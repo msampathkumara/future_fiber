@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".pdfEditor.MainEditorActivity">
+    <item
+        android:id="@+id/add_btn_photo_gallery"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_add_photo_alternate_24"
+        android:title="Add Photo ( Gallery )"
+        android:visible="true" />
+    <item
+        android:id="@+id/add_btn_photo_camera"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_add_a_photo_24"
+        android:title="Add Photo ( Camera )"
+        android:visible="true" />
+    <item
+        android:id="@+id/add_btn_text"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_text_fields_24"
+        android:title="Add Text"
+        android:visible="true" />
+    <item
+        android:id="@+id/add_btn_page"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_note_add_24"
+        android:title="New Page"
+        android:visible="true" />
+
+</menu>

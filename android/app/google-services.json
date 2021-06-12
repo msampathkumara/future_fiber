@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "27155477934",
+    "firebase_url": "https://smart-wind-default-rtdb.firebaseio.com",
+    "project_id": "smart-wind",
+    "storage_bucket": "smart-wind.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:27155477934:android:4c5c6688d51ead0730043f",
+        "android_client_info": {
+          "package_name": "com.sampathkumara.northsails.smartwind"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "27155477934-tq4lg8gml4vam2vm3pmgv44mbsju7qsg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBggKndNStZQHrA00JqSbtlkUs6Cz9s3OI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "27155477934-tq4lg8gml4vam2vm3pmgv44mbsju7qsg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

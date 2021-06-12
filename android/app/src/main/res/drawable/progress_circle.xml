@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rotate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="1"
+    android:fromDegrees="0"
+    android:pivotX="50%"
+    android:pivotY="50%"
+    android:toDegrees="1190">
+    <layer-list>
+
+
+
+        <item>
+            <shape
+                android:innerRadiusRatio="3"
+                android:shape="ring"
+                android:thicknessRatio="45"
+                android:useLevel="false">
+
+                <size
+                    android:width="48dip"
+                    android:height="48dip" />
+
+                <gradient
+                    android:centerColor="#03A9F4"
+                    android:centerY="0.60"
+                    android:endColor="#FFFFFF"
+                    android:startColor="#FFFFFF"
+                    android:type="linear"
+                    android:useLevel="false" />
+            </shape>
+        </item>
+        <item>
+            <shape
+                android:innerRadiusRatio="3"
+                android:shape="ring"
+                android:thicknessRatio="60"
+                android:useLevel="false">
+
+                <size
+                    android:width="48dip"
+                    android:height="48dip" />
+
+                <gradient
+                    android:centerColor="#FBFBFB"
+                    android:centerY="0.50"
+                    android:endColor="#03A9F4"
+                    android:startColor="#2196F3"
+                    android:type="linear"
+                    android:useLevel="false" />
+            </shape>
+        </item>
+    </layer-list>
+
+</rotate>

@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E1E1E1"
+    tools:context="com.pdfEditor.Editor">
+
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="#00FFFFFF"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <FrameLayout
+            android:id="@+id/pdfViewPerant"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#00FFFFFF"
+            android:visibility="visible">
+
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="50dp"
+            android:background="#00FFFFFF">
+
+            <com.pdfviewer.PDFView
+                android:id="@+id/pdfView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#00B3B3B3"
+                android:visibility="visible" />
+        </FrameLayout>
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#00FFFFFF"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frameLayout">
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigationView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/bottom_sheet_dialog_background"
+            android:paddingTop="5sp"
+            app:itemIconTint="@drawable/selector_bottom_nav"
+            app:itemRippleColor="@color/red"
+            app:itemTextColor="@drawable/selector_bottom_nav"
+            app:labelVisibilityMode="labeled"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:menu="@menu/ticket_info_nav_menu"
+            app:popupTheme="@style/popup"
+            />
+
+        <LinearLayout
+            android:id="@+id/toolset"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:visibility="gone">
+
+            <ImageButton
+                android:id="@+id/mb_new_page"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_margin="0dp"
+                android:layout_marginStart="3dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="#00E8E9EC"
+                android:contentDescription="TODO"
+                android:cropToPadding="true"
+                android:padding="5dp"
+                android:paddingBottom="100dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/tools_new_page">
+
+            </ImageButton>
+
+            <ImageButton
+                android:id="@+id/b_hightlight"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_margin="0dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="#0010304E"
+                android:contentDescription="TODO"
+                android:cropToPadding="true"
+                android:padding="5dp"
+                android:paddingBottom="100dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/tools_highlighter">
+
+            </ImageButton>
+
+            <ImageButton
+                android:id="@+id/mb_text"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_margin="0dp"
+                android:layout_marginStart="3dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="#00E8E9EC"
+                android:contentDescription="TODO"
+                android:cropToPadding="true"
+                android:padding="5dp"
+                android:paddingBottom="100dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/tools_add_text">
+
+            </ImageButton>
+
+            <ImageButton
+                android:id="@+id/arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_margin="0dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="#0010304E"
+                android:contentDescription="TODO"
+                android:cropToPadding="true"
+                android:padding="5dp"
+                android:paddingBottom="100dp"
+                android:scaleType="fitCenter"
+                android:visibility="gone"
+                app:srcCompat="@drawable/up_arrow"></ImageButton>
+
+            <ImageButton
+                android:id="@+id/b_eraser"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_margin="0dp"
+                android:layout_marginStart="3dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="#0010304E"
+                android:contentDescription="TODO"
+                android:cropToPadding="true"
+                android:padding="5dp"
+                android:paddingBottom="100dp"
+                android:scaleType="fitCenter"
+                android:visibility="gone"
+                app:srcCompat="@drawable/tools_eracer">
+
+            </ImageButton>
+
+            <ImageButton
+                android:id="@+id/mb_image"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_margin="0dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="#00E8E9EC"
+                android:contentDescription="TODO"
+                android:cropToPadding="true"
+                android:padding="5dp"
+                android:paddingBottom="100dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/tools_add_picture">
+
+            </ImageButton>
+
+            <ImageButton
+                android:id="@+id/mb_freehand"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_margin="0dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="#0010304E"
+                android:contentDescription="TODO"
+                android:cropToPadding="true"
+                android:padding="5dp"
+                android:paddingBottom="100dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/tools_pen">
+
+            </ImageButton>
+
+            <ImageButton
+                android:id="@+id/mb_undo"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_margin="0dp"
+                android:layout_marginStart="3dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="#0010304E"
+                android:contentDescription="TODO"
+                android:cropToPadding="true"
+                android:padding="5dp"
+                android:paddingBottom="100dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/tools_undo">
+
+            </ImageButton>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

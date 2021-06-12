@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/tools_pen_1"
+        android:checkable="false"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_create_24"
+        android:title="Pen"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/tools_highlighter_1"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_highlight_24"
+        android:title="Highlighter"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/tools_add_picture_1"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_input_add"
+        android:title="Add"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/tools_undo_1"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_replay_24"
+        android:title="undo"
+        app:showAsAction="ifRoom" />
+
+<!--    <item-->
+<!--        android:id="@+id/tools_new_page_1"-->
+<!--        android:enabled="true"-->
+<!--        android:icon="@drawable/tools_new_page"-->
+<!--        android:title="New Page"-->
+<!--        app:showAsAction="ifRoom" />-->
+
+</menu>
