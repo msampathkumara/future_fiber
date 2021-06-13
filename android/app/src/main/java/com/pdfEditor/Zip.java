@@ -14,7 +14,7 @@ public class Zip {
     static final int BUFFER = 2048;
 
     ZipOutputStream out;
-    byte data[];
+    byte[] data;
 
     public Zip(String name) {
         FileOutputStream dest = null;

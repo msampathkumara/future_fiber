@@ -53,7 +53,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import com.E;
-import com.NsFile.NsFile;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.pdfEditor.EditorTools.data;
 import com.pdfEditor.EditorTools.freehand.p_drawing_view;
@@ -170,7 +169,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     private LinearLayout extraTools;
     private boolean RELOAD;
     private OnPrint onPrint;
-    private NsFile SELECTED_NS_FILE;
+    private Ticket SELECTED_Ticket;
     private EditsList pdfEditsList;
     private RunAfterSave runAfterSave;
     private BottomNavigationView bottomNavigationView;
@@ -574,14 +573,14 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         this.runAfterNsFileLoad = runAfterNsFileLoad;
     }
 
-    public void loadFile(@NonNull final NsFile file, final boolean editable) {
+//    public void loadFile(@NonNull final NsFile file, final boolean editable) {
+    public void loadFile(@NonNull final Ticket file, final boolean editable) {
 
-        SELECTED_NS_FILE = file;
-        CurrentFile = file.getFile(getContext());
+        SELECTED_Ticket = file;
+//        CurrentFile = file.getFile(getContext());
+        CurrentFile = file.ticketFile;
         setFile(CurrentFile);
         pages = new ArrayList<>();
-
-        System.out.println("FFFFFFFFF = " + file.getName());
         if (pdfView != null) {
             PDFView.Configurator configurator = pdfView.fromFile(CurrentFile);
             System.out.println("_______ 3 ________");
@@ -694,7 +693,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
                     mergePdf.addSource(CurrentFile);
                     mergePdf.addSource(fileToMarge);
 //                    file = FileManager.createFile(CurrentFile.getName(), getContext(), Environment.DIRECTORY_DOCUMENTS);
-                    file = SELECTED_NS_FILE.file;
+                    file = SELECTED_Ticket.ticketFile;
                     mergePdf.setDestinationFileName(file.getAbsolutePath());
                     mergePdf.mergeDocuments(false);
                     pDialog.dismiss();
@@ -771,7 +770,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         webView.addJavascriptInterface(new WebViewInterface() {
             @Override
             public void onSvgData(JSONObject value) {
-                runAfterSave.run(value, SELECTED_NS_FILE);
+                runAfterSave.run(value, SELECTED_Ticket);
 
             }
 
@@ -1480,13 +1479,13 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
 
     public void addImage(long id, Bitmap b1) {
-        getImagesList().put(id, bitmapToFile(id, b1, String.valueOf(SELECTED_NS_FILE.getFileId())));
+        getImagesList().put(id, bitmapToFile(id, b1, String.valueOf(SELECTED_Ticket.id)));
     }
 
     private File bitmapToFile(long id, Bitmap bitmap, String fileId) {
 
 //        File direct = new File(Environment.getExternalStorageDirectory() + "/Documents/PdfEdits/" + fileId);
-        File dir = new File(getContext().getExternalFilesDir(null) + "/" + SELECTED_NS_FILE.id + "/images");
+        File dir = new File(getContext().getExternalFilesDir(null) + "/" + SELECTED_Ticket.id + "/images");
         if (!dir.exists()) {
             dir.mkdirs();
         }
@@ -1526,7 +1525,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
             }
 
             @Override
-            public void run(JSONObject value, NsFile nsFile) {
+            public void run(JSONObject value, Ticket nsFile) {
                 runAfterUpload.run(null);
             }
 

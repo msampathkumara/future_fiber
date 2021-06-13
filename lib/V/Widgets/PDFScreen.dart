@@ -2,16 +2,18 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:smartwind/C/DB/DB.dart';
+import 'package:smartwind/M/Ticket.dart';
 
 // import 'package:flutter_full_pdf_viewer/flutter_full_pdf_viewer.dart';
 
 class PDFScreen extends StatefulWidget {
-  String pathPDF = "";
-  int fileID = 0;
+  // String pathPDF = "";
+  // int fileID = 0;
+  Ticket ticket;
 
-  PDFScreen(this.pathPDF, this.fileID);
+  PDFScreen(this.ticket);
 
   @override
   _PDFScreenState createState() {
@@ -51,8 +53,8 @@ class _PDFScreenState extends State<PDFScreen> {
       body: Container(
         child: Stack(
           children: <Widget>[
-            PDFView(
-              filePath: widget.pathPDF,
+            new PDFView(
+              filePath: widget.ticket.ticketFile!.path,
               enableSwipe: true,
               swipeHorizontal: false,
               autoSpacing: false,
@@ -125,9 +127,9 @@ class _PDFScreenState extends State<PDFScreen> {
               icon: Icon(Icons.edit_outlined),
               label: Text("Edit"),
               onPressed: () async {
-                final int result = await platform.invokeMethod('editPdf', {'path': widget.pathPDF, 'fileID': widget.fileID});
-
-                // await snapshot.data.setPage(pages ~/ 2);
+                await widget.ticket.OpenEditor();
+                await DB.updateDatabase(context: context,showLoadingDialog: true);
+                Navigator.pop(context,true);
               },
             );
           }
@@ -137,6 +139,4 @@ class _PDFScreenState extends State<PDFScreen> {
       ),
     );
   }
-
-  static const platform = const MethodChannel('editPdf');
 }

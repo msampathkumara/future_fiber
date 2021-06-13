@@ -21,12 +21,12 @@ import android.widget.SeekBar;
 import androidx.annotation.NonNull;
 
 import com.azeesoft.lib.colorpicker.ColorPickerDialog;
-import com.pdfviewer.PDFView;
-import com.sampathkumara.northsails.smartwind.R;
 import com.pdfEditor.Editor;
 import com.pdfEditor.PAGE;
 import com.pdfEditor.uploadEdits.PdfEdit;
 import com.pdfEditor.uploadEdits.editsPaint;
+import com.pdfviewer.PDFView;
+import com.sampathkumara.northsails.smartwind.R;
 
 //import com.flask.colorpicker.ColorPickerView;
 //import com.flask.colorpicker.OnColorSelectedListener;

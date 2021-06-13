@@ -4,7 +4,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 
 import com.pdfEditor.xEdits;
-import com.pdfEditor.xEdits;
 
 
 public class xPath extends xEdits {

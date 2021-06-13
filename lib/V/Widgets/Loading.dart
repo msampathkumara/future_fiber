@@ -7,7 +7,9 @@ class Loading extends StatefulWidget {
 
   var loadingText;
 
-  Loading({Key? key, this.loadingText = "Loading"}) : super(key: key);
+  var showProgress;
+
+  Loading({Key? key, this.loadingText = "Loading", this.showProgress = true}) : super(key: key);
 
   @override
   _LoadingState createState() {
@@ -54,18 +56,19 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
         alignment: WrapAlignment.center,
         direction: Axis.horizontal,
         children: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: new CircularPercentIndicator(
-                radius: 100.0,
-                lineWidth: 4.0,
-                percent: (_progress / 100).toDouble(),
-                center: new Text("$_progress%"),
-                progressColor: Colors.blue,
+          if (widget.showProgress)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: new CircularPercentIndicator(
+                  radius: 100.0,
+                  lineWidth: 4.0,
+                  percent: (_progress / 100).toDouble(),
+                  center: new Text("$_progress%"),
+                  progressColor: Colors.blue,
+                ),
               ),
             ),
-          ),
           Text(
             widget.loadingText,
             textScaleFactor: 1,

@@ -4,9 +4,9 @@ package com.pdfviewer;
 import android.os.AsyncTask;
 
 import com.pdfviewer.source.DocumentSource;
-import com.shockwave.pdfium.util.Size;
 import com.shockwave.pdfium.PdfDocument;
 import com.shockwave.pdfium.PdfiumCore;
+import com.shockwave.pdfium.util.Size;
 
 import java.lang.ref.WeakReference;
 

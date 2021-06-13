@@ -53,13 +53,14 @@ public class MainEditorActivity extends AppCompatActivity {
     static String FILE_PATH;
     private final int rfResult = 222;
     public Editor pdfEditor;
-    NsFile SELECTED_FILE;
+    //    NsFile SELECTED_FILE;
+    Ticket SELECTED_FILE;
     //    FloatingActionButton fab;
     int RequestedOrientation;
     private NsFile CURRENT_FOLDER;
     private boolean QA;
     private boolean FIELD_FORMS;
-
+    Ticket ticket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,15 +72,23 @@ public class MainEditorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_editor);
 
 
-        SELECTED_FILE = new NsFile();
+//        SELECTED_FILE = new NsFile();
+        SELECTED_FILE = Ticket.formJsonString(getIntent().getExtras().getString("ticket"));
+        FILE_PATH = getIntent().getExtras().getString("path");
 //        SELECTED_FILE.file = new File(getIntent().getExtras().getString("path"));
-        FILE_PATH = getExternalFilesDir(null) + "/35874.pdf";
+        SELECTED_FILE.id = getIntent().getExtras().getInt("ticketId");
+        ticket = Ticket.formJsonString(getIntent().getExtras().getString("ticket"));
+
+//        SELECTED_FILE.name = getIntent().getExtras().getString("name");
+//        FILE_PATH = getExternalFilesDir(null) + "/35874.pdf";
         System.out.println("------------------------------------------------------------------------");
         System.out.println(FILE_PATH);
-        SELECTED_FILE.file = new File(FILE_PATH);
-        SELECTED_FILE.name = "MO-0000";
-        SELECTED_FILE.id = 1230;
-        System.out.println("------------------------------------------------------------------------" + SELECTED_FILE.file.exists());
+//        SELECTED_FILE.file = new File(FILE_PATH);
+        SELECTED_FILE.ticketFile = new File(FILE_PATH);
+//        SELECTED_FILE.name = "MO-0000";
+//        SELECTED_FILE.id = 1230;
+//        System.out.println("------------------------------------------------------------------------" + SELECTED_FILE.file.exists());
+        System.out.println("------------------------------------------------------------------------" + SELECTED_FILE.ticketFile.exists());
 
 
         View fab = findViewById(R.id.fab);
@@ -87,7 +96,8 @@ public class MainEditorActivity extends AppCompatActivity {
         fab.setOnClickListener(view -> {
 
             fab.setVisibility(View.GONE);
-            loadFile(SELECTED_FILE.file);
+//            loadFile(SELECTED_FILE.file);
+            loadFile(SELECTED_FILE.ticketFile);
         });
 
 
@@ -99,7 +109,8 @@ public class MainEditorActivity extends AppCompatActivity {
         loadEditor();
 //        pdfEditor.showTools();
 //        fab.setVisibility(View.GONE);
-        loadFile(SELECTED_FILE.file);
+//        loadFile(SELECTED_FILE.file);
+        loadFile(SELECTED_FILE.ticketFile);
 //
 //        FILE_NAME = SELECTED_FILE.getName();
 //
@@ -226,6 +237,9 @@ public class MainEditorActivity extends AppCompatActivity {
 
                         @Override
                         public void run(File sourceFile) {
+                            Intent data = new Intent() ;
+                            data.putExtra("edited", true);
+                            setResult(Activity.RESULT_OK, data);
                             finish();
 //                    new DownloadNsFile(SELECTED_FILE, MainEditorActivity.this, new DownloadNsFile.OnDownload() {
 //
@@ -367,7 +381,7 @@ public class MainEditorActivity extends AppCompatActivity {
 
     private void finishJob() {
         System.out.println("____________________________________ SAVING ___________________________");
-        System.out.println("folder = " + SELECTED_FILE.getParent());
+
         if (pdfEditor.getToolVisibility() == View.VISIBLE) {
             if (pdfEditor.isEdited()) {
                 pdfEditor.saveEdits();
@@ -442,7 +456,7 @@ public class MainEditorActivity extends AppCompatActivity {
 
 
             @Override
-            public void run(JSONObject value, NsFile SELECTED_NS_FILE) {
+            public void run(JSONObject value, Ticket SELECTED_NS_FILE) {
                 System.out.println("-----------------------------------------------------------------------+++++++");
 //                Zip zipFile = new Zip(getExternalFilesDir(null) + "/" + SELECTED_FILE.id + "/" + SELECTED_FILE.id + ".zip");
 //                File svgFile = getSVGFile(value.toString());
@@ -467,7 +481,7 @@ public class MainEditorActivity extends AppCompatActivity {
 
                 vals.put("type", "edits");
 
-                vals.put("file", SELECTED_NS_FILE.getFileId() + "");
+                vals.put("file", SELECTED_NS_FILE.id + "");
                 vals.put("ticketId", SELECTED_NS_FILE.id + "");
                 vals.put("svgs", value.toString());
 

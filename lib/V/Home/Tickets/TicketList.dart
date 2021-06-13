@@ -302,10 +302,14 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
                 padding: const EdgeInsets.all(8),
                 itemCount: FilesList.length,
                 itemBuilder: (BuildContext context, int index) {
+                  print(FilesList[index]);
                   Ticket ticket = Ticket.fromJson(FilesList[index]);
                   // print(ticket.toJson());
                   return GestureDetector(
                     behavior: HitTestBehavior.opaque,
+                    onLongPress: () {
+                      showTicketOptions(ticket);
+                    },
                     onTap: () {
                       var ticketInfo = TicketInfo(ticket);
                       ticketInfo.show(context);
@@ -434,5 +438,43 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
     listsArray = [AllFilesList, UpwindFilesList, ODFilesList, NylonFilesList, OEMFilesList, NoPoolFilesList];
     currentFileList = listsArray[_selectedTabIndex];
     print(currentFileList.length);
+  }
+
+  void showTicketOptions(Ticket ticket) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
+          height: 400,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ListTile(
+                  title: Text(ticket.mo ?? ticket.oe!),
+                  subtitle: Text(ticket.oe!),
+                ),
+                Divider(),
+                ListTile(
+                  title: Text(ticket.isRed == 1 ? "Remove Red Flag" : "Set Red Flag"),
+                  leading: Icon(FontAwesomeIcons.fontAwesomeFlag),
+                ),
+                ListTile(
+                    title: Text(ticket.isGr == 1 ? "Remove GR" : "Set GR"),
+                    leading: SizedBox(width: 32, height: 32, child: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))))),
+                ListTile(
+                    title: Text(ticket.isSk == 1 ? "Remove SK" : "Set SK"),
+                    leading: SizedBox(width: 32, height: 32, child: CircleAvatar(backgroundColor: Colors.pink, child: Center(child: Text("SK", style: TextStyle(color: Colors.white)))))),
+                ListTile(title: Text(ticket.isRush == 1 ? "Remove Rush" : "Set Rush"), leading: Icon(FontAwesomeIcons.bolt, color: Colors.orangeAccent)),
+                ListTile(title: Text("Finish"), leading: Icon(FontAwesomeIcons.bolt, color: Colors.orangeAccent)),
+                Spacer(),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:path_provider/path_provider.dart';
@@ -36,6 +37,7 @@ class Ticket {
   int fileVersion = 0;
   String? production;
   double progress = 0.0;
+  File? ticketFile;
 
   Ticket() {}
 
@@ -61,7 +63,7 @@ class Ticket {
 
   Future<File> getFile(context, {onReceiveProgress}) async {
     var loadingWidget = Loading(
-      loadingText: "Downloading",
+      loadingText: "Downloading Ticket",
     );
     loadingWidget.show(context);
 
@@ -75,20 +77,18 @@ class Ticket {
 
     var response;
     try {
-      await dio.download(Server.getServerApiPath('/tickets/downloadTicket?' + queryString), filePath, onReceiveProgress: (received, total) {
+      await dio.download(Server.getServerApiPath('/tickets/getTicket?' + queryString), filePath, onReceiveProgress: (received, total) {
         int percentage = ((received / total) * 100).floor();
         loadingWidget.setProgress(percentage);
         if (onReceiveProgress != null) {
           onReceiveProgress(percentage);
         }
-      }).then((value) {
+      }).then((value) async {
         response = value;
         print('+++++++++++++++++++++++++++++++++++++++++++++');
         print(response.headers["fileVersion"]);
         String fileVersion = response.headers["fileVersion"][0];
-        DB.getDB().then((db) => db!.rawQuery("replace into files (ticket,ver)values(?,?) ", [id, fileVersion]).then((data) {
-              print(data);
-            }));
+        await setLocalFileVersion(fileVersion);
       });
     } on DioError catch (e) {
       if (e.response != null) {
@@ -113,27 +113,34 @@ class Ticket {
 
     loadingWidget.close(context);
     File file = new File(filePath);
+    ticketFile = file;
     return file;
   }
 
   Future<void> open(context, {onReceiveProgress}) async {
-    var ed = await getExternalStorageDirectory();
-    var filePath = ed!.path + '/$id.pdf';
-    File file = new File(filePath);
-
+    File file = await getLocalFile();
     var i = await getLocalFileVersion();
-    if (i == fileVersion && file.existsSync()) {
+    var isNew = await isFileNew();
+    print(isNew);
+
+    if (isNew && file.existsSync()) {
       print("File exists ");
-      Navigator.push(
+      var data = await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => PDFScreen(file.path, id)),
+        MaterialPageRoute(builder: (context) => PDFScreen(this)),
       );
+      if (data != null && data) {
+        open(context);
+      }
     } else {
-      getFile(context).then((file) {
-        Navigator.push(
+      getFile(context).then((file) async {
+        var data = await Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => PDFScreen(file.path, id)),
+          MaterialPageRoute(builder: (context) => PDFScreen(this)),
         );
+        if (data != null && data) {
+          open(context);
+        }
       });
     }
   }
@@ -141,4 +148,40 @@ class Ticket {
   factory Ticket.fromJson(Map<String, dynamic> json) => _$TicketFromJson(json);
 
   Map<String, dynamic> toJson() => _$TicketToJson(this);
+
+  Future<File> getLocalFile() async {
+    var ed = await getExternalStorageDirectory();
+    var filePath = ed!.path + '/$id.pdf';
+    File file = new File(filePath);
+    ticketFile = file;
+    return file;
+  }
+
+  Future OpenEditor() async {
+    return await platform.invokeMethod('editPdf', {'path': ticketFile!.path, 'fileID': id, 'ticket': toJson().toString()});
+  }
+
+  static const platform = const MethodChannel('editPdf');
+
+  isFileNew() async {
+    print('fffff=' + fileVersion.toString());
+    print('fffff=' + (await getLocalFileVersion()).toString());
+    print("SELECT * FROM tickets t left join  files f on f.ticket=t.id    where t.id=$id and f.ver=t.fileVersion ");
+    return DB.getDB().then((db) {
+      return db!.rawQuery("SELECT * FROM tickets t left join  files f on f.ticket=t.id    where t.id=$id and  fileVersion > ver ").then((value) {
+        print(value);
+        if (value.length > 0) {
+          return false;
+        } else {
+          return true;
+        }
+      });
+    });
+  }
+
+  setLocalFileVersion(newFileVersion) {
+    return DB.getDB().then((db) => db!.rawQuery("replace into files (ticket,ver)values(?,?) ", [id, newFileVersion]).then((data) {
+          print(data);
+        }));
+  }
 }

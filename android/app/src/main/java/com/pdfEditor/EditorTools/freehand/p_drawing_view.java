@@ -68,7 +68,7 @@ public class p_drawing_view extends FrameLayout {
                 int[] x = new int[]{R.id.b_color_blue, R.id.b_color_green, R.id.b_color_orange, R.id.b_color_red, R.id.b_color_yellow};
 
                 for (int xx : x) {
-                    ImageButton btn = (ImageButton) findViewById(xx);
+                    ImageButton btn = findViewById(xx);
                     btn.setImageResource(R.drawable.transparent);
                     if (xx == v.getId()) {
                         btn.setImageResource(R.drawable.ring);

@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:smartwind/V/Widgets/Loading.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../OnlineDB.dart';
@@ -69,10 +70,17 @@ class DB {
     return int.parse(version);
   }
 
-  static Future updateDatabase() async {
+  static Future updateDatabase({context, showLoadingDialog = false}) async {
+    var loadingWidget = Loading(
+      loadingText: "updating Database",
+      showProgress: false,
+    );
+    if (showLoadingDialog && context != null) {
+      loadingWidget.show(context);
+    }
     // await getDB().then((value) => value!.rawQuery("delete from tickets "));
     return getDB().then((value) => value!.rawQuery("select ifnull(max(uptime),0) uptime from tickets; ").then((value) {
-          print(value);
+          print("last update on == " + value.toString());
           String uptime = value[0]["uptime"].toString();
           return OnlineDB.apiGet("tickets/getProductionPoolTickets", {"uptime": uptime}).then((Response response) async {
             Map res = (json.decode(response.body) as Map);
@@ -91,6 +99,9 @@ class DB {
               batch.delete('tickets', where: 'id = ?', whereArgs: [ticket["id"]]);
             });
             print(await batch.commit(noResult: false));
+            if (showLoadingDialog && context != null) {
+              loadingWidget.close(context);
+            }
           });
         }));
   }
