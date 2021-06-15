@@ -4,6 +4,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.webkit.CookieManager;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,7 +45,7 @@ public class MultipartUtility {
      * @param charset
      * @throws IOException
      */
-    public MultipartUtility(String requestURL, String charset, Context context)
+    public MultipartUtility(String requestURL, String charset, Context context,String authKey)
             throws IOException {
         this.charset = charset;
 
@@ -51,10 +56,9 @@ public class MultipartUtility {
         URL url = new URL(requestURL);
         httpConn = (HttpURLConnection) url.openConnection();
 
-        SharedPreferences prefs = context.getSharedPreferences("general_settings", Context.MODE_PRIVATE);
-        String authKey = prefs.getString("authKey", null);
 
-        httpConn.setRequestProperty("Authorization", authKey);
+
+        httpConn.setRequestProperty("authorization", authKey);
         httpConn.setUseCaches(true);
         httpConn.setDoOutput(true); // indicates POST method
         httpConn.setDoInput(true);
@@ -68,8 +72,7 @@ public class MultipartUtility {
         httpConn.setRequestProperty("User-Agent", "CodeJava Agent");
         httpConn.setRequestProperty("Test", "Bonjour");
         outputStream = httpConn.getOutputStream();
-        writer = new PrintWriter(new OutputStreamWriter(outputStream, charset),
-                true);
+        writer = new PrintWriter(new OutputStreamWriter(outputStream, charset), true);
     }
 
     /**

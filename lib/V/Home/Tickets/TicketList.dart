@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/M/Ticket.dart';
+import 'package:smartwind/V/Widgets/FlagDialog.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 
 import 'TicketInfo.dart';
@@ -31,12 +32,9 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
       });
       print("Selected Index: " + _TabBarcontroller.index.toString());
     });
-
-    DB.getDB().then((value) async {
-      database = value;
-      loadData().then((value) {
-        setState(() {});
-      });
+    reloadData();
+    DB.setOnDBChangeListener(() {
+      reloadData();
     });
   }
 
@@ -307,8 +305,9 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
                   // print(ticket.toJson());
                   return GestureDetector(
                     behavior: HitTestBehavior.opaque,
-                    onLongPress: () {
-                      showTicketOptions(ticket);
+                    onLongPress: () async {
+                      await showTicketOptions(ticket, context);
+                      setState(() {});
                     },
                     onTap: () {
                       var ticketInfo = TicketInfo(ticket);
@@ -440,13 +439,13 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
     print(currentFileList.length);
   }
 
-  void showTicketOptions(Ticket ticket) {
-    showModalBottomSheet<void>(
+  Future<void> showTicketOptions(Ticket ticket, BuildContext context1) async {
+    await showModalBottomSheet<void>(
       context: context,
       builder: (BuildContext context) {
         return Container(
           decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
-          height: 400,
+          height: 500,
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -459,16 +458,45 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
                 Divider(),
                 ListTile(
                   title: Text(ticket.isRed == 1 ? "Remove Red Flag" : "Set Red Flag"),
-                  leading: Icon(FontAwesomeIcons.fontAwesomeFlag),
+                  leading: Icon(Icons.flag),
+                  onTap: () async {
+                    Navigator.of(context).pop();
+                    await FlagDialog.showRedFlagDialog(context1, ticket);
+                  },
                 ),
                 ListTile(
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                      await FlagDialog.showGRDialog(context1, ticket);
+                    },
                     title: Text(ticket.isGr == 1 ? "Remove GR" : "Set GR"),
-                    leading: SizedBox(width: 32, height: 32, child: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))))),
+                    leading: SizedBox(width: 24, height: 24, child: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))))),
                 ListTile(
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                      await FlagDialog.showSKDialog(context1, ticket);
+                    },
                     title: Text(ticket.isSk == 1 ? "Remove SK" : "Set SK"),
-                    leading: SizedBox(width: 32, height: 32, child: CircleAvatar(backgroundColor: Colors.pink, child: Center(child: Text("SK", style: TextStyle(color: Colors.white)))))),
-                ListTile(title: Text(ticket.isRush == 1 ? "Remove Rush" : "Set Rush"), leading: Icon(FontAwesomeIcons.bolt, color: Colors.orangeAccent)),
-                ListTile(title: Text("Finish"), leading: Icon(FontAwesomeIcons.bolt, color: Colors.orangeAccent)),
+                    leading: SizedBox(width: 24, height: 24, child: CircleAvatar(backgroundColor: Colors.pink, child: Center(child: Text("SK", style: TextStyle(color: Colors.white)))))),
+                ListTile(
+                    title: Text(ticket.isRush == 1 ? "Remove Rush" : "Set Rush"),
+                    leading: Icon(Icons.bolt, color: Colors.orangeAccent),
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                      await FlagDialog.showRushDialog(context1, ticket);
+                    }),
+                ListTile(
+                    title: Text("Finish"),
+                    leading: Icon(Icons.check_circle_outline_outlined, color: Colors.green),
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                    }),
+                ListTile(
+                    title: Text("Delete"),
+                    leading: Icon(Icons.delete_forever, color: Colors.red),
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                    }),
                 Spacer(),
               ],
             ),
@@ -476,5 +504,14 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
         );
       },
     );
+  }
+
+  void reloadData() {
+    DB.getDB().then((value) async {
+      database = value;
+      loadData().then((value) {
+        setState(() {});
+      });
+    });
   }
 }

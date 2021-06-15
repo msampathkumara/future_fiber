@@ -8,6 +8,7 @@ class DbMigrator {
       "ALTER TABLE tickets ADD isHold tinyint default 0;",
       "create table files (ticket int ,ver int , unique (ticket)) "
     ],
-    2: ["alter table tickets add fileVersion int default 0 null;"]
+    2: ["alter table tickets add fileVersion int default 0 null;"],
+    3: ["create table flags ( id int primary key, ticket int null, type varchar(10) null, comment longtext null, dnt datetime   null, user int null ,UNIQUE(ticket, type) ON CONFLICT REPLACE )"],
   };
 }

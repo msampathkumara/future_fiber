@@ -102,7 +102,23 @@ class DB {
             if (showLoadingDialog && context != null) {
               loadingWidget.close(context);
             }
+            List OnDBChangeCallBacks_temp = [];
+            OnDBChangeCallBacks_temp.addAll(OnDBChangeCallBacks);
+            for (var i = 0; i < OnDBChangeCallBacks_temp.length; i++) {
+              var x = OnDBChangeCallBacks_temp[i];
+              try {
+                x();
+              } catch (e) {
+                OnDBChangeCallBacks.remove(x);
+              }
+            }
           });
         }));
+  }
+
+  static List OnDBChangeCallBacks = [];
+
+  static setOnDBChangeListener(callBack) {
+    OnDBChangeCallBacks.add(callBack);
   }
 }

@@ -1,9 +1,13 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartwind/V/Widgets/Loading.dart';
 
 // import 'package:firebase_auth/firebase_auth.dart';
+import 'V/Home/Home.dart';
 import 'V/Login/Login.dart';
 import 'mainFuncs.dart';
 
@@ -50,6 +54,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    if (kDebugMode) {
+      SharedPreferences.setMockInitialValues(new Map());
+    }
   }
 
   @override
@@ -64,7 +71,11 @@ class _MyHomePageState extends State<MyHomePage> {
           future: _mainFuncs.initializeFlutterFireFuture,
           builder: (context, snapshot) {
             print("ssssssssssssssssssssssssssss " + snapshot.toString());
+
             if (snapshot.hasData) {
+              if (FirebaseAuth.instance.currentUser != null) {
+                return Home();
+              }
               return Login();
             } else {
               return Loading();

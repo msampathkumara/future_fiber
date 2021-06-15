@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +10,9 @@ import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:smartwind/C/DB/DB.dart';
+import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/C/Server.dart';
+import 'package:smartwind/M/TicketFlag.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/Loading.dart';
 import 'package:smartwind/V/Widgets/PDFScreen.dart';
@@ -19,24 +23,44 @@ part 'Ticket.g.dart';
 class Ticket {
   String? mo;
   String? oe;
+  @JsonKey(defaultValue: 0, includeIfNull: true)
   int finished = 0;
+  @JsonKey(defaultValue: 0, includeIfNull: true)
   int uptime = 0;
+  @JsonKey(defaultValue: 0, includeIfNull: true)
   int file = 0;
+  @JsonKey(defaultValue: 0, includeIfNull: true)
   int sheet = 0;
+  @JsonKey(defaultValue: 0, includeIfNull: true)
   int dir = 0;
+  @JsonKey(defaultValue: 0, includeIfNull: true)
   int id = 0;
+  @JsonKey(defaultValue: 0, includeIfNull: true)
   int isRed = 0;
+  @JsonKey(defaultValue: 0, includeIfNull: true)
   int isRush = 0;
+  @JsonKey(defaultValue: 0, includeIfNull: true)
   int isSk = 0;
+  @JsonKey(defaultValue: 0, includeIfNull: true)
   int inPrint = 0;
+  @JsonKey(defaultValue: 0, includeIfNull: true)
   int isGr = 0;
+  @JsonKey(defaultValue: 0, includeIfNull: true)
   int isError = 0;
+  @JsonKey(defaultValue: 0, includeIfNull: true)
   int canOpen = 1;
+  @JsonKey(defaultValue: 0, includeIfNull: true)
   int isSort = 0;
+  @JsonKey(defaultValue: 0, includeIfNull: true)
   int isHold = 0;
+  @JsonKey(defaultValue: 0, includeIfNull: true)
   int fileVersion = 0;
-  String? production;
+  @JsonKey(defaultValue: 0.0, includeIfNull: true)
   double progress = 0.0;
+
+  String? production;
+
+  @JsonKey(ignore: true)
   File? ticketFile;
 
   Ticket() {}
@@ -69,15 +93,16 @@ class Ticket {
 
     var dio = Dio();
     var ed = await getExternalStorageDirectory();
-
+    final user = FirebaseAuth.instance.currentUser;
+    final idToken = await user!.getIdToken();
     dio.options.headers['content-Type'] = 'application/json';
-    // dio.options.headers["authorization"] = "token ${token}";
+    dio.options.headers["authorization"] = '$idToken';
     String queryString = Uri(queryParameters: {"id": id.toString()}).query;
     var filePath = ed!.path + '/$id.pdf';
 
     var response;
     try {
-      await dio.download(Server.getServerApiPath('/tickets/getTicket?' + queryString), filePath, onReceiveProgress: (received, total) {
+      await dio.download(Server.getServerApiPath('/tickets/getTicketFile?' + queryString), filePath, onReceiveProgress: (received, total) {
         int percentage = ((received / total) * 100).floor();
         loadingWidget.setProgress(percentage);
         if (onReceiveProgress != null) {
@@ -183,5 +208,23 @@ class Ticket {
     return DB.getDB().then((db) => db!.rawQuery("replace into files (ticket,ver)values(?,?) ", [id, newFileVersion]).then((data) {
           print(data);
         }));
+  }
+
+  Future<List> getFlagList(String FlagType) async {
+    print("tickets/flags/getList");
+    return OnlineDB.apiGet("tickets/flags/getList", {"ticket": id.toString(), "type": FlagType}).then((response) {
+      print(response.body);
+      print("----------------------------------------");
+      Map res = (json.decode(response.body) as Map);
+      List l = ((res["flag"] ?? []));
+
+      List<TicketFlag> list = List<TicketFlag>.from(l.map((model) {
+        return TicketFlag.fromJson(model);
+      }));
+      print(list.length);
+      return list;
+    }).catchError((onError) {
+      print(onError);
+    });
   }
 }

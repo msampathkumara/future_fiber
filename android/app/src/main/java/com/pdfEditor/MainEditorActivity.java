@@ -25,6 +25,10 @@ import androidx.core.graphics.BitmapCompat;
 import com.Dialogs.LoadingDialog;
 import com.NsFile.NsFile;
 import com.Server;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 import com.pdfEditor.EditorTools.data;
 import com.pdfviewer.util.SizeF;
 import com.sampathkumara.northsails.smartwind.R;
@@ -62,6 +66,7 @@ public class MainEditorActivity extends AppCompatActivity {
     private boolean FIELD_FORMS;
     Ticket ticket;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,24 +76,12 @@ public class MainEditorActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
         setContentView(R.layout.activity_main_editor);
 
-
-//        SELECTED_FILE = new NsFile();
         SELECTED_FILE = Ticket.formJsonString(getIntent().getExtras().getString("ticket"));
         FILE_PATH = getIntent().getExtras().getString("path");
-//        SELECTED_FILE.file = new File(getIntent().getExtras().getString("path"));
         SELECTED_FILE.id = getIntent().getExtras().getInt("ticketId");
         ticket = Ticket.formJsonString(getIntent().getExtras().getString("ticket"));
 
-//        SELECTED_FILE.name = getIntent().getExtras().getString("name");
-//        FILE_PATH = getExternalFilesDir(null) + "/35874.pdf";
-        System.out.println("------------------------------------------------------------------------");
-        System.out.println(FILE_PATH);
-//        SELECTED_FILE.file = new File(FILE_PATH);
         SELECTED_FILE.ticketFile = new File(FILE_PATH);
-//        SELECTED_FILE.name = "MO-0000";
-//        SELECTED_FILE.id = 1230;
-//        System.out.println("------------------------------------------------------------------------" + SELECTED_FILE.file.exists());
-        System.out.println("------------------------------------------------------------------------" + SELECTED_FILE.ticketFile.exists());
 
 
         View fab = findViewById(R.id.fab);
@@ -96,41 +89,14 @@ public class MainEditorActivity extends AppCompatActivity {
         fab.setOnClickListener(view -> {
 
             fab.setVisibility(View.GONE);
-//            loadFile(SELECTED_FILE.file);
             loadFile(SELECTED_FILE.ticketFile);
         });
 
 
-//        FILE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/pdfEditor/";
-//        SELECTED_FILE = (NsFile) getIntent().getExtras().get(FileBrowser.FILE);
-//        System.out.println("FILE ID ==== " + SELECTED_FILE.fileId);
-//
-//
         loadEditor();
-//        pdfEditor.showTools();
-//        fab.setVisibility(View.GONE);
-//        loadFile(SELECTED_FILE.file);
         loadFile(SELECTED_FILE.ticketFile);
-//
-//        FILE_NAME = SELECTED_FILE.getName();
-//
-//
-//        getSupportActionBar().setTitle(FilenameUtils.removeExtension(SELECTED_FILE.getName()));
-//        pdfEditor.showTools();
 
     }
-
-//    public static <T> T copyObject(Object object) {
-//        Gson gson = new Gson();
-//        JsonObject jsonObject = gson.toJsonTree(object).getAsJsonObject();
-//        return gson.fromJson(jsonObject, (Type) object.getClass());
-//    }
-
-//    public void loadFile(@NonNull NsFile mItem) {
-//        SELECTED_FILE = mItem;
-//        loadFile(mItem.getFile(MainEditorActivity.this));
-//
-//    }
 
     private void loadEditor() {
         pdfEditor = new Editor();
@@ -178,42 +144,6 @@ public class MainEditorActivity extends AppCompatActivity {
             }
         }
 
-//        else if (requestCode == SAVE_FOLDER_SELECTED) {
-//            if (RESULT_OK == resultCode) {
-//                System.out.println("+++++++++++++++++++++++++ SAVING ++++++++++++++++++++++++");
-//                savePDF(data.getExtras().getString(FileBrowser.FOLDER), data.getExtras().getString(FileBrowser.FILE_NAME), false, new FileManager.RunAfterUpload() {
-//                    @Override
-//                    public void run(File file) {
-//                    }
-//
-//                    @Override
-//                    public void error(Exception exception) {
-//
-//                    }
-//                });
-//            }
-//        } else if (requestCode == FileBrowser.OPEN) {
-//            if (RESULT_OK == resultCode) {
-//                CURRENT_FOLDER = (NsFile) data.getExtras().get(FileBrowser.FOLDER);
-//                String filePath = data.getStringExtra(FileBrowser.FILE_PATH);
-//                System.out.println(filePath);
-//                System.out.println("CURRENT_FOLDER " + CURRENT_FOLDER);
-////                File file = new File(filePath);
-//                System.out.println("FILE HAVE ");
-////                loadFile(file);
-//                loadFile((NsFile) data.getExtras().get(FileBrowser.FILE));
-//            }
-//        } else if (requestCode == POOL_TICKET) {
-//            if (RESULT_OK == resultCode) {
-//                System.out.println("CURRENT_FOLDER " + CURRENT_FOLDER);
-//                System.out.println("FILE HAVE ");
-//                Intent i = new Intent(this, MainEditorActivity.class);
-//                i.putExtra(FileBrowser.FILE, (NsFile) data.getExtras().get(FileBrowser.FILE));
-//                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                startActivityForResult(i, 0);
-//            }
-//        }
-
 
     }
 
@@ -237,31 +167,11 @@ public class MainEditorActivity extends AppCompatActivity {
 
                         @Override
                         public void run(File sourceFile) {
-                            Intent data = new Intent() ;
+                            Intent data = new Intent();
                             data.putExtra("edited", true);
                             setResult(Activity.RESULT_OK, data);
                             finish();
-//                    new DownloadNsFile(SELECTED_FILE, MainEditorActivity.this, new DownloadNsFile.OnDownload() {
-//
-//
-//                        @Override
-//                        public void run(NsFile nsFile) {
-//                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-//                            System.out.println(RequestedOrientation + "**************************" + getResources().getConfiguration().orientation);
-//                            if (RequestedOrientation == getResources().getConfiguration().orientation) {
-//                                loadFile(nsFile);
-//                            }
-//
-//                            pdfEditor.hideTools();
-//                            pdfEditor.hideExtraTools();
-//                            fab.setVisibility(View.VISIBLE);
-//                        }
-//
-//                        @Override
-//                        public void onProgressChange(int percentage, int bytes_total, int bytes_downloaded) {
-//
-//                        }
-//                    }).execute();
+
                         }
 
                         @Override
@@ -457,6 +367,7 @@ public class MainEditorActivity extends AppCompatActivity {
 
             @Override
             public void run(JSONObject value, Ticket SELECTED_NS_FILE) {
+
                 System.out.println("-----------------------------------------------------------------------+++++++");
 //                Zip zipFile = new Zip(getExternalFilesDir(null) + "/" + SELECTED_FILE.id + "/" + SELECTED_FILE.id + ".zip");
 //                File svgFile = getSVGFile(value.toString());
@@ -553,41 +464,52 @@ public class MainEditorActivity extends AppCompatActivity {
     }
 
     public static void uploadMultyParts(Context context, String requestURL, final HashMap<String, ArrayList<File>> sourceFiles, final HashMap<String, String> keyvalues, RunAfterMultipartUpload runAfterUpload) {
-        try {
 
-            String charset = "UTF-8";
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+        user.getIdToken(true).addOnSuccessListener(new OnSuccessListener<GetTokenResult>() {
+            @Override
+            public void onSuccess(GetTokenResult getTokenResult) {
+                System.out.println("getTokenResult.getToken()");
+                System.out.println(getTokenResult.getToken());
+
+                try {
+
+                    String charset = "UTF-8";
 
 
-            MultipartUtility multipart = new MultipartUtility(requestURL, charset, context);
+                    MultipartUtility multipart = new MultipartUtility(requestURL, charset, context, getTokenResult.getToken());
 
-            int xx = 0;
-            for (String key : sourceFiles.keySet()) {
-                for (File f : sourceFiles.get(key)) {
-                    multipart.addFilePart("image" + xx++, f);
+                    int xx = 0;
+                    for (String key : sourceFiles.keySet()) {
+                        for (File f : sourceFiles.get(key)) {
+                            multipart.addFilePart("image" + xx++, f);
+                        }
+                    }
+
+                    for (String key : keyvalues.keySet()) {
+                        multipart.addFormField(key, keyvalues.get(key));
+                    }
+
+                    List<String> response = multipart.finish();
+
+                    Log.v("rht", "SERVER REPLIED:");
+
+                    for (String line : response) {
+//                Log.v("rht", "Line : " + line);
+                        System.out.println("____" + line);
+                    }
+
+
+                    runAfterUpload.run();
+
+                } catch (Exception e) {
+                    runAfterUpload.onError(e);
                 }
             }
 
-            for (String key : keyvalues.keySet()) {
-                multipart.addFormField(key, keyvalues.get(key));
-            }
+        });
 
-            List<String> response = multipart.finish();
-
-            Log.v("rht", "SERVER REPLIED:");
-
-            for (String line : response) {
-//                Log.v("rht", "Line : " + line);
-                System.out.println("____" + line);
-            }
-
-
-            runAfterUpload.run();
-
-        } catch (Exception e) {
-
-            runAfterUpload.onError(e);
-
-        }
 
     }
 

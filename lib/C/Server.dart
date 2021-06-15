@@ -11,6 +11,10 @@ class Server {
     }
   }
 
+  static String getServerPath(String path) {
+    return getServerAddress() + "/" + path;
+  }
+
   static String getServerApiPath(String url) {
     return getServerAddress() + "api/" + url;
   }

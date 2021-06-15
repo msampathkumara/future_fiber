@@ -10,24 +10,24 @@ Ticket _$TicketFromJson(Map<String, dynamic> json) {
   return Ticket()
     ..mo = json['mo'] as String?
     ..oe = json['oe'] as String?
-    ..finished = json['finished'] as int
-    ..uptime = json['uptime'] as int
-    ..file = json['file'] as int
-    ..sheet = json['sheet'] as int
-    ..dir = json['dir'] as int
-    ..id = json['id'] as int
-    ..isRed = json['isRed'] as int
-    ..isRush = json['isRush'] as int
-    ..isSk = json['isSk'] as int
-    ..inPrint = json['inPrint'] as int
-    ..isGr = json['isGr'] as int
-    ..isError = json['isError'] as int
-    ..canOpen = json['canOpen'] as int
-    ..isSort = json['isSort'] as int
-    ..isHold = json['isHold'] as int
-    ..fileVersion = json['fileVersion'] as int
-    ..production = json['production'] as String?
-    ..progress = (json['progress'] as num).toDouble();
+    ..finished = json['finished'] as int? ?? 0
+    ..uptime = json['uptime'] as int? ?? 0
+    ..file = json['file'] as int? ?? 0
+    ..sheet = json['sheet'] as int? ?? 0
+    ..dir = json['dir'] as int? ?? 0
+    ..id = json['id'] as int? ?? 0
+    ..isRed = json['isRed'] as int? ?? 0
+    ..isRush = json['isRush'] as int? ?? 0
+    ..isSk = json['isSk'] as int? ?? 0
+    ..inPrint = json['inPrint'] as int? ?? 0
+    ..isGr = json['isGr'] as int? ?? 0
+    ..isError = json['isError'] as int? ?? 0
+    ..canOpen = json['canOpen'] as int? ?? 0
+    ..isSort = json['isSort'] as int? ?? 0
+    ..isHold = json['isHold'] as int? ?? 0
+    ..fileVersion = json['fileVersion'] as int? ?? 0
+    ..progress = (json['progress'] as num?)?.toDouble() ?? 0.0
+    ..production = json['production'] as String?;
 }
 
 Map<String, dynamic> _$TicketToJson(Ticket instance) => <String, dynamic>{
@@ -49,6 +49,6 @@ Map<String, dynamic> _$TicketToJson(Ticket instance) => <String, dynamic>{
       'isSort': instance.isSort,
       'isHold': instance.isHold,
       'fileVersion': instance.fileVersion,
-      'production': instance.production,
       'progress': instance.progress,
+      'production': instance.production,
     };
