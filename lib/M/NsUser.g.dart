@@ -15,12 +15,19 @@ NsUser _$NsUserFromJson(Map<String, dynamic> json) {
     ..utype = json['utype'] as String
     ..epf = json['epf'] as String
     ..etype = json['etype'] as int? ?? 0
-    ..section = json['section'] as int? ?? 0
+    ..sectionId = json['sectionId'] as int? ?? 0
     ..loft = json['loft'] as int? ?? 0
     ..contact = json['contact'] as String
     ..img = json['img'] as String? ?? '0'
     ..sectionName = json['sectionName'] as String? ?? '-'
-    ..emailAddress = json['emailAddress'] as String? ?? '-';
+    ..emailAddress = json['emailAddress'] as String? ?? '-'
+    ..sections = (json['sections'] as List<dynamic>?)
+            ?.map((e) => Section.fromJson(e as Map<String, dynamic>))
+            .toList() ??
+        []
+    ..section = json['section'] == null
+        ? null
+        : Section.fromJson(json['section'] as Map<String, dynamic>);
 }
 
 Map<String, dynamic> _$NsUserToJson(NsUser instance) => <String, dynamic>{
@@ -31,10 +38,12 @@ Map<String, dynamic> _$NsUserToJson(NsUser instance) => <String, dynamic>{
       'utype': instance.utype,
       'epf': instance.epf,
       'etype': instance.etype,
-      'section': instance.section,
+      'sectionId': instance.sectionId,
       'loft': instance.loft,
       'contact': instance.contact,
       'img': instance.img,
       'sectionName': instance.sectionName,
       'emailAddress': instance.emailAddress,
+      'sections': instance.sections.map((e) => e.toJson()).toList(),
+      'section': instance.section?.toJson(),
     };

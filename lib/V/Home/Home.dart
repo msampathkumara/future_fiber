@@ -8,12 +8,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/V/Home/CurrentUser/CurrentUserDetails.dart';
-import 'package:smartwind/V/Home/UserManager/UserManager.dart';
+import 'package:smartwind/V/Home/Tickets/ProductionPool/ProductionPool.dart';
 import 'package:smartwind/V/Login/Login.dart';
 
+import 'About.dart';
 import 'Tickets/FinishedGoods/FinishedGoods.dart';
-import 'Tickets/ProductionPool/ProductionPool.dart';
 import 'Tickets/StandardFiles/StandardFiles.dart';
+import 'UserManager/UserManager.dart';
 
 class Home extends StatefulWidget {
   Home({Key? key}) : super(key: key);
@@ -24,7 +25,7 @@ class Home extends StatefulWidget {
   }
 }
 
-enum WhyFarther { harder, smarter, selfStarter, tradingCharter }
+enum MenuItems {logout,dbReload, }
 
 class _HomeState extends State<Home> {
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -50,7 +51,7 @@ class _HomeState extends State<Home> {
 
     SharedPreferences.getInstance().then((prefs) {
       var u = prefs.getString("user");
-      print(u);
+
       if (u != null) {
         setState(() {
           nsUser = NsUser.fromJson(json.decode(u));
@@ -78,78 +79,133 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          toolbarHeight: 150,
-          title: Padding(
-            padding: const EdgeInsets.only(top: 24.0),
-            child: ListTile(
-              leading: CircleAvatar(radius: 24.0, backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"), backgroundColor: Colors.transparent),
-              title: Text(nsUser!.name, textScaleFactor: 1.2),
-              subtitle: Text("@ ${nsUser!.sectionName}"),
-              trailing: _currentUserOprionMenu(),
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CurrentUserDetails(nsUser!)));
-              },
-            ),
-          ),
-        ),
-        body: Center(
-          child: Wrap(
-            direction: Axis.vertical,
-            children: [
-              _OpenContainerWrapper(
-                transitionType: ContainerTransitionType.fade,
-                closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                  return _ExampleCard(openContainer: openContainer);
-                },
-                onClosed: _showMarkedAsDoneSnackbar,
+      child: nsUser!.section == null
+          ? Center(
+              child: Container(
+                  child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [CircularProgressIndicator(), Padding(padding: const EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
+            )))
+          : Scaffold(
+              appBar: AppBar(
+                backgroundColor: Colors.white,
+                elevation: 0,
+                toolbarHeight: 150,
+                title: Padding(
+                  padding: const EdgeInsets.only(top: 24.0),
+                  child: ListTile(
+                    leading: CircleAvatar(radius: 24.0, backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"), backgroundColor: Colors.transparent),
+                    title: Text(nsUser!.name, textScaleFactor: 1.2),
+                    subtitle: Text("@ ${nsUser!.section!.sectionTitle}"),
+                    trailing: _currentUserOprionMenu(),
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => CurrentUserDetails(nsUser!)));
+                    },
+                  ),
+                ),
               ),
-
-              // OpenContainer<String>(
-              //   openBuilder: (_, closeContainer) => SearchPage(closeContainer),
-              //   onClosed: (res) => setState(() {
-              //     searchString = res;
-              //   }),
-              //   tappable: false,
-              //   closedBuilder: (_, openContainer) => SearchBar(
-              //     searchString: searchString,
-              //     openContainer: openContainer,
-              //   ),
-              // ),
-              // Container(
-              //     height: 200,
-              //     width: 200,
-              //     child: Card(
-              //         child: InkWell(
-              //             onTap: () {
-              //               show(ProductionPool());
-              //             },
-              //             splashColor: Colors.green,
-              //             child: Center(
-              //                 child: Wrap(direction: Axis.horizontal, crossAxisAlignment: WrapCrossAlignment.center, children: [
-              //               Container(
-              //                   height: 170,
-              //                   child: Center(
-              //                       child: CircleAvatar(radius: 70.0, backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"), backgroundColor: Colors.transparent))),
-              //               Center(child: Text("Production Pool")),
-              //             ]))))),
-              // ElevatedButton(onPressed: () => show(FinishedGoods()), child: Text("Finished Goods")),
-              // ElevatedButton(onPressed: () => show(StandardFiles()), child: Text("Standard Library")),
-              // ElevatedButton(onPressed: () => show(UserManager()), child: Text("User Manager")),
-              // ElevatedButton(onPressed: () => show(ProductionPool()), child: Text("CPR")),
-              // ElevatedButton(
-              //   onPressed: () async {
-              //     _logout();
-              //   },
-              //   child: Text("Logout"),
-              // )
-            ],
-          ),
-        ),
-      ),
+              body: Container(
+                height: double.maxFinite,
+                width: double.maxFinite,
+                child: Stack(
+                  children: [
+                    new Positioned(
+                      bottom: 10,
+                      right: 0,
+                      child: ColorFiltered(
+                        colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.1), BlendMode.dstATop),
+                        child: Image.asset(
+                          "assets/north_sails-logo.png",
+                          width: 350,
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: FractionalOffset.center,
+                      child: Wrap(
+                        direction: Axis.horizontal,
+                        children: [
+                          _OpenContainerWrapper(
+                            closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                              return _menuButton(
+                                  openContainer,
+                                  Icon(
+                                    Icons.precision_manufacturing_outlined,
+                                    size: 100,
+                                  ),
+                                  "Production Pool");
+                            },
+                            openWidget: ProductionPool(),
+                            onClosed: _showMarkedAsDoneSnackbar,
+                          ),
+                          _OpenContainerWrapper(
+                            closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                              return _menuButton(
+                                  openContainer,
+                                  Icon(
+                                    Icons.inventory_2_outlined,
+                                    size: 100,
+                                  ),
+                                  "Finished Goods");
+                            },
+                            openWidget: FinishedGoods(),
+                            onClosed: _showMarkedAsDoneSnackbar,
+                          ),
+                          _OpenContainerWrapper(
+                            closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                              return _menuButton(
+                                  openContainer,
+                                  Icon(
+                                    Icons.collections_bookmark_outlined,
+                                    size: 100,
+                                  ),
+                                  "Standard Library");
+                            },
+                            openWidget: StandardFiles(),
+                            onClosed: _showMarkedAsDoneSnackbar,
+                          ),
+                          _OpenContainerWrapper(
+                            closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                              return _menuButton(
+                                  openContainer,
+                                  Icon(
+                                    Icons.people_outline_outlined,
+                                    size: 100,
+                                  ),
+                                  "User Manager");
+                            },
+                            openWidget: UserManager(),
+                            onClosed: _showMarkedAsDoneSnackbar,
+                          ),
+                        ],
+                      ),
+                    ),
+                    new Positioned(
+                        bottom: 10,
+                        left: 0,
+                        right: 0,
+                        child: new Align(
+                            alignment: FractionalOffset.bottomCenter,
+                            child: Center(
+                                child: OpenContainer(
+                                    closedElevation: 0,
+                                    transitionDuration: Duration(milliseconds: 500),
+                                    openBuilder: (BuildContext context, void Function({Object? returnValue}) action) {
+                                      return About();
+                                    },
+                                    closedBuilder: (BuildContext context, void Function() action) {
+                                      return Chip(
+                                        avatar: CircleAvatar(
+                                          backgroundColor: Colors.grey.shade800,
+                                          child: Image.asset("assets/north_sails-logox50.png", width: 50),
+                                        ),
+                                        label: const Text('NS Smart Wind 1.0'),
+                                      );
+                                    })))),
+                  ],
+                ),
+              ),
+            ),
     );
   }
 
@@ -165,187 +221,81 @@ class _HomeState extends State<Home> {
   }
 
   _currentUserOprionMenu() {
-    return PopupMenuButton<WhyFarther>(
-      onSelected: (WhyFarther result) {
+    return PopupMenuButton<MenuItems>(
+      onSelected: (MenuItems result) {
+
+        if(result==MenuItems.logout){
+          _logout();
+        }else if(result==MenuItems.dbReload){
+          DB.updateDatabase(context: context,showLoadingDialog: true,reset: true);
+        }
+
+
         setState(() {
           _selection = result;
         });
+        // print(result);
       },
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<WhyFarther>>[
-        const PopupMenuItem<WhyFarther>(
-          value: WhyFarther.harder,
-          child: Text('Working a lot harder'),
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<MenuItems>>[
+        const PopupMenuItem<MenuItems>(
+          value: MenuItems.dbReload,
+          child: Text('Reload Database'),
         ),
-        const PopupMenuItem<WhyFarther>(
-          value: WhyFarther.smarter,
-          child: Text('Being a lot smarter'),
+        const PopupMenuItem<MenuItems>(
+          value: MenuItems.logout,
+          child: Text('Logout'),
         ),
-        const PopupMenuItem<WhyFarther>(
-          value: WhyFarther.selfStarter,
-          child: Text('Being a self-starter'),
-        ),
-        const PopupMenuItem<WhyFarther>(
-          value: WhyFarther.tradingCharter,
-          child: Text('Placed in charge of trading charter'),
-        ),
+
       ],
     );
+  }
+
+  _menuButton(openContainer, image, title) {
+    return SizedBox(
+        height: 200,
+        width: 200,
+        child: InkWell(
+            onTap: openContainer,
+            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
+              Expanded(child: Container(height: 170, child: Center(child: image))),
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
+                  child: Text(
+                    title,
+                    textScaleFactor: 1.2,
+                  ),
+                ),
+              )
+            ])));
   }
 }
 
 class _OpenContainerWrapper extends StatelessWidget {
   const _OpenContainerWrapper({
+    required this.openWidget,
     required this.closedBuilder,
-    required this.transitionType,
     required this.onClosed,
   });
 
+  final Widget openWidget;
   final CloseContainerBuilder closedBuilder;
-  final ContainerTransitionType transitionType;
   final ClosedCallback<bool?> onClosed;
 
   @override
   Widget build(BuildContext context) {
-    return OpenContainer<bool>(
-      transitionType: transitionType,
-      openBuilder: (BuildContext context, VoidCallback _) {
-        return const _DetailsPage();
-      },
-      onClosed: onClosed,
-      tappable: false,
-      closedBuilder: closedBuilder,
-    );
-  }
-}
-
-class _ExampleCard extends StatelessWidget {
-  const _ExampleCard({required this.openContainer});
-
-  final VoidCallback openContainer;
-
-  @override
-  Widget build(BuildContext context) {
-    return _InkWellOverlay(
-      openContainer: openContainer,
-      height: 300,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Expanded(
-            child: Container(
-              color: Colors.black38,
-              child: Center(
-                child: Image.asset(
-                  'assets/placeholder_image.png',
-                  width: 100,
-                ),
-              ),
-            ),
-          ),
-          const ListTile(
-            title: Text('Title'),
-            subtitle: Text('Secondary text'),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 16.0,
-              right: 16.0,
-              bottom: 16.0,
-            ),
-            child: Text(
-              'Lorem ipsum dolor sit amet, consectetur '
-              'adipiscing elit, sed do eiusmod tempor.',
-              style: Theme.of(context).textTheme.bodyText2!.copyWith(color: Colors.black54),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _InkWellOverlay extends StatelessWidget {
-  const _InkWellOverlay({
-    this.openContainer,
-    this.width,
-    this.height,
-    this.child,
-  });
-
-  final VoidCallback? openContainer;
-  final double? width;
-  final double? height;
-  final Widget? child;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: height,
-      width: width,
-      child: InkWell(
-        onTap: openContainer,
-        child: child,
-      ),
-    );
-  }
-}
-
-class _DetailsPage extends StatelessWidget {
-  const _DetailsPage({this.includeMarkAsDoneButton = true});
-
-  final bool includeMarkAsDoneButton;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Details page'),
-        actions: <Widget>[
-          if (includeMarkAsDoneButton)
-            IconButton(
-              icon: const Icon(Icons.done),
-              onPressed: () => Navigator.pop(context, true),
-              tooltip: 'Mark as done',
-            )
-        ],
-      ),
-      body: ListView(
-        children: <Widget>[
-          Container(
-            color: Colors.black38,
-            height: 250,
-            child: Padding(
-              padding: const EdgeInsets.all(70.0),
-              child: Image.asset(
-                'assets/placeholder_image.png',
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  'Title',
-                  style: Theme.of(context).textTheme.headline5!.copyWith(
-                        color: Colors.black54,
-                        fontSize: 30.0,
-                      ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                        color: Colors.black54,
-                        height: 1.5,
-                        fontSize: 16.0,
-                      ),
-                ),
-              ],
-            ),
-          ),
-        ],
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: OpenContainer<bool>(
+        transitionType: ContainerTransitionType.fade,
+        openBuilder: (BuildContext context, VoidCallback _) {
+          return openWidget;
+        },
+        onClosed: (x) {
+          print('ccccccccccccccccccccccccccccccc');
+        },
+        tappable: false,
+        closedBuilder: closedBuilder,
       ),
     );
   }

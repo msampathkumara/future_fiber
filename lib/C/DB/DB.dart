@@ -70,7 +70,7 @@ class DB {
     return int.parse(version);
   }
 
-  static Future updateDatabase({context, showLoadingDialog = false}) async {
+  static Future updateDatabase({context, showLoadingDialog = false, reset = false}) async {
     var loadingWidget = Loading(
       loadingText: "updating Database",
       showProgress: false,
@@ -78,27 +78,22 @@ class DB {
     if (showLoadingDialog && context != null) {
       loadingWidget.show(context);
     }
-    // await getDB().then((value) => value!.rawQuery("delete from tickets "));
+
     return getDB().then((value) => value!.rawQuery("select ifnull(max(uptime),0) uptime from tickets; ").then((value) {
           print("last update on == " + value.toString());
           String uptime = value[0]["uptime"].toString();
-          return OnlineDB.apiGet("tickets/getProductionPoolTickets", {"uptime": uptime}).then((Response response) async {
+          if (reset) {
+            uptime = '0';
+            print('reset');
+          }
+          return OnlineDB.apiGet("tickets/getTickets", {"uptime": uptime}).then((Response response) async {
             Map res = (json.decode(response.body) as Map);
-            List tickets = (res["tickets"] ?? []);
-            List deletedTickets = (res["deletedTickets"] ?? []);
 
-            print('tickets = ' + tickets.length.toString());
-            print('deletedTickets = ' + deletedTickets.length.toString());
+            processData(res);
 
-            Batch batch = db!.batch();
-            tickets.forEach((ticket) {
-              print(ticket);
-              batch.insert('tickets', ticket, conflictAlgorithm: ConflictAlgorithm.replace);
-            });
-            deletedTickets.forEach((ticket) {
-              batch.delete('tickets', where: 'id = ?', whereArgs: [ticket["id"]]);
-            });
-            print(await batch.commit(noResult: false));
+
+            // print('deletedTickets = ' + deletedTickets.length.toString());
+
             if (showLoadingDialog && context != null) {
               loadingWidget.close(context);
             }
@@ -120,5 +115,48 @@ class DB {
 
   static setOnDBChangeListener(callBack) {
     OnDBChangeCallBacks.add(callBack);
+  }
+
+  static void processData(Map<dynamic, dynamic> res) {
+    if (res.containsKey("tickets")) {
+      List tickets = (res["tickets"] ?? []);
+      print('tickets = ' + tickets.length.toString());
+      insertTickets(tickets);
+    }
+    if (res.containsKey("deletedTickets")) {
+      List deletedTickets = (res["deletedTickets"] ?? []);
+      deleteTickets(deletedTickets);
+    }
+    if (res.containsKey("ticketProgressDetails")) {
+      List ticketProgressDetails = (res["ticketProgressDetails"] ?? []);
+      insertTicketProgressDetails(ticketProgressDetails);
+    }
+  }
+
+  static Future<void> insertTickets(List<dynamic> tickets) async {
+    await db!.transaction((txn) async {
+      Batch batch = txn.batch();
+      tickets.forEach((ticket) {
+        batch.insert('tickets', ticket, conflictAlgorithm: ConflictAlgorithm.replace);
+      });
+      await batch.commit(noResult: true);
+      print('tickets inserted ');
+    });
+  }
+
+  static Future<void> deleteTickets(List<dynamic> deletedTickets) async {
+    Batch batch = db!.batch();
+    deletedTickets.forEach((ticket) {
+      batch.delete('tickets', where: 'id = ?', whereArgs: [ticket["id"]]);
+    });
+    print(await batch.commit(noResult: false));
+  }
+
+  static Future<void> insertTicketProgressDetails(List<dynamic> deletedTickets) async {
+    Batch batch = db!.batch();
+    deletedTickets.forEach((ticket) {
+      batch.insert('ticketProgressDetails', ticket, conflictAlgorithm: ConflictAlgorithm.replace);
+    });
+    print(await batch.commit(noResult: false));
   }
 }

@@ -56,6 +56,8 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
         alignment: WrapAlignment.center,
         direction: Axis.horizontal,
         children: [
+
+
           if (widget.showProgress)
             Center(
               child: Padding(

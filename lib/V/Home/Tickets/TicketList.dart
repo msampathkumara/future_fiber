@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:http/http.dart' as http;
 import 'package:smartwind/C/DB/DB.dart';
+import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Ticket.dart';
+import 'package:smartwind/V/Home/Tickets/ProductionPool/FinishCheckList.dart';
 import 'package:smartwind/V/Widgets/FlagDialog.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 
@@ -24,17 +29,18 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
   @override
   initState() {
     super.initState();
-
-    _TabBarcontroller = TabController(length: tabs.length, vsync: this);
-    _TabBarcontroller.addListener(() {
-      loadData().then((value) {
-        setState(() {});
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _TabBarcontroller = TabController(length: tabs.length, vsync: this);
+      _TabBarcontroller!.addListener(() {
+        // loadData().then((value) {
+        //   setState(() {});
+        // });
+        print("Selected Index: " + _TabBarcontroller!.index.toString());
       });
-      print("Selected Index: " + _TabBarcontroller.index.toString());
-    });
-    reloadData();
-    DB.setOnDBChangeListener(() {
       reloadData();
+      DB.setOnDBChangeListener(() {
+        reloadData();
+      });
     });
   }
 
@@ -231,47 +237,49 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
   }
 
   final tabs = ["All", "Upwind", "OD", "Nylon", "OEM", "No Pool"];
-  late TabController _TabBarcontroller;
+  TabController? _TabBarcontroller;
 
   getBody() {
-    return DefaultTabController(
-      length: tabs.length,
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          toolbarHeight: 50,
-          automaticallyImplyLeading: false,
-          backgroundColor: Colors.green,
-          elevation: 4.0,
-          bottom: TabBar(
-            controller: _TabBarcontroller,
-            indicatorWeight: 4.0,
-            indicatorColor: Colors.white,
-            // onTap: (d) {
-            //   setState(() {
-            //     print("refresh ${_selectedTabIndex}");
-            //     currentFileList = listsArray[_selectedTabIndex];
-            //   });
-            // },
-            isScrollable: true,
-            tabs: [
-              for (final tab in tabs) Tab(text: tab),
-            ],
-          ),
-        ),
-        body: TabBarView(
-          controller: _TabBarcontroller,
-          children: [
-            GetTicketListByCategoty(AllFilesList),
-            GetTicketListByCategoty(UpwindFilesList),
-            GetTicketListByCategoty(ODFilesList),
-            GetTicketListByCategoty(NylonFilesList),
-            GetTicketListByCategoty(OEMFilesList),
-            GetTicketListByCategoty(NoPoolFilesList),
-          ],
-        ),
-      ),
-    );
+    return _TabBarcontroller == null
+        ? Container()
+        : DefaultTabController(
+            length: tabs.length,
+            child: Scaffold(
+              backgroundColor: Colors.white,
+              appBar: AppBar(
+                toolbarHeight: 50,
+                automaticallyImplyLeading: false,
+                backgroundColor: Colors.green,
+                elevation: 4.0,
+                bottom: TabBar(
+                  controller: _TabBarcontroller,
+                  indicatorWeight: 4.0,
+                  indicatorColor: Colors.white,
+                  // onTap: (d) {
+                  //   setState(() {
+                  //     print("refresh ${_selectedTabIndex}");
+                  //     currentFileList = listsArray[_selectedTabIndex];
+                  //   });
+                  // },
+                  isScrollable: true,
+                  tabs: [
+                    for (final tab in tabs) Tab(text: tab),
+                  ],
+                ),
+              ),
+              body: TabBarView(
+                controller: _TabBarcontroller,
+                children: [
+                  GetTicketListByCategoty(AllFilesList),
+                  GetTicketListByCategoty(UpwindFilesList),
+                  GetTicketListByCategoty(ODFilesList),
+                  GetTicketListByCategoty(NylonFilesList),
+                  GetTicketListByCategoty(OEMFilesList),
+                  GetTicketListByCategoty(NoPoolFilesList),
+                ],
+              ),
+            ),
+          );
   }
 
   final int CAT_ALL = 0;
@@ -300,7 +308,7 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
                 padding: const EdgeInsets.all(8),
                 itemCount: FilesList.length,
                 itemBuilder: (BuildContext context, int index) {
-                  print(FilesList[index]);
+                  // print(FilesList[index]);
                   Ticket ticket = Ticket.fromJson(FilesList[index]);
                   // print(ticket.toJson());
                   return GestureDetector(
@@ -318,7 +326,12 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
                       ticket.open(context);
                     },
                     child: Ink(
-                      color: ticket.isHold == 1 ? Colors.black12 : Colors.white,
+                      decoration: BoxDecoration(
+                          color: ticket.isHold == 1 ? Colors.black12 : Colors.white,
+                          border: Border.all(
+                            color: Colors.white,
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(20))),
                       child: ListTile(
                         leading: Text("${index + 1}"),
                         title: Text(ticket.mo ?? ""),
@@ -326,6 +339,11 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
                         // subtitle: Text(ticket.fileVersion.toString()),
                         trailing: Wrap(
                           children: [
+                            if (ticket.inPrint == 1)
+                              IconButton(
+                                icon: Icon(Icons.print_outlined, color: Colors.deepOrangeAccent),
+                                onPressed: () {},
+                              ),
                             if (ticket.isHold == 1)
                               IconButton(
                                 icon: Icon(FontAwesomeIcons.handRock, color: Colors.black),
@@ -406,33 +424,36 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
   List<Map<String, dynamic>> NoPoolFilesList = [];
 
   Future<void> loadData() async {
-    _selectedTabIndex = _TabBarcontroller.index;
+    _selectedTabIndex = _TabBarcontroller!.index;
     print('loadData');
 
-    String canOpen = _showAllTickets ? " " : " and canOpen=1 ";
+    // String canOpen = _showAllTickets ? " " : " and canOpen=1  and openSections like '%#1#%' ";
+    String canOpen = _showAllTickets ? " " : " and canOpen=1    ";
     String searchQ = "";
     searchQ = "   mo like '%$searchText%'";
 
-    switch (_selectedTabIndex) {
-      case 0:
-        AllFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + '  order by ${listSortBy} DESC');
-        break;
-      case 1:
-        UpwindFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Upwind\' order by ${listSortBy} DESC');
-        break;
-      case 2:
-        ODFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OD\' order by ${listSortBy} DESC');
-        break;
-      case 3:
-        NylonFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Nylon\' order by ${listSortBy} DESC');
-        break;
-      case 4:
-        OEMFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OEM\' order by ${listSortBy} DESC');
-        break;
-      case 5:
-        NoPoolFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production is null order by ${listSortBy} DESC');
-        break;
-    }
+    // switch (_selectedTabIndex) {
+    //   case 0:
+    AllFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + '  order by ${listSortBy} DESC');
+    // AllFilesList = await database.rawQuery('delete from tickets ');
+
+    //   break;
+    // case 1:
+    UpwindFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Upwind\' order by ${listSortBy} DESC');
+    //   break;
+    // case 2:
+    ODFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OD\' order by ${listSortBy} DESC');
+    //   break;
+    // case 3:
+    NylonFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Nylon\' order by ${listSortBy} DESC');
+    //   break;
+    // case 4:
+    OEMFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OEM\' order by ${listSortBy} DESC');
+    //   break;
+    // case 5:
+    NoPoolFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production is null order by ${listSortBy} DESC');
+    // break;
+    // }
 
     listsArray = [AllFilesList, UpwindFilesList, ODFilesList, NylonFilesList, OEMFilesList, NoPoolFilesList];
     currentFileList = listsArray[_selectedTabIndex];
@@ -440,12 +461,13 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
   }
 
   Future<void> showTicketOptions(Ticket ticket, BuildContext context1) async {
+    print(ticket.toJson());
     await showModalBottomSheet<void>(
       context: context,
       builder: (BuildContext context) {
         return Container(
           decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
-          height: 500,
+          height: 550,
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -461,7 +483,8 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
                   leading: Icon(Icons.flag),
                   onTap: () async {
                     Navigator.of(context).pop();
-                    await FlagDialog.showRedFlagDialog(context1, ticket);
+                    bool resul = await FlagDialog.showRedFlagDialog(context1, ticket);
+                    ticket.isRed = resul ? 1 : 0;
                   },
                 ),
                 ListTile(
@@ -480,15 +503,28 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
                     leading: SizedBox(width: 24, height: 24, child: CircleAvatar(backgroundColor: Colors.pink, child: Center(child: Text("SK", style: TextStyle(color: Colors.white)))))),
                 ListTile(
                     title: Text(ticket.isRush == 1 ? "Remove Rush" : "Set Rush"),
-                    leading: Icon(Icons.bolt, color: Colors.orangeAccent),
+                    leading: Icon(Icons.offline_bolt_outlined, color: Colors.orangeAccent),
                     onTap: () async {
                       Navigator.of(context).pop();
                       await FlagDialog.showRushDialog(context1, ticket);
+                      OnlineDB.apiPost("tickets/flags/setFlag", {"ticket": ticket.id.toString(), "comment": "", "type": "rush"}).then((http.Response response) async {
+                        Map res = (json.decode(response.body) as Map);
+                        print(res);
+                        print('');
+                      });
+                    }),
+                ListTile(
+                    title: Text(ticket.inPrint == 1 ? "Done Printing" : "Send To Print"),
+                    leading: Icon(ticket.inPrint == 1 ? Icons.print_disabled_outlined : Icons.print_outlined, color: Colors.deepOrangeAccent),
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                      await sendToPrint(ticket);
                     }),
                 ListTile(
                     title: Text("Finish"),
                     leading: Icon(Icons.check_circle_outline_outlined, color: Colors.green),
                     onTap: () async {
+                      await Navigator.push(context1, MaterialPageRoute(builder: (context) => FinishCheckList(ticket)));
                       Navigator.of(context).pop();
                     }),
                 ListTile(
@@ -509,9 +545,22 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
   void reloadData() {
     DB.getDB().then((value) async {
       database = value;
-      loadData().then((value) {
-        setState(() {});
-      });
+      await loadData();
+      try {
+        this.setState(() {});
+      } catch (e) {}
     });
+  }
+
+  Future sendToPrint(Ticket ticket) async {
+    if (ticket.inPrint == 0) {
+      await OnlineDB.apiPost("tickets/print/sendToPrint", {"ticket": ticket.id.toString()});
+      ticket.inPrint = 1;
+      return 1;
+    } else {
+      await OnlineDB.apiPost("tickets/print/removePrint", {"ticket": ticket.id.toString()});
+      ticket.inPrint = 0;
+      return 0;
+    }
   }
 }

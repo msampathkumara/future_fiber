@@ -1,0 +1,43 @@
+{
+  "3d": [
+    "SAIL SIZING",
+    "SAIL GRAPHICS",
+    "REINFORCEMENTS",
+    "3DI",
+    "BB REFERENCE",
+    "BATTENS & POCKETS",
+    "EXTRAS",
+    "FURLING"
+  ],
+  "handWork": [
+    "ATTACHMENTS/HARDWARE",
+    "BATTENS & POCKETS",
+    "BB REFERENCE",
+    "SAIL EDGES",
+    "EXTRAS"
+  ],
+  "qc": [
+    "ALL SECTIONS"
+  ],
+  "stickup": [
+    "SAIL SIZING",
+    "MEMBRANE ",
+    "EXTRAS ",
+    "BB REFERENCE"
+  ],
+  "layout": [
+    "SAIL SIZING-Cut Back",
+    "REINFORCEMENTS",
+    "SAIL GRAPHICS",
+    "BB REFERENCE",
+    "FURLING",
+    "BATTENS & POCKETS",
+    "EXTRAS"
+  ],
+  "cutting": [
+    "FURLING ",
+    "MEMBRANE ",
+    "CMD ",
+    "NOTES"
+  ]
+}

@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:smartwind/V/Widgets/Loading.dart';
 
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'V/Home/Home.dart';
@@ -70,15 +69,18 @@ class _MyHomePageState extends State<MyHomePage> {
       body: FutureBuilder(
           future: _mainFuncs.initializeFlutterFireFuture,
           builder: (context, snapshot) {
-            print("ssssssssssssssssssssssssssss " + snapshot.toString());
-
             if (snapshot.hasData) {
               if (FirebaseAuth.instance.currentUser != null) {
                 return Home();
               }
               return Login();
             } else {
-              return Loading();
+              return Center(
+                  child: Container(
+                      child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [CircularProgressIndicator(), Padding(padding: const EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
+              )));
             }
           }),
     );

@@ -83,7 +83,7 @@ class FlagDialog {
                       onPressed: () {
                         setFlag(TicketFlag.FlagType_RED, redCommentController.value.text, ticket).then((value) {
                           print(value.body.toString());
-                          Navigator.of(context).pop();
+                          Navigator.of(context).pop(true);
                         });
                       })
                   : ElevatedButton(
@@ -91,7 +91,7 @@ class FlagDialog {
                       onPressed: () {
                         removeFlag(TicketFlag.FlagType_RED, ticket).then((value) {
                           print(value.body.toString());
-                          Navigator.of(context).pop();
+                          Navigator.of(context).pop(false);
                         });
                       }),
             ],

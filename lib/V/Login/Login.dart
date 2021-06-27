@@ -9,6 +9,7 @@ import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/V/Home/Home.dart';
+import 'package:smartwind/V/Login/SectionSelector.dart';
 
 import 'PasswordRecovery.dart';
 
@@ -24,6 +25,10 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   NsUser _user = new NsUser();
   late bool NfcIsAvailable = false;
+
+  bool loading = false;
+
+  var hidePassword = true;
 
   @override
   initState() {
@@ -49,61 +54,73 @@ class _LoginState extends State<Login> {
     NfcManager.instance.stopSession();
   }
 
+  var _controller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Container(
-            child: Wrap(
-              direction: Axis.horizontal,
-              children: [
-                if (NfcIsAvailable) Text("Use NFC Card To login "),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    decoration: InputDecoration(labelText: 'User Name'),
-                    onChanged: (uname) {
-                      _user.uname = uname;
-                    },
+      body: loading
+          ? Center(
+              child: Container(
+                  child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [CircularProgressIndicator(), Padding(padding: const EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
+            )))
+          : Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Container(
+                  child: Wrap(
+                    direction: Axis.horizontal,
+                    children: [
+                      if (NfcIsAvailable) Text("Use NFC Card To login "),
+                      Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextFormField(
+                              initialValue: _user.uname,
+                              decoration: InputDecoration(labelText: 'User Name'),
+                              onChanged: (uname) {
+                                _user.uname = uname;
+                              })),
+                      Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                              decoration: InputDecoration(
+                                  labelText: 'Enter Password',
+                                  suffixIcon: IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        hidePassword = !hidePassword;
+                                      });
+                                    },
+                                    icon: Icon(hidePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+                                  )),
+                              obscureText: hidePassword,
+                              enableSuggestions: false,
+                              autocorrect: false,
+                              controller: _controller,
+                              onChanged: (pword) {
+                                _user.pword = pword;
+                              })),
+                      Center(child: Padding(padding: const EdgeInsets.all(8.0), child: ElevatedButton(onPressed: _login, child: Text("Login")))),
+                      Center(child: Padding(padding: const EdgeInsets.all(8.0), child: TextButton(onPressed: _recoverPassword, child: Text("Forgot Password")))),
+                    ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    decoration: InputDecoration(labelText: 'Enter your username'),
-                    onChanged: (pword) {
-                      _user.pword = pword;
-                    },
-                  ),
-                ),
-                Center(
-                    child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(onPressed: _login, child: Text("Login")),
-                )),
-                Center(
-                    child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextButton(onPressed: _recoverPassword, child: Text("Forgot Password")),
-                )),
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 
   _login() {
     // Todo login
-    print('ddddddddddddddddddddddddddddd');
+
+    setLoading(true);
     http
         .post(
-      Uri.parse(Server.getServerPath("users/login")),
+      Uri.parse(Server.getServerPath("user/login")),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -115,21 +132,26 @@ class _LoginState extends State<Login> {
 
       NsUser nsUser = NsUser.fromJson(res["user"]);
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString("user", json.encode(nsUser));
+      nsUser.section = nsUser.sections.length > 0 ? nsUser.sections[0] : null;
+      await prefs.setString("user", json.encode(nsUser));
+
       print("saving user to SharedPreferences");
       print(json.encode(nsUser));
 
       final UserCredential googleUserCredential = await FirebaseAuth.instance.signInWithCustomToken(res["token"]);
       if (googleUserCredential.user != null) {
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (Route<dynamic> route) => false);
+        if (nsUser.sections.length > 1) {
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => SectionSelector(nsUser)), (Route<dynamic> route) => false);
+        } else {
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (Route<dynamic> route) => false);
+        }
         DB.updateDatabase();
       }
+      setLoading(false);
     }).onError((error, stackTrace) {
       print(error);
+      setLoading(false);
     });
-
-    // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (Route<dynamic> route) => false);
-    // DB.updateDatabase();
   }
 
   _recoverPassword() {
@@ -139,5 +161,11 @@ class _LoginState extends State<Login> {
       context,
       MaterialPageRoute(builder: (context) => PasswordRecovery()),
     );
+  }
+
+  void setLoading(bool show) {
+    setState(() {
+      loading = show;
+    });
   }
 }

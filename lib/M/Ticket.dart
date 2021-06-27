@@ -58,6 +58,9 @@ class Ticket {
   @JsonKey(defaultValue: 0.0, includeIfNull: true)
   double progress = 0.0;
 
+  @JsonKey(defaultValue: "", includeIfNull: true)
+  String openSections = "";
+
   String? production;
 
   @JsonKey(ignore: true)
@@ -216,13 +219,14 @@ class Ticket {
       print(response.body);
       print("----------------------------------------");
       Map res = (json.decode(response.body) as Map);
-      List l = ((res["flag"] ?? []));
+      List l = ((res["flags"] ?? []));
 
       List<TicketFlag> list = List<TicketFlag>.from(l.map((model) {
         return TicketFlag.fromJson(model);
       }));
       print(list.length);
       return list;
+
     }).catchError((onError) {
       print(onError);
     });
