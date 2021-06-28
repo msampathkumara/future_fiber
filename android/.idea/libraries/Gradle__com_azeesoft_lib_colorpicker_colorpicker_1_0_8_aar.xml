@@ -1,9 +1,9 @@
 <component name="libraryTable">
   <library name="Gradle: com.azeesoft.lib.colorpicker:colorpicker:1.0.8@aar">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/de99a733b2cd00378b2f72535152257d/jetified-colorpicker-1.0.8/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/de99a733b2cd00378b2f72535152257d/jetified-colorpicker-1.0.8/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/de99a733b2cd00378b2f72535152257d/jetified-colorpicker-1.0.8/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ed9e1e9a3811f00e62230abbc8eab023/jetified-colorpicker-1.0.8/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ed9e1e9a3811f00e62230abbc8eab023/jetified-colorpicker-1.0.8/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ed9e1e9a3811f00e62230abbc8eab023/jetified-colorpicker-1.0.8/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.azeesoft.lib.colorpicker/colorpicker/1.0.8/c351dc4c9a94a64a0279a24bc52b710f4f755478/colorpicker-1.0.8-javadoc.jar!/" />

@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Ticket.dart';
-import 'package:smartwind/V/Home/Tickets/ProductionPool/FinishCheckList.dart';
+import 'package:smartwind/V/Home/Tickets/ProductionPool/Finish/FinishCheckList.dart';
 import 'package:smartwind/V/Widgets/FlagDialog.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 
@@ -22,7 +22,8 @@ class TicketList extends StatefulWidget {
   }
 }
 
-class _TicketListState extends State<TicketList> with SingleTickerProviderStateMixin {
+class _TicketListState extends State<TicketList>
+    with SingleTickerProviderStateMixin {
   var database;
   late int _selectedTabIndex;
 
@@ -90,15 +91,18 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
               }
               searchText = text;
 
-              var future = new Future.delayed(const Duration(milliseconds: 300));
+              var future =
+                  new Future.delayed(const Duration(milliseconds: 300));
               subscription = future.asStream().listen((v) {
                 print("SEARCHING FOR ${searchText}");
                 var t = DateTime.now().millisecondsSinceEpoch;
                 loadData().then((value) {
-                  print("SEARCHING time ${(DateTime.now().millisecondsSinceEpoch - t)}");
+                  print(
+                      "SEARCHING time ${(DateTime.now().millisecondsSinceEpoch - t)}");
                   t = DateTime.now().millisecondsSinceEpoch;
                   setState(() {});
-                  print("load time ${(DateTime.now().millisecondsSinceEpoch - t)}");
+                  print(
+                      "load time ${(DateTime.now().millisecondsSinceEpoch - t)}");
                 });
               });
             },
@@ -195,10 +199,12 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
                       padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
                       child: ListView(
                         children: [
-                          getListItem("Date", FontAwesomeIcons.calendarDay, "uptime"),
+                          getListItem(
+                              "Date", FontAwesomeIcons.calendarDay, "uptime"),
                           getListItem("Name", FontAwesomeIcons.amazon, "name"),
                           getListItem("Red Flag", FontAwesomeIcons.flag, "red"),
-                          getListItem("Hold", FontAwesomeIcons.handRock, "hold"),
+                          getListItem(
+                              "Hold", FontAwesomeIcons.handRock, "hold"),
                           getListItem("Rush", FontAwesomeIcons.bolt, "rush"),
                           getListItem(
                               "SK",
@@ -224,9 +230,12 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
                                 ),
                               ),
                               "gr"),
-                          getListItem("Short", FontAwesomeIcons.shoppingBasket, "sort"),
-                          getListItem("Error Route", FontAwesomeIcons.exclamationTriangle, "errOut"),
-                          getListItem("Print", FontAwesomeIcons.print, "inprint"),
+                          getListItem(
+                              "Short", FontAwesomeIcons.shoppingBasket, "sort"),
+                          getListItem("Error Route",
+                              FontAwesomeIcons.exclamationTriangle, "errOut"),
+                          getListItem(
+                              "Print", FontAwesomeIcons.print, "inprint"),
                         ],
                       )),
                 ),
@@ -327,7 +336,9 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
                     },
                     child: Ink(
                       decoration: BoxDecoration(
-                          color: ticket.isHold == 1 ? Colors.black12 : Colors.white,
+                          color: ticket.isHold == 1
+                              ? Colors.black12
+                              : Colors.white,
                           border: Border.all(
                             color: Colors.white,
                           ),
@@ -341,12 +352,14 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
                           children: [
                             if (ticket.inPrint == 1)
                               IconButton(
-                                icon: Icon(Icons.print_outlined, color: Colors.deepOrangeAccent),
+                                icon: Icon(Icons.print_outlined,
+                                    color: Colors.deepOrangeAccent),
                                 onPressed: () {},
                               ),
                             if (ticket.isHold == 1)
                               IconButton(
-                                icon: Icon(FontAwesomeIcons.handRock, color: Colors.black),
+                                icon: Icon(FontAwesomeIcons.handRock,
+                                    color: Colors.black),
                                 onPressed: () {},
                               ),
                             if (ticket.isGr == 1)
@@ -377,22 +390,26 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
                               ),
                             if (ticket.isError == 1)
                               IconButton(
-                                icon: Icon(FontAwesomeIcons.exclamationTriangle, color: Colors.red),
+                                icon: Icon(FontAwesomeIcons.exclamationTriangle,
+                                    color: Colors.red),
                                 onPressed: () {},
                               ),
                             if (ticket.isSort == 1)
                               IconButton(
-                                icon: Icon(FontAwesomeIcons.shoppingBasket, color: Colors.green),
+                                icon: Icon(FontAwesomeIcons.shoppingBasket,
+                                    color: Colors.green),
                                 onPressed: () {},
                               ),
                             if (ticket.isRush == 1)
                               IconButton(
-                                icon: Icon(FontAwesomeIcons.bolt, color: Colors.orangeAccent),
+                                icon: Icon(FontAwesomeIcons.bolt,
+                                    color: Colors.orangeAccent),
                                 onPressed: () {},
                               ),
                             if (ticket.isRed == 1)
                               IconButton(
-                                icon: Icon(FontAwesomeIcons.fontAwesomeFlag, color: Colors.red),
+                                icon: Icon(FontAwesomeIcons.fontAwesomeFlag,
+                                    color: Colors.red),
                                 onPressed: () {},
                               ),
                           ],
@@ -434,28 +451,53 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
 
     // switch (_selectedTabIndex) {
     //   case 0:
-    AllFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + '  order by ${listSortBy} DESC');
+    AllFilesList = await database.rawQuery(
+        'SELECT * FROM tickets where $searchQ   ' +
+            canOpen +
+            '  order by ${listSortBy} DESC');
     // AllFilesList = await database.rawQuery('delete from tickets ');
 
     //   break;
     // case 1:
-    UpwindFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Upwind\' order by ${listSortBy} DESC');
+    UpwindFilesList = await database.rawQuery(
+        'SELECT * FROM tickets where $searchQ   ' +
+            canOpen +
+            ' and production=\'Upwind\' order by ${listSortBy} DESC');
     //   break;
     // case 2:
-    ODFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OD\' order by ${listSortBy} DESC');
+    ODFilesList = await database.rawQuery(
+        'SELECT * FROM tickets where $searchQ   ' +
+            canOpen +
+            ' and production=\'OD\' order by ${listSortBy} DESC');
     //   break;
     // case 3:
-    NylonFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Nylon\' order by ${listSortBy} DESC');
+    NylonFilesList = await database.rawQuery(
+        'SELECT * FROM tickets where $searchQ   ' +
+            canOpen +
+            ' and production=\'Nylon\' order by ${listSortBy} DESC');
     //   break;
     // case 4:
-    OEMFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OEM\' order by ${listSortBy} DESC');
+    OEMFilesList = await database.rawQuery(
+        'SELECT * FROM tickets where $searchQ   ' +
+            canOpen +
+            ' and production=\'OEM\' order by ${listSortBy} DESC');
     //   break;
     // case 5:
-    NoPoolFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production is null order by ${listSortBy} DESC');
+    NoPoolFilesList = await database.rawQuery(
+        'SELECT * FROM tickets where $searchQ   ' +
+            canOpen +
+            ' and production is null order by ${listSortBy} DESC');
     // break;
     // }
 
-    listsArray = [AllFilesList, UpwindFilesList, ODFilesList, NylonFilesList, OEMFilesList, NoPoolFilesList];
+    listsArray = [
+      AllFilesList,
+      UpwindFilesList,
+      ODFilesList,
+      NylonFilesList,
+      OEMFilesList,
+      NoPoolFilesList
+    ];
     currentFileList = listsArray[_selectedTabIndex];
     print(currentFileList.length);
   }
@@ -466,7 +508,10 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
       context: context,
       builder: (BuildContext context) {
         return Container(
-          decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+              color: Colors.white),
           height: 550,
           child: Center(
             child: Column(
@@ -479,11 +524,13 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
                 ),
                 Divider(),
                 ListTile(
-                  title: Text(ticket.isRed == 1 ? "Remove Red Flag" : "Set Red Flag"),
+                  title: Text(
+                      ticket.isRed == 1 ? "Remove Red Flag" : "Set Red Flag"),
                   leading: Icon(Icons.flag),
                   onTap: () async {
                     Navigator.of(context).pop();
-                    bool resul = await FlagDialog.showRedFlagDialog(context1, ticket);
+                    bool resul =
+                        await FlagDialog.showRedFlagDialog(context1, ticket);
                     ticket.isRed = resul ? 1 : 0;
                   },
                 ),
@@ -493,38 +540,67 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
                       await FlagDialog.showGRDialog(context1, ticket);
                     },
                     title: Text(ticket.isGr == 1 ? "Remove GR" : "Set GR"),
-                    leading: SizedBox(width: 24, height: 24, child: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))))),
+                    leading: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircleAvatar(
+                            backgroundColor: Colors.blue,
+                            child: Center(
+                                child: Text("GR",
+                                    style: TextStyle(color: Colors.white)))))),
                 ListTile(
                     onTap: () async {
                       Navigator.of(context).pop();
                       await FlagDialog.showSKDialog(context1, ticket);
                     },
                     title: Text(ticket.isSk == 1 ? "Remove SK" : "Set SK"),
-                    leading: SizedBox(width: 24, height: 24, child: CircleAvatar(backgroundColor: Colors.pink, child: Center(child: Text("SK", style: TextStyle(color: Colors.white)))))),
+                    leading: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircleAvatar(
+                            backgroundColor: Colors.pink,
+                            child: Center(
+                                child: Text("SK",
+                                    style: TextStyle(color: Colors.white)))))),
                 ListTile(
-                    title: Text(ticket.isRush == 1 ? "Remove Rush" : "Set Rush"),
-                    leading: Icon(Icons.offline_bolt_outlined, color: Colors.orangeAccent),
+                    title:
+                        Text(ticket.isRush == 1 ? "Remove Rush" : "Set Rush"),
+                    leading: Icon(Icons.offline_bolt_outlined,
+                        color: Colors.orangeAccent),
                     onTap: () async {
                       Navigator.of(context).pop();
-                      await FlagDialog.showRushDialog(context1, ticket);
-                      OnlineDB.apiPost("tickets/flags/setFlag", {"ticket": ticket.id.toString(), "comment": "", "type": "rush"}).then((http.Response response) async {
+                      // await FlagDialog.showRushDialog(context1, ticket);
+                      var u = ticket.isRush == 1 ? "removeFlag" : "setFlag";
+                      OnlineDB.apiPost("tickets/flags/" + u, {
+                        "ticket": ticket.id.toString(),
+                        "comment": "",
+                        "type": "rush"
+                      }).then((http.Response response) async {
                         Map res = (json.decode(response.body) as Map);
-                        print(res);
-                        print('');
                       });
                     }),
                 ListTile(
-                    title: Text(ticket.inPrint == 1 ? "Done Printing" : "Send To Print"),
-                    leading: Icon(ticket.inPrint == 1 ? Icons.print_disabled_outlined : Icons.print_outlined, color: Colors.deepOrangeAccent),
+                    title: Text(ticket.inPrint == 1
+                        ? "Done Printing"
+                        : "Send To Print"),
+                    leading: Icon(
+                        ticket.inPrint == 1
+                            ? Icons.print_disabled_outlined
+                            : Icons.print_outlined,
+                        color: Colors.deepOrangeAccent),
                     onTap: () async {
                       Navigator.of(context).pop();
                       await sendToPrint(ticket);
                     }),
                 ListTile(
                     title: Text("Finish"),
-                    leading: Icon(Icons.check_circle_outline_outlined, color: Colors.green),
+                    leading: Icon(Icons.check_circle_outline_outlined,
+                        color: Colors.green),
                     onTap: () async {
-                      await Navigator.push(context1, MaterialPageRoute(builder: (context) => FinishCheckList(ticket)));
+                      await Navigator.push(
+                          context1,
+                          MaterialPageRoute(
+                              builder: (context) => FinishCheckList(ticket)));
                       Navigator.of(context).pop();
                     }),
                 ListTile(
@@ -554,11 +630,13 @@ class _TicketListState extends State<TicketList> with SingleTickerProviderStateM
 
   Future sendToPrint(Ticket ticket) async {
     if (ticket.inPrint == 0) {
-      await OnlineDB.apiPost("tickets/print/sendToPrint", {"ticket": ticket.id.toString()});
+      await OnlineDB.apiPost(
+          "tickets/print/sendToPrint", {"ticket": ticket.id.toString()});
       ticket.inPrint = 1;
       return 1;
     } else {
-      await OnlineDB.apiPost("tickets/print/removePrint", {"ticket": ticket.id.toString()});
+      await OnlineDB.apiPost(
+          "tickets/print/removePrint", {"ticket": ticket.id.toString()});
       ticket.inPrint = 0;
       return 0;
     }
