@@ -27,6 +27,7 @@ Ticket _$TicketFromJson(Map<String, dynamic> json) {
     ..isHold = json['isHold'] as int? ?? 0
     ..fileVersion = json['fileVersion'] as int? ?? 0
     ..progress = (json['progress'] as num?)?.toDouble() ?? 0.0
+    ..completed = json['completed'] as int? ?? 0
     ..openSections = json['openSections'] as String? ?? ''
     ..production = json['production'] as String?;
 }
@@ -51,6 +52,7 @@ Map<String, dynamic> _$TicketToJson(Ticket instance) => <String, dynamic>{
       'isHold': instance.isHold,
       'fileVersion': instance.fileVersion,
       'progress': instance.progress,
+      'completed': instance.completed,
       'openSections': instance.openSections,
       'production': instance.production,
     };

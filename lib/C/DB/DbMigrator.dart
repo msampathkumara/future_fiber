@@ -11,10 +11,13 @@ class DbMigrator {
       "CREATE INDEX index_name ON tickets;",
     ],
     2: ["alter table tickets add fileVersion int default 0 null;"],
-    3: ["create table flags ( id int primary key, ticket int null, type varchar(10) null, comment longtext null, dnt datetime   null, user int null ,UNIQUE(ticket, type) ON CONFLICT REPLACE )"],
+    3: [
+      "create table flags ( id int primary key, ticket int null, type varchar(10) null, comment longtext null, dnt datetime   null, user int null ,UNIQUE(ticket, type) ON CONFLICT REPLACE )"
+    ],
     4: [
       "create table ticketProgressDetails( id int, operation text null, finishedOn text default 0 null, finishedBy int null, finishedAt int null, status int default 0 null, operationNo int null, ticketId int not null, nextOperationNo int default 0 null, doAt int default 0 null, constraint ticketProgressDetails_uindex unique (operation, operationNo, nextOperationNo, ticketId));",
       "ALTER TABLE ticketProgressDetails ADD upon text default 0;"
     ],
+    5: ["alter table tickets add completed tinyint default 0 null;"],
   };
 }

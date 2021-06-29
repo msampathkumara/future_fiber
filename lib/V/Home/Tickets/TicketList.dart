@@ -445,14 +445,15 @@ class _TicketListState extends State<TicketList>
     print('loadData');
 
     // String canOpen = _showAllTickets ? " " : " and canOpen=1  and openSections like '%#1#%' ";
-    String canOpen = _showAllTickets ? " " : " and canOpen=1    ";
+
+    String canOpen = _showAllTickets ? " " : " and canOpen=1   and file=1   and completed=0 ";
     String searchQ = "";
     searchQ = "   mo like '%$searchText%'";
 
     // switch (_selectedTabIndex) {
     //   case 0:
     AllFilesList = await database.rawQuery(
-        'SELECT * FROM tickets where $searchQ   ' +
+        'SELECT * FROM tickets where  $searchQ   ' +
             canOpen +
             '  order by ${listSortBy} DESC');
     // AllFilesList = await database.rawQuery('delete from tickets ');

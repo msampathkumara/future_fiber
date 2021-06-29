@@ -1,24 +1,22 @@
-import 'dart:async';
-import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui' as ui
-    show ImageFilter, Gradient, Image, Color, ImageByteFormat;
-import 'package:native_screenshot/native_screenshot.dart';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:native_screenshot/native_screenshot.dart';
+import 'package:smartwind/C/OnlineDB.dart';
+import 'package:smartwind/C/ServerResponce/OperationMinMax.dart';
 import 'package:smartwind/C/ServerResponce/UserRFCredentials.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import 'PDFViewWidget.dart';
+
 class RF extends StatefulWidget {
   Ticket ticket;
   UserRFCredentials userRFCredentials;
+  OperationMinMax operationMinMax;
 
-  RF(this.ticket, this.userRFCredentials);
+  RF(this.ticket, this.userRFCredentials, this.operationMinMax);
 
   @override
   _RFState createState() {
@@ -28,19 +26,57 @@ class RF extends StatefulWidget {
 
 class _RFState extends State<RF> {
   Map? checkListMap;
-  File? ticketFile;
+
+  late Ticket ticket;
+
+  late UserRFCredentials userRFCredentials;
+  late OperationMinMax operationMinMax;
+  var showFinishButton = true;
+
+  WebView? _webView;
+  WebViewController? _controller;
 
   @override
-  void initState() {
+  initState() {
     super.initState();
+    ticket = widget.ticket;
+    userRFCredentials = widget.userRFCredentials;
+    operationMinMax = widget.operationMinMax;
 
-    getExternalStorageDirectory().then((value) {
-      ticketFile = new File(value!.path + "/1111.pdf");
-      setState(() {
-        print(
-            "dfddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd");
-        print(ticketFile!.path);
-      });
+    DefaultAssetBundle.of(context).loadString('assets/js.txt').then((value) {
+      jsString = setupData("$value");
+      _webView = WebView(
+        // initialUrl: 'https://www.w3schools.com/howto/howto_css_register_form.asp',
+        initialUrl: "http://10.200.4.31/webclient/",
+        javascriptMode: JavascriptMode.unrestricted,
+        onWebViewCreated: (WebViewController webViewController) {
+          _controller = webViewController;
+          // _controller.complete(webViewController);
+        },
+        onProgress: (int progress) {
+          print("WebView is loading (progress : $progress%)");
+        },
+        javascriptChannels: <JavascriptChannel>{
+          _toasterJavascriptChannel(context),
+        },
+        navigationDelegate: (NavigationRequest request) {
+          // if (request.url.startsWith('https://www.youtube.com/')) {
+          //   print('blocking navigation to $request}');
+          //   return NavigationDecision.prevent;
+          // }
+          // print('allowing navigation to $request');
+          return NavigationDecision.navigate;
+        },
+        onPageStarted: (String url) {
+          print('Page started loading: $url');
+        },
+        onPageFinished: (String url) {
+          print('Page finished loading: $url');
+          _controller!.evaluateJavascript(jsString);
+        },
+        gestureNavigationEnabled: true,
+      );
+      setState(() {});
     });
   }
 
@@ -49,135 +85,86 @@ class _RFState extends State<RF> {
     super.dispose();
   }
 
-  WebViewController? _controller;
-  final Completer<PDFViewController> _pdfcontroller =
-      Completer<PDFViewController>();
-  int pages = 0;
-  int currentPage = 0;
-  bool isReady = false;
-  String errorMessage = '';
-  static GlobalKey previewContainer = new GlobalKey();
-
-
   @override
   Widget build(BuildContext context) {
-    return RepaintBoundary(
-      key: previewContainer,
-      child: Scaffold(
-
-
-          body: Builder(builder: (BuildContext context) {
-        return Column(
-          children: [
-            if (ticketFile != null)
+    if (jsString.isNotEmpty) {
+      return Scaffold(
+          appBar: AppBar(
+            title: Text(ticket.mo ?? ""),
+          ),
+          floatingActionButton: Visibility(
+            child: FloatingActionButton.extended(
+              backgroundColor: Colors.red,
+              icon: Icon(Icons.check_circle_outline_outlined),
+              label: Text("Finish"),
+              onPressed: () async {
+                var r = await OnlineDB.apiGet("tickets/finish", {'ticket': ticket.id.toString()});
+                print(json.decode(r.body));
+                // ServerResponceMap res1 = ServerResponceMap.fromJson(json.decode(r.body));
+                Navigator.pop(context, true);
+              },
+            ),
+            visible: showFinishButton, // set it to false
+          ),
+          body: Column(
+            children: [
               Expanded(
-                child: new PDFView(
-                  filePath: ticketFile!.path,
-                  enableSwipe: true,
-                  swipeHorizontal: false,
-                  autoSpacing: false,
-                  pageFling: true,
-                  pageSnap: true,
-                  defaultPage: 1,
-                  fitPolicy: FitPolicy.BOTH,
-                  preventLinkNavigation: false,
-                  onRender: (_pages) {
-                    setState(() {
-                      pages = _pages!;
-                      isReady = true;
-                      print('READYYYY');
-                    });
-                  },
-                  onError: (error) {
-                    setState(() {
-                      errorMessage = error.toString();
-                    });
-                    print(error.toString());
-                  },
-                  onPageError: (page, error) {
-                    setState(() {
-                      errorMessage = '$page: ${error.toString()}';
-                    });
-                    print('$page: ${error.toString()}');
-                  },
-                  onViewCreated: (PDFViewController pdfViewController) {
-                    _pdfcontroller.complete(pdfViewController);
-                  },
-                  onLinkHandler: (String? uri) {
-                    print('goto uri: $uri');
-                  },
-                  onPageChanged: (int? page, int? total) {
-                    print('page change: $page/$total');
-                    setState(() {
-                      currentPage = page!;
-                    });
-                  },
+                child: PDFViewWidget(ticket.ticketFile!.path),
+              ),
+              // Row(
+              //   children: [
+              //     ElevatedButton(
+              //       onPressed: () async {
+              //         setState(() {});
+              //       },
+              //       child: Text("scan"),
+              //     )
+              //   ],
+              // ),
+              if (_webView != null)
+                Expanded(
+                  child: _webView!,
                 ),
-              ),
-            Row(
-              children: [
-                ElevatedButton(
-                  onPressed: () async {takescrshot();},
-                  child: Text("scan"),
-                )
-              ],
-            ),
-            Expanded(
-              child: WebView(
-                initialUrl:
-                    'https://www.w3schools.com/howto/howto_css_register_form.asp',
-                javascriptMode: JavascriptMode.unrestricted,
-                onWebViewCreated: (WebViewController webViewController) {
-                  _controller = webViewController;
-                  // _controller.complete(webViewController);
-                },
-                onProgress: (int progress) {
-                  print("WebView is loading (progress : $progress%)");
-                },
-                javascriptChannels: <JavascriptChannel>{
-                  _toasterJavascriptChannel(context),
-                },
-                navigationDelegate: (NavigationRequest request) {
-                  if (request.url.startsWith('https://www.youtube.com/')) {
-                    print('blocking navigation to $request}');
-                    return NavigationDecision.prevent;
-                  }
-                  print('allowing navigation to $request');
-                  return NavigationDecision.navigate;
-                },
-                onPageStarted: (String url) {
-                  print('Page started loading: $url');
-                },
-                onPageFinished: (String url) {
-                  print('Page finished loading: $url');
-                  _controller!.evaluateJavascript('''
-                      var email = document.getElementsByClassName('w3-input'); 
-                            email[0].value = "wwww"; ''');
-                },
-                gestureNavigationEnabled: true,
-              ),
-            ),
-          ],
-        );
-      })),
-    );
+            ],
+          ));
+    } else {
+      return Scaffold(
+        body: Center(
+          child: Text("Loading"),
+        ),
+      );
+    }
+  }
+
+  takescrshot() async {
+    String? path = await NativeScreenshot.takeScreenshot();
+    print(path);
+  }
+
+  String jsString = "";
+
+  String setupData(loadData) {
+    print(userRFCredentials.toJson());
+    loadData = loadData.toString().replaceAll("@@user", userRFCredentials.uname ?? "");
+    loadData = loadData.toString().replaceAll("@@pass", userRFCredentials.pword ?? "");
+    loadData = loadData.toString().replaceAll("@@mo", widget.ticket.mo ?? "");
+    loadData = loadData.toString().replaceAll("@@low", operationMinMax.min.toString());
+    loadData = loadData.toString().replaceAll("@@max", operationMinMax.max.toString());
+
+    return loadData;
   }
 
   JavascriptChannel _toasterJavascriptChannel(BuildContext context) {
     return JavascriptChannel(
-        name: 'Toaster',
+        name: 'App',
         onMessageReceived: (JavascriptMessage message) {
-          // ignore: deprecated_member_use
-          Scaffold.of(context).showSnackBar(
-            SnackBar(content: Text(message.message)),
-          );
+          showFinishButton = true;
+          print('Call Finish ');
+
+
+          setState(() {});
         });
   }
 
-  takescrshot() async {
 
-    String? path = await NativeScreenshot.takeScreenshot();
-    print(path);
-
-  }
 }

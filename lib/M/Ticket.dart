@@ -57,6 +57,8 @@ class Ticket {
   int fileVersion = 0;
   @JsonKey(defaultValue: 0.0, includeIfNull: true)
   double progress = 0.0;
+  @JsonKey(defaultValue: 0, includeIfNull: true)
+  int completed = 0;
 
   @JsonKey(defaultValue: "", includeIfNull: true)
   String openSections = "";
@@ -76,7 +78,9 @@ class Ticket {
 
   Future<int> getLocalFileVersion() {
     return DB.getDB().then((db) {
-      return db!.rawQuery("select  ver  from files where ticket=$id ").then((value) {
+      return db!
+          .rawQuery("select  ver  from files where ticket=$id ")
+          .then((value) {
         if (value.length > 0) {
           String uptime = value[0]["ver"].toString();
           print("getLocalFileVersion == $uptime");
@@ -88,7 +92,7 @@ class Ticket {
     });
   }
 
-  Future<File> getFile(context, {onReceiveProgress}) async {
+  Future<File> _getFile(context, {onReceiveProgress}) async {
     var loadingWidget = Loading(
       loadingText: "Downloading Ticket",
     );
@@ -105,7 +109,9 @@ class Ticket {
 
     var response;
     try {
-      await dio.download(Server.getServerApiPath('/tickets/getTicketFile?' + queryString), filePath, onReceiveProgress: (received, total) {
+      await dio.download(
+          Server.getServerApiPath('/tickets/getTicketFile?' + queryString),
+          filePath, onReceiveProgress: (received, total) {
         int percentage = ((received / total) * 100).floor();
         loadingWidget.setProgress(percentage);
         if (onReceiveProgress != null) {
@@ -145,6 +151,18 @@ class Ticket {
     return file;
   }
 
+  Future<File?> getFile(context, {onReceiveProgress}) async {
+    File file = await getLocalFile();
+    var i = await getLocalFileVersion();
+    var isNew = await isFileNew();
+    if (isNew && file.existsSync()) {
+      return ticketFile;
+    } else {
+      await _getFile(context);
+    }
+    return ticketFile;
+  }
+
   Future<void> open(context, {onReceiveProgress}) async {
     File file = await getLocalFile();
     var i = await getLocalFileVersion();
@@ -161,7 +179,7 @@ class Ticket {
         open(context);
       }
     } else {
-      getFile(context).then((file) async {
+      _getFile(context).then((file) async {
         var data = await Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => PDFScreen(this)),
@@ -186,7 +204,11 @@ class Ticket {
   }
 
   Future OpenEditor() async {
-    return await platform.invokeMethod('editPdf', {'path': ticketFile!.path, 'fileID': id, 'ticket': toJson().toString()});
+    return await platform.invokeMethod('editPdf', {
+      'path': ticketFile!.path,
+      'fileID': id,
+      'ticket': toJson().toString()
+    });
   }
 
   static const platform = const MethodChannel('editPdf');
@@ -194,9 +216,13 @@ class Ticket {
   isFileNew() async {
     print('fffff=' + fileVersion.toString());
     print('fffff=' + (await getLocalFileVersion()).toString());
-    print("SELECT * FROM tickets t left join  files f on f.ticket=t.id    where t.id=$id and f.ver=t.fileVersion ");
+    print(
+        "SELECT * FROM tickets t left join  files f on f.ticket=t.id    where t.id=$id and f.ver=t.fileVersion ");
     return DB.getDB().then((db) {
-      return db!.rawQuery("SELECT * FROM tickets t left join  files f on f.ticket=t.id    where t.id=$id and  fileVersion > ver ").then((value) {
+      return db!
+          .rawQuery(
+              "SELECT * FROM tickets t left join  files f on f.ticket=t.id    where t.id=$id and  fileVersion > ver ")
+          .then((value) {
         print(value);
         if (value.length > 0) {
           return false;
@@ -208,14 +234,17 @@ class Ticket {
   }
 
   setLocalFileVersion(newFileVersion) {
-    return DB.getDB().then((db) => db!.rawQuery("replace into files (ticket,ver)values(?,?) ", [id, newFileVersion]).then((data) {
+    return DB.getDB().then((db) => db!.rawQuery(
+            "replace into files (ticket,ver)values(?,?) ",
+            [id, newFileVersion]).then((data) {
           print(data);
         }));
   }
 
   Future<List> getFlagList(String FlagType) async {
     print("tickets/flags/getList");
-    return OnlineDB.apiGet("tickets/flags/getList", {"ticket": id.toString(), "type": FlagType}).then((response) {
+    return OnlineDB.apiGet("tickets/flags/getList",
+        {"ticket": id.toString(), "type": FlagType}).then((response) {
       print(response.body);
       print("----------------------------------------");
       Map res = (json.decode(response.body) as Map);
@@ -226,7 +255,6 @@ class Ticket {
       }));
       print(list.length);
       return list;
-
     }).catchError((onError) {
       print(onError);
     });

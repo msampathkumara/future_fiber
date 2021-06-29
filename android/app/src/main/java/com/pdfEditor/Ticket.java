@@ -32,7 +32,25 @@ public class Ticket {
     double progress = 0.0;
     File  ticketFile;
 
+    public File getTicketFile() {
+        return ticketFile;
+    }
 
+    public void setTicketFile(File ticketFile) {
+        this.ticketFile = ticketFile;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getMo() {
+        return mo;
+    }
 
     public static Ticket formJsonString(String ticketJsonString) {
         try {

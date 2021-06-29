@@ -20,7 +20,7 @@ class OnlineDB {
     );
   }
 
-  static Future<http.Response> apiGet(String url, Map<String, dynamic> data) async {
+  static Future<http.Response> apiGet(String url, Map<String, String> data) async {
     final user = FirebaseAuth.instance.currentUser;
     final idToken = await user!.getIdToken();
 

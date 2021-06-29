@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.sampathkumara.northsails.smartwind">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -15,7 +15,7 @@
         android:label="smartwind"
         tools:replace="android:label"
         android:requestLegacyExternalStorage="true"
-        >
+         >
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
             android:value="ocr" />
@@ -72,6 +72,8 @@
 <!--            </intent-filter>-->
 
         </activity>
+
+
 
         <provider
             android:name="androidx.core.content.FileProvider"

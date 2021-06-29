@@ -34,12 +34,6 @@
 @import firebase_messaging;
 #endif
 
-#if __has_include(<firebase_ml_vision/FLTFirebaseMlVisionPlugin.h>)
-#import <firebase_ml_vision/FLTFirebaseMlVisionPlugin.h>
-#else
-@import firebase_ml_vision;
-#endif
-
 #if __has_include(<flutter_barcode_scanner/SwiftFlutterBarcodeScannerPlugin.h>)
 #import <flutter_barcode_scanner/SwiftFlutterBarcodeScannerPlugin.h>
 #else
@@ -50,6 +44,12 @@
 #import <flutter_pdfview/FLTPDFViewFlutterPlugin.h>
 #else
 @import flutter_pdfview;
+#endif
+
+#if __has_include(<google_ml_vision/FLTGoogleMlVisionPlugin.h>)
+#import <google_ml_vision/FLTGoogleMlVisionPlugin.h>
+#else
+@import google_ml_vision;
 #endif
 
 #if __has_include(<image_picker/FLTImagePickerPlugin.h>)
@@ -114,9 +114,9 @@
   [FLTFirebaseCorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCorePlugin"]];
   [FLTFirebaseCrashlyticsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCrashlyticsPlugin"]];
   [FLTFirebaseMessagingPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseMessagingPlugin"]];
-  [FLTFirebaseMlVisionPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseMlVisionPlugin"]];
   [SwiftFlutterBarcodeScannerPlugin registerWithRegistrar:[registry registrarForPlugin:@"SwiftFlutterBarcodeScannerPlugin"]];
   [FLTPDFViewFlutterPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTPDFViewFlutterPlugin"]];
+  [FLTGoogleMlVisionPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTGoogleMlVisionPlugin"]];
   [FLTImagePickerPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTImagePickerPlugin"]];
   [IntegrationTestPlugin registerWithRegistrar:[registry registrarForPlugin:@"IntegrationTestPlugin"]];
   [NativeScreenshotPlugin registerWithRegistrar:[registry registrarForPlugin:@"NativeScreenshotPlugin"]];

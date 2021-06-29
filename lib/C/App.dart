@@ -17,7 +17,7 @@ class App {
 
   static NsUser? currentUser;
 
-  static getCurrentUser() async {
+   static Future<NsUser?> getCurrentUser() async {
     var prefs = await SharedPreferences.getInstance();
     var u = prefs.getString("user");
     if (u != null) {

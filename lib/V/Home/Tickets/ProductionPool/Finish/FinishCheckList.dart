@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:smartwind/C/App.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/C/ServerResponce/ServerResponceMap.dart';
+import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Widgets/Loading.dart';
 
@@ -24,9 +26,12 @@ class FinishCheckList extends StatefulWidget {
 class _FinishCheckListState extends State<FinishCheckList> {
   Map? checkListMap;
 
+  late Ticket ticket;
+
   @override
   void initState() {
     super.initState();
+    ticket = widget.ticket;
   }
 
   @override
@@ -73,11 +78,8 @@ class _FinishCheckListState extends State<FinishCheckList> {
                                 child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                         primary: Colors.green,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 50, vertical: 20),
-                                        textStyle: TextStyle(
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.bold)),
+                                        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                                        textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
                                     onPressed: () {
                                       var loadingWidget = Loading(
                                         loadingText: "Loading",
@@ -85,22 +87,34 @@ class _FinishCheckListState extends State<FinishCheckList> {
                                       );
 
                                       loadingWidget.show(context);
-                                      OnlineDB.apiGet( "users/getRfCredentials", {})
-                                          .then((http.Response response) async {
+                                      OnlineDB.apiGet("users/getRfCredentials", {}).then((http.Response response) async {
                                         print(response.body);
-                                        ServerResponceMap res =
-                                            ServerResponceMap.fromJson(
-                                                json.decode(response.body));
+                                        ServerResponceMap res = ServerResponceMap.fromJson(json.decode(response.body));
+                                        var r = await OnlineDB.apiGet("tickets/finish/getMaxMinOpNo", {'ticket': ticket.id.toString()});
+                                        ServerResponceMap res1 = ServerResponceMap.fromJson(json.decode(r.body));
+
+                                        NsUser? user = await App.getCurrentUser();
+
+                                        print(user!.toJson());
+
                                         loadingWidget.close(context);
                                         if (res.userRFCredentials != null) {
+                                          print("-------------------------------------");
+                                          print(ticket.toJson());
+                                          await ticket.getFile(context);
+                                          if (res1.done != null) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(backgroundColor: Colors.red, content: Text('Already Completed')));
+                                          } else if (ticket.ticketFile != null) {
+                                            await Navigator.push(context,
+                                                MaterialPageRoute(builder: (context) => RF(ticket, res.userRFCredentials!, res1.operationMinMax!)));
+                                          }
 
-                                          await Navigator.push(  context,  MaterialPageRoute(  builder: (context) => RF(widget.ticket,res.userRFCredentials!)));
-
-                                          // if (Navigator.canPop(context)) {
-                                          //   Navigator.pop(context);
-                                          // } else {
-                                          //   SystemNavigator.pop();
-                                          // }
+                                          if (Navigator.canPop(context)) {
+                                            Navigator.pop(context);
+                                          } else {
+                                            SystemNavigator.pop();
+                                          }
                                         }
                                       });
                                     },
@@ -113,11 +127,8 @@ class _FinishCheckListState extends State<FinishCheckList> {
                                 child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                         primary: Colors.redAccent,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 50, vertical: 20),
-                                        textStyle: TextStyle(
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.bold)),
+                                        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                                        textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
                                     onPressed: () {},
                                     child: Text("Disagree")),
                               ),
