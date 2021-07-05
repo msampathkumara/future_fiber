@@ -44,7 +44,8 @@ class DB {
     }, onUpgrade: (db, oldVersion, newVersion) async {
       print('updating Database version $oldVersion to $newVersion');
       var curdDbVersion = await getCurrentDbVersion(db);
-      var upgradeScripts = new Map.fromIterable(DbMigrator.migrations.keys.where((k) => k > curdDbVersion), key: (k) => k, value: (k) => DbMigrator.migrations[k]);
+      var upgradeScripts =
+          new Map.fromIterable(DbMigrator.migrations.keys.where((k) => k > curdDbVersion), key: (k) => k, value: (k) => DbMigrator.migrations[k]);
 
       if (upgradeScripts.length == 0) return;
 
@@ -78,19 +79,19 @@ class DB {
     if (showLoadingDialog && context != null) {
       loadingWidget.show(context);
     }
-
-    return getDB().then((value) => value!.rawQuery("select ifnull(max(uptime),0) uptime from tickets; ").then((value) {
+    var resetQ = "";
+    if (reset) {
+      resetQ = "delete from tickets;";
+      print('reset');
+    }
+    return getDB().then((value) => value!.rawQuery(resetQ + "select ifnull(max(uptime),0) uptime from tickets; ").then((value) {
           print("last update on == " + value.toString());
-          String uptime = value[0]["uptime"].toString();
-          if (reset) {
-            uptime = '0';
-            print('reset');
-          }
+          String uptime = value.length > 0 ? value[0]["uptime"].toString() : "0";
+
           return OnlineDB.apiGet("tickets/getTickets", {"uptime": uptime}).then((Response response) async {
             Map res = (json.decode(response.body) as Map);
 
             processData(res);
-
 
             // print('deletedTickets = ' + deletedTickets.length.toString());
 

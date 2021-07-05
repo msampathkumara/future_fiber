@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // import 'package:firebase_auth/firebase_auth.dart';
+import 'C/App.dart';
 import 'V/Home/Home.dart';
 import 'V/Login/Login.dart';
 import 'mainFuncs.dart';
@@ -70,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
           future: _mainFuncs.initializeFlutterFireFuture,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              if (FirebaseAuth.instance.currentUser != null) {
+              if (FirebaseAuth.instance.currentUser != null &&  App.currentUser!=null) {
                 return Home();
               }
               return Login();

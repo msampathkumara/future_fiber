@@ -5,13 +5,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smartwind/C/App.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/V/Home/CurrentUser/CurrentUserDetails.dart';
 import 'package:smartwind/V/Home/Tickets/ProductionPool/ProductionPool.dart';
 import 'package:smartwind/V/Login/Login.dart';
+import 'package:smartwind/V/Login/SectionSelector.dart';
 
 import 'About.dart';
+import 'Admin/AdminCpanel.dart';
 import 'Tickets/FinishedGoods/FinishedGoods.dart';
 import 'Tickets/StandardFiles/StandardFiles.dart';
 import 'UserManager/UserManager.dart';
@@ -25,21 +28,25 @@ class Home extends StatefulWidget {
   }
 }
 
-enum MenuItems {logout,dbReload, }
+enum MenuItems { logout, dbReload, changeSection, cpanel }
 
 class _HomeState extends State<Home> {
   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseMessaging messaging = FirebaseMessaging.instance;
-  NsUser? nsUser = new NsUser();
+  NsUser? nsUser ;
 
   @override
   void initState() {
     super.initState();
     FirebaseMessaging.instance.subscribeToTopic('file_update');
+    FirebaseMessaging.instance.subscribeToTopic('TicketDbReset');
     DB.updateDatabase();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (json.decode(message.data["FILE_DB_UPDATE"]) != null) {
         DB.updateDatabase();
+      } else if (json.decode(message.data["updateTicketDB"]) != null) {
+        DB.updateDatabase(reset: true);
+        print('--------------------------RESEING DATABASE-----------------');
       }
       print('Got a message whilst in the foreground!');
       print('Message data: ${message.data}');
@@ -49,17 +56,22 @@ class _HomeState extends State<Home> {
       }
     });
 
-    SharedPreferences.getInstance().then((prefs) {
-      var u = prefs.getString("user");
-
-      if (u != null) {
-        setState(() {
-          nsUser = NsUser.fromJson(json.decode(u));
-        });
-      } else {
-        _logout();
-      }
+    App.getCurrentUser().then((value) {
+      nsUser = value;
+      setState(() {});
     });
+
+    // SharedPreferences.getInstance().then((prefs) {
+    //   var u = prefs.getString("user");
+    //
+    //   if (u != null) {
+    //     setState(() {
+    //       nsUser = NsUser.fromJson(json.decode(u));
+    //     });
+    //   } else {
+    //     _logout();
+    //   }
+    // });
   }
 
   @override
@@ -79,7 +91,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: nsUser!.section == null
+      child: nsUser == null
           ? Center(
               child: Container(
                   child: Column(
@@ -94,9 +106,12 @@ class _HomeState extends State<Home> {
                 title: Padding(
                   padding: const EdgeInsets.only(top: 24.0),
                   child: ListTile(
-                    leading: CircleAvatar(radius: 24.0, backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"), backgroundColor: Colors.transparent),
+                    leading: CircleAvatar(
+                        radius: 24.0,
+                        backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"),
+                        backgroundColor: Colors.transparent),
                     title: Text(nsUser!.name, textScaleFactor: 1.2),
-                    subtitle: Text("@ ${nsUser!.section!.sectionTitle}"),
+                    subtitle: Text("${nsUser!.section!.sectionTitle}@${nsUser!.section!.factory}"),
                     trailing: _currentUserOprionMenu(),
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => CurrentUserDetails(nsUser!)));
@@ -223,13 +238,15 @@ class _HomeState extends State<Home> {
   _currentUserOprionMenu() {
     return PopupMenuButton<MenuItems>(
       onSelected: (MenuItems result) {
-
-        if(result==MenuItems.logout){
+        if (result == MenuItems.logout) {
           _logout();
-        }else if(result==MenuItems.dbReload){
-          DB.updateDatabase(context: context,showLoadingDialog: true,reset: true);
+        } else if (result == MenuItems.dbReload) {
+          DB.updateDatabase(context: context, showLoadingDialog: true, reset: true);
+        } else if (result == MenuItems.changeSection) {
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => SectionSelector(nsUser!)), (Route<dynamic> route) => false);
+        } else if (result == MenuItems.cpanel) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => AdminCpanel()));
         }
-
 
         setState(() {
           _selection = result;
@@ -245,7 +262,15 @@ class _HomeState extends State<Home> {
           value: MenuItems.logout,
           child: Text('Logout'),
         ),
-
+        const PopupMenuItem<MenuItems>(
+          value: MenuItems.changeSection,
+          child: Text('Change Section'),
+        ),
+        if (nsUser!.utype == 'admin')
+          const PopupMenuItem<MenuItems>(
+            value: MenuItems.cpanel,
+            child: Text('Cpanel'),
+          ),
       ],
     );
   }

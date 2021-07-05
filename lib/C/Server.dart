@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 class Server {
-  static bool local = true;
+  static bool local = false;
 
   static String getServerAddress() {
     // if (kDebugMode && local) {
@@ -20,3 +20,4 @@ class Server {
     return getServerAddress() + "/api/" + url;
   }
 }
+

@@ -10,7 +10,7 @@ import io.flutter.plugin.common.MethodChannel
 
 
 class MainActivity : FlutterActivity() {
-    private val editPdf: Int = 0;
+    private val editPdf: Int = 0
     private val CHANNEL = "editPdf"
        var   editPdfResult : MethodChannel.Result? =null
 
@@ -50,7 +50,7 @@ class MainActivity : FlutterActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, @Nullable data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == editPdf && editPdfResult!=null) {
-            editPdfResult!!.success(data?.getBooleanExtra("edited", false));
+            editPdfResult!!.success(data?.getBooleanExtra("edited", false))
         }
     }
 }

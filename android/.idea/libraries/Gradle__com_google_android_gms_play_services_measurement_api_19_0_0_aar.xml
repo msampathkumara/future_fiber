@@ -1,8 +1,6 @@
 <component name="libraryTable">
   <library name="Gradle: com.google.android.gms:play-services-measurement-api:19.0.0@aar">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/2a0353a4c85292303bbd095ee456da5d/jetified-play-services-measurement-api-19.0.0/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/a1d8b9b84b006cded33e2f6d087662e8/jetified-play-services-measurement-api-19.0.0/res" />
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/875d6c7ffeeee17d2dcae50782cb8d7a/jetified-play-services-measurement-api-19.0.0/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/875d6c7ffeeee17d2dcae50782cb8d7a/jetified-play-services-measurement-api-19.0.0/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/875d6c7ffeeee17d2dcae50782cb8d7a/jetified-play-services-measurement-api-19.0.0/AndroidManifest.xml" />

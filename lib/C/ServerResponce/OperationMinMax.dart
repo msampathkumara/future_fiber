@@ -6,6 +6,7 @@ part 'OperationMinMax.g.dart';
 class OperationMinMax {
   int? min;
   int? max;
+  int? doAt;
 
   OperationMinMax();
 

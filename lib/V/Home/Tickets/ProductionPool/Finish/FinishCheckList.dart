@@ -3,10 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:smartwind/C/App.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/C/ServerResponce/ServerResponceMap.dart';
-import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Widgets/Loading.dart';
 
@@ -90,26 +88,23 @@ class _FinishCheckListState extends State<FinishCheckList> {
                                       OnlineDB.apiGet("users/getRfCredentials", {}).then((http.Response response) async {
                                         print(response.body);
                                         ServerResponceMap res = ServerResponceMap.fromJson(json.decode(response.body));
-                                        var r = await OnlineDB.apiGet("tickets/finish/getMaxMinOpNo", {'ticket': ticket.id.toString()});
+                                        var r = await OnlineDB.apiGet("tickets/finish/getProgress", {'ticket': ticket.id.toString()});
                                         ServerResponceMap res1 = ServerResponceMap.fromJson(json.decode(r.body));
-
-                                        NsUser? user = await App.getCurrentUser();
-
-                                        print(user!.toJson());
 
                                         loadingWidget.close(context);
                                         if (res.userRFCredentials != null) {
                                           print("-------------------------------------");
-                                          print(ticket.toJson());
+                                          print(res1.toJson());
                                           await ticket.getFile(context);
                                           if (res1.done != null) {
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(SnackBar(backgroundColor: Colors.red, content: Text('Already Completed')));
                                           } else if (ticket.ticketFile != null) {
-                                            await Navigator.push(context,
-                                                MaterialPageRoute(builder: (context) => RF(ticket, res.userRFCredentials!, res1.operationMinMax!)));
+                                            await Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) => RF(ticket, res.userRFCredentials!, res1.operationMinMax!, res1.progressList)));
                                           }
-
                                           if (Navigator.canPop(context)) {
                                             Navigator.pop(context);
                                           } else {

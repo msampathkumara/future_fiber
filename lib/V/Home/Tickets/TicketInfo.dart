@@ -24,7 +24,7 @@ class TicketInfo extends StatefulWidget {
 
 class _TicketInfoState extends State<TicketInfo> {
   late Ticket _ticket;
-  late double _progress = 0;
+  late int _progress = 0;
 
   @override
   void initState() {

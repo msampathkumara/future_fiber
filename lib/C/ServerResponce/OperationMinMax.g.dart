@@ -9,11 +9,13 @@ part of 'OperationMinMax.dart';
 OperationMinMax _$OperationMinMaxFromJson(Map<String, dynamic> json) {
   return OperationMinMax()
     ..min = json['min'] as int?
-    ..max = json['max'] as int?;
+    ..max = json['max'] as int?
+    ..doAt = json['doAt'] as int?;
 }
 
 Map<String, dynamic> _$OperationMinMaxToJson(OperationMinMax instance) =>
     <String, dynamic>{
       'min': instance.min,
       'max': instance.max,
+      'doAt': instance.doAt,
     };
