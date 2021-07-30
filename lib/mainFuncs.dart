@@ -11,7 +11,7 @@ class mainFuncs {
 
   late Future initializeFlutterFireFuture = initializeFlutterFire();
 
-  mainFuncs() {}
+  mainFuncs() ;
 
   Future<bool> initializeFlutterFire() async {
 

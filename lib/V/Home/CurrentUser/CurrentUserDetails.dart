@@ -76,7 +76,7 @@ class _CurrentUserDetailsState extends State<CurrentUserDetails> {
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
                           children: [
-                            ListTile(leading: Icon(Icons.phone_android_outlined), title: Text("Phone"), subtitle: Text(nsUser.contact.split(",").join("\n"), style: stStyle)),
+                            ListTile(leading: Icon(Icons.phone_android_outlined), title: Text("Phone"), subtitle: Text(nsUser.phone.split(",").join("\n"), style: stStyle)),
                             ListTile(leading: Icon(Icons.alternate_email_outlined), title: Text("Email"), subtitle: Text(nsUser.emailAddress.split(",").join("\n"), style: stStyle)),
                             ListTile(leading: Icon(Icons.location_on_outlined), title: Text("Address"), subtitle: Text(nsUser.emailAddress.split(",").join("\n"), style: stStyle)),
                           ],

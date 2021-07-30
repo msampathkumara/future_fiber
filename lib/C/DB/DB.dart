@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/Loading.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -79,37 +80,44 @@ class DB {
     if (showLoadingDialog && context != null) {
       loadingWidget.show(context);
     }
-    var resetQ = "";
+
+    var DB = await getDB();
     if (reset) {
-      resetQ = "delete from tickets;";
       print('reset');
+      await DB!.rawQuery("delete from tickets;");
     }
-    return getDB().then((value) => value!.rawQuery(resetQ + "select ifnull(max(uptime),0) uptime from tickets; ").then((value) {
-          print("last update on == " + value.toString());
-          String uptime = value.length > 0 ? value[0]["uptime"].toString() : "0";
+    return getDB()
+        .then((value) => value!.rawQuery("select ifnull(max(uptime),0) uptime from tickets; ").then((value) {
+              print("last update on == " + value.toString());
+              String uptime = value.length > 0 ? value[0]["uptime"].toString() : "0";
 
-          return OnlineDB.apiGet("tickets/getTickets", {"uptime": uptime}).then((Response response) async {
-            Map res = (json.decode(response.body) as Map);
+              return OnlineDB.apiGet("tickets/getTickets", {"uptime": uptime}).then((Response response) async {
+                Map res = (json.decode(response.body) as Map);
 
-            processData(res);
+                processData(res);
 
-            // print('deletedTickets = ' + deletedTickets.length.toString());
+                // print('deletedTickets = ' + deletedTickets.length.toString());
 
-            if (showLoadingDialog && context != null) {
-              loadingWidget.close(context);
-            }
-            List OnDBChangeCallBacks_temp = [];
-            OnDBChangeCallBacks_temp.addAll(OnDBChangeCallBacks);
-            for (var i = 0; i < OnDBChangeCallBacks_temp.length; i++) {
-              var x = OnDBChangeCallBacks_temp[i];
-              try {
-                x();
-              } catch (e) {
-                OnDBChangeCallBacks.remove(x);
-              }
-            }
-          });
-        }));
+                if (showLoadingDialog && context != null) {
+                  loadingWidget.close(context);
+                }
+                List OnDBChangeCallBacksTemp = [];
+                OnDBChangeCallBacksTemp.addAll(OnDBChangeCallBacks);
+                for (var i = 0; i < OnDBChangeCallBacksTemp.length; i++) {
+                  var x = OnDBChangeCallBacksTemp[i];
+                  try {
+                    x();
+                  } catch (e) {
+                    OnDBChangeCallBacks.remove(x);
+                  }
+                }
+              }).onError((error, stackTrace) {
+                ErrorMessageView(errorMessage: error.toString()).show(context);
+              });
+            }))
+        .onError((onError, st) {
+      ErrorMessageView(errorMessage: onError.toString()).show(context);
+    });
   }
 
   static List OnDBChangeCallBacks = [];
@@ -138,6 +146,9 @@ class DB {
     await db!.transaction((txn) async {
       Batch batch = txn.batch();
       tickets.forEach((ticket) {
+        insertFlags(ticket["flags"] ?? [], batch);
+        ticket.remove("flags");
+        // print(ticket);
         batch.insert('tickets', ticket, conflictAlgorithm: ConflictAlgorithm.replace);
       });
       await batch.commit(noResult: true);
@@ -159,5 +170,11 @@ class DB {
       batch.insert('ticketProgressDetails', ticket, conflictAlgorithm: ConflictAlgorithm.replace);
     });
     print(await batch.commit(noResult: false));
+  }
+
+  static Future<void> insertFlags(List<dynamic> flags, Batch batch) async {
+    flags.forEach((ticket) {
+      batch.insert('flags', ticket, conflictAlgorithm: ConflictAlgorithm.replace);
+    });
   }
 }

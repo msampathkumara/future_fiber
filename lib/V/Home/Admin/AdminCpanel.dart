@@ -15,17 +15,24 @@ class _AdminCpanelState extends State<AdminCpanel> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Center(
-          child: Wrap(
-      children: [
+      child: Wrap(direction: Axis.vertical,
+        children: [
           ElevatedButton(
               child: Text("Update Files"),
               onPressed: () {
                 OnlineDB.apiGet("tickets/updateFiles", {}).then((Response response) async {
                   print(response.body);
                 });
-              })
-      ],
-    ),
-        ));
+              }),
+          ElevatedButton(
+              child: Text("Reload Ticket DB"),
+              onPressed: () {
+                OnlineDB.apiGet("admin/reloadTicketDB", {}).then((Response response) async {
+                  print(response.body);
+                });
+              }),
+        ],
+      ),
+    ));
   }
 }

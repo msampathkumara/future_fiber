@@ -1,9 +1,9 @@
 <component name="libraryTable">
   <library name="Gradle: com.tom_roush:pdfbox-android:1.8.10.0@aar">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/911e7f247f601d371f01d8a7d0f6c63a/jetified-pdfbox-android-1.8.10.0/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/911e7f247f601d371f01d8a7d0f6c63a/jetified-pdfbox-android-1.8.10.0/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/911e7f247f601d371f01d8a7d0f6c63a/jetified-pdfbox-android-1.8.10.0/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/923113920a9337000efebd1a1e87f470/transformed/jetified-pdfbox-android-1.8.10.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/923113920a9337000efebd1a1e87f470/transformed/jetified-pdfbox-android-1.8.10.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/923113920a9337000efebd1a1e87f470/transformed/jetified-pdfbox-android-1.8.10.0/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.tom_roush/pdfbox-android/1.8.10.0/e30881c044f7ad3b99380dea6869e19bbd10a056/pdfbox-android-1.8.10.0-javadoc.jar!/" />

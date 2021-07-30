@@ -166,7 +166,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                 Card(
                   child: Column(
                     children: [
-                      ListTile(title: Text("Contact Details"), leading: Icon(Icons.contact_phone_outlined)),
+                      ListTile(title: Text("Phone Details"), leading: Icon(Icons. contact_phone_outlined)),
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(children: [
@@ -181,13 +181,13 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                                     inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                                     controller: _phoneNumberControll,
                                     onFieldSubmitted: (t) {
-                                      nsUser.addContact(t);
+                                      nsUser.addPhone(t);
                                       _phoneNumberControll.text = "";
                                     },
                                   ),
                                   Row(
-                                      children: List.generate(nsUser.getContactsList().length, (index) {
-                                    String number = nsUser.getContactsList()[index];
+                                      children: List.generate(nsUser.getPhonesList().length, (index) {
+                                    String number = nsUser.getPhonesList()[index];
                                     return Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: GestureDetector(
@@ -195,9 +195,9 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                                             _showPopupmenu(details.globalPosition, (val) {
                                               if (val == 1) {
                                                 _phoneNumberControll.text = number;
-                                                nsUser.removeContact(number);
+                                                nsUser.removePhone(number);
                                               } else {
-                                                nsUser.removeContact(number);
+                                                nsUser.removePhone(number);
                                               }
                                               setState(() {});
                                             });

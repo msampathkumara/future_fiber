@@ -12,7 +12,9 @@ class NsUser {
   @JsonKey(defaultValue: "", includeIfNull: true)
   String pword = "";
   String name = "";
+  @JsonKey(defaultValue: "", includeIfNull: true)
   String utype = "";
+  @JsonKey(defaultValue: "", includeIfNull: true)
   String epf = "";
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int etype = 0;
@@ -20,7 +22,8 @@ class NsUser {
   int sectionId = 0;
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int loft = 0;
-  String contact = "";
+  @JsonKey(defaultValue: "", includeIfNull: true)
+  String phone = "";
   @JsonKey(defaultValue: "0", includeIfNull: true)
   String img = "";
   @JsonKey(defaultValue: "-", includeIfNull: true)
@@ -39,11 +42,11 @@ class NsUser {
 
   Map<String, dynamic> toJson() => _$NsUserToJson(this);
 
-  List getContactsList() {
-    if (contact.isEmpty) {
+  List getPhonesList() {
+    if (phone.isEmpty) {
       return [];
     }
-    return contact.split(",");
+    return phone.split(",");
   }
 
   List getEmailList() {
@@ -53,10 +56,10 @@ class NsUser {
     return emailAddress.split(",");
   }
 
-  void removeContact(String number) {
-    var l = getContactsList();
+  void removePhone(String number) {
+    var l = getPhonesList();
     l.remove(number);
-    contact = l.join(',');
+    phone = l.join(',');
   }
 
   void removeEmail(String number) {
@@ -65,13 +68,13 @@ class NsUser {
     emailAddress = l.join(',');
   }
 
-  void addContact(String number) {
-    var l = getContactsList();
+  void addPhone(String number) {
+    var l = getPhonesList();
     l.add(number);
     l = [
       ...{...l}
     ];
-    contact = l.join(',');
+    phone = l.join(',');
   }
 
   void addEmailAddress(String email) {

@@ -12,12 +12,12 @@ NsUser _$NsUserFromJson(Map<String, dynamic> json) {
     ..uname = json['uname'] as String
     ..pword = json['pword'] as String? ?? ''
     ..name = json['name'] as String
-    ..utype = json['utype'] as String
-    ..epf = json['epf'] as String
+    ..utype = json['utype'] as String? ?? ''
+    ..epf = json['epf'] as String? ?? ''
     ..etype = json['etype'] as int? ?? 0
     ..sectionId = json['sectionId'] as int? ?? 0
     ..loft = json['loft'] as int? ?? 0
-    ..contact = json['contact'] as String
+    ..phone = json['phone'] as String? ?? ''
     ..img = json['img'] as String? ?? '0'
     ..sectionName = json['sectionName'] as String? ?? '-'
     ..emailAddress = json['emailAddress'] as String? ?? '-'
@@ -40,7 +40,7 @@ Map<String, dynamic> _$NsUserToJson(NsUser instance) => <String, dynamic>{
       'etype': instance.etype,
       'sectionId': instance.sectionId,
       'loft': instance.loft,
-      'contact': instance.contact,
+      'phone': instance.phone,
       'img': instance.img,
       'sectionName': instance.sectionName,
       'emailAddress': instance.emailAddress,

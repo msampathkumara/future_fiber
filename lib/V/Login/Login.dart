@@ -2,14 +2,18 @@ import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hex/hex.dart';
 import 'package:http/http.dart' as http;
+import 'package:jwt_decode/jwt_decode.dart';
 import 'package:nfc_manager/nfc_manager.dart';
+import 'package:nfc_manager/platform_tags.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/V/Home/Home.dart';
 import 'package:smartwind/V/Login/SectionSelector.dart';
+import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 
 import 'PasswordRecovery.dart';
 
@@ -30,6 +34,9 @@ class _LoginState extends State<Login> {
 
   var hidePassword = true;
 
+  bool empty_user_details = false;
+  String nfcCode = "";
+
   @override
   initState() {
     super.initState();
@@ -39,6 +46,18 @@ class _LoginState extends State<Login> {
       if (NfcIsAvailable) {
         NfcManager.instance.startSession(
           onDiscovered: (NfcTag tag) async {
+            print(Ndef.from(tag)!.cachedMessage!.records ?? "");
+            print(new String.fromCharCodes(NfcA.from(tag)!.identifier));
+            // List<int> l = tag.data["nfca"]["identifier"];
+            List<int> l = NfcA.from(tag)!.identifier;
+            // ErrorMessageView(errorMessage: HEX.encode(l)).show(context);
+
+            // new String.fromCharCodes(charCodes)
+            // String serial=new String.fromCharCodes( NfcA.from(tag)!.identifier);
+            // ErrorMessageView(errorMessage: serial).show(context);
+            nfcCode = HEX.encode(l);
+            _login();
+
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(tag.data.toString()),
             ));
@@ -104,8 +123,11 @@ class _LoginState extends State<Login> {
                               onChanged: (pword) {
                                 _user.pword = pword;
                               })),
+                      if (empty_user_details) Text("Enter user name and password", style: TextStyle(color: Colors.red)),
                       Center(child: Padding(padding: const EdgeInsets.all(8.0), child: ElevatedButton(onPressed: _login, child: Text("Login")))),
-                      Center(child: Padding(padding: const EdgeInsets.all(8.0), child: TextButton(onPressed: _recoverPassword, child: Text("Forgot Password")))),
+                      Center(
+                          child: Padding(
+                              padding: const EdgeInsets.all(8.0), child: TextButton(onPressed: _recoverPassword, child: Text("Forgot Password")))),
                     ],
                   ),
                 ),
@@ -115,7 +137,11 @@ class _LoginState extends State<Login> {
   }
 
   _login() {
-    // Todo login
+    if (nfcCode.isEmpty && (_user.uname.isEmpty || _user.pword.isEmpty)) {
+      empty_user_details = true;
+      return;
+    }
+    print({"uname": _user.uname, "pword": _user.pword, "nfc": nfcCode});
 
     setLoading(true);
     http
@@ -124,13 +150,23 @@ class _LoginState extends State<Login> {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode({"uname": _user.uname, "pword": _user.pword}),
+      body: jsonEncode({"uname": _user.uname, "pword": _user.pword, "nfc": nfcCode}),
     )
         .then((response) async {
+      nfcCode = "";
       print(response.body);
       Map res = (json.decode(response.body) as Map);
 
-      NsUser nsUser = NsUser.fromJson(res["user"]);
+      if (res["user"] == null) {
+        empty_user_details = true;
+        setLoading(false);
+        return;
+      }
+
+      Map<String, dynamic> payload = Jwt.parseJwt(res["user"]);
+      print(payload);
+
+      NsUser nsUser = NsUser.fromJson(payload);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       nsUser.section = nsUser.sections.length > 0 ? nsUser.sections[0] : null;
       await prefs.setString("user", json.encode(nsUser));
@@ -149,7 +185,9 @@ class _LoginState extends State<Login> {
       }
       setLoading(false);
     }).onError((error, stackTrace) {
-      print(error);
+      nfcCode = "";
+      print(stackTrace.toString());
+      ErrorMessageView(errorMessage: error.toString()).show(context);
       setLoading(false);
     });
   }

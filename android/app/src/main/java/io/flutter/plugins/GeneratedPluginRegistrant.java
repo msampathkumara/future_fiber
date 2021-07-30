@@ -26,7 +26,6 @@ public final class GeneratedPluginRegistrant {
     flutterEngine.getPlugins().add(new com.brianmtully.flutter.plugins.googlemlvision.GoogleMlVisionPlugin());
     flutterEngine.getPlugins().add(new io.flutter.plugins.imagepicker.ImagePickerPlugin());
     flutterEngine.getPlugins().add(new dev.flutter.plugins.integration_test.IntegrationTestPlugin());
-    flutterEngine.getPlugins().add(new jpg.ivan.native_screenshot.NativeScreenshotPlugin());
     flutterEngine.getPlugins().add(new io.flutter.plugins.nfcmanager.NfcManagerPlugin());
     flutterEngine.getPlugins().add(new io.flutter.plugins.pathprovider.PathProviderPlugin());
     flutterEngine.getPlugins().add(new com.baseflow.permissionhandler.PermissionHandlerPlugin());

@@ -22,5 +22,9 @@ class DbMigrator {
     5: ["alter table tickets add crossProList Text default  '[]'  ;"],
     6: ["alter table tickets add oldProd Text default  null  ;"],
     7: ["alter table tickets add atSection Text default  ''  ;"],
+    8: ["alter table tickets add fileName Text default  ''  ;"],
+    9: ["alter table tickets add custom Text default  ''  ;"],
+    10: ["alter table tickets add ticketProgress Text default  ''  ;"],
+    11: ["alter table flags add flaged int default  0  ;"],
   };
 }

@@ -64,12 +64,6 @@
 @import integration_test;
 #endif
 
-#if __has_include(<native_screenshot/NativeScreenshotPlugin.h>)
-#import <native_screenshot/NativeScreenshotPlugin.h>
-#else
-@import native_screenshot;
-#endif
-
 #if __has_include(<nfc_manager/NfcManagerPlugin.h>)
 #import <nfc_manager/NfcManagerPlugin.h>
 #else
@@ -119,7 +113,6 @@
   [FLTGoogleMlVisionPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTGoogleMlVisionPlugin"]];
   [FLTImagePickerPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTImagePickerPlugin"]];
   [IntegrationTestPlugin registerWithRegistrar:[registry registrarForPlugin:@"IntegrationTestPlugin"]];
-  [NativeScreenshotPlugin registerWithRegistrar:[registry registrarForPlugin:@"NativeScreenshotPlugin"]];
   [NfcManagerPlugin registerWithRegistrar:[registry registrarForPlugin:@"NfcManagerPlugin"]];
   [FLTPathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTPathProviderPlugin"]];
   [PermissionHandlerPlugin registerWithRegistrar:[registry registrarForPlugin:@"PermissionHandlerPlugin"]];

@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:native_screenshot/native_screenshot.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/C/ServerResponce/OperationMinMax.dart';
 import 'package:smartwind/C/ServerResponce/Progress.dart';
@@ -197,8 +196,8 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
   }
 
   takescrshot() async {
-    String? path = await NativeScreenshot.takeScreenshot();
-    print(path);
+    // String? path = await NativeScreenshot.takeScreenshot();
+    // print(path);
   }
 
   String jsString = "";

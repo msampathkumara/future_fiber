@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 // ignore: must_be_immutable
@@ -13,7 +12,7 @@ class SearchBar extends StatefulWidget implements PreferredSizeWidget {
 
   var child;
 
-  SearchBar({@required this.onSearchTextChanged, @required this.onSubmitted, this.OnBarcode,this.child}) {
+  SearchBar({@required this.onSearchTextChanged, @required this.onSubmitted, this.OnBarcode, this.child}) {
     print("_______________________________________");
   }
 
@@ -76,7 +75,7 @@ class _SearchBarState extends State<SearchBar> {
                   child: Ink(
                     child: Card(
                       child: IconButton(
-                        icon: FaIcon(FontAwesomeIcons.barcode),
+                        icon: Icon(Icons.qr_code_scanner_outlined),
                         onPressed: () async {
                           var permissionStatus = await Permission.camera.request();
                           if (permissionStatus.isGranted) {
@@ -106,7 +105,7 @@ class _SearchBarState extends State<SearchBar> {
                       ),
                     ),
                   ),
-                ),if(widget.child!=null)widget.child
+                ), if(widget.child != null)widget.child
             ],
           )),
     );

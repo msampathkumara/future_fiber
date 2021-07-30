@@ -15,7 +15,7 @@ import 'package:smartwind/V/Widgets/FlagDialog.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 
 import 'ProductionPool/CrossProduction.dart';
-import 'TicketInfo.dart';
+import 'TicketInfo/TicketInfo.dart';
 
 class TicketList extends StatefulWidget {
   TicketList();
@@ -72,7 +72,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                 }
 
                 _TabBarcontroller = TabController(length: tabs.length, vsync: this);
-                setState(() {});
+                loadData().then((value) => setState(() {}));
               },
               itemBuilder: (BuildContext context) {
                 return {"Show All Tickets"}.map((String choice) {
@@ -357,7 +357,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                       child: ListTile(
                         leading: Text("${index + 1}"),
                         title: Text(
-                          (ticket.mo ?? ""),
+                          (ticket.mo ?? "").trim().isEmpty ? (ticket.oe ?? "") : ticket.mo ?? "",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
@@ -365,6 +365,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                         subtitle: Wrap(
                           direction: Axis.vertical,
                           children: [
+                            if ((ticket.mo ?? "").trim().isNotEmpty) Text((ticket.oe ?? "")),
                             if (ticket.crossPro == 1)
                               Chip(
                                   avatar: CircleAvatar(
@@ -435,12 +436,18 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                                 icon: Icon(FontAwesomeIcons.fontAwesomeFlag, color: Colors.red),
                                 onPressed: () {},
                               ),
-                            CircularPercentIndicator(
-                              radius: 60.0,
-                              lineWidth: 5.0,
-                              percent: ticket.progress / 100,
-                              center: new Text(ticket.progress.toString() + "%"),
-                              progressColor: Colors.green,
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: CircularPercentIndicator(
+                                radius: 40.0,
+                                lineWidth: 5.0,
+                                percent: ticket.progress / 100,
+                                center: new Text(
+                                  ticket.progress.toString() + "%",
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                                progressColor: Colors.green,
+                              ),
                             )
                           ],
                         ),
@@ -481,12 +488,12 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
 
     NsUser? nsUser = await App.getCurrentUser();
     var section = nsUser!.section!.id;
-    String canOpen = _showAllTickets ? " and file=1 and completed=0" : " and canOpen=1   and file=1   and completed=0 ";
+    String canOpen = _showAllTickets ? "  file=1 and completed=0" : " canOpen=1   and file=1   and completed=0 ";
     String searchQ = "";
-    searchQ = "   mo like '%$searchText%'";
+    if (searchText.isNotEmpty) {
+      searchQ = "  ( mo like '%$searchText%' or oe like '%$searchText%') and ";
+    }
 
-    // switch (_selectedTabIndex) {
-    //   case 0:
     print('current user $section');
 
     AllFilesList = await database.rawQuery(
@@ -498,26 +505,27 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     CrossProductionFilesList = await database.rawQuery(
         'SELECT * FROM tickets where  $searchQ   ' + canOpen + " and openSections like '%|$section|%' and crossPro=1 order by $listSortBy DESC");
 
-    // //   break;
-    // // case 1:
-    // UpwindFilesList =  await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Upwind\' order by ${listSortBy} DESC');
-    // //   break;
-    // // case 2:
-    // ODFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OD\' order by ${listSortBy} DESC');
-    // //   break;
-    // // case 3:
-    // NylonFilesList =
-    //     await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Nylon\' order by ${listSortBy} DESC');
-    // //   break;
-    // // case 4:
-    // OEMFilesList =
-    //     await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OEM\' order by ${listSortBy} DESC');
-    // //   break;
-    // // case 5:
-    // NoPoolFilesList =
-    //     await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production is null order by ${listSortBy} DESC');
-    // // break;
-    // // }
+    if (_showAllTickets) {
+      AllFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + '   order by ${listSortBy} DESC');
+
+      UpwindFilesList =
+          await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Upwind\' order by ${listSortBy} DESC');
+
+      ODFilesList =
+          await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OD\' order by ${listSortBy} DESC');
+
+      NylonFilesList =
+          await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Nylon\' order by ${listSortBy} DESC');
+
+      OEMFilesList =
+          await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OEM\' order by ${listSortBy} DESC');
+
+      NoPoolFilesList = await database
+          .rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production is null or production=""  order by ${listSortBy} DESC');
+    }
+    AllFilesList.forEach((element) {
+      print(element);
+    });
 
     listsArray = [AllFilesList, UpwindFilesList, ODFilesList, NylonFilesList, OEMFilesList, NoPoolFilesList];
     currentFileList = listsArray[_selectedTabIndex];
