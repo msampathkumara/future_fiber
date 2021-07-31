@@ -12,7 +12,7 @@
 
     <application
         android:icon="@mipmap/ic_launcher"
-        android:label="smartwind"
+        android:label="SmartWind"
         tools:replace="android:label"
         android:requestLegacyExternalStorage="true"
          >

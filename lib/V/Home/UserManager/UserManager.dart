@@ -25,7 +25,8 @@ class UserManager extends StatefulWidget {
   }
 }
 
-class _UserManagerState extends State<UserManager> with SingleTickerProviderStateMixin {
+class _UserManagerState extends State<UserManager>
+    with SingleTickerProviderStateMixin {
   var database;
   late int _selectedTabIndex;
 
@@ -46,8 +47,6 @@ class _UserManagerState extends State<UserManager> with SingleTickerProviderStat
         print("Selected Index: " + _TabBarcontroller!.index.toString());
       });
 
-      getDataFromServer();
-
       NfcManager.instance.isAvailable().then((value) {
         NfcIsAvailable = value;
       });
@@ -64,10 +63,10 @@ class _UserManagerState extends State<UserManager> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     return new FutureBuilder<String>(
-      future: getJwt(), // a Future<String> or null
+      future: load(), // a Future<String> or null
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: Text('Please wait its loading...'));
+          return Center(child: CircularProgressIndicator());
         } else {
           if (snapshot.hasError)
             return new Text('Error: ${snapshot.error}');
@@ -109,7 +108,8 @@ class _UserManagerState extends State<UserManager> with SingleTickerProviderStat
                       }
                       searchText = text;
 
-                      var future = new Future.delayed(const Duration(milliseconds: 300));
+                      var future =
+                          new Future.delayed(const Duration(milliseconds: 300));
                       subscription = future.asStream().listen((v) {
                         print("SEARCHING FOR ${searchText}");
                       });
@@ -141,7 +141,8 @@ class _UserManagerState extends State<UserManager> with SingleTickerProviderStat
                         ],
                       ),
                     )),
-                floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+                floatingActionButtonLocation:
+                    FloatingActionButtonLocation.endDocked,
                 floatingActionButton: OpenContainer(
                     closedShape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50.0),
@@ -149,14 +150,17 @@ class _UserManagerState extends State<UserManager> with SingleTickerProviderStat
                     closedElevation: 2,
                     closedColor: _themeColor,
                     transitionDuration: Duration(milliseconds: 500),
-                    openBuilder: (BuildContext context, void Function({Object? returnValue}) action) {
+                    openBuilder: (BuildContext context,
+                        void Function({Object? returnValue}) action) {
                       return AddUser();
                     },
-                    closedBuilder: (BuildContext context, void Function() action) {
+                    closedBuilder:
+                        (BuildContext context, void Function() action) {
                       return InkWell(
                           child: Padding(
                         padding: const EdgeInsets.all(16.0),
-                        child: Icon(Icons.person_add_outlined, size: 24, color: Colors.white),
+                        child: Icon(Icons.person_add_outlined,
+                            size: 24, color: Colors.white),
                       ));
                     }));
         }
@@ -212,7 +216,11 @@ class _UserManagerState extends State<UserManager> with SingleTickerProviderStat
   // }
 
   getBody() {
-    return _TabBarcontroller == null ? Container() : Scaffold(backgroundColor: Colors.white, body: GetTicketListByCategoty(filteredAllUsersList));
+    return _TabBarcontroller == null
+        ? Container()
+        : Scaffold(
+            backgroundColor: Colors.white,
+            body: GetTicketListByCategoty(filteredAllUsersList));
   }
 
   final int CAT_ALL = 0;
@@ -254,7 +262,10 @@ class _UserManagerState extends State<UserManager> with SingleTickerProviderStat
                     child: ListTile(
                       leading: CircleAvatar(
                           radius: 24.0,
-                          backgroundImage: NetworkImage(Server.getServerApiPath("users/getImage?img=" + nsUser.img + "&size=62"),
+                          backgroundImage: NetworkImage(
+                              Server.getServerApiPath("users/getImage?img=" +
+                                  nsUser.img +
+                                  "&size=62"),
                               headers: {"authorization": '$idToken'}),
                           backgroundColor: Colors.transparent),
                       title: Text(nsUser.name),
@@ -290,8 +301,10 @@ class _UserManagerState extends State<UserManager> with SingleTickerProviderStat
       context: context,
       builder: (BuildContext context) {
         return Container(
-          decoration:
-              BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+              color: Colors.white),
           height: 500,
           child: Center(
             child: Column(
@@ -301,7 +314,9 @@ class _UserManagerState extends State<UserManager> with SingleTickerProviderStat
                 ListTile(
                   leading: CircleAvatar(
                       radius: 24.0,
-                      backgroundImage: NetworkImage(Server.getServerApiPath("users/getImage?img=" + nsUser.img + "&size=48"),
+                      backgroundImage: NetworkImage(
+                          Server.getServerApiPath(
+                              "users/getImage?img=" + nsUser.img + "&size=48"),
                           headers: {"authorization": '$idToken'}),
                       backgroundColor: Colors.transparent),
                   title: Text(nsUser.name),
@@ -362,10 +377,11 @@ class _UserManagerState extends State<UserManager> with SingleTickerProviderStat
         print("--------------------------------------");
       });
 
-      AllUsersList = List<NsUser>.from(users.map((model) => NsUser.fromJson(model)));
+      AllUsersList =
+          List<NsUser>.from(users.map((model) => NsUser.fromJson(model)));
       filterUsers();
 
-      setState(() {});
+      // setState(() {});
     });
   }
 
@@ -377,10 +393,11 @@ class _UserManagerState extends State<UserManager> with SingleTickerProviderStat
         });
   }
 
-  Future<String> getJwt() async {
+  Future<String> load() async {
     final user = FirebaseAuth.instance.currentUser;
     idToken = await user!.getIdToken();
     print('id token === $idToken');
+    await getDataFromServer();
     return (idToken);
   }
 

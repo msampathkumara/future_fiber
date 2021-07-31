@@ -46,8 +46,8 @@ class _LoginState extends State<Login> {
       if (NfcIsAvailable) {
         NfcManager.instance.startSession(
           onDiscovered: (NfcTag tag) async {
-            print(Ndef.from(tag)!.cachedMessage!.records ?? "");
-            print(new String.fromCharCodes(NfcA.from(tag)!.identifier));
+            // print(Ndef.from(tag)!.cachedMessage!.records ?? "");
+            // print(new String.fromCharCodes(NfcA.from(tag)!.identifier));
             // List<int> l = tag.data["nfca"]["identifier"];
             List<int> l = NfcA.from(tag)!.identifier;
             // ErrorMessageView(errorMessage: HEX.encode(l)).show(context);
@@ -58,9 +58,9 @@ class _LoginState extends State<Login> {
             nfcCode = HEX.encode(l);
             _login();
 
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(tag.data.toString()),
-            ));
+            // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            //   content: Text(tag.data.toString()),
+            // ));
           },
         );
       }
@@ -85,7 +85,12 @@ class _LoginState extends State<Login> {
               child: Container(
                   child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: [CircularProgressIndicator(), Padding(padding: const EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
+              children: [
+                CircularProgressIndicator(),
+                Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text("Loading", textScaleFactor: 1))
+              ],
             )))
           : Center(
               child: Padding(
@@ -99,7 +104,8 @@ class _LoginState extends State<Login> {
                           padding: const EdgeInsets.all(8.0),
                           child: TextFormField(
                               initialValue: _user.uname,
-                              decoration: InputDecoration(labelText: 'User Name'),
+                              decoration:
+                                  InputDecoration(labelText: 'User Name'),
                               onChanged: (uname) {
                                 _user.uname = uname;
                               })),
@@ -114,7 +120,9 @@ class _LoginState extends State<Login> {
                                         hidePassword = !hidePassword;
                                       });
                                     },
-                                    icon: Icon(hidePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+                                    icon: Icon(hidePassword
+                                        ? Icons.visibility_outlined
+                                        : Icons.visibility_off_outlined),
                                   )),
                               obscureText: hidePassword,
                               enableSuggestions: false,
@@ -123,11 +131,20 @@ class _LoginState extends State<Login> {
                               onChanged: (pword) {
                                 _user.pword = pword;
                               })),
-                      if (empty_user_details) Text("Enter user name and password", style: TextStyle(color: Colors.red)),
-                      Center(child: Padding(padding: const EdgeInsets.all(8.0), child: ElevatedButton(onPressed: _login, child: Text("Login")))),
+                      if (empty_user_details)
+                        Text("Enter user name and password",
+                            style: TextStyle(color: Colors.red)),
                       Center(
                           child: Padding(
-                              padding: const EdgeInsets.all(8.0), child: TextButton(onPressed: _recoverPassword, child: Text("Forgot Password")))),
+                              padding: const EdgeInsets.all(8.0),
+                              child: ElevatedButton(
+                                  onPressed: _login, child: Text("Login")))),
+                      Center(
+                          child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: TextButton(
+                                  onPressed: _recoverPassword,
+                                  child: Text("Forgot Password")))),
                     ],
                   ),
                 ),
@@ -150,7 +167,8 @@ class _LoginState extends State<Login> {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode({"uname": _user.uname, "pword": _user.pword, "nfc": nfcCode}),
+      body: jsonEncode(
+          {"uname": _user.uname, "pword": _user.pword, "nfc": nfcCode}),
     )
         .then((response) async {
       nfcCode = "";
@@ -174,12 +192,19 @@ class _LoginState extends State<Login> {
       print("saving user to SharedPreferences");
       print(json.encode(nsUser));
 
-      final UserCredential googleUserCredential = await FirebaseAuth.instance.signInWithCustomToken(res["token"]);
+      final UserCredential googleUserCredential =
+          await FirebaseAuth.instance.signInWithCustomToken(res["token"]);
       if (googleUserCredential.user != null) {
         if (nsUser.sections.length > 1) {
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => SectionSelector(nsUser)), (Route<dynamic> route) => false);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => SectionSelector(nsUser)),
+              (Route<dynamic> route) => false);
         } else {
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (Route<dynamic> route) => false);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => Home()),
+              (Route<dynamic> route) => false);
         }
         DB.updateDatabase();
       }
