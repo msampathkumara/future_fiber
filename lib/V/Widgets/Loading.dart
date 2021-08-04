@@ -49,35 +49,22 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
-      body: Center(
-          child: Wrap(
-        alignment: WrapAlignment.center,
-        direction: Axis.horizontal,
-        children: [
-
-
+        backgroundColor: Colors.blue,
+        body: Center(
+            child: Wrap(alignment: WrapAlignment.center, direction: Axis.horizontal, children: [
           if (widget.showProgress)
             Center(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: new CircularPercentIndicator(
-                  radius: 100.0,
-                  lineWidth: 4.0,
-                  percent: (_progress / 100).toDouble(),
-                  center: new Text("$_progress%"),
-                  progressColor: Colors.blue,
-                ),
-              ),
-            ),
-          Text(
-            widget.loadingText,
-            textScaleFactor: 1,
-          ),
-        ],
-      )),
-    );
+                child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: new CircularPercentIndicator(
+                        radius: 100.0,
+                        lineWidth: 4.0,
+                        percent: ((_progress >= 0 && _progress <= 1) ? _progress : 0 / 100).toDouble(),
+                        center: new Text("$_progress%"),
+                        progressColor: Colors.blue))),
+          Text(widget.loadingText, textScaleFactor: 1)
+        ])));
   }
 
   onProgressChange(progress) {

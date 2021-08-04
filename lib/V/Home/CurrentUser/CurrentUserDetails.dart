@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/NsUser.dart';
 
 class CurrentUserDetails extends StatefulWidget {
@@ -17,10 +19,17 @@ class _CurrentUserDetailsState extends State<CurrentUserDetails> {
 
   TextStyle stStyle = TextStyle(color: Colors.black, fontSize: 18);
 
+  var idToken;
+
   @override
   void initState() {
     super.initState();
     nsUser = widget.nsUser;
+    final user = FirebaseAuth.instance.currentUser;
+    user!.getIdToken().then((t) {
+      idToken = t;
+      setState(() {});
+    });
   }
 
   @override
@@ -41,7 +50,12 @@ class _CurrentUserDetailsState extends State<CurrentUserDetails> {
               direction: Axis.vertical,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                CircleAvatar(radius: 124.0, backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"), backgroundColor: Colors.transparent),
+                CircleAvatar(
+                    radius: 124.0,
+                    backgroundImage: idToken != null
+                        ? NetworkImage(Server.getServerApiPath("users/getImage?img=" + nsUser.img + "&size=1000"), headers: {"authorization": '$idToken'})
+                        : NsUser.getDefaultImage(),
+                    backgroundColor: Colors.transparent),
                 Padding(
                   padding: const EdgeInsets.only(top: 16.0),
                   child: Text(
@@ -77,7 +91,8 @@ class _CurrentUserDetailsState extends State<CurrentUserDetails> {
                         child: Column(
                           children: [
                             ListTile(leading: Icon(Icons.phone_android_outlined), title: Text("Phone"), subtitle: Text(nsUser.phone.split(",").join("\n"), style: stStyle)),
-                            ListTile(leading: Icon(Icons.alternate_email_outlined), title: Text("Email"), subtitle: Text(nsUser.emailAddress.split(",").join("\n"), style: stStyle)),
+                            ListTile(
+                                leading: Icon(Icons.alternate_email_outlined), title: Text("Email"), subtitle: Text(nsUser.emailAddress.split(",").join("\n"), style: stStyle)),
                             ListTile(leading: Icon(Icons.location_on_outlined), title: Text("Address"), subtitle: Text(nsUser.emailAddress.split(",").join("\n"), style: stStyle)),
                           ],
                         ),

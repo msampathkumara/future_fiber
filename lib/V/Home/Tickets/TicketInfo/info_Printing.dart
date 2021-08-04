@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/ServerResponce/TicketPrint.dart';
 import 'package:smartwind/M/TicketFlag.dart';
+import 'package:smartwind/V/Widgets/UserImage.dart';
 
 class info_Printing extends StatefulWidget {
   List<TicketPrint> printList;
@@ -37,14 +38,11 @@ class _info_PrintingState extends State<info_Printing> {
               child: ListTile(
                 title: Row(
                   children: [
-                    Expanded(flex: 3, child: Text(ticketPrint.action??"")),
-                    Expanded(flex: 3, child: Text(ticketPrint.doneOn??"", style: TextStyle())),
+                    Expanded(flex: 3, child: Text(ticketPrint.action ?? "")),
+                    Expanded(flex: 3, child: Text(ticketPrint.doneOn ?? "", style: TextStyle())),
                   ],
                 ),
-                trailing: CircleAvatar(
-                    radius: 24.0,
-                    backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"),
-                    backgroundColor: Colors.transparent),
+                trailing: UserImage(nsUserId: ticketPrint.doneBy, radius: 24),
               ),
             ),
           );
@@ -83,10 +81,7 @@ class _info_PrintingState extends State<info_Printing> {
                     Expanded(flex: 3, child: Text(ticketFlag.dnt, style: TextStyle())),
                   ],
                 ),
-                trailing: CircleAvatar(
-                    radius: 24.0,
-                    backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"),
-                    backgroundColor: Colors.transparent),
+                trailing: CircleAvatar(radius: 24.0, backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"), backgroundColor: Colors.transparent),
               ),
             );
           },

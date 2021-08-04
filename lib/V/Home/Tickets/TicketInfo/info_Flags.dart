@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/TicketFlag.dart';
+import 'package:smartwind/V/Widgets/UserImage.dart';
 
 class info_Flags extends StatefulWidget {
   List<TicketFlag> ticketFlag;
@@ -54,10 +55,7 @@ class _info_FlagsState extends State<info_Flags> {
                         Expanded(flex: 3, child: Text(ticketFlag.dnt, style: TextStyle())),
                       ],
                     ),
-                    trailing: CircleAvatar(
-                        radius: 24.0,
-                        backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"),
-                        backgroundColor: Colors.transparent),
+                    trailing: UserImage(nsUserId: ticketFlag.user, radius: 24),
                   ),
                 ),
               ),
@@ -90,20 +88,18 @@ class _info_FlagsState extends State<info_Flags> {
           itemCount: ticketFlags.length,
           itemBuilder: (BuildContext context, int index) {
             TicketFlag ticketFlag = ticketFlags[index];
+
             return Container(
               decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
               child: ListTile(
-                title: Row(
-                  children: [
-                    Expanded(flex: 3, child: Text(ticketFlag.flaged == 1 ? "Flag added" : "Flag Removed")),
-                    Expanded(flex: 3, child: Text(ticketFlag.dnt, style: TextStyle())),
-                  ],
-                ),
-                trailing: CircleAvatar(
-                    radius: 24.0,
-                    backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"),
-                    backgroundColor: Colors.transparent),
-              ),
+                  title: Row(
+                    children: [
+                      Expanded(flex: 3, child: Text(ticketFlag.flaged == 1 ? "Flag added" : "Flag Removed")),
+                      Expanded(flex: 3, child: Text(ticketFlag.dnt, style: TextStyle())),
+                    ],
+                  ),
+                  // trailing: CircleAvatar(radius: 24.0, backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"), backgroundColor: Colors.transparent),
+                  trailing: UserImage(nsUserId: ticketFlag.user, radius: 24)),
             );
           },
           separatorBuilder: (BuildContext context, int index) {

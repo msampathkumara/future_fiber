@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Section.dart';
 
 part 'Progress.g.dart';
@@ -7,7 +8,7 @@ part 'Progress.g.dart';
 class Progress {
   int? doAt;
   Object? finishedAt;
-  Object? finishedBy;
+  int? finishedBy;
   String? finishedOn;
   int? id;
   int? nextOperationNo;
@@ -17,6 +18,8 @@ class Progress {
   int? ticketId;
   String? upon;
   Section? section;
+
+  NsUser? user;
 
   Progress();
 

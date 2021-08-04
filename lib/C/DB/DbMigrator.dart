@@ -26,5 +26,15 @@ class DbMigrator {
     9: ["alter table tickets add custom Text default  ''  ;"],
     10: ["alter table tickets add ticketProgress Text default  ''  ;"],
     11: ["alter table flags add flaged int default  0  ;"],
+    14: [
+      "DROP TABLE IF EXISTS   users",
+      "DROP TABLE IF EXISTS   userSections",
+      "create table users ( id int primary key, uname varchar(255) not null, utype varchar(255) default 'user' not null, status varchar(255) default 'ok' not null, epf varchar(255) null, etype int  null, loft int  null, phone varchar(255) null, sectionId int default 0 not null, name varchar(255) null, img varchar(255) null, claimVersion int default 0 null, uptime varchar(20) default null, deleted int default 0 null, md5Id varchar(100) null, emailAddress longtext null, UNIQUE (id) ON CONFLICT REPLACE );",
+      "create table userSections ( userId int, sectionId int,   UNIQUE (userId,sectionId) ON CONFLICT REPLACE );"
+    ],
+    16: [
+      "DROP TABLE IF EXISTS   factorySections",
+      "create table factorySections ( id int, sectionTitle varchar(50) null, factory varchar(30) null, loft int null,uptime varchar(20)  null, UNIQUE (id) ON CONFLICT REPLACE );"
+    ],
   };
 }

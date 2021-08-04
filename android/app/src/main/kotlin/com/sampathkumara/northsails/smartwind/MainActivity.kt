@@ -12,7 +12,7 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity : FlutterActivity() {
     private val editPdf: Int = 0
     private val CHANNEL = "editPdf"
-       var   editPdfResult : MethodChannel.Result? =null
+    var editPdfResult: MethodChannel.Result? = null
 
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
@@ -34,6 +34,8 @@ class MainActivity : FlutterActivity() {
                 val path = call.argument<String>("path")
                 val ticket = call.argument<String>("ticket")
 
+                println("$fileID _$path _$ticket");
+
 
                 val i = Intent(this, MainEditorActivity::class.java)
                 i.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -49,7 +51,7 @@ class MainActivity : FlutterActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, @Nullable data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == editPdf && editPdfResult!=null) {
+        if (requestCode == editPdf && editPdfResult != null) {
             editPdfResult!!.success(data?.getBooleanExtra("edited", false))
         }
     }

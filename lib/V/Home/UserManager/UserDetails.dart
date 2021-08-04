@@ -5,8 +5,6 @@ import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Section.dart';
 import 'package:smartwind/V/Home/UserManager/UpdateUserDetails.dart';
 
-import 'NfcScan.dart';
-
 class UserDetails extends StatefulWidget {
   NsUser nsUser;
 
@@ -73,8 +71,7 @@ class _UserDetailsState extends State<UserDetails> {
                         children: [
                           CircleAvatar(
                               radius: 124.0,
-                              backgroundImage: NetworkImage(Server.getServerApiPath("users/getImage?img=" + nsUser.img + "&size=200"),
-                                  headers: {"authorization": '$idToken'}),
+                              backgroundImage: NetworkImage(Server.getServerApiPath("users/getImage?img=" + nsUser.img + "&size=500"), headers: {"authorization": '$idToken'}),
                               backgroundColor: Colors.transparent),
                           Padding(
                             padding: const EdgeInsets.only(top: 16.0),
@@ -97,70 +94,58 @@ class _UserDetailsState extends State<UserDetails> {
                       ),
                     ),
                   ),
-                  body: Scaffold(
-                    floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-                    floatingActionButton: FloatingActionButton(
-                      onPressed: () {
-                        NfcScan(nsUser).show(context);
-                      },
-                      child: Icon(Icons.credit_card_outlined),
-                    ),
-                    body: SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          children: [
-                            Card(
-                              child: Column(
-                                children: [
-                                  ListTile(title: Text("Contact Details"), leading: Icon(Icons.contact_phone_outlined)),
-                                  Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Column(
-                                      children: [
-                                        ListTile(
-                                            leading: Icon(Icons.phone_android_outlined),
-                                            title: Text("Phone"),
-                                            subtitle: Text(nsUser.phone.split(",").join("\n"), style: stStyle)),
-                                        ListTile(
-                                            leading: Icon(Icons.alternate_email_outlined),
-                                            title: Text("Email"),
-                                            subtitle: Text(nsUser.emailAddress.split(",").join("\n"), style: stStyle)),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
+                  body: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          Card(
+                            child: Column(
+                              children: [
+                                ListTile(title: Text("Contact Details"), leading: Icon(Icons.contact_phone_outlined)),
+                                Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    children: [
+                                      ListTile(
+                                          leading: Icon(Icons.phone_android_outlined), title: Text("Phone"), subtitle: Text(nsUser.phone.split(",").join("\n"), style: stStyle)),
+                                      ListTile(
+                                          leading: Icon(Icons.alternate_email_outlined),
+                                          title: Text("Email"),
+                                          subtitle: Text(nsUser.emailAddress.split(",").join("\n"), style: stStyle)),
+                                    ],
+                                  ),
+                                )
+                              ],
                             ),
-                            Card(
-                              child: Column(
-                                children: [
-                                  ListTile(title: Text("Job Details"), leading: Icon(Icons.work_outline_outlined)),
-                                  Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Column(
-                                      children: [
-                                        ListTile(leading: Icon(Icons.badge_outlined), title: Text("EPF"), subtitle: Text(nsUser.epf, style: stStyle)),
-                                        ListTile(
-                                            leading: Icon(Icons.domain_outlined),
-                                            title: Text("Section"),
-                                            subtitle: Wrap(
-                                                direction: Axis.horizontal,
-                                                crossAxisAlignment: WrapCrossAlignment.start,
-                                                children: List.generate(nsUser.sections.length, (index) {
-                                                  Section section = nsUser.sections[index];
-                                                  return Padding(
-                                                      padding: const EdgeInsets.only(right: 8.0),
-                                                      child: Chip(label: Text(section.sectionTitle + " @ " + section.factory)));
-                                                }))),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
+                          ),
+                          Card(
+                            child: Column(
+                              children: [
+                                ListTile(title: Text("Job Details"), leading: Icon(Icons.work_outline_outlined)),
+                                Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    children: [
+                                      ListTile(leading: Icon(Icons.badge_outlined), title: Text("EPF"), subtitle: Text(nsUser.epf, style: stStyle)),
+                                      ListTile(
+                                          leading: Icon(Icons.domain_outlined),
+                                          title: Text("Section"),
+                                          subtitle: Wrap(
+                                              direction: Axis.horizontal,
+                                              crossAxisAlignment: WrapCrossAlignment.start,
+                                              children: List.generate(nsUser.sections.length, (index) {
+                                                Section section = nsUser.sections[index];
+                                                return Padding(
+                                                    padding: const EdgeInsets.only(right: 8.0), child: Chip(label: Text(section.sectionTitle + " @ " + section.factory)));
+                                              }))),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
                       ),
                     ),
                   ),

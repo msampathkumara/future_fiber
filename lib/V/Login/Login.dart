@@ -8,8 +8,8 @@ import 'package:jwt_decode/jwt_decode.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:nfc_manager/platform_tags.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/C/Server.dart';
+import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/V/Home/Home.dart';
 import 'package:smartwind/V/Login/SectionSelector.dart';
@@ -18,23 +18,28 @@ import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'PasswordRecovery.dart';
 
 class Login extends StatefulWidget {
-  Login() {}
+ static var appUser;
+
+  Login();
 
   @override
   _LoginState createState() {
+    appUser = AppUser();
     return _LoginState();
   }
 }
 
 class _LoginState extends State<Login> {
+
+
   NsUser _user = new NsUser();
-  late bool NfcIsAvailable = false;
+  late bool nfcIsAvailable = false;
 
   bool loading = false;
 
   var hidePassword = true;
 
-  bool empty_user_details = false;
+  bool emptyUserDetails = false;
   String nfcCode = "";
 
   @override
@@ -42,8 +47,8 @@ class _LoginState extends State<Login> {
     super.initState();
 
     NfcManager.instance.isAvailable().then((value) {
-      NfcIsAvailable = value;
-      if (NfcIsAvailable) {
+      nfcIsAvailable = value;
+      if (nfcIsAvailable) {
         NfcManager.instance.startSession(
           onDiscovered: (NfcTag tag) async {
             // print(Ndef.from(tag)!.cachedMessage!.records ?? "");
@@ -85,12 +90,7 @@ class _LoginState extends State<Login> {
               child: Container(
                   child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: [
-                CircularProgressIndicator(),
-                Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text("Loading", textScaleFactor: 1))
-              ],
+              children: [CircularProgressIndicator(), Padding(padding: const EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
             )))
           : Center(
               child: Padding(
@@ -99,13 +99,12 @@ class _LoginState extends State<Login> {
                   child: Wrap(
                     direction: Axis.horizontal,
                     children: [
-                      if (NfcIsAvailable) Text("Use NFC Card To login "),
+                      if (nfcIsAvailable) Text("Use NFC Card To login "),
                       Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: TextFormField(
                               initialValue: _user.uname,
-                              decoration:
-                                  InputDecoration(labelText: 'User Name'),
+                              decoration: InputDecoration(labelText: 'User Name'),
                               onChanged: (uname) {
                                 _user.uname = uname;
                               })),
@@ -120,9 +119,7 @@ class _LoginState extends State<Login> {
                                         hidePassword = !hidePassword;
                                       });
                                     },
-                                    icon: Icon(hidePassword
-                                        ? Icons.visibility_outlined
-                                        : Icons.visibility_off_outlined),
+                                    icon: Icon(hidePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined),
                                   )),
                               obscureText: hidePassword,
                               enableSuggestions: false,
@@ -131,20 +128,9 @@ class _LoginState extends State<Login> {
                               onChanged: (pword) {
                                 _user.pword = pword;
                               })),
-                      if (empty_user_details)
-                        Text("Enter user name and password",
-                            style: TextStyle(color: Colors.red)),
-                      Center(
-                          child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ElevatedButton(
-                                  onPressed: _login, child: Text("Login")))),
-                      Center(
-                          child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: TextButton(
-                                  onPressed: _recoverPassword,
-                                  child: Text("Forgot Password")))),
+                      if (emptyUserDetails) Text("Enter user name and password", style: TextStyle(color: Colors.red)),
+                      Center(child: Padding(padding: const EdgeInsets.all(8.0), child: ElevatedButton(onPressed: _login, child: Text("Login")))),
+                      Center(child: Padding(padding: const EdgeInsets.all(8.0), child: TextButton(onPressed: _recoverPassword, child: Text("Forgot Password")))),
                     ],
                   ),
                 ),
@@ -155,7 +141,7 @@ class _LoginState extends State<Login> {
 
   _login() {
     if (nfcCode.isEmpty && (_user.uname.isEmpty || _user.pword.isEmpty)) {
-      empty_user_details = true;
+      emptyUserDetails = true;
       return;
     }
     print({"uname": _user.uname, "pword": _user.pword, "nfc": nfcCode});
@@ -167,16 +153,18 @@ class _LoginState extends State<Login> {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(
-          {"uname": _user.uname, "pword": _user.pword, "nfc": nfcCode}),
+      body: jsonEncode({"uname": _user.uname, "pword": _user.pword, "nfc": nfcCode}),
     )
         .then((response) async {
-      nfcCode = "";
       print(response.body);
       Map res = (json.decode(response.body) as Map);
 
       if (res["user"] == null) {
-        empty_user_details = true;
+        if (nfcCode.isNotEmpty) {
+          ErrorMessageView(errorMessage: "Scan Valid ID Card", icon: Icons.badge_outlined).show(context);
+          nfcCode = "";
+        }
+        // emptyUserDetails = true;
         setLoading(false);
         return;
       }
@@ -192,21 +180,13 @@ class _LoginState extends State<Login> {
       print("saving user to SharedPreferences");
       print(json.encode(nsUser));
 
-      final UserCredential googleUserCredential =
-          await FirebaseAuth.instance.signInWithCustomToken(res["token"]);
+      final UserCredential googleUserCredential = await FirebaseAuth.instance.signInWithCustomToken(res["token"]);
       if (googleUserCredential.user != null) {
         if (nsUser.sections.length > 1) {
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => SectionSelector(nsUser)),
-              (Route<dynamic> route) => false);
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => SectionSelector(nsUser)), (Route<dynamic> route) => false);
         } else {
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => Home()),
-              (Route<dynamic> route) => false);
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (Route<dynamic> route) => false);
         }
-        DB.updateDatabase();
       }
       setLoading(false);
     }).onError((error, stackTrace) {

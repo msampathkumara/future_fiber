@@ -199,8 +199,9 @@ class _TicketInfoState extends State<TicketInfo> {
   List<TicketHistory> ticketHistory = [];
 
   void getData(Ticket _ticket) {
+    print('requesting data---------------');
     OnlineDB.apiGet(("tickets/info/getTicketInfo"), {'ticket': _ticket.id.toString()}).then((value) {
-      print((value.body));
+      print(' data recived---------------');  print((value.body));
       setState(() {
         ServerResponceMap res = ServerResponceMap.fromJson(json.decode(value.body));
         progressList = res.progressList;

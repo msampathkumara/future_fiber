@@ -81,7 +81,7 @@ public class MainEditorActivity extends AppCompatActivity {
         SELECTED_FILE.id = getIntent().getExtras().getInt("ticketId");
         ticket = Ticket.formJsonString(getIntent().getExtras().getString("ticket"));
 
-        SELECTED_FILE.ticketFile = new File(FILE_PATH);
+        SELECTED_FILE.ticketFile = new File(FILE_PATH) ;
 
 
         View fab = findViewById(R.id.fab);

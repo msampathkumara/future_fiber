@@ -33,7 +33,7 @@ enum MenuItems { logout, dbReload, changeSection, cpanel }
 class _HomeState extends State<Home> {
   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseMessaging messaging = FirebaseMessaging.instance;
-  NsUser? nsUser ;
+    NsUser? nsUser;
 
   @override
   void initState() {
@@ -57,22 +57,20 @@ class _HomeState extends State<Home> {
     });
 
     App.getCurrentUser().then((value) {
-      nsUser = value;
-      setState(() {});
+      if (value != null) {
+        final user = FirebaseAuth.instance.currentUser;
+        user!.getIdToken().then((t) {
+          idToken = t;
+          nsUser = value;
+          setState(() {});
+        });
+      } else {
+        _logout();
+      }
     });
-
-    // SharedPreferences.getInstance().then((prefs) {
-    //   var u = prefs.getString("user");
-    //
-    //   if (u != null) {
-    //     setState(() {
-    //       nsUser = NsUser.fromJson(json.decode(u));
-    //     });
-    //   } else {
-    //     _logout();
-    //   }
-    // });
   }
+
+  var idToken;
 
   @override
   void dispose() {
@@ -106,10 +104,7 @@ class _HomeState extends State<Home> {
                 title: Padding(
                   padding: const EdgeInsets.only(top: 24.0),
                   child: ListTile(
-                    leading: CircleAvatar(
-                        radius: 24.0,
-                        backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"),
-                        backgroundColor: Colors.transparent),
+                    leading: CircleAvatar(radius: 24.0, backgroundImage: NsUser.getUserImage(nsUser ), backgroundColor: Colors.transparent),
                     title: Text(nsUser!.name, textScaleFactor: 1.2),
                     subtitle: Text("${nsUser!.section!.sectionTitle}@${nsUser!.section!.factory}"),
                     trailing: _currentUserOprionMenu(),
@@ -237,10 +232,12 @@ class _HomeState extends State<Home> {
 
   _currentUserOprionMenu() {
     return PopupMenuButton<MenuItems>(
-      onSelected: (MenuItems result) {
+      onSelected: (MenuItems result) async {
         if (result == MenuItems.logout) {
           _logout();
         } else if (result == MenuItems.dbReload) {
+          await DB.dropDatabase();
+          await DB.loadDB();
           DB.updateDatabase(context: context, showLoadingDialog: true, reset: true);
         } else if (result == MenuItems.changeSection) {
           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => SectionSelector(nsUser!)), (Route<dynamic> route) => false);

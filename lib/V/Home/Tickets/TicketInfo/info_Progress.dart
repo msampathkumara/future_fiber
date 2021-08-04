@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/ServerResponce/Progress.dart';
+import 'package:smartwind/V/Widgets/UserImage.dart';
 
 class info_Progress extends StatefulWidget {
   List<Progress> progressList;
@@ -26,25 +27,22 @@ class _info_ProgressState extends State<info_Progress> {
         itemCount: progressList.length,
         itemBuilder: (BuildContext context, int index) {
           Progress progress = progressList[index];
-          print(progress.operation);
+
           return Container(
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: progress.status == 1 ? Colors.green : Colors.grey[100]),
             child: ListTile(
               title: Row(
                 children: [
-                  Expanded(
-                      flex: 3, child: Text(progress.operation ?? "", style: TextStyle(color: progress.status == 1 ? Colors.white : Colors.black))),
+                  Expanded(flex: 3, child: Text(progress.operation ?? "", style: TextStyle(color: progress.status == 1 ? Colors.white : Colors.black))),
+                  Expanded(flex: 3, child: Container(child: Chip(label: Text((progress.section!.sectionTitle) + " @ " + progress.section!.factory)))),
                   Expanded(
                       flex: 3,
-                      child: Container(child: Chip(label: Text((progress.section!.sectionTitle  ) + " @ " + progress.section!.factory)))),
-                  Expanded(
-                      flex: 3, child: Text(progress.finishedOn ?? "", style: TextStyle(color: progress.status == 1 ? Colors.white : Colors.black))),
+                      child: Text((progress.finishedOn != "0" ? progress.finishedOn : "") ?? "", style: TextStyle(color: progress.status == 1 ? Colors.white : Colors.black))),
                 ],
               ),
-              trailing: CircleAvatar(
-                  radius: 24.0,
-                  backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"),
-                  backgroundColor: Colors.transparent),
+              // trailing:
+              //     progress.finishedBy != null ? CircleAvatar(radius: 24.0, backgroundImage: NsUser.getUserImage(progress.user), backgroundColor: Colors.transparent) : Text(""),
+              trailing: progress.finishedBy != null ? UserImage(backgroundColor: Colors.transparent,radius: 24.0,nsUserId: progress.finishedBy) : Text(""),
             ),
           );
         },

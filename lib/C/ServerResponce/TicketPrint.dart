@@ -10,6 +10,8 @@ class TicketPrint {
 
   String? action;
 
+  int? doneBy;
+
   TicketPrint();
 
   factory TicketPrint.fromJson(Map<String, dynamic> json) => _$TicketPrintFromJson(json);

@@ -21,6 +21,12 @@ class DB {
     return db;
   }
 
+  static Future<void> dropDatabase() async {
+    Directory? directory = await getExternalStorageDirectory();
+    String path = (directory!.path + "/" + _dbName);
+    await deleteDatabase(path);
+  }
+
   static Future<Database> loadDB() async {
     Directory? directory = await getExternalStorageDirectory();
     String path = (directory!.path + "/" + _dbName);
@@ -45,8 +51,7 @@ class DB {
     }, onUpgrade: (db, oldVersion, newVersion) async {
       print('updating Database version $oldVersion to $newVersion');
       var curdDbVersion = await getCurrentDbVersion(db);
-      var upgradeScripts =
-          new Map.fromIterable(DbMigrator.migrations.keys.where((k) => k > curdDbVersion), key: (k) => k, value: (k) => DbMigrator.migrations[k]);
+      var upgradeScripts = new Map.fromIterable(DbMigrator.migrations.keys.where((k) => k > curdDbVersion), key: (k) => k, value: (k) => DbMigrator.migrations[k]);
 
       if (upgradeScripts.length == 0) return;
 
@@ -85,18 +90,26 @@ class DB {
     if (reset) {
       print('reset');
       await DB!.rawQuery("delete from tickets;");
+      await DB.rawQuery("delete from factorySections;");
+      await DB.rawQuery("delete from users;");
     }
     return getDB()
-        .then((value) => value!.rawQuery("select ifnull(max(uptime),0) uptime from tickets; ").then((value) {
+        .then((value) => value!
+                .rawQuery("select "
+                    "(select ifnull(max(uptime),0) uptime from tickets) tickets,"
+                    "(select ifnull(max(uptime),0) uptime from factorySections) factorySections,"
+                    "(select ifnull(max(uptime),0) uptime from users) users")
+                .then((value) {
               print("last update on == " + value.toString());
-              String uptime = value.length > 0 ? value[0]["uptime"].toString() : "0";
+              Map<Object, Object?> xx = value.length > 0 ? value[0] : {'tickets': '0', 'users': '0'};
+              print('xxxxxxxxxxxxxxxxxxxxxxxxxxx');
+              Map<String, String> uptime = xx.map((key, value) => MapEntry("$key", "$value"));
+              print(uptime.toString());
 
-              return OnlineDB.apiGet("tickets/getTickets", {"uptime": uptime}).then((Response response) async {
+              return OnlineDB.apiGet("data/getData", uptime).then((Response response) async {
                 Map res = (json.decode(response.body) as Map);
 
                 processData(res);
-
-                // print('deletedTickets = ' + deletedTickets.length.toString());
 
                 if (showLoadingDialog && context != null) {
                   loadingWidget.close(context);
@@ -116,6 +129,7 @@ class DB {
               });
             }))
         .onError((onError, st) {
+      print(onError);
       ErrorMessageView(errorMessage: onError.toString()).show(context);
     });
   }
@@ -139,6 +153,15 @@ class DB {
     if (res.containsKey("ticketProgressDetails")) {
       List ticketProgressDetails = (res["ticketProgressDetails"] ?? []);
       insertTicketProgressDetails(ticketProgressDetails);
+    }
+
+    if (res.containsKey("users")) {
+      List users = (res["users"] ?? []);
+      insertUsers(users);
+    }
+    if (res.containsKey("factorySections")) {
+      List factorySections = (res["factorySections"] ?? []);
+      insertFactorySections(factorySections);
     }
   }
 
@@ -176,5 +199,32 @@ class DB {
     flags.forEach((ticket) {
       batch.insert('flags', ticket, conflictAlgorithm: ConflictAlgorithm.replace);
     });
+  }
+
+  static Future<void> insertUsers(List<dynamic> users) async {
+    Batch batch = db!.batch();
+    users.forEach((user) {
+      insertUserSections(user["id"], user["sections"] ?? [], batch);
+      user.remove("sections");
+      print(user);
+      batch.insert('users', user, conflictAlgorithm: ConflictAlgorithm.replace);
+    });
+    print(await batch.commit(noResult: false));
+  }
+
+  static Future<void> insertFactorySections(List<dynamic> factorySections) async {
+    Batch batch = db!.batch();
+    factorySections.forEach((factorySection) {
+      batch.insert('factorySections', factorySection, conflictAlgorithm: ConflictAlgorithm.replace);
+    });
+    print(await batch.commit(noResult: false));
+  }
+
+  static Future<void> insertUserSections(userId, List<dynamic> userSections, Batch? batch) async {
+    batch = batch ?? db!.batch();
+    userSections.forEach((userSection) {
+      batch!.insert('userSections', {"userId": userId, "sectionId": userSection["id"]}, conflictAlgorithm: ConflictAlgorithm.replace);
+    });
+    print(await batch.commit(noResult: false));
   }
 }

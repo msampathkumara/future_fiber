@@ -38,30 +38,7 @@ class OnlineDB {
     return http.get(Uri.parse(Server.getServerApiPath('$url?$queryString')), headers: header);
   }
 
-  static getImage(String s) {
-    // final user = FirebaseAuth.instance.currentUser;
-    // final idToken =   user!.getIdToken();
-    return Image.network(s, headers: {"authorization": '$idToken'});
-  }
 
-  static getUserImage(String image, int size) {
-    final user = FirebaseAuth.instance.currentUser;
 
-    return FutureBuilder<String>(
-      future: user!.getIdToken(), // function where you call your api
-      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: Text('Please wait its loading...'));
-        } else {
-          if (snapshot.hasError)
-            return Center(child: Text('Error: ${snapshot.error}'));
-          else
-            idToken = snapshot.data;
-          print("**************************************************************************************************************");
-          print(image);
-          return Image.network(Server.getServerApiPath("users/getImage?img=" + image + "&size=$size"), headers: {"authorization": '$idToken'});
-        }
-      },
-    );
-  }
+
 }

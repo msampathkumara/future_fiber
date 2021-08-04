@@ -181,6 +181,7 @@ class Ticket {
         open(context);
       }
     } else {
+      print("File not exists or old ");
       _getFile(context).then((file) async {
         var data = await Navigator.push(
           context,

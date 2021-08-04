@@ -1,5 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:smartwind/C/DB/DB.dart';
+import 'package:smartwind/C/Server.dart';
+import 'package:smartwind/V/Widgets/UserImage.dart';
 
+import 'AppUser.dart';
 import 'Section.dart';
 
 part 'NsUser.g.dart';
@@ -36,7 +41,11 @@ class NsUser {
   @JsonKey(defaultValue: null, includeIfNull: true)
   Section? section;
 
-  NsUser();
+  NsUser() {
+    DB.getDB().then((value) => value!.rawQuery(" select * from userSections us left join factorySections fs on fs.id=us.sectionId where userid='$id'  ").then((s) {
+          sections = List<Section>.from(s.map((model) => Section.fromJson(model)));
+        }));
+  }
 
   factory NsUser.fromJson(Map<String, dynamic> json) => _$NsUserFromJson(json);
 
@@ -96,5 +105,37 @@ class NsUser {
     if (!have) {
       sections.add(selectedSection);
     }
+  }
+
+  getSections() {
+    return sections;
+  }
+
+  static getDefaultImage() {
+    return AssetImage('assets/images/user.png');
+  }
+
+  static getUserImage(NsUser? nsUser) {
+    return nsUser == null
+        ? getDefaultImage()
+        : NetworkImage(Server.getServerApiPath("users/getImage?img=" + nsUser.img + "&size=500"), headers: {"authorization": '${AppUser.getIdToken()}'});
+  }
+
+  static getUserImageById(int? nsUserId) {
+    return UserImage(nsUserId: nsUserId);
+  }
+
+  static Future<NsUser?> fromId(int? id) {
+    if (id == null) {
+      return Future.value(null);
+    }
+
+    return DB.getDB().then((value) => value!.rawQuery(" select * from users  where id=$id  ").then((s) {
+          if (s.length > 0) {
+            return NsUser.fromJson(s[0]);
+          } else {
+            return null;
+          }
+        }));
   }
 }

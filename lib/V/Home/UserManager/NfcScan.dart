@@ -26,7 +26,7 @@ class NfcScan extends StatefulWidget {
   }
 }
 
-class _NfcScanState extends State<NfcScan> with TickerProviderStateMixin {
+class _NfcScanState extends State<NfcScan> {
   @override
   void initState() {
     super.initState();
@@ -39,17 +39,22 @@ class _NfcScanState extends State<NfcScan> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+
+    return Container();
+
     // TODO: implement build
-    return Scaffold(
-      body: Center(
-          child: Wrap(
-        alignment: WrapAlignment.center,
-        direction: Axis.vertical,crossAxisAlignment: WrapCrossAlignment.center,
-        children: [
-          Icon(Icons.badge_outlined, size: 255, color: Colors.grey),
-          Text("Scan ID Card", style: TextStyle(fontSize: 48), textAlign: TextAlign.center)
-        ],
-      )),
-    );
+    // return Scaffold(
+    //   body: Center(
+    //       child: Wrap(
+    //     alignment: WrapAlignment.center,
+    //     direction: Axis.vertical,
+    //     crossAxisAlignment: WrapCrossAlignment.center,
+    //     children: [
+    //       Icon(Icons.badge_outlined, size: 255, color: Colors.grey),
+    //       Text("Scan ID Card",
+    //           style: TextStyle(fontSize: 48), textAlign: TextAlign.center)
+    //     ],
+    //   )),
+    // );
   }
 }
