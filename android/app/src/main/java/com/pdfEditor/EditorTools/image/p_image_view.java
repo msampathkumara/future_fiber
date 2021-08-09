@@ -118,7 +118,8 @@ public class p_image_view extends RelativeLayout {
 
 //        float dheight = (getHeight() - pdfView.pdfFile.getMaxPageHeight()) / 2;
 
-        float sp = (pdfView.pdfFile.getPageSpacing(pdfView.getCurrentPage(), zoom) / 2)  ;
+//        float sp = (pdfView.pdfFile.getPageSpacing(pdfView.getCurrentPage(), zoom) / 2)  ;
+        float sp = ((((pdfView.pdfFile.getPageSpacing(pdfView.getCurrentPage(), zoom) / 2)/zoom) * (2*(pdfView.getCurrentPage()+1)-1 ))  );
 
         float dheight = (((getHeight() - pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight())) / 2);
         final xImage xImage = new xImage(b, translateX, translateY - dheight , (TEXT_X/zoom), (TEXT_Y/zoom) ,

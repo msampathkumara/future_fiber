@@ -168,7 +168,7 @@ public class TextEditor extends RelativeLayout {
 
         pdfEdit.setText(text);
         pdfEdit.setEditsPaint(editsPaint);
-        float sp = (pdfView.pdfFile.getPageSpacing(pdfView.getCurrentPage(), zoom) / 2)  ;
+        float sp = ((((pdfView.pdfFile.getPageSpacing(pdfView.getCurrentPage(), zoom) / 2)/zoom) * (2*(pdfView.getCurrentPage()+1)-1 ))  );
         pdfEdit.setPositionX((translateX + ((TEXT_X) / zoom)) / (pdfView.pdfFile.getMaxPageWidth()));
         pdfEdit.setPositionY((translateY + ((TEXT_Y) / zoom)-sp) / (pdfView.pdfFile.getMaxPageHeight()));
         pdfEdit.setTextBold(bold);
