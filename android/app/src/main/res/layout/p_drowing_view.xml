@@ -44,8 +44,8 @@
                         android:id="@+id/color"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="15dp"
                         android:layout_weight="1"
                         android:background="@drawable/transparent"
 
@@ -53,50 +53,56 @@
                         android:src="@drawable/colors"
                         android:text="Color"
                         android:textAllCaps="false"
-                        android:textSize="10sp" />
+                        android:textSize="10sp"
+                        android:contentDescription="TODO" />
 
 
                     <ImageButton
                         android:id="@+id/b_color_red"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginEnd="15dp"
                         android:background="@drawable/color_ball"
                         android:backgroundTint="#E91E63"
 
-                        android:src="@drawable/ring" />
+                        android:src="@drawable/ring"
+                        android:contentDescription="TODO" />
 
                     <ImageButton
                         android:id="@+id/b_color_blue"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginEnd="15dp"
                         android:background="@drawable/color_ball"
-                        android:backgroundTint="#03A9F4" />
+                        android:backgroundTint="#03A9F4"
+                        android:contentDescription="TODO" />
 
                     <ImageButton
                         android:id="@+id/b_color_orange"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginEnd="15dp"
                         android:background="@drawable/color_ball"
-                        android:backgroundTint="#FF5722" />
+                        android:backgroundTint="#FF5722"
+                        android:contentDescription="TODO" />
 
                     <ImageButton
                         android:id="@+id/b_color_green"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginEnd="15dp"
                         android:background="@drawable/color_ball"
-                        android:backgroundTint="#4CAF50" />
+                        android:backgroundTint="#4CAF50"
+                        android:contentDescription="TODO" />
 
                     <ImageButton
                         android:id="@+id/b_color_yellow"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginEnd="15dp"
                         android:background="@drawable/color_ball"
-                        android:backgroundTint="#FFC107" />
+                        android:backgroundTint="#FFC107"
+                        android:contentDescription="TODO" />
                 </LinearLayout>
 
                 <View

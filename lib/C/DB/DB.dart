@@ -108,7 +108,8 @@ class DB {
 
               return OnlineDB.apiGet("data/getData", uptime).then((Response response) async {
                 Map res = (json.decode(response.body) as Map);
-
+                print("----------------------------------------------------------------");
+                print(res);
                 processData(res);
 
                 if (showLoadingDialog && context != null) {

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/C/ServerResponce/Progress.dart';
@@ -93,10 +94,10 @@ class _TicketInfoState extends State<TicketInfo> {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                _getBottomNavigationBarItem(Icons.data_usage, ("Progress"), 0),
-                _getBottomNavigationBarItem(Icons.flag, ("Flags"), 1),
-                _getBottomNavigationBarItem(Icons.print, ("Printing"), 2),
-                _getBottomNavigationBarItem(Icons.history, ("History"), 3),
+                _getBottomNavigationBarItem(Icons.tour_rounded, ("Flags"), 0),
+                _getBottomNavigationBarItem(Icons.data_usage_rounded, ("Progress"), 1),
+                _getBottomNavigationBarItem(Icons.print_rounded, ("Printing"), 2),
+                _getBottomNavigationBarItem(Icons.history_rounded, ("History"), 3),
               ],
             ),
           )),
@@ -113,7 +114,10 @@ class _TicketInfoState extends State<TicketInfo> {
   }
 
   _appBar() {
-    double height = MediaQuery.of(context).size.height;
+    double height = MediaQuery
+        .of(context)
+        .size
+        .height;
     var ts = TextStyle(color: Colors.white, fontSize: 24);
     var smallText = TextStyle(fontSize: 16);
     return AppBar(
@@ -149,6 +153,55 @@ class _TicketInfoState extends State<TicketInfo> {
                         "update on : " + (_ticket.getUpdateDateTime()),
                         style: ts.merge(smallText),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Container(
+                          child: Wrap(
+                            children: [
+                              if (_ticket.inPrint == 1)
+                                IconButton(
+                                  icon: CircleAvatar(child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white),
+                                  onPressed: () {},
+                                ),
+                              if (_ticket.isHold == 1)
+                                IconButton(
+                                  icon: CircleAvatar(child: Icon(Icons.pan_tool_rounded, color: Colors.black), backgroundColor: Colors.white),
+                                  onPressed: () {},
+                                ),
+                              if (_ticket.isGr == 1)
+                                IconButton(
+                                  icon: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))),
+                                  onPressed: () {},
+                                ),
+                              if (_ticket.isSk == 1)
+                                IconButton(
+                                  icon: CircleAvatar(backgroundColor: Colors.pink, child: Center(child: Text("SK", style: TextStyle(color: Colors.white)))),
+                                  onPressed: () {},
+                                ),
+                              if (_ticket.isError == 1)
+                                IconButton(
+                                  icon: CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white),
+                                  onPressed: () {},
+                                ),
+                              if (_ticket.isSort == 1)
+                                IconButton(
+                                  icon: CircleAvatar(child: Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white),
+                                  onPressed: () {},
+                                ),
+                              if (_ticket.isRush == 1)
+                                IconButton(
+                                  icon: CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white),
+                                  onPressed: () {},
+                                ),
+                              if (_ticket.isRed == 1)
+                                IconButton(
+                                  icon: CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white),
+                                  onPressed: () {},
+                                )
+                            ],
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -181,10 +234,9 @@ class _TicketInfoState extends State<TicketInfo> {
   _body(int index) {
     switch (index) {
       case 0:
-        return info_Progress(progressList);
-
-      case 1:
         return info_Flags(flags, flagsHistory);
+      case 1:
+        return info_Progress(progressList);
       case 2:
         return info_Printing(printList);
       case 3:
@@ -201,7 +253,8 @@ class _TicketInfoState extends State<TicketInfo> {
   void getData(Ticket _ticket) {
     print('requesting data---------------');
     OnlineDB.apiGet(("tickets/info/getTicketInfo"), {'ticket': _ticket.id.toString()}).then((value) {
-      print(' data recived---------------');  print((value.body));
+      print(' data recived---------------');
+      print((value.body));
       setState(() {
         ServerResponceMap res = ServerResponceMap.fromJson(json.decode(value.body));
         progressList = res.progressList;

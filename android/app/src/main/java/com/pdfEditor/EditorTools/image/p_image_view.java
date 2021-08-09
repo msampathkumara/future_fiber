@@ -24,7 +24,7 @@ import com.sampathkumara.northsails.smartwind.R;
 public class p_image_view extends RelativeLayout {
 
 
-    @NonNull
+
     public static image_container shapeC;
     private static float Yposition;
     private static Bitmap mBitmap;
@@ -33,10 +33,9 @@ public class p_image_view extends RelativeLayout {
     private final Editor editor;
     private final Rect rectf = new Rect();
     private final PDFView pdfView;
-    @NonNull
-    private final String TAG = "TEXT EDITOR";
+
     RelativeLayout pane;
-    private View window;
+
     private int TEXT_X;
     private int TEXT_Y;
     private int deltaX_ = 0;
@@ -94,9 +93,7 @@ public class p_image_view extends RelativeLayout {
             @Override
             public void onClick(View view) {
                 done.callOnClick();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    editor.browsImages(context);
-                }
+                editor.browsImages(context);
 
             }
         });
@@ -120,8 +117,11 @@ public class p_image_view extends RelativeLayout {
 //        mCanvas.drawBitmap(b, (TEXT_X) / zoom, (TEXT_Y) / zoom, null);
 
 //        float dheight = (getHeight() - pdfView.pdfFile.getMaxPageHeight()) / 2;
+
+        float sp = (pdfView.pdfFile.getPageSpacing(pdfView.getCurrentPage(), zoom) / 2)  ;
+
         float dheight = (((getHeight() - pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight())) / 2);
-        final xImage xImage = new xImage(b, translateX, translateY - dheight, (TEXT_X), (TEXT_Y),
+        final xImage xImage = new xImage(b, translateX, translateY - dheight , (TEXT_X/zoom), (TEXT_Y/zoom) ,
                 pageNo, pdfView.pdfFile.getMaxPageWidth(), pdfView.pdfFile.getMaxPageHeight(), zoom);
         editor.editsList.add(xImage);
 //        mCanvas.restore();
@@ -135,7 +135,7 @@ public class p_image_view extends RelativeLayout {
         pdfEdit.setRect_height((shapeC.getHeight() / zoom) / pdfView.pdfFile.getMaxPageHeight());
 
         pdfEdit.setPositionX((translateX + (TEXT_X / zoom)) / pdfView.pdfFile.getMaxPageWidth());
-        pdfEdit.setPositionY((translateY + (TEXT_Y / zoom)) / pdfView.pdfFile.getMaxPageHeight());
+        pdfEdit.setPositionY((translateY + (TEXT_Y / zoom)-sp) / pdfView.pdfFile.getMaxPageHeight());
         editor.getPdfEditsList().addEdit(pageNo, xImage.getId(), pdfEdit);
 
         editor.addImage(xImage.getId(), b1);
@@ -194,7 +194,7 @@ public class p_image_view extends RelativeLayout {
 //            }
 //        }
 //    }
-
+PAGE page;
     public void setPage(@NonNull PAGE page) {
 
         System.out.println(page.id + "____" + page.position);
@@ -202,6 +202,7 @@ public class p_image_view extends RelativeLayout {
         mBitmap = page.getBitmap();
         mCanvas = new Canvas(mBitmap);
         pageNo = page.id;
+      this.  page=page;
 //        reDraw();
 //        invalidate();
     }
@@ -230,17 +231,18 @@ public class p_image_view extends RelativeLayout {
 //                    float y = pdfView.pdfFile.getMaxPageHeight() / kk.getPageHeight();
 
         Matrix scaleMatrix = new Matrix();
-        scaleMatrix.setScale(x, y, 0, 0);
-        scaleMatrix.postTranslate(kk.getCanvasX() * x, kk.getCanvasY() * y);
+        scaleMatrix.setScale(x / pdfView.getZoom(), y / pdfView.getZoom(), 0, 0);
+        scaleMatrix.postTranslate(kk.getCanvasX()    , kk.getCanvasY()    );
 
         float xp = (kk.translateX() / kk.getPageWidth()) * pdfView.pdfFile.getMaxPageWidth();
         float yp = (kk.translateY() / kk.getPageHeight()) * pdfView.pdfFile.getMaxPageHeight();
 
-        float xx = (((xp) * pdfView.getZoom()) + (pdfView.getCurrentXOffset()));
-        float yy = (((yp) * pdfView.getZoom()) + pdfView.getCurrentYOffset() + (Yposition * pdfView.getZoom()));
+//        float xx = (((xp) * pdfView.getZoom()) + (pdfView.getCurrentXOffset()*0));
+//        float yy = (((yp) * pdfView.getZoom()) + (pdfView.getCurrentYOffset()*0) + (Yposition * pdfView.getZoom()));
 
+        mCanvas.translate(xp   , (yp-Yposition+(page.dy*pdfView.getCurrentPage()))   );
 
-        mCanvas.translate(xx, yy);
+//        mCanvas.translate(xx, yy);
 
 //                    mCanvas.translate(k.translateX() * x, k.translateY() * y);
 

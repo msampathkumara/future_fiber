@@ -40,7 +40,6 @@ import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -76,13 +75,21 @@ public class MainEditorActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
         setContentView(R.layout.activity_main_editor);
 
-        SELECTED_FILE = Ticket.formJsonString(getIntent().getExtras().getString("ticket"));
-        FILE_PATH = getIntent().getExtras().getString("path");
-        SELECTED_FILE.id = getIntent().getExtras().getInt("ticketId");
-        ticket = Ticket.formJsonString(getIntent().getExtras().getString("ticket"));
-
-        SELECTED_FILE.ticketFile = new File(FILE_PATH) ;
-
+        if (getIntent().getExtras() != null) {
+            SELECTED_FILE = Ticket.formJsonString(getIntent().getExtras().getString("ticket"));
+            FILE_PATH = getIntent().getExtras().getString("path");
+            System.out.println("--------------------------------------------------------------------------------------------------------");
+            System.out.println(getIntent().getExtras().getString("ticket"));
+            SELECTED_FILE.id = getIntent().getExtras().getInt("ticketId");
+            ticket = Ticket.formJsonString(getIntent().getExtras().getString("ticket"));
+            SELECTED_FILE.ticketFile = new File(FILE_PATH);
+        } else {
+            SELECTED_FILE = Ticket.formJsonString("{oe: cat-001, finished: 0, uptime: 1628192673367, file: 1, sheet: 0, dir: 20218, id: 40913, isRed: 0, isRush: 1, isSk: 0, inPrint: 0, isGr: 0, isError: 0, canOpen: 1, isSort: 0, isHold: 0, fileVersion: 1628192673126, progress: 0, completed: 0, nowAt: 0, crossPro: 0}");
+            FILE_PATH = "/storage/emulated/0/Android/data/com.sampathkumara.northsails.smartwind/files/40913.pdf";
+            SELECTED_FILE.id = 40913;
+            ticket = Ticket.formJsonString("{oe: cat-001, finished: 0, uptime: 1628192673367, file: 1, sheet: 0, dir: 20218, id: 40913, isRed: 0, isRush: 1, isSk: 0, inPrint: 0, isGr: 0, isError: 0, canOpen: 1, isSort: 0, isHold: 0, fileVersion: 1628192673126, progress: 0, completed: 0, nowAt: 0, crossPro: 0}");
+            SELECTED_FILE.ticketFile = new File(FILE_PATH);
+        }
 
         View fab = findViewById(R.id.fab);
 //
@@ -123,7 +130,7 @@ public class MainEditorActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putParcelable("x", new data(pdfEditor.editsList, pdfEditor.getImagesList(), pdfEditor.getPdfEditsList(), pdfEditor.getToolVisibility()));
+        savedInstanceState.putParcelable("x", new data(pdfEditor.editsList, pdfEditor.getImagesList(), pdfEditor.getPdfEditsList(), 1));
         System.out.println("_____________________________________________________onSaveInstanceState");
         savedInstanceState.putString("xx", "Welcome back to Android");
     }
@@ -229,7 +236,7 @@ public class MainEditorActivity extends AppCompatActivity {
             pdfEditor.editsList = data.getEditsList();
             pdfEditor.setImagesList(data.getImagesList());
             pdfEditor.setPdfEditsList(data.getPdfEditsList());
-            pdfEditor.setToolVisibility(data.getToolVisibility());
+
             System.out.println(pdfEditor.editsList.size() + " ---------------------" + data.ssss);
 //            fab.setVisibility(data.getToolVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
         }
@@ -289,43 +296,7 @@ public class MainEditorActivity extends AppCompatActivity {
 //        super.onResume();
 //    }
 
-    private void finishJob() {
-        System.out.println("____________________________________ SAVING ___________________________");
 
-        if (pdfEditor.getToolVisibility() == View.VISIBLE) {
-            if (pdfEditor.isEdited()) {
-                pdfEditor.saveEdits();
-                uploadPdfEdits(new RunAfterUpload() {
-                    @Override
-                    public void run(File sourceFile) {
-//                        Intent i = new Intent(MainEditorActivity.this, qaCheckList.class);
-//                        i.putExtra(FileBrowser.FILE, SELECTED_FILE);
-//                        startActivityForResult(i, rfResult);
-//                        finish();
-                    }
-
-                    @Override
-                    public void error(Exception exception) {
-
-                    }
-                }, this);
-
-
-            } else {
-//                Intent i = new Intent(MainEditorActivity.this, qaCheckList.class);
-//                i.putExtra(FileBrowser.FILE, SELECTED_FILE);
-//                startActivityForResult(i, rfResult);
-//                finish();
-            }
-
-
-        } else {
-//            Intent i = new Intent(MainEditorActivity.this, qaCheckList.class);
-//            i.putExtra(FileBrowser.FILE, SELECTED_FILE);
-//            startActivityForResult(i, rfResult);
-//            finish();
-        }
-    }
 
     private void startNewActivity(@NonNull String packageName) {
         Intent intent = getPackageManager().getLaunchIntentForPackage(packageName);
@@ -400,7 +371,9 @@ public class MainEditorActivity extends AppCompatActivity {
 
                 System.out.println("____________SVG SIZE_________________" + (sizeInBytes / 1024));
                 HashMap<String, ArrayList<File>> images = pdfEditor.getImages();
-
+                if (true) {
+                    return;
+                }
                 String requestURL = Server.getServerApiPath("tickets/uploadEdits");
                 uploadMultyParts(context, requestURL, images, vals, new RunAfterMultipartUpload() {
                     @Override
@@ -619,8 +592,6 @@ public class MainEditorActivity extends AppCompatActivity {
                                         System.out.println("drowing  " + (System.currentTimeMillis() - x));
                                         contentStream.close();
                                         System.out.println("close " + (System.currentTimeMillis() - x));
-                                    } catch (FileNotFoundException e) {
-                                        e.printStackTrace();
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }

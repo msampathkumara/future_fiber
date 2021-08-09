@@ -4,21 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".pdfEditor.MainEditorActivity">
-
-    <!--    <com.google.android.material.appbar.AppBarLayout-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:theme="@style/homeTheme.AppBarOverlay">-->
-
-    <!--        <androidx.appcompat.widget.Toolbar-->
-    <!--            android:id="@+id/toolbar"-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="match_parent"-->
-    <!--            android:background="#0010304E"-->
-    <!--            app:popupTheme="@style/homeTheme.PopupOverlay" />-->
-
-    <!--    </com.google.android.material.appbar.AppBarLayout>-->
+    tools:context="com.pdfEditor.MainEditorActivity">
 
     <include layout="@layout/content_main_editor" />
 
@@ -31,6 +17,7 @@
         android:visibility="gone"
         app:backgroundTint="#10304E"
         app:srcCompat="@drawable/editor_expander"
-        tools:visibility="gone" />
+        tools:visibility="gone"
+        android:contentDescription=" " />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

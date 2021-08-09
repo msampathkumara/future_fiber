@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_share/flutter_share.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:path_provider/path_provider.dart';
@@ -15,7 +16,7 @@ import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/TicketFlag.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/Loading.dart';
-import 'package:smartwind/V/Widgets/PDFScreen.dart';
+import 'package:smartwind/V/Widgets/PdfEditor.dart';
 
 part 'Ticket.g.dart';
 
@@ -74,7 +75,7 @@ class Ticket {
   @JsonKey(ignore: true)
   File? ticketFile;
 
-  Ticket() {}
+  Ticket();
 
   String getUpdateDateTime() {
     var date = DateTime.fromMicrosecondsSinceEpoch(uptime * 1000);
@@ -128,15 +129,15 @@ class Ticket {
       });
     } on DioError catch (e) {
       if (e.response != null) {
-        print('"******************************************** responce');
+        print('"******************************************** response');
         if (e.response!.statusCode == 404) {
           loadingWidget.close(context);
           var errorView = ErrorMessageView(
             errorMessage: "File Not Found",
             icon: Icons.sd_card_alert,
           );
-          errorView.show(context);
-          throw ("file not found");
+          await errorView.show(context);
+          return Future.value(null);
         }
 
         print(e.response!.statusCode);
@@ -155,38 +156,34 @@ class Ticket {
 
   Future<File?> getFile(context, {onReceiveProgress}) async {
     File file = await getLocalFile();
-    var i = await getLocalFileVersion();
+    // var i = await getLocalFileVersion();
     var isNew = await isFileNew();
     if (isNew && file.existsSync()) {
       return ticketFile;
     } else {
-      await _getFile(context);
+      ticketFile = await _getFile(context);
     }
     return ticketFile;
   }
 
   Future<void> open(context, {onReceiveProgress}) async {
     File file = await getLocalFile();
-    var i = await getLocalFileVersion();
+    // var i = await getLocalFileVersion();
     var isNew = await isFileNew();
     print(isNew);
 
     if (isNew && file.existsSync()) {
       print("File exists ");
-      var data = await Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => PDFScreen(this)),
-      );
+      // var data = await Navigator.push(  context,   MaterialPageRoute(builder: (context) => PDFScreen(this))   );
+      var data = await Navigator.push(context, MaterialPageRoute(builder: (context) => PdfEditor(this)));
       if (data != null && data) {
         open(context);
       }
     } else {
       print("File not exists or old ");
       _getFile(context).then((file) async {
-        var data = await Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => PDFScreen(this)),
-        );
+        // var data = await Navigator.push(  context, MaterialPageRoute(builder: (context) => PDFScreen(this)) );
+        var data = await Navigator.push(context, MaterialPageRoute(builder: (context) => PdfEditor(this)));
         if (data != null && data) {
           open(context);
         }
@@ -206,8 +203,13 @@ class Ticket {
     return file;
   }
 
-  Future OpenEditor() async {
-    return await platform.invokeMethod('editPdf', {'path': ticketFile!.path, 'fileID': id, 'ticket': toJson().toString()});
+  Future openEditor() async {
+    var t = Ticket.fromJson(toJson()).toJson();
+    t.keys.where((k) => (t[k] ?? "").toString().isEmpty).toList().forEach(t.remove);
+    print("____________________________________________________________________________________________________________________________*****");
+    print(t);
+
+    return await platform.invokeMethod('editPdf', {'path': ticketFile!.path, 'fileID': id, 'ticket': t.toString()});
   }
 
   static const platform = const MethodChannel('editPdf');
@@ -234,9 +236,9 @@ class Ticket {
         }));
   }
 
-  Future<List> getFlagList(String FlagType) async {
+  Future<List> getFlagList(String flagType) async {
     print("tickets/flags/getList");
-    return OnlineDB.apiGet("tickets/flags/getList", {"ticket": id.toString(), "type": FlagType}).then((response) {
+    return OnlineDB.apiGet("tickets/flags/getList", {"ticket": id.toString(), "type": flagType}).then((response) {
       print(response.body);
       print("----------------------------------------");
       Map res = (json.decode(response.body) as Map);
@@ -250,5 +252,20 @@ class Ticket {
     }).catchError((onError) {
       print(onError);
     });
+  }
+
+  sharePdf(context) async {
+    File? file = await getFile(context);
+    if (file != null) {
+      file = file.copySync("${file.parent.path}/${(mo ?? oe ?? id)}.pdf");
+      await FlutterShare.shareFile(
+        title: mo ?? oe ?? "$id.pdf",
+        text: "share ticket file",
+        filePath: file.path,
+      );
+      file.delete();
+    } else {
+      ErrorMessageView(errorMessage: "File Not Found", icon: Icons.insert_drive_file_outlined).show(context);
+    }
   }
 }

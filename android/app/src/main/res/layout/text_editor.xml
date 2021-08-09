@@ -18,12 +18,12 @@
             android:id="@+id/editText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:autoText="false"
             android:background="#00ffffff"
             android:baselineAligned="false"
             android:ems="10"
             android:inputType="textMultiLine"
-            android:paddingTop="10dp" />
+            android:paddingTop="10dp"
+            android:importantForAutofill="no" />
     </LinearLayout>
 
 </RelativeLayout>

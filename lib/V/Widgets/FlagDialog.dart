@@ -45,7 +45,7 @@ class FlagDialog {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(padding: const EdgeInsets.all(8.0), child: Text(tf.comment, textScaleFactor: 1.2, style: TextStyle(color: Colors.black))),
-                                  Align(alignment: Alignment.bottomRight, child: Text(tf.dnt))
+                                  Align(alignment: Alignment.bottomRight, child: Text(tf.getDateTime()))
                                 ],
                               ),
                               leading: CircleAvatar(radius: 24.0, backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"), backgroundColor: Colors.transparent),

@@ -33,7 +33,8 @@
                 android:layout_width="128dp"
                 android:layout_height="128dp"
                 android:layout_gravity="center"
-                app:srcCompat="@drawable/ic_baseline_sentiment_very_dissatisfied_24" />
+                app:srcCompat="@drawable/ic_baseline_sentiment_very_dissatisfied_24"
+                android:contentDescription="TODO" />
         </FrameLayout>
 
         <TextView

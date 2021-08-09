@@ -16,8 +16,8 @@ class ErrorMessageView extends StatefulWidget {
     return state;
   }
 
-  void show(context) {
-    Navigator.push(
+    show(context) async{
+  await  Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => this),
     );

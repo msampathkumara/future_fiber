@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/ServerResponce/TicketHistory.dart';
-import 'package:smartwind/M/TicketFlag.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
 
 class info_History extends StatefulWidget {
@@ -38,7 +37,7 @@ class _info_HistoryState extends State<info_History> {
               child: ListTile(
                 title: Row(
                   children: [
-                    Expanded(flex: 3, child: Text(ticketHistory.action ?? "")),
+                    Expanded(flex: 3, child: Text((ticketHistory.action ?? "").toLowerCase().replaceUnderscore.capitalizeFirstofEach )),
                     Expanded(flex: 3, child: Text(ticketHistory.uptime ?? "", style: TextStyle())),
                   ],
                 ),
@@ -60,6 +59,14 @@ class _info_HistoryState extends State<info_History> {
       ),
     );
   }
+}
 
+extension CapExtension on String {
+  String get inCaps => '${this[0].toUpperCase()}${this.substring(1)}';
 
+  String get allInCaps => this.toUpperCase();
+
+  String get replaceUnderscore => this.replaceAll(RegExp('_'), ' ');
+
+  String get capitalizeFirstofEach => this.split(" ").map((str) => str.inCaps).join(" ");
 }

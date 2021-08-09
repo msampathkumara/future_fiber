@@ -2,14 +2,23 @@ package com.pdfEditor.uploadEdits;
 
 public class editPoint {
 
+
     float x;
     float y;
     boolean curve = false;
+    public float sp = 0;
 
     public editPoint(float x, float y, boolean curve) {
         this.x = x;
         this.y = y;
         this.curve = curve;
+    }
+
+    public editPoint(float x, float y, boolean curve, float sp) {
+        this.x = x;
+        this.y = y;
+        this.curve = curve;
+        this.sp = sp;
     }
 
     public boolean isCurve() {

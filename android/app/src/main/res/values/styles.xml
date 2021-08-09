@@ -55,12 +55,18 @@
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="actionOverflowMenuStyle">@style/popupOverflowMenu</item>
     </style>
 
     <style name="popup" parent="Widget.AppCompat.Toolbar">
         <item name="android:background">@color/red</item>
         <item name="popupTheme">@style/Theme.AppCompat.Light</item>
         <item name="theme">@style/Theme.AppCompat</item>
+
+    </style>
+
+    <style name="popupOverflowMenu" >
+        <item name="android:popupBackground">@drawable/xx</item>
     </style>
 
 </resources>

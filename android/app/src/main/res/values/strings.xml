@@ -3,4 +3,8 @@
     <!--    <string name="smart_upwind_version_code">Smart Upwind ${appVersionName}</string>-->
 
 
+    <string name="add_photo_gallery">Add Photo ( Gallery )</string>
+    <string name="add_photo_camera">Add Photo ( Camera )</string>
+    <string name="add_text">Add Text</string>
+    <string name="new_page">New Page</string>
 </resources>

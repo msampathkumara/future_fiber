@@ -61,39 +61,5 @@ class _info_PrintingState extends State<info_Printing> {
     );
   }
 
-  getHistory(List<TicketFlag> ticketFlags) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Container(
-        child: ListView.separated(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          padding: const EdgeInsets.all(8),
-          itemCount: ticketFlags.length,
-          itemBuilder: (BuildContext context, int index) {
-            TicketFlag ticketFlag = ticketFlags[index];
-            return Container(
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
-              child: ListTile(
-                title: Row(
-                  children: [
-                    Expanded(flex: 3, child: Text(ticketFlag.flaged == 1 ? "Flag added" : "Flag Removed")),
-                    Expanded(flex: 3, child: Text(ticketFlag.dnt, style: TextStyle())),
-                  ],
-                ),
-                trailing: CircleAvatar(radius: 24.0, backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"), backgroundColor: Colors.transparent),
-              ),
-            );
-          },
-          separatorBuilder: (BuildContext context, int index) {
-            return Divider(
-              height: 1,
-              endIndent: 0.5,
-              color: Colors.grey,
-            );
-          },
-        ),
-      ),
-    );
-  }
+
 }

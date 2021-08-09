@@ -36,9 +36,6 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _TabBarcontroller = TabController(length: tabs.length, vsync: this);
       _TabBarcontroller!.addListener(() {
-        // loadData().then((value) {
-        //   setState(() {});
-        // });
         print("Selected Index: " + _TabBarcontroller!.index.toString());
       });
       reloadData();
@@ -133,7 +130,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      currentFileList.length.toString(),
+                      "${currentFileList.length}",
                       textScaleFactor: 1.1,
                       style: TextStyle(color: Colors.white),
                     ),
@@ -209,10 +206,10 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                       child: ListView(
                         children: [
                           getListItem("Date", FontAwesomeIcons.calendarDay, "uptime"),
-                          getListItem("Name", FontAwesomeIcons.amazon, "name"),
-                          getListItem("Red Flag", FontAwesomeIcons.flag, "red"),
-                          getListItem("Hold", FontAwesomeIcons.handRock, "hold"),
-                          getListItem("Rush", FontAwesomeIcons.bolt, "rush"),
+                          getListItem("Name", FontAwesomeIcons.amazon, "mo"),
+                          getListItem("Red Flag", FontAwesomeIcons.flag, "isred"),
+                          getListItem("Hold", FontAwesomeIcons.handRock, "ishold"),
+                          getListItem("Rush", FontAwesomeIcons.bolt, "isrush"),
                           getListItem(
                               "SK",
                               CircleAvatar(
@@ -224,7 +221,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                                   ),
                                 ),
                               ),
-                              "sk"),
+                              "issk"),
                           getListItem(
                               "GR",
                               CircleAvatar(
@@ -236,7 +233,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                                   ),
                                 ),
                               ),
-                              "gr"),
+                              "isgr"),
                           getListItem("Short", FontAwesomeIcons.shoppingBasket, "sort"),
                           getListItem("Error Route", FontAwesomeIcons.exclamationTriangle, "errOut"),
                           getListItem("Print", FontAwesomeIcons.print, "inprint"),
@@ -271,12 +268,6 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                     controller: _TabBarcontroller,
                     indicatorWeight: 4.0,
                     indicatorColor: Colors.white,
-                    // onTap: (d) {
-                    //   setState(() {
-                    //     print("refresh ${_selectedTabIndex}");
-                    //     currentFileList = listsArray[_selectedTabIndex];
-                    //   });
-                    // },
                     isScrollable: true,
                     tabs: [
                       for (final tab in tabs) Tab(text: tab),
@@ -285,21 +276,21 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                 ),
                 body: _showAllTickets
                     ? TabBarView(controller: _TabBarcontroller, children: [
-                        GetTicketListByCategoty(AllFilesList),
-                        GetTicketListByCategoty(FinishedFilesList),
-                        GetTicketListByCategoty(CrossProductionFilesList),
-                        GetTicketListByCategoty(NylonFilesList),
-                        GetTicketListByCategoty(OEMFilesList),
-                        GetTicketListByCategoty(NoPoolFilesList),
+                        getTicketListByCategoty(AllFilesList),
+                        getTicketListByCategoty(FinishedFilesList),
+                        getTicketListByCategoty(CrossProductionFilesList),
+                        getTicketListByCategoty(NylonFilesList),
+                        getTicketListByCategoty(OEMFilesList),
+                        getTicketListByCategoty(NoPoolFilesList),
                       ])
                     : TabBarView(controller: _TabBarcontroller, children: [
-                        GetTicketListByCategoty(AllFilesList),
-                        GetTicketListByCategoty(FinishedFilesList),
-                        GetTicketListByCategoty(CrossProductionFilesList),
+                        getTicketListByCategoty(AllFilesList),
+                        getTicketListByCategoty(FinishedFilesList),
+                        getTicketListByCategoty(CrossProductionFilesList),
 
-                        // GetTicketListByCategoty(NylonFilesList),
-                        // GetTicketListByCategoty(OEMFilesList),
-                        // GetTicketListByCategoty(NoPoolFilesList),
+                        // getTicketListByCategoty(NylonFilesList),
+                        // getTicketListByCategoty(OEMFilesList),
+                        // getTicketListByCategoty(NoPoolFilesList),
                       ])),
           );
   }
@@ -312,7 +303,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
 
   // var indicator = new GlobalKey<RefreshIndicatorState>();
 
-  GetTicketListByCategoty(List<Map<String, dynamic>> FilesList) {
+  getTicketListByCategoty(List<Map<String, dynamic>> FilesList) {
     return Column(
       children: [
         Expanded(
@@ -382,58 +373,42 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                           children: [
                             if (ticket.inPrint == 1)
                               IconButton(
-                                icon: Icon(Icons.print_outlined, color: Colors.deepOrangeAccent),
+                                icon: CircleAvatar(child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white),
                                 onPressed: () {},
                               ),
                             if (ticket.isHold == 1)
                               IconButton(
-                                icon: Icon(FontAwesomeIcons.handRock, color: Colors.black),
+                                icon: CircleAvatar(child: Icon(Icons.pan_tool_rounded, color: Colors.black), backgroundColor: Colors.white),
                                 onPressed: () {},
                               ),
                             if (ticket.isGr == 1)
                               IconButton(
-                                icon: CircleAvatar(
-                                  backgroundColor: Colors.blue,
-                                  child: Center(
-                                    child: Text(
-                                      "GR",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ),
+                                icon: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))),
                                 onPressed: () {},
                               ),
                             if (ticket.isSk == 1)
                               IconButton(
-                                icon: CircleAvatar(
-                                  backgroundColor: Colors.pink,
-                                  child: Center(
-                                    child: Text(
-                                      "SK",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ),
+                                icon: CircleAvatar(backgroundColor: Colors.pink, child: Center(child: Text("SK", style: TextStyle(color: Colors.white)))),
                                 onPressed: () {},
                               ),
                             if (ticket.isError == 1)
                               IconButton(
-                                icon: Icon(FontAwesomeIcons.exclamationTriangle, color: Colors.red),
+                                icon: CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white),
                                 onPressed: () {},
                               ),
                             if (ticket.isSort == 1)
                               IconButton(
-                                icon: Icon(FontAwesomeIcons.shoppingBasket, color: Colors.green),
+                                icon: CircleAvatar(child: Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white),
                                 onPressed: () {},
                               ),
                             if (ticket.isRush == 1)
                               IconButton(
-                                icon: Icon(FontAwesomeIcons.bolt, color: Colors.orangeAccent),
+                                icon: CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white),
                                 onPressed: () {},
                               ),
                             if (ticket.isRed == 1)
                               IconButton(
-                                icon: Icon(FontAwesomeIcons.fontAwesomeFlag, color: Colors.red),
+                                icon: CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white),
                                 onPressed: () {},
                               ),
                             Padding(
@@ -482,7 +457,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
 
   Future<void> loadData() async {
     _selectedTabIndex = _TabBarcontroller!.index;
-    print('loadData');
+    print('loadData listSortBy $listSortBy');
 
     // String canOpen = _showAllTickets ? " " : " and canOpen=1  and openSections like '%#1#%' ";
 
@@ -496,36 +471,27 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
 
     print('current user $section');
 
-    AllFilesList = await database.rawQuery(
-        "SELECT * FROM tickets where  $searchQ   " + canOpen + " and openSections like '%|" + section.toString() + "|%'  order by $listSortBy DESC");
+    AllFilesList =
+        await database.rawQuery("SELECT * FROM tickets where  $searchQ   " + canOpen + " and openSections like '%|" + section.toString() + "|%'  order by $listSortBy DESC");
 
-    FinishedFilesList = await database
-        .rawQuery('SELECT * FROM tickets where  $searchQ   ' + canOpen + "   and openSections like '%|$section|f%' order by $listSortBy DESC");
+    FinishedFilesList = await database.rawQuery('SELECT * FROM tickets where  $searchQ   ' + canOpen + "   and openSections like '%|$section|f%' order by $listSortBy DESC");
 
-    CrossProductionFilesList = await database.rawQuery(
-        'SELECT * FROM tickets where  $searchQ   ' + canOpen + " and openSections like '%|$section|%' and crossPro=1 order by $listSortBy DESC");
+    CrossProductionFilesList =
+        await database.rawQuery('SELECT * FROM tickets where  $searchQ   ' + canOpen + " and openSections like '%|$section|%' and crossPro=1 order by $listSortBy DESC");
 
     if (_showAllTickets) {
-      AllFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + '   order by ${listSortBy} DESC');
+      AllFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + '   order by $listSortBy DESC');
 
-      UpwindFilesList =
-          await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Upwind\' order by ${listSortBy} DESC');
+      UpwindFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Upwind\' order by $listSortBy DESC');
 
-      ODFilesList =
-          await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OD\' order by ${listSortBy} DESC');
+      ODFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OD\' order by $listSortBy DESC');
 
-      NylonFilesList =
-          await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Nylon\' order by ${listSortBy} DESC');
+      NylonFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Nylon\' order by $listSortBy DESC');
 
-      OEMFilesList =
-          await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OEM\' order by ${listSortBy} DESC');
+      OEMFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OEM\' order by $listSortBy DESC');
 
-      NoPoolFilesList = await database
-          .rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production is null or production=""  order by ${listSortBy} DESC');
+      NoPoolFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production is null or production=""  order by $listSortBy DESC');
     }
-    AllFilesList.forEach((element) {
-      print(element);
-    });
 
     listsArray = [AllFilesList, UpwindFilesList, ODFilesList, NylonFilesList, OEMFilesList, NoPoolFilesList];
     currentFileList = listsArray[_selectedTabIndex];
@@ -538,90 +504,94 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
       context: context,
       builder: (BuildContext context) {
         return Container(
-          decoration:
-              BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
-          height: 550,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                ListTile(
-                  title: Text(ticket.mo ?? ticket.oe!),
-                  subtitle: Text(ticket.oe!),
-                ),
-                Divider(),
-                ListTile(
-                  title: Text(ticket.isRed == 1 ? "Remove Red Flag" : "Set Red Flag"),
-                  leading: Icon(Icons.flag),
-                  onTap: () async {
-                    Navigator.of(context).pop();
-                    bool resul = await FlagDialog.showRedFlagDialog(context1, ticket);
-                    ticket.isRed = resul ? 1 : 0;
-                  },
-                ),
-                ListTile(
+          decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
+          height: 650,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              ListTile(
+                title: Text(ticket.mo ?? ticket.oe!),
+                subtitle: Text(ticket.oe!),
+              ),
+              Divider(),
+              Expanded(
+                  child: Container(
+                child: SingleChildScrollView(
+                    child: Column(children: [
+                  ListTile(
+                    title: Text(ticket.isRed == 1 ? "Remove Red Flag" : "Set Red Flag"),
+                    leading: Icon(Icons.flag),
                     onTap: () async {
                       Navigator.of(context).pop();
-                      await FlagDialog.showGRDialog(context1, ticket);
+                      bool resul = await FlagDialog.showRedFlagDialog(context1, ticket);
+                      ticket.isRed = resul ? 1 : 0;
                     },
-                    title: Text(ticket.isGr == 1 ? "Remove GR" : "Set GR"),
-                    leading: SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))))),
-                ListTile(
-                    onTap: () async {
-                      Navigator.of(context).pop();
-                      await FlagDialog.showSKDialog(context1, ticket);
-                    },
-                    title: Text(ticket.isSk == 1 ? "Remove SK" : "Set SK"),
-                    leading: SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircleAvatar(backgroundColor: Colors.pink, child: Center(child: Text("SK", style: TextStyle(color: Colors.white)))))),
-                ListTile(
-                    title: Text(ticket.isRush == 1 ? "Remove Rush" : "Set Rush"),
-                    leading: Icon(Icons.offline_bolt_outlined, color: Colors.orangeAccent),
-                    onTap: () async {
-                      Navigator.of(context).pop();
-                      // await FlagDialog.showRushDialog(context1, ticket);
-                      var u = ticket.isRush == 1 ? "removeFlag" : "setFlag";
-                      OnlineDB.apiPost("tickets/flags/" + u, {"ticket": ticket.id.toString(), "comment": "", "type": "rush"})
-                          .then((http.Response response) async {
-                        Map res = (json.decode(response.body) as Map);
-                      });
-                    }),
-                ListTile(
-                    title: Text(ticket.inPrint == 1 ? "Done Printing" : "Send To Print"),
-                    leading: Icon(ticket.inPrint == 1 ? Icons.print_disabled_outlined : Icons.print_outlined, color: Colors.deepOrangeAccent),
-                    onTap: () async {
-                      Navigator.of(context).pop();
-                      await sendToPrint(ticket);
-                    }),
-                ListTile(
-                    title: Text("Finish"),
-                    leading: Icon(Icons.check_circle_outline_outlined, color: Colors.green),
-                    onTap: () async {
-                      await Navigator.push(context1, MaterialPageRoute(builder: (context) => FinishCheckList(ticket)));
-                      Navigator.of(context).pop();
-                    }),
-                ListTile(
-                    title: Text("Cross Production"),
-                    leading: Icon(Icons.merge_type_outlined, color: Colors.green),
-                    onTap: () async {
-                      await Navigator.push(context1, MaterialPageRoute(builder: (context) => CrossProduction(ticket)));
-                      Navigator.of(context).pop();
-                    }),
-                ListTile(
-                    title: Text("Delete"),
-                    leading: Icon(Icons.delete_forever, color: Colors.red),
-                    onTap: () async {
-                      Navigator.of(context).pop();
-                    }),
-                Spacer(),
-              ],
-            ),
+                  ),
+                  ListTile(
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                        await FlagDialog.showGRDialog(context1, ticket);
+                      },
+                      title: Text(ticket.isGr == 1 ? "Remove GR" : "Set GR"),
+                      leading: SizedBox(
+                          width: 24, height: 24, child: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))))),
+                  ListTile(
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                        await FlagDialog.showSKDialog(context1, ticket);
+                      },
+                      title: Text(ticket.isSk == 1 ? "Remove SK" : "Set SK"),
+                      leading: SizedBox(
+                          width: 24, height: 24, child: CircleAvatar(backgroundColor: Colors.pink, child: Center(child: Text("SK", style: TextStyle(color: Colors.white)))))),
+                  ListTile(
+                      title: Text(ticket.isRush == 1 ? "Remove Rush" : "Set Rush"),
+                      leading: Icon(Icons.offline_bolt_outlined, color: Colors.orangeAccent),
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                        // await FlagDialog.showRushDialog(context1, ticket);
+                        var u = ticket.isRush == 1 ? "removeFlag" : "setFlag";
+                        OnlineDB.apiPost("tickets/flags/" + u, {"ticket": ticket.id.toString(), "comment": "", "type": "rush"}).then((http.Response response) async {
+                          Map res = (json.decode(response.body) as Map);
+                        });
+                      }),
+                  ListTile(
+                      title: Text(ticket.inPrint == 1 ? "Cancel Printing" : "Send To Print"),
+                      leading: Icon(ticket.inPrint == 1 ? Icons.print_disabled_outlined : Icons.print_outlined, color: Colors.deepOrangeAccent),
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                        await sendToPrint(ticket);
+                      }),
+                  ListTile(
+                      title: Text("Finish"),
+                      leading: Icon(Icons.check_circle_outline_outlined, color: Colors.green),
+                      onTap: () async {
+                        await Navigator.push(context1, MaterialPageRoute(builder: (context) => FinishCheckList(ticket)));
+                        Navigator.of(context).pop();
+                      }),
+                  ListTile(
+                      title: Text("Cross Production"),
+                      leading: Icon(Icons.merge_type_outlined, color: Colors.green),
+                      onTap: () async {
+                        await Navigator.push(context1, MaterialPageRoute(builder: (context) => CrossProduction(ticket)));
+                        Navigator.of(context).pop();
+                      }),
+                  ListTile(
+                      title: Text("Send Ticket"),
+                      leading: Icon(Icons.send_outlined, color: Colors.lightBlue),
+                      onTap: () async {
+                        await ticket.sharePdf(context);
+                        Navigator.of(context).pop();
+                      }),
+                  ListTile(
+                      title: Text("Delete"),
+                      leading: Icon(Icons.delete_forever, color: Colors.red),
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                      }),
+                ])),
+              ))
+            ],
           ),
         );
       },
@@ -640,11 +610,19 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
 
   Future sendToPrint(Ticket ticket) async {
     if (ticket.inPrint == 0) {
-      await OnlineDB.apiPost("tickets/print/sendToPrint", {"ticket": ticket.id.toString()});
-      ticket.inPrint = 1;
+        OnlineDB.apiPost("tickets/print", {"ticket": ticket.id.toString(),"action":"sent"}).then((value) {
+          print('Send to print  ${value.body}');
+        ticket.inPrint = 1;
+        setState(() {
+
+        });
+        }).onError((error, stackTrace){
+          print(error);
+      });
+
       return 1;
     } else {
-      await OnlineDB.apiPost("tickets/print/removePrint", {"ticket": ticket.id.toString()});
+      await OnlineDB.apiPost("tickets/print", {"ticket": ticket.id.toString(),"action":"cancel"});
       ticket.inPrint = 0;
       return 0;
     }

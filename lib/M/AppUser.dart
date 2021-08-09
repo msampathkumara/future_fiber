@@ -6,9 +6,9 @@ class AppUser extends NsUser {
 
   AppUser() {
     print('AppUser');
-    FirebaseAuth.instance.authStateChanges().listen((firebaseUser) {
+    FirebaseAuth.instance.idTokenChanges().listen((firebaseUser) {
       firebaseUser!.getIdToken().then((value) => _idToken = value);
-      print('appuser firebase authStateChanges');
+      print('appUser firebase authStateChanges');
     });
   }
 

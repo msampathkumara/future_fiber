@@ -160,7 +160,7 @@ public class TextEditor extends RelativeLayout {
 
         editsPaint editsPaint = new editsPaint();
         editsPaint.setColor(paint.getColor());
-        editsPaint.setOpacity(paint.getAlpha() / 255);
+        editsPaint.setOpacity(paint.getAlpha() / 255f);
 
 
         final PdfEdit pdfEdit = new PdfEdit(PdfEdit.TYPE_TEXT);
@@ -168,9 +168,9 @@ public class TextEditor extends RelativeLayout {
 
         pdfEdit.setText(text);
         pdfEdit.setEditsPaint(editsPaint);
-
+        float sp = (pdfView.pdfFile.getPageSpacing(pdfView.getCurrentPage(), zoom) / 2)  ;
         pdfEdit.setPositionX((translateX + ((TEXT_X) / zoom)) / (pdfView.pdfFile.getMaxPageWidth()));
-        pdfEdit.setPositionY((translateY + ((TEXT_Y) / zoom)) / (pdfView.pdfFile.getMaxPageHeight()));
+        pdfEdit.setPositionY((translateY + ((TEXT_Y) / zoom)-sp) / (pdfView.pdfFile.getMaxPageHeight()));
         pdfEdit.setTextBold(bold);
         pdfEdit.setTextItelic(italic);
         pdfEdit.setTextSize(size);
@@ -210,29 +210,32 @@ public class TextEditor extends RelativeLayout {
 
         mCanvas.save();
 
-        float x1 = pdfView.pdfFile.getMaxPageWidth() / (kk.getPageWidth());
-        float y1 = pdfView.pdfFile.getMaxPageHeight() / kk.getPageHeight();
+//        float x1 = pdfView.pdfFile.getMaxPageWidth() / (kk.getPageWidth());
+//        float y1 = pdfView.pdfFile.getMaxPageHeight() / kk.getPageHeight();
 
         Paint p = new Paint(kk.getPaint());
-        p.setTextSize(p.getTextSize() * pdfView.getZoom());
+//        p.setTextSize(p.getTextSize() * pdfView.getZoom());
+        p.setTextSize(p.getTextSize() );
 
         float xp = (kk.translateX() / kk.getPageWidth()) * pdfView.pdfFile.getMaxPageWidth();
         float yp = (kk.translateY() / kk.getPageHeight()) * pdfView.pdfFile.getMaxPageHeight();
 
 
-        float xx = ((xp * pdfView.getZoom()) + (pdfView.getCurrentXOffset()));
-        float yy = ((yp * pdfView.getZoom()) + pdfView.getCurrentYOffset() + (Yposition * pdfView.getZoom()));
+//        float xx = ((xp * pdfView.getZoom()) + (pdfView.getCurrentXOffset()*0));
+//        float yy = ((yp * pdfView.getZoom()) + (pdfView.getCurrentYOffset()*0) + (Yposition * pdfView.getZoom()));
 
 
-        mCanvas.translate(xx, yy);
+//        mCanvas.translate(xx, yy);
+        mCanvas.translate(xp, yp-Yposition+(page.dy*pdfView.getCurrentPage()) );
 
-        mCanvas.drawText(kk.getText(), kk.getCanvasX() * pdfView.getZoom() * x1, kk.getCanvasY() * pdfView.getZoom() * y1, p);
+//        mCanvas.drawText(kk.getText(), kk.getCanvasX() * pdfView.getZoom() * x1, kk.getCanvasY() * pdfView.getZoom() * y1, p);
+        mCanvas.drawText(kk.getText(), kk.getCanvasX()  , kk.getCanvasY()  , p);
 
         mCanvas.restore();
         invalidate();
 
     }
-
+PAGE page;
     public void setPage(PAGE page) {
 
         System.out.println(page.id + "____" + page.position);
@@ -240,6 +243,7 @@ public class TextEditor extends RelativeLayout {
         Bitmap mBitmap = page.getBitmap();
         mCanvas = new Canvas(mBitmap);
         pageNo = page.id;
+       this. page=page;
     }
 
     @Override

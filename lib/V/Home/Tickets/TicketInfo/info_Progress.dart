@@ -33,7 +33,7 @@ class _info_ProgressState extends State<info_Progress> {
             child: ListTile(
               title: Row(
                 children: [
-                  Expanded(flex: 3, child: Text(progress.operation ?? "", style: TextStyle(color: progress.status == 1 ? Colors.white : Colors.black))),
+                  Expanded(flex: 3, child: Text((progress.operation ?? "").splitFromCaps, style: TextStyle(color: progress.status == 1 ? Colors.white : Colors.black))),
                   Expanded(flex: 3, child: Container(child: Chip(label: Text((progress.section!.sectionTitle) + " @ " + progress.section!.factory)))),
                   Expanded(
                       flex: 3,
@@ -42,7 +42,7 @@ class _info_ProgressState extends State<info_Progress> {
               ),
               // trailing:
               //     progress.finishedBy != null ? CircleAvatar(radius: 24.0, backgroundImage: NsUser.getUserImage(progress.user), backgroundColor: Colors.transparent) : Text(""),
-              trailing: progress.finishedBy != null ? UserImage(backgroundColor: Colors.transparent,radius: 24.0,nsUserId: progress.finishedBy) : Text(""),
+              trailing: progress.finishedBy != null ? UserImage(backgroundColor: Colors.transparent, radius: 24.0, nsUserId: progress.finishedBy) : Text(""),
             ),
           );
         },
@@ -59,4 +59,8 @@ class _info_ProgressState extends State<info_Progress> {
       ),
     );
   }
+}
+
+extension CapExtension on String {
+  String get splitFromCaps => this.split(RegExp(r"(?=[A-Z])")).join(" ");
 }

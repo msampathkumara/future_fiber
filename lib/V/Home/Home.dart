@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartwind/C/App.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/M/NsUser.dart';
+import 'package:smartwind/V/Home/CPR/CPR.dart';
 import 'package:smartwind/V/Home/CurrentUser/CurrentUserDetails.dart';
 import 'package:smartwind/V/Home/Tickets/ProductionPool/ProductionPool.dart';
 import 'package:smartwind/V/Login/Login.dart';
@@ -106,7 +107,7 @@ class _HomeState extends State<Home> {
                   child: ListTile(
                     leading: CircleAvatar(radius: 24.0, backgroundImage: NsUser.getUserImage(nsUser ), backgroundColor: Colors.transparent),
                     title: Text(nsUser!.name, textScaleFactor: 1.2),
-                    subtitle: Text("${nsUser!.section!.sectionTitle}@${nsUser!.section!.factory}"),
+                    subtitle: Text("${nsUser!.section!.sectionTitle} @ ${nsUser!.section!.factory}"),
                     trailing: _currentUserOprionMenu(),
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => CurrentUserDetails(nsUser!)));
@@ -146,6 +147,18 @@ class _HomeState extends State<Home> {
                                   "Production Pool");
                             },
                             openWidget: ProductionPool(),
+                            onClosed: _showMarkedAsDoneSnackbar,
+                          ),_OpenContainerWrapper(
+                            closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                              return _menuButton(
+                                  openContainer,
+                                  Icon(
+                                    Icons.local_mall_outlined,
+                                    size: 100,
+                                  ),
+                                  "CPR");
+                            },
+                            openWidget: CPR(),
                             onClosed: _showMarkedAsDoneSnackbar,
                           ),
                           _OpenContainerWrapper(

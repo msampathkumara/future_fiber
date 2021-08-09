@@ -14,6 +14,15 @@ public class xEdits {
     float zoom;
     float pageHeight;
     float pageWidth;
+    float spacing;
+
+    public float getSpacing() {
+        return spacing;
+    }
+
+    public void setSpacing(float spacing) {
+        this.spacing = spacing;
+    }
 
     public long getId() {
         return id;

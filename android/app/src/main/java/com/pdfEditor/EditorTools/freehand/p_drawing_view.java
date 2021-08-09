@@ -112,7 +112,7 @@ public class p_drawing_view extends FrameLayout {
         return drawingView.getBitmap();
     }
 
-    public void setPage(@NonNull PAGE page) {
+    public void setPage(  PAGE page) {
         drawingView.setPage(page);
     }
 

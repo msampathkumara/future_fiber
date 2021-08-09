@@ -13,7 +13,7 @@ TicketFlag _$TicketFlagFromJson(Map<String, dynamic> json) {
     ..type = json['type'] as String? ?? ''
     ..comment = json['comment'] as String? ?? '-'
     ..user = json['user'] as int? ?? 0
-    ..dnt = json['dnt'] as String? ?? '-'
+    ..dnt = json['dnt'] as String? ?? ''
     ..flaged = json['flaged'] as int? ?? 0;
 }
 

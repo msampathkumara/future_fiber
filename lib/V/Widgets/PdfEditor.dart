@@ -8,23 +8,68 @@ import 'package:smartwind/M/Ticket.dart';
 
 // import 'package:flutter_full_pdf_viewer/flutter_full_pdf_viewer.dart';
 
-class PDFScreen extends StatefulWidget {
+class PdfEditor extends StatefulWidget {
   // String pathPDF = "";
   // int fileID = 0;
   Ticket ticket;
 
-  PDFScreen(this.ticket);
+  PdfEditor(this.ticket);
 
   @override
-  _PDFScreenState createState() {
-    return _PDFScreenState();
+  _PdfEditorState createState() {
+    return _PdfEditorState();
   }
 }
 
-class _PDFScreenState extends State<PDFScreen> {
+class _PdfEditorState extends State<PdfEditor> {
+  late PDFView ppp;
+
   @override
   void initState() {
     super.initState();
+
+    ppp = new PDFView(
+      filePath: widget.ticket.ticketFile!.path,
+      enableSwipe: true,
+      swipeHorizontal: false,
+      autoSpacing: false,
+      pageFling: true,
+      pageSnap: true,
+      defaultPage: currentPage,
+      fitPolicy: FitPolicy.BOTH,
+      preventLinkNavigation: false,
+      onRender: (_pages) {
+        setState(() {
+          pages = _pages!;
+          isReady = true;
+          print('READYYYY');
+        });
+      },
+      onError: (error) {
+        setState(() {
+          errorMessage = error.toString();
+        });
+        print(error.toString());
+      },
+      onPageError: (page, error) {
+        setState(() {
+          errorMessage = '$page: ${error.toString()}';
+        });
+        print('$page: ${error.toString()}');
+      },
+      onViewCreated: (PDFViewController pdfViewController) {
+        _controller.complete(pdfViewController);
+      },
+      onLinkHandler: (String? uri) {
+        print('goto uri: $uri');
+      },
+      onPageChanged: (int? page, int? total) {
+        print('page change: $page/$total');
+        setState(() {
+          currentPage = page!;
+        });
+      },
+    );
 
   }
 
@@ -47,8 +92,8 @@ class _PDFScreenState extends State<PDFScreen> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.share),
-            onPressed: () async{
-              await  widget.ticket.sharePdf(context);
+            onPressed: () async {
+              await widget.ticket.sharePdf(context);
             },
           ),
         ],
@@ -56,48 +101,7 @@ class _PDFScreenState extends State<PDFScreen> {
       body: Container(
         child: Stack(
           children: <Widget>[
-            new PDFView(
-              filePath: widget.ticket.ticketFile!.path,
-              enableSwipe: true,
-              swipeHorizontal: false,
-              autoSpacing: false,
-              pageFling: true,
-              pageSnap: true,
-              defaultPage: currentPage,
-              fitPolicy: FitPolicy.BOTH,
-              preventLinkNavigation: false,
-              onRender: (_pages) {
-                setState(() {
-                  pages = _pages!;
-                  isReady = true;
-                  print('READYYYY');
-                });
-              },
-              onError: (error) {
-                setState(() {
-                  errorMessage = error.toString();
-                });
-                print(error.toString());
-              },
-              onPageError: (page, error) {
-                setState(() {
-                  errorMessage = '$page: ${error.toString()}';
-                });
-                print('$page: ${error.toString()}');
-              },
-              onViewCreated: (PDFViewController pdfViewController) {
-                _controller.complete(pdfViewController);
-              },
-              onLinkHandler: (String? uri) {
-                print('goto uri: $uri');
-              },
-              onPageChanged: (int? page, int? total) {
-                print('page change: $page/$total');
-                setState(() {
-                  currentPage = page!;
-                });
-              },
-            ),
+            ppp,
             // if (errorMessage.isEmpty)Center(
             //   child: Text(errorMessage),
             // ),

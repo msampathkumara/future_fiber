@@ -1,5 +1,7 @@
 package com.pdfEditor;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -24,6 +26,7 @@ import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -77,6 +80,7 @@ import com.pdfviewer.util.FitPolicy;
 import com.pdfviewer.util.SizeF;
 import com.sampathkumara.northsails.smartwind.BuildConfig;
 import com.sampathkumara.northsails.smartwind.R;
+import com.sampathkumara.northsails.smartwind.R.id;
 import com.tom_roush.pdfbox.multipdf.PDFMergerUtility;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
 import com.tom_roush.pdfbox.pdmodel.PDPage;
@@ -101,8 +105,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
-import static android.app.Activity.RESULT_OK;
-
 
 public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
@@ -113,19 +115,15 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     private static final int RESULT_LOAD_IMAGE = 12345;
     private static final int RESULT_CAMERA_LOAD_IMAGE = 123;
     static int x = 0;
-    private static File SELECTED_FILE;
     private final int OPEN_FILE_TO_MERGE = 111;
     public List<xEdits> editsList = new ArrayList();
     public PDFView pdfView;
     @Nullable
 
     public File CurrentFile;
-    private Bitmap NOTICE_BITMAP;
     private Intent pictureIntent;
-    boolean hide;
     private boolean FragmentLoaded = false;
     private runAfterLoad runAfterLoad;
-    private OnSaveListener OnSaveListener;
     private runAfterLoad runAfterFileLoad;
     OnViewCreatedListner onViewCreatedListner;
     boolean XS = true;
@@ -139,8 +137,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     public static List<PAGE> pages;
     private p_image_view imageView;
     private String imageFilePath;
-    private boolean button_drawingView_clicked = false;
-    private boolean button_arrow_clicked = false;
+    private final boolean button_arrow_clicked = false;
     private File file;
     @Nullable
     private p_drawing_view drawingView;
@@ -150,12 +147,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     private p_hightlight_view highlighterView;
     @Nullable
     private p_eraser_view erasingView;
-    private ImageButton button_textEditor;
-    private ImageButton button_drawingView;
-    private ImageButton button_highlighter;
-    private ImageButton button_erase;
-    private ImageButton button_image;
-    private ImageButton ExtraToolsToggle;
+
     private boolean is_text_editor_clicked;
     private boolean shape_editor;
     private boolean image_editor;
@@ -208,12 +200,14 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         }
         return pages;
     }
-
+public  static PAGE currentPage;
     @Override
     public void onPageChanged(final int page, int pageCount) {
         System.out.println("PAGE CHANGED");
         System.out.println(pdfView.getCurrentYOffset());
+        System.out.println(pdfView.pdfFile.getMaxPageHeight() );
 
+        currentPage=  pages.get(page);
 
         shapeView.setPage(pages.get(page));
 
@@ -264,7 +258,6 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     public void loadFile(File file, Bitmap NBitmap) {
         Bitmap workingBitmap = Bitmap.createBitmap(NBitmap);
         Bitmap mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true);
-        NOTICE_BITMAP = mutableBitmap;
         loadFile(file);
 
     }
@@ -455,17 +448,30 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
                 System.out.println("PAGE COUNT  " + pdfView.getPageCount());
                 float pageYposition = 0;
+                float pageSpacingTot = 0;
+                float lastPageSp=0;
                 for (int i = 0; i < pdfView.getPageCount(); ++i) {
                     SizeF pageSize = pdfView.getPageSize(i);
-                    pages.add(new PAGE(pdfView.pdfFile, pageYposition, i));
+                    PAGE pp = new PAGE(pdfView.pdfFile, pageYposition, i);
+
+                    pageSpacingTot  = ((pdfView.pdfFile.getPageSpacing(i, 1) / 2) * ((2 * i) - 1));
+
+                    pp.pageSpacingTot = pageSpacingTot;
+
+                    pp.dy=  (pageYposition-  pageSpacingTot)-lastPageSp;
+                    lastPageSp=    (pageYposition-  pageSpacingTot) ;
+                    System.out.println(pp.dy+"*****"+(pdfView.pdfFile.getPageSpacing(i, 1) / 2) + "=====" + ((2 * i) - 1) + "-----" + i + " pageSpacingTot " + pageSpacingTot);
+
+                    pages.add(pp);
                     pageYposition += (pageSize.getHeight() + (pdfView.getSpacingPx()));
+
 
 //                    System.out.println(pageSize.getHeight() + "________HHHHHHHHHHHHHH_______________" + pdfView.pdfFile.getMaxPageHeight());
 
                     getPdfEditsList().getPage(i).setHeight(pageSize.getHeight());
                     getPdfEditsList().getPage(i).setWidth(pageSize.getWidth());
                 }
-                Bitmap bitmap = pages.get(0).getBitmap();
+
 
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
@@ -537,20 +543,12 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         imageView.setVisibility(View.GONE);
 
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            button_highlighter.setImageResource(R.drawable.tools_highlighter);
-            button_textEditor.setImageResource(R.drawable.tools_add_text);
-            button_drawingView.setImageResource(R.drawable.tools_pen);
-            button_erase.setImageResource(R.drawable.tools_eracer);
-//            button_shapesEditor.setImageResource(R.drawable.tools_shapes);
-//            button_writePad.setImageResource(R.drawable.tools_highlighter);
-            button_image.setImageResource(R.drawable.tools_add_picture);
-        }
+
 
         is_text_editor_clicked = false;
         boolean writebox_editor = Boolean.FALSE;
         shape_editor = false;
-        button_drawingView_clicked = false;
+        boolean button_drawingView_clicked = false;
         button_erasingView_clicked = false;
         button_highlighter_clicked = false;
         image_editor = false;
@@ -573,7 +571,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         this.runAfterNsFileLoad = runAfterNsFileLoad;
     }
 
-//    public void loadFile(@NonNull final NsFile file, final boolean editable) {
+    //    public void loadFile(@NonNull final NsFile file, final boolean editable) {
     public void loadFile(@NonNull final Ticket file, final boolean editable) {
 
         SELECTED_Ticket = file;
@@ -613,10 +611,8 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
             Uri uri = data.getData();
             new File(getContext().getFilesDir() + "/pdf.pdf").delete();
             try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    Files.copy(getInputStreamForVirtualFile(uri, "application/pdf"),
-                            Paths.get(getContext().getFilesDir() + "/pdf.pdf"));
-                }
+                Files.copy(getInputStreamForVirtualFile(uri, "application/pdf"),
+                        Paths.get(getContext().getFilesDir() + "/pdf.pdf"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -858,6 +854,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
             });
 
     private void visibleOnly(View view, int i) {
+
         drawingView.setVisibility(View.GONE);
         highlighterView.setVisibility(View.GONE);
         imageView.setVisibility(View.GONE);
@@ -879,301 +876,134 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         bottomNavigationView.getMenu().getItem(3).setCheckable(false);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(
-                new BottomNavigationView.OnNavigationItemSelectedListener() {
-                    @SuppressLint("RestrictedApi")
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                item -> {
 
 
-                        switch (item.getItemId()) {
-                            case R.id.tools_pen_1:
-                                item.setCheckable(drawingView.getVisibility() != View.VISIBLE);
-                                visibleOnly(drawingView, drawingView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-                                return drawingView.getVisibility() == View.VISIBLE;
+                    switch (item.getItemId()) {
+                        case id.tools_pen_1:
+                            item.setCheckable(drawingView.getVisibility() != View.VISIBLE);
+                            visibleOnly(drawingView, drawingView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+                            return drawingView.getVisibility() == View.VISIBLE;
 
-                            case R.id.tools_highlighter_1:
-                                item.setCheckable(highlighterView.getVisibility() != View.VISIBLE);
-                                visibleOnly(highlighterView, highlighterView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-                                return highlighterView.getVisibility() == View.VISIBLE;
+                        case id.tools_highlighter_1:
+                            item.setCheckable(highlighterView.getVisibility() != View.VISIBLE);
+                            visibleOnly(highlighterView, highlighterView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+                            return highlighterView.getVisibility() == View.VISIBLE;
 
-                            case R.id.add_btn_text:
-                                item.setCheckable(textEditorView.getVisibility() != View.VISIBLE);
-                                visibleOnly(textEditorView, textEditorView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-                                return textEditorView.getVisibility() == View.VISIBLE;
+                        case id.add_btn_text:
+                            item.setCheckable(textEditorView.getVisibility() != View.VISIBLE);
+                            visibleOnly(textEditorView, textEditorView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+                            return textEditorView.getVisibility() == View.VISIBLE;
 
-                            case R.id.tools_add_picture_1:
+                        case id.tools_add_picture_1:
 
+                            Context wrapper = new ContextThemeWrapper(getContext(), R.style.popupOverflowMenu);
+                            PopupMenu popup = new PopupMenu(wrapper, view.findViewById(id.tools_add_picture_1));
+                            MenuBuilder menuBuilder = (MenuBuilder) popup.getMenu();
+                            menuBuilder.setOptionalIconsVisible(true);
+                            MenuInflater inflater = popup.getMenuInflater();
+                            inflater.inflate(R.menu.add_menu, popup.getMenu());
+                            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                                @RequiresApi(api = Build.VERSION_CODES.O)
+                                @Override
+                                public boolean onMenuItemClick(MenuItem item) {
+                                    switch (item.getItemId()) {
+                                        case id.add_btn_photo_gallery  :
+                                            imageChooserActivityStoragePermissions.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+                                            return true;
 
-                                PopupMenu popup = new PopupMenu(getContext(), view.findViewById(R.id.tools_add_picture_1));
-                                MenuBuilder menuBuilder = (MenuBuilder) popup.getMenu();
-                                menuBuilder.setOptionalIconsVisible(true);
-                                MenuInflater inflater = popup.getMenuInflater();
-                                inflater.inflate(R.menu.add_menu, popup.getMenu());
-                                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                                    @RequiresApi(api = Build.VERSION_CODES.O)
-                                    @Override
-                                    public boolean onMenuItemClick(MenuItem item) {
-                                        switch (item.getItemId()) {
-                                            case R.id.add_btn_photo_gallery:
-                                                imageChooserActivityStoragePermissions.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
-                                                return true;
-                                            case R.id.add_btn_photo_camera:
-                                                cmeraActivityStoragePermissions.launch(Manifest.permission.CAMERA);
-                                                return true;
+                                        case id.add_btn_photo_camera :
+                                            cmeraActivityStoragePermissions.launch(Manifest.permission.CAMERA);
+                                            return true;
 
-                                            case R.id.add_btn_text:
-                                                visibleOnly(textEditorView, View.VISIBLE);
-                                                return true;
-                                        }
+                                        case id.add_btn_text :
+                                            visibleOnly(textEditorView, View.VISIBLE);
+                                            return true;
 
+                                            case id.add_btn_page :
+                                            addNewPage();
+                                            return true;
 
-                                        return false;
                                     }
-                                });
-                                popup.show();
-                                return false;
 
-                            case R.id.tools_undo_1:
-                                undo();
-                        }
-                        return false;
+
+                                    return false;
+                                }
+                            });
+                            popup.show();
+                            return false;
+
+                        case id.tools_undo_1:
+                            undo();
+                            break;
+                        default:
+                            break;
                     }
-
-
+                    return false;
                 });
 
         bottomNavigationView.setElevation(5);
 
-
-//        mb_zoom = getActivity().findViewById(R.id.mb_zoom);
-//        mb_print = getActivity().findViewById(R.id.mb_print);
-//        mb_merge = getActivity().findViewById(R.id.mb_merge);
         pdfView = getActivity().findViewById(R.id.pdfView);
-        button_textEditor = getActivity().findViewById(R.id.mb_text);
-        button_drawingView = getActivity().findViewById(R.id.mb_freehand);
-        button_highlighter = getActivity().findViewById(R.id.b_hightlight);
-        button_erase = getActivity().findViewById(R.id.b_eraser);
-//        button_shapesEditor = getActivity().findViewById(R.id.mb_shapes);
-//        ImageButton button_writePad = getActivity().findViewById(R.id.mb_writebox);
-        ImageButton button_undo = getActivity().findViewById(R.id.mb_undo);
 
         pdfViewPerant = getActivity().findViewById(R.id.pdfViewPerant);
-        toolset = getActivity().findViewById(R.id.toolset);
-//        extraTools = getActivity().findViewById(R.id.extraTools);
-//        left_menu = getActivity().findViewById(R.id.left_menu);
-//        left_menu.setVisibility(View.GONE);
 
-        button_image = getActivity().findViewById(R.id.mb_image);
-        ExtraToolsToggle = getActivity().findViewById(R.id.arrow);
-        button_new_page = getActivity().findViewById(R.id.mb_new_page);
-//        button_save = getActivity().findViewById(R.id.mb_save_notice);
-//        button_save.setVisibility(View.GONE);
 
-        System.out.println("created >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 1");
-//        button_save.setOnClickListener(new View.OnClickListener() {
+
+//        button_new_page.setOnClickListener(new View.OnClickListener() {
+//            @SuppressLint("StaticFieldLeak")
 //            @Override
 //            public void onClick(View view) {
-//                if (OnSaveListener != null) {
-//                    OnSaveListener.run(Editor.this);
-//                }
-//            }
-//        });
-
-//        mb_print.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (onPrint != null) {
-//                    onPrint.run(Editor.this);
-//                }
-//            }
-//        });
-
-        View.OnClickListener on_tool_button_click = new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onClick(View view) {
-                boolean x;
-
-
-                switch (view.getId()) {
-                    case R.id.mb_freehand:
-                        x = !button_drawingView_clicked;
-                        unClickAllButtons();
-                        button_drawingView_clicked = x;
-                        if (x) {
-                            drawingView.setVisibility(View.VISIBLE);
-                            button_drawingView.setImageResource(R.drawable.tools_k_pen);
-                        } else {
-                            drawingView.setVisibility(View.GONE);
-                        }
-
-                        break;
-                    case R.id.arrow:
-                        x = !button_arrow_clicked;
-                        button_arrow_clicked = x;
-                        if (x) {
-                            ExtraToolsToggle.setImageResource(R.drawable.down_arrow);
-                            showExtraTools();
-                        } else {
-                            ExtraToolsToggle.setImageResource(R.drawable.up_arrow);
-                            hideExtraTools();
-                        }
-
-                        break;
-                    case R.id.mb_text:
-                        x = !is_text_editor_clicked;
-                        unClickAllButtons();
-                        is_text_editor_clicked = x;
-                        if (is_text_editor_clicked) {
-                            textEditorView.setVisibility(View.VISIBLE);
-                            textEditorView.bringToFront();
-                            button_textEditor.setImageResource(R.drawable.tools_k_text_add);
-                        } else {
-                            textEditorView.setVisibility(View.GONE);
-
-                        }
-
-                        break;
-                    case R.id.b_hightlight:
-                        x = !button_highlighter_clicked;
-                        unClickAllButtons();
-                        button_highlighter_clicked = x;
-                        if (button_highlighter_clicked) {
-                            highlighterView.setVisibility(View.VISIBLE);
-                            button_highlighter.setImageResource(R.drawable.tools_k_highlighter);
-                        } else {
-                            highlighterView.setVisibility(View.GONE);
-                        }
-                        break;
-                    case R.id.b_eraser:
-                        x = !button_erasingView_clicked;
-                        unClickAllButtons();
-                        button_erasingView_clicked = x;
-                        if (x) {
-                            erasingView.setVisibility(View.VISIBLE);
-                            button_erase.setImageResource(R.drawable.tools_k_eracer);
-                        } else {
-                            erasingView.setVisibility(View.GONE);
-                        }
-                        break;
-//                    case R.id.mb_shapes:
-//                        x = !shape_editor;
-//                        unClickAllButtons();
-//                        shape_editor = x;
-//                        if (shape_editor) {
-//                            shapeView.setVisibility(View.VISIBLE);
-//                            button_shapesEditor.setImageResource(R.drawable.tools_k_shapes);
-//                            shapeView.bringToFront();
-//                        } else {
-//                            shapeView.setVisibility(View.GONE);
+//
+//                new AsyncTask<Void, Void, Void>() {
+//
+//                    @Override
+//                    protected Void doInBackground(Void... voids) {
+//                        try {
+//                            PDDocument doc = PDDocument.load(Editor.this.getFile());
+//                            PDPage p = doc.getPage(doc.getPages().getCount() - 1);
+//                            System.out.println(p.getMediaBox().getHeight());
+//                            System.out.println(p.getMediaBox().getWidth());
+//
+////                            PDPage page = new PDPage(PDRectangle.A4);
+//
+//                            PDPage page = new PDPage(p.getMediaBox());
+//                            doc.addPage(page);
+//                            doc.save(Editor.this.getFile());
+//                            doc.close();
+//                            System.out.println("FILE SAVED");
+//
+//                            getActivity().runOnUiThread(new Runnable() {
+//
+//                                @Override
+//                                public void run() {
+//
+//                                    Editor.this.reloadFile();
+//
+//                                }
+//                            });
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
 //                        }
-//                        break;
-                    case R.id.mb_image:
-                        x = !image_editor;
-                        unClickAllButtons();
-                        image_editor = x;
-                        if (x) {
-                            imageView.setVisibility(View.VISIBLE);
-                            imageView.bringToFront();
-                            browsImages(getActivity());
-                            button_image.setImageResource(R.drawable.tools_k_add_picture);
-                        } else {
-                            imageView.setVisibility(View.GONE);
-                        }
-
-                        break;
-                }
-
-            }
-        };
-        System.out.println("created >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 2");
-
-        button_textEditor.setOnClickListener(on_tool_button_click);
-        button_drawingView.setOnClickListener(on_tool_button_click);
-        button_highlighter.setOnClickListener(on_tool_button_click);
-        button_erase.setOnClickListener(on_tool_button_click);
-//        button_shapesEditor.setOnClickListener(on_tool_button_click);
-        button_image.setOnClickListener(on_tool_button_click);
-        ExtraToolsToggle.setOnClickListener(on_tool_button_click);
-
-
-//        mb_merge.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(@NonNull View view) {
-//                Intent chooseFile;
-//                Intent intent;
-//                chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-//                chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
-//                chooseFile.setType("application/pdf");
-//                intent = Intent.createChooser(chooseFile, "Choose a file");
-//                startActivityForResult(intent, OPEN_FILE_TO_MERGE);
+//                        return null;
+//                    }
+//
+//                    @Override
+//                    protected void onPreExecute() {
+//                        super.onPreExecute();
+//                        dialog = new ProgressDialog(getContext());
+//                        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+//                        dialog.setMessage("Adding New Page... ");
+//                        dialog.setTitle("Please wait...");
+//                        dialog.setIndeterminate(true);
+//                        dialog.setCanceledOnTouchOutside(false);
+//                        dialog.show();
+//                    }
+//                }.execute();
+//
 //
 //            }
 //        });
-
-
-        button_undo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                undo();
-            }
-        });
-
-
-        button_new_page.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("StaticFieldLeak")
-            @Override
-            public void onClick(View view) {
-
-                new AsyncTask<Void, Void, Void>() {
-
-                    @Override
-                    protected Void doInBackground(Void... voids) {
-                        try {
-                            PDDocument doc = PDDocument.load(Editor.this.getFile());
-                            PDPage p = doc.getPage(doc.getPages().getCount() - 1);
-                            System.out.println(p.getMediaBox().getHeight());
-                            System.out.println(p.getMediaBox().getWidth());
-
-//                            PDPage page = new PDPage(PDRectangle.A4);
-
-                            PDPage page = new PDPage(p.getMediaBox());
-                            doc.addPage(page);
-                            doc.save(Editor.this.getFile());
-                            doc.close();
-                            System.out.println("FILE SAVED");
-
-                            getActivity().runOnUiThread(new Runnable() {
-
-                                @Override
-                                public void run() {
-
-                                    Editor.this.reloadFile();
-
-                                }
-                            });
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        return null;
-                    }
-
-                    @Override
-                    protected void onPreExecute() {
-                        super.onPreExecute();
-                        dialog = new ProgressDialog(getContext());
-                        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                        dialog.setMessage("Adding New Page... ");
-                        dialog.setTitle("Please wait...");
-                        dialog.setIndeterminate(true);
-                        dialog.setCanceledOnTouchOutside(false);
-                        dialog.show();
-                    }
-                }.execute();
-
-
-            }
-        });
 
         pdfViewPerant.bringToFront();
 
@@ -1187,6 +1017,56 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         }
         System.out.println("created >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 3");
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private void addNewPage() {
+         new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    PDDocument doc = PDDocument.load(Editor.this.getFile());
+                    PDPage p = doc.getPage(doc.getPages().getCount() - 1);
+                    System.out.println(p.getMediaBox().getHeight());
+                    System.out.println(p.getMediaBox().getWidth());
+
+//                            PDPage page = new PDPage(PDRectangle.A4);
+
+                    PDPage page = new PDPage(p.getMediaBox());
+                    doc.addPage(page);
+                    doc.save(Editor.this.getFile());
+                    doc.close();
+                    System.out.println("FILE SAVED");
+
+                    getActivity().runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+
+                            Editor.this.reloadFile();
+
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                dialog = new ProgressDialog(getContext());
+                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                dialog.setMessage("Adding New Page... ");
+                dialog.setTitle("Please wait...");
+                dialog.setIndeterminate(true);
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.show();
+            }
+        }.execute();
+
     }
 
     private void undo() {
@@ -1254,7 +1134,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         // This bundle will be passed to onCreate if the process is
         // killed and restarted.
 
-        savedInstanceState.putParcelable("x", new data(editsList, images, pdfEditsList, getToolVisibility()));
+        savedInstanceState.putParcelable("x", new data(editsList, images, pdfEditsList, 1));
         System.out.println("_____________________________________________________onSaveInstanceState");
 
         // etc.
@@ -1263,13 +1143,13 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         savedInstanceState.putString("xx", "Welcome back to Android");
     }
 
-    public int getToolVisibility() {
-        return toolset.getVisibility();
-    }
+//    public int getToolVisibility() {
+//        return toolset.getVisibility();
+//    }
 
-    public void setToolVisibility(int visibility) {
-//        toolset.setVisibility(visibility);
-    }
+//    public void setToolVisibility(int visibility) {
+////        toolset.setVisibility(visibility);
+//    }
 
     @Override
     public void onDetach() {
@@ -1435,29 +1315,28 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 //        float dheight = (((canvas.getHeight() - pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight()))/2) * nthOdd(pdfView.getCurrentPage() + 1);
         float dheight = (((canvas.getHeight() - pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight()))) * pdfView.getCurrentPage() * pdfView.getZoom();
         dheight = pdfView.getCurrentPage() == 0 ? 0 : dheight;
-        float X = Math.abs(pdfView.getCurrentXOffset());
+//        float X = Math.abs(pdfView.getCurrentXOffset());
 
-        Rect clipBounds = pdfView.getClipBounds();
+//        Rect clipBounds = pdfView.getClipBounds();
 
-        float Y = 0 - ((pdfView.getCurrentYOffset()) + (pages.get(pdfView.getCurrentPage()).getPosition()) * pdfView.getZoom());
+//        float Y = 0 - ((pdfView.getCurrentYOffset()) + (pages.get(pdfView.getCurrentPage()).getPosition()) * pdfView.getZoom());
 
 
-        System.out.println(dheight + " YYYYYYYYYYYYYYYYYYY ==== " + Y);
+
 //        canvas.drawBitmap(drawingView.getBitmap(), null,   new RectF(X, Y - dheight,
 //                X + drawingView.getBitmap().getWidth(),
 //                Y + drawingView.getBitmap().getHeight()), null);
-        Y = Y - dheight;
+//        Y = Y - dheight;
 
-        canvas.drawBitmap(drawingView.getBitmap(), null, new RectF(X, Y,
-                X + drawingView.getBitmap().getWidth(),
-                Y + (drawingView.getBitmap().getHeight())), null);
+        canvas.drawBitmap(drawingView.getBitmap(), null, new RectF(0, 0,
+                drawingView.getBitmap().getWidth() * pdfView.getZoom(),
+                drawingView.getBitmap().getHeight() * pdfView.getZoom()), null);
 
-        System.out.println(pdfView.getWidth() + "___________________________________________");
+//        System.out.println(pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight() + "___________________________________________");
     }
 
     public void setSaveButtonListner(OnSaveListener OnSaveListener) {
-        this.OnSaveListener = OnSaveListener;
-//        if (OnSaveListener != null) {
+        //        if (OnSaveListener != null) {
 //            button_save.setVisibility(View.VISIBLE);
 //        } else {
 //            button_save.setVisibility(View.GONE);

@@ -27,6 +27,8 @@ public class PAGE extends PDPage {
     @NonNull
     final List<xText> textMap;
     public float dheight;
+    public float pageSpacingTot;
+    public float dy;
     //    private   SizeF pageSize;
     float maxPageWidth;
     float maxPageHeight;
@@ -55,7 +57,8 @@ public class PAGE extends PDPage {
     public Bitmap getBitmap() {
         if (bitmap == null) {
 
-            bitmap = Bitmap.createBitmap((int) pdfFile.getMaxPageWidth(), (int) pdfFile.getMaxPageHeight(), Bitmap.Config.ARGB_8888);
+             bitmap = Bitmap.createBitmap((int) pdfFile.getMaxPageWidth(), (int) pdfFile.getMaxPageHeight(), Bitmap.Config.ARGB_8888);
+
         }
 //        System.out.println("__________________________________________GET BITMAP____________________");
         return bitmap;

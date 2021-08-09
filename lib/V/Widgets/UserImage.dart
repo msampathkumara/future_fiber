@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/Server.dart';
@@ -27,6 +28,7 @@ class _UserImageState extends State<UserImage> {
     if (nsUser == null && widget.nsUserId != null) {
       NsUser.fromId(widget.nsUserId).then((value) {
         nsUser = value;
+
         setState(() {});
       });
     }

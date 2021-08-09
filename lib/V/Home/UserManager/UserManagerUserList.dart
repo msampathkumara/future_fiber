@@ -6,6 +6,7 @@ import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
+import 'package:smartwind/V/Widgets/UserImage.dart';
 
 import 'AddNfcCard.dart';
 import 'AddUser.dart';
@@ -207,10 +208,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                       // ticket.open(context);
                     },
                     child: ListTile(
-                      leading: CircleAvatar(
-                          radius: 24.0,
-                          backgroundImage: NsUser.getUserImage(nsUser ),
-                          backgroundColor: Colors.transparent),
+                      leading: UserImage(nsUser: nsUser),
                       title: Text(nsUser.name),
                       subtitle: Text("#" + nsUser.uname),
                       trailing: Wrap(children: []),

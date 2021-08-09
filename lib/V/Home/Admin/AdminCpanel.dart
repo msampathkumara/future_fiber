@@ -23,6 +23,12 @@ class _AdminCpanelState extends State<AdminCpanel> {
                 OnlineDB.apiGet("tickets/updateFiles", {}).then((Response response) async {
                   print(response.body);
                 });
+              }),ElevatedButton(
+              child: Text("Convert Tickets"),
+              onPressed: () {
+                OnlineDB.apiGet("admin/convertTickets", {}).then((Response response) async {
+                  print(response.body);
+                });
               }),
           ElevatedButton(
               child: Text("Reload Ticket DB"),
