@@ -17,7 +17,6 @@ public class xPath extends xEdits {
         this.translateX = translateX;
         this.translateY = translateY;
         this.page = page;
-        this.pageSize = pageSize;
         setPageWidth(PageWidth);
         setPageHeight(PageHeight);
         setZoom(zoom);

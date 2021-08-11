@@ -6,12 +6,11 @@ import java.util.HashMap;
 
 public class EditsList {
 
-    HashMap<Integer, PdfPage> pageList = new HashMap<>();
+    final HashMap<Integer, PdfPage> pageList = new HashMap<>();
 
     public String getList() {
         Gson gson = new Gson();
-        String jsonString = gson.toJson(EditsList.this);
-        return jsonString;
+        return gson.toJson(this);
     }
 
     public void removeEdit(int page, long id) {

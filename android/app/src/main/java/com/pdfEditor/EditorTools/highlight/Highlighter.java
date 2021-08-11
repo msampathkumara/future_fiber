@@ -69,7 +69,6 @@ public class Highlighter extends FrameLayout {
         super(c);
         this.editor = editor;
         this.pdfView = pdfView;
-        Context context = c;
         mPath = new Path();
         Paint mBitmapPaint = new Paint(Paint.DITHER_FLAG);
         circlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -81,7 +80,7 @@ public class Highlighter extends FrameLayout {
         circlePaint.setStrokeWidth(stroke);
         circlePaint.setColor(Color.argb(100, 0, 0, 0));
 
-        mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
+        mScaleDetector = new ScaleGestureDetector(c, new ScaleListener());
 
         setBackgroundColor(Color.argb(5, 0, 0, 0));
 
@@ -97,8 +96,6 @@ public class Highlighter extends FrameLayout {
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent event) {
         mScaleDetector.onTouchEvent(event);
-//        float x = event.getX() / pdfView.getZoom() + clipBounds.left;
-//        float y = event.getY() / pdfView.getZoom() + clipBounds.top;
 
         float x = event.getX();
         float y = event.getY();
@@ -193,10 +190,7 @@ public class Highlighter extends FrameLayout {
 
 
             float zoom = pdfView.getZoom();
-//            points.add(new editPoint(((x / zoom) / pdfView.pdfFile.getMaxPageWidth()), (((y / zoom) / pdfView.pdfFile.getMaxPageHeight())), true));
 
-//            circlePath.reset();
-//            circlePath.addCircle(mX, mY, 30, Path.Direction.CW);
         }
 
     }
@@ -298,10 +292,6 @@ public class Highlighter extends FrameLayout {
 
     }
 
-    public void setEditText(boolean editText) {
-        boolean EDITH_TEXT = editText;
-    }
-
     public void setColor(int color) {
         this.mcolor = color;
     }
@@ -309,52 +299,6 @@ public class Highlighter extends FrameLayout {
     public void setStroke(int stroke) {
         this.stroke = stroke;
     }
-
-    public void setEdited(boolean edited) {
-        //        reDraw();
-//        invalidate();
-    }
-
-//    public void reDraw() {
-//        System.out.println("REDDDDDDDDDDDD");
-//        for (xEdits kk : editor.editsList) {
-//            System.out.println(kk.page + "^^^^^^^" + this.pageNo);
-//            if (kk.page == this.pageNo) {
-//                if (kk instanceof xPath) {
-//                    xPath k = (xPath) kk;
-//                    System.out.println("KKKKKKKKJHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
-//                    Path path = new Path(k.getPath());
-//
-//                    mCanvas.save();
-//                    float x = pdfView.pdfFile.getMaxPageWidth() / (kk.getPageWidth());
-//                    float y = pdfView.pdfFile.getMaxPageHeight() / kk.getPageHeight();
-//                    x = x * (pdfView.getZoom() / k.getZoom());
-//                    y = y * (pdfView.getZoom() / k.getZoom());
-//
-//                    Matrix scaleMatrix = new Matrix();
-//                    RectF rectF = new RectF();
-//                    path.computeBounds(rectF, true);
-//                    scaleMatrix.setScale(x, y, 0, 0);
-//                    path.transform(scaleMatrix);
-//
-//                    float xp = (k.translateX() / kk.getPageWidth()) * pdfView.pdfFile.getMaxPageWidth();
-//                    float yp = (k.translateY() / kk.getPageHeight()) * pdfView.pdfFile.getMaxPageHeight();
-//
-//                    float xx = (((xp) * pdfView.getZoom()) + (pdfView.getCurrentXOffset()));
-//                    float yy = (((yp) * pdfView.getZoom()) + pdfView.getCurrentYOffset() + (Yposition * pdfView.getZoom()));
-//                    mCanvas.translate(xx, yy);
-//
-//                    Paint p = new Paint(k.getPaint());
-//                    p.setStrokeWidth(p.getStrokeWidth() * pdfView.getZoom());
-//                    mCanvas.drawPath(path, p);
-//
-//                    mCanvas.restore();
-//                    invalidate();
-//
-//                }
-//            }
-//        }
-//    }
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
@@ -365,10 +309,6 @@ public class Highlighter extends FrameLayout {
             mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 5.0f));
             scaling = true;
             System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxx__ " + mScaleFactor);
-//            frameLayout.setScaleX(mScaleFactor);
-//            frameLayout.setScaleY(mScaleFactor);
-//            invalidate();
-//            dv.setVisibility(View.GONE);
             return false;
         }
     }

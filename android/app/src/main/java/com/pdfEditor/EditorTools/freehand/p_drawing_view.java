@@ -29,7 +29,6 @@ public class p_drawing_view extends FrameLayout {
 
     public p_drawing_view(@NonNull Context context, PDFView pdfView, Editor editor) {
         super(context);
-        Context context1 = context;
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.p_drowing_view, this);
         FrameLayout pane = findViewById(R.id.pane);

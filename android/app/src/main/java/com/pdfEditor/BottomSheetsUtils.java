@@ -11,11 +11,13 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.sampathkumara.northsails.smartwind.R;
 
+import java.util.Objects;
+
 
 public class BottomSheetsUtils {
     public static void setupFullHeight(BottomSheetDialog bottomSheetDialog, Activity context, int margineTop) {
         FrameLayout bottomSheet = bottomSheetDialog.findViewById(R.id.design_bottom_sheet);
-        BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
+        BottomSheetBehavior behavior = BottomSheetBehavior.from(Objects.requireNonNull(bottomSheet));
         ViewGroup.LayoutParams layoutParams = bottomSheet.getLayoutParams();
         int statusBarHeight = (int) Math.ceil(25 * context.getResources().getDisplayMetrics().density);
         int windowHeight = getWindowHeight(context);
@@ -24,7 +26,7 @@ public class BottomSheetsUtils {
         }
         bottomSheet.setLayoutParams(layoutParams);
         behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        behavior.setPeekHeight(layoutParams.height);
+        behavior.setPeekHeight(Objects.requireNonNull(layoutParams).height);
     }
 
     public static int getWindowHeight(Activity context) {

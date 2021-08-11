@@ -1,13 +1,7 @@
 package com.pdfEditor;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.webkit.CookieManager;
-
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GetTokenResult;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -41,11 +35,11 @@ public class MultipartUtility {
      * This constructor initializes a new HTTP POST request with content type
      * is set to multipart/form-data
      *
-     * @param requestURL
-     * @param charset
-     * @throws IOException
+     * @param requestURL -sss
+     * @param charset    -charset
+     * @throws IOException-IOException
      */
-    public MultipartUtility(String requestURL, String charset, Context context,String authKey)
+    public MultipartUtility(String requestURL, String charset, Context context, String authKey)
             throws IOException {
         this.charset = charset;
 
@@ -55,7 +49,6 @@ public class MultipartUtility {
 
         URL url = new URL(requestURL);
         httpConn = (HttpURLConnection) url.openConnection();
-
 
 
         httpConn.setRequestProperty("authorization", authKey);
@@ -82,7 +75,7 @@ public class MultipartUtility {
      * @param value field value
      */
     public void addFormField(String name, String value) {
-        writer.append("--" + boundary).append(LINE_FEED);
+        writer.append("--").append(boundary).append(LINE_FEED);
         writer.append("Content-Disposition: form-data; name=\"").append(name).append("\"")
                 .append(LINE_FEED);
         writer.append("Content-Type: text/plain; charset=").append(charset).append(
@@ -119,12 +112,6 @@ public class MultipartUtility {
         }
         outputStream.flush();
         inputStream.close();
-//        List<String> cookieList = httpConn.getHeaderFields().get("Set-Cookie");
-//        if (cookieList != null) {
-//            for (String cookieTemp : cookieList) {
-//                cookieManager.setCookie(httpConn.getURL().toString(), cookieTemp);
-//            }
-//        }
         writer.append(LINE_FEED);
         writer.flush();
     }
@@ -148,7 +135,7 @@ public class MultipartUtility {
      * @throws IOException
      */
     public List<String> finish() throws IOException {
-        List<String> response = new ArrayList<String>();
+        List<String> response = new ArrayList<>();
 
         writer.append(LINE_FEED).flush();
         writer.append("--").append(boundary).append("--").append(LINE_FEED);

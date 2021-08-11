@@ -28,7 +28,7 @@ public class p_Text_Editor_view extends FrameLayout {
     private final Button b_bold;
     private final Button b_italic;
     @NonNull
-    public TextEditor textEditor;
+    public final TextEditor textEditor;
     private boolean isbold = false;
     private int STROKE;
     private boolean isItalic;

@@ -17,11 +17,8 @@ public class ColorSelector extends LinearLayout {
         void OnColorSelect(int color);
     }
 
-    OnColorSelectListener onColorSelectListener = new OnColorSelectListener() {
-        @Override
-        public void OnColorSelect(int color) {
+    OnColorSelectListener onColorSelectListener = color -> {
 
-        }
     };
 
     public void setOnColorSelect(OnColorSelectListener onColorSelectListener) {

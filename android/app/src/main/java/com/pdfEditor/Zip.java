@@ -13,8 +13,8 @@ import java.util.zip.ZipOutputStream;
 public class Zip {
     static final int BUFFER = 2048;
 
-    ZipOutputStream out;
-    byte[] data;
+    final ZipOutputStream out;
+    final byte[] data;
 
     public Zip(String name) {
         FileOutputStream dest = null;
@@ -40,8 +40,6 @@ public class Zip {
                 out.write(data, 0, count);
             }
             origin.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -60,8 +58,6 @@ public class Zip {
                 out.write(data, 0, count);
             }
             origin.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

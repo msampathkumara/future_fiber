@@ -16,7 +16,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -64,8 +63,6 @@ import com.pdfEditor.EditorTools.highlight.p_hightlight_view;
 import com.pdfEditor.EditorTools.image.image_container;
 import com.pdfEditor.EditorTools.image.p_image_view;
 import com.pdfEditor.EditorTools.image.xImage;
-import com.pdfEditor.EditorTools.shape.p_shape_view;
-import com.pdfEditor.EditorTools.shape.xShape;
 import com.pdfEditor.EditorTools.textEditor.p_Text_Editor_view;
 import com.pdfEditor.EditorTools.textEditor.xText;
 import com.pdfEditor.uploadEdits.EditsList;
@@ -115,8 +112,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     private static final int RESULT_LOAD_IMAGE = 12345;
     private static final int RESULT_CAMERA_LOAD_IMAGE = 123;
     static int x = 0;
-    private final int OPEN_FILE_TO_MERGE = 111;
-    public List<xEdits> editsList = new ArrayList();
+    public ArrayList<xEdits> editsList = new ArrayList<>();
     public PDFView pdfView;
     @Nullable
 
@@ -151,12 +147,9 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     private boolean is_text_editor_clicked;
     private boolean shape_editor;
     private boolean image_editor;
-    private boolean button_highlighter_clicked;
     private ProgressDialog dialog;
     private FrameLayout pdfViewPerant;
-    private boolean button_erasingView_clicked = false;
-    @Nullable
-    private p_shape_view shapeView;
+
     private LinearLayout toolset;
     private LinearLayout extraTools;
     private boolean RELOAD;
@@ -200,16 +193,18 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         }
         return pages;
     }
-public  static PAGE currentPage;
+
+    public static PAGE currentPage;
+
     @Override
     public void onPageChanged(final int page, int pageCount) {
         System.out.println("PAGE CHANGED");
         System.out.println(pdfView.getCurrentYOffset());
-        System.out.println(pdfView.pdfFile.getMaxPageHeight() );
+        System.out.println(pdfView.pdfFile.getMaxPageHeight());
 
-        currentPage=  pages.get(page);
+        currentPage = pages.get(page);
 
-        shapeView.setPage(pages.get(page));
+
 
 
         drawingView.setPage(pages.get(page));
@@ -237,8 +232,6 @@ public  static PAGE currentPage;
                     imageView.reDraw((xImage) kk);
                 } else if (kk instanceof xText) {
                     textEditorView.textEditor.reDraw((xText) kk);
-                } else if (kk instanceof xShape) {
-                    shapeView.reDraw((xShape) kk);
                 }
 
 
@@ -246,12 +239,6 @@ public  static PAGE currentPage;
 
         }
 
-
-//        drawingView.drawingView.reDraw();
-//        shapeView.reDraw();
-//        imageView.reDraw();
-//        highlighterView.reDraw();
-//        textEditorView.reDraw();
 
     }
 
@@ -318,6 +305,7 @@ public  static PAGE currentPage;
                         }
 
                     } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             });
@@ -388,12 +376,6 @@ public  static PAGE currentPage;
             public void loadComplete(int nbPages) {
                 System.out.println("ON______LOAD");
                 if (RELOAD) {
-//                System.out.println("______________________________________________________________");
-//                System.out.println(pdfView.getPageCount());
-//                SizeF pageSize = pdfView.getPageSize(pdfView.getPageCount());
-//                System.out.println("page size === "+pageSize + "___" + pdfView.getSpacingPx());
-//                PAGE page1 = pages.get(pdfView.getPageCount()-2 );
-//                pages.add(new PAGE(pageSize, page1.getPosition()+pageSize.getHeight(), pdfView.getPageCount()));
                     RELOAD = false;
 //                return;
                 }
@@ -407,7 +389,7 @@ public  static PAGE currentPage;
                             visibleOnly(null, 0);
                         }
                     });
-                    shapeView = new p_shape_view(Editor.this.getContext(), pdfView, Editor.this);
+
 
 
                     highlighterView = new p_hightlight_view(Editor.this.getContext(), pdfView, Editor.this);
@@ -423,14 +405,14 @@ public  static PAGE currentPage;
                     pdfViewPerant.addView(textEditorView);
                     pdfViewPerant.addView(highlighterView);
                     pdfViewPerant.addView(erasingView);
-                    pdfViewPerant.addView(shapeView);
+
 
                     pdfViewPerant.addView(imageView);
 
                 }
                 drawingView.setVisibility(View.GONE);
                 Objects.requireNonNull(textEditorView).setVisibility(View.GONE);
-                shapeView.setVisibility(View.GONE);
+
 
                 highlighterView.setVisibility(View.GONE);
                 erasingView.setVisibility(View.GONE);
@@ -449,18 +431,18 @@ public  static PAGE currentPage;
                 System.out.println("PAGE COUNT  " + pdfView.getPageCount());
                 float pageYposition = 0;
                 float pageSpacingTot = 0;
-                float lastPageSp=0;
+                float lastPageSp = 0;
                 for (int i = 0; i < pdfView.getPageCount(); ++i) {
                     SizeF pageSize = pdfView.getPageSize(i);
                     PAGE pp = new PAGE(pdfView.pdfFile, pageYposition, i);
 
-                    pageSpacingTot  = ((pdfView.pdfFile.getPageSpacing(i, 1) / 2) * ((2 * i) - 1));
+                    pageSpacingTot = ((pdfView.pdfFile.getPageSpacing(i, 1) / 2) * ((2 * i) - 1));
 
                     pp.pageSpacingTot = pageSpacingTot;
 
-                    pp.dy=  (pageYposition-  pageSpacingTot)-lastPageSp;
-                    lastPageSp=    (pageYposition-  pageSpacingTot) ;
-                    System.out.println(pp.dy+"*****"+(pdfView.pdfFile.getPageSpacing(i, 1) / 2) + "=====" + ((2 * i) - 1) + "-----" + i + " pageSpacingTot " + pageSpacingTot);
+                    pp.dy = (pageYposition - pageSpacingTot) - lastPageSp;
+                    lastPageSp = (pageYposition - pageSpacingTot);
+                    System.out.println(pp.dy + "*****" + (pdfView.pdfFile.getPageSpacing(i, 1) / 2) + "=====" + ((2 * i) - 1) + "-----" + i + " pageSpacingTot " + pageSpacingTot);
 
                     pages.add(pp);
                     pageYposition += (pageSize.getHeight() + (pdfView.getSpacingPx()));
@@ -497,25 +479,10 @@ public  static PAGE currentPage;
                 }
             }
 
-//            @Override
-//            public void onLayerDrawn(Canvas canvas, float pageWidth, float pageHeight, int displayedPage, float translateX, float translateY) {
-//                if (dialog != null && dialog.isShowing()) {
-//                    dialog.dismiss();
-//                }
-////                canvas.drawBitmap(drawingView.getBitmap(),
-////                        null,
-////                        new RectF(0, 0, pageWidth, pageHeight),
-////                        null);
-//
-////                drawingView.drawingView.reDraw(canvas);
-//
-//            }
         });
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-//                pdfView.setLayoutParams(new FrameLayout.LayoutParams(Math.max(Dwidth, Dheight) - 100, pdfView.getHeight() - 60));
-//                pdfView.setLayoutParams(new FrameLayout.LayoutParams(Dwidth - 100, pdfView.getHeight() - 60));
             }
         });
         return pv;
@@ -527,9 +494,7 @@ public  static PAGE currentPage;
             textEditorView.saveText();
         }
 
-        if (shape_editor) {
-            shapeView.save();
-        }
+
         if (image_editor) {
             imageView.save();
         }
@@ -538,19 +503,17 @@ public  static PAGE currentPage;
         textEditorView.setVisibility(View.GONE);
         highlighterView.setVisibility(View.GONE);
         erasingView.setVisibility(View.GONE);
-        shapeView.setVisibility(View.GONE);
+
 
         imageView.setVisibility(View.GONE);
-
-
 
 
         is_text_editor_clicked = false;
         boolean writebox_editor = Boolean.FALSE;
         shape_editor = false;
         boolean button_drawingView_clicked = false;
-        button_erasingView_clicked = false;
-        button_highlighter_clicked = false;
+        boolean button_erasingView_clicked = false;
+        boolean button_highlighter_clicked = false;
         image_editor = false;
 
 
@@ -606,12 +569,13 @@ public  static PAGE currentPage;
         super.onActivityResult(requestCode, resultCode, data);
 
 
+        int OPEN_FILE_TO_MERGE = 111;
         if (requestCode == OPEN_FILE_TO_MERGE && resultCode == RESULT_OK && null != data) {
 
             Uri uri = data.getData();
             new File(getContext().getFilesDir() + "/pdf.pdf").delete();
             try {
-                Files.copy(getInputStreamForVirtualFile(uri, "application/pdf"),
+                Files.copy(getInputStreamForVirtualFile(uri),
                         Paths.get(getContext().getFilesDir() + "/pdf.pdf"));
             } catch (IOException e) {
                 e.printStackTrace();
@@ -663,12 +627,12 @@ public  static PAGE currentPage;
         }
     }
 
-    private InputStream getInputStreamForVirtualFile(Uri uri, String mimeTypeFilter)
+    private InputStream getInputStreamForVirtualFile(Uri uri)
             throws IOException {
 
         ContentResolver resolver = getContext().getContentResolver();
 
-        String[] openableMimeTypes = resolver.getStreamTypes(uri, mimeTypeFilter);
+        String[] openableMimeTypes = resolver.getStreamTypes(uri, "application/pdf");
 
 
         return resolver
@@ -735,27 +699,23 @@ public  static PAGE currentPage;
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case 11: {
+        if (requestCode == 11) {// If request is cancelled, the result arrays are empty.
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Editor.this.startActivityForResult(pictureIntent, RESULT_CAMERA_LOAD_IMAGE);
+            } else {
 
-                    Editor.this.startActivityForResult(pictureIntent, RESULT_CAMERA_LOAD_IMAGE);
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    Toast.makeText(Editor.this.getContext(), "Permission denied to Open Camera", Toast.LENGTH_SHORT).show();
-                }
-                return;
+                // permission denied, boo! Disable the
+                // functionality that depends on this permission.
+                Toast.makeText(Editor.this.getContext(), "Permission denied to Open Camera", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
@@ -782,9 +742,7 @@ public  static PAGE currentPage;
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 
-        View view = inflater.inflate(R.layout.pdf_editor, container, false);
-
-        return view;
+        return inflater.inflate(R.layout.pdf_editor, container, false);
     }
 
     private void updateNavigationBarState(int actionId) {
@@ -823,7 +781,7 @@ public  static PAGE currentPage;
                 }
             });
 
-    ActivityResultLauncher<Intent> imageChooserActivity = registerForActivityResult(
+    final ActivityResultLauncher<Intent> imageChooserActivity = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
@@ -865,6 +823,7 @@ public  static PAGE currentPage;
         view.setVisibility(i);
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
@@ -908,19 +867,19 @@ public  static PAGE currentPage;
                                 @Override
                                 public boolean onMenuItemClick(MenuItem item) {
                                     switch (item.getItemId()) {
-                                        case id.add_btn_photo_gallery  :
+                                        case id.add_btn_photo_gallery:
                                             imageChooserActivityStoragePermissions.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
                                             return true;
 
-                                        case id.add_btn_photo_camera :
+                                        case id.add_btn_photo_camera:
                                             cmeraActivityStoragePermissions.launch(Manifest.permission.CAMERA);
                                             return true;
 
-                                        case id.add_btn_text :
+                                        case id.add_btn_text:
                                             visibleOnly(textEditorView, View.VISIBLE);
                                             return true;
 
-                                            case id.add_btn_page :
+                                        case id.add_btn_page:
                                             addNewPage();
                                             return true;
 
@@ -949,62 +908,6 @@ public  static PAGE currentPage;
         pdfViewPerant = getActivity().findViewById(R.id.pdfViewPerant);
 
 
-
-//        button_new_page.setOnClickListener(new View.OnClickListener() {
-//            @SuppressLint("StaticFieldLeak")
-//            @Override
-//            public void onClick(View view) {
-//
-//                new AsyncTask<Void, Void, Void>() {
-//
-//                    @Override
-//                    protected Void doInBackground(Void... voids) {
-//                        try {
-//                            PDDocument doc = PDDocument.load(Editor.this.getFile());
-//                            PDPage p = doc.getPage(doc.getPages().getCount() - 1);
-//                            System.out.println(p.getMediaBox().getHeight());
-//                            System.out.println(p.getMediaBox().getWidth());
-//
-////                            PDPage page = new PDPage(PDRectangle.A4);
-//
-//                            PDPage page = new PDPage(p.getMediaBox());
-//                            doc.addPage(page);
-//                            doc.save(Editor.this.getFile());
-//                            doc.close();
-//                            System.out.println("FILE SAVED");
-//
-//                            getActivity().runOnUiThread(new Runnable() {
-//
-//                                @Override
-//                                public void run() {
-//
-//                                    Editor.this.reloadFile();
-//
-//                                }
-//                            });
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
-//                        return null;
-//                    }
-//
-//                    @Override
-//                    protected void onPreExecute() {
-//                        super.onPreExecute();
-//                        dialog = new ProgressDialog(getContext());
-//                        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-//                        dialog.setMessage("Adding New Page... ");
-//                        dialog.setTitle("Please wait...");
-//                        dialog.setIndeterminate(true);
-//                        dialog.setCanceledOnTouchOutside(false);
-//                        dialog.show();
-//                    }
-//                }.execute();
-//
-//
-//            }
-//        });
-
         pdfViewPerant.bringToFront();
 
         if (runAfterLoad != null) {
@@ -1021,7 +924,7 @@ public  static PAGE currentPage;
 
     @SuppressLint("StaticFieldLeak")
     private void addNewPage() {
-         new AsyncTask<Void, Void, Void>() {
+        new AsyncTask<Void, Void, Void>() {
 
             @Override
             protected Void doInBackground(Void... voids) {
@@ -1110,6 +1013,8 @@ public  static PAGE currentPage;
         x++;
     }
 
+
+
     @Override
     public void onStart() {
         super.onStart();
@@ -1128,7 +1033,7 @@ public  static PAGE currentPage;
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
         // Save UI state changes to the savedInstanceState.
         // This bundle will be passed to onCreate if the process is
@@ -1142,14 +1047,6 @@ public  static PAGE currentPage;
 
         savedInstanceState.putString("xx", "Welcome back to Android");
     }
-
-//    public int getToolVisibility() {
-//        return toolset.getVisibility();
-//    }
-
-//    public void setToolVisibility(int visibility) {
-////        toolset.setVisibility(visibility);
-//    }
 
     @Override
     public void onDetach() {
@@ -1192,14 +1089,13 @@ public  static PAGE currentPage;
         String imageFileName = "IMG_" + timeStamp + "_";
         File storageDir =
                 getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
+
+
+        return File.createTempFile(
                 imageFileName,  /* prefix */
                 ".bmp",         /* suffix */
                 storageDir      /* directory */
         );
-
-
-        return image;
     }
 
 
@@ -1256,7 +1152,8 @@ public  static PAGE currentPage;
         adb.setTitle("Which one?");
         final AlertDialog ad = adb.show();
         Button nbutton = ad.getButton(DialogInterface.BUTTON_NEGATIVE);
-        nbutton.setBackgroundColor(getResources().getColor(R.color.btn1));
+//        nbutton.setBackgroundColor(getResources().getColor(R.color.btn1));
+        nbutton.setBackgroundColor(ContextCompat.getColor(context, R.color.btn1));
 
         gallerySelect.findViewById(R.id.cam).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1271,17 +1168,48 @@ public  static PAGE currentPage;
             public void onClick(View view) {
                 Intent pickPhoto = new Intent(Intent.ACTION_PICK,
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                Editor.this.startActivityForResult(pickPhoto, RESULT_LOAD_IMAGE);
+//                Editor.this.startActivityForResult(pickPhoto, RESULT_LOAD_IMAGE);
+
+                registerForActivityResult(
+                        new ActivityResultContracts.StartActivityForResult(),
+                        new ActivityResultCallback<ActivityResult>() {
+                            @Override
+                            public void onActivityResult(ActivityResult result) {
+                                if (result.getResultCode() == Activity.RESULT_OK) {
+                                    Intent data = result.getData();
+                                    Uri selectedImage = data.getData();
+                                    System.out.println("________________________________________________________________");
+                                    System.out.println(selectedImage);
+                                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+                                    Cursor cursor = getActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                                    cursor.moveToFirst();
+
+                                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                                    String picturePath = cursor.getString(columnIndex);
+                                    cursor.close();
+
+                                    BitmapFactory.Options options = new BitmapFactory.Options();
+                                    options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                                    Bitmap bitmap1 = BitmapFactory.decodeFile(picturePath, options);
+                                    imageView.resetImageBox();
+                                    image_container.setBitmap(bitmap1);
+                                }
+                            }
+                        }).launch(pickPhoto);
+
+
                 ad.dismiss();
             }
         });
 
     }
 
+
     public HashMap<String, ArrayList<File>> getImages() {
 
         HashMap<String, ArrayList<File>> files = new HashMap<>();
-        ArrayList<File> imagesList = new ArrayList();
+        ArrayList<File> imagesList = new ArrayList<>();
         for (Map.Entry<Long, File> f : images.entrySet()) {
             imagesList.add(f.getValue());
         }
@@ -1315,18 +1243,7 @@ public  static PAGE currentPage;
 //        float dheight = (((canvas.getHeight() - pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight()))/2) * nthOdd(pdfView.getCurrentPage() + 1);
         float dheight = (((canvas.getHeight() - pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight()))) * pdfView.getCurrentPage() * pdfView.getZoom();
         dheight = pdfView.getCurrentPage() == 0 ? 0 : dheight;
-//        float X = Math.abs(pdfView.getCurrentXOffset());
 
-//        Rect clipBounds = pdfView.getClipBounds();
-
-//        float Y = 0 - ((pdfView.getCurrentYOffset()) + (pages.get(pdfView.getCurrentPage()).getPosition()) * pdfView.getZoom());
-
-
-
-//        canvas.drawBitmap(drawingView.getBitmap(), null,   new RectF(X, Y - dheight,
-//                X + drawingView.getBitmap().getWidth(),
-//                Y + drawingView.getBitmap().getHeight()), null);
-//        Y = Y - dheight;
 
         canvas.drawBitmap(drawingView.getBitmap(), null, new RectF(0, 0,
                 drawingView.getBitmap().getWidth() * pdfView.getZoom(),
@@ -1335,26 +1252,9 @@ public  static PAGE currentPage;
 //        System.out.println(pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight() + "___________________________________________");
     }
 
-    public void setSaveButtonListner(OnSaveListener OnSaveListener) {
-        //        if (OnSaveListener != null) {
-//            button_save.setVisibility(View.VISIBLE);
-//        } else {
-//            button_save.setVisibility(View.GONE);
-//        }
-    }
-
     public void setOnViewCreated(OnViewCreatedListner onViewCreatedListner) {
         this.onViewCreatedListner = onViewCreatedListner;
     }
-
-//    public void setOnPrintListner(OnPrint onPrint) {
-//        this.onPrint = onPrint;
-//        if (onPrint != null) {
-//            mb_print.setVisibility(View.VISIBLE);
-//        } else {
-//            mb_print.setVisibility(View.GONE);
-//        }
-//    }
 
 
     public void addImage(long id, Bitmap b1) {
@@ -1388,9 +1288,7 @@ public  static PAGE currentPage;
             textEditorView.saveText();
         }
 
-        if (shape_editor) {
-            shapeView.save();
-        }
+
         if (image_editor) {
             imageView.save();
         }
@@ -1417,8 +1315,6 @@ public  static PAGE currentPage;
 
     public void uploadEdits(RunAfterSave afterSaveToServer) {
         runAfterSave = afterSaveToServer;
-//        System.out.println(getPdfEditsList().getList());
-//        System.out.println("__2 __"+new Date());
         webView.evaluateJavascript("getSvgList(" + getPdfEditsList().getList() + " );", null);
 //        System.out.println("__3 __"+new Date());
 
@@ -1436,12 +1332,6 @@ public  static PAGE currentPage;
         reDraw(displayedPage);
     }
 
-
-//    public void onLayerDrawn(Canvas canvas, float pageWidth, float pageHeight, int displayedPage, float translateX, float translateY) {
-//
-//        DrawBitmap(canvas);
-//        reDraw(displayedPage);
-//    }
 
     public interface AfterSaveToServer {
         void run();

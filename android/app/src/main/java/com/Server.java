@@ -1,7 +1,7 @@
 package com;
 
 public class Server {
-    static boolean local = false;
+  public  static boolean local = false;
 
     public static String getServerAddress() {
         if (local) {

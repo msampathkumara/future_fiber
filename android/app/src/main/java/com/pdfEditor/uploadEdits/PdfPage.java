@@ -46,8 +46,7 @@ public class PdfPage {
 
     public String toJson() {
         Gson gson = new Gson();
-        String jsonString = gson.toJson(this);
-        return jsonString;
+        return gson.toJson(this);
     }
 
 

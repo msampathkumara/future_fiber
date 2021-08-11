@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 
 import com.pdfEditor.EditorTools.freehand.xPath;
 import com.pdfEditor.EditorTools.image.xImage;
-import com.pdfEditor.EditorTools.shape.xShape;
 import com.pdfEditor.EditorTools.textEditor.xText;
 import com.pdfviewer.PdfFile;
 import com.tom_roush.pdfbox.pdmodel.PDPage;
@@ -19,8 +18,7 @@ import java.util.List;
 public class PAGE extends PDPage {
 
     public final float position;
-    @NonNull
-    public final List<xShape> shapeMap;
+
     public final int id;
     @NonNull
     public final List<xPath> paths;
@@ -32,7 +30,7 @@ public class PAGE extends PDPage {
     //    private   SizeF pageSize;
     float maxPageWidth;
     float maxPageHeight;
-    PdfFile pdfFile;
+    final PdfFile pdfFile;
     //    private SizeF oldPageSize;
     private Bitmap bitmap;
     private boolean edited;
@@ -45,7 +43,7 @@ public class PAGE extends PDPage {
         this.id = id;
         paths = new ArrayList<>();
         textMap = new ArrayList<>();
-        shapeMap = new ArrayList<>();
+
         this.pdfFile = pdfFile;
     }
 

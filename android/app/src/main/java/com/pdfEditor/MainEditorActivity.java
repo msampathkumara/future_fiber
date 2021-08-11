@@ -54,7 +54,6 @@ public class MainEditorActivity extends AppCompatActivity {
 
     public static String FILE_NAME;
     static String FILE_PATH;
-    private final int rfResult = 222;
     public Editor pdfEditor;
     //    NsFile SELECTED_FILE;
     Ticket SELECTED_FILE;
@@ -128,7 +127,7 @@ public class MainEditorActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putParcelable("x", new data(pdfEditor.editsList, pdfEditor.getImagesList(), pdfEditor.getPdfEditsList(), 1));
         System.out.println("_____________________________________________________onSaveInstanceState");
@@ -142,6 +141,7 @@ public class MainEditorActivity extends AppCompatActivity {
         System.out.println("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR ______ " + requestCode + " __  " + resultCode);
 
         int SAVE_FOLDER_SELECTED = 1;
+        int rfResult = 222;
         if (requestCode == rfResult) {
             if (resultCode == Activity.RESULT_OK) {
                 onBackPressed();
@@ -165,7 +165,7 @@ public class MainEditorActivity extends AppCompatActivity {
             if (RequestedOrientation == Configuration.ORIENTATION_LANDSCAPE) {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             } else {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
             }
 
             pdfEditor.saveEdits();
@@ -174,17 +174,13 @@ public class MainEditorActivity extends AppCompatActivity {
 
                         @Override
                         public void run(File sourceFile) {
-                            Intent data = new Intent();
-                            data.putExtra("edited", true);
-                            setResult(Activity.RESULT_OK, data);
-                            finish();
+//                            Intent data = new Intent();
+//                            data.putExtra("edited", true);
+//                            setResult(Activity.RESULT_OK, data);
+//                            finish();
 
                         }
 
-                        @Override
-                        public void error(Exception exception) {
-
-                        }
                     }, this
             );
 
@@ -243,60 +239,6 @@ public class MainEditorActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        if (!getIntent().getExtras().getBoolean(HIDE_TOP_BAR_MENU, false)) {
-//            getMenuInflater().inflate(R.menu.pdf_editor_menu, menu);
-//        }
-//
-//
-//        return true;
-//    }
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle item selection
-//        Intent i;
-//        switch (item.getItemId()) {
-//            case R.id.mb_finish_job:
-//                finishJob();
-//                return true;
-//            case R.id.mb_bluebook:
-//                i = new Intent(MainEditorActivity.this, BlueBookWithTicket.class);
-//                i.putExtra("url", "http://bluebook.northsails.com:8088/nsbb/app/blueBook.html");
-//                i.putExtra(FileBrowser.FILE, SELECTED_FILE);
-//                startActivity(i);
-//                break;
-//            case R.id.mb_other_apps:
-//                Intent intent = new Intent(MainEditorActivity.this, OtherApps.class);
-//                startActivity(intent);
-//                break;
-//            case R.id.mb_email:
-//                startNewActivity("com.google.android.gm");
-//                break;
-//            case R.id.mb_pick_list:
-//                i = new Intent(MainEditorActivity.this, ShortPickList.class);
-//                i.putExtra(FileBrowser.FILE, SELECTED_FILE);
-//                startActivity(i);
-//                break;
-//            case R.id.mb_report:
-//                Intent x = new Intent(MainEditorActivity.this, webBrowser.class);
-//                x.putExtra("url", Strings.getServerAddress() + "/FileBrowser/Report/index.php?file=" + SELECTED_FILE.getFileId() + "&mob=1");
-//                startActivity(x);
-//                break;
-//            default:
-//                return super.onOptionsItemSelected(item);
-//        }
-//        return true;
-//    }
-
-//    @Override
-//    protected void onResume() {
-//        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ on resume main activity");
-//        super.onResume();
-//    }
-
-
 
     private void startNewActivity(@NonNull String packageName) {
         Intent intent = getPackageManager().getLaunchIntentForPackage(packageName);
@@ -309,7 +251,7 @@ public class MainEditorActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    LoadingDialog loadingDialog = new LoadingDialog("Saving. Please wait...", true);
+    final LoadingDialog loadingDialog = new LoadingDialog("Saving. Please wait...", true);
 
 
     static final int BUFFER = 2048;
@@ -320,13 +262,6 @@ public class MainEditorActivity extends AppCompatActivity {
             loadingDialog.show(getSupportFragmentManager(), loadingDialog.getTag());
         }
 
-
-//        final ProgressDialog dialog = new ProgressDialog(MainEditorActivity.this);
-//        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-//        dialog.setMessage("Saving. Please wait...");
-//        dialog.setIndeterminate(true);
-//        dialog.setCanceledOnTouchOutside(false);
-//        dialog.show();
 
         pdfEditor.uploadEdits(new RunAfterSave() {
 
@@ -340,26 +275,7 @@ public class MainEditorActivity extends AppCompatActivity {
             public void run(JSONObject value, Ticket SELECTED_NS_FILE) {
 
                 System.out.println("-----------------------------------------------------------------------+++++++");
-//                Zip zipFile = new Zip(getExternalFilesDir(null) + "/" + SELECTED_FILE.id + "/" + SELECTED_FILE.id + ".zip");
-//                File svgFile = getSVGFile(value.toString());
-//
-//                zipFile.addFile(svgFile);
-//
-////                File dir = new File( getExternalFilesDir(null) + "/" + SELECTED_NS_FILE.id+"/images");
-//
-//                HashMap<String, ArrayList<File>> i = pdfEditor.getImages();
-//
-//                ArrayList<File> images = i.get("images[]");
-//
-//                for (File file : images) {
-//                    System.out.println(file.getPath());
-//                    System.out.println(file.exists());
-//                    zipFile.addFile(file, "images");
-//                }
-////                zipFile.addFile(dir);
-//                zipFile.closeZip();
-//
-                HashMap<String, String> vals = new HashMap();
+                HashMap<String, String> vals = new HashMap<>();
 
                 vals.put("type", "edits");
 
@@ -371,9 +287,9 @@ public class MainEditorActivity extends AppCompatActivity {
 
                 System.out.println("____________SVG SIZE_________________" + (sizeInBytes / 1024));
                 HashMap<String, ArrayList<File>> images = pdfEditor.getImages();
-                if (true) {
-                    return;
-                }
+//                if (true) {
+//                    return;
+//                }
                 String requestURL = Server.getServerApiPath("tickets/uploadEdits");
                 uploadMultyParts(context, requestURL, images, vals, new RunAfterMultipartUpload() {
                     @Override
@@ -442,7 +358,7 @@ public class MainEditorActivity extends AppCompatActivity {
         FirebaseUser user = mAuth.getCurrentUser();
         user.getIdToken(true).addOnSuccessListener(new OnSuccessListener<GetTokenResult>() {
             @Override
-            public void onSuccess(GetTokenResult getTokenResult) {
+            public void onSuccess(@NonNull GetTokenResult getTokenResult) {
                 System.out.println("getTokenResult.getToken()");
                 System.out.println(getTokenResult.getToken());
 
@@ -490,10 +406,10 @@ public class MainEditorActivity extends AppCompatActivity {
     class x extends AsyncTask<Boolean, Boolean, Void> {
         final String folder;
         ProgressDialog savingDialog;
-        boolean ERR = false;
+        final boolean ERR = false;
         String fileName;
         boolean EDITED = false;
-        RunAfterUpload runAfterUpload;
+        final RunAfterUpload runAfterUpload;
 
         x(String folder, String fileName, RunAfterUpload runAfterUpload) {
             this.folder = folder;

@@ -34,7 +34,7 @@ class MainActivity : FlutterActivity() {
                 val path = call.argument<String>("path")
                 val ticket = call.argument<String>("ticket")
 
-                println("$fileID _$path _$ticket");
+                println("$fileID _$path _$ticket")
 
 
                 val i = Intent(this, MainEditorActivity::class.java)

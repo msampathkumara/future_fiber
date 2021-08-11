@@ -18,11 +18,6 @@ import com.pdfEditor.PAGE;
 import com.pdfviewer.PDFView;
 import com.sampathkumara.northsails.smartwind.R;
 
-//import com.flask.colorpicker.ColorPickerView;
-//import com.flask.colorpicker.OnColorSelectedListener;
-//import com.flask.colorpicker.builder.ColorPickerClickListener;
-//import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
-
 
 public class p_hightlight_view extends FrameLayout {
 
@@ -61,26 +56,6 @@ public class p_hightlight_view extends FrameLayout {
         });
         seekBar.setProgress(15);
 
-//        findViewById(R.id.color).setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                ColorPickerDialog colorPickerDialog = ColorPickerDialog.createColorPickerDialog(getContext(), R.style.CustomColorPicker);
-//                colorPickerDialog.setOnColorPickedListener(new ColorPickerDialog.OnColorPickedListener() {
-//                    @Override
-//                    public void onColorPicked(int color, String hexVal) {
-//                        System.out.println("Got color: " + color);
-//                        System.out.println("Got color in hex form: " + hexVal);
-//
-//                        highlighter.setColor(adjustAlpha(color));
-//                        // Make use of the picked color here
-//                    }
-//                });
-//                colorPickerDialog.show();
-////                colorPickerDialog.findViewById(R.id.hexVal).setVisibility(GONE);
-//
-//            }
-//        });
-
         OnClickListener onColorSelect = new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,7 +66,7 @@ public class p_hightlight_view extends FrameLayout {
                     btn.setImageResource(R.drawable.transparent);
                     if (xx == v.getId()) {
                         btn.setImageResource(R.drawable.ring);
-                        highlighter.setColor(getTransparentColor(btn.getBackgroundTintList().getDefaultColor(), 0.50));
+                        highlighter.setColor(getTransparentColor(btn.getBackgroundTintList().getDefaultColor()));
                     }
                 }
                 if (v.getId() == R.id.color) {
@@ -125,14 +100,14 @@ public class p_hightlight_view extends FrameLayout {
 
     }
 
-    private int getTransparentColor(int color, double opacity) {
+    private int getTransparentColor(int color) {
         int alpha = Color.alpha(color);
         int red = Color.red(color);
         int green = Color.green(color);
         int blue = Color.blue(color);
 
         // Set alpha based on your logic, here I'm making it 25% of it's initial value.
-        alpha *= opacity;
+        alpha *= 0.5;
 
         return Color.argb(alpha, red, green, blue);
     }
@@ -157,7 +132,7 @@ public class p_hightlight_view extends FrameLayout {
     }
 
     public void setEdited(boolean edited) {
-        highlighter.setEdited(edited);
+
     }
 
 

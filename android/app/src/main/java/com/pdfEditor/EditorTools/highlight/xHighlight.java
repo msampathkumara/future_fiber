@@ -13,14 +13,6 @@ public class xHighlight extends xEdits {
     private Path path;
 
 
-//    public xHighlight(Path path, Paint paint, float translateX, float translateY, int page) {
-//        this.path = path;
-//        this.paint = paint;
-//        this.translateX = translateX;
-//        this.translateY = translateY;
-//        this.page = page;
-//    }
-
     public xHighlight(Path path, Paint paint, float translateX, float translateY, int page, float PageWidth, float PageHeight, float zoom) {
 
         this.path = path;
@@ -47,14 +39,6 @@ public class xHighlight extends xEdits {
     public Path getPath() {
         return path;
     }
-
-//    @Override
-//    public Paint getPaint() {
-//        paint.getColor();
-//        Paint p = new Paint(paint);
-//        p.setColor(adjustAlpha(p.getColor()));
-//        return p;
-//    }
 
     public void setPath(Path path) {
         this.path = path;

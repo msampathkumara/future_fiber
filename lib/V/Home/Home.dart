@@ -34,7 +34,7 @@ enum MenuItems { logout, dbReload, changeSection, cpanel }
 class _HomeState extends State<Home> {
   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseMessaging messaging = FirebaseMessaging.instance;
-    NsUser? nsUser;
+  NsUser? nsUser;
 
   @override
   void initState() {
@@ -105,7 +105,7 @@ class _HomeState extends State<Home> {
                 title: Padding(
                   padding: const EdgeInsets.only(top: 24.0),
                   child: ListTile(
-                    leading: CircleAvatar(radius: 24.0, backgroundImage: NsUser.getUserImage(nsUser ), backgroundColor: Colors.transparent),
+                    leading: CircleAvatar(radius: 24.0, backgroundImage: NsUser.getUserImage(nsUser), backgroundColor: Colors.transparent),
                     title: Text(nsUser!.name, textScaleFactor: 1.2),
                     subtitle: Text("${nsUser!.section!.sectionTitle} @ ${nsUser!.section!.factory}"),
                     trailing: _currentUserOprionMenu(),
@@ -148,7 +148,8 @@ class _HomeState extends State<Home> {
                             },
                             openWidget: ProductionPool(),
                             onClosed: _showMarkedAsDoneSnackbar,
-                          ),_OpenContainerWrapper(
+                          ),
+                          _OpenContainerWrapper(
                             closedBuilder: (BuildContext _, VoidCallback openContainer) {
                               return _menuButton(
                                   openContainer,
@@ -280,7 +281,7 @@ class _HomeState extends State<Home> {
           const PopupMenuItem<MenuItems>(
             value: MenuItems.cpanel,
             child: Text('Cpanel'),
-          ),
+          )
       ],
     );
   }

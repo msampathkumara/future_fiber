@@ -171,7 +171,7 @@ class Ticket {
     // var i = await getLocalFileVersion();
     var isNew = await isFileNew();
     print(isNew);
-
+    isNew = false;
     if (isNew && file.existsSync()) {
       print("File exists ");
       // var data = await Navigator.push(  context,   MaterialPageRoute(builder: (context) => PDFScreen(this))   );

@@ -29,6 +29,7 @@ public abstract class WebViewInterface {
 
     }
 
+    @SuppressWarnings("EmptyMethod")
     public abstract void onLoad();
 
 

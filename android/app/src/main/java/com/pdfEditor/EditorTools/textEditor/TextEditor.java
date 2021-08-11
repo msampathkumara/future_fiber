@@ -210,9 +210,6 @@ public class TextEditor extends RelativeLayout {
 
         mCanvas.save();
 
-//        float x1 = pdfView.pdfFile.getMaxPageWidth() / (kk.getPageWidth());
-//        float y1 = pdfView.pdfFile.getMaxPageHeight() / kk.getPageHeight();
-
         Paint p = new Paint(kk.getPaint());
 //        p.setTextSize(p.getTextSize() * pdfView.getZoom());
         p.setTextSize(p.getTextSize() );
@@ -221,11 +218,6 @@ public class TextEditor extends RelativeLayout {
         float yp = (kk.translateY() / kk.getPageHeight()) * pdfView.pdfFile.getMaxPageHeight();
 
 
-//        float xx = ((xp * pdfView.getZoom()) + (pdfView.getCurrentXOffset()*0));
-//        float yy = ((yp * pdfView.getZoom()) + (pdfView.getCurrentYOffset()*0) + (Yposition * pdfView.getZoom()));
-
-
-//        mCanvas.translate(xx, yy);
         mCanvas.translate(xp, yp-Yposition+(page.dy*pdfView.getCurrentPage()) );
 
 //        mCanvas.drawText(kk.getText(), kk.getCanvasX() * pdfView.getZoom() * x1, kk.getCanvasY() * pdfView.getZoom() * y1, p);

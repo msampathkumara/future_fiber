@@ -18,7 +18,7 @@ import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'PasswordRecovery.dart';
 
 class Login extends StatefulWidget {
- static var appUser;
+  static var appUser;
 
   Login();
 
@@ -30,8 +30,6 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-
-
   NsUser _user = new NsUser();
   late bool nfcIsAvailable = false;
 
@@ -70,6 +68,9 @@ class _LoginState extends State<Login> {
         );
       }
     });
+
+    // nfcCode = "04f68ad2355e80";
+    // _login();
   }
 
   @override

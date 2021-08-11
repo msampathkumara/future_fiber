@@ -29,7 +29,7 @@ public class data implements Parcelable {
     };
     public String ssss;
     EditsList pdfEditsList = new EditsList();
-    List<xEdits> editsList = new ArrayList<>();
+    ArrayList<xEdits> editsList = new ArrayList<>();
     HashMap<Long, File> images = new HashMap<>();
     NsFile fileldForm;
     NsFile ticket;
@@ -89,12 +89,12 @@ public class data implements Parcelable {
         this.pdfEditsList = pdfEditsList;
     }
 
-    public List<xEdits> getEditsList() {
+    public ArrayList<xEdits> getEditsList() {
 
         return editsList;
     }
 
-    public void setEditsList(List<xEdits> editsList) {
+    public void setEditsList(ArrayList<xEdits> editsList) {
         this.editsList = editsList;
     }
 

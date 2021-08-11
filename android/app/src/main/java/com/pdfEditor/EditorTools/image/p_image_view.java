@@ -34,7 +34,7 @@ public class p_image_view extends RelativeLayout {
     private final Rect rectf = new Rect();
     private final PDFView pdfView;
 
-    RelativeLayout pane;
+    final RelativeLayout pane;
 
     private int TEXT_X;
     private int TEXT_Y;
@@ -114,11 +114,7 @@ public class p_image_view extends RelativeLayout {
 //        mCanvas.translate(translateX, translateY);
         final Bitmap b = Bitmap.createScaledBitmap(shapeC.getImage(), (shapeC.getWidth()), (shapeC.getHeight()), false);
         final Bitmap b1 = Bitmap.createScaledBitmap(shapeC.getImage(), (shapeC.getWidth()), (shapeC.getHeight()), false);
-//        mCanvas.drawBitmap(b, (TEXT_X) / zoom, (TEXT_Y) / zoom, null);
 
-//        float dheight = (getHeight() - pdfView.pdfFile.getMaxPageHeight()) / 2;
-
-//        float sp = (pdfView.pdfFile.getPageSpacing(pdfView.getCurrentPage(), zoom) / 2)  ;
         float sp = ((((pdfView.pdfFile.getPageSpacing(pdfView.getCurrentPage(), zoom) / 2)/zoom) * (2*(pdfView.getCurrentPage()+1)-1 ))  );
 
         float dheight = (((getHeight() - pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight())) / 2);
@@ -155,8 +151,6 @@ public class p_image_view extends RelativeLayout {
 //                view.getGlobalVisibleRect(rectf1);
                 final int X = (int) event.getRawX() - rectf.left;
                 final int Y = (int) event.getRawY() - rectf.top;
-//                final int X = (int) event.getRawX()   ;
-//                final int Y = (int) event.getRawY()  ;
                 LayoutParams lParams = (LayoutParams) shapeC.getLayoutParams();
                 System.out.println(X + "_____" + Y);
                 switch (event.getAction()) {
@@ -184,17 +178,6 @@ public class p_image_view extends RelativeLayout {
         });
     }
 
-//    public void reDraw() {
-//        System.out.println("Redrawing........");
-////        mBitmap.eraseColor(Color.TRANSPARENT);
-//        for (xEdits kk : editor.editsList) {
-//            if (kk.page == this.pageNo) {
-//                if (kk instanceof xImage) {
-//                    reDraw((xImage)  kk);
-//                }
-//            }
-//        }
-//    }
 PAGE page;
     public void setPage(@NonNull PAGE page) {
 
@@ -204,8 +187,6 @@ PAGE page;
         mCanvas = new Canvas(mBitmap);
         pageNo = page.id;
       this.  page=page;
-//        reDraw();
-//        invalidate();
     }
 
     @Override
@@ -228,9 +209,6 @@ PAGE page;
         y = y * (pdfView.getZoom() / kk.getZoom());
 
 
-//                    float x = pdfView.pdfFile.getMaxPageWidth() / (kk.getPageWidth());
-//                    float y = pdfView.pdfFile.getMaxPageHeight() / kk.getPageHeight();
-
         Matrix scaleMatrix = new Matrix();
         scaleMatrix.setScale(x / pdfView.getZoom(), y / pdfView.getZoom(), 0, 0);
         scaleMatrix.postTranslate(kk.getCanvasX()    , kk.getCanvasY()    );
@@ -238,14 +216,7 @@ PAGE page;
         float xp = (kk.translateX() / kk.getPageWidth()) * pdfView.pdfFile.getMaxPageWidth();
         float yp = (kk.translateY() / kk.getPageHeight()) * pdfView.pdfFile.getMaxPageHeight();
 
-//        float xx = (((xp) * pdfView.getZoom()) + (pdfView.getCurrentXOffset()*0));
-//        float yy = (((yp) * pdfView.getZoom()) + (pdfView.getCurrentYOffset()*0) + (Yposition * pdfView.getZoom()));
-
         mCanvas.translate(xp   , (yp-Yposition+(page.dy*pdfView.getCurrentPage()))   );
-
-//        mCanvas.translate(xx, yy);
-
-//                    mCanvas.translate(k.translateX() * x, k.translateY() * y);
 
         mCanvas.drawBitmap(kk.getBitmap(), scaleMatrix, null);
 

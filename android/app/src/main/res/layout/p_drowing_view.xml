@@ -49,12 +49,12 @@
                         android:layout_weight="1"
                         android:background="@drawable/transparent"
 
+                        android:contentDescription="TODO"
                         android:scaleType="fitCenter"
                         android:src="@drawable/colors"
                         android:text="Color"
                         android:textAllCaps="false"
-                        android:textSize="10sp"
-                        android:contentDescription="TODO" />
+                        android:textSize="11sp" />
 
 
                     <ImageButton

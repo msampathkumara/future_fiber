@@ -64,9 +64,6 @@ public class image_container extends RelativeLayout {
                         System.out.println(X + "__" + Y + "___(" + lParams.width + "______________" + lParams.height + "_)_________________" + deltaX_ + "__" + deltaY_);
                         break;
                     case MotionEvent.ACTION_UP:
-//                        bm = Bitmap.createBitmap(lParams.width, lParams.height, Bitmap.Config.ARGB_8888);
-//                        mCanvas = new Canvas(bm);
-                        break;
                     case MotionEvent.ACTION_POINTER_UP:
                         break;
                     case MotionEvent.ACTION_MOVE:

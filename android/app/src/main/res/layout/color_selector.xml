@@ -8,7 +8,7 @@
 
     <ImageButton
         android:id="@+id/color"
-        android:layout_width="25dp"
+        android:layout_width="0dp"
         android:layout_height="25dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="15dp"
@@ -19,7 +19,7 @@
         android:src="@drawable/colors"
         android:text="Color"
         android:textAllCaps="false"
-        android:textSize="10sp"
+        android:textSize="11sp"
         android:contentDescription="TODO" />
 
 

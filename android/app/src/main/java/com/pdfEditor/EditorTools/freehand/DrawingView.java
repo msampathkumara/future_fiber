@@ -40,7 +40,7 @@ public class DrawingView extends FrameLayout {
     private final Path path = new Path();
     public int width;
     public int height;
-    Editor editor;
+    final Editor editor;
     ArrayList<editPoint> points = new ArrayList<>();
 
     private boolean scaling;

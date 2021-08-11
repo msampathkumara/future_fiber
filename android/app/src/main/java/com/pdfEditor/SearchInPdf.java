@@ -22,13 +22,13 @@ class SearchInPdf {
                 .getAbsolutePath(), "X.pdf");
         PDDocument document = PDDocument.load(f);
         try {
-            System.out.println(search("Type", document));
+            System.out.println(search(document));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static int search(String name, @NonNull PDDocument document) throws IOException {
+    private static int search(@NonNull PDDocument document) throws IOException {
 
         x = System.currentTimeMillis();
         int page = 0;
@@ -39,7 +39,7 @@ class SearchInPdf {
 //        text = text.replaceAll(" ", "").toLowerCase();
         System.out.println(text);
         String data = text.substring(0, Math.min(text.length(), 4));// Get first 4 chars in text
-        if (data.equals(name)) {// test if it's egal to the word I want
+        if (data.equals("Type")) {// test if it's egal to the word I want
 
 //                break;
         }
@@ -66,11 +66,6 @@ class SearchInPdf {
         textForRegion = textForRegion.replaceAll("^\\s+|\\s+$", "");
         System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzz___7_" + (System.currentTimeMillis() - x));
         return textForRegion;
-    }
-
-    public static void main(String[] args) {
-
-
     }
 
 
