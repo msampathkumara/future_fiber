@@ -1,9 +1,9 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hex/hex.dart';
-import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:nfc_manager/platform_tags.dart';
@@ -69,8 +69,8 @@ class _LoginState extends State<Login> {
       }
     });
 
-    // nfcCode = "04f68ad2355e80";
-    // _login();
+    nfcCode = "04f68ad2355e80";
+    _login();
   }
 
   @override
@@ -148,17 +148,16 @@ class _LoginState extends State<Login> {
     print({"uname": _user.uname, "pword": _user.pword, "nfc": nfcCode});
 
     setLoading(true);
-    http
-        .post(
-      Uri.parse(Server.getServerPath("user/login")),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode({"uname": _user.uname, "pword": _user.pword, "nfc": nfcCode}),
-    )
-        .then((response) async {
-      print(response.body);
-      Map res = (json.decode(response.body) as Map);
+
+    Dio dio = new Dio();
+    dio.options.headers['content-Type'] = 'application/json';
+
+    dio.post(
+      Server.getServerPath("user/login"),
+      data: {"uname": _user.uname, "pword": _user.pword, "nfc": nfcCode},
+    ).then((response) async {
+      print(response.data);
+      Map res = response.data;
 
       if (res["user"] == null) {
         if (nfcCode.isNotEmpty) {
@@ -188,6 +187,7 @@ class _LoginState extends State<Login> {
         } else {
           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (Route<dynamic> route) => false);
         }
+        NfcManager.instance.stopSession();
       }
       setLoading(false);
     }).onError((error, stackTrace) {

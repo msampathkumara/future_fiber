@@ -80,8 +80,8 @@ class _CrossProductionState extends State<CrossProduction> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  OnlineDB.apiGet("tickets/crossProduction", {'ticket': widget.ticket.id.toString(),"factory":selectedSection.factory}).then((http.Response response) async {
-                    print(response.body);
+                  OnlineDB.apiGet("tickets/crossProduction", {'ticket': widget.ticket.id.toString(),"factory":selectedSection.factory}).then((  response) async {
+                    print(response.data);
                   });
                 },
                 child: Text("Send"),

@@ -37,6 +37,8 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
 
   var _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
+  bool _setIdCards = false;
+
   @override
   initState() {
     super.initState();
@@ -52,38 +54,36 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
       });
     });
     _refreshIndicatorKey.currentState?.show();
-    getDataFromServer().then((value) {
+    reloadData().then((value) {
       if (_refreshIndicatorKey.currentState != null) _refreshIndicatorKey.currentState!.deactivate();
     });
+    _dbChangeCallBack=  DB.setOnDBChangeListener(() {
+      reloadData();
+    },context,collection: DataTables.Users);
   }
-
+  late DbChangeCallBack _dbChangeCallBack;
   late List listsArray;
 
   @override
   void dispose() {
     super.dispose();
+    _dbChangeCallBack.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         appBar: AppBar(
           actions: <Widget>[
             PopupMenuButton<String>(
-              onSelected: (s) {
-                print(s);
-                _showAllTickets = !_showAllTickets;
-              },
-              itemBuilder: (BuildContext context) {
-                return {"Show All Tickets"}.map((String choice) {
-                  return CheckedPopupMenuItem<String>(
-                    value: choice,
-                    child: Text(choice),
-                    checked: _showAllTickets,
-                  );
-                }).toList();
-              },
-            ),
+                onSelected: (s) {
+                  print(s);
+                  setState(() {
+                    _setIdCards = !_setIdCards;
+                  });
+                },
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[CheckedPopupMenuItem<String>(value: "id", child: Text("Set ID Cards"), checked: _setIdCards)])
           ],
           elevation: 0.0,
           toolbarHeight: 150,
@@ -185,7 +185,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
           child: RefreshIndicator(
             key: _refreshIndicatorKey,
             onRefresh: () {
-              return getDataFromServer();
+              return reloadData();
             },
             child: Padding(
               padding: const EdgeInsets.only(top: 16),
@@ -194,6 +194,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                 itemCount: FilesList.length,
                 itemBuilder: (BuildContext context, int index) {
                   NsUser nsUser = FilesList[index];
+                  print("nsUser.hasNfc ${nsUser.hasNfc}");
                   return GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onLongPress: () async {
@@ -211,7 +212,17 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                       leading: UserImage(nsUser: nsUser),
                       title: Text(nsUser.name),
                       subtitle: Text("#" + nsUser.uname),
-                      trailing: Wrap(children: []),
+                      trailing: Wrap(children: [
+                        if (_setIdCards)
+                          IconButton(
+                              icon: Icon(Icons.badge_outlined, color: nsUser.hasNfc == 0 ? Colors.grey : Colors.green),
+                              tooltip: ' ',
+                              onPressed: () {
+                                setState(() {
+                                  showAddNfcDialog(nsUser);
+                                });
+                              })
+                      ]),
                     ),
                   );
                 },
@@ -292,16 +303,9 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
     );
   }
 
-  void reloadData() {
-    DB.getDB().then((value) async {
-      database = value;
-      // loadData().then((value) {
-      //   setState(() {});
-      // });
-    });
-  }
 
-  Future<void> getDataFromServer() {
+
+  Future<void> reloadData() {
     return DB.getDB().then((value) => value!.rawQuery(" select * from users ").then((users) {
           AllUsersList = List<NsUser>.from(users.map((model) => NsUser.fromJson(model)));
           filterUsers();
@@ -344,3 +348,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
     setState(() {});
   }
 }
+
+
+
+

@@ -27,7 +27,8 @@ NsUser _$NsUserFromJson(Map<String, dynamic> json) {
         []
     ..section = json['section'] == null
         ? null
-        : Section.fromJson(json['section'] as Map<String, dynamic>);
+        : Section.fromJson(json['section'] as Map<String, dynamic>)
+    ..hasNfc = json['hasNfc'] as int? ?? 0;
 }
 
 Map<String, dynamic> _$NsUserToJson(NsUser instance) => <String, dynamic>{
@@ -46,4 +47,5 @@ Map<String, dynamic> _$NsUserToJson(NsUser instance) => <String, dynamic>{
       'emailAddress': instance.emailAddress,
       'sections': instance.sections.map((e) => e.toJson()).toList(),
       'section': instance.section?.toJson(),
+      'hasNfc': instance.hasNfc,
     };

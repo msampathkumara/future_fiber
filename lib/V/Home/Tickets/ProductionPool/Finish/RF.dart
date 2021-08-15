@@ -109,7 +109,7 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
               label: Text("Finish"),
               onPressed: () async {
                 var r = await OnlineDB.apiGet("tickets/finish", {'ticket': ticket.id.toString(), 'doAt': operationMinMax.doAt.toString()});
-                print(json.decode(r.body));
+                print(json.decode(r.data));
                 // ServerResponceMap res1 = ServerResponceMap.fromJson(json.decode(r.body));
                 Navigator.pop(context, true);
               },

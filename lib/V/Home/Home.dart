@@ -4,12 +4,14 @@ import 'package:animations/animations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartwind/C/App.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/V/Home/CPR/CPR.dart';
 import 'package:smartwind/V/Home/CurrentUser/CurrentUserDetails.dart';
+import 'package:smartwind/V/Home/Tickets/Print/PrintManager.dart';
 import 'package:smartwind/V/Home/Tickets/ProductionPool/ProductionPool.dart';
 import 'package:smartwind/V/Login/Login.dart';
 import 'package:smartwind/V/Login/SectionSelector.dart';
@@ -36,18 +38,24 @@ class _HomeState extends State<Home> {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   NsUser? nsUser;
 
+  var appVersion;
+
   @override
   void initState() {
     super.initState();
     FirebaseMessaging.instance.subscribeToTopic('file_update');
     FirebaseMessaging.instance.subscribeToTopic('TicketDbReset');
-    DB.updateDatabase();
+    FirebaseMessaging.instance.subscribeToTopic('userUpdates');
+    DB.updateDatabase(context);
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (json.decode(message.data["FILE_DB_UPDATE"]) != null) {
-        DB.updateDatabase();
+        DB.updateDatabase(context);
       } else if (json.decode(message.data["updateTicketDB"]) != null) {
-        DB.updateDatabase(reset: true);
+        DB.updateDatabase(context, reset: true);
         print('--------------------------RESEING DATABASE-----------------');
+      } else if (json.decode(message.data["userUpdates"]) != null) {
+        DB.updateDatabase(context, reset: true);
+        print('--------------------------UPDATING USER DATABASE-----------------');
       }
       print('Got a message whilst in the foreground!');
       print('Message data: ${message.data}');
@@ -68,6 +76,10 @@ class _HomeState extends State<Home> {
       } else {
         _logout();
       }
+    });
+    PackageInfo.fromPlatform().then((appInfo) {
+      print(appInfo);
+      appVersion = appInfo.version;
     });
   }
 
@@ -107,7 +119,7 @@ class _HomeState extends State<Home> {
                   child: ListTile(
                     leading: CircleAvatar(radius: 24.0, backgroundImage: NsUser.getUserImage(nsUser), backgroundColor: Colors.transparent),
                     title: Text(nsUser!.name, textScaleFactor: 1.2),
-                    subtitle: Text("${nsUser!.section!.sectionTitle} @ ${nsUser!.section!.factory}"),
+                    subtitle: nsUser!.section != null ? Text("${nsUser!.section!.sectionTitle} @ ${nsUser!.section!.factory}") : Text(""),
                     trailing: _currentUserOprionMenu(),
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => CurrentUserDetails(nsUser!)));
@@ -189,18 +201,23 @@ class _HomeState extends State<Home> {
                             onClosed: _showMarkedAsDoneSnackbar,
                           ),
                           _OpenContainerWrapper(
-                            closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                              return _menuButton(
-                                  openContainer,
-                                  Icon(
-                                    Icons.people_outline_outlined,
-                                    size: 100,
-                                  ),
-                                  "User Manager");
-                            },
-                            openWidget: UserManager(),
-                            onClosed: _showMarkedAsDoneSnackbar,
-                          ),
+                              closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                return _menuButton(
+                                    openContainer,
+                                    Icon(
+                                      Icons.people_outline_outlined,
+                                      size: 100,
+                                    ),
+                                    "User Manager");
+                              },
+                              openWidget: UserManager(),
+                              onClosed: _showMarkedAsDoneSnackbar),
+                          _OpenContainerWrapper(
+                              closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                return _menuButton(openContainer, Icon(Icons.print_rounded, size: 100, color: Colors.blue), "Print");
+                              },
+                              openWidget: PrintManager(),
+                              onClosed: _showMarkedAsDoneSnackbar)
                         ],
                       ),
                     ),
@@ -223,7 +240,7 @@ class _HomeState extends State<Home> {
                                           backgroundColor: Colors.grey.shade800,
                                           child: Image.asset("assets/north_sails-logox50.png", width: 50),
                                         ),
-                                        label: const Text('NS Smart Wind 1.0'),
+                                        label: Text('NS Smart Wind $appVersion '),
                                       );
                                     })))),
                   ],
@@ -252,7 +269,7 @@ class _HomeState extends State<Home> {
         } else if (result == MenuItems.dbReload) {
           await DB.dropDatabase();
           await DB.loadDB();
-          DB.updateDatabase(context: context, showLoadingDialog: true, reset: true);
+          DB.updateDatabase(context, showLoadingDialog: true, reset: true);
         } else if (result == MenuItems.changeSection) {
           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => SectionSelector(nsUser!)), (Route<dynamic> route) => false);
         } else if (result == MenuItems.cpanel) {

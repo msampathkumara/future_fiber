@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smartwind/V/Home/CPR/SetClientsToCPR.dart';
 
 class CPR extends StatefulWidget {
   CPR({Key? key}) : super(key: key);
@@ -23,6 +24,10 @@ class _CPRState extends State<CPR> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Scaffold();
+    return Scaffold(
+      body: Column(
+        children: [SetClientToCPR()],
+      ),
+    );
   }
 }

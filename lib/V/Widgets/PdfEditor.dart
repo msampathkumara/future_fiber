@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
-import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/M/Ticket.dart';
 
 // import 'package:flutter_full_pdf_viewer/flutter_full_pdf_viewer.dart';
@@ -70,7 +69,6 @@ class _PdfEditorState extends State<PdfEditor> {
         });
       },
     );
-
   }
 
   @override
@@ -87,63 +85,64 @@ class _PdfEditorState extends State<PdfEditor> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text((widget.ticket.mo ?? widget.ticket.oe ?? "") + " ${widget.ticket.mo != null ? "(${widget.ticket.oe})" : ""}  ", style: TextStyle(color: Colors.white)),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.share),
-            onPressed: () async {
-              await widget.ticket.sharePdf(context);
-            },
-          ),
-        ],
-      ),
-      body: Container(
-        child: Stack(
-          children: <Widget>[
-            ppp,
-            // if (errorMessage.isEmpty)Center(
-            //   child: Text(errorMessage),
-            // ),
-            // if(!isReady)
-
-            errorMessage.isEmpty
-                ? ((!isReady)
-                    ? Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : Container())
-                : Center(
-                    child: Text(errorMessage),
-                  )
+        appBar: AppBar(
+          title: Text((widget.ticket.mo ?? widget.ticket.oe ?? "") + " ${widget.ticket.mo != null ? "(${widget.ticket.oe})" : ""}  ", style: TextStyle(color: Colors.white)),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.share),
+              onPressed: () async {
+                await widget.ticket.sharePdf(context);
+              },
+            ),
           ],
         ),
-      ),
-      floatingActionButton: FutureBuilder<PDFViewController>(
-        future: _controller.future,
-        builder: (context, AsyncSnapshot<PDFViewController> snapshot) {
-          if (snapshot.hasData) {
-            // return FloatingActionButton.extended(
-            //   label: Text("Go to ${pages ~/ 2}"),
-            //   onPressed: () async {
-            //     await snapshot.data.setPage(pages ~/ 2);
-            //   },
-            // );
+        body: Container(
+          child: Stack(
+            children: <Widget>[
+              ppp,
+              // if (errorMessage.isEmpty)Center(
+              //   child: Text(errorMessage),
+              // ),
+              // if(!isReady)
 
-            return FloatingActionButton.extended(
-              icon: Icon(Icons.edit_outlined),
-              label: Text("Edit"),
-              onPressed: () async {
-                await widget.ticket.openEditor();
-                await DB.updateDatabase(context: context, showLoadingDialog: true);
-                Navigator.pop(context, true);
-              },
-            );
-          }
-
-          return Container();
-        },
-      ),
-    );
+              errorMessage.isEmpty
+                  ? ((!isReady)
+                      ? Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : Container())
+                  : Center(
+                      child: Text(errorMessage),
+                    )
+            ],
+          ),
+        )
+        // ,
+        // floatingActionButton: FutureBuilder<PDFViewController>(
+        //   future: _controller.future,
+        //   builder: (context, AsyncSnapshot<PDFViewController> snapshot) {
+        //     if (snapshot.hasData) {
+        //       // return FloatingActionButton.extended(
+        //       //   label: Text("Go to ${pages ~/ 2}"),
+        //       //   onPressed: () async {
+        //       //     await snapshot.data.setPage(pages ~/ 2);
+        //       //   },
+        //       // );
+        //
+        //       return FloatingActionButton.extended(
+        //         icon: Icon(Icons.edit_outlined),
+        //         label: Text("Edit"),
+        //         onPressed: () async {
+        //           await widget.ticket.openEditor();
+        //           await DB.updateDatabase(  context, showLoadingDialog: true);
+        //           Navigator.pop(context, true);
+        //         },
+        //       );
+        //     }
+        //
+        //     return Container();
+        //   },
+        // )
+        );
   }
 }

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/C/ServerResponce/Progress.dart';
@@ -114,10 +113,7 @@ class _TicketInfoState extends State<TicketInfo> {
   }
 
   _appBar() {
-    double height = MediaQuery
-        .of(context)
-        .size
-        .height;
+    double height = MediaQuery.of(context).size.height;
     var ts = TextStyle(color: Colors.white, fontSize: 24);
     var smallText = TextStyle(fontSize: 16);
     return AppBar(
@@ -254,9 +250,9 @@ class _TicketInfoState extends State<TicketInfo> {
     print('requesting data---------------');
     OnlineDB.apiGet(("tickets/info/getTicketInfo"), {'ticket': _ticket.id.toString()}).then((value) {
       print(' data recived---------------');
-      print((value.body));
+      print((value.data));
       setState(() {
-        ServerResponceMap res = ServerResponceMap.fromJson(json.decode(value.body));
+        ServerResponceMap res = ServerResponceMap.fromJson( (value.data));
         progressList = res.progressList;
         flags = res.flags;
         flagsHistory = res.flagsHistory;

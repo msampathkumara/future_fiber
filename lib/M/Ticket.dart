@@ -14,6 +14,7 @@ import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/TicketFlag.dart';
+import 'package:smartwind/V/Home/CPR/AddCPR.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/Loading.dart';
 import 'package:smartwind/V/Widgets/PdfEditor.dart';
@@ -171,7 +172,7 @@ class Ticket {
     // var i = await getLocalFileVersion();
     var isNew = await isFileNew();
     print(isNew);
-    isNew = false;
+    // isNew = false;
     if (isNew && file.existsSync()) {
       print("File exists ");
       // var data = await Navigator.push(  context,   MaterialPageRoute(builder: (context) => PDFScreen(this))   );
@@ -215,11 +216,11 @@ class Ticket {
   static const platform = const MethodChannel('editPdf');
 
   isFileNew() async {
-    print('fffff=' + fileVersion.toString());
-    print('fffff=' + (await getLocalFileVersion()).toString());
-    print("SELECT * FROM tickets t left join  files f on f.ticket=t.id    where t.id=$id and f.ver=t.fileVersion ");
+    // print('fffff=' + fileVersion.toString());
+    // print('fffff=' + (await getLocalFileVersion()).toString());
+    // print("SELECT * FROM tickets t left join  files f on f.ticket=t.id    where t.id=$id and f.ver=t.fileVersion ");
     return DB.getDB().then((db) {
-      return db!.rawQuery("SELECT * FROM tickets t left join  files f on f.ticket=t.id    where t.id=$id and  fileVersion > ver ").then((value) {
+      return db!.rawQuery("SELECT * FROM tickets t left join  files f on f.ticket=t.id    where t.id=$id and type='ticket' and  fileVersion > ver ").then((value) {
         print(value);
         if (value.length > 0) {
           return false;
@@ -231,7 +232,7 @@ class Ticket {
   }
 
   setLocalFileVersion(newFileVersion) {
-    return DB.getDB().then((db) => db!.rawQuery("replace into files (ticket,ver)values(?,?) ", [id, newFileVersion]).then((data) {
+    return DB.getDB().then((db) => db!.rawQuery("replace into files (ticket,ver,type)values(?,?,?) ", [id, newFileVersion, 'ticket']).then((data) {
           print(data);
         }));
   }
@@ -239,9 +240,9 @@ class Ticket {
   Future<List> getFlagList(String flagType) async {
     print("tickets/flags/getList");
     return OnlineDB.apiGet("tickets/flags/getList", {"ticket": id.toString(), "type": flagType}).then((response) {
-      print(response.body);
+      print(response.data);
       print("----------------------------------------");
-      Map res = (json.decode(response.body) as Map);
+      Map res = (json.decode(response.data) as Map);
       List l = ((res["flags"] ?? []));
 
       List<TicketFlag> list = List<TicketFlag>.from(l.map((model) {
@@ -267,5 +268,9 @@ class Ticket {
     } else {
       ErrorMessageView(errorMessage: "File Not Found", icon: Icons.insert_drive_file_outlined).show(context);
     }
+  }
+
+  addCPR(BuildContext context) async {
+    await Navigator.push(context, MaterialPageRoute(builder: (context) => AddCPR(this)));
   }
 }

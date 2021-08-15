@@ -20,21 +20,21 @@ class _AdminCpanelState extends State<AdminCpanel> {
           ElevatedButton(
               child: Text("Update Files"),
               onPressed: () {
-                OnlineDB.apiGet("tickets/updateFiles", {}).then((Response response) async {
-                  print(response.body);
+                OnlineDB.apiGet("tickets/updateFiles", {}).then((  response) async {
+                  print(response.data);
                 });
               }),ElevatedButton(
               child: Text("Convert Tickets"),
               onPressed: () {
-                OnlineDB.apiGet("admin/convertTickets", {}).then((Response response) async {
-                  print(response.body);
+                OnlineDB.apiGet("admin/convertTickets", {}).then((  response) async {
+                  print(response.data);
                 });
               }),
           ElevatedButton(
               child: Text("Reload Ticket DB"),
               onPressed: () {
-                OnlineDB.apiGet("admin/reloadTicketDB", {}).then((Response response) async {
-                  print(response.body);
+                OnlineDB.apiGet("admin/reloadTicketDB", {}).then((  response) async {
+                  print(response.data);
                 });
               }),
         ],

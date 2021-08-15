@@ -131,7 +131,7 @@ class _PDFScreenState extends State<PDFScreen> {
               label: Text("Edit"),
               onPressed: () async {
                 await widget.ticket.openEditor();
-                await DB.updateDatabase(context: context, showLoadingDialog: true);
+                await DB.updateDatabase(  context, showLoadingDialog: true);
                 Navigator.pop(context, true);
               },
             );

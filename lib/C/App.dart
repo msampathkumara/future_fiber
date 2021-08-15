@@ -1,10 +1,25 @@
 import 'dart:convert';
 
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartwind/M/NsUser.dart';
 
 class App {
-  App();
+
+
+  App()  ;
+
+ static Future getAppInfo(){
+   return PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+
+      String appName = packageInfo.appName;
+      String packageName = packageInfo.packageName;
+      String version = packageInfo.version;
+      String buildNumber = packageInfo.buildNumber;
+      print('version $version');
+      return packageInfo;
+    });
+  }
 
   factory App.fromJson(Map<String, dynamic> json) {
     return App();
@@ -17,7 +32,7 @@ class App {
 
   static NsUser? currentUser;
 
-   static Future<NsUser?> getCurrentUser() async {
+  static Future<NsUser?> getCurrentUser() async {
     var prefs = await SharedPreferences.getInstance();
     var u = prefs.getString("user");
     if (u != null) {

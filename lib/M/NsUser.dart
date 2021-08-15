@@ -41,6 +41,9 @@ class NsUser {
   @JsonKey(defaultValue: null, includeIfNull: true)
   Section? section;
 
+  @JsonKey(defaultValue: 0, includeIfNull: true)
+  int? hasNfc;
+
   NsUser() {
     DB.getDB().then((value) => value!.rawQuery(" select * from userSections us left join factorySections fs on fs.id=us.sectionId where userid='$id'  ").then((s) {
           sections = List<Section>.from(s.map((model) => Section.fromJson(model)));

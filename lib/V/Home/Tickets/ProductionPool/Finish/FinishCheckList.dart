@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/C/ServerResponce/ServerResponceMap.dart';
 import 'package:smartwind/M/Ticket.dart';
@@ -39,6 +38,8 @@ class _FinishCheckListState extends State<FinishCheckList> {
 
   @override
   Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
     return FutureBuilder(
         future: _loadData(), // async work
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -49,9 +50,13 @@ class _FinishCheckListState extends State<FinishCheckList> {
               if (snapshot.hasError)
                 return Text('Error: ${snapshot.error}');
               else
-                return Scaffold(
-                    appBar: AppBar(title: Text("Check List")),
-                    body: Column(
+                return AlertDialog(
+                  title: Text("Check List"),
+                  content: Container(
+                    height: height / 2,
+                    width: width - 200,
+                    child: Scaffold(
+                        body: Column(
                       children: [
                         Expanded(
                           child: ListView.builder(
@@ -61,77 +66,54 @@ class _FinishCheckListState extends State<FinishCheckList> {
                                 return ListTile(
                                   title: Text(
                                     t,
-                                    style: TextStyle(fontSize: 30),
+                                    style: TextStyle(fontSize: 20),
                                   ),
                                 );
                               }),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        primary: Colors.green,
-                                        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                                        textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-                                    onPressed: () {
-                                      var loadingWidget = Loading(
-                                        loadingText: "Loading",
-                                        showProgress: false,
-                                      );
-
-                                      loadingWidget.show(context);
-                                      OnlineDB.apiGet("users/getRfCredentials", {}).then((http.Response response) async {
-                                        print(response.body);
-                                        ServerResponceMap res = ServerResponceMap.fromJson(json.decode(response.body));
-                                        var r = await OnlineDB.apiGet("tickets/finish/getProgress", {'ticket': ticket.id.toString()});
-                                        ServerResponceMap res1 = ServerResponceMap.fromJson(json.decode(r.body));
-
-                                        loadingWidget.close(context);
-                                        if (res.userRFCredentials != null) {
-                                          print("-------------------------------------");
-                                          print(res1.toJson());
-                                          await ticket.getFile(context);
-                                          if (res1.done != null) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(SnackBar(backgroundColor: Colors.red, content: Text('Already Completed')));
-                                          } else if (ticket.ticketFile != null) {
-                                            await Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) => RF(ticket, res.userRFCredentials!, res1.operationMinMax!, res1.progressList)));
-                                          }
-                                          if (Navigator.canPop(context)) {
-                                            Navigator.pop(context);
-                                          } else {
-                                            SystemNavigator.pop();
-                                          }
-                                        }
-                                      });
-                                    },
-                                    child: Text("Agree")),
-                              ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        primary: Colors.redAccent,
-                                        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                                        textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-                                    onPressed: () {},
-                                    child: Text("Disagree")),
-                              ),
-                            ),
-                          ],
                         )
                       ],
-                    ));
+                    )),
+                  ),
+                  actions: [
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(primary: Colors.green, textStyle: TextStyle(fontWeight: FontWeight.bold)),
+                        onPressed: () {
+                          var loadingWidget = Loading(
+                            loadingText: "Loading",
+                            showProgress: false,
+                          );
+
+                          loadingWidget.show(context);
+                          OnlineDB.apiGet("users/getRfCredentials", {}).then((response) async {
+                            print(response.data);
+                            ServerResponceMap res = ServerResponceMap.fromJson((response.data));
+                            var r = await OnlineDB.apiGet("tickets/finish/getProgress", {'ticket': ticket.id.toString()});
+                            ServerResponceMap res1 = ServerResponceMap.fromJson((r.data));
+
+                            loadingWidget.close(context);
+                            if (res.userRFCredentials != null) {
+                              print("-------------------------------------");
+                              print(res1.toJson());
+                              await ticket.getFile(context);
+                              if (res1.done != null) {
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.red, content: Text('Already Completed')));
+                              } else if (ticket.ticketFile != null) {
+                                await Navigator.push(
+                                    context, MaterialPageRoute(builder: (context) => RF(ticket, res.userRFCredentials!, res1.operationMinMax!, res1.progressList)));
+                              }
+                              if (Navigator.canPop(context)) {
+                                Navigator.pop(context);
+                              } else {
+                                SystemNavigator.pop();
+                              }
+                            }
+                          });
+                        },
+                        child: Text("Agree")),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(primary: Colors.redAccent, textStyle: TextStyle(fontWeight: FontWeight.bold)), onPressed: () {}, child: Text("Disagree"))
+                  ],
+                );
           }
         });
   }

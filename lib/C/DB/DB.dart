@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/Loading.dart';
@@ -77,7 +75,7 @@ class DB {
     return int.parse(version);
   }
 
-  static Future updateDatabase({context, showLoadingDialog = false, reset = false}) async {
+  static Future updateDatabase(context, {showLoadingDialog = false, reset = false}) async {
     var loadingWidget = Loading(
       loadingText: "updating Database",
       showProgress: false,
@@ -102,30 +100,21 @@ class DB {
                 .then((value) {
               print("last update on == " + value.toString());
               Map<Object, Object?> xx = value.length > 0 ? value[0] : {'tickets': '0', 'users': '0'};
-              print('xxxxxxxxxxxxxxxxxxxxxxxxxxx');
               Map<String, String> uptime = xx.map((key, value) => MapEntry("$key", "$value"));
               print(uptime.toString());
 
-              return OnlineDB.apiGet("data/getData", uptime).then((Response response) async {
-                Map res = (json.decode(response.body) as Map);
+              return OnlineDB.apiGet("data/getData", uptime).then((response) async {
+                Map res = (response.data);
                 print("----------------------------------------------------------------");
                 print(res);
                 processData(res);
-
                 if (showLoadingDialog && context != null) {
                   loadingWidget.close(context);
                 }
-                List OnDBChangeCallBacksTemp = [];
-                OnDBChangeCallBacksTemp.addAll(OnDBChangeCallBacks);
-                for (var i = 0; i < OnDBChangeCallBacksTemp.length; i++) {
-                  var x = OnDBChangeCallBacksTemp[i];
-                  try {
-                    x();
-                  } catch (e) {
-                    OnDBChangeCallBacks.remove(x);
-                  }
-                }
+                callChangesCallBack(res);
+
               }).onError((error, stackTrace) {
+                print(stackTrace);
                 ErrorMessageView(errorMessage: error.toString()).show(context);
               });
             }))
@@ -135,13 +124,16 @@ class DB {
     });
   }
 
-  static List OnDBChangeCallBacks = [];
+  static List<DbChangeCallBack> OnDBChangeCallBacks = [];
 
-  static setOnDBChangeListener(callBack) {
-    OnDBChangeCallBacks.add(callBack);
+  static DbChangeCallBack setOnDBChangeListener(callBack, context, {collection = DataTables.None}) {
+    print('DbChangeCallBack $collection ');
+    var dbChangeCallBack = new DbChangeCallBack(callBack, context, collection);
+    OnDBChangeCallBacks.add(dbChangeCallBack);
+    return dbChangeCallBack;
   }
 
-  static void processData(Map<dynamic, dynamic> res) {
+  static Future<void> processData(Map<dynamic, dynamic> res) async {
     if (res.containsKey("tickets")) {
       List tickets = (res["tickets"] ?? []);
       print('tickets = ' + tickets.length.toString());
@@ -163,6 +155,10 @@ class DB {
     if (res.containsKey("factorySections")) {
       List factorySections = (res["factorySections"] ?? []);
       insertFactorySections(factorySections);
+    }
+    if (res.containsKey("standardTickets")) {
+      List factorySections = (res["standardTickets"] ?? []);
+      await insertStandardTickets(factorySections);
     }
   }
 
@@ -227,5 +223,60 @@ class DB {
       batch!.insert('userSections', {"userId": userId, "sectionId": userSection["id"]}, conflictAlgorithm: ConflictAlgorithm.replace);
     });
     print(await batch.commit(noResult: false));
+  }
+
+  static Future<void> insertStandardTickets(List<dynamic> standardTickets) async {
+    var db = await getDB();
+    Batch batch = db!.batch();
+
+    standardTickets.forEach((standardTicket) {
+      batch.insert('standardTickets', standardTicket, conflictAlgorithm: ConflictAlgorithm.replace);
+    });
+    print(await batch.commit(noResult: false));
+  }
+
+  static callChangesCallBack(Map<dynamic, dynamic> res) {
+    List keys = res.keys.toList();
+
+    List<DbChangeCallBack> OnDBChangeCallBacksTemp = [];
+    OnDBChangeCallBacksTemp.addAll(OnDBChangeCallBacks);
+    for (var i = 0; i < OnDBChangeCallBacksTemp.length; i++) {
+      var x = OnDBChangeCallBacksTemp[i];
+
+      try {
+        if (x.isDisposed()) {
+          OnDBChangeCallBacks.remove(x);
+        } else if (x.collection == DataTables.None || keys.contains(x.collection.toShortString())) {
+          x.callBack();
+        }
+      } catch (e) {
+        OnDBChangeCallBacks.remove(x);
+      }
+    }
+  }
+}
+
+enum DataTables { None, Users, Tickets, standardTickets }
+
+class DbChangeCallBack {
+  DataTables collection;
+  bool disposed = false;
+  var callBack;
+  var context;
+
+  DbChangeCallBack(this.callBack, this.context, this.collection) {}
+
+  void dispose() {
+    disposed = true;
+  }
+
+  bool isDisposed() {
+    return context == null || disposed;
+  }
+}
+
+extension ParseToString on DataTables {
+  String toShortString() {
+    return (this).toString().split('.').last.toLowerCase();
   }
 }

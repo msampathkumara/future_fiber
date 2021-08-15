@@ -1,5 +1,5 @@
 class Server {
-  static bool local = false ;
+  static bool local = true ;
 
   static String getServerAddress() {
     // if (kDebugMode && local) {
