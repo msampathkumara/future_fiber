@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartwind/C/App.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/M/NsUser.dart';
-import 'package:smartwind/V/Home/CPR/CPR.dart';
+import 'package:smartwind/V/Home/CPR/CPRList.dart';
 import 'package:smartwind/V/Home/CurrentUser/CurrentUserDetails.dart';
 import 'package:smartwind/V/Home/Tickets/Print/PrintManager.dart';
 import 'package:smartwind/V/Home/Tickets/ProductionPool/ProductionPool.dart';
@@ -171,7 +171,7 @@ class _HomeState extends State<Home> {
                                   ),
                                   "CPR");
                             },
-                            openWidget: CPR(),
+                            openWidget: CPRList(),
                             onClosed: _showMarkedAsDoneSnackbar,
                           ),
                           _OpenContainerWrapper(
@@ -217,7 +217,13 @@ class _HomeState extends State<Home> {
                                 return _menuButton(openContainer, Icon(Icons.print_rounded, size: 100, color: Colors.blue), "Print");
                               },
                               openWidget: PrintManager(),
-                              onClosed: _showMarkedAsDoneSnackbar)
+                              onClosed: _showMarkedAsDoneSnackbar),
+                          _OpenContainerWrapper(
+                              closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                return _menuButton(openContainer, Icon(Icons.verified_rounded, size: 100, color: Colors.green), "QA & QC");
+                              },
+                              openWidget: PrintManager(),
+                              onClosed: _showMarkedAsDoneSnackbar),
                         ],
                       ),
                     ),
