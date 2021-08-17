@@ -1,6 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'CprMaterial.dart';
 import 'Ticket.dart';
-
+ 
 part 'CPR.g.dart';
 @JsonSerializable(explicitToJson: true)
 class CPR {
@@ -14,8 +16,10 @@ class CPR {
   String? supplier3;
   String comment = "";
   String image = "";
-
+  List<CprMaterial> materials =<CprMaterial>[];
   CPR();
+
+ 
 
 factory CPR.fromJson(Map<String, dynamic> json) => _$CPRFromJson(json);
 

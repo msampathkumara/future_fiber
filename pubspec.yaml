@@ -25,7 +25,6 @@ dependencies:
   firebase_messaging: ^10.0.4
   google_ml_vision: ^0.0.6
   #  --------------------------------------------------
-#  http: ^0.13.3
   dio: ^4.0.0
   percent_indicator: ^3.0.1
   nfc_manager: ^3.1.0
@@ -43,6 +42,8 @@ dependencies:
   flutter_pdfview: ^1.1.0
   hex: ^0.2.0
   package_info_plus: ^1.0.4
+
+  dropdown_search: ^0.6.3
 
 dev_dependencies:
   json_serializable:
