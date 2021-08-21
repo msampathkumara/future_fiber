@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:smartwind/C/App.dart';
 import 'package:smartwind/C/DB/DB.dart';
@@ -134,7 +133,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                   ),
                   const Spacer(),
                   Text(
-                    "Sorted by $sorted_by",
+                    "Sorted by $sortedBy",
                     style: TextStyle(color: Colors.white),
                   ),
                   InkWell(
@@ -142,7 +141,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                     splashColor: Colors.red,
                     child: Ink(
                       child: IconButton(
-                        icon: FaIcon(FontAwesomeIcons.sortAlphaDown),
+                        icon: Icon(Icons.sort_by_alpha_rounded),
                         onPressed: () {
                           _sortByBottomSheetMenu();
                         },
@@ -155,7 +154,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
   }
 
   String listSortBy = "uptime";
-  String sorted_by = "Date";
+  String sortedBy = "Date";
   String searchText = "";
   var subscription;
   bool _showAllTickets = false;
@@ -167,10 +166,10 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
         title: Text(title),
         selectedTileColor: Colors.black12,
         selected: listSortBy == key,
-        leading: icon is IconData ? FaIcon(icon) : icon,
+        leading: icon is IconData ? Icon(icon) : icon,
         onTap: () {
           listSortBy = key;
-          sorted_by = title;
+          sortedBy = title;
           Navigator.pop(context);
           loadData().then((value) {
             setState(() {});
@@ -202,19 +201,20 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                       padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
                       child: ListView(
                         children: [
-                          getListItem("Date", FontAwesomeIcons.calendarDay, "uptime"),
-                          getListItem("Name", FontAwesomeIcons.amazon, "mo"),
-                          getListItem("Red Flag", FontAwesomeIcons.flag, "isred"),
-                          getListItem("Hold", FontAwesomeIcons.handRock, "ishold"),
-                          getListItem("Rush", FontAwesomeIcons.bolt, "isrush"),
+                          getListItem("Date", Icons.date_range_rounded, "uptime"),
+                          getListItem("Name", Icons.sort_by_alpha_rounded, "mo"),
+                          getListItem("Red Flag", Icons.tour_rounded, "isred"),
+                          getListItem("Hold", Icons.pan_tool_rounded, "ishold"),
+                          getListItem("Rush", Icons.flash_on_rounded, "isrush"),
                           getListItem(
                               "SK",
                               CircleAvatar(
+                                radius: 12,
                                 backgroundColor: Colors.grey,
                                 child: Center(
                                   child: Text(
                                     "SK",
-                                    style: TextStyle(color: Colors.white),
+                                    style: TextStyle(color: Colors.white, fontSize: 8),
                                   ),
                                 ),
                               ),
@@ -222,18 +222,19 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                           getListItem(
                               "GR",
                               CircleAvatar(
+                                radius: 12,
                                 backgroundColor: Colors.grey,
                                 child: Center(
                                   child: Text(
                                     "GR",
-                                    style: TextStyle(color: Colors.white),
+                                    style: TextStyle(color: Colors.white, fontSize: 8),
                                   ),
                                 ),
                               ),
                               "isgr"),
-                          getListItem("Short", FontAwesomeIcons.shoppingBasket, "sort"),
-                          getListItem("Error Route", FontAwesomeIcons.exclamationTriangle, "errOut"),
-                          getListItem("Print", FontAwesomeIcons.print, "inprint"),
+                          getListItem("Short", Icons.local_mall_rounded, "sort"),
+                          getListItem("Error Route", Icons.warning_rounded, "errOut"),
+                          getListItem("Print", Icons.print_rounded, "inprint"),
                         ],
                       )),
                 ),
@@ -549,9 +550,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                         Navigator.of(context).pop();
                         // await FlagDialog.showRushDialog(context1, ticket);
                         var u = ticket.isRush == 1 ? "removeFlag" : "setFlag";
-                        OnlineDB.apiPost("tickets/flags/" + u, {"ticket": ticket.id.toString(), "comment": "", "type": "rush"}).then((response) async {
-                          Map res = (response.data);
-                        });
+                        OnlineDB.apiPost("tickets/flags/" + u, {"ticket": ticket.id.toString(), "comment": "", "type": "rush"}).then((response) async {});
                       }),
                   ListTile(
                       title: Text(ticket.inPrint == 1 ? "Cancel Printing" : "Send To Print"),
@@ -589,6 +588,19 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                   ListTile(
                       title: Text("Add CPR"),
                       leading: Icon(Icons.local_mall_rounded, color: Colors.amber),
+                      onTap: () async {
+                        await ticket.addCPR(context);
+                        Navigator.of(context).pop();
+                      }),
+                  ListTile(
+                      title: Text("Shipping"),
+                      leading: Icon(Icons.directions_boat_rounded, color: Colors.brown),
+                      onTap: () async {
+                        await ticket.addCPR(context);
+                        Navigator.of(context).pop();
+                      }),ListTile(
+                      title: Text("CS"),
+                      leading: Icon(Icons.pivot_table_chart_rounded, color: Colors.green),
                       onTap: () async {
                         await ticket.addCPR(context);
                         Navigator.of(context).pop();

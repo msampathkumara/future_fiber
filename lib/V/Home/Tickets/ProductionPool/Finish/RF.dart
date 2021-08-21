@@ -67,11 +67,6 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
           _toasterJavascriptChannel(context),
         },
         navigationDelegate: (NavigationRequest request) {
-          // if (request.url.startsWith('https://www.youtube.com/')) {
-          //   print('blocking navigation to $request}');
-          //   return NavigationDecision.prevent;
-          // }
-          // print('allowing navigation to $request');
           return NavigationDecision.navigate;
         },
         onPageStarted: (String url) {

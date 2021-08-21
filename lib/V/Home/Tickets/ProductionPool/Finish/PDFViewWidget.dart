@@ -22,7 +22,7 @@ class _PDFViewWidget extends State<PDFViewWidget> {
   int currentPage = 0;
   bool isReady = false;
   String errorMessage = '';
-  WebViewController? _controller;
+
   @override
   void initState() {
     super.initState();

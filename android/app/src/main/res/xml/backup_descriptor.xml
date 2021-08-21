@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- TODO Remove the following "exclude" elements to make them a part of the auto backup -->
+    <!-- Exclude the shared preferences file that contains the GCM registrationId -->
+    <exclude
+        domain="sharedpref"
+        path="com.google.firebase.crashlytics.xml" />
+    <exclude
+        domain="sharedpref"
+        path="io.flutter.plugins.firebase.messaging.xml" />
+    <exclude
+        domain="sharedpref"
+        path="FlutterSharedPreferences.xml" />
+    <exclude
+        domain="sharedpref"
+        path="flutter_image_picker_shared_preference.xml" />
+    <exclude
+        domain="sharedpref"
+        path="io.flutter.firebase.messaging.callback.xml" />
+</full-backup-content>

@@ -4,14 +4,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:smartwind/C/DB/DB.dart';
+import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/Ticket.dart';
+import 'package:smartwind/V/Home/BlueBook/BlueBook.dart';
+import 'package:smartwind/V/Home/Tickets/ShippingSystem/ShippingSystem.dart';
 
 // import 'package:flutter_full_pdf_viewer/flutter_full_pdf_viewer.dart';
 
 class PDFScreen extends StatefulWidget {
   // String pathPDF = "";
   // int fileID = 0;
-  Ticket ticket;
+  final Ticket ticket;
 
   PDFScreen(this.ticket);
 
@@ -25,7 +28,6 @@ class _PDFScreenState extends State<PDFScreen> {
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
@@ -45,12 +47,44 @@ class _PDFScreenState extends State<PDFScreen> {
       appBar: AppBar(
         title: Text((widget.ticket.mo ?? widget.ticket.oe ?? "") + " ${widget.ticket.mo != null ? "(${widget.ticket.oe})" : ""}  ", style: TextStyle(color: Colors.white)),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.share),
-            onPressed: () async{
-              await  widget.ticket.sharePdf(context);
+          // IconButton(
+          //   icon: Icon(Icons.share),
+          //   onPressed: () async {
+          //     await widget.ticket.sharePdf(context);
+          //   },
+          // ),
+          PopupMenuButton<ActionMenuItems>(
+            onSelected: (ActionMenuItems s) async {
+              if (s == ActionMenuItems.CS) {
+                widget.ticket.openInCS(context);
+              }else if (s == ActionMenuItems.ShippingSystem) {
+                widget.ticket.openInShippingSystem(context);
+              }
+              else if (s == ActionMenuItems.BlueBook) {
+                var data = await Navigator.push(context, MaterialPageRoute(builder: (context) => BlueBook(ticket: widget.ticket)));
+              } else if (s == ActionMenuItems.Share) {
+                await widget.ticket.sharePdf(context);
+              }
             },
-          ),
+            itemBuilder: (BuildContext context) {
+              return {
+                {'action': ActionMenuItems.Share, 'icon': Icons.share, 'text': "Share", "color": Colors.redAccent},
+                {'action': ActionMenuItems.BlueBook, 'icon': Icons.menu_book_rounded, 'text': "Blue Book", "color": Colors.blueAccent},
+                {'action': ActionMenuItems.ShippingSystem, 'icon': Icons.directions_boat_rounded, 'text': "Shipping System", "color": Colors.brown},
+                {'action': ActionMenuItems.CS, 'icon': Icons.pivot_table_chart_rounded, 'text': "CS", "color": Colors.green}
+              }.map((choice) {
+                return PopupMenuItem<ActionMenuItems>(
+                  value: (choice["action"] as ActionMenuItems),
+                  child: Wrap(
+                    children: [
+                      Icon(choice["icon"] as IconData, color: choice["color"] as Color),
+                      Padding(padding: const EdgeInsets.only(top: 4.0, left: 8), child: Text(choice["text"].toString()))
+                    ],
+                  ),
+                );
+              }).toList();
+            },
+          )
         ],
       ),
       body: Container(
@@ -131,7 +165,7 @@ class _PDFScreenState extends State<PDFScreen> {
               label: Text("Edit"),
               onPressed: () async {
                 await widget.ticket.openEditor();
-                await DB.updateDatabase(  context, showLoadingDialog: true);
+                await DB.updateDatabase(context, showLoadingDialog: true);
                 Navigator.pop(context, true);
               },
             );

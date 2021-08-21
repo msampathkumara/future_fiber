@@ -15,9 +15,11 @@ import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/TicketFlag.dart';
 import 'package:smartwind/V/Home/CPR/AddCPR.dart';
+import 'package:smartwind/V/Home/Tickets/CS/CS.dart';
+import 'package:smartwind/V/Home/Tickets/ShippingSystem/ShippingSystem.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/Loading.dart';
-import 'package:smartwind/V/Widgets/PdfEditor.dart';
+import 'package:smartwind/V/Widgets/PDFScreen.dart';
 
 part 'Ticket.g.dart';
 
@@ -27,6 +29,8 @@ class Ticket {
   String? oe;
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int finished = 0;
+
+  // @JsonKey(defaultValue: 0, includeIfNull: true, fromJson: _stringToInt)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int uptime = 0;
   @JsonKey(defaultValue: 0, includeIfNull: true)
@@ -77,6 +81,14 @@ class Ticket {
   File? ticketFile;
 
   Ticket();
+
+  static int _stringToInt(number) => number == null
+      ? 0
+      : (number is int)
+          ? number
+          : int.parse(number);
+
+  static String? _stringFromInt(int number) => number.toString();
 
   String getUpdateDateTime() {
     var date = DateTime.fromMicrosecondsSinceEpoch(uptime * 1000);
@@ -175,16 +187,15 @@ class Ticket {
     // isNew = false;
     if (isNew && file.existsSync()) {
       print("File exists ");
-      // var data = await Navigator.push(  context,   MaterialPageRoute(builder: (context) => PDFScreen(this))   );
-      var data = await Navigator.push(context, MaterialPageRoute(builder: (context) => PdfEditor(this)));
+      var data = await Navigator.push(context, MaterialPageRoute(builder: (context) => PDFScreen(this)));
       if (data != null && data) {
         open(context);
       }
     } else {
       print("File not exists or old ");
       _getFile(context).then((file) async {
-        // var data = await Navigator.push(  context, MaterialPageRoute(builder: (context) => PDFScreen(this)) );
-        var data = await Navigator.push(context, MaterialPageRoute(builder: (context) => PdfEditor(this)));
+        var data = await Navigator.push(context, MaterialPageRoute(builder: (context) => PDFScreen(this)));
+        // var data = await Navigator.push(context, MaterialPageRoute(builder: (context) => PdfEditor(this)));
         if (data != null && data) {
           open(context);
         }
@@ -272,5 +283,13 @@ class Ticket {
 
   addCPR(BuildContext context) async {
     await Navigator.push(context, MaterialPageRoute(builder: (context) => AddCPR(this)));
+  }
+
+  Future openInShippingSystem(BuildContext context) {
+    return Navigator.push(context, MaterialPageRoute(builder: (context) => ShippingSystem(this)));
+  }
+
+  Future openInCS(BuildContext context) {
+    return Navigator.push(context, MaterialPageRoute(builder: (context) => CS(this)));
   }
 }

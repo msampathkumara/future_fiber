@@ -7,15 +7,15 @@ part 'TicketFlag.g.dart';
 @JsonSerializable(explicitToJson: true)
 class TicketFlag {
   @JsonKey(ignore: true)
-  static String FlagType_RED = "red";
+  static String flagTypeRED = "red";
   @JsonKey(ignore: true)
-  static String FlagType_RUSH = "rush";
+  static String flagTypeRUSH = "rush";
   @JsonKey(ignore: true)
-  static String FlagType_SK = "sk";
+  static String flagTypeSK = "sk";
   @JsonKey(ignore: true)
-  static String FlagType_GR = "gr";
+  static String flagTypeGR = "gr";
   @JsonKey(ignore: true)
-  static String FlagType_HOLD = "hold";
+  static String flagTypeHOLD = "hold";
 
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int id = 0;

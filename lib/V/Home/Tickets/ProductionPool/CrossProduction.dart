@@ -5,7 +5,7 @@ import 'package:smartwind/M/Section.dart';
 import 'package:smartwind/M/Ticket.dart';
 
 class CrossProduction extends StatefulWidget {
-  Ticket ticket;
+  final Ticket ticket;
 
   CrossProduction(this.ticket, {Key? key}) : super(key: key);
 

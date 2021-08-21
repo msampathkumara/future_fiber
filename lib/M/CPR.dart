@@ -1,9 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:json_annotation/json_annotation.dart';
-import 'CprMaterial.dart';
+
+import 'CprItem.dart';
+import 'NsUser.dart';
 import 'Ticket.dart';
- 
+
 part 'CPR.g.dart';
+
 @JsonSerializable(explicitToJson: true)
 class CPR {
   Ticket? ticket;
@@ -11,17 +13,32 @@ class CPR {
   String? shortageType;
   String? cprType;
   String? client;
-  String? supplier1;
-  String? supplier2;
-  String? supplier3;
+  @JsonKey(defaultValue: "", includeIfNull: true)
   String comment = "";
+  @JsonKey(defaultValue: "", includeIfNull: true)
   String image = "";
-  List<CprMaterial> materials =<CprMaterial>[];
+  @JsonKey(defaultValue: [], includeIfNull: true)
+  List<CprItem> items = <CprItem>[];
+  @JsonKey(defaultValue: [], includeIfNull: true)
+  List<String> suppliers = <String>[];
+
+  var mo;
+  var oe;
+  String status = "";
+  int id = 0;
+  var dnt;
+  String supplier = "";
+  NsUser? sentBy;
+  NsUser? recivedBy;
+
+  String? sentOn;
+  String? recivedOn;
+
+  NsUser? user;
+
   CPR();
 
- 
+  factory CPR.fromJson(Map<String, dynamic> json) => _$CPRFromJson(json);
 
-factory CPR.fromJson(Map<String, dynamic> json) => _$CPRFromJson(json);
-
-Map<String, dynamic> toJson() => _$CPRToJson(this);
+  Map<String, dynamic> toJson() => _$CPRToJson(this);
 }

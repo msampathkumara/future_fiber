@@ -81,14 +81,13 @@ public class MainEditorActivity extends AppCompatActivity {
             System.out.println(getIntent().getExtras().getString("ticket"));
             SELECTED_FILE.id = getIntent().getExtras().getInt("ticketId");
             ticket = Ticket.formJsonString(getIntent().getExtras().getString("ticket"));
-            SELECTED_FILE.ticketFile = new File(FILE_PATH);
         } else {
             SELECTED_FILE = Ticket.formJsonString("{oe: cat-001, finished: 0, uptime: 1628192673367, file: 1, sheet: 0, dir: 20218, id: 40913, isRed: 0, isRush: 1, isSk: 0, inPrint: 0, isGr: 0, isError: 0, canOpen: 1, isSort: 0, isHold: 0, fileVersion: 1628192673126, progress: 0, completed: 0, nowAt: 0, crossPro: 0}");
             FILE_PATH = "/storage/emulated/0/Android/data/com.sampathkumara.northsails.smartwind/files/40913.pdf";
             SELECTED_FILE.id = 40913;
             ticket = Ticket.formJsonString("{oe: cat-001, finished: 0, uptime: 1628192673367, file: 1, sheet: 0, dir: 20218, id: 40913, isRed: 0, isRush: 1, isSk: 0, inPrint: 0, isGr: 0, isError: 0, canOpen: 1, isSort: 0, isHold: 0, fileVersion: 1628192673126, progress: 0, completed: 0, nowAt: 0, crossPro: 0}");
-            SELECTED_FILE.ticketFile = new File(FILE_PATH);
         }
+        SELECTED_FILE.ticketFile = new File(FILE_PATH);
 
         View fab = findViewById(R.id.fab);
 //

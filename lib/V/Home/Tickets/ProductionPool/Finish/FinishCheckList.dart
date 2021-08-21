@@ -10,7 +10,7 @@ import 'package:smartwind/V/Widgets/Loading.dart';
 import 'RF.dart';
 
 class FinishCheckList extends StatefulWidget {
-  Ticket ticket;
+  final Ticket ticket;
 
   FinishCheckList(this.ticket, {Key? key}) : super(key: key);
 

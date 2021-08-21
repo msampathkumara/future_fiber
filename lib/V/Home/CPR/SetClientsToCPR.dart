@@ -4,6 +4,9 @@ import 'package:smartwind/M/CPR.dart';
 
 class SetClientToCPR extends StatefulWidget {
   CPR cpr;
+  var _supplier1;
+  var _supplier2;
+  var _supplier3;
 
   SetClientToCPR(this.cpr);
 
@@ -13,16 +16,10 @@ class SetClientToCPR extends StatefulWidget {
 
 class _SetClientToCPRState extends State<SetClientToCPR> {
   var _suppliers = ["Cutting", "SA", "Printing"];
-  var _supplier1;
-
-  var _supplier2;
-
-  var _supplier3;
 
   @override
   Widget build(BuildContext context) {
-    print('_supplier1 $_supplier1');
-
+    widget.cpr.suppliers = [widget._supplier1, widget._supplier2, widget._supplier3];
     return Container(
       child: Column(
         children: [
@@ -39,18 +36,17 @@ class _SetClientToCPRState extends State<SetClientToCPR> {
                         toggleable: true,
                         title: Text(_supplier),
                         value: _supplier,
-                        groupValue: _supplier1,
+                        groupValue: widget._supplier1,
                         onChanged: (value) {
-                          widget.cpr.supplier1 = value;
                           setState(() {
-                            _supplier1 = value;
+                            widget._supplier1 = value;
                           });
                         }),
                   ),
               ],
             ),
           ),
-          if (_supplier1 != null)
+          if (widget._supplier1 != null)
             ListTile(
               title: Text("Second Supplier"),
               isThreeLine: true,
@@ -64,18 +60,17 @@ class _SetClientToCPRState extends State<SetClientToCPR> {
                           toggleable: true,
                           title: Text(_supplier),
                           value: _supplier,
-                          groupValue: _supplier2,
+                          groupValue: widget._supplier2,
                           onChanged: (value) {
-                            widget.cpr.supplier2 = value;
                             setState(() {
-                              _supplier2 = value;
+                              widget._supplier2 = value;
                             });
                           }),
                     ),
                 ],
               ),
             ),
-          if (_supplier1 != null && _supplier2 != null)
+          if (widget._supplier1 != null && widget._supplier2 != null)
             ListTile(
               title: Text("Third Supplier"),
               isThreeLine: true,
@@ -89,11 +84,10 @@ class _SetClientToCPRState extends State<SetClientToCPR> {
                           selected: false,
                           title: Text(_supplier),
                           value: _supplier,
-                          groupValue: _supplier3,
+                          groupValue: widget._supplier3,
                           onChanged: (value) {
-                            widget.cpr.supplier3 = value;
                             setState(() {
-                              _supplier3 = value;
+                              widget._supplier3 = value;
                             });
                           }),
                     ),

@@ -5,7 +5,7 @@ description: NorthSails Smart Wind
 publish_to: 'none'
 
 
-version: 1.1.4+5
+version: 1.1.6+7
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -15,14 +15,13 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.3
-  font_awesome_flutter: ^9.1.0
 
   #  firebase------------------------------------------
-  firebase_core: ^1.4.0
+  firebase_core: ^1.5.0
   firebase_analytics:
-  firebase_crashlytics: ^2.1.1
-  firebase_auth: ^3.0.1
-  firebase_messaging: ^10.0.4
+  firebase_crashlytics: ^2.2.0
+  firebase_auth: ^3.0.2
+  firebase_messaging: ^10.0.5
   google_ml_vision: ^0.0.6
   #  --------------------------------------------------
   dio: ^4.0.0
@@ -41,9 +40,10 @@ dependencies:
   path_provider: ^2.0.2
   flutter_pdfview: ^1.1.0
   hex: ^0.2.0
-  package_info_plus: ^1.0.4
+  package_info_plus: ^1.0.5
 
   dropdown_search: ^0.6.3
+  measured_size: ^1.0.0
 
 dev_dependencies:
   json_serializable:

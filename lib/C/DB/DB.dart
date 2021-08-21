@@ -84,12 +84,12 @@ class DB {
       loadingWidget.show(context);
     }
 
-    var DB = await getDB();
+    var db = await getDB();
     if (reset) {
       print('reset');
-      await DB!.rawQuery("delete from tickets;");
-      await DB.rawQuery("delete from factorySections;");
-      await DB.rawQuery("delete from users;");
+      await db!.rawQuery("delete from tickets;");
+      await db.rawQuery("delete from factorySections;");
+      await db.rawQuery("delete from users;");
     }
     return getDB()
         .then((value) => value!
@@ -124,12 +124,12 @@ class DB {
     });
   }
 
-  static List<DbChangeCallBack> OnDBChangeCallBacks = [];
+  static List<DbChangeCallBack> onDBChangeCallBacks = [];
 
   static DbChangeCallBack setOnDBChangeListener(callBack, context, {collection = DataTables.None}) {
     print('DbChangeCallBack $collection ');
     var dbChangeCallBack = new DbChangeCallBack(callBack, context, collection);
-    OnDBChangeCallBacks.add(dbChangeCallBack);
+    onDBChangeCallBacks.add(dbChangeCallBack);
     return dbChangeCallBack;
   }
 
@@ -238,19 +238,19 @@ class DB {
   static callChangesCallBack(Map<dynamic, dynamic> res) {
     List keys = res.keys.toList();
 
-    List<DbChangeCallBack> OnDBChangeCallBacksTemp = [];
-    OnDBChangeCallBacksTemp.addAll(OnDBChangeCallBacks);
-    for (var i = 0; i < OnDBChangeCallBacksTemp.length; i++) {
-      var x = OnDBChangeCallBacksTemp[i];
+    List<DbChangeCallBack> onDBChangeCallBacksTemp = [];
+    onDBChangeCallBacksTemp.addAll(onDBChangeCallBacks);
+    for (var i = 0; i < onDBChangeCallBacksTemp.length; i++) {
+      var x = onDBChangeCallBacksTemp[i];
 
       try {
         if (x.isDisposed()) {
-          OnDBChangeCallBacks.remove(x);
+          onDBChangeCallBacks.remove(x);
         } else if (x.collection == DataTables.None || keys.contains(x.collection.toShortString())) {
           x.callBack();
         }
       } catch (e) {
-        OnDBChangeCallBacks.remove(x);
+        onDBChangeCallBacks.remove(x);
       }
     }
   }
@@ -264,7 +264,7 @@ class DbChangeCallBack {
   var callBack;
   var context;
 
-  DbChangeCallBack(this.callBack, this.context, this.collection) {}
+  DbChangeCallBack(this.callBack, this.context, this.collection);
 
   void dispose() {
     disposed = true;

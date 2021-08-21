@@ -10,7 +10,7 @@ import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
 
 class AddNfcCard extends StatefulWidget {
-  NsUser nsUser;
+ final NsUser nsUser;
 
   AddNfcCard(this.nsUser, {Key? key}) : super(key: key);
 

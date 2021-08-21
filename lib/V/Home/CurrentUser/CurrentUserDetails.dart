@@ -4,7 +4,7 @@ import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/NsUser.dart';
 
 class CurrentUserDetails extends StatefulWidget {
-  NsUser nsUser;
+  final NsUser nsUser;
 
   CurrentUserDetails(this.nsUser, {Key? key}) : super(key: key);
 

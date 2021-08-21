@@ -11,6 +11,7 @@ import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/V/Home/CPR/CPRList.dart';
 import 'package:smartwind/V/Home/CurrentUser/CurrentUserDetails.dart';
+import 'package:smartwind/V/Home/HR/HRSystem.dart';
 import 'package:smartwind/V/Home/Tickets/Print/PrintManager.dart';
 import 'package:smartwind/V/Home/Tickets/ProductionPool/ProductionPool.dart';
 import 'package:smartwind/V/Login/Login.dart';
@@ -18,6 +19,8 @@ import 'package:smartwind/V/Login/SectionSelector.dart';
 
 import 'About.dart';
 import 'Admin/AdminCpanel.dart';
+import 'BlueBook/BlueBook.dart';
+import 'J109.dart';
 import 'Tickets/FinishedGoods/FinishedGoods.dart';
 import 'Tickets/StandardFiles/StandardFiles.dart';
 import 'UserManager/UserManager.dart';
@@ -90,7 +93,7 @@ class _HomeState extends State<Home> {
     super.dispose();
   }
 
-  var _selection;
+
 
   void _showMarkedAsDoneSnackbar(bool? isMarkedAsDone) {
     if (isMarkedAsDone ?? false)
@@ -145,86 +148,101 @@ class _HomeState extends State<Home> {
                     ),
                     Align(
                       alignment: FractionalOffset.center,
-                      child: Wrap(
-                        direction: Axis.horizontal,
-                        children: [
-                          _OpenContainerWrapper(
-                            closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                              return _menuButton(
-                                  openContainer,
-                                  Icon(
-                                    Icons.precision_manufacturing_outlined,
-                                    size: 100,
-                                  ),
-                                  "Production Pool");
-                            },
-                            openWidget: ProductionPool(),
-                            onClosed: _showMarkedAsDoneSnackbar,
-                          ),
-                          _OpenContainerWrapper(
-                            closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                              return _menuButton(
-                                  openContainer,
-                                  Icon(
-                                    Icons.local_mall_outlined,
-                                    size: 100,
-                                  ),
-                                  "CPR");
-                            },
-                            openWidget: CPRList(),
-                            onClosed: _showMarkedAsDoneSnackbar,
-                          ),
-                          _OpenContainerWrapper(
-                            closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                              return _menuButton(
-                                  openContainer,
-                                  Icon(
-                                    Icons.inventory_2_outlined,
-                                    size: 100,
-                                  ),
-                                  "Finished Goods");
-                            },
-                            openWidget: FinishedGoods(),
-                            onClosed: _showMarkedAsDoneSnackbar,
-                          ),
-                          _OpenContainerWrapper(
-                            closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                              return _menuButton(
-                                  openContainer,
-                                  Icon(
-                                    Icons.collections_bookmark_outlined,
-                                    size: 100,
-                                  ),
-                                  "Standard Library");
-                            },
-                            openWidget: StandardFiles(),
-                            onClosed: _showMarkedAsDoneSnackbar,
-                          ),
-                          _OpenContainerWrapper(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 48.0),
+                        child: Wrap(
+                          direction: Axis.horizontal,crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            _OpenContainerWrapper(
                               closedBuilder: (BuildContext _, VoidCallback openContainer) {
                                 return _menuButton(
                                     openContainer,
                                     Icon(
-                                      Icons.people_outline_outlined,
+                                      Icons.precision_manufacturing_outlined,
                                       size: 100,
                                     ),
-                                    "User Manager");
+                                    "Production Pool");
                               },
-                              openWidget: UserManager(),
-                              onClosed: _showMarkedAsDoneSnackbar),
-                          _OpenContainerWrapper(
+                              openWidget: ProductionPool(),
+                              onClosed: _showMarkedAsDoneSnackbar,
+                            ),
+                            _OpenContainerWrapper(
                               closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                return _menuButton(openContainer, Icon(Icons.print_rounded, size: 100, color: Colors.blue), "Print");
+                                return _menuButton(
+                                    openContainer,
+                                    Icon(
+                                      Icons.local_mall_rounded,
+                                      color: Colors.amber,
+                                      size: 100,
+                                    ),
+                                    "CPR");
                               },
-                              openWidget: PrintManager(),
-                              onClosed: _showMarkedAsDoneSnackbar),
-                          _OpenContainerWrapper(
+                              openWidget: CPRList(),
+                              onClosed: _showMarkedAsDoneSnackbar,
+                            ),
+                            _OpenContainerWrapper(
+                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                  return _menuButton(openContainer, Icon(Icons.inventory_2_rounded, color: Colors.deepOrange, size: 100), "Finished Goods");
+                                },
+                                openWidget: FinishedGoods(),
+                                onClosed: _showMarkedAsDoneSnackbar),
+                            _OpenContainerWrapper(
                               closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                return _menuButton(openContainer, Icon(Icons.verified_rounded, size: 100, color: Colors.green), "QA & QC");
+                                return _menuButton(
+                                    openContainer,
+                                    Icon(
+                                      Icons.collections_bookmark_outlined,
+                                      size: 100,
+                                    ),
+                                    "Standard Library");
                               },
-                              openWidget: PrintManager(),
-                              onClosed: _showMarkedAsDoneSnackbar),
-                        ],
+                              openWidget: StandardFiles(),
+                              onClosed: _showMarkedAsDoneSnackbar,
+                            ),
+                            _OpenContainerWrapper(
+                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                  return _menuButton(
+                                      openContainer,
+                                      Icon(
+                                        Icons.people_outline_outlined,
+                                        size: 100,
+                                      ),
+                                      "User Manager");
+                                },
+                                openWidget: UserManager(),
+                                onClosed: _showMarkedAsDoneSnackbar),
+                            _OpenContainerWrapper(
+                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                  return _menuButton(openContainer, Icon(Icons.print_rounded, size: 100, color: Colors.blue), "Print");
+                                },
+                                openWidget: PrintManager(),
+                                onClosed: _showMarkedAsDoneSnackbar),
+                            _OpenContainerWrapper(
+                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                  return _menuButton(openContainer, Icon(Icons.verified_rounded, size: 100, color: Colors.green), "QA & QC");
+                                },
+                                openWidget: PrintManager(),
+                                onClosed: _showMarkedAsDoneSnackbar),
+                            _OpenContainerWrapper(
+                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                  return _menuButton(openContainer, Icon(Icons.subject_rounded, size: 100, color: Colors.pinkAccent), "J109");
+                                },
+                                openWidget: J109(),
+                                onClosed: _showMarkedAsDoneSnackbar),
+                            _OpenContainerWrapper(
+                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                  return _menuButton(openContainer, Icon(Icons.menu_book_rounded, size: 100, color: Colors.blueAccent), "Blue Book");
+                                },
+                                openWidget: BlueBook(),
+                                onClosed: _showMarkedAsDoneSnackbar),
+                            _OpenContainerWrapper(
+                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                  return _menuButton(openContainer, Icon(Icons.groups_rounded, size: 100, color: Colors.orange), "HR System");
+                                },
+                                openWidget: HESystem(),
+                                onClosed: _showMarkedAsDoneSnackbar),
+                          ],
+                        ),
                       ),
                     ),
                     new Positioned(
@@ -283,7 +301,7 @@ class _HomeState extends State<Home> {
         }
 
         setState(() {
-          _selection = result;
+
         });
         // print(result);
       },

@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 class ErrorMessageView extends StatefulWidget {
   late _ErrorMessageViewState state;
 
-  String errorMessage;
+  final String errorMessage;
 
   var icon;
 
@@ -30,7 +30,7 @@ class ErrorMessageView extends StatefulWidget {
 
 class _ErrorMessageViewState extends State<ErrorMessageView> with TickerProviderStateMixin {
   late AnimationController controller;
-  int _progress = 0;
+
 
   @override
   void initState() {

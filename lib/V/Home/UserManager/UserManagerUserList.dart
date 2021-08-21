@@ -25,7 +25,7 @@ class UserManagerUserList extends StatefulWidget {
 
 class _UserManagerUserListState extends State<UserManagerUserList> with TickerProviderStateMixin {
   var database;
-  late int _selectedTabIndex;
+
 
   var _themeColor = Colors.orange;
 
@@ -105,13 +105,13 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
 
               var future = new Future.delayed(const Duration(milliseconds: 300));
               subscription = future.asStream().listen((v) {
-                print("SEARCHING FOR ${searchText}");
+                print("SEARCHING FOR $searchText");
                 filterUsers();
               });
             },
             onSubmitted: (text) {},
             OnBarcode: (barcode) {
-              print("xxxxxxxxxxxxxxxxxx ${barcode}");
+              print("xxxxxxxxxxxxxxxxxx $barcode");
             },
           ),
           centerTitle: true,
@@ -160,7 +160,6 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
   String sorted_by = "Date";
   String searchText = "";
   var subscription;
-  bool _showAllTickets = false;
   List<Map> currentFileList = [];
 
   final tabs = ["All", "Upwind", "OD", "Nylon", "OEM", "No Pool"];

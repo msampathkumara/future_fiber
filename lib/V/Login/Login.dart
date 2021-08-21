@@ -15,6 +15,7 @@ import 'package:smartwind/V/Home/Home.dart';
 import 'package:smartwind/V/Login/SectionSelector.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 
+import 'CheckTabStatus.dart';
 import 'PasswordRecovery.dart';
 
 class Login extends StatefulWidget {
@@ -83,7 +84,7 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: loading
@@ -183,7 +184,7 @@ class _LoginState extends State<Login> {
       final UserCredential googleUserCredential = await FirebaseAuth.instance.signInWithCustomToken(res["token"]);
       if (googleUserCredential.user != null) {
         if (nsUser.sections.length > 1) {
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => SectionSelector(nsUser)), (Route<dynamic> route) => false);
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => CheckTabStatus(nsUser)), (Route<dynamic> route) => false);
         } else {
           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (Route<dynamic> route) => false);
         }

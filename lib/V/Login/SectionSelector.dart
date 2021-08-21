@@ -7,7 +7,7 @@ import 'package:smartwind/M/Section.dart';
 import 'package:smartwind/V/Home/Home.dart';
 
 class SectionSelector extends StatefulWidget {
-  NsUser nsUser;
+  final NsUser nsUser;
 
   SectionSelector(this.nsUser, {Key? key}) : super(key: key);
 

@@ -53,7 +53,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
 
   Future getImage() async {
     final picker = ImagePicker();
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     setState(() {
       if (pickedFile != null) {

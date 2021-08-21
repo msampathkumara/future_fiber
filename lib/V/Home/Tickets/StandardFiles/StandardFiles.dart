@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:smartwind/C/App.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/C/OnlineDB.dart';
@@ -174,7 +173,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
         title: Text(title),
         selectedTileColor: Colors.black12,
         selected: listSortBy == key,
-        leading: icon is IconData ? FaIcon(icon) : icon,
+        leading: icon is IconData ? Icon(icon) : icon,
         onTap: () {
           listSortBy = key;
           sortedBy = title;
@@ -209,8 +208,8 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
                       padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
                       child: ListView(
                         children: [
-                          getListItem("Date", FontAwesomeIcons.calendarDay, "uptime DESC"),
-                          getListItem("Name", FontAwesomeIcons.amazon, "oe"),
+                          getListItem("Date", Icons.date_range_rounded, "uptime DESC"),
+                          getListItem("Name", Icons.sort_by_alpha_rounded, "oe"),
                           getListItem("Usage", Icons.data_usage_outlined, "usedCount DESC")
                         ],
                       )),
@@ -329,8 +328,6 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
   }
 
   List<Map<String, dynamic>> _allFilesList = [];
-  List<Map<String, dynamic>> _finishedFilesList = [];
-  List<Map<String, dynamic>> _crossProductionFilesList = [];
 
   List<Map<String, dynamic>> _upwindFilesList = [];
   List<Map<String, dynamic>> _oDFilesList = [];

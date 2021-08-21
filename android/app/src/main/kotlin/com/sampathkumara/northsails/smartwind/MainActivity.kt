@@ -4,9 +4,14 @@ import android.content.Intent
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
 import com.pdfEditor.MainEditorActivity
+import com.tom_roush.pdfbox.multipdf.Splitter
+import com.tom_roush.pdfbox.pdmodel.PDDocument
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import org.apache.commons.io.FilenameUtils
+import java.io.File
+import java.io.IOException
 
 
 class MainActivity : FlutterActivity() {
@@ -28,7 +33,6 @@ class MainActivity : FlutterActivity() {
 //        }
 
             if ("editPdf" == call.method) {
-
                 editPdfResult = result
                 val fileID = call.argument<Int>("fileID")
                 val path = call.argument<String>("path")
@@ -43,6 +47,33 @@ class MainActivity : FlutterActivity() {
                 i.putExtra("path", path)
                 i.putExtra("ticket", ticket)
                 startActivityForResult(i, editPdf)
+
+            } else if ("splitPage" == call.method) {
+                editPdfResult = result
+                val filePath = call.argument<String>("path")
+                val pageIndex = call.argument<Int>("page")
+                println(" _$filePath _$pageIndex ")
+
+
+                val splitter = Splitter()
+                val out: File;
+                try {
+                    val document: PDDocument = PDDocument.load(File(filePath))
+                    val pages: List<PDDocument> = splitter.split(document)
+                    val pd = pages[pageIndex!!]
+                    val parentFile = File(filePath).parentFile
+                    val fileNameWithOutExt = FilenameUtils.removeExtension(filePath)
+                    out = File(fileNameWithOutExt + "_" + pageIndex + ".pdf")
+                    println(  fileNameWithOutExt + "_" + pageIndex + ".pdf");
+                    println(out.absolutePath);
+                    println("------------------------------------------------------------------------------------------------");
+                    pd.save(out)
+                    document.close()
+                    result.success(out.absolutePath)
+                } catch (e: IOException) {
+                    e.printStackTrace()
+
+                }
 
 
             }

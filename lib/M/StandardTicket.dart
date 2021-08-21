@@ -5,7 +5,6 @@ import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/C/Server.dart';

@@ -3,8 +3,8 @@ import 'package:flutter/widgets.dart';
 import 'package:smartwind/M/NsUser.dart';
 
 class NfcScan extends StatefulWidget {
-  late _NfcScanState state;
-  NsUser nsUser;
+    late _NfcScanState state;
+  final NsUser nsUser;
 
   NfcScan(this.nsUser);
 

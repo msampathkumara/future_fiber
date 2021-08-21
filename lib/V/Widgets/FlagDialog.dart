@@ -10,7 +10,7 @@ class FlagDialog {
     TextEditingController redCommentController = TextEditingController();
     showLoadingDialog(context);
     bool dataLoaded = false;
-    ticket.getFlagList(TicketFlag.FlagType_RED).then((list) {
+    ticket.getFlagList(TicketFlag.flagTypeRED).then((list) {
       dataLoaded = true;
       Navigator.of(context).pop();
       TicketFlag lastFlag;
@@ -81,7 +81,7 @@ class FlagDialog {
                   ? ElevatedButton(
                       child: const Text('Add Red Flag'),
                       onPressed: () {
-                        setFlag(TicketFlag.FlagType_RED, redCommentController.value.text, ticket).then((value) {
+                        setFlag(TicketFlag.flagTypeRED, redCommentController.value.text, ticket).then((value) {
                           print(value.body.toString());
                           Navigator.of(context).pop(true);
                         });
@@ -89,7 +89,7 @@ class FlagDialog {
                   : ElevatedButton(
                       child: const Text('Remove Red Flag'),
                       onPressed: () {
-                        removeFlag(TicketFlag.FlagType_RED, ticket).then((value) {
+                        removeFlag(TicketFlag.flagTypeRED, ticket).then((value) {
                           print(value.body.toString());
                           Navigator.of(context).pop(false);
                         });
