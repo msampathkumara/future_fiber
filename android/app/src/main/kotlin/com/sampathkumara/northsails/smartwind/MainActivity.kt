@@ -12,9 +12,13 @@ import io.flutter.plugin.common.MethodChannel
 import org.apache.commons.io.FilenameUtils
 import java.io.File
 import java.io.IOException
+import io.flutter.plugins.webviewflutter.FlutterWebView
 
 
 class MainActivity : FlutterActivity() {
+
+
+
     private val editPdf: Int = 0
     private val CHANNEL = "editPdf"
     var editPdfResult: MethodChannel.Result? = null
@@ -74,6 +78,13 @@ class MainActivity : FlutterActivity() {
                     e.printStackTrace()
 
                 }
+
+
+            }else if ("addWebViewFile" == call.method) {
+
+                val filePath = call.argument<String>("path")
+
+
 
 
             }

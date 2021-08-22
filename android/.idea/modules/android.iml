@@ -10,6 +10,8 @@
   <component name="NewModuleRootManager">
     <exclude-output />
     <content url="file://$MODULE_DIR$/../..">
+      <excludeFolder url="file://$MODULE_DIR$/../../CustomWebView/build" />
+      <excludeFolder url="file://$MODULE_DIR$/../../CustomWebView/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/../../.gradle" />
     </content>
     <orderEntry type="inheritedJdk" />

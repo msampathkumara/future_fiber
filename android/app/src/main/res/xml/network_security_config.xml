@@ -3,5 +3,7 @@
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">smartwind.nsslsupportservices.com</domain>
         <domain includeSubdomains="true">192.168.0.104</domain>
+        <domain includeSubdomains="true">cs.northsails.com</domain>
+        <domain includeSubdomains="true">northsails.cemex.cloud</domain>
     </domain-config>
 </network-security-config>

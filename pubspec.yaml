@@ -45,6 +45,9 @@ dependencies:
   dropdown_search: ^0.6.3
   measured_size: ^1.0.0
 
+  custom_webview:
+    path: ./Pugins/custom_webview
+
 dev_dependencies:
   json_serializable:
   build_runner: ^2.1.1
