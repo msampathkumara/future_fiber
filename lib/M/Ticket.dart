@@ -21,10 +21,12 @@ import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/Loading.dart';
 import 'package:smartwind/V/Widgets/PDFScreen.dart';
 
+import 'DataObject.dart';
+
 part 'Ticket.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-class Ticket {
+class Ticket extends DataObject{
   String? mo;
   String? oe;
   @JsonKey(defaultValue: 0, includeIfNull: true)
@@ -291,5 +293,10 @@ class Ticket {
 
   Future openInCS(BuildContext context) {
     return Navigator.push(context, MaterialPageRoute(builder: (context) => CS(this)));
+  }
+
+  getName() {
+    return mo??oe;
+
   }
 }

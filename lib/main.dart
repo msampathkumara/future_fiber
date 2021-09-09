@@ -1,8 +1,10 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // import 'package:firebase_auth/firebase_auth.dart';
@@ -13,11 +15,15 @@ import 'mainFuncs.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp();
+  await Firebase.initializeApp();
   // Firebase.initializeApp().then((value) => print(value)).catchError((onError) => print(onError));
   // FirebaseApp defaultApp = Firebase.app();
 
   // FirebaseAuth auth = FirebaseAuth.instance;
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent, // transparent status bar
+  ));
   runApp(MyApp());
 }
 
@@ -54,6 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+
     if (kDebugMode) {
       SharedPreferences.setMockInitialValues(new Map());
     }
@@ -71,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
           future: _mainFuncs.initializeFlutterFireFuture,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              if (FirebaseAuth.instance.currentUser != null &&  App.currentUser!=null) {
+              if (FirebaseAuth.instance.currentUser != null && App.currentUser != null) {
                 return Home();
               }
               return Login();

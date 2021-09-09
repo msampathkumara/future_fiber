@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,8 +12,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/NsUser.dart';
-import 'package:smartwind/V/Home/Home.dart';
-import 'package:smartwind/V/Login/SectionSelector.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 
 import 'CheckTabStatus.dart';
@@ -26,6 +25,7 @@ class Login extends StatefulWidget {
   @override
   _LoginState createState() {
     appUser = AppUser();
+
     return _LoginState();
   }
 }
@@ -50,15 +50,7 @@ class _LoginState extends State<Login> {
       if (nfcIsAvailable) {
         NfcManager.instance.startSession(
           onDiscovered: (NfcTag tag) async {
-            // print(Ndef.from(tag)!.cachedMessage!.records ?? "");
-            // print(new String.fromCharCodes(NfcA.from(tag)!.identifier));
-            // List<int> l = tag.data["nfca"]["identifier"];
             List<int> l = NfcA.from(tag)!.identifier;
-            // ErrorMessageView(errorMessage: HEX.encode(l)).show(context);
-
-            // new String.fromCharCodes(charCodes)
-            // String serial=new String.fromCharCodes( NfcA.from(tag)!.identifier);
-            // ErrorMessageView(errorMessage: serial).show(context);
             nfcCode = HEX.encode(l);
             _login();
 
@@ -70,8 +62,8 @@ class _LoginState extends State<Login> {
       }
     });
 
-    nfcCode = "04f68ad2355e80";
-    _login();
+    // nfcCode = "04f68ad2355e80";
+    // _login();
   }
 
   @override
@@ -81,12 +73,13 @@ class _LoginState extends State<Login> {
   }
 
   var _controller = TextEditingController();
+  var _passwordFocusNode = FocusNode();
+  var _unameFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xff01c1fe),
       body: loading
           ? Center(
               child: Container(
@@ -94,46 +87,148 @@ class _LoginState extends State<Login> {
               mainAxisSize: MainAxisSize.min,
               children: [CircularProgressIndicator(), Padding(padding: const EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
             )))
-          : Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Container(
-                  child: Wrap(
-                    direction: Axis.horizontal,
-                    children: [
-                      if (nfcIsAvailable) Text("Use NFC Card To login "),
-                      Padding(
-                          padding: const EdgeInsets.all(8.0),
+          : Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment(2.0, 0.0),
+                  colors: <Color>[Color(0xff1981d2), Color(0xff40aee5), Color(0xff1981d2)],
+                  tileMode: TileMode.clamp,
+                ),
+              ),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: Container(
+                    child: Wrap(
+                      direction: Axis.horizontal,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Center(
+                            child: CircleAvatar(
+                              radius: 100,
+                              child: Image.asset("assets/north_sails-logo.png"),
+                            ),
+                          ),
+                        ),
+                        Text("User Name", style: TextStyle(color: Colors.white, fontSize: 20)),
+                        Material(
+                          borderRadius: BorderRadius.circular(5.0),
+                          elevation: 10.0,
+                          shadowColor: Color(0xff224597),
+                          color: Colors.blue,
                           child: TextFormField(
+                              autofocus: true,
+                              onFieldSubmitted: (d) {
+                                _passwordFocusNode.requestFocus();
+                              },
+                              style: TextStyle(fontSize: 20, color: Colors.white),
+                              cursorColor: Colors.white,
                               initialValue: _user.uname,
-                              decoration: InputDecoration(labelText: 'User Name'),
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    borderSide: BorderSide(
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  prefixIcon: Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: new Icon(Icons.account_circle_outlined, color: Colors.white),
+                                  ),
+                                  hintText: 'Enter User Name',
+                                  hintStyle: TextStyle(color: Colors.white60),
+                                  fillColor: Colors.blue,
+                                  filled: true,
+                                  contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                                  focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.white60, width: 2.0), borderRadius: BorderRadius.circular(5.0)),
+                                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0), borderSide: BorderSide(color: Colors.blue, width: 3.0))),
                               onChanged: (uname) {
                                 _user.uname = uname;
-                              })),
-                      Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextField(
+                              }),
+                        ),
+                        SizedBox(
+                          height: 62,
+                        ),
+                        Text("Password", style: TextStyle(color: Colors.white, fontSize: 20)),
+                        Material(
+                          borderRadius: BorderRadius.circular(5.0),
+                          elevation: 10.0,
+                          shadowColor: Color(0xff224597),
+                          color: Colors.white,
+                          child: TextFormField(
+                              focusNode: _passwordFocusNode,
+                              cursorColor: Colors.white,
+                              onFieldSubmitted: (f) {
+                                _login();
+                              },
+                              style: TextStyle(fontSize: 20, color: Colors.white),
+                              initialValue: _user.pword,
+                              obscureText: hidePassword,
+                              autofocus: false,
                               decoration: InputDecoration(
-                                  labelText: 'Enter Password',
                                   suffixIcon: IconButton(
                                     onPressed: () {
                                       setState(() {
                                         hidePassword = !hidePassword;
                                       });
                                     },
-                                    icon: Icon(hidePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined),
-                                  )),
-                              obscureText: hidePassword,
-                              enableSuggestions: false,
-                              autocorrect: false,
-                              controller: _controller,
+                                    icon: Icon(hidePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: Colors.white),
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    borderSide: BorderSide(
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  prefixIcon: Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: new Icon(Icons.lock_outlined, color: Colors.white),
+                                  ),
+                                  hintText: 'Enter Password',
+                                  hintStyle: TextStyle(color: Colors.white60),
+                                  fillColor: Colors.blue,
+                                  filled: true,
+                                  contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                                  focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.white60, width: 2.0), borderRadius: BorderRadius.circular(5.0)),
+                                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0), borderSide: BorderSide(color: Colors.blue, width: 3.0))),
                               onChanged: (pword) {
                                 _user.pword = pword;
-                              })),
-                      if (emptyUserDetails) Text("Enter user name and password", style: TextStyle(color: Colors.red)),
-                      Center(child: Padding(padding: const EdgeInsets.all(8.0), child: ElevatedButton(onPressed: _login, child: Text("Login")))),
-                      Center(child: Padding(padding: const EdgeInsets.all(8.0), child: TextButton(onPressed: _recoverPassword, child: Text("Forgot Password")))),
-                    ],
+                              }),
+                        ),
+                        Align(
+                            alignment: Alignment.centerRight,
+                            child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: TextButton(onPressed: _recoverPassword, child: Text("Forgot Password ?", style: TextStyle(color: Colors.white))))),
+                        SizedBox(
+                          height: 62,
+                        ),
+                        if (emptyUserDetails) Text("Enter user name and password", style: TextStyle(color: Colors.red)),
+                        SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed: _login,
+                              child: Text("Login", style: TextStyle(color: Colors.blue, fontSize: 20)),
+                              style: ButtonStyle(
+                                  elevation: MaterialStateProperty.all(10),
+                                  backgroundColor: MaterialStateProperty.all(Colors.white),
+                                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0), side: BorderSide(color: Colors.blue)))),
+                            )),
+                        if (nfcIsAvailable) SizedBox(height: 84),
+                        if (nfcIsAvailable)
+                          Center(
+                              child: Text(
+                            " ~~~~~~~~~~~~~ Or ~~~~~~~~~~~~~~~ ",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          )),
+                        if (nfcIsAvailable) SizedBox(height: 32),
+                        if (nfcIsAvailable) Center(child: Text("Use NFC card to login ", style: TextStyle(color: Colors.white, fontSize: 25))),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -183,11 +278,11 @@ class _LoginState extends State<Login> {
 
       final UserCredential googleUserCredential = await FirebaseAuth.instance.signInWithCustomToken(res["token"]);
       if (googleUserCredential.user != null) {
-        if (nsUser.sections.length > 1) {
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => CheckTabStatus(nsUser)), (Route<dynamic> route) => false);
-        } else {
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (Route<dynamic> route) => false);
-        }
+        // if (nsUser.sections.length > 1) {
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => CheckTabStatus(nsUser)), (Route<dynamic> route) => false);
+        // } else {
+        //   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (Route<dynamic> route) => false);
+        // }
         NfcManager.instance.stopSession();
       }
       setLoading(false);

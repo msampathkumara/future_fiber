@@ -22,11 +22,12 @@ import 'Admin/AdminCpanel.dart';
 import 'BlueBook/BlueBook.dart';
 import 'J109.dart';
 import 'Tickets/FinishedGoods/FinishedGoods.dart';
+import 'Tickets/QC/QCList.dart';
 import 'Tickets/StandardFiles/StandardFiles.dart';
 import 'UserManager/UserManager.dart';
 
 class Home extends StatefulWidget {
-  Home({Key? key}) : super(key: key);
+  Home( )  ;
 
   @override
   _HomeState createState() {
@@ -221,7 +222,7 @@ class _HomeState extends State<Home> {
                                 closedBuilder: (BuildContext _, VoidCallback openContainer) {
                                   return _menuButton(openContainer, Icon(Icons.verified_rounded, size: 100, color: Colors.green), "QA & QC");
                                 },
-                                openWidget: PrintManager(),
+                                openWidget: QCList(),
                                 onClosed: _showMarkedAsDoneSnackbar),
                             _OpenContainerWrapper(
                                 closedBuilder: (BuildContext _, VoidCallback openContainer) {

@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
 import com.pdfEditor.MainEditorActivity
+import com.pdfEditor.QCEditor
 import com.tom_roush.pdfbox.multipdf.Splitter
 import com.tom_roush.pdfbox.pdmodel.PDDocument
 import io.flutter.embedding.android.FlutterActivity
@@ -12,14 +13,13 @@ import io.flutter.plugin.common.MethodChannel
 import org.apache.commons.io.FilenameUtils
 import java.io.File
 import java.io.IOException
-import io.flutter.plugins.webviewflutter.FlutterWebView
 
 
 class MainActivity : FlutterActivity() {
 
 
-
     private val editPdf: Int = 0
+    private val qaEdit: Int = 1
     private val CHANNEL = "editPdf"
     var editPdfResult: MethodChannel.Result? = null
 
@@ -36,57 +36,67 @@ class MainActivity : FlutterActivity() {
 //            }
 //        }
 
-            if ("editPdf" == call.method) {
-                editPdfResult = result
-                val fileID = call.argument<Int>("fileID")
-                val path = call.argument<String>("path")
-                val ticket = call.argument<String>("ticket")
+            when (call.method) {
+                "editPdf" -> {
+                    editPdfResult = result
+                    val fileID = call.argument<Int>("fileID")
+                    val path = call.argument<String>("path")
+                    val ticket = call.argument<String>("ticket")
 
-                println("$fileID _$path _$ticket")
-
-
-                val i = Intent(this, MainEditorActivity::class.java)
-                i.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                i.putExtra("ticketId", fileID)
-                i.putExtra("path", path)
-                i.putExtra("ticket", ticket)
-                startActivityForResult(i, editPdf)
-
-            } else if ("splitPage" == call.method) {
-                editPdfResult = result
-                val filePath = call.argument<String>("path")
-                val pageIndex = call.argument<Int>("page")
-                println(" _$filePath _$pageIndex ")
+                    println("$fileID _$path _$ticket")
 
 
-                val splitter = Splitter()
-                val out: File;
-                try {
-                    val document: PDDocument = PDDocument.load(File(filePath))
-                    val pages: List<PDDocument> = splitter.split(document)
-                    val pd = pages[pageIndex!!]
-                    val parentFile = File(filePath).parentFile
-                    val fileNameWithOutExt = FilenameUtils.removeExtension(filePath)
-                    out = File(fileNameWithOutExt + "_" + pageIndex + ".pdf")
-                    println(  fileNameWithOutExt + "_" + pageIndex + ".pdf");
-                    println(out.absolutePath);
-                    println("------------------------------------------------------------------------------------------------");
-                    pd.save(out)
-                    document.close()
-                    result.success(out.absolutePath)
-                } catch (e: IOException) {
-                    e.printStackTrace()
+                    val i = Intent(this, MainEditorActivity::class.java)
+                    i.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    i.putExtra("ticketId", fileID)
+                    i.putExtra("path", path)
+                    i.putExtra("ticket", ticket)
+                    startActivityForResult(i, editPdf)
 
                 }
+                "splitPage" -> {
+                    editPdfResult = result
+                    val filePath = call.argument<String>("path")
+                    val pageIndex = call.argument<Int>("page")
+                    println(" _$filePath _$pageIndex ")
 
 
-            }else if ("addWebViewFile" == call.method) {
+                    val splitter = Splitter()
+                    val out: File;
+                    try {
+                        val document: PDDocument = PDDocument.load(File(filePath))
+                        val pages: List<PDDocument> = splitter.split(document)
+                        val pd = pages[pageIndex!!]
+                        val parentFile = File(filePath).parentFile
+                        val fileNameWithOutExt = FilenameUtils.removeExtension(filePath)
+                        out = File(fileNameWithOutExt + "_" + pageIndex + ".pdf")
+                        pd.save(out)
+                        document.close()
+                        result.success(out.absolutePath)
+                    } catch (e: IOException) {
+                        e.printStackTrace()
 
-                val filePath = call.argument<String>("path")
+                    }
 
 
+                }
+                "qcEdit" -> {
+
+                    editPdfResult = result
+                    val ticket = call.argument<String>("ticket")
+                    val qc = call.argument<Boolean>("qc")
+
+                    println(" $qc---------------------------------- _$ticket")
 
 
+                    val i = Intent(this, QCEditor::class.java)
+//                    i.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    i.putExtra("ticket", ticket)
+                    i.putExtra("qc", qc)
+                    startActivityForResult(i, qaEdit)
+
+
+                }
             }
         }
     }
@@ -95,6 +105,9 @@ class MainActivity : FlutterActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == editPdf && editPdfResult != null) {
             editPdfResult!!.success(data?.getBooleanExtra("edited", false))
+        }
+        else if (requestCode == qaEdit && editPdfResult != null) {
+            editPdfResult!!.success(data?.getBooleanExtra("edited", true))
         }
     }
 }

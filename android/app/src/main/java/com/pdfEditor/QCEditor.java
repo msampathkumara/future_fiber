@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.util.Log;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,7 +22,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.BitmapCompat;
 
 import com.Dialogs.LoadingDialog;
-import com.NsFile.NsFile;
 import com.Server;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -50,20 +48,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 
-public class MainEditorActivity extends AppCompatActivity {
+public class QCEditor extends AppCompatActivity {
 
     public static String FILE_NAME;
     static String FILE_PATH;
     public Editor pdfEditor;
-    //    NsFile SELECTED_FILE;
     Ticket SELECTED_FILE;
-    //    FloatingActionButton fab;
     int RequestedOrientation;
-    private NsFile CURRENT_FOLDER;
-    private boolean QA;
-    private boolean FIELD_FORMS;
-    Ticket ticket;
-
+boolean isQc=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,27 +66,42 @@ public class MainEditorActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
         setContentView(R.layout.activity_main_editor);
 
+        FILE_PATH = createNewPDFFile();
+
         if (getIntent().getExtras() != null) {
-            SELECTED_FILE = Ticket.formJsonString(getIntent().getExtras().getString("ticket"));
-            FILE_PATH = getIntent().getExtras().getString("path");
-            System.out.println("--------------------------------------------------------------------------------------------------------");
+            System.out.println("--------------------------------------------------------- getExtras");
             System.out.println(getIntent().getExtras().getString("ticket"));
-            SELECTED_FILE.id = getIntent().getExtras().getInt("ticketId");
-            ticket = Ticket.formJsonString(getIntent().getExtras().getString("ticket"));
+            SELECTED_FILE = Ticket.formJsonString(getIntent().getExtras().getString("ticket"));
+            isQc =  (getIntent().getExtras().getBoolean("qc"));
+
         } else {
             SELECTED_FILE = Ticket.formJsonString("{oe: cat-001, finished: 0, uptime: 1628192673367, file: 1, sheet: 0, dir: 20218, id: 40913, isRed: 0, isRush: 1, isSk: 0, inPrint: 0, isGr: 0, isError: 0, canOpen: 1, isSort: 0, isHold: 0, fileVersion: 1628192673126, progress: 0, completed: 0, nowAt: 0, crossPro: 0}");
-            FILE_PATH = "/storage/emulated/0/Android/data/com.sampathkumara.northsails.smartwind/files/40913.pdf";
-            SELECTED_FILE.id = 40913;
-            ticket = Ticket.formJsonString("{oe: cat-001, finished: 0, uptime: 1628192673367, file: 1, sheet: 0, dir: 20218, id: 40913, isRed: 0, isRush: 1, isSk: 0, inPrint: 0, isGr: 0, isError: 0, canOpen: 1, isSort: 0, isHold: 0, fileVersion: 1628192673126, progress: 0, completed: 0, nowAt: 0, crossPro: 0}");
         }
-        SELECTED_FILE.ticketFile = new File(FILE_PATH);
 
 
-
-
+        SELECTED_FILE.ticketFile = new File(FILE_PATH); 
         loadEditor();
         loadFile(SELECTED_FILE.ticketFile);
 
+    }
+
+    private String createNewPDFFile() {
+        PDDocument doc = new PDDocument();
+        PDPage page = new PDPage();
+        doc.addPage(page);
+        PDPageContentStream contentStream = null;
+        String path = "";
+        try {
+            contentStream = new PDPageContentStream(doc, page);
+            contentStream.close();
+            path = this.getExternalFilesDir("Files").getPath() + "/QAtemplate.pdf";
+            doc.save(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println(path);
+        System.out.println(new File(path).exists());
+        return path;
     }
 
     private void loadEditor() {
@@ -167,10 +174,10 @@ public class MainEditorActivity extends AppCompatActivity {
 
                         @Override
                         public void run(File sourceFile) {
-//                            Intent data = new Intent();
-//                            data.putExtra("edited", true);
-//                            setResult(Activity.RESULT_OK, data);
-//                            finish();
+                            Intent data = new Intent();
+                            data.putExtra("saved", true);
+                            setResult(Activity.RESULT_OK, data);
+                            finish();
 
                         }
 
@@ -270,11 +277,10 @@ public class MainEditorActivity extends AppCompatActivity {
                 System.out.println("-----------------------------------------------------------------------+++++++");
                 HashMap<String, String> vals = new HashMap<>();
 
-                vals.put("type", "edits");
-
                 vals.put("file", SELECTED_NS_FILE.id + "");
                 vals.put("ticketId", SELECTED_NS_FILE.id + "");
                 vals.put("svgs", value.toString());
+                vals.put("type", isQc?"qc":"qa");
 
                 long sizeInBytes = value.toString().getBytes().length;
 
@@ -283,12 +289,13 @@ public class MainEditorActivity extends AppCompatActivity {
 //                if (true) {
 //                    return;
 //                }
-                String requestURL = Server.getServerApiPath("tickets/uploadEdits");
+                String requestURL = Server.getServerApiPath("tickets/qc/uploadEdits");
                 uploadMultyParts(context, requestURL, images, vals, new RunAfterMultipartUpload() {
                     @Override
                     public void run() {
 
-//                        dialog.dismiss();
+                        System.out.println("333333333333333333333333333333333333333333333333333333333333333333");
+
                         loadingDialog.dismiss();
                         pdfEditor.resetEdits();
                         runAfterUpload.run(null);
@@ -331,19 +338,6 @@ public class MainEditorActivity extends AppCompatActivity {
         });
     }
 
-    private File getSVGFile(String data) {
-        File dir = new File(getExternalFilesDir(null) + "/" + SELECTED_FILE.id);
-        dir.mkdirs();
-        File file = new File(dir, "svg.svgdata");
-        try {
-            try (FileOutputStream stream = new FileOutputStream(file)) {
-                stream.write(data.getBytes());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return file;
-    }
 
     public static void uploadMultyParts(Context context, String requestURL, final HashMap<String, ArrayList<File>> sourceFiles, final HashMap<String, String> keyvalues, RunAfterMultipartUpload runAfterUpload) {
 
@@ -426,7 +420,7 @@ public class MainEditorActivity extends AppCompatActivity {
 //            runOnUiThread(new Runnable() {
 //                @Override
 //                public void run() {
-            savingDialog = new ProgressDialog(MainEditorActivity.this);
+            savingDialog = new ProgressDialog(QCEditor.this);
             savingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             savingDialog.setMessage("Saving.. Please wait...");
             savingDialog.setIndeterminate(true);
@@ -528,11 +522,7 @@ public class MainEditorActivity extends AppCompatActivity {
                     long y = System.currentTimeMillis();
                     System.out.println("saved to local............." + (y - x));
                     doc.close();
-//                    in.close();
-                    if (outFile.exists()) {
-//                        FileManager.uploadFile(outFile, folder, temp, runAfterUpload);
-                    }
-//                    outFile.delete();
+                    outFile.exists();
 
                     System.out.println("saved to server............." + (System.currentTimeMillis() - y));
                     System.out.println("total time............." + (System.currentTimeMillis() - x));

@@ -205,8 +205,6 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         currentPage = pages.get(page);
 
 
-
-
         drawingView.setPage(pages.get(page));
         textEditorView.setPage(pages.get(page));
         highlighterView.setPage(pages.get(page));
@@ -389,7 +387,6 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
                             visibleOnly(null, 0);
                         }
                     });
-
 
 
                     highlighterView = new p_hightlight_view(Editor.this.getContext(), pdfView, Editor.this);
@@ -1012,7 +1009,6 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         super.onActivityCreated(savedInstanceState);
         x++;
     }
-
 
 
     @Override

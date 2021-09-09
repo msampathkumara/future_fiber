@@ -21,6 +21,8 @@ class _SectionSelectorState extends State<SectionSelector> {
   @override
   void initState() {
     super.initState();
+    print('-------------------------------------SectionSelector');
+    print(widget.nsUser.toJson());
   }
 
   @override

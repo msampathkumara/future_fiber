@@ -41,5 +41,8 @@ class DbMigrator {
       "create table standardTickets ( id int, oe varchar(50) null, usedCount int default 0  , uptime INT default 0, production varchar(15) null, fileVersion INT default 0 null, UNIQUE (id) ON CONFLICT REPLACE )",
       "alter table files add type Text default  '' ;"
     ],
+    21: [
+      "alter table users add address text default '' ;",
+    ]
   };
 }

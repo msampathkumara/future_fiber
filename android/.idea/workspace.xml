@@ -4,90 +4,12 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="26d1c8f4-7672-4f99-834a-d5bcc84c5770" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/android/.gradle/4.10.2/fileChanges/last-build.bin" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/android/.gradle/4.10.2/fileHashes/fileHashes.bin" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/android/.gradle/4.10.2/fileHashes/fileHashes.lock" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/android/.gradle/4.10.2/gc.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/android/.gradle/vcs-1/gc.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/android/build.gradle" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/android/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/android/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/android/gradlew" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/android/gradlew.bat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/android/settings.gradle" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/android/src/main/AndroidManifest.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/android/src/main/java/io/flutter/plugins/customwebviewflutter/CustomWebViewFlutterPlugin.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/android/src/main/java/io/flutter/plugins/customwebviewflutter/DisplayListenerProxy.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/android/src/main/java/io/flutter/plugins/customwebviewflutter/FlutterCookieManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/android/src/main/java/io/flutter/plugins/customwebviewflutter/FlutterWebView.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/android/src/main/java/io/flutter/plugins/customwebviewflutter/FlutterWebViewClient.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/android/src/main/java/io/flutter/plugins/customwebviewflutter/FlutterWebViewFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/android/src/main/java/io/flutter/plugins/customwebviewflutter/InputAwareWebView.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/android/src/main/java/io/flutter/plugins/customwebviewflutter/JavaScriptChannel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/android/src/main/java/io/flutter/plugins/customwebviewflutter/ThreadedInputConnectionProxyAdapterView.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/android/src/main/java/io/flutter/plugins/customwebviewflutter/WebViewBuilder.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/android/src/main/java/io/flutter/plugins/customwebviewflutter/WebViewCallBack.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/ios/Assets/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/ios/Classes/FLTCookieManager.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/ios/Classes/FLTCookieManager.m" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/ios/Classes/FLTWKNavigationDelegate.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/ios/Classes/FLTWKNavigationDelegate.m" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/ios/Classes/FLTWKProgressionDelegate.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/ios/Classes/FLTWKProgressionDelegate.m" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/ios/Classes/FLTWebViewFlutterPlugin.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/ios/Classes/FLTWebViewFlutterPlugin.m" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/ios/Classes/FlutterWebView.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/ios/Classes/FlutterWebView.m" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/ios/Classes/JavaScriptChannelHandler.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/ios/Classes/JavaScriptChannelHandler.m" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/ios/webview_flutter.podspec" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/lib/platform_interface.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/lib/src/webview_android.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/lib/src/webview_cupertino.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/lib/src/webview_method_channel.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/lib/webview_flutter.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/pubspec.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/test/webview_flutter_test.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/webView/platform_interface.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/webView/src/webview_android.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/webView/src/webview_cupertino.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/webView/src/webview_method_channel.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Pugins/custom_webview/webView/webview_flutter.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/android/build.gradle" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/android/settings.gradle" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/android/src/main/AndroidManifest.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/android/src/main/java/io/flutter/plugins/webviewflutter/CustomWebViewFlutterPlugin.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/android/src/main/java/io/flutter/plugins/webviewflutter/DisplayListenerProxy.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/android/src/main/java/io/flutter/plugins/webviewflutter/FlutterCookieManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/android/src/main/java/io/flutter/plugins/webviewflutter/FlutterWebView.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/android/src/main/java/io/flutter/plugins/webviewflutter/FlutterWebViewClient.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/android/src/main/java/io/flutter/plugins/webviewflutter/FlutterWebViewFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/android/src/main/java/io/flutter/plugins/webviewflutter/InputAwareWebView.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/android/src/main/java/io/flutter/plugins/webviewflutter/JavaScriptChannel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/android/src/main/java/io/flutter/plugins/webviewflutter/ThreadedInputConnectionProxyAdapterView.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/android/src/main/java/io/flutter/plugins/webviewflutter/WebViewBuilder.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/android/src/main/java/io/flutter/plugins/webviewflutter/WebViewCallBack.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/ios/Assets/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/ios/Classes/FLTCookieManager.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/ios/Classes/FLTCookieManager.m" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/ios/Classes/FLTWKNavigationDelegate.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/ios/Classes/FLTWKNavigationDelegate.m" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/ios/Classes/FLTWKProgressionDelegate.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/ios/Classes/FLTWKProgressionDelegate.m" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/ios/Classes/FLTWebViewFlutterPlugin.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/ios/Classes/FLTWebViewFlutterPlugin.m" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/ios/Classes/FlutterWebView.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/ios/Classes/FlutterWebView.m" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/ios/Classes/JavaScriptChannelHandler.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/ios/Classes/JavaScriptChannelHandler.m" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/ios/webview_flutter.podspec" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/lib/platform_interface.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/lib/src/webview_android.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/lib/src/webview_cupertino.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/lib/src/webview_method_channel.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/lib/webview_flutter.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CustomWebView/pubspec.yaml" afterDir="false" />
+    <list default="true" id="578bc586-ec80-424d-893c-0e8f0629e916" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/pdfEditor/QCEditor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../lib/M/DataObject.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../lib/M/QC.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../lib/V/Home/Tickets/QC/QCList.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../lib/V/Home/Tickets/QC/QCView.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../.flutter-plugins" beforeDir="false" afterPath="$PROJECT_DIR$/../.flutter-plugins" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/../.flutter-plugins-dependencies" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../.packages" beforeDir="false" afterPath="$PROJECT_DIR$/../.packages" afterDir="false" />
@@ -95,81 +17,25 @@
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/checksums/checksums.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_annotation_annotation_experimental_1_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_annotation_annotation_experimental_1_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_arch_core_core_runtime_2_1_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_arch_core_core_runtime_2_1_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_asynclayoutinflater_asynclayoutinflater_1_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_asynclayoutinflater_asynclayoutinflater_1_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_browser_browser_1_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_browser_browser_1_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_cardview_cardview_1_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_cardview_cardview_1_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_constraintlayout_constraintlayout_2_0_1_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_constraintlayout_constraintlayout_2_0_1_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_coordinatorlayout_coordinatorlayout_1_1_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_coordinatorlayout_coordinatorlayout_1_1_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_core_core_1_5_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_core_core_1_5_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_cursoradapter_cursoradapter_1_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_cursoradapter_cursoradapter_1_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_customview_customview_1_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_customview_customview_1_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_documentfile_documentfile_1_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_documentfile_documentfile_1_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_drawerlayout_drawerlayout_1_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_drawerlayout_drawerlayout_1_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_dynamicanimation_dynamicanimation_1_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_dynamicanimation_dynamicanimation_1_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_interpolator_interpolator_1_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_interpolator_interpolator_1_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_legacy_legacy_support_core_ui_1_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_legacy_legacy_support_core_ui_1_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_legacy_legacy_support_core_utils_1_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_legacy_legacy_support_core_utils_1_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_lifecycle_lifecycle_livedata_2_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_lifecycle_lifecycle_livedata_2_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_lifecycle_lifecycle_livedata_core_2_3_1_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_lifecycle_lifecycle_livedata_core_2_3_1_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_lifecycle_lifecycle_runtime_2_3_1_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_lifecycle_lifecycle_runtime_2_3_1_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_lifecycle_lifecycle_viewmodel_2_3_1_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_lifecycle_lifecycle_viewmodel_2_3_1_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_lifecycle_lifecycle_viewmodel_savedstate_2_3_1_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_lifecycle_lifecycle_viewmodel_savedstate_2_3_1_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_loader_loader_1_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_loader_loader_1_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_localbroadcastmanager_localbroadcastmanager_1_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_localbroadcastmanager_localbroadcastmanager_1_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_print_print_1_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_print_print_1_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_recyclerview_recyclerview_1_1_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_recyclerview_recyclerview_1_1_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_savedstate_savedstate_1_1_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_savedstate_savedstate_1_1_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_slidingpanelayout_slidingpanelayout_1_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_slidingpanelayout_slidingpanelayout_1_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_swiperefreshlayout_swiperefreshlayout_1_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_swiperefreshlayout_swiperefreshlayout_1_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_transition_transition_1_2_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_transition_transition_1_2_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_vectordrawable_vectordrawable_1_1_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_vectordrawable_vectordrawable_1_1_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_vectordrawable_vectordrawable_animated_1_1_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_vectordrawable_vectordrawable_animated_1_1_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_versionedparcelable_versionedparcelable_1_1_1_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_versionedparcelable_versionedparcelable_1_1_1_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_viewpager2_viewpager2_1_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_viewpager2_viewpager2_1_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_viewpager_viewpager_1_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_viewpager_viewpager_1_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_azeesoft_lib_colorpicker_colorpicker_1_0_8_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_azeesoft_lib_colorpicker_colorpicker_1_0_8_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_github_barteksc_pdfium_android_1_9_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_github_barteksc_pdfium_android_1_9_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_ads_identifier_17_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_ads_identifier_17_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_auth_api_phone_17_4_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_auth_api_phone_17_4_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_base_17_1_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_base_17_1_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_basement_17_1_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_basement_17_1_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_measurement_19_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_measurement_19_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_measurement_api_19_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_measurement_api_19_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_measurement_base_19_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_measurement_base_19_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_measurement_impl_19_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_measurement_impl_19_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_measurement_sdk_19_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_measurement_sdk_19_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_measurement_sdk_api_19_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_measurement_sdk_api_19_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_safetynet_17_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_safetynet_17_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_stats_17_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_stats_17_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_tasks_17_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_gms_play_services_tasks_17_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_material_material_1_3_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_material_material_1_3_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_firebase_firebase_analytics_19_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_firebase_firebase_analytics_19_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_firebase_firebase_auth_21_0_1_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_firebase_firebase_auth_21_0_1_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_firebase_firebase_auth_interop_20_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_firebase_firebase_auth_interop_20_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_firebase_firebase_common_20_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_firebase_firebase_common_20_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_firebase_firebase_components_17_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_firebase_firebase_components_17_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_firebase_firebase_installations_17_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_firebase_firebase_installations_17_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_firebase_firebase_installations_interop_17_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_firebase_firebase_installations_interop_17_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_firebase_firebase_measurement_connector_19_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_firebase_firebase_measurement_connector_19_0_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_tom_roush_pdfbox_android_1_8_10_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_tom_roush_pdfbox_android_1_8_10_0_aar.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/android.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/android.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/modules/app/android.app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/android.app.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/pdfEditor/Editor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/pdfEditor/Editor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/pdfEditor/MainEditorActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/pdfEditor/MainEditorActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/pdfEditor/Ticket.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/pdfEditor/Ticket.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/kotlin/com/sampathkumara/northsails/smartwind/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/kotlin/com/sampathkumara/northsails/smartwind/MainActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/xml/network_security_config.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/xml/network_security_config.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_main_editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_main_editor.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/smartwind_android.iml" beforeDir="false" afterPath="$PROJECT_DIR$/smartwind_android.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ios/Runner/GeneratedPluginRegistrant.m" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Runner/GeneratedPluginRegistrant.m" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/V/Home/Tickets/CS/CS.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/V/Home/Tickets/CS/CS.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/M/Enums.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/M/Enums.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/M/Ticket.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/M/Ticket.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/V/Home/Home.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/V/Home/Home.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/V/Home/Tickets/Print/PrintManager.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/V/Home/Tickets/Print/PrintManager.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/V/Home/Tickets/ProductionPool/Finish/FinishCheckList.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/V/Home/Tickets/ProductionPool/Finish/FinishCheckList.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/V/Home/Tickets/ProductionPool/Finish/WebViewWidget.dart" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../pubspec.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../pubspec.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../smartwind.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../smartwind.iml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -185,7 +51,7 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectId" id="1x5muljaKqqPkGxrVpgJG2mw8yd" />
+  <component name="ProjectId" id="1xDxZKDfcFbzmpRCtfyuVVvWHvq" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -198,7 +64,7 @@
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
   <component name="RunManager">
-    <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
+    <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App">
       <module name="android.app" />
       <option name="DEPLOY" value="true" />
       <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
@@ -260,24 +126,12 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="26d1c8f4-7672-4f99-834a-d5bcc84c5770" name="Default Changelist" comment="" />
-      <created>1629653550909</created>
+      <changelist id="578bc586-ec80-424d-893c-0e8f0629e916" name="Default Changelist" comment="" />
+      <created>1629903518981</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1629653550909</updated>
+      <updated>1629903518981</updated>
     </task>
     <servers />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>

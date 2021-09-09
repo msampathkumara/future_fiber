@@ -59,7 +59,11 @@ public class Ticket {
             return gson.fromJson(jsonObject.toString(), Ticket.class);
         } catch (JSONException err) {
             Log.d("Error", err.toString());
+            err.printStackTrace();
         }
+
+        System.out.println("****************************************************************************** err");
+
         return null;
     }
 }

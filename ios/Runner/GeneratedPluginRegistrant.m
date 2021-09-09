@@ -10,6 +10,12 @@
 @import custom_webview;
 #endif
 
+#if __has_include(<device_info/FLTDeviceInfoPlugin.h>)
+#import <device_info/FLTDeviceInfoPlugin.h>
+#else
+@import device_info;
+#endif
+
 #if __has_include(<firebase_analytics/FLTFirebaseAnalyticsPlugin.h>)
 #import <firebase_analytics/FLTFirebaseAnalyticsPlugin.h>
 #else
@@ -70,6 +76,12 @@
 @import image_picker;
 #endif
 
+#if __has_include(<imei_plugin/ImeiPlugin.h>)
+#import <imei_plugin/ImeiPlugin.h>
+#else
+@import imei_plugin;
+#endif
+
 #if __has_include(<integration_test/IntegrationTestPlugin.h>)
 #import <integration_test/IntegrationTestPlugin.h>
 #else
@@ -122,6 +134,7 @@
 
 + (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
   [FLTWebViewFlutterPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTWebViewFlutterPlugin"]];
+  [FLTDeviceInfoPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTDeviceInfoPlugin"]];
   [FLTFirebaseAnalyticsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseAnalyticsPlugin"]];
   [FLTFirebaseAuthPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseAuthPlugin"]];
   [FLTFirebaseCorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCorePlugin"]];
@@ -132,6 +145,7 @@
   [FlutterSharePlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterSharePlugin"]];
   [FLTGoogleMlVisionPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTGoogleMlVisionPlugin"]];
   [FLTImagePickerPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTImagePickerPlugin"]];
+  [ImeiPlugin registerWithRegistrar:[registry registrarForPlugin:@"ImeiPlugin"]];
   [IntegrationTestPlugin registerWithRegistrar:[registry registrarForPlugin:@"IntegrationTestPlugin"]];
   [NfcManagerPlugin registerWithRegistrar:[registry registrarForPlugin:@"NfcManagerPlugin"]];
   [FLTPackageInfoPlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTPackageInfoPlusPlugin"]];

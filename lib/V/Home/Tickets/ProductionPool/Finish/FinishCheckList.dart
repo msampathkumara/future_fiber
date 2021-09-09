@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:smartwind/C/App.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/C/ServerResponce/ServerResponceMap.dart';
 import 'package:smartwind/M/Ticket.dart';
@@ -111,12 +112,27 @@ class _FinishCheckListState extends State<FinishCheckList> {
                         },
                         child: Text("Agree")),
                     ElevatedButton(
-                        style: ElevatedButton.styleFrom(primary: Colors.redAccent, textStyle: TextStyle(fontWeight: FontWeight.bold)), onPressed: () {}, child: Text("Disagree"))
+                        style: ElevatedButton.styleFrom(primary: Colors.redAccent, textStyle: TextStyle(fontWeight: FontWeight.bold)),
+                        onPressed: () async {
+                          App.getCurrentUser().then((user) async {
+                            var isQc = false;
+                            if (user!.section!.sectionTitle.toLowerCase() == "qc") {
+                              isQc = true;
+                            }
+
+                            var xx = await platform.invokeMethod('qcEdit', {
+                              'ticket': {'id': ticket.id, "qc": isQc}.toString()
+                            });
+                          });
+                        },
+                        child: Text("Disagree"))
                   ],
                 );
           }
         });
   }
+
+  static const platform = const MethodChannel('editPdf');
 
   _loadData() async {
     var x = DefaultAssetBundle.of(context);
