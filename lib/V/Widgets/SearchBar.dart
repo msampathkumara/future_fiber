@@ -1,8 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 // ignore: must_be_immutable
 class SearchBar extends StatefulWidget implements PreferredSizeWidget {
@@ -12,7 +11,9 @@ class SearchBar extends StatefulWidget implements PreferredSizeWidget {
 
   var child;
 
-  SearchBar({@required this.onSearchTextChanged, @required this.onSubmitted, this.OnBarcode, this.child}) {
+  int delay = 0;
+
+  SearchBar({@required this.onSearchTextChanged, @required this.onSubmitted, this.OnBarcode, this.child, this.delay = 0}) {
     print("_______________________________________");
   }
 
@@ -27,6 +28,8 @@ class SearchBar extends StatefulWidget implements PreferredSizeWidget {
 
 class _SearchBarState extends State<SearchBar> {
   final TextEditingController searchController = new TextEditingController();
+
+  StreamSubscription? subscription;
 
   @override
   void initState() {
@@ -55,7 +58,13 @@ class _SearchBarState extends State<SearchBar> {
                       decoration: InputDecoration(hintText: 'Search', border: InputBorder.none),
                       onSubmitted: widget.onSubmitted,
                       onChanged: (val) {
-                        widget.onSearchTextChanged(val);
+                        if (subscription != null) {
+                          subscription!.cancel();
+                        }
+                        var future = new Future.delayed(Duration(milliseconds: widget.delay));
+                        subscription = future.asStream().listen((v) {
+                          widget.onSearchTextChanged(val);
+                        });
                       },
                     ),
                     trailing: IconButton(
@@ -68,65 +77,8 @@ class _SearchBarState extends State<SearchBar> {
                   ),
                 ),
               ),
-              if (widget.OnBarcode != null)
-                InkWell(
-                  onTap: () {},
-                  splashColor: Colors.red,
-                  child: Ink(
-                    child: Card(
-                      child: IconButton(
-                        icon: Icon(Icons.qr_code_scanner_outlined),
-                        onPressed: () async {
-                          var permissionStatus = await Permission.camera.request();
-                          if (permissionStatus.isGranted) {
-                            String barcode = await scanQR();
-                            if (barcode == null) {
-                              print('nothing return.');
-                            } else {
-                              widget.OnBarcode(barcode);
-                              // setState(() {
-                              searchController.text = barcode;
-                              widget.onSearchTextChanged(barcode);
-                              // });
-                            }
-
-                            // String barcode = await scanner.scan();
-                            // if (barcode == null) {
-                            //   print('nothing return.');
-                            // } else {
-                            //   widget.OnBarcode(barcode);
-                            //   // setState(() {
-                            //   searchController.text = barcode;
-                            //   widget.onSearchTextChanged(barcode);
-                            //   // });
-                            // }
-                          }
-                        },
-                      ),
-                    ),
-                  ),
-                ), if(widget.child != null)widget.child
             ],
           )),
     );
-  }
-
-  scanQR() async {
-    String barcodeScanRes;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode("#ff6666", "Cancel", true, ScanMode.QR);
-      print("barcodeScanRes");
-      print(barcodeScanRes);
-    } on PlatformException {
-      barcodeScanRes = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return null;
-
-    return barcodeScanRes;
   }
 }

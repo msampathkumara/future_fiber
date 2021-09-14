@@ -40,7 +40,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
         appBar: AppBar(
           actions: <Widget>[],
           elevation: 0.0,
-          toolbarHeight: 150,
+          toolbarHeight: 82,
           backgroundColor: themeColor,
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
@@ -201,7 +201,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          toolbarHeight: 50,
+          toolbarHeight: 0,
           automaticallyImplyLeading: false,
           backgroundColor: themeColor,
           elevation: (!_showFilters && _showFiltersEnd) ? 4 : 0,

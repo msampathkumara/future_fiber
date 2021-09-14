@@ -118,10 +118,12 @@ class NsUser {
     return AssetImage('assets/images/user.png');
   }
 
-  static getUserImage(NsUser? nsUser) {
-    return nsUser == null
-        ? getDefaultImage()
-        : NetworkImage(Server.getServerApiPath("users/getImage?img=" + nsUser.img + "&size=500"), headers: {"authorization": '${AppUser.getIdToken()}'});
+  var _img;
+
+  getUserImage() {
+    var img = NetworkImage(Server.getServerApiPath("users/getImage?img=" + this.img + "&size=500"), headers: {"authorization": '${AppUser.getIdToken()}'});
+
+    return (this.img).isEmpty ? getDefaultImage() : img;
   }
 
   static getUserImageById(int? nsUserId) {

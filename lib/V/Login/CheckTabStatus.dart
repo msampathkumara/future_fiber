@@ -1,8 +1,9 @@
 import 'package:device_info/device_info.dart';
+import 'package:device_information/device_information.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:imei_plugin/imei_plugin.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/V/Home/Home.dart';
@@ -24,6 +25,11 @@ class _CheckTabStatusState extends State<CheckTabStatus> {
   static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
@@ -38,22 +44,14 @@ class _CheckTabStatusState extends State<CheckTabStatus> {
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(32.0),
-            child: Center(
-                child: Column(
+            child: Column(
               children: [
                 Expanded(
                   child: Center(
                     child: Wrap(
                       direction: Axis.vertical,
                       crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        UserImage(nsUser: widget.nsUser, radius: 100),
-                        SizedBox(
-                          height: 48,
-                        ),
-                        Text("Hi", textScaleFactor: 3),
-                        Text(widget.nsUser.name, textScaleFactor: 3)
-                      ],
+                      children: [UserImage(nsUser: widget.nsUser, radius: 100), SizedBox(height: 48), Text("Hi", textScaleFactor: 3), Text(widget.nsUser.name, textScaleFactor: 3)],
                     ),
                   ),
                 ),
@@ -102,21 +100,23 @@ class _CheckTabStatusState extends State<CheckTabStatus> {
                       )),
                 )
               ],
-            )),
+            ),
           ),
         ));
   }
 
   Future check() async {
-    String imei = await ImeiPlugin.getImei();
-    List<String> multiImei = await ImeiPlugin.getImeiMulti(); //for double-triple SIM phones
-    String uuid = await ImeiPlugin.getId();
+    PermissionStatus ps = await Permission.phone.request();
+    if (!ps.isGranted) {
+      return;
+    }
+    String imeiNo = await DeviceInformation.deviceIMEINumber;
     var build = await deviceInfoPlugin.androidInfo;
 
     var deviceInfo = {
       'tab': 1,
       'stylus': 1,
-      'imei': imei,
+      'imei': imeiNo,
       'version.securityPatch': build.version.securityPatch,
       'version.sdkInt': build.version.sdkInt,
       'version.release': build.version.release,

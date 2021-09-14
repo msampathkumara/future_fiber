@@ -62,8 +62,8 @@ class _LoginState extends State<Login> {
       }
     });
 
-    // nfcCode = "04f68ad2355e80";
-    // _login();
+    nfcCode = "04f68ad2355e80";
+    _login();
   }
 
   @override
@@ -79,13 +79,13 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff01c1fe),
+      backgroundColor: Colors.white,
       body: loading
           ? Center(
               child: Container(
                   child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: [CircularProgressIndicator(), Padding(padding: const EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
+              children: [CircularProgressIndicator( ), Padding(padding: const EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
             )))
           : Container(
               decoration: const BoxDecoration(
@@ -123,8 +123,8 @@ class _LoginState extends State<Login> {
                               onFieldSubmitted: (d) {
                                 _passwordFocusNode.requestFocus();
                               },
-                              style: TextStyle(fontSize: 20, color: Colors.white),
-                              cursorColor: Colors.white,
+                              style: TextStyle(fontSize: 20, color: Colors.blue),
+                              cursorColor: Colors.blue,
                               initialValue: _user.uname,
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(
@@ -135,14 +135,14 @@ class _LoginState extends State<Login> {
                                   ),
                                   prefixIcon: Padding(
                                     padding: const EdgeInsets.only(left: 8.0),
-                                    child: new Icon(Icons.account_circle_outlined, color: Colors.white),
+                                    child: new Icon(Icons.account_circle_outlined, color: Colors.blue),
                                   ),
                                   hintText: 'Enter User Name',
-                                  hintStyle: TextStyle(color: Colors.white60),
-                                  fillColor: Colors.blue,
+                                  hintStyle: TextStyle(color: Colors.blue.shade200),
+                                  fillColor: Colors.white,
                                   filled: true,
                                   contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                                  focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.white60, width: 2.0), borderRadius: BorderRadius.circular(5.0)),
+                                  focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.blue, width: 2.0), borderRadius: BorderRadius.circular(5.0)),
                                   enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0), borderSide: BorderSide(color: Colors.blue, width: 3.0))),
                               onChanged: (uname) {
                                 _user.uname = uname;
@@ -156,14 +156,14 @@ class _LoginState extends State<Login> {
                           borderRadius: BorderRadius.circular(5.0),
                           elevation: 10.0,
                           shadowColor: Color(0xff224597),
-                          color: Colors.white,
+                          color: Colors.blue,
                           child: TextFormField(
                               focusNode: _passwordFocusNode,
-                              cursorColor: Colors.white,
+                              cursorColor: Colors.blue,
                               onFieldSubmitted: (f) {
                                 _login();
                               },
-                              style: TextStyle(fontSize: 20, color: Colors.white),
+                              style: TextStyle(fontSize: 20, color: Colors.blue),
                               initialValue: _user.pword,
                               obscureText: hidePassword,
                               autofocus: false,
@@ -174,7 +174,7 @@ class _LoginState extends State<Login> {
                                         hidePassword = !hidePassword;
                                       });
                                     },
-                                    icon: Icon(hidePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: Colors.white),
+                                    icon: Icon(hidePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: Colors.blue),
                                   ),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(5.0),
@@ -184,11 +184,11 @@ class _LoginState extends State<Login> {
                                   ),
                                   prefixIcon: Padding(
                                     padding: const EdgeInsets.only(left: 8.0),
-                                    child: new Icon(Icons.lock_outlined, color: Colors.white),
+                                    child: new Icon(Icons.lock_outlined, color: Colors.blue),
                                   ),
                                   hintText: 'Enter Password',
-                                  hintStyle: TextStyle(color: Colors.white60),
-                                  fillColor: Colors.blue,
+                                  hintStyle: TextStyle(color: Colors.blue.shade200),
+                                  fillColor: Colors.white,
                                   filled: true,
                                   contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                                   focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.white60, width: 2.0), borderRadius: BorderRadius.circular(5.0)),
@@ -278,12 +278,13 @@ class _LoginState extends State<Login> {
 
       final UserCredential googleUserCredential = await FirebaseAuth.instance.signInWithCustomToken(res["token"]);
       if (googleUserCredential.user != null) {
+        NfcManager.instance.stopSession();
         // if (nsUser.sections.length > 1) {
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => CheckTabStatus(nsUser)), (Route<dynamic> route) => false);
+   await     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => CheckTabStatus(nsUser)), (Route<dynamic> route) => false);
         // } else {
         //   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (Route<dynamic> route) => false);
         // }
-        NfcManager.instance.stopSession();
+
       }
       setLoading(false);
     }).onError((error, stackTrace) {

@@ -85,7 +85,7 @@ class _CSState extends State<CS> with TickerProviderStateMixin {
                         child: Scaffold(
                             backgroundColor: Colors.white,
                             appBar: AppBar(
-                              toolbarHeight: 50,
+                              toolbarHeight: 0,
                               automaticallyImplyLeading: false,
                               backgroundColor: Colors.green,
                               elevation: 4.0,

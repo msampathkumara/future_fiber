@@ -86,7 +86,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
                 ),
               ],
               elevation: 0.0,
-              toolbarHeight: 150,
+              toolbarHeight: 80,
               backgroundColor: Colors.green,
               leading: IconButton(
                 icon: Icon(Icons.arrow_back),
@@ -235,7 +235,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
             child: Scaffold(
                 backgroundColor: Colors.white,
                 appBar: AppBar(
-                  toolbarHeight: 50,
+                  toolbarHeight: 0,
                   automaticallyImplyLeading: false,
                   backgroundColor: Colors.green,
                   elevation: 4.0,

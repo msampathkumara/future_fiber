@@ -42,7 +42,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
         appBar: AppBar(
           actions: <Widget>[],
           elevation: 0.0,
-          toolbarHeight: 150,
+          toolbarHeight: 80,
           backgroundColor: themeColor,
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
@@ -159,7 +159,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          toolbarHeight: 50,
+          toolbarHeight: 0,
           automaticallyImplyLeading: false,
           backgroundColor: themeColor,
           elevation: (!_showFilters && _showFiltersEnd) ? 4 : 0,
@@ -270,13 +270,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
                               // subtitle: Text(ticket.fileVersion.toString()),
                               trailing: Wrap(
                                   alignment: WrapAlignment.center,
-                                  children: [
-                                    UserImage(
-                                      nsUserId: _ticketQc.userId,
-                                      radius: 20,
-                                    ),
-                                    Text("${_ticketQc.user!.uname}", textScaleFactor: 1)
-                                  ],
+                                  children: [UserImage(nsUserId: _ticketQc.userId, radius: 20), Text("${_ticketQc.user!.uname}", textScaleFactor: 1)],
                                   direction: Axis.vertical))));
                 },
                 separatorBuilder: (BuildContext context, int index) {

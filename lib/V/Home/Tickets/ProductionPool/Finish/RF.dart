@@ -119,7 +119,7 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
                     length: tabs.length,
                     child: Scaffold(
                         appBar: AppBar(
-                            toolbarHeight: 50,
+                            toolbarHeight: 0,
                             automaticallyImplyLeading: false,
                             elevation: 4.0,
                             bottom: TabBar(

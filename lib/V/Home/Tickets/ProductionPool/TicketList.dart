@@ -79,7 +79,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
             ),
           ],
           elevation: 0.0,
-          toolbarHeight: 150,
+          toolbarHeight: 82,
           backgroundColor: Colors.green,
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
@@ -90,22 +90,15 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
             textScaleFactor: 1.2,
           ),
           bottom: SearchBar(
+            delay: 300,
             onSearchTextChanged: (text) {
               if (subscription != null) {
                 subscription.cancel();
               }
               searchText = text;
 
-              var future = new Future.delayed(const Duration(milliseconds: 300));
-              subscription = future.asStream().listen((v) {
-                print("SEARCHING FOR $searchText");
-                var t = DateTime.now().millisecondsSinceEpoch;
-                loadData().then((value) {
-                  print("SEARCHING time ${(DateTime.now().millisecondsSinceEpoch - t)}");
-                  t = DateTime.now().millisecondsSinceEpoch;
-                  setState(() {});
-                  print("load time ${(DateTime.now().millisecondsSinceEpoch - t)}");
-                });
+              loadData().then((value) {
+                setState(() {});
               });
             },
             onSubmitted: (text) {},
@@ -206,32 +199,10 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                           getListItem("Red Flag", Icons.tour_rounded, "isred"),
                           getListItem("Hold", Icons.pan_tool_rounded, "ishold"),
                           getListItem("Rush", Icons.flash_on_rounded, "isrush"),
-                          getListItem(
-                              "SK",
-                              CircleAvatar(
-                                radius: 12,
-                                backgroundColor: Colors.grey,
-                                child: Center(
-                                  child: Text(
-                                    "SK",
-                                    style: TextStyle(color: Colors.white, fontSize: 8),
-                                  ),
-                                ),
-                              ),
-                              "issk"),
-                          getListItem(
-                              "GR",
-                              CircleAvatar(
-                                radius: 12,
-                                backgroundColor: Colors.grey,
-                                child: Center(
-                                  child: Text(
-                                    "GR",
-                                    style: TextStyle(color: Colors.white, fontSize: 8),
-                                  ),
-                                ),
-                              ),
-                              "isgr"),
+                          getListItem("SK",
+                              CircleAvatar(radius: 12, backgroundColor: Colors.grey, child: Center(child: Text("SK", style: TextStyle(color: Colors.white, fontSize: 8)))), "issk"),
+                          getListItem("GR",
+                              CircleAvatar(radius: 12, backgroundColor: Colors.grey, child: Center(child: Text("GR", style: TextStyle(color: Colors.white, fontSize: 8)))), "isgr"),
                           getListItem("Short", Icons.local_mall_rounded, "sort"),
                           getListItem("Error Route", Icons.warning_rounded, "errOut"),
                           getListItem("Print", Icons.print_rounded, "inprint"),
@@ -258,7 +229,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
             child: Scaffold(
                 backgroundColor: Colors.white,
                 appBar: AppBar(
-                  toolbarHeight: 50,
+                  toolbarHeight: 10,
                   automaticallyImplyLeading: false,
                   backgroundColor: Colors.green,
                   elevation: 4.0,
@@ -322,111 +293,14 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                   // print(FilesList[index]);
                   Ticket ticket = Ticket.fromJson(FilesList[index]);
                   // print(ticket.toJson());
-                  return GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onLongPress: () async {
-                      await showTicketOptions(ticket, context);
-                      setState(() {});
-                    },
-                    onTap: () {
-                      var ticketInfo = TicketInfo(ticket);
-                      ticketInfo.show(context);
-                    },
-                    onDoubleTap: () async {
-                      print(await ticket.getLocalFileVersion());
-                      ticket.open(context);
-                    },
-                    child: Ink(
-                      decoration: BoxDecoration(
-                          color: ticket.isHold == 1 ? Colors.black12 : Colors.white,
-                          border: Border.all(
-                            color: Colors.white,
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(20))),
-                      child: ListTile(
-                        leading: Text("${index + 1}"),
-                        title: Text(
-                          (ticket.mo ?? "").trim().isEmpty ? (ticket.oe ?? "") : ticket.mo ?? "",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        subtitle: Wrap(
-                          direction: Axis.vertical,
-                          children: [
-                            if ((ticket.mo ?? "").trim().isNotEmpty) Text((ticket.oe ?? "")),
-                            if (ticket.crossPro == 1)
-                              Chip(
-                                  avatar: CircleAvatar(
-                                    child: Icon(
-                                      Icons.merge_type_outlined,
-                                    ),
-                                  ),
-                                  label: Text(ticket.crossProList)),
-                            Text(ticket.getUpdateDateTime()),
-                          ],
-                        ),
-                        // subtitle: Text(ticket.fileVersion.toString()),
-                        trailing: Wrap(
-                          children: [
-                            if (ticket.inPrint == 1)
-                              IconButton(
-                                icon: CircleAvatar(child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white),
-                                onPressed: () {},
-                              ),
-                            if (ticket.isHold == 1)
-                              IconButton(
-                                icon: CircleAvatar(child: Icon(Icons.pan_tool_rounded, color: Colors.black), backgroundColor: Colors.white),
-                                onPressed: () {},
-                              ),
-                            if (ticket.isGr == 1)
-                              IconButton(
-                                icon: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))),
-                                onPressed: () {},
-                              ),
-                            if (ticket.isSk == 1)
-                              IconButton(
-                                icon: CircleAvatar(backgroundColor: Colors.pink, child: Center(child: Text("SK", style: TextStyle(color: Colors.white)))),
-                                onPressed: () {},
-                              ),
-                            if (ticket.isError == 1)
-                              IconButton(
-                                icon: CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white),
-                                onPressed: () {},
-                              ),
-                            if (ticket.isSort == 1)
-                              IconButton(
-                                icon: CircleAvatar(child: Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white),
-                                onPressed: () {},
-                              ),
-                            if (ticket.isRush == 1)
-                              IconButton(
-                                icon: CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white),
-                                onPressed: () {},
-                              ),
-                            if (ticket.isRed == 1)
-                              IconButton(
-                                icon: CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white),
-                                onPressed: () {},
-                              ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 4),
-                              child: CircularPercentIndicator(
-                                radius: 40.0,
-                                lineWidth: 5.0,
-                                percent: ticket.progress / 100,
-                                center: new Text(
-                                  ticket.progress.toString() + "%",
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                                progressColor: Colors.green,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
+                  return TicketTile(index, ticket, () async {
+                    print('Long pres');
+                    await showTicketOptions(ticket, context);
+                    setState(() {});
+                  }, () {
+                    var ticketInfo = TicketInfo(ticket);
+                    ticketInfo.show(context);
+                  }, () {});
                 },
                 separatorBuilder: (BuildContext context, int index) {
                   return Divider(
@@ -598,7 +472,8 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                       onTap: () async {
                         await ticket.addCPR(context);
                         Navigator.of(context).pop();
-                      }),ListTile(
+                      }),
+                  ListTile(
                       title: Text("CS"),
                       leading: Icon(Icons.pivot_table_chart_rounded, color: Colors.green),
                       onTap: () async {
@@ -646,5 +521,125 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
       ticket.inPrint = 0;
       return 0;
     }
+  }
+}
+
+class TicketTile extends StatelessWidget {
+  final Ticket ticket;
+  final int index;
+  final onLongPress;
+  final onTap;
+  final onDoubleTap;
+
+  const TicketTile(this.index, this.ticket, this.onLongPress, this.onTap, this.onDoubleTap);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onLongPress: () async {
+        // await showTicketOptions(ticket, context);
+        // setState(() {});
+        onLongPress();
+      },
+      onTap: () {
+        var ticketInfo = TicketInfo(ticket);
+        ticketInfo.show(context);
+      },
+      onDoubleTap: () async {
+        print(await ticket.getLocalFileVersion());
+        ticket.open(context);
+      },
+      child: Ink(
+        decoration: BoxDecoration(
+            color: ticket.isHold == 1 ? Colors.black12 : Colors.white,
+            border: Border.all(
+              color: Colors.white,
+            ),
+            borderRadius: BorderRadius.all(Radius.circular(20))),
+        child: ListTile(
+          leading: Text("${index + 1}"),
+          title: Text(
+            (ticket.mo ?? "").trim().isEmpty ? (ticket.oe ?? "") : ticket.mo ?? "",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          subtitle: Wrap(
+            direction: Axis.vertical,
+            children: [
+              if ((ticket.mo ?? "").trim().isNotEmpty) Text((ticket.oe ?? "")),
+              if (ticket.crossPro == 1)
+                Chip(
+                    avatar: CircleAvatar(
+                      child: Icon(
+                        Icons.merge_type_outlined,
+                      ),
+                    ),
+                    label: Text(ticket.crossProList)),
+              Text(ticket.getUpdateDateTime()),
+            ],
+          ),
+          // subtitle: Text(ticket.fileVersion.toString()),
+          trailing: Wrap(
+            children: [
+              if (ticket.inPrint == 1)
+                IconButton(
+                  icon: CircleAvatar(child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white),
+                  onPressed: () {},
+                ),
+              if (ticket.isHold == 1)
+                IconButton(
+                  icon: CircleAvatar(child: Icon(Icons.pan_tool_rounded, color: Colors.black), backgroundColor: Colors.white),
+                  onPressed: () {},
+                ),
+              if (ticket.isGr == 1)
+                IconButton(
+                  icon: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))),
+                  onPressed: () {},
+                ),
+              if (ticket.isSk == 1)
+                IconButton(
+                  icon: CircleAvatar(backgroundColor: Colors.pink, child: Center(child: Text("SK", style: TextStyle(color: Colors.white)))),
+                  onPressed: () {},
+                ),
+              if (ticket.isError == 1)
+                IconButton(
+                  icon: CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white),
+                  onPressed: () {},
+                ),
+              if (ticket.isSort == 1)
+                IconButton(
+                  icon: CircleAvatar(child: Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white),
+                  onPressed: () {},
+                ),
+              if (ticket.isRush == 1)
+                IconButton(
+                  icon: CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white),
+                  onPressed: () {},
+                ),
+              if (ticket.isRed == 1)
+                IconButton(
+                  icon: CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white),
+                  onPressed: () {},
+                ),
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: CircularPercentIndicator(
+                  radius: 40.0,
+                  lineWidth: 5.0,
+                  percent: ticket.progress / 100,
+                  center: new Text(
+                    ticket.progress.toString() + "%",
+                    style: TextStyle(fontSize: 12),
+                  ),
+                  progressColor: Colors.green,
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

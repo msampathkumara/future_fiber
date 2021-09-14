@@ -38,7 +38,7 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
         appBar: AppBar(
           actions: <Widget>[],
           elevation: 0.0,
-          toolbarHeight: 150,
+          toolbarHeight: 80,
           backgroundColor: themeColor,
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
@@ -191,7 +191,7 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          toolbarHeight: 50,
+          toolbarHeight: 0,
           automaticallyImplyLeading: false,
           backgroundColor: themeColor,
           elevation: (!_showFilters && _showFiltersEnd) ? 4 : 0,

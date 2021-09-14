@@ -16,6 +16,7 @@ import 'package:smartwind/V/Home/Tickets/Print/PrintManager.dart';
 import 'package:smartwind/V/Home/Tickets/ProductionPool/ProductionPool.dart';
 import 'package:smartwind/V/Login/Login.dart';
 import 'package:smartwind/V/Login/SectionSelector.dart';
+import 'package:smartwind/V/Widgets/UserImage.dart';
 
 import 'About.dart';
 import 'Admin/AdminCpanel.dart';
@@ -27,7 +28,7 @@ import 'Tickets/StandardFiles/StandardFiles.dart';
 import 'UserManager/UserManager.dart';
 
 class Home extends StatefulWidget {
-  Home( )  ;
+  Home();
 
   @override
   _HomeState createState() {
@@ -94,8 +95,6 @@ class _HomeState extends State<Home> {
     super.dispose();
   }
 
-
-
   void _showMarkedAsDoneSnackbar(bool? isMarkedAsDone) {
     if (isMarkedAsDone ?? false)
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -105,174 +104,152 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: nsUser == null
-          ? Center(
-              child: Container(
-                  child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [CircularProgressIndicator(), Padding(padding: const EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
-            )))
-          : Scaffold(
-              appBar: AppBar(
-                backgroundColor: Colors.white,
-                elevation: 0,
-                toolbarHeight: 150,
-                title: Padding(
-                  padding: const EdgeInsets.only(top: 24.0),
-                  child: ListTile(
-                    leading: CircleAvatar(radius: 24.0, backgroundImage: NsUser.getUserImage(nsUser), backgroundColor: Colors.transparent),
-                    title: Text(nsUser!.name, textScaleFactor: 1.2),
-                    subtitle: nsUser!.section != null ? Text("${nsUser!.section!.sectionTitle} @ ${nsUser!.section!.factory}") : Text(""),
-                    trailing: _currentUserOprionMenu(),
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => CurrentUserDetails(nsUser!)));
-                    },
+    return nsUser == null
+        ? Center(
+            child: Container(
+                child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [CircularProgressIndicator(), Padding(padding: const EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
+          )))
+        : Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              toolbarHeight: 100,
+              title: Padding(
+                padding: const EdgeInsets.only(top: 24.0),
+                child: ListTile(
+                  // leading: CircleAvatar(radius: 24.0, backgroundImage: nsUser.getUserImage(), backgroundColor: Colors.transparent),
+                  leading: UserImage(
+                    nsUser: nsUser,
+                    radius: 36,
                   ),
-                ),
-              ),
-              body: Container(
-                height: double.maxFinite,
-                width: double.maxFinite,
-                child: Stack(
-                  children: [
-                    new Positioned(
-                      bottom: 10,
-                      right: 0,
-                      child: ColorFiltered(
-                        colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.1), BlendMode.dstATop),
-                        child: Image.asset(
-                          "assets/north_sails-logo.png",
-                          width: 350,
-                        ),
-                      ),
-                    ),
-                    Align(
-                      alignment: FractionalOffset.center,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 48.0),
-                        child: Wrap(
-                          direction: Axis.horizontal,crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            _OpenContainerWrapper(
-                              closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                return _menuButton(
-                                    openContainer,
-                                    Icon(
-                                      Icons.precision_manufacturing_outlined,
-                                      size: 100,
-                                    ),
-                                    "Production Pool");
-                              },
-                              openWidget: ProductionPool(),
-                              onClosed: _showMarkedAsDoneSnackbar,
-                            ),
-                            _OpenContainerWrapper(
-                              closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                return _menuButton(
-                                    openContainer,
-                                    Icon(
-                                      Icons.local_mall_rounded,
-                                      color: Colors.amber,
-                                      size: 100,
-                                    ),
-                                    "CPR");
-                              },
-                              openWidget: CPRList(),
-                              onClosed: _showMarkedAsDoneSnackbar,
-                            ),
-                            _OpenContainerWrapper(
-                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                  return _menuButton(openContainer, Icon(Icons.inventory_2_rounded, color: Colors.deepOrange, size: 100), "Finished Goods");
-                                },
-                                openWidget: FinishedGoods(),
-                                onClosed: _showMarkedAsDoneSnackbar),
-                            _OpenContainerWrapper(
-                              closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                return _menuButton(
-                                    openContainer,
-                                    Icon(
-                                      Icons.collections_bookmark_outlined,
-                                      size: 100,
-                                    ),
-                                    "Standard Library");
-                              },
-                              openWidget: StandardFiles(),
-                              onClosed: _showMarkedAsDoneSnackbar,
-                            ),
-                            _OpenContainerWrapper(
-                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                  return _menuButton(
-                                      openContainer,
-                                      Icon(
-                                        Icons.people_outline_outlined,
-                                        size: 100,
-                                      ),
-                                      "User Manager");
-                                },
-                                openWidget: UserManager(),
-                                onClosed: _showMarkedAsDoneSnackbar),
-                            _OpenContainerWrapper(
-                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                  return _menuButton(openContainer, Icon(Icons.print_rounded, size: 100, color: Colors.blue), "Print");
-                                },
-                                openWidget: PrintManager(),
-                                onClosed: _showMarkedAsDoneSnackbar),
-                            _OpenContainerWrapper(
-                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                  return _menuButton(openContainer, Icon(Icons.verified_rounded, size: 100, color: Colors.green), "QA & QC");
-                                },
-                                openWidget: QCList(),
-                                onClosed: _showMarkedAsDoneSnackbar),
-                            _OpenContainerWrapper(
-                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                  return _menuButton(openContainer, Icon(Icons.subject_rounded, size: 100, color: Colors.pinkAccent), "J109");
-                                },
-                                openWidget: J109(),
-                                onClosed: _showMarkedAsDoneSnackbar),
-                            _OpenContainerWrapper(
-                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                  return _menuButton(openContainer, Icon(Icons.menu_book_rounded, size: 100, color: Colors.blueAccent), "Blue Book");
-                                },
-                                openWidget: BlueBook(),
-                                onClosed: _showMarkedAsDoneSnackbar),
-                            _OpenContainerWrapper(
-                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                  return _menuButton(openContainer, Icon(Icons.groups_rounded, size: 100, color: Colors.orange), "HR System");
-                                },
-                                openWidget: HESystem(),
-                                onClosed: _showMarkedAsDoneSnackbar),
-                          ],
-                        ),
-                      ),
-                    ),
-                    new Positioned(
-                        bottom: 10,
-                        left: 0,
-                        right: 0,
-                        child: new Align(
-                            alignment: FractionalOffset.bottomCenter,
-                            child: Center(
-                                child: OpenContainer(
-                                    closedElevation: 0,
-                                    transitionDuration: Duration(milliseconds: 500),
-                                    openBuilder: (BuildContext context, void Function({Object? returnValue}) action) {
-                                      return About();
-                                    },
-                                    closedBuilder: (BuildContext context, void Function() action) {
-                                      return Chip(
-                                        avatar: CircleAvatar(
-                                          backgroundColor: Colors.grey.shade800,
-                                          child: Image.asset("assets/north_sails-logox50.png", width: 50),
-                                        ),
-                                        label: Text('NS Smart Wind $appVersion '),
-                                      );
-                                    })))),
-                  ],
+                  title: Text(nsUser!.name, textScaleFactor: 1.2),
+                  subtitle: nsUser!.section != null ? Text("${nsUser!.section!.sectionTitle} @ ${nsUser!.section!.factory}") : Text(""),
+                  trailing: _currentUserOprionMenu(),
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => CurrentUserDetails(nsUser!)));
+                  },
                 ),
               ),
             ),
-    );
+            body: Container(
+              height: double.maxFinite,
+              width: double.maxFinite,
+              child: Stack(
+                children: [
+                  new Positioned(
+                    bottom: 10,
+                    right: 0,
+                    child: ColorFiltered(
+                      colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.1), BlendMode.dstATop),
+                      child: Image.asset(
+                        "assets/north_sails-logo.png",
+                        width: 350,
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: FractionalOffset.center,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 48.0),
+                      child: Wrap(
+                        direction: Axis.horizontal,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          _OpenContainerWrapper(
+                            closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                              return _menuButton(openContainer, Icon(Icons.precision_manufacturing_outlined, size: 100), "Production Pool");
+                            },
+                            openWidget: ProductionPool(),
+                            onClosed: _showMarkedAsDoneSnackbar,
+                          ),
+                          _OpenContainerWrapper(
+                            closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                              return _menuButton(openContainer, Icon(Icons.local_mall_rounded, color: Colors.amber, size: 100), "CPR");
+                            },
+                            openWidget: CPRList(),
+                            onClosed: _showMarkedAsDoneSnackbar,
+                          ),
+                          _OpenContainerWrapper(
+                              closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                return _menuButton(openContainer, Icon(Icons.inventory_2_rounded, color: Colors.deepOrange, size: 100), "Finished Goods");
+                              },
+                              openWidget: FinishedGoods(),
+                              onClosed: _showMarkedAsDoneSnackbar),
+                          _OpenContainerWrapper(
+                            closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                              return _menuButton(openContainer, Icon(Icons.collections_bookmark_outlined, size: 100), "Standard Library");
+                            },
+                            openWidget: StandardFiles(),
+                            onClosed: _showMarkedAsDoneSnackbar,
+                          ),
+                          _OpenContainerWrapper(
+                              closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                return _menuButton(openContainer, Icon(Icons.people_outline_outlined, color: Colors.lightGreen, size: 100), "User Manager");
+                              },
+                              openWidget: UserManager(),
+                              onClosed: _showMarkedAsDoneSnackbar),
+                          _OpenContainerWrapper(
+                              closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                return _menuButton(openContainer, Icon(Icons.print_rounded, size: 100, color: Colors.blue), "Print");
+                              },
+                              openWidget: PrintManager(),
+                              onClosed: _showMarkedAsDoneSnackbar),
+                          _OpenContainerWrapper(
+                              closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                return _menuButton(openContainer, Icon(Icons.verified_rounded, size: 100, color: Colors.green), "QA & QC");
+                              },
+                              openWidget: QCList(),
+                              onClosed: _showMarkedAsDoneSnackbar),
+                          _OpenContainerWrapper(
+                              closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                return _menuButton(openContainer, Icon(Icons.subject_rounded, size: 100, color: Colors.pinkAccent), "J109");
+                              },
+                              openWidget: J109(),
+                              onClosed: _showMarkedAsDoneSnackbar),
+                          _OpenContainerWrapper(
+                              closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                return _menuButton(openContainer, Icon(Icons.menu_book_rounded, size: 100, color: Colors.blueAccent), "Blue Book");
+                              },
+                              openWidget: BlueBook(),
+                              onClosed: _showMarkedAsDoneSnackbar),
+                          _OpenContainerWrapper(
+                              closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                return _menuButton(openContainer, Icon(Icons.groups_rounded, size: 100, color: Colors.orange), "HR System");
+                              },
+                              openWidget: HESystem(),
+                              onClosed: _showMarkedAsDoneSnackbar),
+                        ],
+                      ),
+                    ),
+                  ),
+                  new Positioned(
+                      bottom: 10,
+                      left: 0,
+                      right: 0,
+                      child: new Align(
+                          alignment: FractionalOffset.bottomCenter,
+                          child: Center(
+                              child: OpenContainer(
+                                  closedElevation: 0,
+                                  transitionDuration: Duration(milliseconds: 500),
+                                  openBuilder: (BuildContext context, void Function({Object? returnValue}) action) {
+                                    return About();
+                                  },
+                                  closedBuilder: (BuildContext context, void Function() action) {
+                                    return Chip(
+                                      avatar: CircleAvatar(
+                                        backgroundColor: Colors.grey.shade800,
+                                        child: Image.asset("assets/north_sails-logox50.png", width: 50),
+                                      ),
+                                      label: Text('NS Smart Wind $appVersion '),
+                                    );
+                                  })))),
+                ],
+              ),
+            ),
+          );
   }
 
   void show(Widget window) {
@@ -301,9 +278,7 @@ class _HomeState extends State<Home> {
           Navigator.push(context, MaterialPageRoute(builder: (context) => AdminCpanel()));
         }
 
-        setState(() {
-
-        });
+        setState(() {});
         // print(result);
       },
       itemBuilder: (BuildContext context) => <PopupMenuEntry<MenuItems>>[

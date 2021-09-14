@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AndroidLayouts">
+    <shared>
+      <config />
+    </shared>
+  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="578bc586-ec80-424d-893c-0e8f0629e916" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/pdfEditor/QCEditor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../lib/M/DataObject.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../lib/M/QC.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../lib/V/Home/Tickets/QC/QCList.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../lib/V/Home/Tickets/QC/QCView.dart" afterDir="false" />
+    <list default="true" id="e2ac27c0-3163-4f0b-a4b3-3e14e909e5be" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../.run/profile.run.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../.flutter-plugins" beforeDir="false" afterPath="$PROJECT_DIR$/../.flutter-plugins" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/../.flutter-plugins-dependencies" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../.packages" beforeDir="false" afterPath="$PROJECT_DIR$/../.packages" afterDir="false" />
@@ -21,19 +22,20 @@
       <change beforePath="$PROJECT_DIR$/.idea/modules/app/android.app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/android.app.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/pdfEditor/Editor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/pdfEditor/Editor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/pdfEditor/MainEditorActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/pdfEditor/MainEditorActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/pdfEditor/Ticket.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/pdfEditor/Ticket.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/kotlin/com/sampathkumara/northsails/smartwind/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/kotlin/com/sampathkumara/northsails/smartwind/MainActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_main_editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_main_editor.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/M/Enums.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/M/Enums.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/M/Ticket.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/M/Ticket.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ios/Flutter/Generated.xcconfig" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Flutter/Generated.xcconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ios/Flutter/flutter_export_environment.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Flutter/flutter_export_environment.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ios/Runner/GeneratedPluginRegistrant.h" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Runner/GeneratedPluginRegistrant.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ios/Runner/GeneratedPluginRegistrant.m" beforeDir="false" afterPath="$PROJECT_DIR$/../ios/Runner/GeneratedPluginRegistrant.m" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/C/Server.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/C/Server.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/M/NsUser.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/M/NsUser.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/V/Home/CPR/AddCPR.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/V/Home/CPR/AddCPR.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../lib/V/Home/Home.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/V/Home/Home.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/V/Home/Tickets/Print/PrintManager.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/V/Home/Tickets/Print/PrintManager.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/V/Home/Tickets/ProductionPool/Finish/FinishCheckList.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/V/Home/Tickets/ProductionPool/Finish/FinishCheckList.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/V/Home/Tickets/ProductionPool/Finish/WebViewWidget.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/V/Home/Tickets/ProductionPool/TicketList.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/V/Home/Tickets/ProductionPool/TicketList.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/V/Login/CheckTabStatus.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/V/Login/CheckTabStatus.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/V/Login/Login.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/V/Login/Login.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/V/Widgets/SearchBar.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/V/Widgets/SearchBar.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/V/Widgets/UserImage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/V/Widgets/UserImage.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../pubspec.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../pubspec.yaml" afterDir="false" />
     </list>
@@ -51,7 +53,7 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectId" id="1xDxZKDfcFbzmpRCtfyuVVvWHvq" />
+  <component name="ProjectId" id="1y09mrMqxMvI0t9fLmlcT4QFHQQ" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -61,10 +63,11 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="dart.analysis.tool.window.visible" value="false" />
+    <property name="recommended.upgrade.last.time.stamp" value="1631379374339" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
   <component name="RunManager">
-    <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App">
+    <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
       <module name="android.app" />
       <option name="DEPLOY" value="true" />
       <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
@@ -126,11 +129,11 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="578bc586-ec80-424d-893c-0e8f0629e916" name="Default Changelist" comment="" />
-      <created>1629903518981</created>
+      <changelist id="e2ac27c0-3163-4f0b-a4b3-3e14e909e5be" name="Default Changelist" comment="" />
+      <created>1631377804826</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1629903518981</updated>
+      <updated>1631377804826</updated>
     </task>
     <servers />
   </component>

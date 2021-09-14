@@ -4,6 +4,7 @@ import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Section.dart';
 import 'package:smartwind/V/Home/UserManager/UpdateUserDetails.dart';
+import 'package:smartwind/V/Widgets/UserImage.dart';
 
 class UserDetails extends StatefulWidget {
   NsUser nsUser;
@@ -69,10 +70,7 @@ class _UserDetailsState extends State<UserDetails> {
                         direction: Axis.vertical,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          CircleAvatar(
-                              radius: 124.0,
-                              backgroundImage: NetworkImage(Server.getServerApiPath("users/getImage?img=" + nsUser.img + "&size=500"), headers: {"authorization": '$idToken'}),
-                              backgroundColor: Colors.transparent),
+                          UserImage(nsUser: nsUser,radius: 124),
                           Padding(
                             padding: const EdgeInsets.only(top: 16.0),
                             child: Text(

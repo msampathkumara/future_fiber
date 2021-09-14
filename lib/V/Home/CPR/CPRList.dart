@@ -48,7 +48,7 @@ class _CPRListState extends State<CPRList> {
     return Scaffold(
         appBar: AppBar(
           elevation: 0.0,
-          toolbarHeight: 150,
+          toolbarHeight: 82,
           backgroundColor: Colors.amber,
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
@@ -83,7 +83,7 @@ class _CPRListState extends State<CPRList> {
         ),
         body: Scaffold(
           appBar: AppBar(
-            toolbarHeight: 50,
+            toolbarHeight: 0,
             automaticallyImplyLeading: false,
             backgroundColor: themeColor,
             elevation: (!_showFilters && _showFiltersEnd) ? 4 : 0,

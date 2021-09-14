@@ -20,8 +20,8 @@ dependencies:
   firebase_core: ^1.6.0
   firebase_analytics:
   firebase_crashlytics: ^2.2.1
-  firebase_auth: ^3.1.0
-  firebase_messaging: ^10.0.6
+  firebase_auth: ^3.1.1
+  firebase_messaging: ^10.0.7
   google_ml_vision: ^0.0.7
 
   #  --------------------------------------------------
@@ -34,8 +34,8 @@ dependencies:
   jwt_decode: ^0.3.1
   flutter_share: ^2.0.0
 
-  webview_flutter: ^2.0.12
-  permission_handler: ^8.1.4+2
+  webview_flutter: ^2.0.13
+  permission_handler: ^8.1.6
   flutter_barcode_scanner: ^2.0.0
   sqflite: ^2.0.0+4
   path_provider: ^2.0.3
@@ -43,11 +43,13 @@ dependencies:
   hex: ^0.2.0
   package_info_plus: ^1.0.6
 
-  dropdown_search: ^0.6.3
+  dropdown_search: ^1.0.0
   measured_size: ^1.0.0
 
-  imei_plugin: ^1.2.0
+#  imei_plugin: ^1.2.0
+  device_information: ^0.0.4
   device_info: ^2.0.2
+
 
   custom_webview:
     path: ./Pugins/custom_webview

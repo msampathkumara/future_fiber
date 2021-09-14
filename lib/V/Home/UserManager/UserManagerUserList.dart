@@ -86,7 +86,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                 itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[CheckedPopupMenuItem<String>(value: "id", child: Text("Set ID Cards"), checked: _setIdCards)])
           ],
           elevation: 0.0,
-          toolbarHeight: 150,
+          toolbarHeight: 80,
           backgroundColor: _themeColor,
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
@@ -193,7 +193,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                 itemCount: FilesList.length,
                 itemBuilder: (BuildContext context, int index) {
                   NsUser nsUser = FilesList[index];
-                  print("nsUser.hasNfc ${nsUser.hasNfc}");
+                  // print("nsUser.hasNfc ${nsUser.hasNfc}");
                   return GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onLongPress: () async {
