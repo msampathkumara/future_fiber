@@ -118,7 +118,7 @@ class NsUser {
     return AssetImage('assets/images/user.png');
   }
 
-  var _img;
+
 
   getUserImage() {
     var img = NetworkImage(Server.getServerApiPath("users/getImage?img=" + this.img + "&size=500"), headers: {"authorization": '${AppUser.getIdToken()}'});

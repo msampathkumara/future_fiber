@@ -39,6 +39,8 @@ class _TicketInfoState extends State<TicketInfo> {
   late Ticket _ticket;
   late int _progress = 0;
 
+  bool _loading = true;
+
   @override
   void initState() {
     super.initState();
@@ -80,7 +82,7 @@ class _TicketInfoState extends State<TicketInfo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _body(bottomNavigationBarSelectedIndex),
+      body: _loading ? Center(child: CircularProgressIndicator()) : _body(bottomNavigationBarSelectedIndex),
       appBar: _appBar(),
       backgroundColor: Colors.white,
       bottomNavigationBar: BottomAppBar(
@@ -104,9 +106,7 @@ class _TicketInfoState extends State<TicketInfo> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.import_contacts),
         onPressed: () {
-          setState(() {
-            _ticket.open(context);
-          });
+          _ticket.open(context);
         },
       ),
     );
@@ -236,7 +236,7 @@ class _TicketInfoState extends State<TicketInfo> {
       case 2:
         return info_Printing(printList);
       case 3:
-        return info_History(ticketHistory);
+        return InfoHistory(ticketHistory);
     }
   }
 
@@ -247,12 +247,15 @@ class _TicketInfoState extends State<TicketInfo> {
   List<TicketHistory> ticketHistory = [];
 
   void getData(Ticket _ticket) {
+    setState(() {
+      _loading = true;
+    });
     print('requesting data---------------');
     OnlineDB.apiGet(("tickets/info/getTicketInfo"), {'ticket': _ticket.id.toString()}).then((value) {
       print(' data recived---------------');
       print((value.data));
       setState(() {
-        ServerResponceMap res = ServerResponceMap.fromJson( (value.data));
+        ServerResponceMap res = ServerResponceMap.fromJson((value.data));
         progressList = res.progressList;
         flags = res.flags;
         flagsHistory = res.flagsHistory;
@@ -264,6 +267,10 @@ class _TicketInfoState extends State<TicketInfo> {
     }).onError((error, stackTrace) {
       print(stackTrace.toString());
       ErrorMessageView(errorMessage: error.toString()).show(context);
+    }).whenComplete(() {
+      setState(() {
+        _loading = false;
+      });
     });
   }
 

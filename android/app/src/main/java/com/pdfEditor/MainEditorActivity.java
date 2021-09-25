@@ -288,7 +288,6 @@ public class MainEditorActivity extends AppCompatActivity {
                     @Override
                     public void run() {
 
-//                        dialog.dismiss();
                         loadingDialog.dismiss();
                         pdfEditor.resetEdits();
                         runAfterUpload.run(null);

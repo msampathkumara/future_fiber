@@ -10,6 +10,7 @@ import 'package:flutter_share/flutter_share.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/C/Server.dart';
@@ -26,7 +27,7 @@ import 'DataObject.dart';
 part 'Ticket.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-class Ticket extends DataObject{
+class Ticket extends DataObject {
   String? mo;
   String? oe;
   @JsonKey(defaultValue: 0, includeIfNull: true)
@@ -129,7 +130,7 @@ class Ticket extends DataObject{
 
     var response;
     try {
-      await dio.download(Server.getServerApiPath('/tickets/getTicketFile?' + queryString), filePath, onReceiveProgress: (received, total) {
+      await dio.download(Server.getServerApiPath('tickets/getTicketFile?' + queryString), filePath, onReceiveProgress: (received, total) {
         int percentage = ((received / total) * 100).floor();
         loadingWidget.setProgress(percentage);
         if (onReceiveProgress != null) {
@@ -145,6 +146,7 @@ class Ticket extends DataObject{
     } on DioError catch (e) {
       if (e.response != null) {
         print('"******************************************** response');
+        print(e.response);
         if (e.response!.statusCode == 404) {
           loadingWidget.close(context);
           var errorView = ErrorMessageView(
@@ -254,8 +256,8 @@ class Ticket extends DataObject{
     print("tickets/flags/getList");
     return OnlineDB.apiGet("tickets/flags/getList", {"ticket": id.toString(), "type": flagType}).then((response) {
       print(response.data);
-      print("----------------------------------------");
-      Map res = (json.decode(response.data) as Map);
+      print("-----------------vvvvvvvvvvv-----------------------");
+      Map<String, dynamic> res =  response.data ;
       List l = ((res["flags"] ?? []));
 
       List<TicketFlag> list = List<TicketFlag>.from(l.map((model) {
@@ -269,15 +271,21 @@ class Ticket extends DataObject{
   }
 
   sharePdf(context) async {
+    // var status = await Permission.storage.isDenied;
+    if (await Permission.storage.isDenied) {
+      await Permission.storage.request();
+    }
     File? file = await getFile(context);
-    if (file != null) {
+    if (file != null && file.existsSync()) {
+      print('--------------------- ${file.path}');
+
       file = file.copySync("${file.parent.path}/${(mo ?? oe ?? id)}.pdf");
       await FlutterShare.shareFile(
         title: mo ?? oe ?? "$id.pdf",
         text: "share ticket file",
         filePath: file.path,
       );
-      file.delete();
+      // file.delete();
     } else {
       ErrorMessageView(errorMessage: "File Not Found", icon: Icons.insert_drive_file_outlined).show(context);
     }
@@ -296,7 +304,6 @@ class Ticket extends DataObject{
   }
 
   getName() {
-    return mo??oe;
-
+    return mo ?? oe;
   }
 }

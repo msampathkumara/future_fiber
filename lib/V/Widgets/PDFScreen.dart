@@ -7,9 +7,7 @@ import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Home/BlueBook/BlueBook.dart';
-import 'package:smartwind/V/Home/Tickets/ShippingSystem/ShippingSystem.dart';
-
-// import 'package:flutter_full_pdf_viewer/flutter_full_pdf_viewer.dart';
+import 'package:smartwind/V/Home/Tickets/ProductionPool/Finish/FinishCheckList.dart';
 
 class PDFScreen extends StatefulWidget {
   // String pathPDF = "";
@@ -25,10 +23,59 @@ class PDFScreen extends StatefulWidget {
 }
 
 class _PDFScreenState extends State<PDFScreen> {
+  var pdfPath;
+
+  var pdfView;
+
   @override
   void initState() {
     super.initState();
+    pdfPath = widget.ticket.ticketFile!.path;
+
+    pdfView=   new PDFView(
+      filePath: pdfPath,
+      enableSwipe: true,
+      swipeHorizontal: false,
+      autoSpacing: false,
+      pageFling: true,
+      pageSnap: true,
+      defaultPage: currentPage,
+      fitPolicy: FitPolicy.BOTH,
+      preventLinkNavigation: false,
+      onRender: (_pages) {
+        setState(() {
+          pages = _pages!;
+          isReady = true;
+          print('READYYYY');
+        });
+      },
+      onError: (error) {
+        setState(() {
+          errorMessage = error.toString();
+        });
+        print(error.toString());
+      },
+      onPageError: (page, error) {
+        setState(() {
+          errorMessage = '$page: ${error.toString()}';
+        });
+        print('$page: ${error.toString()}');
+      },
+      onViewCreated: (PDFViewController pdfViewController) {
+        _controller.complete(pdfViewController);
+      },
+      onLinkHandler: (String? uri) {
+        print('goto uri: $uri');
+      },
+      onPageChanged: (int? page, int? total) {
+        print('page change: $page/$total');
+        setState(() {
+          currentPage = page!;
+        });
+      },
+    );
   }
+
 
   @override
   void dispose() {
@@ -57,13 +104,18 @@ class _PDFScreenState extends State<PDFScreen> {
             onSelected: (ActionMenuItems s) async {
               if (s == ActionMenuItems.CS) {
                 widget.ticket.openInCS(context);
-              }else if (s == ActionMenuItems.ShippingSystem) {
+              } else if (s == ActionMenuItems.ShippingSystem) {
                 widget.ticket.openInShippingSystem(context);
-              }
-              else if (s == ActionMenuItems.BlueBook) {
+              } else if (s == ActionMenuItems.BlueBook) {
                 var data = await Navigator.push(context, MaterialPageRoute(builder: (context) => BlueBook(ticket: widget.ticket)));
               } else if (s == ActionMenuItems.Share) {
                 await widget.ticket.sharePdf(context);
+              } else if (s == ActionMenuItems.Finish) {
+                await showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return FinishCheckList(widget.ticket);
+                    });
               }
             },
             itemBuilder: (BuildContext context) {
@@ -71,7 +123,8 @@ class _PDFScreenState extends State<PDFScreen> {
                 {'action': ActionMenuItems.Share, 'icon': Icons.share, 'text': "Share", "color": Colors.redAccent},
                 {'action': ActionMenuItems.BlueBook, 'icon': Icons.menu_book_rounded, 'text': "Blue Book", "color": Colors.blueAccent},
                 {'action': ActionMenuItems.ShippingSystem, 'icon': Icons.directions_boat_rounded, 'text': "Shipping System", "color": Colors.brown},
-                {'action': ActionMenuItems.CS, 'icon': Icons.pivot_table_chart_rounded, 'text': "CS", "color": Colors.green}
+                {'action': ActionMenuItems.CS, 'icon': Icons.pivot_table_chart_rounded, 'text': "CS", "color": Colors.green},
+                {'action': ActionMenuItems.Finish, 'icon': Icons.check_circle_outline_outlined, 'text': "Finish", "color": Colors.green}
               }.map((choice) {
                 return PopupMenuItem<ActionMenuItems>(
                   value: (choice["action"] as ActionMenuItems),
@@ -90,48 +143,7 @@ class _PDFScreenState extends State<PDFScreen> {
       body: Container(
         child: Stack(
           children: <Widget>[
-            new PDFView(
-              filePath: widget.ticket.ticketFile!.path,
-              enableSwipe: true,
-              swipeHorizontal: false,
-              autoSpacing: false,
-              pageFling: true,
-              pageSnap: true,
-              defaultPage: currentPage,
-              fitPolicy: FitPolicy.BOTH,
-              preventLinkNavigation: false,
-              onRender: (_pages) {
-                setState(() {
-                  pages = _pages!;
-                  isReady = true;
-                  print('READYYYY');
-                });
-              },
-              onError: (error) {
-                setState(() {
-                  errorMessage = error.toString();
-                });
-                print(error.toString());
-              },
-              onPageError: (page, error) {
-                setState(() {
-                  errorMessage = '$page: ${error.toString()}';
-                });
-                print('$page: ${error.toString()}');
-              },
-              onViewCreated: (PDFViewController pdfViewController) {
-                _controller.complete(pdfViewController);
-              },
-              onLinkHandler: (String? uri) {
-                print('goto uri: $uri');
-              },
-              onPageChanged: (int? page, int? total) {
-                print('page change: $page/$total');
-                setState(() {
-                  currentPage = page!;
-                });
-              },
-            ),
+            pdfView,
             // if (errorMessage.isEmpty)Center(
             //   child: Text(errorMessage),
             // ),
@@ -164,6 +176,8 @@ class _PDFScreenState extends State<PDFScreen> {
               icon: Icon(Icons.edit_outlined),
               label: Text("Edit"),
               onPressed: () async {
+                print('EDIT CLICK');
+
                 await widget.ticket.openEditor();
                 await DB.updateDatabase(context, showLoadingDialog: true);
                 Navigator.pop(context, true);

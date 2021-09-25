@@ -29,7 +29,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
 
   var _themeColor = Colors.orange;
 
-  late bool NfcIsAvailable;
+  late bool nfcIsAvailable;
 
   var idToken;
 
@@ -44,13 +44,13 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
     super.initState();
     idToken = widget.idToken;
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      _TabBarcontroller = TabController(length: tabs.length, vsync: this);
-      _TabBarcontroller!.addListener(() {
-        print("Selected Index: " + _TabBarcontroller!.index.toString());
+      _tabBarController = TabController(length: tabs.length, vsync: this);
+      _tabBarController!.addListener(() {
+        print("Selected Index: " + _tabBarController!.index.toString());
       });
 
       NfcManager.instance.isAvailable().then((value) {
-        NfcIsAvailable = value;
+        nfcIsAvailable = value;
       });
     });
     _refreshIndicatorKey.currentState?.show();
@@ -110,7 +110,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
               });
             },
             onSubmitted: (text) {},
-            OnBarcode: (barcode) {
+            onBarCode: (barcode) {
               print("xxxxxxxxxxxxxxxxxx $barcode");
             },
           ),
@@ -157,16 +157,16 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
   }
 
   String listSortBy = "uptime";
-  String sorted_by = "Date";
+  String sortedBy = "Date";
   String searchText = "";
   var subscription;
   List<Map> currentFileList = [];
 
   final tabs = ["All", "Upwind", "OD", "Nylon", "OEM", "No Pool"];
-  TabController? _TabBarcontroller;
+  TabController? _tabBarController;
 
   getBody() {
-    return _TabBarcontroller == null ? Container() : Scaffold(backgroundColor: Colors.white, body: GetTicketListByCategoty(filteredAllUsersList));
+    return _tabBarController == null ? Container() : Scaffold(backgroundColor: Colors.white, body: getTicketListByCategory(filteredAllUsersList));
   }
 
   final int CAT_ALL = 0;
@@ -177,7 +177,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
 
   // var indicator = new GlobalKey<RefreshIndicatorState>();
 
-  GetTicketListByCategoty(List<NsUser> FilesList) {
+  getTicketListByCategory(List<NsUser> filesList) {
     return Column(
       children: [
         Expanded(
@@ -190,9 +190,9 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
               padding: const EdgeInsets.only(top: 16),
               child: ListView.separated(
                 padding: const EdgeInsets.all(8),
-                itemCount: FilesList.length,
+                itemCount: filesList.length,
                 itemBuilder: (BuildContext context, int index) {
-                  NsUser nsUser = FilesList[index];
+                  NsUser nsUser = filesList[index];
                   // print("nsUser.hasNfc ${nsUser.hasNfc}");
                   return GestureDetector(
                     behavior: HitTestBehavior.opaque,
@@ -268,7 +268,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                   subtitle: Text("#" + nsUser.uname),
                 ),
                 Divider(),
-                if (NfcIsAvailable)
+                if (nfcIsAvailable)
                   ListTile(
                     title: Text("Add ID Card"),
                     leading: Icon(Icons.nfc_outlined),

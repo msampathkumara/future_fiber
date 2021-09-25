@@ -29,7 +29,7 @@ class _QCViewState extends State<QCView> {
 
   @override
   Widget build(BuildContext context) {
-    var URL = Server.getServerApiPath("tickets/qc/qcImageView?qcId=${widget.qc.id}");
+    var uRL = Server.getServerApiPath("tickets/qc/qcImageView?qcId=${widget.qc.id}");
 
     return Scaffold(
         appBar: AppBar(
@@ -39,7 +39,7 @@ class _QCViewState extends State<QCView> {
             ? WebView(
                 onWebViewCreated: (WebViewController webViewController) {
                   Map<String, String> headers = {"Authorization": "" + idToken};
-                  webViewController.loadUrl(URL, headers: headers);
+                  webViewController.loadUrl(uRL, headers: headers);
                 },
               )
             : Center(child: CircularProgressIndicator()));

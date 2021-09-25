@@ -64,7 +64,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
               });
             },
             onSubmitted: (text) {},
-            OnBarcode: (barcode) {
+            onBarCode: (barcode) {
               print("xxxxxxxxxxxxxxxxxx $barcode");
             },
           ),
@@ -153,26 +153,25 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
         });
   }
 
-  bool _showFilters = false;
+
 
   getBody() {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          toolbarHeight: 0,
+          toolbarHeight: 50,
           automaticallyImplyLeading: false,
           backgroundColor: themeColor,
-          elevation: (!_showFilters && _showFiltersEnd) ? 4 : 0,
+          elevation:   5  ,
           actions: [
-            IconButton(
-              icon: Icon(Icons.filter_alt_rounded),
-              onPressed: () {
-                setState(() {
-                  _showFilters = !_showFilters;
-                  _showFiltersEnd = false;
-                });
-              },
-            )
+            // IconButton(
+            //     icon: Icon(Icons.filter_alt_rounded),
+            //     onPressed: () {
+            //       setState(() {
+            //         _showFilters = !_showFilters;
+            //         _showFiltersEnd = false;
+            //       });
+            //     })
           ],
           title: Wrap(
             spacing: 5,
@@ -182,7 +181,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
         body: _getTicketsList());
   }
 
-  bool _showFiltersEnd = false;
+
 
   _getTicketsList() {
     return Column(
@@ -232,10 +231,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
                                                 padding: const EdgeInsets.all(12.0),
                                                 child: !_dataLoadingError
                                                     ? CircularProgressIndicator(color: Colors.red, strokeWidth: 2)
-                                                    : Icon(
-                                                        Icons.refresh_rounded,
-                                                        size: 18,
-                                                      ))))))));
+                                                    : Icon(Icons.refresh_rounded, size: 18))))))));
                   }
 
                   QC _ticketQc = (_ticketQcList[index]);

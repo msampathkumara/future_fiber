@@ -16,7 +16,7 @@ QC _$QCFromJson(Map<String, dynamic> json) {
         ? null
         : Ticket.fromJson(json['ticket'] as Map<String, dynamic>)
     ..userId = json['userId'] as int
-    ..userName = json['userName'] as String
+    ..userName = json['userName'] as String? ?? ''
     ..user = json['user'] == null
         ? null
         : NsUser.fromJson(json['user'] as Map<String, dynamic>)

@@ -27,12 +27,14 @@ class TicketFlag {
   String comment = "";
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int user = 0;
-  @JsonKey(defaultValue: "", includeIfNull: true)
+  @JsonKey(   fromJson: _stringFromInt)
   String dnt = "";
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int flaged = 0;
 
-  TicketFlag() {}
+  static String _stringFromInt(number) => (number??"").toString();
+
+  TicketFlag();
 
   get isFlaged => flaged == 1;
 
@@ -41,6 +43,7 @@ class TicketFlag {
   Map<String, dynamic> toJson() => _$TicketFlagToJson(this);
 
   getDateTime() {
+    print(toJson());
     if ((dnt).isEmpty) {
       return "";
     }

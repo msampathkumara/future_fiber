@@ -27,7 +27,7 @@ class RF extends StatefulWidget {
 
 class _RFState extends State<RF> with SingleTickerProviderStateMixin {
   final tabs = ["Ticket", "Progress"];
-  TabController? _TabBarcontroller;
+  TabController? _tabBarcontroller;
   Map? checkListMap;
 
   late Ticket ticket;
@@ -48,7 +48,7 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
     operationMinMax = widget.operationMinMax;
     progressList = widget.progressList;
 
-    _TabBarcontroller = TabController(length: tabs.length, vsync: this);
+    _tabBarcontroller = TabController(length: tabs.length, vsync: this);
 
     DefaultAssetBundle.of(context).loadString('assets/js.txt').then((value) {
       jsString = setupData("$value");
@@ -123,12 +123,12 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
                             automaticallyImplyLeading: false,
                             elevation: 4.0,
                             bottom: TabBar(
-                                controller: _TabBarcontroller,
+                                controller: _tabBarcontroller,
                                 indicatorWeight: 4.0,
                                 indicatorColor: Colors.white,
                                 isScrollable: true,
                                 tabs: [for (final tab in tabs) Tab(text: tab)])),
-                        body: TabBarView(controller: _TabBarcontroller, physics: NeverScrollableScrollPhysics(), children: [
+                        body: TabBarView(controller: _tabBarcontroller, physics: NeverScrollableScrollPhysics(), children: [
                           Scaffold(body: PDFViewWidget(ticket.ticketFile!.path)),
                           Scaffold(
                             body: ListView.builder(

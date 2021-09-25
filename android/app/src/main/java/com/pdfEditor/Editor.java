@@ -123,7 +123,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     private runAfterLoad runAfterFileLoad;
     OnViewCreatedListner onViewCreatedListner;
     boolean XS = true;
-    ImageButton button_new_page;
+//    ImageButton button_new_page;
 
     runAfterFileLoad runAfterNsFileLoad;
     private HashMap<Long, File> images = new HashMap<>();
@@ -133,7 +133,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     public static List<PAGE> pages;
     private p_image_view imageView;
     private String imageFilePath;
-    private final boolean button_arrow_clicked = false;
+//    private final boolean button_arrow_clicked = false;
     private File file;
     @Nullable
     private p_drawing_view drawingView;
@@ -145,7 +145,6 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     private p_eraser_view erasingView;
 
     private boolean is_text_editor_clicked;
-    private boolean shape_editor;
     private boolean image_editor;
     private ProgressDialog dialog;
     private FrameLayout pdfViewPerant;
@@ -507,7 +506,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
         is_text_editor_clicked = false;
         boolean writebox_editor = Boolean.FALSE;
-        shape_editor = false;
+        boolean shape_editor = false;
         boolean button_drawingView_clicked = false;
         boolean button_erasingView_clicked = false;
         boolean button_highlighter_clicked = false;
@@ -820,7 +819,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         view.setVisibility(i);
     }
 
-    @SuppressLint("NonConstantResourceId")
+    @SuppressLint({"NonConstantResourceId", "RestrictedApi"})
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 

@@ -9,8 +9,9 @@ class UserImage extends StatefulWidget {
   int? nsUserId;
   Color? backgroundColor;
   double? radius;
+  Function(NsUser)? onUserLoad;
 
-  UserImage({this.nsUser, this.nsUserId, this.backgroundColor, this.radius});
+  UserImage({this.nsUser, this.nsUserId, this.backgroundColor, this.radius, this.onUserLoad});
 
   @override
   _UserImageState createState() => _UserImageState();
@@ -31,9 +32,15 @@ class _UserImageState extends State<UserImage> {
       NsUser.fromId(widget.nsUserId).then((value) {
         nsUser = value;
         loadImage();
+        if (widget.onUserLoad != null) {
+          widget.onUserLoad!(nsUser!);
+        }
       });
     } else {
       loadImage();
+      if (widget.onUserLoad != null) {
+        widget.onUserLoad!(nsUser!);
+      }
     }
   }
 
@@ -43,22 +50,16 @@ class _UserImageState extends State<UserImage> {
     return CircleAvatar(radius: widget.radius, backgroundImage: _loaded ? img : placeholder, backgroundColor: widget.backgroundColor ?? Colors.transparent);
   }
 
-  static getUserImage(NsUser? nsUser) {
-    return nsUser == null
-        ? AssetImage('assets/images/user.png')
-        : NetworkImage(Server.getServerApiPath("users/getImage?img=" + nsUser.img + "&size=500"), headers: {"authorization": '${AppUser.getIdToken()}'});
-  }
-
   void loadImage() {
     img = NetworkImage(Server.getServerApiPath("users/getImage?img=" + nsUser!.img + "&size=500"), headers: {"authorization": '${AppUser.getIdToken()}'});
     img.resolve(ImageConfiguration()).addListener(ImageStreamListener((info, call) {
-      if (mounted) {
-        setState(() {
-          _loaded = true;
-        });
-      }
-    },onError: (exception,stack){
-      _loaded = false;
-    }));
+          if (mounted) {
+            setState(() {
+              _loaded = true;
+            });
+          }
+        }, onError: (exception, stack) {
+          _loaded = false;
+        }));
   }
 }

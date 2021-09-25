@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'dart:ui';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hex/hex.dart';
 import 'package:jwt_decode/jwt_decode.dart';
@@ -61,9 +61,10 @@ class _LoginState extends State<Login> {
         );
       }
     });
-
-    nfcCode = "04f68ad2355e80";
-    _login();
+    if (kDebugMode) {
+      nfcCode = "04f68ad2355e80";
+      _login();
+    }
   }
 
   @override
@@ -85,17 +86,17 @@ class _LoginState extends State<Login> {
               child: Container(
                   child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: [CircularProgressIndicator( ), Padding(padding: const EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
+              children: [CircularProgressIndicator(), Padding(padding: const EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
             )))
           : Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment(2.0, 0.0),
-                  colors: <Color>[Color(0xff1981d2), Color(0xff40aee5), Color(0xff1981d2)],
-                  tileMode: TileMode.clamp,
-                ),
-              ),
+              // decoration: const BoxDecoration(
+              //   gradient: LinearGradient(
+              //     begin: Alignment.topLeft,
+              //     end: Alignment(2.0, 0.0),
+              //     colors: <Color>[Color(0xff1981d2), Color(0xff40aee5), Color(0xff1981d2)],
+              //     tileMode: TileMode.clamp,
+              //   ),
+              // ),
               child: Center(
                 child: Padding(
                   padding: const EdgeInsets.all(32.0),
@@ -112,91 +113,79 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                         ),
-                        Text("User Name", style: TextStyle(color: Colors.white, fontSize: 20)),
-                        Material(
-                          borderRadius: BorderRadius.circular(5.0),
-                          elevation: 10.0,
-                          shadowColor: Color(0xff224597),
-                          color: Colors.blue,
-                          child: TextFormField(
-                              autofocus: true,
-                              onFieldSubmitted: (d) {
-                                _passwordFocusNode.requestFocus();
-                              },
-                              style: TextStyle(fontSize: 20, color: Colors.blue),
-                              cursorColor: Colors.blue,
-                              initialValue: _user.uname,
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(5.0),
-                                    borderSide: BorderSide(
-                                      color: Colors.black,
-                                    ),
+                        Text("User Name", style: TextStyle(color: Colors.black, fontSize: 20)),
+                        TextFormField(
+                            autofocus: true,
+                            onFieldSubmitted: (d) {
+                              _passwordFocusNode.requestFocus();
+                            },
+                            style: TextStyle(fontSize: 20, color: Colors.blue),
+                            cursorColor: Colors.blue,
+                            initialValue: _user.uname,
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  borderSide: BorderSide(
+                                    color: Colors.black,
                                   ),
-                                  prefixIcon: Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: new Icon(Icons.account_circle_outlined, color: Colors.blue),
-                                  ),
-                                  hintText: 'Enter User Name',
-                                  hintStyle: TextStyle(color: Colors.blue.shade200),
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                                  focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.blue, width: 2.0), borderRadius: BorderRadius.circular(5.0)),
-                                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0), borderSide: BorderSide(color: Colors.blue, width: 3.0))),
-                              onChanged: (uname) {
-                                _user.uname = uname;
-                              }),
-                        ),
+                                ),
+                                prefixIcon: Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: new Icon(Icons.account_circle_outlined, color: Colors.blue),
+                                ),
+                                hintText: 'Enter User Name',
+                                hintStyle: TextStyle(color: Colors.blue.shade200),
+                                fillColor: Colors.white,
+                                filled: true,
+                                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                                focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.black, width: 1.0), borderRadius: BorderRadius.circular(5.0)),
+                                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0), borderSide: BorderSide(color: Colors.black38, width: 1.0))),
+                            onChanged: (uname) {
+                              _user.uname = uname;
+                            }),
                         SizedBox(
                           height: 62,
                         ),
-                        Text("Password", style: TextStyle(color: Colors.white, fontSize: 20)),
-                        Material(
-                          borderRadius: BorderRadius.circular(5.0),
-                          elevation: 10.0,
-                          shadowColor: Color(0xff224597),
-                          color: Colors.blue,
-                          child: TextFormField(
-                              focusNode: _passwordFocusNode,
-                              cursorColor: Colors.blue,
-                              onFieldSubmitted: (f) {
-                                _login();
-                              },
-                              style: TextStyle(fontSize: 20, color: Colors.blue),
-                              initialValue: _user.pword,
-                              obscureText: hidePassword,
-                              autofocus: false,
-                              decoration: InputDecoration(
-                                  suffixIcon: IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        hidePassword = !hidePassword;
-                                      });
-                                    },
-                                    icon: Icon(hidePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: Colors.blue),
+                        Text("Password", style: TextStyle(color: Colors.black, fontSize: 20)),
+                        TextFormField(
+                            focusNode: _passwordFocusNode,
+                            cursorColor: Colors.blue,
+                            onFieldSubmitted: (f) {
+                              _login();
+                            },
+                            style: TextStyle(fontSize: 20, color: Colors.blue),
+                            initialValue: _user.pword,
+                            obscureText: hidePassword,
+                            autofocus: false,
+                            decoration: InputDecoration(
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      hidePassword = !hidePassword;
+                                    });
+                                  },
+                                  icon: Icon(hidePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: Colors.blue),
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  borderSide: BorderSide(
+                                    color: Colors.black,
                                   ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(5.0),
-                                    borderSide: BorderSide(
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  prefixIcon: Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: new Icon(Icons.lock_outlined, color: Colors.blue),
-                                  ),
-                                  hintText: 'Enter Password',
-                                  hintStyle: TextStyle(color: Colors.blue.shade200),
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                                  focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.white60, width: 2.0), borderRadius: BorderRadius.circular(5.0)),
-                                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0), borderSide: BorderSide(color: Colors.blue, width: 3.0))),
-                              onChanged: (pword) {
-                                _user.pword = pword;
-                              }),
-                        ),
+                                ),
+                                prefixIcon: Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: new Icon(Icons.lock_outlined, color: Colors.blue),
+                                ),
+                                hintText: 'Enter Password',
+                                hintStyle: TextStyle(color: Colors.blue.shade200),
+                                fillColor: Colors.white,
+                                filled: true,
+                                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                                focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.black87, width: 1.0), borderRadius: BorderRadius.circular(5.0)),
+                                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0), borderSide: BorderSide(color: Colors.black38, width: 1.0))),
+                            onChanged: (pword) {
+                              _user.pword = pword;
+                            }),
                         Align(
                             alignment: Alignment.centerRight,
                             child: Padding(
@@ -213,10 +202,10 @@ class _LoginState extends State<Login> {
                               onPressed: _login,
                               child: Text("Login", style: TextStyle(color: Colors.blue, fontSize: 20)),
                               style: ButtonStyle(
-                                  elevation: MaterialStateProperty.all(10),
+                                  elevation: MaterialStateProperty.all(1),
                                   backgroundColor: MaterialStateProperty.all(Colors.white),
                                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0), side: BorderSide(color: Colors.blue)))),
+                                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0), side: BorderSide(color: Colors.blue)))),
                             )),
                         if (nfcIsAvailable) SizedBox(height: 84),
                         if (nfcIsAvailable)
@@ -280,7 +269,7 @@ class _LoginState extends State<Login> {
       if (googleUserCredential.user != null) {
         NfcManager.instance.stopSession();
         // if (nsUser.sections.length > 1) {
-   await     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => CheckTabStatus(nsUser)), (Route<dynamic> route) => false);
+        await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => CheckTabStatus(nsUser)), (Route<dynamic> route) => false);
         // } else {
         //   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (Route<dynamic> route) => false);
         // }

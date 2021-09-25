@@ -9,9 +9,9 @@ import 'package:smartwind/M/Ticket.dart';
 class SelectPdfPage extends StatefulWidget {
   final Ticket ticket;
 
-  final OnPageSelect;
+  final onPageSelect;
 
-  const SelectPdfPage(this.ticket, this.OnPageSelect);
+  const SelectPdfPage(this.ticket, this.onPageSelect);
 
   @override
   _SelectPdfPageState createState() => _SelectPdfPageState();
@@ -26,7 +26,7 @@ class _SelectPdfPageState extends State<SelectPdfPage> {
   initState() {
     super.initState();
     ticket = widget.ticket;
-    OnPageSelect = widget.OnPageSelect;
+    OnPageSelect = widget.onPageSelect;
   }
 
   final Completer<PDFViewController> _controller = Completer<PDFViewController>();

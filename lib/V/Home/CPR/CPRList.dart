@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:measured_size/measured_size.dart';
 import 'package:smartwind/C/OnlineDB.dart';
@@ -28,6 +29,7 @@ class _CPRListState extends State<CPRList> {
   @override
   void initState() {
     super.initState();
+    SchedulerBinding.instance!.addPostFrameCallback((_){  _refreshIndicatorKey.currentState?.show(); } );
 
     _reloadData(0);
   }
@@ -47,7 +49,7 @@ class _CPRListState extends State<CPRList> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          elevation: 0.0,
+          elevation:_showFilters? 0.0:5,
           toolbarHeight: 82,
           backgroundColor: Colors.amber,
           leading: IconButton(
@@ -59,6 +61,14 @@ class _CPRListState extends State<CPRList> {
             textScaleFactor: 1.2,
           ),
           bottom: SearchBar(
+            child: IconButton(
+                icon: Icon(Icons.filter_alt_rounded, color: Colors.white),
+                onPressed: () {
+                  setState(() {
+                    _showFilters = !_showFilters;
+                    _showFiltersEnd = false;
+                  });
+                }),
             onSearchTextChanged: (text) {
               if (subscription != null) {
                 subscription.cancel();
@@ -73,30 +83,27 @@ class _CPRListState extends State<CPRList> {
                   setState(() {});
                 });
               });
-            },
-            onSubmitted: (text) {},
-            OnBarcode: (barcode) {
-              print("xxxxxxxxxxxxxxxxxx $barcode");
-            },
+            }
+
           ),
           centerTitle: true,
         ),
         body: Scaffold(
           appBar: AppBar(
-            toolbarHeight: 0,
+            toolbarHeight: (_selectedStatus != "All" || _selectedShortageType != "All" || _selectedCprTypes != "All") ? 50 : 0,
             automaticallyImplyLeading: false,
             backgroundColor: themeColor,
             elevation: (!_showFilters && _showFiltersEnd) ? 4 : 0,
             actions: [
-              IconButton(
-                icon: Icon(Icons.filter_alt_rounded),
-                onPressed: () {
-                  setState(() {
-                    _showFilters = !_showFilters;
-                    _showFiltersEnd = false;
-                  });
-                },
-              )
+              // IconButton(
+              //   icon: Icon(Icons.filter_alt_rounded),
+              //   onPressed: () {
+              //     setState(() {
+              //       _showFilters = !_showFilters;
+              //       _showFiltersEnd = false;
+              //     });
+              //   },
+              // )
             ],
             title: Wrap(
               spacing: 5,
@@ -270,7 +277,6 @@ class _CPRListState extends State<CPRList> {
             onChange: (Size size) {
               setState(() {
                 __filterHeight = size.height;
-                print(size);
               });
             },
             child: Wrap(

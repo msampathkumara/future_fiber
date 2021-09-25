@@ -15,7 +15,8 @@ class QC {
   Ticket? ticket;
 
   int userId = 0;
-  String userName = "";
+  @JsonKey(defaultValue: "", includeIfNull: true)
+  String? userName = "";
 
   NsUser? user;
   int qc = 0;
@@ -32,10 +33,10 @@ class QC {
   }
 
   getDateTime() {
-    if ((_dnt) !=null) {
+    if ((_dnt) != null) {
       return "";
     }
-    var date = DateTime.fromMicrosecondsSinceEpoch( (dnt) * 1000);
+    var date = DateTime.fromMicrosecondsSinceEpoch((dnt) * 1000);
     var formattedDate = DateFormat('yyyy-MM-dd HH:mm').format(date);
     return formattedDate;
   }

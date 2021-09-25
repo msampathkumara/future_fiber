@@ -24,7 +24,9 @@ class _BlueBookState extends State<BlueBook> {
   var showFinishButton = true;
 
   WebView? _webView;
-  WebViewController? _webViewController;
+
+  late WebViewController _webViewController;
+
 
   @override
   initState() {

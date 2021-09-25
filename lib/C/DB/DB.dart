@@ -90,17 +90,21 @@ class DB {
       await db!.rawQuery("delete from tickets;");
       await db.rawQuery("delete from factorySections;");
       await db.rawQuery("delete from users;");
+      await db.rawQuery("delete from maxUpTimes  ;");
     }
     return getDB()
         .then((value) => value!
                 .rawQuery("select "
                     "(select ifnull(max(uptime),0) uptime from tickets) tickets,"
+                    "(select ifnull( (uptime),0) uptime from maxUpTimes where collection='deletedTickets') deletedTicketsIds,"
+                    "(select ifnull( (uptime),0) uptime from maxUpTimes where collection='completedTickets') completedTicketsIds,"
                     "(select ifnull(max(uptime),0) uptime from factorySections) factorySections,"
                     "(select ifnull(max(uptime),0) uptime from users) users")
                 .then((value) {
               print("last update on == " + value.toString());
               Map<Object, Object?> xx = value.length > 0 ? value[0] : {'tickets': '0', 'users': '0'};
               Map<String, String> uptime = xx.map((key, value) => MapEntry("$key", "$value"));
+
               print(uptime.toString());
 
               return OnlineDB.apiGet("data/getData", uptime).then((response) async {
@@ -111,8 +115,7 @@ class DB {
                 if (showLoadingDialog && context != null) {
                   loadingWidget.close(context);
                 }
-                callChangesCallBack(res);
-
+                callChangesCallBacks(res);
               }).onError((error, stackTrace) {
                 print(stackTrace);
                 ErrorMessageView(errorMessage: error.toString()).show(context);
@@ -139,15 +142,28 @@ class DB {
       print('tickets = ' + tickets.length.toString());
       insertTickets(tickets);
     }
-    if (res.containsKey("deletedTickets")) {
-      List deletedTickets = (res["deletedTickets"] ?? []);
+    if (res.containsKey("deletedTicketsIds")) {
+      List deletedTickets = (res["deletedTicketsIds"] ?? []);
       deleteTickets(deletedTickets);
+      if (deletedTickets.length > 0) {
+        var maxTime = deletedTickets.map<int>((e) => e['uptime']).reduce(max);
+        var db = await getDB();
+        db!.insert('maxUpTimes', {"collection": "deletedTickets", "uptime": maxTime}, conflictAlgorithm: ConflictAlgorithm.replace);
+      }
+    }
+    if (res.containsKey("completedTicketsIds")) {
+      List completedTickets = (res["completedTicketsIds"] ?? []);
+      deleteTickets(completedTickets);
+      if (completedTickets.length > 0) {
+        var maxTime = completedTickets.map<int>((e) => e['uptime']).reduce(max);
+        var db = await getDB();
+        db!.insert('maxUpTimes', {"collection": "completedTickets", "uptime": maxTime}, conflictAlgorithm: ConflictAlgorithm.replace);
+      }
     }
     if (res.containsKey("ticketProgressDetails")) {
       List ticketProgressDetails = (res["ticketProgressDetails"] ?? []);
       insertTicketProgressDetails(ticketProgressDetails);
     }
-
     if (res.containsKey("users")) {
       List users = (res["users"] ?? []);
       insertUsers(users);
@@ -178,9 +194,11 @@ class DB {
 
   static Future<void> deleteTickets(List<dynamic> deletedTickets) async {
     Batch batch = db!.batch();
+
     deletedTickets.forEach((ticket) {
       batch.delete('tickets', where: 'id = ?', whereArgs: [ticket["id"]]);
     });
+
     print(await batch.commit(noResult: false));
   }
 
@@ -235,7 +253,7 @@ class DB {
     print(await batch.commit(noResult: false));
   }
 
-  static callChangesCallBack(Map<dynamic, dynamic> res) {
+  static callChangesCallBacks(Map<dynamic, dynamic> res) {
     List keys = res.keys.toList();
 
     List<DbChangeCallBack> onDBChangeCallBacksTemp = [];
@@ -253,6 +271,30 @@ class DB {
         onDBChangeCallBacks.remove(x);
       }
     }
+  }
+
+  static callChangesCallBack(DataTables table) {
+    List<DbChangeCallBack> onDBChangeCallBacksTemp = [];
+    onDBChangeCallBacksTemp.addAll(onDBChangeCallBacks);
+    for (var i = 0; i < onDBChangeCallBacksTemp.length; i++) {
+      var x = onDBChangeCallBacksTemp[i];
+
+      try {
+        if (x.isDisposed()) {
+          onDBChangeCallBacks.remove(x);
+        } else if (x.collection == DataTables.None || table == x.collection) {
+          x.callBack();
+        }
+      } catch (e) {
+        onDBChangeCallBacks.remove(x);
+      }
+    }
+  }
+
+  static Future<void> updateCompletedTicket(context, ticketId) async {
+    var db = await getDB();
+    await db!.delete("tickets", where: 'id=?', whereArgs: [ticketId]);
+    callChangesCallBack(DataTables.Tickets);
   }
 }
 

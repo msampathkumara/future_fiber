@@ -13,7 +13,7 @@ TicketPrint _$TicketPrintFromJson(Map<String, dynamic> json) {
         ? null
         : Ticket.fromJson(json['ticket'] as Map<String, dynamic>)
     ..action = json['action'] as String?
-    ..done = json['done'] as int
+    ..done = json['done'] as int? ?? 0
     ..doneOn = json['doneOn'] as String;
 }
 

@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/Ticket.dart';
-import 'package:smartwind/V/Home/Tickets/CS/SelectPdfPage.dart';
 
 class ShippingSystem extends StatefulWidget {
   final Ticket ticket;
@@ -27,14 +26,12 @@ class _ShippingSystemState extends State<ShippingSystem> with TickerProviderStat
         print("Selected Index: " + _tabBarController!.index.toString());
       });
     });
-
-
   }
 
   @override
   Widget build(BuildContext context) {
     return _tabBarController == null
-        ? Container()
+        ? Scaffold(body: Container())
         : DefaultTabController(
             length: tabs.length,
             child: Scaffold(

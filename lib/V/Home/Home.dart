@@ -1,6 +1,5 @@
-import 'dart:convert';
-
 import 'package:animations/animations.dart';
+import 'package:device_information/device_information.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +7,9 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartwind/C/App.dart';
 import 'package:smartwind/C/DB/DB.dart';
+import 'package:smartwind/C/FCM.dart';
+import 'package:smartwind/C/OnlineDB.dart';
+import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/V/Home/CPR/CPRList.dart';
 import 'package:smartwind/V/Home/CurrentUser/CurrentUserDetails.dart';
@@ -16,6 +18,7 @@ import 'package:smartwind/V/Home/Tickets/Print/PrintManager.dart';
 import 'package:smartwind/V/Home/Tickets/ProductionPool/ProductionPool.dart';
 import 'package:smartwind/V/Login/Login.dart';
 import 'package:smartwind/V/Login/SectionSelector.dart';
+import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
 
 import 'About.dart';
@@ -48,28 +51,8 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    FirebaseMessaging.instance.subscribeToTopic('file_update');
-    FirebaseMessaging.instance.subscribeToTopic('TicketDbReset');
-    FirebaseMessaging.instance.subscribeToTopic('userUpdates');
+    FCM.listen(context);
     DB.updateDatabase(context);
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      if (json.decode(message.data["FILE_DB_UPDATE"]) != null) {
-        DB.updateDatabase(context);
-      } else if (json.decode(message.data["updateTicketDB"]) != null) {
-        DB.updateDatabase(context, reset: true);
-        print('--------------------------RESEING DATABASE-----------------');
-      } else if (json.decode(message.data["userUpdates"]) != null) {
-        DB.updateDatabase(context, reset: true);
-        print('--------------------------UPDATING USER DATABASE-----------------');
-      }
-      print('Got a message whilst in the foreground!');
-      print('Message data: ${message.data}');
-
-      if (message.notification != null) {
-        print('Message also contained a notification: ${message.notification}');
-      }
-    });
-
     App.getCurrentUser().then((value) {
       if (value != null) {
         final user = FirebaseAuth.instance.currentUser;
@@ -93,6 +76,7 @@ class _HomeState extends State<Home> {
   @override
   void dispose() {
     super.dispose();
+    FCM.unsubscribe();
   }
 
   void _showMarkedAsDoneSnackbar(bool? isMarkedAsDone) {
@@ -126,7 +110,7 @@ class _HomeState extends State<Home> {
                   ),
                   title: Text(nsUser!.name, textScaleFactor: 1.2),
                   subtitle: nsUser!.section != null ? Text("${nsUser!.section!.sectionTitle} @ ${nsUser!.section!.factory}") : Text(""),
-                  trailing: _currentUserOprionMenu(),
+                  trailing: _currentUserOperionMenu(),
                   onTap: () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => CurrentUserDetails(nsUser!)));
                   },
@@ -134,10 +118,9 @@ class _HomeState extends State<Home> {
               ),
             ),
             body: Container(
-              height: double.maxFinite,
-              width: double.maxFinite,
-              child: Stack(
-                children: [
+                height: double.maxFinite,
+                width: double.maxFinite,
+                child: Stack(children: [
                   new Positioned(
                     bottom: 10,
                     right: 0,
@@ -239,17 +222,13 @@ class _HomeState extends State<Home> {
                                   },
                                   closedBuilder: (BuildContext context, void Function() action) {
                                     return Chip(
-                                      avatar: CircleAvatar(
-                                        backgroundColor: Colors.grey.shade800,
-                                        child: Image.asset("assets/north_sails-logox50.png", width: 50),
-                                      ),
-                                      label: Text('NS Smart Wind $appVersion '),
-                                    );
-                                  })))),
-                ],
-              ),
-            ),
-          );
+                                        avatar: CircleAvatar(
+                                          backgroundColor: Colors.grey.shade800,
+                                          child: Image.asset("assets/north_sails-logox50.png", width: 50),
+                                        ),
+                                        label: Text('NS Smart Wind $appVersion ${Server.local ? " | Local Server" : " |  Online"}'));
+                                  }))))
+                ])));
   }
 
   void show(Widget window) {
@@ -257,17 +236,31 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _logout() async {
+    String imeiNo = await DeviceInformation.deviceIMEINumber;
+    await OnlineDB.apiPost("tabs/logout", {"imei": imeiNo}).then((response) async {
+      if (response.data["saved"] == true) {
+        print("----------------------------------------55555555555555555555");
+      } else {
+        ErrorMessageView(errorMessage: response.data).show(context);
+      }
+      print(response.data);
+
+      return 1;
+    }).catchError((onError) {
+      print(onError);
+    });
     FirebaseAuth.instance.signOut();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove("user");
+
     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Login()), (Route<dynamic> route) => false);
   }
 
-  _currentUserOprionMenu() {
+  _currentUserOperionMenu() {
     return PopupMenuButton<MenuItems>(
       onSelected: (MenuItems result) async {
         if (result == MenuItems.logout) {
-          _logout();
+          await _logout();
         } else if (result == MenuItems.dbReload) {
           await DB.dropDatabase();
           await DB.loadDB();

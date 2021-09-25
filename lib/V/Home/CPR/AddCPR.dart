@@ -283,7 +283,7 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                                       label: "Menu mode",
                                       hint: "country in menu mode",
                                       onChanged: (mat) {
-                                        currentMarerial.item = mat!;
+                                        currentMaterial.item = mat!;
                                       })),
                               SizedBox(width: 8),
                               SizedBox(
@@ -292,15 +292,15 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                                       controller: _qtyController,
                                       decoration: new InputDecoration(border: new OutlineInputBorder(borderSide: new BorderSide(color: Colors.teal)), labelText: 'QTY'),
                                       onChanged: (text) {
-                                        currentMarerial.qty = (text);
+                                        currentMaterial.qty = (text);
                                       })),
                               SizedBox(width: 8),
                               Card(
                                 child: IconButton(
                                     color: Colors.blue,
                                     onPressed: () {
-                                      _addMaterialToList(currentMarerial);
-                                      currentMarerial = new CprItem();
+                                      _addMaterialToList(currentMaterial);
+                                      currentMaterial = new CprItem();
                                       _qtyController.clear();
                                       _dropdownSearchKey.currentState!.changeSelectedItem("");
                                       setState(() {});
@@ -341,10 +341,8 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
   }
 
   List<String> _matList = [];
-  var _qtyController = TextEditingController();
-  var _nameController = TextEditingController();
-  bool _showSelectedItem = true;
-  CprItem currentMarerial = new CprItem();
+  var _qtyController = TextEditingController(); 
+  CprItem currentMaterial = new CprItem();
   final _dropdownSearchKey = GlobalKey<DropdownSearchState<String>>();
 
   getData(String filter) {
@@ -353,12 +351,12 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
     return Future.value(data);
   }
 
-  void _addMaterialToList(CprItem currentMarerial) {
-    List<CprItem> x = _cpr.items.where((element) => element.item == currentMarerial.item).toList();
+  void _addMaterialToList(CprItem currentMaterial) {
+    List<CprItem> x = _cpr.items.where((element) => element.item == currentMaterial.item).toList();
     if (x.length == 0) {
-      _cpr.items.add(CprItem.fromJson(currentMarerial.toJson()));
+      _cpr.items.add(CprItem.fromJson(currentMaterial.toJson()));
     } else {
-      x[0].qty += currentMarerial.qty;
+      x[0].qty += currentMaterial.qty;
     }
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Enums.dart';
@@ -23,6 +24,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
   initState() {
     super.initState();
     WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _refreshIndicatorKey.currentState?.show();
       loadData(0);
     });
   }
@@ -34,9 +36,23 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
     super.dispose();
   }
 
+  TextEditingController searchController = new TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+        floatingActionButton: FloatingActionButton(
+            onPressed: () async {
+              String barcode = await FlutterBarcodeScanner.scanBarcode("#ff6666", "Cancel", false, ScanMode.DEFAULT);
+              if (barcode == '-1') {
+                print('nothing return.');
+              } else {
+                searchController.value = TextEditingValue(text: barcode, selection: TextSelection.fromPosition(TextPosition(offset: barcode.length)));
+              }
+            },
+            child: const Icon(Icons.qr_code_rounded),
+            backgroundColor: themeColor),
         appBar: AppBar(
           actions: <Widget>[],
           elevation: 0.0,
@@ -51,30 +67,35 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
             textScaleFactor: 1.2,
           ),
           bottom: SearchBar(
-            onSearchTextChanged: (text) {
-              if (subscription != null) {
-                subscription.cancel();
-              }
-              searchText = text;
-              _ticketList = [];
-              var future = new Future.delayed(const Duration(milliseconds: 300));
-              subscription = future.asStream().listen((v) {
-                print("SEARCHING FOR $searchText");
-                var t = DateTime.now().millisecondsSinceEpoch;
+              // child: IconButton(
+              //   icon: Icon(Icons.filter_alt_rounded, color: Colors.white),
+              //   onPressed: () {
+              //     setState(() {
+              //       _showFilters = !_showFilters;
+              //       _showFiltersEnd = false;
+              //     });
+              //   },
+              // ),
+              searchController: searchController,
+              onSearchTextChanged: (text) {
+                if (subscription != null) {
+                  subscription.cancel();
+                }
+                searchText = text;
+                _ticketList = [];
+                var future = new Future.delayed(const Duration(milliseconds: 300));
+                subscription = future.asStream().listen((v) {
+                  print("SEARCHING FOR $searchText");
+                  var t = DateTime.now().millisecondsSinceEpoch;
 
-                loadData(0).then((value) {
-                  print("SEARCHING time ${(DateTime.now().millisecondsSinceEpoch - t)}");
-                  t = DateTime.now().millisecondsSinceEpoch;
-                  setState(() {});
-                  print("load time ${(DateTime.now().millisecondsSinceEpoch - t)}");
+                  loadData(0).then((value) {
+                    print("SEARCHING time ${(DateTime.now().millisecondsSinceEpoch - t)}");
+                    t = DateTime.now().millisecondsSinceEpoch;
+                    setState(() {});
+                    print("load time ${(DateTime.now().millisecondsSinceEpoch - t)}");
+                  });
                 });
-              });
-            },
-            onSubmitted: (text) {},
-            OnBarcode: (barcode) {
-              print("xxxxxxxxxxxxxxxxxx $barcode");
-            },
-          ),
+              }),
           centerTitle: true,
         ),
         body: getBody(),
@@ -85,9 +106,6 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
               data: IconThemeData(color: Colors.white),
               child: Row(
                 children: [
-                  Padding(padding: const EdgeInsets.all(8.0), child: Text("$dataCount", textScaleFactor: 1.1, style: TextStyle(color: Colors.white))),
-                  const Spacer(),
-                  Text("Sorted by $sortedBy", style: TextStyle(color: Colors.white)),
                   InkWell(
                     onTap: () {},
                     splashColor: Colors.red,
@@ -99,7 +117,12 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                         },
                       ),
                     ),
-                  )
+                  ),
+                  const Spacer(),
+                  Padding(padding: const EdgeInsets.all(8.0), child: Text("$dataCount", textScaleFactor: 1.1, style: TextStyle(color: Colors.white))),
+                  const Spacer(),
+                  // Text("Sorted by $sortedBy", style: TextStyle(color: Colors.white)),
+                  SizedBox(width: 36)
                 ],
               ),
             )));
@@ -195,26 +218,25 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
         });
   }
 
-  bool _showFilters = false;
-
   getBody() {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          toolbarHeight: 0,
+          toolbarHeight: 50,
           automaticallyImplyLeading: false,
           backgroundColor: themeColor,
-          elevation: (!_showFilters && _showFiltersEnd) ? 4 : 0,
+          // elevation: (!_showFilters && _showFiltersEnd) ? 4 : 0,
+          elevation: 4,
           actions: [
-            IconButton(
-              icon: Icon(Icons.filter_alt_rounded),
-              onPressed: () {
-                setState(() {
-                  _showFilters = !_showFilters;
-                  _showFiltersEnd = false;
-                });
-              },
-            )
+            // IconButton(
+            //   icon: Icon(Icons.filter_alt_rounded),
+            //   onPressed: () {
+            //     setState(() {
+            //       _showFilters = !_showFilters;
+            //       _showFiltersEnd = false;
+            //     });
+            //   },
+            // )
           ],
           title: Wrap(
             spacing: 5,
@@ -230,13 +252,14 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
         body: _getTicketsList());
   }
 
-  bool _showFiltersEnd = false;
+  var _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   _getTicketsList() {
     return Column(
       children: [
         Expanded(
           child: RefreshIndicator(
+            key: _refreshIndicatorKey,
             onRefresh: () {
               return loadData(0).then((value) {
                 setState(() {});

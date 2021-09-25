@@ -12,10 +12,7 @@ class App {
  static Future getAppInfo(){
    return PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
 
-      String appName = packageInfo.appName;
-      String packageName = packageInfo.packageName;
       String version = packageInfo.version;
-      String buildNumber = packageInfo.buildNumber;
       print('version $version');
       return packageInfo;
     });

@@ -116,7 +116,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
                   });
                 },
                 onSubmitted: (text) {},
-                OnBarcode: (barcode) {
+                onBarCode: (barcode) {
                   print("xxxxxxxxxxxxxxxxxx $barcode");
                 },
               ),

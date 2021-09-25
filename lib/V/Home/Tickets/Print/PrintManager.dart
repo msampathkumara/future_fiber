@@ -21,6 +21,7 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
   initState() {
     super.initState();
     WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _refreshIndicatorKey.currentState?.show();
       loadData(0);
     });
   }
@@ -37,7 +38,7 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
     return Scaffold(
         appBar: AppBar(
           actions: <Widget>[],
-          elevation: 0.0,
+          elevation: 0,
           toolbarHeight: 80,
           backgroundColor: themeColor,
           leading: IconButton(
@@ -46,25 +47,15 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
           ),
           title: Text("Print", textScaleFactor: 1.2),
           bottom: SearchBar(
-            onSearchTextChanged: (text) {
-              if (subscription != null) {
-                subscription.cancel();
-              }
-              searchText = text;
-              _ticketPrintList = [];
-              var future = new Future.delayed(const Duration(milliseconds: 300));
-              subscription = future.asStream().listen((v) {
-
+              delay: 300,
+              onSearchTextChanged: (text) {
+                searchText = text;
+                _ticketPrintList = [];
                 loadData(0).then((value) {
                   setState(() {});
                 });
-              });
-            },
-            onSubmitted: (text) {},
-            OnBarcode: (barcode) {
-              print("xxxxxxxxxxxxxxxxxx $barcode");
-            },
-          ),
+              },
+              onSubmitted: (text) {}),
           centerTitle: true,
         ),
         body: getBody(),
@@ -79,17 +70,14 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
                   const Spacer(),
                   Text("Sorted by $sortedBy", style: TextStyle(color: Colors.white)),
                   InkWell(
-                    onTap: () {},
-                    splashColor: Colors.red,
-                    child: Ink(
-                      child: IconButton(
-                        icon: Icon(Icons.sort_by_alpha_rounded),
-                        onPressed: () {
-                          _sortByBottomSheetMenu();
-                        },
-                      ),
-                    ),
-                  )
+                      onTap: () {},
+                      splashColor: Colors.red,
+                      child: Ink(
+                          child: IconButton(
+                              icon: Icon(Icons.sort_by_alpha_rounded),
+                              onPressed: () {
+                                _sortByBottomSheetMenu();
+                              })))
                 ],
               ),
             )));
@@ -147,32 +135,10 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
                           getListItem("Red Flag", Icons.tour_rounded, "isred"),
                           getListItem("Hold", Icons.pan_tool_rounded, "ishold"),
                           getListItem("Rush", Icons.flash_on_rounded, "isrush"),
-                          getListItem(
-                              "SK",
-                              CircleAvatar(
-                                radius: 12,
-                                backgroundColor: Colors.grey,
-                                child: Center(
-                                  child: Text(
-                                    "SK",
-                                    style: TextStyle(color: Colors.white, fontSize: 8),
-                                  ),
-                                ),
-                              ),
-                              "issk"),
-                          getListItem(
-                              "GR",
-                              CircleAvatar(
-                                radius: 12,
-                                backgroundColor: Colors.grey,
-                                child: Center(
-                                  child: Text(
-                                    "GR",
-                                    style: TextStyle(color: Colors.white, fontSize: 8),
-                                  ),
-                                ),
-                              ),
-                              "isgr"),
+                          getListItem("SK",
+                              CircleAvatar(radius: 12, backgroundColor: Colors.grey, child: Center(child: Text("SK", style: TextStyle(color: Colors.white, fontSize: 8)))), "issk"),
+                          getListItem("GR",
+                              CircleAvatar(radius: 12, backgroundColor: Colors.grey, child: Center(child: Text("GR", style: TextStyle(color: Colors.white, fontSize: 8)))), "isgr"),
                           getListItem("Short", Icons.local_mall_rounded, "sort"),
                           getListItem("Error Route", Icons.warning_rounded, "errOut"),
                           getListItem("Print", Icons.print_rounded, "inprint"),
@@ -185,42 +151,28 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
         });
   }
 
-  bool _showFilters = false;
-
   getBody() {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          toolbarHeight: 0,
+          toolbarHeight: 50,
           automaticallyImplyLeading: false,
           backgroundColor: themeColor,
-          elevation: (!_showFilters && _showFiltersEnd) ? 4 : 0,
-          actions: [
-            IconButton(
-              icon: Icon(Icons.filter_alt_rounded),
-              onPressed: () {
-                setState(() {
-                  _showFilters = !_showFilters;
-                  _showFiltersEnd = false;
-                });
-              },
-            )
-          ],
-          title: Wrap(
-            spacing: 5,
-            children: [_statusChip(Status.All), _statusChip(Status.Sent), _statusChip(Status.Done), _statusChip(Status.Cancel)],
-          ),
+          elevation: 10,
+          actions: [],
+          title: Wrap(spacing: 5, children: [_statusChip(Status.All), _statusChip(Status.Sent), _statusChip(Status.Done), _statusChip(Status.Cancel)]),
         ),
         body: _getTicketsList());
   }
 
-  bool _showFiltersEnd = false;
+  var _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   _getTicketsList() {
     return Column(
       children: [
         Expanded(
           child: RefreshIndicator(
+            key: _refreshIndicatorKey,
             onRefresh: () {
               return loadData(0).then((value) {
                 setState(() {});
@@ -273,45 +225,42 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
 
                   TicketPrint ticketPrint = (_ticketPrintList[index]);
                   return GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onLongPress: () async {
-                      // await showTicketOptions(ticketPrint, context);
-                      // setState(() {});
-                    },
-                    onTap: () {
-                      // var ticketInfo = TicketInfo(ticket);
-                      // ticketInfo.show(context);
-                    },
-                    onDoubleTap: () async {
-                      // print(await ticket.getLocalFileVersion());
-                      // ticket.open(context);
-                    },
-                    child: Ink(
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.white,
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(20))),
-                      child: ListTile(
-                        leading: Text("${index + 1}"),
-                        title: Text(
-                          (ticketPrint.ticket!.mo ?? "").trim().isEmpty ? (ticketPrint.ticket!.oe ?? "") : ticketPrint.ticket!.mo ?? "",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        subtitle: Wrap(
-                          direction: Axis.vertical,
-                          children: [
-                            if ((ticketPrint.ticket!.mo ?? "").trim().isNotEmpty) Text((ticketPrint.ticket!.oe ?? "")),
-                            Text(ticketPrint.doneOn),
-                          ],
-                        ),
-                        // subtitle: Text(ticket.fileVersion.toString()),
-                        trailing: Wrap(children: [Text("${ticketPrint.action}", textScaleFactor: 1)])
-                      )
-                    )
-                  );
+                      behavior: HitTestBehavior.opaque,
+                      onLongPress: () async {
+                        // await showTicketOptions(ticketPrint, context);
+                        // setState(() {});
+                      },
+                      onTap: () {
+                        // var ticketInfo = TicketInfo(ticket);
+                        // ticketInfo.show(context);
+                      },
+                      onDoubleTap: () async {
+                        // print(await ticket.getLocalFileVersion());
+                        // ticket.open(context);
+                      },
+                      child: Ink(
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.white,
+                              ),
+                              borderRadius: BorderRadius.all(Radius.circular(20))),
+                          child: ListTile(
+                              leading: Text("${index + 1}"),
+                              title: Text(
+                                (ticketPrint.ticket!.mo ?? "").trim().isEmpty ? (ticketPrint.ticket!.oe ?? "") : ticketPrint.ticket!.mo ?? "",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              subtitle: Wrap(
+                                direction: Axis.vertical,
+                                children: [
+                                  if ((ticketPrint.ticket!.mo ?? "").trim().isNotEmpty) Text((ticketPrint.ticket!.oe ?? "")),
+                                  Text(ticketPrint.doneOn),
+                                ],
+                              ),
+                              // subtitle: Text(ticket.fileVersion.toString()),
+                              trailing: Wrap(children: [Text("${ticketPrint.action}", textScaleFactor: 1)]))));
                 },
                 separatorBuilder: (BuildContext context, int index) {
                   return Divider(

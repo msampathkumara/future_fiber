@@ -50,7 +50,7 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.white,
         body: Center(
             child: Wrap(alignment: WrapAlignment.center, direction: Axis.horizontal, children: [
           if (widget.showProgress)
@@ -61,7 +61,7 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
                         radius: 100.0,
                         lineWidth: 4.0,
                         percent: ((_progress >= 0 && _progress <= 1) ? _progress : 0 / 100).toDouble(),
-                        center: new Text("$_progress%"),
+                        center: new Text("$_progress%",textScaleFactor: 1.5),
                         progressColor: Colors.blue))),
           Text(widget.loadingText, textScaleFactor: 1)
         ])));

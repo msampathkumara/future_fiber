@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:smartwind/C/ServerResponce/TicketHistory.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
 
-class info_History extends StatefulWidget {
+class InfoHistory extends StatefulWidget {
   List<TicketHistory> ticketHistoryList;
 
-  info_History(this.ticketHistoryList);
+  InfoHistory(this.ticketHistoryList);
 
   @override
-  _info_HistoryState createState() => _info_HistoryState();
+  _InfoHistoryState createState() => _InfoHistoryState();
 }
 
-class _info_HistoryState extends State<info_History> {
+class _InfoHistoryState extends State<InfoHistory> {
   List<TicketHistory> ticketHistoryList = [];
 
   @override

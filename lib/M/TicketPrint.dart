@@ -9,6 +9,7 @@ class TicketPrint {
   int id = 0;
   Ticket? ticket;
   String? action;
+  @JsonKey(defaultValue: 0, includeIfNull: true)
   int done = 0;
   String doneOn = "";
 

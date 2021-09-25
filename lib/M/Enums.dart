@@ -2,7 +2,7 @@ enum Production { All, Upwind, OD, Nylon, OEM }
 enum SortByItem { id, mo, oe, finished, dir, uptime, file, sheet, production, isRed, isRush, inPrint, isError, isGr, isSk, isHold, delete, reNamed, progress, fileVersion }
 enum Status { All, Sent, Cancel, Done }
 enum Type {All, QA, QC }
-
+enum TicketFlagTypes {RED,GR,RUSH,SK}
 
 extension ParseToString on Production {
   String toShortString() {
@@ -28,7 +28,13 @@ extension TypeToString on Type {
   }
 }
 
-enum ActionMenuItems{Share,Edit,BlueBook,ShippingSystem,CS}
+extension TicketFlagTypesToString on TicketFlagTypes {
+  String getValue() {
+    return (this).toString().split('.').last.toLowerCase();
+  }
+}
+
+enum ActionMenuItems{Share,Edit,BlueBook,ShippingSystem,CS,Finish}
 extension ActionMenuItemExtension on ActionMenuItems {
   String getValue() {
     return (this).toString().split('.').last;
