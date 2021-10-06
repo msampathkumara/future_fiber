@@ -44,6 +44,7 @@ class DbMigrator {
     21: [
       "alter table users add address text default '' ;",
     ],
-    24: ["create table maxUpTimes ( collection varchar(20), uptime varchar(20), UNIQUE (collection) ON CONFLICT REPLACE );"]
+    24: ["create table maxUpTimes ( collection varchar(20), uptime varchar(20), UNIQUE (collection) ON CONFLICT REPLACE );"],
+    26: ["alter table tickets add isSort int default 0 ;"]
   };
 }

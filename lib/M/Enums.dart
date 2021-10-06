@@ -2,7 +2,7 @@ enum Production { All, Upwind, OD, Nylon, OEM }
 enum SortByItem { id, mo, oe, finished, dir, uptime, file, sheet, production, isRed, isRush, inPrint, isError, isGr, isSk, isHold, delete, reNamed, progress, fileVersion }
 enum Status { All, Sent, Cancel, Done }
 enum Type {All, QA, QC }
-enum TicketFlagTypes {RED,GR,RUSH,SK}
+enum TicketFlagTypes {RED,GR,RUSH,SK,HOLD}
 
 extension ParseToString on Production {
   String toShortString() {

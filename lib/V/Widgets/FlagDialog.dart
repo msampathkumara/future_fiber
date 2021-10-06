@@ -4,7 +4,8 @@ import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/TicketFlag.dart';
-import 'package:smartwind/V/Widgets/UserImage.dart';
+
+import 'UserButton.dart';
 
 class FlagDialog {
   static int FLAG_TYPE_RED = 1;
@@ -202,20 +203,46 @@ class FlagDialog {
                       child: ListView.builder(
                           itemCount: list.length,
                           itemBuilder: (context, i) {
-                            TicketFlag tf = list[i];
+                            TicketFlag ticketFlag = list[i];
                             return Card(
+                              // child: ListTile(
+                              //   title: Text(tf.isFlaged ? "Flag Added" : "Flag Removed"),
+                              //   subtitle: Column(
+                              //     crossAxisAlignment: CrossAxisAlignment.start,
+                              //     children: [
+                              //       Padding(padding: const EdgeInsets.all(8.0), child: Text(tf.comment, textScaleFactor: 1.2, style: TextStyle(color: Colors.black))),
+                              //       Align(alignment: Alignment.bottomRight, child: Text(tf.getDateTime()))
+                              //     ],
+                              //   ),
+                              //   leading: UserImage(nsUserId: tf.user),
+                              //   // leading: CircleAvatar(
+                              //   //     radius: 24.0, backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"), backgroundColor: Colors.transparent),
+                              // ),
+
                               child: ListTile(
-                                title: Text(tf.isFlaged ? "Flag Added" : "Flag Removed"),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(padding: const EdgeInsets.all(8.0), child: Text(tf.comment, textScaleFactor: 1.2, style: TextStyle(color: Colors.black))),
-                                    Align(alignment: Alignment.bottomRight, child: Text(tf.getDateTime()))
-                                  ],
+                                title: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                  Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Padding(
+                                          padding: const EdgeInsets.only(bottom: 8.0, top: 8),
+                                          child: Text(ticketFlag.flaged == 1 ? "Flag Added" : "Flag Removed", style: TextStyle(fontWeight: FontWeight.bold)))),
+                                  Text(ticketFlag.comment),
+                                  Divider(),
+                                ]),
+                                subtitle: SizedBox(
+                                  width: double.infinity,
+                                  child: Row(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(bottom: 4.0),
+                                        child: UserButton(nsUserId: ticketFlag.user, imageRadius: 16),
+                                      ),
+                                      Spacer(),
+                                      Text(ticketFlag.getDateTime(), style: TextStyle(color: Colors.blue)),
+                                    ],
+                                  ),
                                 ),
-                                leading: UserImage(nsUserId: tf.user),
-                                // leading: CircleAvatar(
-                                //     radius: 24.0, backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"), backgroundColor: Colors.transparent),
+                                // leading: UserImage(nsUserId: ticketFlag.user, radius: 24),
                               ),
                             );
                           }),
@@ -272,28 +299,97 @@ class FlagDialog {
   }
 
   static Future<void> showFlagView(BuildContext context, Ticket ticket, TicketFlagTypes flagType) async {
+    var title;
+    var titleText;
+    var titleIcon;
+    switch (flagType) {
+      case TicketFlagTypes.HOLD:
+        titleText = "Hold";
+        titleIcon = Icon(Icons.pan_tool_rounded);
+        break;
+      case TicketFlagTypes.RED:
+        titleText = "Red Flag";
+        titleIcon = Icon(Icons.tour_rounded);
+        break;
+      case TicketFlagTypes.GR:
+        titleText = "Graphics";
+        titleIcon = CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white))));
+        break;
+
+      case TicketFlagTypes.RUSH:
+        titleText = "Rush";
+        titleIcon = Icon(Icons.flash_on_rounded);
+        break;
+      case TicketFlagTypes.SK:
+        titleText = "SK";
+        titleIcon = CircleAvatar(backgroundColor: Colors.pink, child: Center(child: Text("SK", style: TextStyle(color: Colors.white))));
+        break;
+    }
+
+    title = Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [(titleIcon), Text('$titleText')]));
+
     var db = await DB.getDB();
     var data = await db!.rawQuery("select * from flags where ticket='${ticket.id}' and type='${flagType.getValue()}' ");
     print(data);
 
-    TicketFlag tf = TicketFlag.fromJson(data[0]);
-
+    TicketFlag ticketFlag = TicketFlag.fromJson(data[0]);
+    double w = MediaQuery.of(context).size.width;
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-            title: Text(' '),
-            content: ListTile(
-              // title: Text(tf.isFlaged ? "Flag Added" : "Flag Removed"),
-              title: Column(mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(padding: const EdgeInsets.all(8.0), child: Text(tf.comment, textScaleFactor: 1.2, style: TextStyle(color: Colors.black))),
-                  Align(alignment: Alignment.bottomRight, child: Text(tf.getDateTime(), style: TextStyle(color: Colors.blue)))
-                ],
+              title: title,
+              content: Container(
+                width: w,
+                child: ListTile(
+                  title: Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Align(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0, top: 8),
+                            child: Text(ticketFlag.flaged == 1 ? "Flag Added" : "Flag Removed", style: TextStyle(fontWeight: FontWeight.bold)))),
+                    Text(ticketFlag.comment),
+                    Divider(),
+                  ]),
+                  subtitle: SizedBox(
+                    width: double.infinity,
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 4.0),
+                          child: UserButton(nsUserId: ticketFlag.user, imageRadius: 16),
+                        ),
+                        Spacer(),
+                        Text(ticketFlag.getDateTime(), style: TextStyle(color: Colors.blue)),
+                      ],
+                    ),
+                  ),
+                  // leading: UserImage(nsUserId: ticketFlag.user, radius: 24),
+                ),
               ),
-              leading: UserImage(nsUserId: tf.user),
-              // leading: CircleAvatar(
-              //     radius: 24.0, backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"), backgroundColor: Colors.transparent),
-            )));
+
+              // content: ListTile(
+              //   // title: Text(tf.isFlaged ? "Flag Added" : "Flag Removed"),
+              //   title: Column(mainAxisSize: MainAxisSize.min,
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       Padding(padding: const EdgeInsets.all(8.0), child: Text(tf.comment, textScaleFactor: 1.2, style: TextStyle(color: Colors.black))),
+              //       Align(alignment: Alignment.bottomRight, child: Text(tf.getDateTime(), style: TextStyle(color: Colors.blue)))
+              //     ],
+              //   ),
+              //   leading: UserImage(nsUserId: tf.user),
+              //   // leading: CircleAvatar(
+              //   //     radius: 24.0, backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"), backgroundColor: Colors.transparent),
+              // )
+            ));
+  }
+
+  static showStopProductionFlagDialog(BuildContext context, Ticket ticket) {
+    flagType = TicketFlagTypes.HOLD;
+    addTitle = "Stop Production";
+    removeTitle = "Restart Production";
+    icon = Icon(Icons.pan_tool_rounded, color: Colors.red);
+    _commentPlaceHolder = "Comment";
+
+    _showDialog(context, ticket);
   }
 }

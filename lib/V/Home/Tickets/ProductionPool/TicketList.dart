@@ -10,7 +10,6 @@ import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Home/Tickets/ProductionPool/Finish/FinishCheckList.dart';
-import 'package:smartwind/V/Widgets/CustomToolTip.dart';
 import 'package:smartwind/V/Widgets/FlagDialog.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 
@@ -245,7 +244,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                           getListItem("Rush", Icons.flash_on_rounded, "isrush"),
                           getListItem("GR",
                               CircleAvatar(radius: 12, backgroundColor: Colors.grey, child: Center(child: Text("GR", style: TextStyle(color: Colors.white, fontSize: 8)))), "isgr"),
-                          getListItem("Short", Icons.local_mall_rounded, "sort"),
+                          getListItem("Short", Icons.local_mall_rounded, "short"),
                           getListItem("Error Route", Icons.warning_rounded, "errOut"),
                           getListItem("Print", Icons.print_rounded, "inprint"),
                         ],
@@ -268,41 +267,40 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     return _tabBarController == null
         ? Container()
         : DefaultTabController(
-      length: tabs.length,
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          toolbarHeight: 10,
-          automaticallyImplyLeading: false,
-          backgroundColor: themeColor,
-          elevation: 4.0,
-          bottom: TabBar(
-            controller: _tabBarController,
-            indicatorWeight: 4.0,
-            indicatorColor: Colors.white,
-            isScrollable: true,
-            tabs: [
-              for (final tab in tabs) Tab(text: tab),
-            ],
-          ),
-        ),
-        body: _showAllTickets
-            ? TabBarView(controller: _tabBarController, children: [
-          getTicketListByCategory(AllFilesList),
-          getTicketListByCategory(UpwindFilesList),
-          getTicketListByCategory(ODFilesList),
-          getTicketListByCategory(NylonFilesList),
-          getTicketListByCategory(OEMFilesList),
-          getTicketListByCategory(NoPoolFilesList),
-        ])
-            : TabBarView(controller: _tabBarController, children: [
-          getTicketListByCategory(AllFilesList),
-          getTicketListByCategory(CrossProductionFilesList),
-        ]),
-      ),
-    );
+            length: tabs.length,
+            child: Scaffold(
+              backgroundColor: Colors.white,
+              appBar: AppBar(
+                toolbarHeight: 10,
+                automaticallyImplyLeading: false,
+                backgroundColor: themeColor,
+                elevation: 4.0,
+                bottom: TabBar(
+                  controller: _tabBarController,
+                  indicatorWeight: 4.0,
+                  indicatorColor: Colors.white,
+                  isScrollable: true,
+                  tabs: [
+                    for (final tab in tabs) Tab(text: tab),
+                  ],
+                ),
+              ),
+              body: _showAllTickets
+                  ? TabBarView(controller: _tabBarController, children: [
+                      getTicketListByCategory(AllFilesList),
+                      getTicketListByCategory(UpwindFilesList),
+                      getTicketListByCategory(ODFilesList),
+                      getTicketListByCategory(NylonFilesList),
+                      getTicketListByCategory(OEMFilesList),
+                      getTicketListByCategory(NoPoolFilesList),
+                    ])
+                  : TabBarView(controller: _tabBarController, children: [
+                      getTicketListByCategory(AllFilesList),
+                      getTicketListByCategory(CrossProductionFilesList),
+                    ]),
+            ),
+          );
   }
-
 
   getTicketListByCategory(List<Map<String, dynamic>> filesList) {
     return Column(
@@ -421,22 +419,8 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
         });
   }
 
-  // reloadData(int page, {bool reset = false}) {
-  //   print('Reload Data');
-  //   // if (page == 0 || reset) {
-  //   //   _refreshIndicatorKey.currentState?.show();
-  //   //   _cprList = [];
-  //   //   dataCount = 0;
-  //   //   return;
-  //   // }
-  //   // _reloadData(page);
-  // }
-
   List<Map<String, dynamic>> AllFilesList = [];
-
-  // List<Map<String, dynamic>> FinishedFilesList = [];
   List<Map<String, dynamic>> CrossProductionFilesList = [];
-
   List<Map<String, dynamic>> UpwindFilesList = [];
   List<Map<String, dynamic>> ODFilesList = [];
   List<Map<String, dynamic>> NylonFilesList = [];
@@ -447,8 +431,6 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     _selectedTabIndex = _tabBarController!.index;
     print('loadData listSortBy $listSortBy');
 
-    // String canOpen = _showAllTickets ? " " : " and canOpen=1  and openSections like '%#1#%' ";
-
     NsUser? nsUser = await App.getCurrentUser();
     var section = nsUser!.section!.id;
     String canOpen = _showAllTickets ? "  file=1 and completed=0" : " canOpen=1   and file=1   and completed=0 ";
@@ -458,14 +440,6 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     }
 
     print('current user $section');
-
-    AllFilesList =
-    await database.rawQuery("SELECT * FROM tickets where  $searchQ   " + canOpen + " and openSections like '%|" + section.toString() + "|%'  order by $listSortBy DESC");
-
-    // FinishedFilesList = await database.rawQuery('SELECT * FROM tickets where  $searchQ   ' + canOpen + "   and openSections like '%|$section|f%' order by $listSortBy DESC");
-
-    CrossProductionFilesList =
-    await database.rawQuery('SELECT * FROM tickets where  $searchQ   ' + canOpen + " and openSections like '%|$section|%' and crossPro=1 order by $listSortBy DESC");
 
     if (_showAllTickets) {
       AllFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + '   order by $listSortBy DESC');
@@ -479,9 +453,15 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
       OEMFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OEM\' order by $listSortBy DESC');
 
       NoPoolFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production is null or production=""  order by $listSortBy DESC');
-    }
+      listsArray = [AllFilesList, UpwindFilesList, ODFilesList, NylonFilesList, OEMFilesList, NoPoolFilesList];
+    } else {
+      AllFilesList =
+          await database.rawQuery("SELECT * FROM tickets where  $searchQ   " + canOpen + " and openSections like '%|" + section.toString() + "|%'  order by $listSortBy DESC");
+      CrossProductionFilesList =
+          await database.rawQuery('SELECT * FROM tickets where  $searchQ   ' + canOpen + " and openSections like '%|$section|%' and crossPro=1 order by $listSortBy DESC");
 
-    listsArray = [AllFilesList, UpwindFilesList, ODFilesList, NylonFilesList, OEMFilesList, NoPoolFilesList];
+      listsArray = [AllFilesList, CrossProductionFilesList];
+    }
     currentFileList = listsArray[_selectedTabIndex];
     print(currentFileList.length);
   }
@@ -505,107 +485,113 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
               Divider(),
               Expanded(
                   child: Container(
-                    child: SingleChildScrollView(
-                        child: Column(children: [
-                          
-                          ListTile(
-                            title: Text(ticket.isRed == 1 ? "Remove Red Flag" : "Set Red Flag"),
-                            leading: Icon(Icons.flag),
-                            onTap: () async {
-                              Navigator.of(context).pop();
-                              bool resul = await FlagDialog.showRedFlagDialog(context1, ticket);
-                              ticket.isRed = resul ? 1 : 0;
-                            },
-                          ),
-                          ListTile(
-                              onTap: () async {
-                                Navigator.of(context).pop();
-                                await FlagDialog.showGRDialog(context1, ticket);
-                              },
-                              title: Text(ticket.isGr == 1 ? "Remove GR" : "Set GR"),
-                              leading: SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))))),
-                          // ListTile(
-                          //     onTap: () async {
-                          //       Navigator.of(context).pop();
-                          //       await FlagDialog.showSKDialog(context1, ticket);
-                          //     },
-                          //     title: Text(ticket.isSk == 1 ? "Remove SK" : "Set SK"),
-                          //     leading: SizedBox(
-                          //         width: 24, height: 24, child: CircleAvatar(backgroundColor: Colors.pink, child: Center(child: Text("SK", style: TextStyle(color: Colors.white)))))),
-                          ListTile(
-                              title: Text(ticket.isRush == 1 ? "Remove Rush" : "Set Rush"),
-                              leading: Icon(Icons.offline_bolt_outlined, color: Colors.orangeAccent),
-                              onTap: () async {
-                                Navigator.of(context).pop();
-                                // await FlagDialog.showRushDialog(context1, ticket);
-                                var u = ticket.isRush == 1 ? "removeFlag" : "setFlag";
-                                OnlineDB.apiPost("tickets/flags/" + u, {"ticket": ticket.id.toString(), "comment": "", "type": "rush"}).then((response) async {});
-                              }),
-                          ListTile(
-                              title: Text(ticket.inPrint == 1 ? "Cancel Printing" : "Send To Print"),
-                              leading: Icon(ticket.inPrint == 1 ? Icons.print_disabled_outlined : Icons.print_outlined, color: Colors.deepOrangeAccent),
-                              onTap: () async {
-                                Navigator.of(context).pop();
-                                await sendToPrint(ticket);
-                              }),
-                          ListTile(
-                              title: Text("Finish"),
-                              leading: Icon(Icons.check_circle_outline_outlined, color: Colors.green),
-                              onTap: () async {
-                                Navigator.of(context).pop();
-                                await showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return FinishCheckList(ticket);
-                                    });
-                                // await Navigator.push(context1, MaterialPageRoute(builder: (context) => FinishCheckList(ticket)));
-                              }),
-                          ListTile(
-                              title: Text("Cross Production"),
-                              leading: Icon(Icons.merge_type_outlined, color: Colors.green),
-                              onTap: () async {
-                                await Navigator.push(context1, MaterialPageRoute(builder: (context) => CrossProduction(ticket)));
-                                Navigator.of(context).pop();
-                              }),
-                          ListTile(
-                              title: Text("Share Work Ticket"),
-                              leading: Icon(Icons.share_rounded, color: Colors.lightBlue),
-                              onTap: () async {
-                                await ticket.sharePdf(context);
-                                Navigator.of(context).pop();
-                              }),
-                          ListTile(
-                              title: Text("Add CPR"),
-                              leading: Icon(Icons.local_mall_rounded, color: Colors.amber),
-                              onTap: () async {
-                                await ticket.addCPR(context);
-                                Navigator.of(context).pop();
-                              }),
-                          ListTile(
-                              title: Text("Shipping"),
-                              leading: Icon(Icons.directions_boat_rounded, color: Colors.brown),
-                              onTap: () async {
-                                await ticket.addCPR(context);
-                                Navigator.of(context).pop();
-                              }),
-                          ListTile(
-                              title: Text("CS"),
-                              leading: Icon(Icons.pivot_table_chart_rounded, color: Colors.green),
-                              onTap: () async {
-                                await ticket.addCPR(context);
-                                Navigator.of(context).pop();
-                              }),
-                          ListTile(
-                              title: Text("Delete"),
-                              leading: Icon(Icons.delete_forever, color: Colors.red),
-                              onTap: () async {
-                                Navigator.of(context).pop();
-                              }),
-                        ])),
-                  ))
+                child: SingleChildScrollView(
+                    child: Column(children: [
+                  ListTile(
+                    title: Text(ticket.isRed == 1 ? "Remove Red Flag" : "Set Red Flag"),
+                    leading: Icon(Icons.flag),
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                      bool resul = await FlagDialog.showRedFlagDialog(context1, ticket);
+                      ticket.isRed = resul ? 1 : 0;
+                    },
+                  ),
+                  ListTile(
+                    title: Text(ticket.isHold == 1 ? "Restart Production" : "Stop Production"),
+                    leading: Icon(Icons.pan_tool_rounded, color: Colors.red),
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                      bool resul = await FlagDialog.showStopProductionFlagDialog(context1, ticket);
+                      ticket.isHold = resul ? 1 : 0;
+                    },
+                  ),
+                  ListTile(
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                        await FlagDialog.showGRDialog(context1, ticket);
+                      },
+                      title: Text(ticket.isGr == 1 ? "Remove GR" : "Set GR"),
+                      leading: SizedBox(
+                          width: 24, height: 24, child: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))))),
+                  // ListTile(
+                  //     onTap: () async {
+                  //       Navigator.of(context).pop();
+                  //       await FlagDialog.showSKDialog(context1, ticket);
+                  //     },
+                  //     title: Text(ticket.isSk == 1 ? "Remove SK" : "Set SK"),
+                  //     leading: SizedBox(
+                  //         width: 24, height: 24, child: CircleAvatar(backgroundColor: Colors.pink, child: Center(child: Text("SK", style: TextStyle(color: Colors.white)))))),
+                  ListTile(
+                      title: Text(ticket.isRush == 1 ? "Remove Rush" : "Set Rush"),
+                      leading: Icon(Icons.offline_bolt_outlined, color: Colors.orangeAccent),
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                        // await FlagDialog.showRushDialog(context1, ticket);
+                        var u = ticket.isRush == 1 ? "removeFlag" : "setFlag";
+                        OnlineDB.apiPost("tickets/flags/" + u, {"ticket": ticket.id.toString(), "comment": "", "type": "rush"}).then((response) async {});
+                      }),
+                  ListTile(
+                      title: Text(ticket.inPrint == 1 ? "Cancel Printing" : "Send To Print"),
+                      leading: Icon(ticket.inPrint == 1 ? Icons.print_disabled_outlined : Icons.print_outlined, color: Colors.deepOrangeAccent),
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                        await sendToPrint(ticket);
+                      }),
+                  ListTile(
+                      title: Text("Finish"),
+                      leading: Icon(Icons.check_circle_outline_outlined, color: Colors.green),
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                        await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return FinishCheckList(ticket);
+                            });
+                        // await Navigator.push(context1, MaterialPageRoute(builder: (context) => FinishCheckList(ticket)));
+                      }),
+                  ListTile(
+                      title: Text("Cross Production"),
+                      leading: Icon(Icons.merge_type_outlined, color: Colors.green),
+                      onTap: () async {
+                        await Navigator.push(context1, MaterialPageRoute(builder: (context) => CrossProduction(ticket)));
+                        Navigator.of(context).pop();
+                      }),
+                  ListTile(
+                      title: Text("Share Work Ticket"),
+                      leading: Icon(Icons.share_rounded, color: Colors.lightBlue),
+                      onTap: () async {
+                        await ticket.sharePdf(context);
+                        Navigator.of(context).pop();
+                      }),
+                  ListTile(
+                      title: Text("Add CPR"),
+                      leading: Icon(Icons.local_mall_rounded, color: Colors.amber),
+                      onTap: () async {
+                        await ticket.addCPR(context);
+                        Navigator.of(context).pop();
+                      }),
+                  ListTile(
+                      title: Text("Shipping"),
+                      leading: Icon(Icons.directions_boat_rounded, color: Colors.brown),
+                      onTap: () async {
+                        await ticket.addCPR(context);
+                        Navigator.of(context).pop();
+                      }),
+                  ListTile(
+                      title: Text("CS"),
+                      leading: Icon(Icons.pivot_table_chart_rounded, color: Colors.green),
+                      onTap: () async {
+                        await ticket.addCPR(context);
+                        Navigator.of(context).pop();
+                      }),
+                  ListTile(
+                      title: Text("Delete"),
+                      leading: Icon(Icons.delete_forever, color: Colors.red),
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                      }),
+                ])),
+              ))
             ],
           ),
         );
@@ -659,7 +645,9 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
 
   tabListener() {
     print("Selected Index: " + _tabBarController!.index.toString());
-    if(currentFileList == listsArray[_tabBarController!.index]){return;}
+    if (currentFileList == listsArray[_tabBarController!.index]) {
+      return;
+    }
     currentFileList = listsArray[_tabBarController!.index];
     setState(() {
       print('${currentFileList.length}');
@@ -667,7 +655,6 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
   }
 
   void updateTabControler() {
-
     _tabBarController!.addListener(tabListener);
   }
 }
@@ -708,9 +695,7 @@ class TicketTile extends StatelessWidget {
         child: ListTile(
           leading: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[Text("${index + 1}", style: TextStyle(fontWeight: FontWeight.bold))]),
           title: Text(
-            (ticket.mo ?? "")
-                .trim()
-                .isEmpty ? (ticket.oe ?? "") : ticket.mo ?? "",
+            (ticket.mo ?? "").trim().isEmpty ? (ticket.oe ?? "") : ticket.mo ?? "",
             style: TextStyle(
               fontWeight: FontWeight.bold,
             ),
@@ -718,10 +703,9 @@ class TicketTile extends StatelessWidget {
           subtitle: Wrap(
             direction: Axis.vertical,
             children: [
-              if ((ticket.mo ?? "")
-                  .trim()
-                  .isNotEmpty) Text((ticket.oe ?? "")),
-              if (ticket.crossPro == 1) Chip(avatar: CircleAvatar(child: Icon(Icons.merge_type_outlined)), label: Text(ticket.crossProList)), Text(ticket.getUpdateDateTime())
+              if ((ticket.mo ?? "").trim().isNotEmpty) Text((ticket.oe ?? "")),
+              if (ticket.crossPro == 1) Chip(avatar: CircleAvatar(child: Icon(Icons.merge_type_outlined)), label: Text(ticket.crossProList)),
+              Text(ticket.getUpdateDateTime())
               // Wrap(
               //   children: [
               //     Text(ticket.getUpdateDateTime()),
@@ -741,12 +725,16 @@ class TicketTile extends StatelessWidget {
               if (ticket.isHold == 1)
                 IconButton(
                   icon: CircleAvatar(child: Icon(Icons.pan_tool_rounded, color: Colors.black), backgroundColor: Colors.white),
-                  onPressed: () {},
+                  onPressed: () {
+                    FlagDialog.showFlagView(context, ticket, TicketFlagTypes.HOLD);
+                  },
                 ),
               if (ticket.isGr == 1)
                 IconButton(
                   icon: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))),
-                  onPressed: () {FlagDialog.showFlagView(context, ticket,TicketFlagTypes.GR);},
+                  onPressed: () {
+                    FlagDialog.showFlagView(context, ticket, TicketFlagTypes.GR);
+                  },
                 ),
               if (ticket.isSk == 1)
                 IconButton(
@@ -756,22 +744,21 @@ class TicketTile extends StatelessWidget {
               if (ticket.isError == 1)
                 IconButton(
                   icon: CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white),
-                  onPressed: () {},
+                  onPressed: () {}
                 ),
-              if (ticket.isSort == 1)
-                IconButton(
-                  icon: CircleAvatar(child: Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white),
-                  onPressed: () {},
-                ),
+              if (ticket.isSort == 1) IconButton(icon: CircleAvatar(child: Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white), onPressed: () {}),
               if (ticket.isRush == 1)
                 IconButton(
-                  icon: CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white),
-                  onPressed: () {},
-                ),
+                    icon: CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white),
+                    onPressed: () {
+                      FlagDialog.showFlagView(context, ticket, TicketFlagTypes.RUSH);
+                    }),
               if (ticket.isRed == 1)
                 IconButton(
                   icon: CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white),
-                  onPressed: () { FlagDialog.showFlagView(context, ticket,TicketFlagTypes.RED); },
+                  onPressed: () {
+                    FlagDialog.showFlagView(context, ticket, TicketFlagTypes.RED);
+                  },
                 ),
               Padding(
                 padding: const EdgeInsets.only(top: 4),
