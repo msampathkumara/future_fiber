@@ -4,6 +4,7 @@ import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/TicketFlag.dart';
+import 'package:smartwind/ns_icons_icons.dart';
 
 import 'UserButton.dart';
 
@@ -154,7 +155,8 @@ class FlagDialog {
     flagType = TicketFlagTypes.GR;
     addTitle = "Set GR";
     removeTitle = "Remove GR";
-    icon = CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white))));
+    icon = Icon(NsIcons.gr, color: Colors.blue);
+    // icon = CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white))));
     _commentPlaceHolder = "GR Comment";
 
     _showDialog(context, ticket);
@@ -313,7 +315,8 @@ class FlagDialog {
         break;
       case TicketFlagTypes.GR:
         titleText = "Graphics";
-        titleIcon = CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white))));
+        // titleIcon = CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white))));
+        titleIcon = Icon(NsIcons.gr);
         break;
 
       case TicketFlagTypes.RUSH:
@@ -322,7 +325,8 @@ class FlagDialog {
         break;
       case TicketFlagTypes.SK:
         titleText = "SK";
-        titleIcon = CircleAvatar(backgroundColor: Colors.pink, child: Center(child: Text("SK", style: TextStyle(color: Colors.white))));
+        // titleIcon = CircleAvatar(backgroundColor: Colors.pink, child: Center(child: Text("SK", style: TextStyle(color: Colors.white))));
+        titleIcon = Icon(NsIcons.sk);
         break;
     }
 

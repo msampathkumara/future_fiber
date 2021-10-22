@@ -19,7 +19,7 @@ class _info_PrintingState extends State<info_Printing> {
   @override
   void initState() {}
 
-  Map<String, String> titles = {"red": "Red Flag", "rush": "Rush", "gr": "GR"};
+  Map<String, String> titles = {"red": "Red Flag", "rush": "Rush", "gr": "Graphics"};
 
   @override
   Widget build(BuildContext context) {

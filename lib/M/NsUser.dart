@@ -38,6 +38,8 @@ class NsUser {
   @JsonKey(defaultValue: [], includeIfNull: true)
   List<Section> sections = [];
 
+  // List<Section> _sections = [];
+
   @JsonKey(defaultValue: null, includeIfNull: true)
   Section? section;
 
@@ -45,9 +47,7 @@ class NsUser {
   int? hasNfc;
 
   NsUser() {
-    DB.getDB().then((value) => value!.rawQuery(" select * from userSections us left join factorySections fs on fs.id=us.sectionId where userid='$id'  ").then((s) {
-          sections = List<Section>.from(s.map((model) => Section.fromJson(model)));
-        }));
+    loadSections();
   }
 
   factory NsUser.fromJson(Map<String, dynamic> json) => _$NsUserFromJson(json);
@@ -118,8 +118,6 @@ class NsUser {
     return AssetImage('assets/images/user.png');
   }
 
-
-
   getUserImage() {
     var img = NetworkImage(Server.getServerApiPath("users/getImage?img=" + this.img + "&size=500"), headers: {"authorization": '${AppUser.getIdToken()}'});
 
@@ -142,5 +140,12 @@ class NsUser {
             return null;
           }
         }));
+  }
+
+  Future<List>   loadSections() async {
+    var db = await DB.getDB();
+    var s = await db!.rawQuery(" select * from userSections us left join factorySections fs on fs.id=us.sectionId where userid='$id'  ");
+    sections = List<Section>.from(s.map((model) => Section.fromJson(model)));
+    return sections;
   }
 }

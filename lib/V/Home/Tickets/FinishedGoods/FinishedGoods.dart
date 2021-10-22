@@ -6,6 +6,7 @@ import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Home/Tickets/TicketInfo/TicketInfo.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
+import 'package:smartwind/ns_icons_icons.dart';
 
 class FinishedGoods extends StatefulWidget {
   FinishedGoods({Key? key}) : super(key: key);
@@ -180,32 +181,8 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                           getListItem("Red Flag", Icons.tour_rounded, "isred"),
                           getListItem("Hold", Icons.pan_tool_rounded, "ishold"),
                           getListItem("Rush", Icons.flash_on_rounded, "isrush"),
-                          getListItem(
-                              "SK",
-                              CircleAvatar(
-                                radius: 12,
-                                backgroundColor: Colors.grey,
-                                child: Center(
-                                  child: Text(
-                                    "SK",
-                                    style: TextStyle(color: Colors.white, fontSize: 8),
-                                  ),
-                                ),
-                              ),
-                              "issk"),
-                          getListItem(
-                              "GR",
-                              CircleAvatar(
-                                radius: 12,
-                                backgroundColor: Colors.grey,
-                                child: Center(
-                                  child: Text(
-                                    "GR",
-                                    style: TextStyle(color: Colors.white, fontSize: 8),
-                                  ),
-                                ),
-                              ),
-                              "isgr"),
+                          getListItem("SK", NsIcons.sk, "issk"),
+                          getListItem("SK", NsIcons.gr, "isgr"),
                           getListItem("Short", Icons.local_mall_rounded, "sort"),
                           getListItem("Error Route", Icons.warning_rounded, "errOut"),
                           getListItem("Print", Icons.print_rounded, "inprint"),
@@ -370,12 +347,12 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                               ),
                             if (ticket.isGr == 1)
                               IconButton(
-                                icon: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))),
+                                icon: CircleAvatar(child: Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white),
                                 onPressed: () {},
                               ),
                             if (ticket.isSk == 1)
                               IconButton(
-                                icon: CircleAvatar(backgroundColor: Colors.pink, child: Center(child: Text("SK", style: TextStyle(color: Colors.white)))),
+                                icon: CircleAvatar(child: Icon(NsIcons.sk, color: Colors.pink), backgroundColor: Colors.white),
                                 onPressed: () {},
                               ),
                             if (ticket.isError == 1)

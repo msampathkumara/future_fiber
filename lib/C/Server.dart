@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 class Server {
-  static bool local = false;
+  static bool local = true;
 
   static String getServerAddress({onlineServer = false}) {
     // if (onlineServer) {

@@ -11,8 +11,9 @@ class UserButton extends StatefulWidget {
   double? imageRadius;
   Function(NsUser)? onUserLoad;
   Axis? direction;
+  bool hideName;
 
-  UserButton({this.nsUser, this.nsUserId, this.imageRadius, this.onUserLoad, this.direction});
+  UserButton({this.nsUser, this.nsUserId, this.imageRadius, this.onUserLoad, this.direction, this.hideName = false});
 
   @override
   _UserButtonState createState() => _UserButtonState();
@@ -26,9 +27,7 @@ class _UserButtonState extends State<UserButton> {
       nsUser = value;
     }).whenComplete(() {
       _loading = false;
-      setState(() {
-
-      });
+      setState(() {});
     });
   }
 
@@ -36,53 +35,26 @@ class _UserButtonState extends State<UserButton> {
 
   @override
   Widget build(BuildContext context) {
-    return _loading ? Center(child: CircularProgressIndicator()) : nsUser == null ? Text("user not found") : GestureDetector(
-      onTap: () {
-        UserDetails.show(context, nsUser);
-      },
-      child: Wrap(children: [
-        UserImage(nsUser: nsUser, radius: widget.imageRadius ?? 16),
-        Padding(
-            padding: const EdgeInsets.only(left: 8.0, top: 4),
-            child: Wrap(
-              direction: Axis.vertical,
-              children: [
-                Text(nsUser!.name),
-                Text("#${nsUser!.uname}", style: TextStyle(color: Colors.blue)),
-              ],
-            ))
-      ], direction: widget.direction ?? Axis.horizontal),
-    );
+    return _loading
+        ? Center(child: CircularProgressIndicator())
+        : nsUser == null
+            ? Text("user not found")
+            : GestureDetector(
+                onTap: () {
+                  UserDetails.show(context, nsUser);
+                },
+                child: Wrap(children: [
+                  UserImage(nsUser: nsUser, radius: widget.imageRadius ?? 16),
+                  if (!widget.hideName)
+                    Padding(
+                        padding: const EdgeInsets.only(left: 8.0, top: 4),
+                        child: Wrap(
+                          direction: Axis.vertical,
+                          children: [Text(nsUser!.name), Text("#${nsUser!.uname}", style: TextStyle(color: Colors.blue))],
+                        ))
+                ], direction: widget.direction ?? Axis.horizontal),
+              );
 
-
-    // FutureBuilder(
-    //     future: _loadUser(),
-    //     builder: (context, AsyncSnapshot snapshot) {
-    //       if (!snapshot.hasData) {
-    //         return Center(child: CircularProgressIndicator());
-    //       } else {
-    //         if (snapshot.data == null) {
-    //           return Text("user not found");
-    //         }
-    //         return GestureDetector(
-    //           onTap: () {
-    //             UserDetails.show(context, nsUser);
-    //           },
-    //           child: Wrap(children: [
-    //             UserImage(nsUser: nsUser, radius: widget.imageRadius ?? 16),
-    //             Padding(
-    //                 padding: const EdgeInsets.only(left: 8.0, top: 4),
-    //                 child: Wrap(
-    //                   direction: Axis.vertical,
-    //                   children: [
-    //                     Text(nsUser!.name),
-    //                     Text("#${nsUser!.uname}", style: TextStyle(color: Colors.blue)),
-    //                   ],
-    //                 ))
-    //           ], direction: widget.direction ?? Axis.horizontal),
-    //         );
-    //       }
-    //     });
   }
 
   var nsUser;

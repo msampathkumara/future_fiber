@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/OnlineDB.dart';
@@ -26,6 +27,7 @@ class RF extends StatefulWidget {
 }
 
 class _RFState extends State<RF> with SingleTickerProviderStateMixin {
+  final DatabaseReference db = FirebaseDatabase().reference();
   final tabs = ["Ticket", "Progress"];
   TabController? _tabBarcontroller;
   Map? checkListMap;
@@ -80,7 +82,22 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
       );
       setState(() {});
     });
+    print('cxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+
+    db.child("settings").once().then((DataSnapshot result) {
+
+      erpNotWorking = result.value["erpNotWorking"] == 0;
+    });
+    db.child("settings").onChildChanged.listen((Event event) {
+      db.child("settings").once().then((DataSnapshot result) {
+        erpNotWorking = result.value["erpNotWorking"] == 0;
+        print('------------ ${erpNotWorking}');
+        setState(() {  });
+      });
+    });
   }
+
+  var erpNotWorking = false;
 
   @override
   void dispose() {
@@ -103,7 +120,7 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
               icon: Icon(Icons.check_circle_outline_outlined),
               label: Text("Finish"),
               onPressed: () async {
-                var r = await OnlineDB.apiGet("tickets/finish", {'ticket': ticket.id.toString(), 'doAt': operationMinMax.doAt.toString()});
+                var r = await OnlineDB.apiGet("tickets/finish", {'erpDone':erpNotWorking?0:1,'ticket': ticket.id.toString(), 'doAt': operationMinMax.doAt.toString()});
                 print(json.decode(r.data));
                 // ServerResponceMap res1 = ServerResponceMap.fromJson(json.decode(r.body));
                 Navigator.pop(context, true);
@@ -175,7 +192,7 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
                         ]))),
               ),
               Divider(),
-              if (_webView != null)
+              if (_webView != null && (erpNotWorking))
                 Expanded(
                   child: _webView!,
                 ),

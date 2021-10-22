@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/TicketFlag.dart';
 import 'package:smartwind/V/Widgets/UserButton.dart';
+import 'package:smartwind/ns_icons_icons.dart';
 
 class info_Flags extends StatefulWidget {
   List<TicketFlag> ticketFlag;
@@ -23,9 +24,9 @@ class _info_FlagsState extends State<info_Flags> {
   Map<String, dynamic> titles = {
     "red": {"title": "Red Flag", "icon": CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white), "expanded": false},
     "rush": {"title": "Rush", "icon": CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white), "expanded": false},
-    "hold": {"title": "Hold", "icon": CircleAvatar(child: Icon(Icons.pan_tool_rounded, color: Colors.black), backgroundColor: Colors.white), "expanded": false},
-    "gr": {"title": "GR", "icon": null, "expanded": false},
-    "sk": {"title": "SK", "icon": null, "expanded": false},
+    "hold": {"title": "Stop Production", "icon": CircleAvatar(child: Icon(Icons.pan_tool_rounded, color: Colors.black), backgroundColor: Colors.white), "expanded": false},
+    "gr": {"title": "Graphics", "icon": CircleAvatar(child: Icon(NsIcons.gr , color: Colors.red), backgroundColor: Colors.white), "expanded": false},
+    "sk": {"title": "SK", "icon": CircleAvatar(child: Icon(NsIcons.sk, color: Colors.red), backgroundColor: Colors.white), "expanded": false},
   };
 
   @override

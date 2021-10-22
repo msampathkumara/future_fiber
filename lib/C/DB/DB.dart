@@ -182,6 +182,7 @@ class DB {
     await db!.transaction((txn) async {
       Batch batch = txn.batch();
       tickets.forEach((ticket) {
+
         insertFlags(ticket["flags"] ?? [], batch);
         ticket.remove("flags");
         // print(ticket);

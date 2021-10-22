@@ -167,10 +167,10 @@ public class MainEditorActivity extends AppCompatActivity {
 
                         @Override
                         public void run(File sourceFile) {
-//                            Intent data = new Intent();
-//                            data.putExtra("edited", true);
-//                            setResult(Activity.RESULT_OK, data);
-//                            finish();
+                            Intent data = new Intent();
+                            data.putExtra("edited", true);
+                            setResult(Activity.RESULT_OK, data);
+                            finish();
 
                         }
 

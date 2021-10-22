@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/C/ServerResponce/Progress.dart';
@@ -12,6 +12,7 @@ import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/TicketFlag.dart';
 import 'package:smartwind/V/Home/Tickets/TicketInfo/info_Printing.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
+import 'package:smartwind/ns_icons_icons.dart';
 
 import 'info_Flags.dart';
 import 'info_History.dart';
@@ -116,6 +117,8 @@ class _TicketInfoState extends State<TicketInfo> {
     double height = MediaQuery.of(context).size.height;
     var ts = TextStyle(color: Colors.white, fontSize: 24);
     var smallText = TextStyle(fontSize: 16);
+
+
     return AppBar(
       backgroundColor: Colors.orange,
       elevation: 10,
@@ -149,6 +152,10 @@ class _TicketInfoState extends State<TicketInfo> {
                         "update on : " + (_ticket.getUpdateDateTime()),
                         style: ts.merge(smallText),
                       ),
+                      Text(
+                        "Ship Date : ${_ticket.getShipDate()}",
+                        style: ts.merge(smallText),
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(top: 8),
                         child: Container(
@@ -166,12 +173,12 @@ class _TicketInfoState extends State<TicketInfo> {
                                 ),
                               if (_ticket.isGr == 1)
                                 IconButton(
-                                  icon: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))),
+                                  icon: CircleAvatar(child: Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white),
                                   onPressed: () {},
                                 ),
                               if (_ticket.isSk == 1)
                                 IconButton(
-                                  icon: CircleAvatar(backgroundColor: Colors.pink, child: Center(child: Text("SK", style: TextStyle(color: Colors.white)))),
+                                  icon: CircleAvatar(child: Icon(NsIcons.sk, color: Colors.pink), backgroundColor: Colors.white),
                                   onPressed: () {},
                                 ),
                               if (_ticket.isError == 1)

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -78,6 +77,10 @@ class Ticket extends DataObject {
   @JsonKey(defaultValue: "", includeIfNull: true)
   String openSections = "";
 
+  @JsonKey(defaultValue: 0, includeIfNull: true)
+  int shipDate = 0;
+  String _shipDate = "";
+
   String? production;
 
   @JsonKey(ignore: true)
@@ -97,6 +100,18 @@ class Ticket extends DataObject {
     var date = DateTime.fromMicrosecondsSinceEpoch(uptime * 1000);
     var formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(date);
     return formattedDate;
+  }
+
+  String getShipDate() {
+    if (shipDate == 0) {
+      return "";
+    }
+    if (_shipDate != "") {
+      return _shipDate;
+    }
+    var date = DateTime.fromMicrosecondsSinceEpoch(shipDate * 1000);
+    _shipDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(date).split(" ")[0];
+    return _shipDate;
   }
 
   Future<int> getLocalFileVersion() {
@@ -221,19 +236,17 @@ class Ticket extends DataObject {
 
   Future openEditor() async {
     var t = Ticket.fromJson(toJson()).toJson();
+    t["openSections"] = "";
+    t["crossProList"] = "";
     t.keys.where((k) => (t[k] ?? "").toString().isEmpty).toList().forEach(t.remove);
     print("____________________________________________________________________________________________________________________________*****");
     print(t);
-
     return await platform.invokeMethod('editPdf', {'path': ticketFile!.path, 'fileID': id, 'ticket': t.toString()});
   }
 
   static const platform = const MethodChannel('editPdf');
 
   isFileNew() async {
-    // print('fffff=' + fileVersion.toString());
-    // print('fffff=' + (await getLocalFileVersion()).toString());
-    // print("SELECT * FROM tickets t left join  files f on f.ticket=t.id    where t.id=$id and f.ver=t.fileVersion ");
     return DB.getDB().then((db) {
       return db!.rawQuery("SELECT * FROM tickets t left join  files f on f.ticket=t.id    where t.id=$id and type='ticket' and  fileVersion > ver ").then((value) {
         print(value);
@@ -257,7 +270,7 @@ class Ticket extends DataObject {
     return OnlineDB.apiGet("tickets/flags/getList", {"ticket": id.toString(), "type": flagType}).then((response) {
       print(response.data);
       print("-----------------vvvvvvvvvvv-----------------------");
-      Map<String, dynamic> res =  response.data ;
+      Map<String, dynamic> res = response.data;
       List l = ((res["flags"] ?? []));
 
       List<TicketFlag> list = List<TicketFlag>.from(l.map((model) {

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/ServerResponce/TicketHistory.dart';
-import 'package:smartwind/V/Widgets/UserImage.dart';
+import 'package:smartwind/V/Widgets/UserButton.dart';
 
 class InfoHistory extends StatefulWidget {
   List<TicketHistory> ticketHistoryList;
@@ -18,7 +18,7 @@ class _InfoHistoryState extends State<InfoHistory> {
   @override
   void initState() {}
 
-  Map<String, String> titles = {"red": "Red Flag", "rush": "Rush", "gr": "GR"};
+  Map<String, String> titles = {"red": "Red Flag", "rush": "Rush", "gr": "Graphics"};
 
   @override
   Widget build(BuildContext context) {
@@ -35,14 +35,14 @@ class _InfoHistoryState extends State<InfoHistory> {
             title: Container(
               decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.grey[100]),
               child: ListTile(
-                title: Row(
-                  children: [
-                    Expanded(flex: 3, child: Text((ticketHistory.action ?? "").toLowerCase().replaceUnderscore.capitalizeFirstofEach )),
-                    Expanded(flex: 3, child: Text(ticketHistory.uptime ?? "", style: TextStyle())),
-                  ],
-                ),
-                trailing: UserImage(nsUserId: ticketHistory.doneBy, radius: 24),
-              ),
+                  title: Row(
+                    children: [
+                      Expanded(flex: 3, child: Text((ticketHistory.action ?? "").toLowerCase().replaceUnderscore.capitalizeFirstofEach)),
+                      Expanded(flex: 3, child: Text(ticketHistory.uptime ?? "", style: TextStyle())),
+                    ],
+                  ),
+                  // trailing: UserImage(nsUserId: ticketHistory.doneBy, radius: 24),
+                  trailing: SizedBox(width: 30, child: UserButton(nsUserId: ticketHistory.doneBy, imageRadius: 16, hideName: true))),
             ),
           );
         },

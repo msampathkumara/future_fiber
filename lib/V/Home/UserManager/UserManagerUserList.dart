@@ -26,7 +26,6 @@ class UserManagerUserList extends StatefulWidget {
 class _UserManagerUserListState extends State<UserManagerUserList> with TickerProviderStateMixin {
   var database;
 
-
   var _themeColor = Colors.orange;
 
   late bool nfcIsAvailable;
@@ -57,10 +56,11 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
     reloadData().then((value) {
       if (_refreshIndicatorKey.currentState != null) _refreshIndicatorKey.currentState!.deactivate();
     });
-    _dbChangeCallBack=  DB.setOnDBChangeListener(() {
+    _dbChangeCallBack = DB.setOnDBChangeListener(() {
       reloadData();
-    },context,collection: DataTables.Users);
+    }, context, collection: DataTables.Users);
   }
+
   late DbChangeCallBack _dbChangeCallBack;
   late List listsArray;
 
@@ -72,7 +72,6 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         appBar: AppBar(
           actions: <Widget>[
@@ -302,27 +301,13 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
     );
   }
 
-
-
   Future<void> reloadData() {
-    return DB.getDB().then((value) => value!.rawQuery(" select * from users ").then((users) {
-          AllUsersList = List<NsUser>.from(users.map((model) => NsUser.fromJson(model)));
-          filterUsers();
-        }));
-
-    // var t = DateTime.now().millisecondsSinceEpoch;
-    // return OnlineDB.apiGet("users/getUsers", {"uptime": "0"}).then((response) {
-    //   Map res = (json.decode(response.body) as Map);
-    //   List users = (res["users"] ?? []);
-    //
-    //   users.forEach((user) {
-    //     print(user);
-    //     print("--------------------------------------");
-    //   });
-    //
-    //   AllUsersList = List<NsUser>.from(users.map((model) => NsUser.fromJson(model)));
-    //   filterUsers();
-    // });
+    return DB.updateDatabase(context).then((value) {
+      return DB.getDB().then((value) => value!.rawQuery(" select * from users ").then((users) {
+            AllUsersList = List<NsUser>.from(users.map((model) => NsUser.fromJson(model)));
+            filterUsers();
+          }));
+    });
   }
 
   void showAddNfcDialog(nsUser) {
@@ -347,7 +332,3 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
     setState(() {});
   }
 }
-
-
-
-

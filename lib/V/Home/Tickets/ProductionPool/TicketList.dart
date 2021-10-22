@@ -12,6 +12,7 @@ import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Home/Tickets/ProductionPool/Finish/FinishCheckList.dart';
 import 'package:smartwind/V/Widgets/FlagDialog.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
+import 'package:smartwind/ns_icons_icons.dart';
 
 import '../TicketInfo/TicketInfo.dart';
 import 'CrossProduction.dart';
@@ -30,6 +31,13 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
   late int _selectedTabIndex;
 
   late double __filterHeight;
+  bool _showFilters = false;
+  bool _showFiltersEnd = true;
+  String listSortBy = "shipDate";
+  String sortedBy = "Date";
+  String searchText = "";
+  var subscription;
+  bool _showAllTickets = false;
 
   @override
   initState() {
@@ -52,6 +60,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
   }
 
   TextEditingController searchController = new TextEditingController();
+  bool _barcodeResult = false;
 
   @override
   Widget build(BuildContext context) {
@@ -60,11 +69,8 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
         floatingActionButton: FloatingActionButton(
             onPressed: () async {
               String barcode = await FlutterBarcodeScanner.scanBarcode("#ff6666", "Cancel", false, ScanMode.DEFAULT);
-              if (barcode == '-1') {
-                print('nothing return.');
-              } else {
-                searchController.value = TextEditingValue(text: barcode, selection: TextSelection.fromPosition(TextPosition(offset: barcode.length)));
-              }
+
+              openTicketByBarcode(barcode);
             },
             child: const Icon(Icons.qr_code_rounded),
             backgroundColor: Colors.green),
@@ -109,15 +115,6 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
             ),
             bottom: SearchBar(
                 searchController: searchController,
-                // child: IconButton(
-                //     onPressed: () {
-                //       setState(() {
-                //         _showFilters = !_showFilters;
-                //         _showFiltersEnd = false;
-                //       });
-                //     },
-                //     icon: Icon(Icons.filter_alt_rounded),
-                //     color: Colors.white),
                 delay: 300,
                 onSearchTextChanged: (text) {
                   if (subscription != null) {
@@ -127,28 +124,35 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
 
                   loadData().then((value) {
                     setState(() {});
+                    if (_barcodeResult) {
+                      if (currentFileList.length > 0) {
+                        Ticket ticket = Ticket.fromJson(currentFileList[0]);
+                        var ticketInfo = TicketInfo(ticket);
+                        ticketInfo.show(context);
+                      }
+                    }
+                    _barcodeResult = false;
                   });
                 },
                 onSubmitted: (text) {}),
             centerTitle: true),
-        body: Column(
-          children: [
-            // AnimatedContainer(
-            //     onEnd: () {
-            //       setState(() {
-            //         _showFiltersEnd = true;
-            //       });
-            //     },
-            //     curve: Curves.easeInOut,
-            //     height: _showFilters ? __filterHeight : 0,
-            //     color: themeColor,
-            //     child: Material(
-            //       elevation: 0,
-            //       child: _getFilters(),
-            //     ),
-            //     duration: new Duration(milliseconds: 500)),
-            Expanded(child: getBody()),
-          ],
+        body: Container(
+          color: themeColor,
+          child: Column(
+            children: [
+              Wrap(children: [
+                flagIcon(Filters.isError, Icons.warning_rounded),
+                flagIcon(Filters.inPrint, Icons.print_rounded),
+                flagIcon(Filters.isRush, Icons.offline_bolt_rounded),
+                flagIcon(Filters.isRed, Icons.flag_rounded),
+                flagIcon(Filters.isHold, NsIcons.stop),
+                flagIcon(Filters.isSk, NsIcons.sk),
+                flagIcon(Filters.isGr, NsIcons.gr),
+                flagIcon(Filters.isSort, NsIcons.short)
+              ]),
+              Expanded(child: getBody()),
+            ],
+          ),
         ),
         bottomNavigationBar: BottomAppBar(
             shape: CircularNotchedRectangle(),
@@ -188,13 +192,6 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
               ),
             )));
   }
-
-  String listSortBy = "uptime";
-  String sortedBy = "Date";
-  String searchText = "";
-  var subscription;
-  bool _showAllTickets = false;
-  List<Map> currentFileList = [];
 
   void _sortByBottomSheetMenu() {
     getListItem(String title, icon, key) {
@@ -237,16 +234,17 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                       padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
                       child: ListView(
                         children: [
-                          getListItem("Date", Icons.date_range_rounded, "uptime"),
+                          getListItem("Shipping Date", Icons.date_range_rounded, "shipDate"),
+                          getListItem("Modification Date", Icons.date_range_rounded, "uptime"),
                           getListItem("Name", Icons.sort_by_alpha_rounded, "mo"),
-                          getListItem("Red Flag", Icons.tour_rounded, "isred"),
-                          getListItem("Stop Production", Icons.pan_tool_rounded, "ishold"),
-                          getListItem("Rush", Icons.flash_on_rounded, "isrush"),
-                          getListItem("GR",
-                              CircleAvatar(radius: 12, backgroundColor: Colors.grey, child: Center(child: Text("GR", style: TextStyle(color: Colors.white, fontSize: 8)))), "isgr"),
-                          getListItem("Short", Icons.local_mall_rounded, "short"),
-                          getListItem("Error Route", Icons.warning_rounded, "errOut"),
-                          getListItem("Print", Icons.print_rounded, "inprint"),
+                          // getListItem("Red Flag", Icons.tour_rounded, "isred"),
+                          // getListItem("Stop Production", Icons.pan_tool_rounded, "ishold"),
+                          // getListItem("Rush", Icons.flash_on_rounded, "isrush"),
+                          // getListItem("GR",
+                          //     CircleAvatar(radius: 12, backgroundColor: Colors.grey, child: Center(child: Text("GR", style: TextStyle(color: Colors.white, fontSize: 8)))), "isgr"),
+                          // getListItem("Short", Icons.local_mall_rounded, "short"),
+                          // getListItem("Error Route", Icons.warning_rounded, "errOut"),
+                          // getListItem("Print", Icons.print_rounded, "inprint"),
                         ],
                       )),
                 ),
@@ -287,16 +285,16 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
               ),
               body: _showAllTickets
                   ? TabBarView(controller: _tabBarController, children: [
-                      getTicketListByCategory(AllFilesList),
-                      getTicketListByCategory(UpwindFilesList),
-                      getTicketListByCategory(ODFilesList),
-                      getTicketListByCategory(NylonFilesList),
-                      getTicketListByCategory(OEMFilesList),
-                      getTicketListByCategory(NoPoolFilesList),
+                      getTicketListByCategory(_allFilesList),
+                      getTicketListByCategory(_upwindFilesList),
+                      getTicketListByCategory(_oDFilesList),
+                      getTicketListByCategory(_nylonFilesList),
+                      getTicketListByCategory(_oEMFilesList),
+                      getTicketListByCategory(_noPoolFilesList),
                     ])
                   : TabBarView(controller: _tabBarController, children: [
-                      getTicketListByCategory(AllFilesList),
-                      getTicketListByCategory(CrossProductionFilesList),
+                      getTicketListByCategory(_allFilesList),
+                      getTicketListByCategory(_crossProductionFilesList),
                     ]),
             ),
           );
@@ -361,44 +359,21 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
         child: Container(
           color: themeColor,
           child: MeasuredSize(
-            onChange: (Size size) {
-              setState(() {
-                __filterHeight = size.height;
-                print(size);
-              });
-            },
-            child: Wrap(
-              children: [
-                ListTile(
-                    title: Text("Flag", style: TextStyle(color: Colors.white)),
-                    subtitle: Wrap(spacing: 5, children: [
-                      for (final st in __statusList)
-                        _filterChip(_selectedStatus, st, () {
-                          _selectedStatus = st;
-                        })
-                    ])),
-                ListTile(
-                    title: Text("Sort By", style: TextStyle(color: Colors.white)),
-                    subtitle: Wrap(spacing: 5, children: [
-                      for (final st in __shortageTypes)
-                        _filterChip(_selectedShortageType, st, () {
-                          _selectedShortageType = st;
-                        })
-                    ])),
-                // ListTile(
-                //   trailing: ElevatedButton(
-                //     onPressed: () {
-                //       reloadData();
-                //       setState(() {
-                //         _showFilters = false;
-                //       });
-                //     },
-                //     child: Text("Done"),
-                //   ),
-                // ),
-              ],
-            ),
-          ),
+              onChange: (Size size) {
+                setState(() {
+                  __filterHeight = size.height;
+                  print(size);
+                });
+              },
+              child: Wrap(children: [
+                flagIcon(Filters.isError, Icons.warning_rounded),
+                flagIcon(Filters.inPrint, Icons.print_rounded),
+                flagIcon(Filters.isRush, Icons.offline_bolt_rounded),
+                flagIcon(Filters.isRed, Icons.flag_rounded),
+                flagIcon(Filters.isHold, Icons.lock_rounded),
+                flagIcon(Filters.isSk, NsIcons.sk),
+                flagIcon(Filters.isGr, NsIcons.gr)
+              ])),
         ),
       ),
     );
@@ -419,13 +394,14 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
         });
   }
 
-  List<Map<String, dynamic>> AllFilesList = [];
-  List<Map<String, dynamic>> CrossProductionFilesList = [];
-  List<Map<String, dynamic>> UpwindFilesList = [];
-  List<Map<String, dynamic>> ODFilesList = [];
-  List<Map<String, dynamic>> NylonFilesList = [];
-  List<Map<String, dynamic>> OEMFilesList = [];
-  List<Map<String, dynamic>> NoPoolFilesList = [];
+  List<Map<String, dynamic>> currentFileList = [];
+  List<Map<String, dynamic>> _allFilesList = [];
+  List<Map<String, dynamic>> _crossProductionFilesList = [];
+  List<Map<String, dynamic>> _upwindFilesList = [];
+  List<Map<String, dynamic>> _oDFilesList = [];
+  List<Map<String, dynamic>> _nylonFilesList = [];
+  List<Map<String, dynamic>> _oEMFilesList = [];
+  List<Map<String, dynamic>> _noPoolFilesList = [];
 
   Future<void> loadData() async {
     _selectedTabIndex = _tabBarController!.index;
@@ -435,32 +411,39 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     var section = nsUser!.section!.id;
     String canOpen = _showAllTickets ? "  file=1 and completed=0" : " canOpen=1   and file=1   and completed=0 ";
     String searchQ = "";
+    String _dataFilter = "";
+
+    if (dataFilter != Filters.none) {
+      _dataFilter = "   " + dataFilter.getValue() + "=1 and ";
+    }
     if (searchText.isNotEmpty) {
       searchQ = "  ( mo like '%$searchText%' or oe like '%$searchText%') and ";
     }
 
     print('current user $section');
 
+    searchQ += _dataFilter;
+
     if (_showAllTickets) {
-      AllFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + '   order by $listSortBy DESC');
+      _allFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ ' + canOpen + '   order by $listSortBy DESC');
 
-      UpwindFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Upwind\' order by $listSortBy DESC');
+      _upwindFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Upwind\' order by $listSortBy DESC');
 
-      ODFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OD\' order by $listSortBy DESC');
+      _oDFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OD\' order by $listSortBy DESC');
 
-      NylonFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Nylon\' order by $listSortBy DESC');
+      _nylonFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Nylon\' order by $listSortBy DESC');
 
-      OEMFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OEM\' order by $listSortBy DESC');
+      _oEMFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OEM\' order by $listSortBy DESC');
 
-      NoPoolFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production is null or production=""  order by $listSortBy DESC');
-      listsArray = [AllFilesList, UpwindFilesList, ODFilesList, NylonFilesList, OEMFilesList, NoPoolFilesList];
+      _noPoolFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production is null or production=""  order by $listSortBy DESC');
+      listsArray = [_allFilesList, _upwindFilesList, _oDFilesList, _nylonFilesList, _oEMFilesList, _noPoolFilesList];
     } else {
-      AllFilesList =
+      _allFilesList =
           await database.rawQuery("SELECT * FROM tickets where  $searchQ   " + canOpen + " and openSections like '%|" + section.toString() + "|%'  order by $listSortBy DESC");
-      CrossProductionFilesList =
+      _crossProductionFilesList =
           await database.rawQuery('SELECT * FROM tickets where  $searchQ   ' + canOpen + " and openSections like '%|$section|%' and crossPro=1 order by $listSortBy DESC");
 
-      listsArray = [AllFilesList, CrossProductionFilesList];
+      listsArray = [_allFilesList, _crossProductionFilesList];
     }
     currentFileList = listsArray[_selectedTabIndex];
     print(currentFileList.length);
@@ -506,13 +489,15 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                     },
                   ),
                   ListTile(
-                      onTap: () async {
-                        Navigator.of(context).pop();
-                        await FlagDialog.showGRDialog(context1, ticket);
-                      },
-                      title: Text(ticket.isGr == 1 ? "Remove GR" : "Set GR"),
-                      leading: SizedBox(
-                          width: 24, height: 24, child: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))))),
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                      await FlagDialog.showGRDialog(context1, ticket);
+                    },
+                    title: Text(ticket.isGr == 1 ? "Remove GR" : "Set GR"),
+                    // leading: SizedBox(
+                    //     width: 24, height: 24, child: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))))
+                    leading: Icon(NsIcons.gr, color: Colors.blue),
+                  ),
                   // ListTile(
                   //     onTap: () async {
                   //       Navigator.of(context).pop();
@@ -549,30 +534,39 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                             });
                         // await Navigator.push(context1, MaterialPageRoute(builder: (context) => FinishCheckList(ticket)));
                       }),
-                  ListTile(
-                      title: Text("Cross Production"),
-                      leading: Icon(Icons.merge_type_outlined, color: Colors.green),
-                      onTap: () async {
-                        await Navigator.push(context1, MaterialPageRoute(builder: (context) => CrossProduction(ticket)));
-                        Navigator.of(context).pop();
-                      }),
+                  if (ticket.crossPro == 0)
+                    ListTile(
+                        title: Text("Set Cross Production"),
+                        leading: Icon(NsIcons.crossProduction, color: Colors.green),
+                        onTap: () async {
+                          await Navigator.push(context1, MaterialPageRoute(builder: (context) => CrossProduction(ticket)));
+                          Navigator.of(context).pop();
+                        }),
+                  if (ticket.crossPro == 1)
+                    ListTile(
+                        title: Text("Remove Cross Production"),
+                        leading: Icon(NsIcons.crossProduction, color: Colors.green),
+                        onTap: () async {
+                          Navigator.of(context).pop();
+                          showAlertDialog(context,ticket);
+                        }),
                   ListTile(
                       title: Text("Share Work Ticket"),
-                      leading: Icon(Icons.share_rounded, color: Colors.lightBlue),
+                      leading: Icon(NsIcons.share, color: Colors.lightBlue),
                       onTap: () async {
                         await ticket.sharePdf(context);
                         Navigator.of(context).pop();
                       }),
                   ListTile(
                       title: Text("Add CPR"),
-                      leading: Icon(Icons.local_mall_rounded, color: Colors.amber),
+                      leading: Icon(NsIcons.cpr, color: Colors.amber),
                       onTap: () async {
                         await ticket.addCPR(context);
                         Navigator.of(context).pop();
                       }),
                   ListTile(
                       title: Text("Shipping"),
-                      leading: Icon(Icons.directions_boat_rounded, color: Colors.brown),
+                      leading: Icon(NsIcons.shipping, color: Colors.brown),
                       onTap: () async {
                         await ticket.addCPR(context);
                         Navigator.of(context).pop();
@@ -586,7 +580,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                       }),
                   ListTile(
                       title: Text("Delete"),
-                      leading: Icon(Icons.delete_forever, color: Colors.red),
+                      leading: Icon(NsIcons.delete, color: Colors.red),
                       onTap: () async {
                         Navigator.of(context).pop();
                       }),
@@ -657,6 +651,64 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
   void updateTabControler() {
     _tabBarController!.addListener(tabListener);
   }
+
+  Filters dataFilter = Filters.none;
+
+  flagIcon(Filters filter, IconData icon) {
+    return IconButton(
+      icon: CircleAvatar(child: Icon(icon, color: dataFilter == filter ? Colors.red : Colors.black), backgroundColor: Colors.white),
+      tooltip: 'Increase volume by 10',
+      onPressed: () async {
+        if (dataFilter == filter) {
+          dataFilter = Filters.none;
+        } else {
+          dataFilter = filter;
+        }
+        await loadData();
+        setState(() {
+          print('xxxxxxxxxxxxx');
+        });
+      },
+    );
+  }
+
+  Future<void> openTicketByBarcode(barcode) async {
+    var _currentFileList = await database.rawQuery("SELECT * FROM tickets where mo like '%" + barcode + "%' or oe like '%" + barcode + "%' ");
+    if (_currentFileList.length > 0) {
+      Ticket ticket = Ticket.fromJson(_currentFileList[0]);
+      var ticketInfo = TicketInfo(ticket);
+      ticketInfo.show(context);
+    }
+  }
+
+  showAlertDialog(BuildContext context,ticket) {
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context1) {
+        return AlertDialog(
+          title: Text("Remove Cross Production"),
+          content: Text("Do you really want to remove cross production from this ticket ? "),
+          actions: [
+            TextButton(
+              child: Text("No"),
+              onPressed: () {
+                Navigator.of(context1).pop();
+              },
+            ),
+            TextButton(
+              child: Text("Yes"),
+              onPressed: () { Navigator.of(context1).pop();
+                OnlineDB.apiPost("tickets/crossProduction/removeCrossProduction", {'ticketId':  ticket.id.toString() }).then((  response) async {
+                  print(response.data);
+                });
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
 class TicketTile extends StatelessWidget {
@@ -724,28 +776,25 @@ class TicketTile extends StatelessWidget {
                 ),
               if (ticket.isHold == 1)
                 IconButton(
-                  icon: CircleAvatar(child: Icon(Icons.pan_tool_rounded, color: Colors.black), backgroundColor: Colors.white),
+                  icon: CircleAvatar(child: Icon(NsIcons.stop, color: Colors.black), backgroundColor: Colors.white),
                   onPressed: () {
                     FlagDialog.showFlagView(context, ticket, TicketFlagTypes.HOLD);
                   },
                 ),
               if (ticket.isGr == 1)
                 IconButton(
-                  icon: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))),
+                  icon: CircleAvatar(child: Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white),
                   onPressed: () {
                     FlagDialog.showFlagView(context, ticket, TicketFlagTypes.GR);
                   },
                 ),
               if (ticket.isSk == 1)
                 IconButton(
-                  icon: CircleAvatar(backgroundColor: Colors.pink, child: Center(child: Text("SK", style: TextStyle(color: Colors.white)))),
+                  icon: CircleAvatar(child: Icon(NsIcons.sk, color: Colors.pink), backgroundColor: Colors.white),
                   onPressed: () {},
                 ),
               if (ticket.isError == 1)
-                IconButton(
-                  icon: CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white),
-                  onPressed: () {}
-                ),
+                IconButton(icon: CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white), onPressed: () {}),
               if (ticket.isSort == 1) IconButton(icon: CircleAvatar(child: Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white), onPressed: () {}),
               if (ticket.isRush == 1)
                 IconButton(

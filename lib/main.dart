@@ -12,6 +12,10 @@ import 'C/App.dart';
 import 'V/Home/Home.dart';
 import 'V/Login/Login.dart';
 import 'mainFuncs.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
+
+
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
