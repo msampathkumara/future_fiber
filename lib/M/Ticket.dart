@@ -292,11 +292,12 @@ class Ticket extends DataObject {
     if (file != null && file.existsSync()) {
       print('--------------------- ${file.path}');
 
-      file = file.copySync("${file.parent.path}/${(mo ?? oe ?? id)}.pdf");
-      await FlutterShare.shareFile(
+      File? file1   = await file.copy("${file.parent.path}/${(mo ?? oe ?? id)}.pdf");
+      print('copied');
+      await FlutterShare.shareFile(chooserTitle: "Share Ticket" ,
         title: mo ?? oe ?? "$id.pdf",
         text: "share ticket file",
-        filePath: file.path,
+        filePath: file1.path,
       );
       // file.delete();
     } else {

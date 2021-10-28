@@ -20,4 +20,5 @@
     <external-files-path
         name="extfiles"
         path="." />
+    <external-path name="external" path="." />
 </paths>

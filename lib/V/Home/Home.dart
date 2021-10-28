@@ -85,6 +85,7 @@ class _HomeState extends State<Home> {
         content: Text('Marked as done!'),
       ));
   }
+ double iconSize=100.0;
 
   @override
   Widget build(BuildContext context) {
@@ -143,64 +144,64 @@ class _HomeState extends State<Home> {
                           children: [
                             _OpenContainerWrapper(
                               closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                return _menuButton(openContainer, Icon(Icons.precision_manufacturing_outlined, size: 100), "Production Pool");
+                                return _menuButton(openContainer, Icon(Icons.precision_manufacturing_outlined, size: iconSize), "Production Pool");
                               },
                               openWidget: ProductionPool(),
                               onClosed: _showMarkedAsDoneSnackbar,
                             ),
                             _OpenContainerWrapper(
                               closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                return _menuButton(openContainer, Icon(Icons.local_mall_rounded, color: Colors.amber, size: 100), "CPR");
+                                return _menuButton(openContainer, Icon(Icons.local_mall_rounded, color: Colors.amber, size: iconSize), "CPR");
                               },
                               openWidget: CPRList(),
                               onClosed: _showMarkedAsDoneSnackbar,
                             ),
                             _OpenContainerWrapper(
                                 closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                  return _menuButton(openContainer, Icon(Icons.inventory_2_rounded, color: Colors.deepOrange, size: 100), "Finished Goods");
+                                  return _menuButton(openContainer, Icon(Icons.inventory_2_rounded, color: Colors.deepOrange, size: iconSize), "Finished Goods");
                                 },
                                 openWidget: FinishedGoods(),
                                 onClosed: _showMarkedAsDoneSnackbar),
                             _OpenContainerWrapper(
                               closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                return _menuButton(openContainer, Icon(Icons.collections_bookmark_outlined, size: 100), "Standard Library");
+                                return _menuButton(openContainer, Icon(Icons.collections_bookmark_outlined, size: iconSize), "Standard Library");
                               },
                               openWidget: StandardFiles(),
                               onClosed: _showMarkedAsDoneSnackbar,
                             ),
                             _OpenContainerWrapper(
                                 closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                  return _menuButton(openContainer, Icon(Icons.people_outline_outlined, color: Colors.lightGreen, size: 100), "User Manager");
+                                  return _menuButton(openContainer, Icon(Icons.people_outline_outlined, color: Colors.lightGreen, size: iconSize), "User Manager");
                                 },
                                 openWidget: UserManager(),
                                 onClosed: _showMarkedAsDoneSnackbar),
                             _OpenContainerWrapper(
                                 closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                  return _menuButton(openContainer, Icon(Icons.print_rounded, size: 100, color: Colors.blue), "Print");
+                                  return _menuButton(openContainer, Icon(Icons.print_rounded, size: iconSize, color: Colors.blue), "Print");
                                 },
                                 openWidget: PrintManager(),
                                 onClosed: _showMarkedAsDoneSnackbar),
                             _OpenContainerWrapper(
                                 closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                  return _menuButton(openContainer, Icon(Icons.verified_rounded, size: 100, color: Colors.green), "QA & QC");
+                                  return _menuButton(openContainer, Icon(Icons.verified_rounded, size: iconSize, color: Colors.green), "QA & QC");
                                 },
                                 openWidget: QCList(),
                                 onClosed: _showMarkedAsDoneSnackbar),
                             _OpenContainerWrapper(
                                 closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                  return _menuButton(openContainer, Icon(Icons.subject_rounded, size: 100, color: Colors.pinkAccent), "J109");
+                                  return _menuButton(openContainer, Icon(Icons.subject_rounded, size: iconSize, color: Colors.pinkAccent), "J109");
                                 },
                                 openWidget: J109(),
                                 onClosed: _showMarkedAsDoneSnackbar),
                             _OpenContainerWrapper(
                                 closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                  return _menuButton(openContainer, Icon(Icons.menu_book_rounded, size: 100, color: Colors.blueAccent), "Blue Book");
+                                  return _menuButton(openContainer, Icon(Icons.menu_book_rounded, size: iconSize, color: Colors.blueAccent), "Blue Book");
                                 },
                                 openWidget: BlueBook(),
                                 onClosed: _showMarkedAsDoneSnackbar),
                             _OpenContainerWrapper(
                                 closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                  return _menuButton(openContainer, Icon(Icons.groups_rounded, size: 100, color: Colors.orange), "HR System");
+                                  return _menuButton(openContainer, Icon(Icons.groups_rounded, size: iconSize, color: Colors.orange), "HR System");
                                 },
                                 openWidget: HESystem(),
                                 onClosed: _showMarkedAsDoneSnackbar),
@@ -217,7 +218,8 @@ class _HomeState extends State<Home> {
                           alignment: FractionalOffset.bottomCenter,
                           child: Center(
                               child: OpenContainer(
-                                  closedElevation: 0,closedColor: Colors.transparent,
+                                  closedElevation: 0,
+                                  closedColor: Colors.transparent,
                                   transitionDuration: Duration(milliseconds: 500),
                                   openBuilder: (BuildContext context, void Function({Object? returnValue}) action) {
                                     return About();
@@ -298,10 +300,11 @@ class _HomeState extends State<Home> {
     );
   }
 
-  _menuButton(openContainer, image, title) {
+  _menuButton(openContainer,Icon image, title) {
+
     return SizedBox(
-        height: 200,
-        width: 200,
+        height: 170,
+        width: 170,
         child: InkWell(
             onTap: openContainer,
             child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
@@ -309,10 +312,7 @@ class _HomeState extends State<Home> {
               Center(
                 child: Padding(
                   padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
-                  child: Text(
-                    title,
-                    textScaleFactor: 1.2,
-                  ),
+                  child: Text(title, textScaleFactor: 1)
                 ),
               )
             ])));

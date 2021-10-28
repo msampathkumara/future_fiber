@@ -15,6 +15,7 @@ import android.os.Environment;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,6 +38,7 @@ import com.tom_roush.pdfbox.pdmodel.PDPage;
 import com.tom_roush.pdfbox.pdmodel.PDPageContentStream;
 import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -56,13 +58,13 @@ public class MainEditorActivity extends AppCompatActivity {
     static String FILE_PATH;
     public Editor pdfEditor;
     //    NsFile SELECTED_FILE;
-    Ticket SELECTED_FILE;
+    public static   Ticket SELECTED_FILE;
     //    FloatingActionButton fab;
     int RequestedOrientation;
     private NsFile CURRENT_FOLDER;
     private boolean QA;
     private boolean FIELD_FORMS;
-    Ticket ticket;
+    public static  Ticket ticket;
 
 
     @Override
@@ -82,10 +84,10 @@ public class MainEditorActivity extends AppCompatActivity {
             SELECTED_FILE.id = getIntent().getExtras().getInt("ticketId");
             ticket = Ticket.formJsonString(getIntent().getExtras().getString("ticket"));
         } else {
-            SELECTED_FILE = Ticket.formJsonString("{oe: cat-001, finished: 0, uptime: 1628192673367, file: 1, sheet: 0, dir: 20218, id: 40913, isRed: 0, isRush: 1, isSk: 0, inPrint: 0, isGr: 0, isError: 0, canOpen: 1, isSort: 0, isHold: 0, fileVersion: 1628192673126, progress: 0, completed: 0, nowAt: 0, crossPro: 0}");
-            FILE_PATH = "/storage/emulated/0/Android/data/com.sampathkumara.northsails.smartwind/files/40913.pdf";
-            SELECTED_FILE.id = 40913;
-            ticket = Ticket.formJsonString("{oe: cat-001, finished: 0, uptime: 1628192673367, file: 1, sheet: 0, dir: 20218, id: 40913, isRed: 0, isRush: 1, isSk: 0, inPrint: 0, isGr: 0, isError: 0, canOpen: 1, isSort: 0, isHold: 0, fileVersion: 1628192673126, progress: 0, completed: 0, nowAt: 0, crossPro: 0}");
+            SELECTED_FILE = Ticket.formJsonString("{mo: MO-00317003, oe: OIT104823-002Fs, finished: 0, uptime: 1634860233960, file: 1, sheet: 1, dir: 20219, id: 38715, isRed: 0, isRush: 0, isSk: 1, inPrint: 0, isGr: 0, isError: 0, canOpen: 1, isSort: 1, isHold: 0, fileVersion: 1634205686450, progress: 0, completed: 0, nowAt: 3, crossPro: 1, shipDate: 1609698600000, production: OD}");
+            FILE_PATH = "/storage/emulated/0/Android/data/com.sampathkumara.northsails.smartwind/files/38715.pdf";
+            SELECTED_FILE.id = 38715;
+            ticket = Ticket.formJsonString("{mo: MO-00317003, oe: OIT104823-002Fs, finished: 0, uptime: 1634860233960, file: 1, sheet: 1, dir: 20219, id: 38715, isRed: 0, isRush: 0, isSk: 1, inPrint: 0, isGr: 0, isError: 0, canOpen: 1, isSort: 1, isHold: 0, fileVersion: 1634205686450, progress: 0, completed: 0, nowAt: 3, crossPro: 1, shipDate: 1609698600000, production: OD}");
         }
         SELECTED_FILE.ticketFile = new File(FILE_PATH);
 
@@ -110,7 +112,7 @@ public class MainEditorActivity extends AppCompatActivity {
         pdfEditor.setRunAfterNsFileLoad(new Editor.runAfterFileLoad() {
             @Override
             public void run(Editor editor) {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
             }
         });
@@ -123,8 +125,24 @@ public class MainEditorActivity extends AppCompatActivity {
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putParcelable("x", new data(pdfEditor.editsList, pdfEditor.getImagesList(), pdfEditor.getPdfEditsList(), 1));
-        System.out.println("_____________________________________________________onSaveInstanceState");
+        System.out.println("_____________________________________________________onSaveInstanceState 2");
         savedInstanceState.putString("xx", "Welcome back to Android");
+
+    }
+    @Override
+    public void onConfigurationChanged(@NotNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        Toast.makeText(this, "onConfigurationChanged", Toast.LENGTH_SHORT).show();
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
+        }
+//        loadEditor();
+//        loadFile(SELECTED_FILE.ticketFile);
+
     }
 
     @Override

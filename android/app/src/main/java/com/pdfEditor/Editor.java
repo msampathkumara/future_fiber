@@ -1035,7 +1035,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         // killed and restarted.
 
         savedInstanceState.putParcelable("x", new data(editsList, images, pdfEditsList, 1));
-        System.out.println("_____________________________________________________onSaveInstanceState");
+        System.out.println("_____________________________________________________onSaveInstanceState 1");
 
         // etc.
 

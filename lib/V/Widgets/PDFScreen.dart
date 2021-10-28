@@ -109,7 +109,9 @@ class _PDFScreenState extends State<PDFScreen> {
               } else if (s == ActionMenuItems.BlueBook) {
                 var data = await Navigator.push(context, MaterialPageRoute(builder: (context) => BlueBook(ticket: widget.ticket)));
               } else if (s == ActionMenuItems.Share) {
+
                 await widget.ticket.sharePdf(context);
+
               } else if (s == ActionMenuItems.Finish) {
                 await showDialog(
                     context: context,

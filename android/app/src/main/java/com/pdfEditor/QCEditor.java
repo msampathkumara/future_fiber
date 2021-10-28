@@ -130,7 +130,7 @@ boolean isQc=false;
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putParcelable("x", new data(pdfEditor.editsList, pdfEditor.getImagesList(), pdfEditor.getPdfEditsList(), 1));
-        System.out.println("_____________________________________________________onSaveInstanceState");
+        System.out.println("_____________________________________________________onSaveInstanceState 3");
         savedInstanceState.putString("xx", "Welcome back to Android");
     }
 
