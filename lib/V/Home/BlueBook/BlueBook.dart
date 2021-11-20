@@ -1,12 +1,26 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:native_pdf_view/native_pdf_view.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:smartwind/C/ServerResponce/OperationMinMax.dart';
 import 'package:smartwind/C/ServerResponce/UserRFCredentials.dart';
 import 'package:smartwind/M/Ticket.dart';
+import 'package:smartwind/V/Home/BlueBook/BlueBookLogin.dart';
+import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
+import 'package:smartwind/V/Widgets/Loading.dart';
+import 'package:smartwind/V/Widgets/PdfFileViewer.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+
+// import 'package:webview_flutter/webview_flutter.dart';
+
+import 'BlueBookCredentials.dart';
 
 class BlueBook extends StatefulWidget {
   Ticket? ticket;
@@ -23,105 +37,218 @@ class _BlueBookState extends State<BlueBook> {
   late OperationMinMax operationMinMax;
   var showFinishButton = true;
 
-  WebView? _webView;
+  // WebView? _webView;
+  // static InAppWebView? wv;
+  static var wv;
 
   late WebViewController _webViewController;
 
+  var pdfView;
+  var path;
 
   @override
   initState() {
     super.initState();
     ticket = widget.ticket;
+    path = ticket == null ? "" : widget.ticket!.ticketFile!.path;
 
-    _webView = WebView(
-      // initialUrl: "http://bluebook.northsails.com:8088/nsbb/app/blueBook.html",
-      // initialUrl: "http://10.200.4.31/webclient/",
-      javascriptMode: JavascriptMode.unrestricted,
-      onWebViewCreated: (WebViewController webViewController) {
-        _webViewController = webViewController;
-        webViewController.loadUrl("http://bluebook.northsails.com:8088/nsbb/app/blueBook.html", headers: {"Authorization": "Basic c3VtaXRyYUBsazpZeFpGZThIeA=="});
-        // _controller.complete(webViewController);
-      },
-      onProgress: (int progress) {
-        print("WebView is loading (progress : $progress%)");
-      },
-      javascriptChannels: <JavascriptChannel>{},
-      navigationDelegate: (NavigationRequest request) {
-        return NavigationDecision.navigate;
-      },
-      onPageStarted: (String url) {
-        print('Page started loading: $url');
-      },
-      onPageFinished: (String url) {
-        print('Page finished loading: $url');
-        // _controller!.evaluateJavascript(jsString);
-      },
-      gestureNavigationEnabled: true,
+    wv = InAppWebView(
+        initialUrlRequest: URLRequest(url: Uri.parse("http://bluebook.northsails.com:8088/nsbb/app/blueBook.html")),
+        // initialUrlRequest: URLRequest(url: Uri.parse("https://smartupwind.nsslsupportservices.com/FileBrowser/Files/ppp/upwind/upwind")),
+        initialOptions: InAppWebViewGroupOptions(crossPlatform: InAppWebViewOptions(useOnDownloadStart: true), android: AndroidInAppWebViewOptions(useHybridComposition: true)),
+        onReceivedHttpAuthRequest: (InAppWebViewController controller, URLAuthenticationChallenge challenge) async {
+          BlueBookCredentials? blueBookCredentials = await showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return BlurBookLogin();
+              });
+
+          if (blueBookCredentials != null) {
+            return HttpAuthResponse(username: blueBookCredentials.userName, password: blueBookCredentials.password, action: HttpAuthResponseAction.PROCEED);
+          } else {
+            Navigator.pop(context);
+          }
+          return HttpAuthResponse(action: HttpAuthResponseAction.CANCEL);
+        },
+        onDownloadStart: (controller, url) async {
+          print("onDownloadStart $url");
+          File file = await _getFile(context, url.toString());
+          await Navigator.push(context, MaterialPageRoute(builder: (context) => PdfFileViewer(file)));
+        });
+    print('LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL');
+    _pdfController = PdfController(
+      document: PdfDocument.openFile(path),
+      initialPage: _initialPage,
     );
   }
+
+  static final int _initialPage = 2;
+  int _actualPageNumber = _initialPage, _allPagesCount = 0;
+  bool isSampleDoc = true;
+  late PdfController _pdfController;
 
   int pages = 0;
   int currentPage = 0;
   bool isReady = false;
   String errorMessage = '';
-  final Completer<PDFViewController> _controller = Completer<PDFViewController>();
+  late Completer<PDFViewController> _controller = Completer<PDFViewController>();
+  late PDFViewController _pdfView;
+  int x = 0;
+
+  var tabs = ["All", "Cross Production"];
 
   @override
   Widget build(BuildContext context) {
     var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
+    var height = MediaQuery.of(context).size.height;
     return Scaffold(
-      body: SafeArea(
-          child: Column(
+      appBar: AppBar(title: Text("Blue Book")),
+      body: Column(
         children: [
-          if (widget.ticket != null && (isPortrait))
-            Expanded(
-              child: PDFView(
-                filePath: widget.ticket!.ticketFile!.path,
-                enableSwipe: true,
-                swipeHorizontal: false,
-                autoSpacing: false,
-                pageFling: true,
-                pageSnap: true,
-                defaultPage: 0,
-                fitPolicy: FitPolicy.BOTH,
-                preventLinkNavigation: false,
-                onRender: (_pages) {
-                  setState(() {
-                    pages = _pages!;
-                    isReady = true;
-                    print('READYYYY');
-                  });
-                },
-                onError: (error) {
-                  setState(() {
-                    errorMessage = error.toString();
-                  });
-                  print(error.toString());
-                },
-                onPageError: (page, error) {
-                  setState(() {
-                    errorMessage = '$page: ${error.toString()}';
-                  });
-                  print('$page: ${error.toString()}');
-                },
-                onViewCreated: (PDFViewController pdfViewController) {
-                  _controller.complete(pdfViewController);
-                },
-                onLinkHandler: (String? uri) {
-                  print('goto uri: $uri');
-                },
-                onPageChanged: (int? page, int? total) {
-                  print('page change: $page/$total');
-                  setState(() {
-                    currentPage = page!;
-                  });
-                },
+          SizedBox(
+            height: (ticket != null && (isPortrait)) ? height / 2 : 0,
+            child: PdfView(
+              renderer: (PdfPage page) => page.render(
+                width: page.width * 3,
+                height: page.height * 3,
+                format: PdfPageFormat.PNG,
+                backgroundColor: '#ffffff',
               ),
+              documentLoader: Center(child: CircularProgressIndicator()),
+              pageLoader: Center(child: CircularProgressIndicator()),
+              controller: _pdfController,
+              onDocumentLoaded: (document) {
+                setState(() {
+                  _allPagesCount = document.pagesCount;
+                });
+              },
+              onPageChanged: (page) {
+                setState(() {
+                  _actualPageNumber = page;
+                });
+              },
+              scrollDirection: Axis.vertical,
             ),
-          if (widget.ticket != null && (isPortrait)) Container(height: 20, color: Colors.blue),
-          Expanded(child: Container(child: _webView))
+          ),
+
+          // ? Expanded(
+          //     child: PDFView(
+          //     filePath: path,
+          //     enableSwipe: true,
+          //     swipeHorizontal: false,
+          //     autoSpacing: false,
+          //     pageFling: true,
+          //     pageSnap: true,
+          //     defaultPage: 1,
+          //     fitPolicy: FitPolicy.BOTH,
+          //     preventLinkNavigation: false,
+          //     onRender: (_pages) {
+          //       // setState(() {
+          //       pages = _pages!;
+          //       isReady = true;
+          //       print('READYYYY');
+          //       // });
+          //     },
+          //     onError: (error) {
+          //       // setState(() {
+          //       errorMessage = error.toString();
+          //       // });
+          //       print(error.toString());
+          //     },
+          //     onPageError: (page, error) {
+          //       // setState(() {
+          //       errorMessage = '$page: ${error.toString()}';
+          //       // });
+          //       print('$page: ${error.toString()}');
+          //     },
+          //     onViewCreated: (PDFViewController pdfViewController) {
+          //       _controller.complete(pdfViewController);
+          //     },
+          //     onLinkHandler: (String? uri) {
+          //       print('goto uri: $uri');
+          //     },
+          //     onPageChanged: (int? page, int? total) {
+          //       print('page change: $page/$total');
+          //       // setState(() {
+          //       currentPage = page!;
+          //       // });
+          //     },
+          //   ))
+          // : Container(),
+          if (ticket != null && (isPortrait))
+            Container(
+              height: 20,
+              color: Colors.blue,
+              // child: ElevatedButton(
+              //   onPressed: () {
+              //     setState(() {});
+              //   },
+              //   child: Text("ddd"),
+              // ),
+            ),
+          Expanded(child: Container(color: Colors.red, child: wv))
         ],
-      )),
+      ),
     );
+  }
+
+  Future<File> _getFile(context, url, {onReceiveProgress}) async {
+    var loadingWidget = Loading(
+      loadingText: "Downloading File",
+      showProgress: false,
+    );
+    loadingWidget.show(context);
+
+    var dio = Dio();
+    var ed = await getExternalStorageDirectory();
+    final user = FirebaseAuth.instance.currentUser;
+    final idToken = await user!.getIdToken();
+    dio.options.headers['content-Type'] = 'application/json';
+
+    // dio.options.headers["authorization"] = '$idToken';
+    // String queryString = Uri(queryParameters: {"id": id.toString()}).query;
+    var id = UniqueKey();
+    var filePath = ed!.path + '/blueBook/$id.pdf';
+
+    var response;
+    try {
+      await dio.download(url, filePath, onReceiveProgress: (received, total) {
+        print('TOTAL = $total');
+        print('received = $received');
+        // int percentage = ((received / total) * 100).floor();
+        // loadingWidget.setProgress(percentage);
+        // if (onReceiveProgress != null) {
+        //   onReceiveProgress(percentage);
+        // }
+      }).then((value) async {
+        response = value;
+        print('+++++++++++++++++++++++++++++++++++++++++++++');
+        print(response.headers["fileVersion"]);
+      });
+    } on DioError catch (e) {
+      if (e.response != null) {
+        print('"******************************************** response');
+        print(e.response);
+        if (e.response!.statusCode == 404) {
+          loadingWidget.close(context);
+          var errorView = ErrorMessageView(
+            errorMessage: "File Not Found",
+            icon: Icons.sd_card_alert,
+          );
+          await errorView.show(context);
+          return Future.value(null);
+        }
+
+        print(e.response!.statusCode);
+        print(e.response!.data);
+        print(e.response!.headers);
+      } else {
+        print(e.message);
+      }
+    }
+
+    loadingWidget.close(context);
+    File file = new File(filePath);
+    return file;
   }
 }

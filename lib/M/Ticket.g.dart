@@ -31,7 +31,8 @@ Ticket _$TicketFromJson(Map<String, dynamic> json) => Ticket()
   ..crossPro = json['crossPro'] as int? ?? 0
   ..crossProList = json['crossProList'] as String? ?? ''
   ..openSections = json['openSections'] as String? ?? ''
-  ..shipDate = json['shipDate'] as int? ?? 0
+  ..shipDate = json['shipDate'] as String? ?? ''
+  ..deliveryDate = json['deliveryDate'] as String? ?? ''
   ..production = json['production'] as String?;
 
 Map<String, dynamic> _$TicketToJson(Ticket instance) => <String, dynamic>{
@@ -60,5 +61,6 @@ Map<String, dynamic> _$TicketToJson(Ticket instance) => <String, dynamic>{
       'crossProList': instance.crossProList,
       'openSections': instance.openSections,
       'shipDate': instance.shipDate,
+      'deliveryDate': instance.deliveryDate,
       'production': instance.production,
     };

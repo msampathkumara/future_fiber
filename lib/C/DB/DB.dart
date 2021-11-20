@@ -91,6 +91,7 @@ class DB {
       await db.rawQuery("delete from factorySections;");
       await db.rawQuery("delete from users;");
       await db.rawQuery("delete from maxUpTimes  ;");
+      await db.rawQuery("delete from standardTickets  ;");
     }
     return getDB()
         .then((value) => value!
@@ -98,8 +99,9 @@ class DB {
                     "(select ifnull(max(uptime),0) uptime from tickets) tickets,"
                     "(select ifnull( (uptime),0) uptime from maxUpTimes where collection='deletedTickets') deletedTicketsIds,"
                     "(select ifnull( (uptime),0) uptime from maxUpTimes where collection='completedTickets') completedTicketsIds,"
+                    "(select ifnull( (uptime),0) uptime from maxUpTimes where collection='standardTickets') standardTickets,"
                     "(select ifnull(max(uptime),0) uptime from factorySections) factorySections,"
-                    "(select ifnull(max(uptime),0) uptime from users) users")
+                    "(select ifnull(max(uptime),0) uptime from users) users limit 1")
                 .then((value) {
               print("last update on == " + value.toString());
               Map<Object, Object?> xx = value.length > 0 ? value[0] : {'tickets': '0', 'users': '0'};
@@ -173,8 +175,13 @@ class DB {
       insertFactorySections(factorySections);
     }
     if (res.containsKey("standardTickets")) {
-      List factorySections = (res["standardTickets"] ?? []);
-      await insertStandardTickets(factorySections);
+      List standardTickets = (res["standardTickets"] ?? []);
+      await insertStandardTickets(standardTickets);
+      if (standardTickets.length > 0) {
+        var maxTime = standardTickets.map<int>((e) => e['uptime']).reduce(max);
+        var db = await getDB();
+        db!.insert('maxUpTimes', {"collection": "standardTickets", "uptime": maxTime}, conflictAlgorithm: ConflictAlgorithm.replace);
+      }
     }
   }
 
@@ -182,7 +189,6 @@ class DB {
     await db!.transaction((txn) async {
       Batch batch = txn.batch();
       tickets.forEach((ticket) {
-
         insertFlags(ticket["flags"] ?? [], batch);
         ticket.remove("flags");
         // print(ticket);
@@ -248,27 +254,41 @@ class DB {
     var db = await getDB();
     Batch batch = db!.batch();
 
+
     standardTickets.forEach((standardTicket) {
-      batch.insert('standardTickets', standardTicket, conflictAlgorithm: ConflictAlgorithm.replace);
+      if (standardTicket["delete"] == 1) {
+        batch.delete('standardTickets', where: 'id = ?', whereArgs: [standardTicket["id"]]);
+        print('standardTicket deleted');
+      } else {
+        batch.insert('standardTickets', standardTicket, conflictAlgorithm: ConflictAlgorithm.replace);
+      }
     });
     print(await batch.commit(noResult: false));
+
   }
 
   static callChangesCallBacks(Map<dynamic, dynamic> res) {
     List keys = res.keys.toList();
+    print('callChangesCallBacks');
 
     List<DbChangeCallBack> onDBChangeCallBacksTemp = [];
     onDBChangeCallBacksTemp.addAll(onDBChangeCallBacks);
     for (var i = 0; i < onDBChangeCallBacksTemp.length; i++) {
       var x = onDBChangeCallBacksTemp[i];
-
+      print('CallBack=== ${x.collection}');
       try {
         if (x.isDisposed()) {
+          print('CallBack=== isDisposed ');
           onDBChangeCallBacks.remove(x);
         } else if (x.collection == DataTables.None || keys.contains(x.collection.toShortString())) {
+          print('CallBack=== call ');
+          x.callBack();
+          print('${x.collection}');
+        } else {
           x.callBack();
         }
       } catch (e) {
+        print("EEEEEEEE");
         onDBChangeCallBacks.remove(x);
       }
     }

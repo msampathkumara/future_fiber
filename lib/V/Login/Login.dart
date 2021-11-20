@@ -9,6 +9,7 @@ import 'package:jwt_decode/jwt_decode.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:nfc_manager/platform_tags.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/NsUser.dart';
@@ -41,6 +42,8 @@ class _LoginState extends State<Login> {
   bool emptyUserDetails = false;
   String nfcCode = "";
 
+  String errorMessage = "";
+
   @override
   initState() {
     super.initState();
@@ -62,8 +65,8 @@ class _LoginState extends State<Login> {
       }
     });
     if (kDebugMode) {
-      nfcCode = "04f68ad2355e80";
-      _login();
+      // nfcCode = "04f68ad2355e80";
+      // _login();
     }
   }
 
@@ -86,7 +89,12 @@ class _LoginState extends State<Login> {
               child: Container(
                   child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: [CircularProgressIndicator(), Padding(padding: const EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
+              children: [
+                CircularProgressIndicator(),
+                Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text("Loading", textScaleFactor: 1))
+              ],
             )))
           : Container(
               // decoration: const BoxDecoration(
@@ -104,16 +112,24 @@ class _LoginState extends State<Login> {
                     child: Wrap(
                       direction: Axis.horizontal,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(24.0),
-                          child: Center(
-                            child: CircleAvatar(
-                              radius: 100,
-                              child: Image.asset("assets/north_sails-logo.png"),
+                        Container(
+                          child: Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: Center(
+                              child: CircleAvatar(
+                                radius: 100,
+                                child:
+                                    Image.asset("assets/north_sails-logo.png"),
+                              ),
                             ),
                           ),
                         ),
-                        Text("User Name", style: TextStyle(color: Colors.black, fontSize: 20)),
+                        // Text("User Name",
+                        //     style:
+                        //         TextStyle(color: Colors.black, fontSize: 20)),
+                        SizedBox(
+                          height: 62,
+                        ),
                         TextFormField(
                             autofocus: true,
                             onFieldSubmitted: (d) {
@@ -131,22 +147,33 @@ class _LoginState extends State<Login> {
                                 ),
                                 prefixIcon: Padding(
                                   padding: const EdgeInsets.only(left: 8.0),
-                                  child: new Icon(Icons.account_circle_outlined, color: Colors.blue),
+                                  child: new Icon(Icons.account_circle_outlined,
+                                      color: Colors.blue),
                                 ),
                                 hintText: 'Enter User Name',
-                                hintStyle: TextStyle(color: Colors.blue.shade200),
+                                hintStyle:
+                                    TextStyle(color: Colors.blue.shade200),
                                 fillColor: Colors.white,
                                 filled: true,
-                                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                                focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.black, width: 1.0), borderRadius: BorderRadius.circular(5.0)),
-                                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0), borderSide: BorderSide(color: Colors.black38, width: 1.0))),
+                                contentPadding:
+                                    EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                        color: Colors.blueAccent, width: 1.0),
+                                    borderRadius: BorderRadius.circular(5.0)),
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    borderSide: BorderSide(
+                                        color: Colors.blueGrey.shade50, width: 1.0))),
                             onChanged: (uname) {
                               _user.uname = uname;
                             }),
                         SizedBox(
-                          height: 62,
+                          height: 84,
                         ),
-                        Text("Password", style: TextStyle(color: Colors.black, fontSize: 20)),
+                        // Text("Password",
+                        //     style:
+                        //         TextStyle(color: Colors.black, fontSize: 20)),
                         TextFormField(
                             focusNode: _passwordFocusNode,
                             cursorColor: Colors.blue,
@@ -164,7 +191,11 @@ class _LoginState extends State<Login> {
                                       hidePassword = !hidePassword;
                                     });
                                   },
-                                  icon: Icon(hidePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: Colors.blue),
+                                  icon: Icon(
+                                      hidePassword
+                                          ? Icons.visibility_outlined
+                                          : Icons.visibility_off_outlined,
+                                      color: Colors.blue),
                                 ),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(5.0),
@@ -174,38 +205,63 @@ class _LoginState extends State<Login> {
                                 ),
                                 prefixIcon: Padding(
                                   padding: const EdgeInsets.only(left: 8.0),
-                                  child: new Icon(Icons.lock_outlined, color: Colors.blue),
+                                  child: new Icon(Icons.lock_outlined,
+                                      color: Colors.blue),
                                 ),
                                 hintText: 'Enter Password',
-                                hintStyle: TextStyle(color: Colors.blue.shade200),
+                                hintStyle:
+                                    TextStyle(color: Colors.blue.shade200),
                                 fillColor: Colors.white,
                                 filled: true,
-                                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                                focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.black87, width: 1.0), borderRadius: BorderRadius.circular(5.0)),
-                                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0), borderSide: BorderSide(color: Colors.black38, width: 1.0))),
+                                contentPadding:
+                                    EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                        color: Colors.blueAccent, width: 1.0),
+                                    borderRadius: BorderRadius.circular(5.0)),
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    borderSide: BorderSide(
+                                        color: Colors.blueGrey.shade50, width: 1.0))),
                             onChanged: (pword) {
                               _user.pword = pword;
                             }),
+                        SizedBox(
+                          height: 64
+                        ),
+
+                          Text(errorMessage,
+                              style: TextStyle(color: Colors.red,fontSize: 20)),
                         Align(
                             alignment: Alignment.centerRight,
                             child: Padding(
                                 padding: const EdgeInsets.all(4.0),
-                                child: TextButton(onPressed: _recoverPassword, child: Text("Forgot Password ?", style: TextStyle(color: Colors.white))))),
-                        SizedBox(
-                          height: 62,
-                        ),
-                        if (emptyUserDetails) Text("Enter user name and password", style: TextStyle(color: Colors.red)),
+                                child: TextButton(
+                                    onPressed: _recoverPassword,
+                                    child: Text("Forgot Password ?",
+                                        style:
+                                            TextStyle(color: Colors.white))))),
+
+
                         SizedBox(
                             width: double.infinity,
                             height: 50,
                             child: ElevatedButton(
                               onPressed: _login,
-                              child: Text("Login", style: TextStyle(color: Colors.blue, fontSize: 20)),
+                              child: Text("Login",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 20)),
                               style: ButtonStyle(
-                                  elevation: MaterialStateProperty.all(1),
-                                  backgroundColor: MaterialStateProperty.all(Colors.white),
-                                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0), side: BorderSide(color: Colors.blue)))),
+                                  elevation: MaterialStateProperty.all(8),
+                                  backgroundColor:
+                                      MaterialStateProperty.all(Colors.blue),
+                                  shape: MaterialStateProperty.all<
+                                          RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(4.0),
+                                          side:
+                                              BorderSide(color: Colors.blue)))),
                             )),
                         if (nfcIsAvailable) SizedBox(height: 84),
                         if (nfcIsAvailable)
@@ -215,7 +271,11 @@ class _LoginState extends State<Login> {
                             style: TextStyle(color: Colors.white, fontSize: 20),
                           )),
                         if (nfcIsAvailable) SizedBox(height: 32),
-                        if (nfcIsAvailable) Center(child: Text("Use NFC card to login ", style: TextStyle(color: Colors.white, fontSize: 25))),
+                        if (nfcIsAvailable)
+                          Center(
+                              child: Text("Use NFC card to login ",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 25))),
                       ],
                     ),
                   ),
@@ -226,8 +286,10 @@ class _LoginState extends State<Login> {
   }
 
   _login() {
+    errorMessage="";
     if (nfcCode.isEmpty && (_user.uname.isEmpty || _user.pword.isEmpty)) {
-      emptyUserDetails = true;
+      errorMessage = "Enter username and password";
+      setState(() {});
       return;
     }
     print({"uname": _user.uname, "pword": _user.pword, "nfc": nfcCode});
@@ -246,15 +308,21 @@ class _LoginState extends State<Login> {
 
       if (res["user"] == null) {
         if (nfcCode.isNotEmpty) {
-          ErrorMessageView(errorMessage: "Scan Valid ID Card", icon: Icons.badge_outlined).show(context);
+          ErrorMessageView(
+                  errorMessage: "Scan Valid ID Card",
+                  icon: Icons.badge_outlined)
+              .show(context);
           nfcCode = "";
         }
-        // emptyUserDetails = true;
+        errorMessage = "Enter valid username and password";
         setLoading(false);
         return;
       }
 
+      // await DB.updateDatabase(context,showLoadingDialog: true);
+
       Map<String, dynamic> payload = Jwt.parseJwt(res["user"]);
+        // payload["sections"]=[];
       print(payload);
 
       NsUser nsUser = NsUser.fromJson(payload);
@@ -265,11 +333,15 @@ class _LoginState extends State<Login> {
       print("saving user to SharedPreferences");
       print(json.encode(nsUser));
 
-      final UserCredential googleUserCredential = await FirebaseAuth.instance.signInWithCustomToken(res["token"]);
+      final UserCredential googleUserCredential =
+          await FirebaseAuth.instance.signInWithCustomToken(res["token"]);
       if (googleUserCredential.user != null) {
         NfcManager.instance.stopSession();
         // if (nsUser.sections.length > 1) {
-        await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => CheckTabStatus(nsUser)), (Route<dynamic> route) => false);
+        await Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => CheckTabStatus(nsUser)),
+            (Route<dynamic> route) => false);
         // } else {
         //   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (Route<dynamic> route) => false);
         // }

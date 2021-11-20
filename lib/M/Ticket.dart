@@ -19,7 +19,7 @@ import 'package:smartwind/V/Home/Tickets/CS/CS.dart';
 import 'package:smartwind/V/Home/Tickets/ShippingSystem/ShippingSystem.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/Loading.dart';
-import 'package:smartwind/V/Widgets/PDFScreen.dart';
+import 'package:smartwind/V/Widgets/TicketPdfViwer.dart';
 
 import 'DataObject.dart';
 
@@ -77,8 +77,12 @@ class Ticket extends DataObject {
   @JsonKey(defaultValue: "", includeIfNull: true)
   String openSections = "";
 
-  @JsonKey(defaultValue: 0, includeIfNull: true)
-  int shipDate = 0;
+  @JsonKey(defaultValue: "", includeIfNull: true)
+  String shipDate = "";
+
+  @JsonKey(defaultValue: "", includeIfNull: true)
+  String deliveryDate = "";
+
   String _shipDate = "";
 
   String? production;
@@ -102,17 +106,17 @@ class Ticket extends DataObject {
     return formattedDate;
   }
 
-  String getShipDate() {
-    if (shipDate == 0) {
-      return "";
-    }
-    if (_shipDate != "") {
-      return _shipDate;
-    }
-    var date = DateTime.fromMicrosecondsSinceEpoch(shipDate * 1000);
-    _shipDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(date).split(" ")[0];
-    return _shipDate;
-  }
+  // String getShipDate() {
+  //   if (shipDate == 0) {
+  //     return "";
+  //   }
+  //   if (_shipDate != "") {
+  //     return _shipDate;
+  //   }
+  //   var date = DateTime.fromMicrosecondsSinceEpoch(shipDate * 1000);
+  //   _shipDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(date).split(" ")[0];
+  //   return _shipDate;
+  // }
 
   Future<int> getLocalFileVersion() {
     return DB.getDB().then((db) {
@@ -200,20 +204,19 @@ class Ticket extends DataObject {
 
   Future<void> open(context, {onReceiveProgress}) async {
     File file = await getLocalFile();
-    // var i = await getLocalFileVersion();
     var isNew = await isFileNew();
     print(isNew);
     // isNew = false;
     if (isNew && file.existsSync()) {
       print("File exists ");
-      var data = await Navigator.push(context, MaterialPageRoute(builder: (context) => PDFScreen(this)));
+      var data = await Navigator.push(context, MaterialPageRoute(builder: (context) => TicketPdfViwer(this)));
       if (data != null && data) {
         open(context);
       }
     } else {
       print("File not exists or old ");
       _getFile(context).then((file) async {
-        var data = await Navigator.push(context, MaterialPageRoute(builder: (context) => PDFScreen(this)));
+        var data = await Navigator.push(context, MaterialPageRoute(builder: (context) => TicketPdfViwer(this)));
         // var data = await Navigator.push(context, MaterialPageRoute(builder: (context) => PdfEditor(this)));
         if (data != null && data) {
           open(context);
@@ -292,9 +295,10 @@ class Ticket extends DataObject {
     if (file != null && file.existsSync()) {
       print('--------------------- ${file.path}');
 
-      File? file1   = await file.copy("${file.parent.path}/${(mo ?? oe ?? id)}.pdf");
+      File? file1 = await file.copy("${file.parent.path}/${(mo ?? oe ?? id)}.pdf");
       print('copied');
-      await FlutterShare.shareFile(chooserTitle: "Share Ticket" ,
+      await FlutterShare.shareFile(
+        chooserTitle: "Share Ticket",
         title: mo ?? oe ?? "$id.pdf",
         text: "share ticket file",
         filePath: file1.path,
@@ -309,11 +313,13 @@ class Ticket extends DataObject {
     await Navigator.push(context, MaterialPageRoute(builder: (context) => AddCPR(this)));
   }
 
-  Future openInShippingSystem(BuildContext context) {
+  Future openInShippingSystem(BuildContext context) async {
+    await getFile(context);
     return Navigator.push(context, MaterialPageRoute(builder: (context) => ShippingSystem(this)));
   }
 
-  Future openInCS(BuildContext context) {
+  Future openInCS(BuildContext context) async {
+    await getFile(context);
     return Navigator.push(context, MaterialPageRoute(builder: (context) => CS(this)));
   }
 

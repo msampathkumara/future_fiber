@@ -3,26 +3,27 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:native_pdf_view/native_pdf_view.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Home/BlueBook/BlueBook.dart';
 import 'package:smartwind/V/Home/Tickets/ProductionPool/Finish/FinishCheckList.dart';
 
-class PDFScreen extends StatefulWidget {
+class TicketPdfViwer extends StatefulWidget {
   // String pathPDF = "";
   // int fileID = 0;
   final Ticket ticket;
 
-  PDFScreen(this.ticket);
+  TicketPdfViwer(this.ticket);
 
   @override
-  _PDFScreenState createState() {
-    return _PDFScreenState();
+  _TicketPdfViwerState createState() {
+    return _TicketPdfViwerState();
   }
 }
 
-class _PDFScreenState extends State<PDFScreen> {
+class _TicketPdfViwerState extends State<TicketPdfViwer> {
   var pdfPath;
 
   var pdfView;
@@ -32,50 +33,58 @@ class _PDFScreenState extends State<PDFScreen> {
     super.initState();
     pdfPath = widget.ticket.ticketFile!.path;
 
-    pdfView=   new PDFView(
-      filePath: pdfPath,
-      enableSwipe: true,
-      swipeHorizontal: false,
-      autoSpacing: false,
-      pageFling: true,
-      pageSnap: true,
-      defaultPage: currentPage,
-      fitPolicy: FitPolicy.BOTH,
-      preventLinkNavigation: false,
-      onRender: (_pages) {
-        setState(() {
-          pages = _pages!;
-          isReady = true;
-          print('READYYYY');
-        });
-      },
-      onError: (error) {
-        setState(() {
-          errorMessage = error.toString();
-        });
-        print(error.toString());
-      },
-      onPageError: (page, error) {
-        setState(() {
-          errorMessage = '$page: ${error.toString()}';
-        });
-        print('$page: ${error.toString()}');
-      },
-      onViewCreated: (PDFViewController pdfViewController) {
-        _controller.complete(pdfViewController);
-      },
-      onLinkHandler: (String? uri) {
-        print('goto uri: $uri');
-      },
-      onPageChanged: (int? page, int? total) {
-        print('page change: $page/$total');
-        setState(() {
-          currentPage = page!;
-        });
-      },
+    // pdfView = new PDFView(
+    //   filePath: pdfPath,
+    //   enableSwipe: true,
+    //   swipeHorizontal: false,
+    //   autoSpacing: false,
+    //   pageFling: true,
+    //   pageSnap: true,
+    //   defaultPage: currentPage,
+    //   fitPolicy: FitPolicy.BOTH,
+    //   preventLinkNavigation: false,
+    //   onRender: (_pages) {
+    //     setState(() {
+    //       pages = _pages!;
+    //       isReady = true;
+    //       print('READYYYY');
+    //     });
+    //   },
+    //   onError: (error) {
+    //     setState(() {
+    //       errorMessage = error.toString();
+    //     });
+    //     print(error.toString());
+    //   },
+    //   onPageError: (page, error) {
+    //     setState(() {
+    //       errorMessage = '$page: ${error.toString()}';
+    //     });
+    //     print('$page: ${error.toString()}');
+    //   },
+    //   onViewCreated: (PDFViewController pdfViewController) {
+    //     _controller.complete(pdfViewController);
+    //   },
+    //   onLinkHandler: (String? uri) {
+    //     print('goto uri: $uri');
+    //   },
+    //   onPageChanged: (int? page, int? total) {
+    //     print('page change: $page/$total');
+    //     setState(() {
+    //       currentPage = page!;
+    //     });
+    //   },
+    // );
+    _pdfController = PdfController(
+      document: PdfDocument.openFile(pdfPath),
+      initialPage: _initialPage,
     );
   }
 
+  static final int _initialPage = 2;
+  int _actualPageNumber = _initialPage, _allPagesCount = 0;
+  bool isSampleDoc = true;
+  late PdfController _pdfController;
 
   @override
   void dispose() {
@@ -109,9 +118,7 @@ class _PDFScreenState extends State<PDFScreen> {
               } else if (s == ActionMenuItems.BlueBook) {
                 var data = await Navigator.push(context, MaterialPageRoute(builder: (context) => BlueBook(ticket: widget.ticket)));
               } else if (s == ActionMenuItems.Share) {
-
                 await widget.ticket.sharePdf(context);
-
               } else if (s == ActionMenuItems.Finish) {
                 await showDialog(
                     context: context,
@@ -145,18 +152,30 @@ class _PDFScreenState extends State<PDFScreen> {
       body: Container(
         child: Stack(
           children: <Widget>[
-            pdfView,
-            // if (errorMessage.isEmpty)Center(
-            //   child: Text(errorMessage),
-            // ),
-            // if(!isReady)
-
+              PdfView(
+                    renderer: (PdfPage page) => page.render(
+                      width: page.width * 3,
+                      height: page.height * 3,
+                      format: PdfPageFormat.PNG,
+                      backgroundColor: '#ffffff',
+                    ),
+                    documentLoader: Center(child: CircularProgressIndicator()),
+                    pageLoader: Center(child: CircularProgressIndicator()),
+                    controller: _pdfController,
+                    onDocumentLoaded: (document) {
+                      setState(() {
+                        _allPagesCount = document.pagesCount;
+                      });
+                    },
+                    onPageChanged: (page) {
+                      setState(() {
+                        _actualPageNumber = page;
+                      });
+                    },
+                    scrollDirection: Axis.vertical,
+                  ),
             errorMessage.isEmpty
-                ? ((!isReady)
-                    ? Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : Container())
+                ? ((!isReady) ? Container() : Container())
                 : Center(
                     child: Text(errorMessage),
                   )

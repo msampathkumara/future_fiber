@@ -1,7 +1,9 @@
 import 'package:custom_webview/webview_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:native_pdf_view/native_pdf_view.dart';
+
+// import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:smartwind/M/Ticket.dart';
 
 import 'SelectPdfPage.dart';
@@ -65,6 +67,14 @@ class _CSState extends State<CS> with TickerProviderStateMixin {
       },
       gestureNavigationEnabled: true,
     );
+    _pdfController = PdfController(
+      document: PdfDocument.openFile(ticket.ticketFile!.path),
+      initialPage: _initialPage,
+    );
+    _pdfController1 = PdfController(
+      document: PdfDocument.openFile(selectedPage),
+      initialPage: _initialPage,
+    );
   }
 
   @override
@@ -102,8 +112,7 @@ class _CSState extends State<CS> with TickerProviderStateMixin {
                             body: Column(
                               children: [
                                 Expanded(
-                                  child: TabBarView(
-                                      physics: NeverScrollableScrollPhysics(), controller: _tabBarController, children: [getPdf(ticket.ticketFile!.path), getPdf(selectedPage)]),
+                                  child: TabBarView(physics: NeverScrollableScrollPhysics(), controller: _tabBarController, children: [getPdf(1), getPdf(2)]),
                                 ),
                                 Container(height: 30, color: Colors.blue),
                                 Expanded(child: _webView)
@@ -114,40 +123,67 @@ class _CSState extends State<CS> with TickerProviderStateMixin {
   }
 
   var errorMessage;
+  static final int _initialPage = 2;
+  int _actualPageNumber = _initialPage, _allPagesCount = 0;
+  bool isSampleDoc = true;
+  late PdfController _pdfController;
+  late PdfController _pdfController1;
 
-  getPdf(path) {
-    return PDFView(
-      filePath: path,
-      enableSwipe: true,
-      swipeHorizontal: false,
-      autoSpacing: true,
-      pageFling: true,
-      pageSnap: true,
-      defaultPage: 0,
-      fitPolicy: FitPolicy.BOTH,
-      preventLinkNavigation: false,
-      onRender: (_pages) {},
-      onError: (error) {
+  getPdf(id) {
+    return PdfView(
+      renderer: (PdfPage page) => page.render(
+        width: page.width * 3,
+        height: page.height * 3,
+        format: PdfPageFormat.PNG,
+        backgroundColor: '#ffffff',
+      ),
+      documentLoader: Center(child: CircularProgressIndicator()),
+      pageLoader: Center(child: CircularProgressIndicator()),
+      controller: id == 1 ? _pdfController : _pdfController1,
+      onDocumentLoaded: (document) {
         setState(() {
-          errorMessage = error.toString();
+          _allPagesCount = document.pagesCount;
         });
-        print(error.toString());
       },
-      onPageError: (page, error) {
+      onPageChanged: (page) {
         setState(() {
-          errorMessage = '$page: ${error.toString()}';
+          _actualPageNumber = page;
         });
-        print('$page: ${error.toString()}');
       },
-      onViewCreated: (PDFViewController pdfViewController) {
-        // _controller.complete(pdfViewController);
-      },
-      onLinkHandler: (String? uri) {
-        print('goto uri: $uri');
-      },
-      onPageChanged: (int? page, int? total) {
-        print('page change: $page/$total');
-      },
+      scrollDirection: Axis.vertical,
     );
+    // return PDFView(
+    //   filePath: path,
+    //   enableSwipe: true,
+    //   swipeHorizontal: false,
+    //   autoSpacing: true,
+    //   pageFling: true,
+    //   pageSnap: true,
+    //   defaultPage: 0,
+    //   fitPolicy: FitPolicy.BOTH,
+    //   preventLinkNavigation: false,
+    //   onRender: (_pages) {},
+    //   onError: (error) {
+    //     setState(() {
+    //       errorMessage = error.toString();
+    //     });
+    //     print(error.toString());
+    //   },
+    //   onPageError: (page, error) {
+    //     setState(() {
+    //       errorMessage = '$page: ${error.toString()}';
+    //     });
+    //     print('$page: ${error.toString()}');
+    //   },
+    //   onViewCreated: (PDFViewController pdfViewController) {
+    //     // _controller.complete(pdfViewController);
+    //   },
+    //   onLinkHandler: (String? uri) {
+    //     print('goto uri: $uri');
+    //   },
+    //   onPageChanged: (int? page, int? total) {
+    //     print('page change: $page/$total');
+    //   },
+    // );
   }
 }

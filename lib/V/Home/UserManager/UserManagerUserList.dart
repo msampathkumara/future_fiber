@@ -27,6 +27,8 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
   var database;
 
   var _themeColor = Colors.orange;
+  var _deactivateThemeColor = Colors.grey;
+  var _activeThemeColor = Colors.orange;
 
   late bool nfcIsAvailable;
 
@@ -37,6 +39,8 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
   var _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   bool _setIdCards = false;
+
+  var _showDeactivatedUsers = false;
 
   @override
   initState() {
@@ -70,19 +74,31 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
     _dbChangeCallBack.dispose();
   }
 
+  TextEditingController searchController = new TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    _themeColor = _showDeactivatedUsers ? _deactivateThemeColor : _activeThemeColor;
+
     return Scaffold(
         appBar: AppBar(
           actions: <Widget>[
             PopupMenuButton<String>(
-                onSelected: (s) {
-                  print(s);
-                  setState(() {
+                onSelected: (s) async {
+                  if (s == "deactivatedUsers") {
+                    _showDeactivatedUsers = !_showDeactivatedUsers;
+                    _setIdCards = false;
+                    await filterUsers();
+                  } else if (s == "id") {
                     _setIdCards = !_setIdCards;
-                  });
+                  }
+                  print(s);
+                  setState(() {});
                 },
-                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[CheckedPopupMenuItem<String>(value: "id", child: Text("Set ID Cards"), checked: _setIdCards)])
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                      CheckedPopupMenuItem<String>(value: "deactivatedUsers", child: Text("Deactivated Users"), checked: _showDeactivatedUsers),
+                      if (!_showDeactivatedUsers) CheckedPopupMenuItem<String>(value: "id", child: Text("Set ID Cards"), checked: _setIdCards),
+                    ])
           ],
           elevation: 0.0,
           toolbarHeight: 80,
@@ -91,27 +107,29 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
             icon: Icon(Icons.arrow_back),
             onPressed: () => Navigator.pop(context),
           ),
-          title: Text(
-            "User Manager",
-            textScaleFactor: 1.2,
+          title: Column(
+            children: [
+              Text(
+                "User Manager",
+                textScaleFactor: 1.2,
+              ),
+              if (_showDeactivatedUsers)
+                Text(
+                  "(Deactivated Users)",
+                ),
+            ],
           ),
           bottom: SearchBar(
+            searchController: searchController,
             onSearchTextChanged: (text) {
-              if (subscription != null) {
-                subscription.cancel();
-              }
               searchText = text;
-
-              var future = new Future.delayed(const Duration(milliseconds: 300));
-              subscription = future.asStream().listen((v) {
-                print("SEARCHING FOR $searchText");
-                filterUsers();
-              });
+              print("SEARCHING FOR $searchText");
+              filterUsers();
             },
             onSubmitted: (text) {},
-            onBarCode: (barcode) {
-              print("xxxxxxxxxxxxxxxxxx $barcode");
-            },
+            // onBarCode: (barcode) {
+            //   print("xxxxxxxxxxxxxxxxxx $barcode");
+            // },
           ),
           centerTitle: true,
         ),
@@ -136,23 +154,25 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
               ),
             )),
         floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-        floatingActionButton: OpenContainer(
-            closedShape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(50.0),
-            ),
-            closedElevation: 2,
-            closedColor: _themeColor,
-            transitionDuration: Duration(milliseconds: 500),
-            openBuilder: (BuildContext context, void Function({Object? returnValue}) action) {
-              return AddUser();
-            },
-            closedBuilder: (BuildContext context, void Function() action) {
-              return InkWell(
-                  child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Icon(Icons.person_add_outlined, size: 24, color: Colors.white),
-              ));
-            }));
+        floatingActionButton: _showDeactivatedUsers
+            ? null
+            : OpenContainer(
+                closedShape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50.0),
+                ),
+                closedElevation: 2,
+                closedColor: _themeColor,
+                transitionDuration: Duration(milliseconds: 500),
+                openBuilder: (BuildContext context, void Function({Object? returnValue}) action) {
+                  return AddUser();
+                },
+                closedBuilder: (BuildContext context, void Function() action) {
+                  return InkWell(
+                      child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Icon(Icons.person_add_outlined, size: 24, color: Colors.white),
+                  ));
+                }));
   }
 
   String listSortBy = "uptime";
@@ -269,17 +289,26 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                 Divider(),
                 if (nfcIsAvailable)
                   ListTile(
-                    title: Text("Add ID Card"),
-                    leading: Icon(Icons.nfc_outlined),
+                    title: Text(nsUser.userHasNfc() ? "Remove ID Card" : "Add ID Card"),
+                    leading: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(Icons.nfc_outlined),
+                    ),
                     onTap: () async {
                       Navigator.of(context).pop();
-                      showAddNfcDialog(nsUser);
+                      if (nsUser.userHasNfc()) {
+                      } else {
+                        showAddNfcDialog(nsUser);
+                      }
                     },
                   ),
                 ListTile(
                   title: Text("Edit"),
                   subtitle: Text("Update user details"),
-                  leading: Icon(Icons.edit),
+                  leading: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(Icons.edit),
+                  ),
                   onTap: () async {
                     UpdateUserDetails.show(context, nsUser);
                   },
@@ -287,9 +316,23 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                 ListTile(
                   title: Text("Permissions"),
                   subtitle: Text("Update,Add or Remove Permissions"),
-                  leading: Icon(Icons.gpp_good_outlined),
+                  leading: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(Icons.gpp_good_outlined),
+                  ),
                   onTap: () async {
                     UserPermissions.show(context, nsUser);
+                  },
+                ),
+                ListTile(
+                  title: Text(nsUser.disabled ? "Activate User" : "Deactivate User"),
+                  subtitle: Text(nsUser.disabled ? "Activate all activities on system for this user" : "Deactivate all activities on system for this user"),
+                  leading: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(Icons.person_off_rounded),
+                  ),
+                  onTap: () async {
+                    //  TODO , add server call
                   },
                 ),
                 Spacer(),
@@ -302,11 +345,9 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
   }
 
   Future<void> reloadData() {
+    filterUsers();
     return DB.updateDatabase(context).then((value) {
-      return DB.getDB().then((value) => value!.rawQuery(" select * from users ").then((users) {
-            AllUsersList = List<NsUser>.from(users.map((model) => NsUser.fromJson(model)));
-            filterUsers();
-          }));
+      return filterUsers();
     });
   }
 
@@ -318,15 +359,23 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
         });
   }
 
-  void filterUsers() {
+  Future<void> filterUsers() async {
+    String q = " select * from users ";
+    if (_showDeactivatedUsers) {
+      q = " select * from users where deactivate=1";
+    }
+    await DB.getDB().then((value) => value!.rawQuery(q).then((users) {
+          AllUsersList = List<NsUser>.from(users.map((model) => NsUser.fromJson(model)));
+        }));
+
     if (searchText.trim().isEmpty) {
       filteredAllUsersList = AllUsersList;
     } else {
       filteredAllUsersList = AllUsersList.where((element) {
-        return element.name.toLowerCase().contains(searchText) |
+        return (element.name.toLowerCase().contains(searchText) |
             element.uname.toLowerCase().contains(searchText) |
             element.emailAddress.toLowerCase().contains(searchText) |
-            element.phone.toLowerCase().contains(searchText);
+            element.phone.toLowerCase().contains(searchText));
       }).toList();
     }
     setState(() {});

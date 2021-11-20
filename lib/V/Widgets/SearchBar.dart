@@ -7,7 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 // ignore: must_be_immutable
 class SearchBar extends StatefulWidget implements PreferredSizeWidget {
-  TextEditingController? searchController;
+  TextEditingController searchController;
 
   var onSearchTextChanged;
   var onBarCode;
@@ -17,11 +17,9 @@ class SearchBar extends StatefulWidget implements PreferredSizeWidget {
 
   int delay = 0;
 
-  SearchBar({@required this.onSearchTextChanged,   this.onSubmitted, this.onBarCode, this.child, this.delay = 0, this.searchController}) {
+  SearchBar({required this.onSearchTextChanged, this.onSubmitted, this.onBarCode, this.child, this.delay = 300, required this.searchController}) {
     print("_______________________________________");
-    if (searchController == null) {
-      searchController = new TextEditingController();
-    }
+
   }
 
   @override
@@ -39,13 +37,14 @@ class _SearchBarState extends State<SearchBar> {
   @override
   void initState() {
     super.initState();
-    widget.searchController!.addListener(() {
+    widget.searchController.addListener(() {
       if (subscription != null) {
         subscription!.cancel();
       }
       var future = new Future.delayed(Duration(milliseconds: widget.delay));
       subscription = future.asStream().listen((val) {
-        widget.onSearchTextChanged(widget.searchController!.text);
+        print(val);
+        widget.onSearchTextChanged(widget.searchController.text);
       });
       setState(() {});
     });
@@ -77,7 +76,7 @@ class _SearchBarState extends State<SearchBar> {
                     trailing: IconButton(
                       icon: Icon(Icons.cancel),
                       onPressed: () {
-                        widget.searchController!.clear();
+                        widget.searchController.clear();
                         widget.onSearchTextChanged('');
                       },
                     ),
@@ -101,7 +100,7 @@ class _SearchBarState extends State<SearchBar> {
                             } else {
                               widget.onBarCode(barcode);
                               // setState(() {
-                              widget.searchController!.text = barcode;
+                              widget.searchController.text = barcode;
                               // widget.onSearchTextChanged(barcode);
                               // });
                             }

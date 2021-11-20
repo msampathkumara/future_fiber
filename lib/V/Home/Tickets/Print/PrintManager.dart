@@ -33,6 +33,8 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
     super.dispose();
   }
 
+  TextEditingController searchController = new TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,6 +49,7 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
           ),
           title: Text("Print", textScaleFactor: 1.2),
           bottom: SearchBar(
+              searchController: searchController,
               delay: 300,
               onSearchTextChanged: (text) {
                 searchText = text;
@@ -68,16 +71,16 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
                 children: [
                   Padding(padding: const EdgeInsets.all(8.0), child: Text("${_ticketPrintList.length}/$dataCount", textScaleFactor: 1.1, style: TextStyle(color: Colors.white))),
                   const Spacer(),
-                  Text("Sorted by $sortedBy", style: TextStyle(color: Colors.white)),
-                  InkWell(
-                      onTap: () {},
-                      splashColor: Colors.red,
-                      child: Ink(
-                          child: IconButton(
-                              icon: Icon(Icons.sort_by_alpha_rounded),
-                              onPressed: () {
-                                _sortByBottomSheetMenu();
-                              })))
+                  // Text("Sorted by $sortedBy", style: TextStyle(color: Colors.white)),
+                  // InkWell(
+                  //     onTap: () {},
+                  //     splashColor: Colors.red,
+                  //     child: Ink(
+                  //         child: IconButton(
+                  //             icon: Icon(Icons.sort_by_alpha_rounded),
+                  //             onPressed: () {
+                  //               _sortByBottomSheetMenu();
+                  //             })))
                 ],
               ),
             )));

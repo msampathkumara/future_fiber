@@ -21,6 +21,14 @@ class StandardTicketInfo extends StatefulWidget {
 class _StandardTicketInfoState extends State<StandardTicketInfo> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.import_contacts),
+        onPressed: () {
+          widget.standardTicket.open(context);
+        },
+      ),
+    );
   }
 }

@@ -35,7 +35,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
   void dispose() {
     super.dispose();
   }
-
+  TextEditingController searchController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,18 +49,14 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
             onPressed: () => Navigator.pop(context),
           ),
           title: Text("QA & QC", textScaleFactor: 1.2),
-          bottom: SearchBar(
+          bottom: SearchBar(searchController: searchController,
+            delay: 300,
             onSearchTextChanged: (text) {
-              if (subscription != null) {
-                subscription.cancel();
-              }
               searchText = text;
               _ticketQcList = [];
-              var future = new Future.delayed(const Duration(milliseconds: 300));
-              subscription = future.asStream().listen((v) {
-                loadData(0).then((value) {
-                  setState(() {});
-                });
+
+              loadData(0).then((value) {
+                setState(() {});
               });
             },
             onSubmitted: (text) {},
@@ -153,8 +149,6 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
         });
   }
 
-
-
   getBody() {
     return Scaffold(
         backgroundColor: Colors.white,
@@ -162,7 +156,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
           toolbarHeight: 50,
           automaticallyImplyLeading: false,
           backgroundColor: themeColor,
-          elevation:   5  ,
+          elevation: 5,
           actions: [
             // IconButton(
             //     icon: Icon(Icons.filter_alt_rounded),
@@ -180,8 +174,6 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
         ),
         body: _getTicketsList());
   }
-
-
 
   _getTicketsList() {
     return Column(
@@ -266,8 +258,10 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
                               // subtitle: Text(ticket.fileVersion.toString()),
                               trailing: Wrap(
                                   alignment: WrapAlignment.center,
-                                  children: [UserImage(nsUserId: _ticketQc.userId, radius: 20), Text("${_ticketQc.user!.uname}", textScaleFactor: 1)],
-                                  direction: Axis.vertical))));
+                                  children: [UserImage(nsUserId: _ticketQc.userId, radius: 20), Text("${_ticketQc.user!=null?_ticketQc.user!.uname:""}", textScaleFactor: 1)],
+                                  direction: Axis.vertical)
+
+                          )));
                 },
                 separatorBuilder: (BuildContext context, int index) {
                   return Divider(

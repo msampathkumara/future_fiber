@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartwind/M/NsUser.dart';
+import 'package:smartwind/V/Home/BlueBook/BlueBookLogin.dart';
 
 class App {
 
@@ -37,4 +38,5 @@ class App {
     }
     return currentUser;
   }
+
 }

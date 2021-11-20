@@ -6,6 +6,7 @@ import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/StandardTicket.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 
+import 'ChangeFactory.dart';
 import 'StandardTicketInfo.dart';
 
 class StandardFiles extends StatefulWidget {
@@ -48,6 +49,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
   }
 
   bool _showAllTickets = true;
+  TextEditingController searchController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -97,28 +99,15 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
                 textScaleFactor: 1.2,
               ),
               bottom: SearchBar(
+                searchController: searchController,
+                delay: 300,
                 onSearchTextChanged: (text) {
-                  if (subscription != null) {
-                    subscription.cancel();
-                  }
                   searchText = text;
-
-                  var future = new Future.delayed(const Duration(milliseconds: 300));
-                  subscription = future.asStream().listen((v) {
-                    print("SEARCHING FOR $searchText");
-                    var t = DateTime.now().millisecondsSinceEpoch;
-                    loadData().then((value) {
-                      print("SEARCHING time ${(DateTime.now().millisecondsSinceEpoch - t)}");
-                      t = DateTime.now().millisecondsSinceEpoch;
-                      setState(() {});
-                      print("load time ${(DateTime.now().millisecondsSinceEpoch - t)}");
-                    });
+                  loadData().then((value) {
+                    setState(() {});
                   });
                 },
                 onSubmitted: (text) {},
-                onBarCode: (barcode) {
-                  print("xxxxxxxxxxxxxxxxxx $barcode");
-                },
               ),
               centerTitle: true,
             ),
@@ -283,44 +272,48 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
                 // });
               });
             },
-            child: Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: ListView.separated(
-                padding: const EdgeInsets.all(8),
-                itemCount: _filesList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  StandardTicket ticket = StandardTicket.fromJson(_filesList[index]);
-                  // print(ticket.toJson());
-                  return GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onLongPress: () async {
-                      await showTicketOptions(ticket, context);
-                      setState(() {});
-                    },
-                    onTap: () {
-                      var ticketInfo = StandardTicketInfo(ticket);
-                      ticketInfo.show(context);
-                    },
-                    onDoubleTap: () async {
-                      ticket.open(context);
-                    },
-                    child: Ink(
-                      decoration: BoxDecoration(
-                          color: ticket.isHold == 1 ? Colors.black12 : Colors.white, border: Border.all(color: Colors.white), borderRadius: BorderRadius.all(Radius.circular(20))),
-                      child: ListTile(
-                        leading: Text("${index + 1}"),
-                        title: Text((ticket.oe ?? ""), style: TextStyle(fontWeight: FontWeight.bold)),
-                        subtitle: Text(ticket.getUpdateDateTime()),
-                        trailing: Wrap(children: []),
-                      ),
+            child: _filesList.length == 0
+                ? Center(child: Text(searchText.isEmpty ? "No Tickets Found" : "⛔ Work Ticket not found.\n Please contact  Ticket Checking department", textScaleFactor: 1.5))
+                : Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: ListView.separated(
+                      padding: const EdgeInsets.all(8),
+                      itemCount: _filesList.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        StandardTicket ticket = StandardTicket.fromJson(_filesList[index]);
+                        // print(ticket.toJson());
+                        return GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onLongPress: () async {
+                            await showTicketOptions(ticket, context);
+                            setState(() {});
+                          },
+                          onTap: () {
+                            var ticketInfo = StandardTicketInfo(ticket);
+                            ticketInfo.show(context);
+                          },
+                          onDoubleTap: () async {
+                            ticket.open(context);
+                          },
+                          child: Ink(
+                            decoration: BoxDecoration(
+                                color: ticket.isHold == 1 ? Colors.black12 : Colors.white,
+                                border: Border.all(color: Colors.white),
+                                borderRadius: BorderRadius.all(Radius.circular(20))),
+                            child: ListTile(
+                              leading: Text("${index + 1}"),
+                              title: Text((ticket.oe ?? ""), style: TextStyle(fontWeight: FontWeight.bold)),
+                              subtitle: Text(ticket.getUpdateDateTime()),
+                              trailing: Wrap(children: []),
+                            ),
+                          ),
+                        );
+                      },
+                      separatorBuilder: (BuildContext context, int index) {
+                        return Divider(height: 1, endIndent: 0.5, color: Colors.black12);
+                      },
                     ),
-                  );
-                },
-                separatorBuilder: (BuildContext context, int index) {
-                  return Divider(height: 1, endIndent: 0.5, color: Colors.black12);
-                },
-              ),
-            ),
+                  ),
           ),
         ),
       ],
@@ -367,7 +360,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
 
     listsArray = [_allFilesList, _upwindFilesList, _oDFilesList, _nylonFilesList, _oEMFilesList, _noPoolFilesList];
     currentFileList = listsArray[_selectedTabIndex];
-    print(currentFileList.length);
+    print("currentFileList.length == " + currentFileList.length.toString());
   }
 
   Future<void> showTicketOptions(StandardTicket ticket, BuildContext context1) async {
@@ -395,12 +388,18 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
                       title: Text("Change Factory"),
                       leading: Icon(Icons.send_outlined, color: Colors.lightBlue),
                       onTap: () async {
+                        await Navigator.push(context1, MaterialPageRoute(builder: (context) => changeFactory(ticket)));
                         Navigator.of(context).pop();
                       }),
                   ListTile(
                       title: Text("Delete"),
                       leading: Icon(Icons.delete_forever, color: Colors.red),
                       onTap: () async {
+                        // TODO add link
+                        OnlineDB.apiPost("tickets/standard/delete", {'id': ticket.id.toString()}).then((response) async {
+                          print(response.data);
+
+                        });
                         Navigator.of(context).pop();
                       }),
                 ])),
@@ -424,7 +423,12 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
   }
 
   Future loadOnlineData() {
-    return OnlineDB.updateStandardTicketsDB(context).then((response) async {
+    // return OnlineDB.updateStandardTicketsDB(context).then((response) async {
+    //   loading = false;
+    //   return reloadData();
+    // });
+
+    return DB.updateDatabase(context).then((response) async {
       loading = false;
       return reloadData();
     });

@@ -16,11 +16,44 @@ class _info_ProgressState extends State<info_Progress> {
   List<Progress> progressList = [];
 
   @override
-  void initState() {}
+  void initState() {
+    progressList = widget.progressList;
+
+    // progressList.forEach((element) {
+    //   element.timeToFinish = progressList[0] == element ? 0 : 10;
+    // });
+    for (var i = 0; i < progressList.length; i++) {
+      if (i == 0) {
+        progressList[i].timeToFinish = "";
+      } else {
+        String? prevDate = progressList[i - 1].finishedOn;
+        String? nDate = progressList[i].finishedOn;
+        if (prevDate != null || prevDate!.isNotEmpty) {
+          if (nDate != null || nDate!.isNotEmpty) {
+           try{
+             DateTime d = DateTime.parse(prevDate);
+             DateTime d1 = DateTime.parse(nDate);
+             int timeInMinutes = d1.difference(d).inMinutes;
+             if (timeInMinutes == 0) {
+               progressList[i].timeToFinish = "";
+             } else {
+               final minutes = (timeInMinutes % 60).toInt();
+               final hours = (((timeInMinutes - minutes) / 60) % 24).toInt();
+               progressList[i].timeToFinish = "${hours}h ${minutes}m";
+             }
+           }catch(e){
+             progressList[i].timeToFinish = "";
+           }
+          }
+        }
+      }
+    }
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    progressList = widget.progressList;
     return Container(
       child: ListView.separated(
         padding: const EdgeInsets.all(8),
@@ -38,7 +71,8 @@ class _info_ProgressState extends State<info_Progress> {
                       Expanded(
                           flex: 3,
                           child: Text((progress.finishedOn != "0" ? (progress.finishedOn!.replaceAll(RegExp(' '), '\n')) : ""),
-                              style: TextStyle(color: progress.status == 1 ? Colors.white : Colors.black)))
+                              style: TextStyle(color: progress.status == 1 ? Colors.white : Colors.black))),
+                      Expanded(flex: 3, child: Text("${progress.timeToFinish}", style: TextStyle(color: Colors.white))),
                     ],
                   ),
                   trailing: progress.finishedBy != null ? SizedBox(width: 30, child: UserButton(nsUserId: progress.finishedBy, imageRadius: 16, hideName: true)) : Text("")));

@@ -44,7 +44,9 @@ class NsUser {
   Section? section;
 
   @JsonKey(defaultValue: 0, includeIfNull: true)
-  int? hasNfc;
+  int hasNfc = 0;
+
+  bool disabled = false;
 
   NsUser() {
     loadSections();
@@ -59,6 +61,10 @@ class NsUser {
       return [];
     }
     return phone.split(",");
+  }
+
+  bool userHasNfc() {
+    return hasNfc == 1;
   }
 
   List getEmailList() {
@@ -142,7 +148,7 @@ class NsUser {
         }));
   }
 
-  Future<List>   loadSections() async {
+  Future<List> loadSections() async {
     var db = await DB.getDB();
     var s = await db!.rawQuery(" select * from userSections us left join factorySections fs on fs.id=us.sectionId where userid='$id'  ");
     sections = List<Section>.from(s.map((model) => Section.fromJson(model)));

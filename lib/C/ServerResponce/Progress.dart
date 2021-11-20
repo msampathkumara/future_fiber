@@ -20,6 +20,7 @@ class Progress {
   Section? section;
 
   NsUser? user;
+  String timeToFinish = "";
 
   Progress();
 

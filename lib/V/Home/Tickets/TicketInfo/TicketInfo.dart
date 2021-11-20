@@ -153,7 +153,10 @@ class _TicketInfoState extends State<TicketInfo> {
                         style: ts.merge(smallText),
                       ),
                       Text(
-                        "Ship Date : ${_ticket.getShipDate()}",
+                        "Ship Date : ${_ticket.shipDate}",
+                        style: ts.merge(smallText),
+                      ),Text(
+                        "Delivery Date : ${_ticket.deliveryDate}",
                         style: ts.merge(smallText),
                       ),
                       Padding(

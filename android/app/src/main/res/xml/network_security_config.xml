@@ -5,5 +5,8 @@
         <domain includeSubdomains="true">192.168.0.104</domain>
         <domain includeSubdomains="true">cs.northsails.com</domain>
         <domain includeSubdomains="true">northsails.cemex.cloud</domain>
+        <domain includeSubdomains="true">northsails.com</domain>
+        <domain includeSubdomains="true">10.200.4.31</domain>
+        <domain includeSubdomains="true">dev.nsgshipping.com</domain>
     </domain-config>
 </network-security-config>

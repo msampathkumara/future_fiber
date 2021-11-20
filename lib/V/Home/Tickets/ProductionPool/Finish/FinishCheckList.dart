@@ -114,6 +114,11 @@ class _FinishCheckListState extends State<FinishCheckList> {
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(primary: Colors.redAccent, textStyle: TextStyle(fontWeight: FontWeight.bold)),
                         onPressed: () async {
+                          if (Navigator.canPop(context)) {
+                            Navigator.pop(context);
+                          } else {
+                            SystemNavigator.pop();
+                          }
                           App.getCurrentUser().then((user) async {
                             var isQc = false;
                             if (user!.section!.sectionTitle.toLowerCase() == "qc") {
@@ -124,6 +129,9 @@ class _FinishCheckListState extends State<FinishCheckList> {
                               'ticket': {'id': ticket.id, "qc": isQc}.toString()
                             });
                           });
+
+
+
                         },
                         child: Text("Disagree"))
                   ],

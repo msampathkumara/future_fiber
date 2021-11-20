@@ -3,7 +3,7 @@ enum SortByItem { id, mo, oe, finished, dir, uptime, file, sheet, production, is
 enum Status { All, Sent, Cancel, Done }
 enum Type {All, QA, QC }
 enum TicketFlagTypes {RED,GR,RUSH,SK,HOLD}
-enum Filters {isRed, isRush, inPrint, isError, isGr, isSk, isHold,none,isSort}
+enum Filters {isRed, isRush, inPrint, isError, isGr, isSk, isHold,none,isSort,crossPro}
 
 extension ParseToString on Production {
   String toShortString() {

@@ -19,10 +19,11 @@ class FCM {
 
       if (message.from == "/topics/ticketComplete") {
         DB.updateCompletedTicket(context, json.decode(message.data["ticketId"]));
-      }else if (message.from == "/topics/resetDb") {
+      } else if (message.from == "/topics/resetDb") {
         DB.updateDatabase(context, reset: true);
         print('--------------------------RESEING DATABASE-----------------');
-      } else if (json.decode(message.data["FILE_DB_UPDATE"]) != null) {
+        // } else if (json.decode(message.data["FILE_DB_UPDATE"]) != null) {
+      } else if (message.from == "/topics/file_update") {
         DB.updateDatabase(context);
       } else if (json.decode(message.data["updateTicketDB"]) != null) {
         DB.updateDatabase(context, reset: true);

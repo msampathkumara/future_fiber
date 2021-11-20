@@ -31,7 +31,8 @@ StandardTicket _$StandardTicketFromJson(Map<String, dynamic> json) =>
       ..crossPro = json['crossPro'] as int? ?? 0
       ..crossProList = json['crossProList'] as String? ?? ''
       ..openSections = json['openSections'] as String? ?? ''
-      ..shipDate = json['shipDate'] as int? ?? 0
+      ..shipDate = json['shipDate'] as String? ?? ''
+      ..deliveryDate = json['deliveryDate'] as String? ?? ''
       ..production = json['production'] as String?
       ..usedCount = json['usedCount'] as int? ?? 0
       ..uptime = json['uptime'] as int? ?? 0;
@@ -62,6 +63,7 @@ Map<String, dynamic> _$StandardTicketToJson(StandardTicket instance) =>
       'crossProList': instance.crossProList,
       'openSections': instance.openSections,
       'shipDate': instance.shipDate,
+      'deliveryDate': instance.deliveryDate,
       'production': instance.production,
       'usedCount': instance.usedCount,
       'uptime': instance.uptime,

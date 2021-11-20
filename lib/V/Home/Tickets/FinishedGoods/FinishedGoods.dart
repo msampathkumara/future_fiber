@@ -5,6 +5,7 @@ import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Home/Tickets/TicketInfo/TicketInfo.dart';
+import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 import 'package:smartwind/ns_icons_icons.dart';
 
@@ -68,15 +69,6 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
             textScaleFactor: 1.2,
           ),
           bottom: SearchBar(
-              // child: IconButton(
-              //   icon: Icon(Icons.filter_alt_rounded, color: Colors.white),
-              //   onPressed: () {
-              //     setState(() {
-              //       _showFilters = !_showFilters;
-              //       _showFiltersEnd = false;
-              //     });
-              //   },
-              // ),
               searchController: searchController,
               onSearchTextChanged: (text) {
                 if (subscription != null) {
@@ -99,7 +91,25 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
               }),
           centerTitle: true,
         ),
-        body: getBody(),
+        body: Container(
+          color: themeColor,
+          child: Column(
+            children: [
+              Wrap(children: [
+                flagIcon(Filters.crossPro, Icons.merge_type_rounded),
+                flagIcon(Filters.isError, Icons.warning_rounded),
+                flagIcon(Filters.inPrint, Icons.print_rounded),
+                flagIcon(Filters.isRush, Icons.offline_bolt_rounded),
+                flagIcon(Filters.isRed, Icons.flag_rounded),
+                flagIcon(Filters.isHold, NsIcons.stop),
+                flagIcon(Filters.isSk, NsIcons.sk),
+                flagIcon(Filters.isGr, NsIcons.gr),
+                flagIcon(Filters.isSort, NsIcons.short)
+              ]),
+              Expanded(child: getBody()),
+            ],
+          ),
+        ),
         bottomNavigationBar: BottomAppBar(
             shape: CircularNotchedRectangle(),
             color: themeColor,
@@ -127,6 +137,26 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                 ],
               ),
             )));
+  }
+
+  Filters dataFilter = Filters.none;
+
+  flagIcon(Filters filter, IconData icon) {
+    return IconButton(
+      icon: CircleAvatar(child: Icon(icon, color: dataFilter == filter ? Colors.red : Colors.black), backgroundColor: Colors.white),
+      tooltip: 'Increase volume by 10',
+      onPressed: () async {
+        if (dataFilter == filter) {
+          dataFilter = Filters.none;
+        } else {
+          dataFilter = filter;
+        }
+        await loadData(0);
+        setState(() {
+          print('xxxxxxxxxxxxx');
+        });
+      },
+    );
   }
 
   String listSortBy = "uptime";
@@ -176,16 +206,9 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                       padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
                       child: ListView(
                         children: [
-                          getListItem("Date", Icons.date_range_rounded, "uptime"),
-                          getListItem("Name", Icons.sort_by_alpha_rounded, "mo"),
-                          getListItem("Red Flag", Icons.tour_rounded, "isred"),
-                          getListItem("Hold", Icons.pan_tool_rounded, "ishold"),
-                          getListItem("Rush", Icons.flash_on_rounded, "isrush"),
-                          getListItem("SK", NsIcons.sk, "issk"),
-                          getListItem("SK", NsIcons.gr, "isgr"),
-                          getListItem("Short", Icons.local_mall_rounded, "sort"),
-                          getListItem("Error Route", Icons.warning_rounded, "errOut"),
-                          getListItem("Print", Icons.print_rounded, "inprint"),
+                          getListItem("Shipping Date", Icons.date_range_rounded, "shipDate"),
+                          getListItem("Modification Date", Icons.date_range_rounded, "uptime"),
+                          getListItem("Name", Icons.sort_by_alpha_rounded, "mo")
                         ],
                       )),
                 ),
@@ -205,15 +228,6 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
           // elevation: (!_showFilters && _showFiltersEnd) ? 4 : 0,
           elevation: 4,
           actions: [
-            // IconButton(
-            //   icon: Icon(Icons.filter_alt_rounded),
-            //   onPressed: () {
-            //     setState(() {
-            //       _showFilters = !_showFilters;
-            //       _showFiltersEnd = false;
-            //     });
-            //   },
-            // )
           ],
           title: Wrap(
             spacing: 5,
@@ -242,167 +256,169 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                 setState(() {});
               });
             },
-            child: Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: ListView.separated(
-                padding: const EdgeInsets.all(8),
-                itemCount: _ticketList.length < dataCount ? _ticketList.length + 1 : _ticketList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  if (_ticketList.length == index) {
-                    if (!requested && (!_dataLoadingError)) {
-                      var x = ((_ticketList.length) / 20);
+            child: (_ticketList.length == 0 && (!requested))
+                ? Center(child: Text(searchText.isEmpty ? "No Tickets Found" : "⛔ Work Ticket not found.\n Please contact  Ticket Checking department", textScaleFactor: 1.5))
+                : Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: ListView.separated(
+                      padding: const EdgeInsets.all(8),
+                      itemCount: _ticketList.length < dataCount ? _ticketList.length + 1 : _ticketList.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        if (_ticketList.length == index) {
+                          if (!requested && (!_dataLoadingError)) {
+                            var x = ((_ticketList.length) / 20);
 
-                      loadData(x.toInt());
-                    }
-                    return Container(
-                        height: 100,
-                        child: Center(
-                            child: Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: SizedBox(
-                                    height: 48,
-                                    width: 48,
-                                    child: InkWell(
-                                      onTap: () {
-                                        if (_dataLoadingError) {
-                                          setState(() {
-                                            _dataLoadingError = false;
-                                          });
-                                          var x = ((_ticketList.length) / 20);
-                                          loadData(x.toInt());
-                                        }
-                                      },
-                                      child: Card(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(100.0),
-                                          ),
-                                          child: Padding(
-                                              padding: const EdgeInsets.all(12.0),
-                                              child: !_dataLoadingError
-                                                  ? CircularProgressIndicator(color: Colors.red, strokeWidth: 2)
-                                                  : Icon(
-                                                      Icons.refresh_rounded,
-                                                      size: 18,
-                                                    ))),
-                                    )))));
-                  }
+                            loadData(x.toInt());
+                          }
+                          return Container(
+                              height: 100,
+                              child: Center(
+                                  child: Padding(
+                                      padding: const EdgeInsets.all(8),
+                                      child: SizedBox(
+                                          height: 48,
+                                          width: 48,
+                                          child: InkWell(
+                                            onTap: () {
+                                              if (_dataLoadingError) {
+                                                setState(() {
+                                                  _dataLoadingError = false;
+                                                });
+                                                var x = ((_ticketList.length) / 20);
+                                                loadData(x.toInt());
+                                              }
+                                            },
+                                            child: Card(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(100.0),
+                                                ),
+                                                child: Padding(
+                                                    padding: const EdgeInsets.all(12.0),
+                                                    child: !_dataLoadingError
+                                                        ? CircularProgressIndicator(color: Colors.red, strokeWidth: 2)
+                                                        : Icon(
+                                                            Icons.refresh_rounded,
+                                                            size: 18,
+                                                          ))),
+                                          )))));
+                        }
 
-                  Ticket ticket = (_ticketList[index]);
-                  return GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onLongPress: () async {
-                      await showTicketOptions(ticket, context);
-                      setState(() {});
-                    },
-                    onTap: () {
-                      var ticketInfo = TicketInfo(ticket);
-                      ticketInfo.show(context);
-                    },
-                    onDoubleTap: () async {
-                      print(await ticket.getLocalFileVersion());
-                      ticket.open(context);
-                    },
-                    child: Ink(
-                      decoration: BoxDecoration(
-                          color: ticket.isHold == 1 ? Colors.black12 : Colors.white,
-                          border: Border.all(
-                            color: Colors.white,
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(20))),
-                      child: ListTile(
-                        leading: Text("${index + 1}"),
-                        title: Text(
-                          (ticket.mo ?? "").trim().isEmpty ? (ticket.oe ?? "") : ticket.mo ?? "",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        subtitle: Wrap(
-                          direction: Axis.vertical,
-                          children: [
-                            if ((ticket.mo ?? "").trim().isNotEmpty) Text((ticket.oe ?? "")),
-                            if (ticket.crossPro == 1)
-                              Chip(
-                                  avatar: CircleAvatar(
-                                    child: Icon(
-                                      Icons.merge_type_outlined,
-                                    ),
-                                  ),
-                                  label: Text(ticket.crossProList)),
-                            Text(ticket.getUpdateDateTime()),
-                          ],
-                        ),
-                        // subtitle: Text(ticket.fileVersion.toString()),
-                        trailing: Wrap(
-                          children: [
-                            if (ticket.inPrint == 1)
-                              IconButton(
-                                icon: CircleAvatar(child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white),
-                                onPressed: () {},
-                              ),
-                            if (ticket.isHold == 1)
-                              IconButton(
-                                icon: CircleAvatar(child: Icon(Icons.pan_tool_rounded, color: Colors.black), backgroundColor: Colors.white),
-                                onPressed: () {},
-                              ),
-                            if (ticket.isGr == 1)
-                              IconButton(
-                                icon: CircleAvatar(child: Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white),
-                                onPressed: () {},
-                              ),
-                            if (ticket.isSk == 1)
-                              IconButton(
-                                icon: CircleAvatar(child: Icon(NsIcons.sk, color: Colors.pink), backgroundColor: Colors.white),
-                                onPressed: () {},
-                              ),
-                            if (ticket.isError == 1)
-                              IconButton(
-                                icon: CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white),
-                                onPressed: () {},
-                              ),
-                            if (ticket.isSort == 1)
-                              IconButton(
-                                icon: CircleAvatar(child: Icon(Icons.local_mall_rounded, color: themeColor), backgroundColor: Colors.white),
-                                onPressed: () {},
-                              ),
-                            if (ticket.isRush == 1)
-                              IconButton(
-                                icon: CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white),
-                                onPressed: () {},
-                              ),
-                            if (ticket.isRed == 1)
-                              IconButton(
-                                icon: CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white),
-                                onPressed: () {},
-                              ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 4),
-                              child: CircularPercentIndicator(
-                                radius: 40.0,
-                                lineWidth: 5.0,
-                                percent: ticket.progress / 100,
-                                center: new Text(
-                                  ticket.progress.toString() + "%",
-                                  style: TextStyle(fontSize: 12),
+                        Ticket ticket = (_ticketList[index]);
+                        return GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onLongPress: () async {
+                            await showTicketOptions(ticket, context);
+                            setState(() {});
+                          },
+                          onTap: () {
+                            var ticketInfo = TicketInfo(ticket);
+                            ticketInfo.show(context);
+                          },
+                          onDoubleTap: () async {
+                            print(await ticket.getLocalFileVersion());
+                            ticket.open(context);
+                          },
+                          child: Ink(
+                            decoration: BoxDecoration(
+                                color: ticket.isHold == 1 ? Colors.black12 : Colors.white,
+                                border: Border.all(
+                                  color: Colors.white,
                                 ),
-                                progressColor: themeColor,
+                                borderRadius: BorderRadius.all(Radius.circular(20))),
+                            child: ListTile(
+                              leading: Text("${index + 1}"),
+                              title: Text(
+                                (ticket.mo ?? "").trim().isEmpty ? (ticket.oe ?? "") : ticket.mo ?? "",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            )
-                          ],
-                        ),
-                      ),
+                              subtitle: Wrap(
+                                direction: Axis.vertical,
+                                children: [
+                                  if ((ticket.mo ?? "").trim().isNotEmpty) Text((ticket.oe ?? "")),
+                                  if (ticket.crossPro == 1)
+                                    Chip(
+                                        avatar: CircleAvatar(
+                                          child: Icon(
+                                            Icons.merge_type_outlined,
+                                          ),
+                                        ),
+                                        label: Text(ticket.crossProList)),
+                                  Text(ticket.getUpdateDateTime()),
+                                ],
+                              ),
+                              // subtitle: Text(ticket.fileVersion.toString()),
+                              trailing: Wrap(
+                                children: [
+                                  if (ticket.inPrint == 1)
+                                    IconButton(
+                                      icon: CircleAvatar(child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white),
+                                      onPressed: () {},
+                                    ),
+                                  if (ticket.isHold == 1)
+                                    IconButton(
+                                      icon: CircleAvatar(child: Icon(Icons.pan_tool_rounded, color: Colors.black), backgroundColor: Colors.white),
+                                      onPressed: () {},
+                                    ),
+                                  if (ticket.isGr == 1)
+                                    IconButton(
+                                      icon: CircleAvatar(child: Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white),
+                                      onPressed: () {},
+                                    ),
+                                  if (ticket.isSk == 1)
+                                    IconButton(
+                                      icon: CircleAvatar(child: Icon(NsIcons.sk, color: Colors.pink), backgroundColor: Colors.white),
+                                      onPressed: () {},
+                                    ),
+                                  if (ticket.isError == 1)
+                                    IconButton(
+                                      icon: CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white),
+                                      onPressed: () {},
+                                    ),
+                                  if (ticket.isSort == 1)
+                                    IconButton(
+                                      icon: CircleAvatar(child: Icon(Icons.local_mall_rounded, color: themeColor), backgroundColor: Colors.white),
+                                      onPressed: () {},
+                                    ),
+                                  if (ticket.isRush == 1)
+                                    IconButton(
+                                      icon: CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white),
+                                      onPressed: () {},
+                                    ),
+                                  if (ticket.isRed == 1)
+                                    IconButton(
+                                      icon: CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white),
+                                      onPressed: () {},
+                                    ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 4),
+                                    child: CircularPercentIndicator(
+                                      radius: 40.0,
+                                      lineWidth: 5.0,
+                                      percent: ticket.progress / 100,
+                                      center: new Text(
+                                        ticket.progress.toString() + "%",
+                                        style: TextStyle(fontSize: 12),
+                                      ),
+                                      progressColor: themeColor,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      separatorBuilder: (BuildContext context, int index) {
+                        return Divider(
+                          height: 1,
+                          endIndent: 0.5,
+                          color: Colors.black12,
+                        );
+                      },
                     ),
-                  );
-                },
-                separatorBuilder: (BuildContext context, int index) {
-                  return Divider(
-                    height: 1,
-                    endIndent: 0.5,
-                    color: Colors.black12,
-                  );
-                },
-              ),
-            ),
+                  ),
           ),
         ),
       ],
@@ -441,6 +457,13 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                       title: Text("Delete"),
                       leading: Icon(Icons.delete_forever, color: Colors.red),
                       onTap: () async {
+                        OnlineDB.apiPost("tickets/delete", {"id": ticket.id.toString()}).then((response) async {
+                          print('TICKET DELETED');
+                          print(response.data);
+                          print(response.statusCode);
+                        }).catchError((error){
+                          ErrorMessageView(  errorMessage: error.toString()).show(context);
+                        });
                         Navigator.of(context).pop();
                       }),
                 ])),
@@ -476,9 +499,12 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
   bool _dataLoadingError = false;
 
   Future loadData(int page) {
-    requested = true;
+    setState(() {
+      requested = true;
+    });
     return OnlineDB.apiGet("tickets/completed/getList", {
       'production': _selectedProduction.toShortString(),
+      "flag": dataFilter.getValue(),
       'sortDirection': "desc",
       'sortBy': listSortBy,
       'pageIndex': page,

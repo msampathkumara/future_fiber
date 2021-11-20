@@ -8,7 +8,7 @@ class DbMigrator {
       "ALTER TABLE tickets ADD isHold tinyint default 0;",
       "create table files (ticket int ,ver int , unique (ticket)) ",
       "alter table tickets add openSections TEXT default '' null;",
-      "CREATE INDEX ticketsIndex ON tickets;",
+      "CREATE INDEX ticketsIndex ON tickets",
       "alter table tickets add completed tinyint default 0 null;",
       "alter table tickets add nowAt int default 0;",
       "alter table tickets add fileVersion int default 0 null;"
@@ -46,6 +46,9 @@ class DbMigrator {
     ],
     24: ["create table maxUpTimes ( collection varchar(20), uptime varchar(20), UNIQUE (collection) ON CONFLICT REPLACE );"],
     26: ["alter table tickets add isSort int default 0 ;"],
-    27: ["alter table tickets add shipDate datetime default 0 ;"]
+    27: ["alter table tickets add shipDate datetime default 0 ;"],
+    28: ["alter table tickets add deliveryDate datetime default 0 ;"],
+    29: ["alter table users add deactivate int default 0 ;"],
+    30: ["alter table standardTickets add `delete` int default 0 ;"]
   };
 }

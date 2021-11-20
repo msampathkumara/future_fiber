@@ -18,7 +18,8 @@ class RF extends StatefulWidget {
   OperationMinMax operationMinMax;
   List<Progress> progressList;
 
-  RF(this.ticket, this.userRFCredentials, this.operationMinMax, this.progressList);
+  RF(this.ticket, this.userRFCredentials, this.operationMinMax,
+      this.progressList);
 
   @override
   _RFState createState() {
@@ -41,10 +42,13 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
 
   WebView? _webView;
   WebViewController? _controller;
+  bool webPageConnectionError = false;
+  bool loading = true;
 
   @override
   initState() {
     super.initState();
+
     ticket = widget.ticket;
     userRFCredentials = widget.userRFCredentials;
     operationMinMax = widget.operationMinMax;
@@ -55,10 +59,12 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
     DefaultAssetBundle.of(context).loadString('assets/js.txt').then((value) {
       jsString = setupData("$value");
       _webView = WebView(
-        // initialUrl: 'https://www.w3schools.com/howto/howto_css_register_form.asp',
+        // initialUrl:
+        //     'https://www.w3schools.com/howto/howto_css_register_form.asp',
         initialUrl: "http://10.200.4.31/webclient/",
         javascriptMode: JavascriptMode.unrestricted,
         onWebViewCreated: (WebViewController webViewController) {
+          print('WebViewController set');
           _controller = webViewController;
           // _controller.complete(webViewController);
         },
@@ -77,23 +83,40 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
         onPageFinished: (String url) {
           print('Page finished loading: $url');
           _controller!.evaluateJavascript(jsString);
+          loading = false;
+          setState(() {});
+        },
+        onWebResourceError: (c) {
+          loading = false;
+          webPageConnectionError = true;
+          setState(() {});
         },
         gestureNavigationEnabled: true,
       );
+
       setState(() {});
     });
     print('cxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
 
     db.child("settings").once().then((DataSnapshot result) {
-
       erpNotWorking = result.value["erpNotWorking"] == 0;
     });
     db.child("settings").onChildChanged.listen((Event event) {
       db.child("settings").once().then((DataSnapshot result) {
         erpNotWorking = result.value["erpNotWorking"] == 0;
         print('------------ ${erpNotWorking}');
-        setState(() {  });
+        setState(() {});
       });
+    });
+  }
+
+  setupTimeout(){
+    Future.delayed(const Duration(milliseconds: 15000), () {
+      if (loading) {
+        loading = false;
+        webPageConnectionError = true;
+        setState(() {});
+      }
     });
   }
 
@@ -120,7 +143,11 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
               icon: Icon(Icons.check_circle_outline_outlined),
               label: Text("Finish"),
               onPressed: () async {
-                var r = await OnlineDB.apiGet("tickets/finish", {'erpDone':erpNotWorking?0:1,'ticket': ticket.id.toString(), 'doAt': operationMinMax.doAt.toString()});
+                var r = await OnlineDB.apiGet("tickets/finish", {
+                  'erpDone': erpNotWorking ? 0 : 1,
+                  'ticket': ticket.id.toString(),
+                  'doAt': operationMinMax.doAt.toString()
+                });
                 print(json.decode(r.data));
                 // ServerResponceMap res1 = ServerResponceMap.fromJson(json.decode(r.body));
                 Navigator.pop(context, true);
@@ -144,57 +171,101 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
                                 indicatorWeight: 4.0,
                                 indicatorColor: Colors.white,
                                 isScrollable: true,
-                                tabs: [for (final tab in tabs) Tab(text: tab)])),
-                        body: TabBarView(controller: _tabBarcontroller, physics: NeverScrollableScrollPhysics(), children: [
-                          Scaffold(body: PDFViewWidget(ticket.ticketFile!.path)),
-                          Scaffold(
-                            body: ListView.builder(
-                              itemCount: progressList.length,
-                              itemBuilder: (context, i) {
-                                print(progressList[i].toJson());
-                                Progress progress = progressList[i];
-                                print(progress);
-                                bool now = false;
-                                bool done = false;
-                                if (progress.operationNo! >= operationMinMax.min! && progress.operationNo! <= operationMinMax.max!) {
-                                  now = true;
-                                }
-                                if (progress.operationNo! < operationMinMax.min!) {
-                                  done = true;
-                                }
-                                return Padding(
-                                  padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-                                  child: ListTile(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(Radius.circular(5)),
-                                    ),
-                                    tileColor: (now)
-                                        ? Colors.deepOrange[200]
-                                        : (done)
-                                            ? Colors.green[200]
-                                            : Colors.white,
-                                    leading: progress.status == 1
-                                        ? Icon(
-                                            Icons.check_circle_outline_outlined,
-                                            color: Colors.green,
-                                          )
-                                        : Icon(Icons.pending_outlined),
-                                    title: now ? Text(progress.operation!) : Text(progress.operation!),
-                                    subtitle: Text(""),
-                                    trailing: Wrap(
-                                      children: [Text(progress.operationNo.toString())],
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          )
-                        ]))),
+                                tabs: [
+                                  for (final tab in tabs) Tab(text: tab)
+                                ])),
+                        body: TabBarView(
+                            controller: _tabBarcontroller,
+                            physics: NeverScrollableScrollPhysics(),
+                            children: [
+                              Scaffold(
+                                  body: PDFViewWidget(ticket.ticketFile!.path)),
+                              Scaffold(
+                                body: ListView.builder(
+                                  itemCount: progressList.length,
+                                  itemBuilder: (context, i) {
+                                    print(progressList[i].toJson());
+                                    Progress progress = progressList[i];
+                                    print(progress);
+                                    bool now = false;
+                                    bool done = false;
+                                    if (progress.operationNo! >=
+                                            operationMinMax.min! &&
+                                        progress.operationNo! <=
+                                            operationMinMax.max!) {
+                                      now = true;
+                                    }
+                                    if (progress.operationNo! <
+                                        operationMinMax.min!) {
+                                      done = true;
+                                    }
+                                    return Padding(
+                                      padding:
+                                          const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                                      child: ListTile(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(5)),
+                                        ),
+                                        tileColor: (now)
+                                            ? Colors.deepOrange[200]
+                                            : (done)
+                                                ? Colors.green[200]
+                                                : Colors.white,
+                                        leading: progress.status == 1
+                                            ? Icon(
+                                                Icons
+                                                    .check_circle_outline_outlined,
+                                                color: Colors.green,
+                                              )
+                                            : Icon(Icons.pending_outlined),
+                                        title: now
+                                            ? Text(progress.operation!)
+                                            : Text(progress.operation!),
+                                        subtitle: Text(""),
+                                        trailing: Wrap(
+                                          children: [
+                                            Text(
+                                                progress.operationNo.toString())
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              )
+                            ]))),
               ),
               Divider(),
               if (_webView != null && (erpNotWorking))
                 Expanded(
-                  child: _webView!,
+                  child: (loading)
+                      ? Center(child: Text("Loading", textScaleFactor: 1.5))
+                      : webPageConnectionError
+                          ? Center(
+                              child: Wrap(
+                              direction: Axis.vertical,
+                              alignment: WrapAlignment.center,
+                              children: [
+                                Text("No Network Or Not In Factory Network",
+                                    textScaleFactor: 1.2),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ElevatedButton(
+                                      onPressed: () {
+                                        webPageConnectionError = false;
+                                        loading = true;
+                                        setupTimeout();
+                                        setState(() {
+
+                                        });
+                                        _controller!.reload();
+                                      },
+                                      child: Text("Retry")),
+                                )
+                              ],
+                            ))
+                          : _webView!,
                 ),
             ],
           ));
@@ -216,11 +287,15 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
 
   String setupData(loadData) {
     print(userRFCredentials.toJson());
-    loadData = loadData.toString().replaceAll("@@user", userRFCredentials.uname ?? "");
-    loadData = loadData.toString().replaceAll("@@pass", userRFCredentials.pword ?? "");
+    loadData =
+        loadData.toString().replaceAll("@@user", userRFCredentials.uname ?? "");
+    loadData =
+        loadData.toString().replaceAll("@@pass", userRFCredentials.pword ?? "");
     loadData = loadData.toString().replaceAll("@@mo", widget.ticket.mo ?? "");
-    loadData = loadData.toString().replaceAll("@@low", operationMinMax.min.toString());
-    loadData = loadData.toString().replaceAll("@@max", operationMinMax.max.toString());
+    loadData =
+        loadData.toString().replaceAll("@@low", operationMinMax.min.toString());
+    loadData =
+        loadData.toString().replaceAll("@@max", operationMinMax.max.toString());
 
     return loadData;
   }

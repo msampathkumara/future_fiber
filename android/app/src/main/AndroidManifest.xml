@@ -15,6 +15,7 @@
         android:required="true" />
 
     <application
+        android:usesCleartextTraffic="true"
         android:fullBackupContent="@xml/backup_descriptor"
         android:icon="@mipmap/ic_launcher"
         android:label="Smart Wind"

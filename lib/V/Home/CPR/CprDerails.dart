@@ -76,23 +76,23 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
       return DefaultTabController(
         length: 2,
         child: Scaffold(
-            floatingActionButton: Visibility(
-              visible: !keyboardIsOpen,
-              child: FloatingActionButton(
-                onPressed: () {
-                  saving = true;
-                  setState(() {});
-                  OnlineDB.apiPost("cpr/saveCpr", _cpr.toJson()).then((value) {
-                    saving = false;
-                    // Navigator.of(context).pop();
-                  }).catchError((onError) {
-                    ErrorMessageView(errorMessage: onError.toString()).show(context);
-                  });
-                },
-                child: const Icon(Icons.save),
-                backgroundColor: Colors.lightBlue,
-              ),
-            ),
+            // floatingActionButton: Visibility(
+            //   visible: !keyboardIsOpen,
+            //   child: FloatingActionButton(
+            //     onPressed: () {
+            //       saving = true;
+            //       setState(() {});
+            //       OnlineDB.apiPost("cpr/saveCpr", _cpr.toJson()).then((value) {
+            //         saving = false;
+            //         // Navigator.of(context).pop();
+            //       }).catchError((onError) {
+            //         ErrorMessageView(errorMessage: onError.toString()).show(context);
+            //       });
+            //     },
+            //     child: const Icon(Icons.save),
+            //     backgroundColor: Colors.lightBlue,
+            //   ),
+            // ),
             appBar: AppBar(
                 title: Text("CPR Details"),
                 bottom: TabBar(

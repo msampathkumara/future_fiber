@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Section.dart';
 import 'package:smartwind/V/Home/UserManager/UpdateUserDetails.dart';
@@ -70,7 +69,7 @@ class _UserDetailsState extends State<UserDetails> {
                         direction: Axis.vertical,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          UserImage(nsUser: nsUser,radius: 124),
+                          UserImage(nsUser: nsUser, radius: 124),
                           Padding(
                             padding: const EdgeInsets.only(top: 16.0),
                             child: Text(
@@ -147,12 +146,13 @@ class _UserDetailsState extends State<UserDetails> {
                       ),
                     ),
                   ),
-                  floatingActionButton: FloatingActionButton(
-                    onPressed: () {
-                      UpdateUserDetails.show(context, nsUser);
-                    },
-                    child: Icon(Icons.edit_outlined),
-                  ),
+                  floatingActionButton: nsUser.disabled
+                      ? null
+                      : FloatingActionButton(
+                          onPressed: () {
+                            UpdateUserDetails.show(context, nsUser);
+                          },
+                          child: Icon(Icons.edit_outlined)),
                 ),
               );
           }

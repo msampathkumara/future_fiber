@@ -29,7 +29,9 @@ class _CPRListState extends State<CPRList> {
   @override
   void initState() {
     super.initState();
-    SchedulerBinding.instance!.addPostFrameCallback((_){  _refreshIndicatorKey.currentState?.show(); } );
+    SchedulerBinding.instance!.addPostFrameCallback((_) {
+      _refreshIndicatorKey.currentState?.show();
+    });
 
     _reloadData(0);
   }
@@ -44,12 +46,15 @@ class _CPRListState extends State<CPRList> {
   int page = 0;
   bool _showFilters = false;
   bool _showFiltersEnd = false;
+  TextEditingController searchController = new TextEditingController();
+  bool haveFilters = false;
 
   @override
   Widget build(BuildContext context) {
+    haveFilters = (_selectedStatus != "All" || _selectedShortageType != "All" || _selectedCprTypes != "All" || _supplier != "All" || _client != "All");
     return Scaffold(
         appBar: AppBar(
-          elevation:_showFilters? 0.0:5,
+          elevation: (_showFilters || haveFilters) ? 0 : 5,
           toolbarHeight: 82,
           backgroundColor: Colors.amber,
           leading: IconButton(
@@ -61,36 +66,30 @@ class _CPRListState extends State<CPRList> {
             textScaleFactor: 1.2,
           ),
           bottom: SearchBar(
-            child: IconButton(
-                icon: Icon(Icons.filter_alt_rounded, color: Colors.white),
-                onPressed: () {
-                  setState(() {
-                    _showFilters = !_showFilters;
-                    _showFiltersEnd = false;
-                  });
-                }),
-            onSearchTextChanged: (text) {
-              if (subscription != null) {
-                subscription.cancel();
-              }
-              searchText = text;
-              setState(() {
-                _cprList = [];
-              });
-              var future = new Future.delayed(const Duration(milliseconds: 500));
-              subscription = future.asStream().listen((v) {
+              delay: 500,
+              searchController: searchController,
+              child: IconButton(
+                  icon: Icon(Icons.filter_alt_rounded, color: Colors.white),
+                  onPressed: () {
+                    setState(() {
+                      _showFilters = !_showFilters;
+                      _showFiltersEnd = false;
+                    });
+                  }),
+              onSearchTextChanged: (text) {
+                searchText = text;
+                setState(() {
+                  _cprList = [];
+                });
                 reloadData(0).then((value) {
                   setState(() {});
                 });
-              });
-            }
-
-          ),
+              }),
           centerTitle: true,
         ),
         body: Scaffold(
           appBar: AppBar(
-            toolbarHeight: (_selectedStatus != "All" || _selectedShortageType != "All" || _selectedCprTypes != "All") ? 50 : 0,
+            toolbarHeight: haveFilters ? 50 : 0,
             automaticallyImplyLeading: false,
             backgroundColor: themeColor,
             elevation: (!_showFilters && _showFiltersEnd) ? 4 : 0,
@@ -119,7 +118,15 @@ class _CPRListState extends State<CPRList> {
                 if (_selectedCprTypes != "All")
                   _actionChip(_selectedCprTypes, () {
                     _selectedCprTypes = "All";
-                  })
+                  }),
+                if (_client != "All")
+                  _actionChip(_client, () {
+                    _client = "All";
+                  }, preFix: "From "),
+                if (_supplier != "All")
+                  _actionChip(_supplier, () {
+                    _supplier = "All";
+                  }, preFix: "To ")
               ],
             ),
           ),
@@ -146,7 +153,9 @@ class _CPRListState extends State<CPRList> {
                     _cprList = [];
                     return _reloadData(0);
                   },
-                  child: ListView.separated(
+                  child: (_cprList.length == 0 && (!requested))
+                      ? Center(child: Text("No CPR Found", textScaleFactor: 1.5))
+                      : ListView.separated(
                     padding: const EdgeInsets.all(4),
                     itemCount: _cprList.length < dataCount ? _cprList.length + 1 : _cprList.length,
                     itemBuilder: (BuildContext context, int index) {
@@ -261,8 +270,12 @@ class _CPRListState extends State<CPRList> {
   var _selectedStatus = "All";
   var _selectedShortageType = "All";
   var _selectedCprTypes = "All";
+  var _client = "All";
+  var _supplier = "All";
 
   var __statusList = ["All", "Ready", "Pending", "Sent"];
+  var __clients = ["All", "Upwind", "Nylon", "OD", "OEM"];
+  var __suppliers = ["All","Cutting", "SA", "Printing"];
   var __shortageTypes = ["All", "Short", "Damage", "Unreceived"];
   var __cprTypes = ["All", "Pocket", "Rope Luff", "Purchase Cover", "Overhead Tape", "Tape Cover", "Take Down", "Soft Hanks", "Windows", "Stow pouch", "VPC**", "Other"];
 
@@ -306,16 +319,30 @@ class _CPRListState extends State<CPRList> {
                         })
                     ])),
                 ListTile(
-                  trailing: ElevatedButton(
-                    onPressed: () {
-                      reloadData(0, reset: true);
-                      setState(() {
-                        _showFilters = false;
-                      });
-                    },
-                    child: Text("Done"),
-                  ),
-                ),
+                    title: Text("Client", style: TextStyle(color: Colors.white)),
+                    subtitle: Wrap(spacing: 5, children: [
+                      for (final st in __clients)
+                        _filterChip(_client, st, () {
+                          _client = st;
+                        })
+                    ])),
+                ListTile(
+                    title: Text("Supplier", style: TextStyle(color: Colors.white)),
+                    subtitle: Wrap(spacing: 5, children: [
+                      for (final st in __suppliers)
+                        _filterChip(_supplier, st, () {
+                          _supplier = st;
+                        })
+                    ])),
+                ListTile(
+                    trailing: ElevatedButton(
+                        onPressed: () {
+                          reloadData(0, reset: true);
+                          setState(() {
+                            _showFilters = false;
+                          });
+                        },
+                        child: Text("Done")))
               ],
             ),
           ),
@@ -379,26 +406,27 @@ class _CPRListState extends State<CPRList> {
         });
   }
 
-  var sortedBy = "id";
+  var sortedBy = "Date";
   int dataCount = 0;
   bool requested = false;
 
-  reloadData(int page, {bool reset = false}) {
+  Future reloadData(int page, {bool reset = false}) {
     print('Reload Data');
     if (page == 0 || reset) {
       _refreshIndicatorKey.currentState?.show();
       _cprList = [];
       dataCount = 0;
-      return;
+      return Future.value(false);
     }
-    _reloadData(page);
+    return _reloadData(page);
   }
 
-  _reloadData(int page) {
+  Future _reloadData(int page) {
     requested = true;
+    setState(() {});
     return OnlineDB.apiGet("cpr/search", {
       'shortageType': _selectedShortageType,
-      'cprType': _selectedCprTypes,
+      'cprType': _selectedCprTypes, 'client': _client, 'supplier': _supplier,
       'status': _selectedStatus,
       'sortDirection': "asc",
       'page': page,
@@ -478,11 +506,11 @@ class _CPRListState extends State<CPRList> {
         });
   }
 
-  _actionChip(String f, onDelete) {
+  _actionChip(String f, onDelete, {preFix = ""}) {
     return Chip(
       deleteIcon: Icon(Icons.close, color: Colors.white),
       label: Text(
-        f,
+        preFix + f,
         style: TextStyle(color: Colors.white),
       ),
       onDeleted: () {

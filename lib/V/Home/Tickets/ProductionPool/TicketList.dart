@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:measured_size/measured_size.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:smartwind/C/App.dart';
 import 'package:smartwind/C/DB/DB.dart';
@@ -30,14 +29,13 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
   var database;
   late int _selectedTabIndex;
 
-  late double __filterHeight;
-  bool _showFilters = false;
-  bool _showFiltersEnd = true;
   String listSortBy = "shipDate";
+  bool listSortDirectionIsDESC = false;
   String sortedBy = "Date";
   String searchText = "";
   var subscription;
   bool _showAllTickets = false;
+  late DbChangeCallBack dbChangeCallBack;
 
   @override
   initState() {
@@ -46,16 +44,26 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
       _tabBarController = TabController(length: tabs.length, vsync: this);
       updateTabControler();
       reloadData();
-      DB.setOnDBChangeListener(() {
+      dbChangeCallBack = DB.setOnDBChangeListener(() {
+        print('callChangesCallBacks TicketList');
         reloadData();
       }, context, collection: DataTables.Tickets);
     });
+    App.getCurrentUser().then((value) {
+      if (value != null) {
+        nsUser = value;
+        setState(() {});
+      }
+    });
   }
+
+  NsUser? nsUser;
 
   late List listsArray;
 
   @override
   void dispose() {
+    dbChangeCallBack.dispose();
     super.dispose();
   }
 
@@ -109,9 +117,14 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
               icon: Icon(Icons.arrow_back),
               onPressed: () => Navigator.pop(context),
             ),
-            title: Text(
-              "Production Pool",
-              textScaleFactor: 1.2,
+            title: Column(
+              children: [
+                Text(
+                  "Production Pool",
+                  textScaleFactor: 1.2,
+                ),
+                (nsUser != null && nsUser!.section != null) ? Text("${nsUser!.section!.sectionTitle} @ ${nsUser!.section!.factory}") : Text("")
+              ],
             ),
             bottom: SearchBar(
                 searchController: searchController,
@@ -141,6 +154,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
           child: Column(
             children: [
               Wrap(children: [
+                flagIcon(Filters.crossPro, Icons.merge_type_rounded),
                 flagIcon(Filters.isError, Icons.warning_rounded),
                 flagIcon(Filters.inPrint, Icons.print_rounded),
                 flagIcon(Filters.isRush, Icons.offline_bolt_rounded),
@@ -196,11 +210,17 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
   void _sortByBottomSheetMenu() {
     getListItem(String title, icon, key) {
       return ListTile(
+        trailing: (listSortBy == key ? (listSortDirectionIsDESC ? Icon(Icons.arrow_upward_rounded) : Icon(Icons.arrow_downward_rounded)) : null),
         title: Text(title),
         selectedTileColor: Colors.black12,
         selected: listSortBy == key,
         leading: icon is IconData ? Icon(icon) : icon,
         onTap: () {
+          if (listSortBy == key) {
+            listSortDirectionIsDESC = !listSortDirectionIsDESC;
+          } else {
+            listSortDirectionIsDESC = true;
+          }
           listSortBy = key;
           sortedBy = title;
           Navigator.pop(context);
@@ -236,15 +256,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                         children: [
                           getListItem("Shipping Date", Icons.date_range_rounded, "shipDate"),
                           getListItem("Modification Date", Icons.date_range_rounded, "uptime"),
-                          getListItem("Name", Icons.sort_by_alpha_rounded, "mo"),
-                          // getListItem("Red Flag", Icons.tour_rounded, "isred"),
-                          // getListItem("Stop Production", Icons.pan_tool_rounded, "ishold"),
-                          // getListItem("Rush", Icons.flash_on_rounded, "isrush"),
-                          // getListItem("GR",
-                          //     CircleAvatar(radius: 12, backgroundColor: Colors.grey, child: Center(child: Text("GR", style: TextStyle(color: Colors.white, fontSize: 8)))), "isgr"),
-                          // getListItem("Short", Icons.local_mall_rounded, "short"),
-                          // getListItem("Error Route", Icons.warning_rounded, "errOut"),
-                          // getListItem("Print", Icons.print_rounded, "inprint"),
+                          getListItem("Name", Icons.sort_by_alpha_rounded, "mo")
                         ],
                       )),
                 ),
@@ -313,85 +325,37 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
               });
             },
             child: Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: ListView.separated(
-                padding: const EdgeInsets.all(8),
-                itemCount: filesList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  // print(FilesList[index]);
-                  Ticket ticket = Ticket.fromJson(filesList[index]);
-                  // print(ticket.toJson());
-                  return TicketTile(index, ticket, () async {
-                    print('Long pres');
-                    await showTicketOptions(ticket, context);
-                    setState(() {});
-                  }, () {
-                    var ticketInfo = TicketInfo(ticket);
-                    ticketInfo.show(context);
-                  }, () {});
-                },
-                separatorBuilder: (BuildContext context, int index) {
-                  return Divider(
-                    height: 1,
-                    endIndent: 0.5,
-                    color: Colors.black12,
-                  );
-                },
-              ),
-            ),
+                padding: const EdgeInsets.only(top: 16),
+                child: filesList.length > 0
+                    ? ListView.separated(
+                        padding: const EdgeInsets.all(8),
+                        itemCount: filesList.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          // print(FilesList[index]);
+                          Ticket ticket = Ticket.fromJson(filesList[index]);
+                          // print(ticket.toJson());
+                          return TicketTile(index, ticket, () async {
+                            print('Long pres');
+                            await showTicketOptions(ticket, context);
+                            setState(() {});
+                          }, () {
+                            var ticketInfo = TicketInfo(ticket);
+                            ticketInfo.show(context);
+                          }, () {});
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return Divider(
+                            height: 1,
+                            endIndent: 0.5,
+                            color: Colors.black12,
+                          );
+                        },
+                      )
+                    : Center(child: Text(searchText.isEmpty ? "No Tickets Found" : "⛔ Work Ticket not found.\n Please contact  Ticket Checking department", textScaleFactor: 1.5))),
           ),
         ),
       ],
     );
-  }
-
-  var _selectedStatus = "All";
-  var _selectedShortageType = "All";
-  var _selectedCprTypes = "All";
-
-  var __statusList = ["All", "Ready", "Pending", "Sent"];
-  var __shortageTypes = ["All", "Short", "Damage", "Unreceived"];
-  var __cprTypes = ["All", "Pocket", "Rope Luff", "Purchase Cover", "Overhead Tape", "Tape Cover", "Take Down", "Soft Hanks", "Windows", "Stow pouch", "VPC**", "Other"];
-
-  _getFilters() {
-    return SingleChildScrollView(
-      child: ClipRect(
-        child: Container(
-          color: themeColor,
-          child: MeasuredSize(
-              onChange: (Size size) {
-                setState(() {
-                  __filterHeight = size.height;
-                  print(size);
-                });
-              },
-              child: Wrap(children: [
-                flagIcon(Filters.isError, Icons.warning_rounded),
-                flagIcon(Filters.inPrint, Icons.print_rounded),
-                flagIcon(Filters.isRush, Icons.offline_bolt_rounded),
-                flagIcon(Filters.isRed, Icons.flag_rounded),
-                flagIcon(Filters.isHold, Icons.lock_rounded),
-                flagIcon(Filters.isSk, NsIcons.sk),
-                flagIcon(Filters.isGr, NsIcons.gr)
-              ])),
-        ),
-      ),
-    );
-  }
-
-  _filterChip(key, String p, callBack) {
-    return FilterChip(
-        selectedColor: Colors.blue,
-        checkmarkColor: Colors.white,
-        label: Text(
-          p,
-          style: TextStyle(color: key == p ? Colors.white : Colors.black),
-        ),
-        selected: key == p,
-        onSelected: (bool value) {
-          callBack();
-          setState(() {});
-        });
   }
 
   List<Map<String, dynamic>> currentFileList = [];
@@ -425,23 +389,32 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     searchQ += _dataFilter;
 
     if (_showAllTickets) {
-      _allFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ ' + canOpen + '   order by $listSortBy DESC');
+      _allFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ ' + canOpen + '   order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}');
 
-      _upwindFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Upwind\' order by $listSortBy DESC');
+      _upwindFilesList = await database
+          .rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Upwind\' order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}');
 
-      _oDFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OD\' order by $listSortBy DESC');
+      _oDFilesList =
+          await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OD\' order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}');
 
-      _nylonFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Nylon\' order by $listSortBy DESC');
+      _nylonFilesList = await database
+          .rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Nylon\' order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}');
 
-      _oEMFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OEM\' order by $listSortBy DESC');
+      _oEMFilesList =
+          await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OEM\' order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}');
 
-      _noPoolFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production is null or production=""  order by $listSortBy DESC');
+      _noPoolFilesList = await database.rawQuery(
+          'SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production is null or production=""  order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}');
       listsArray = [_allFilesList, _upwindFilesList, _oDFilesList, _nylonFilesList, _oEMFilesList, _noPoolFilesList];
     } else {
-      _allFilesList =
-          await database.rawQuery("SELECT * FROM tickets where  $searchQ   " + canOpen + " and openSections like '%|" + section.toString() + "|%'  order by $listSortBy DESC");
-      _crossProductionFilesList =
-          await database.rawQuery('SELECT * FROM tickets where  $searchQ   ' + canOpen + " and openSections like '%|$section|%' and crossPro=1 order by $listSortBy DESC");
+      _allFilesList = await database.rawQuery("SELECT * FROM tickets where  $searchQ   " +
+          canOpen +
+          " and openSections like '%|" +
+          section.toString() +
+          "|%'  order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}");
+      _crossProductionFilesList = await database.rawQuery('SELECT * FROM tickets where  $searchQ   ' +
+          canOpen +
+          " and openSections like '%|$section|%' and crossPro=1 order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}");
 
       listsArray = [_allFilesList, _crossProductionFilesList];
     }
@@ -548,7 +521,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                         leading: Icon(NsIcons.crossProduction, color: Colors.green),
                         onTap: () async {
                           Navigator.of(context).pop();
-                          showAlertDialog(context,ticket);
+                          showAlertDialog(context, ticket);
                         }),
                   ListTile(
                       title: Text("Share Work Ticket"),
@@ -568,20 +541,26 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                       title: Text("Shipping"),
                       leading: Icon(NsIcons.shipping, color: Colors.brown),
                       onTap: () async {
-                        await ticket.addCPR(context);
+                        await ticket.openInShippingSystem(context);
                         Navigator.of(context).pop();
                       }),
                   ListTile(
                       title: Text("CS"),
                       leading: Icon(Icons.pivot_table_chart_rounded, color: Colors.green),
                       onTap: () async {
-                        await ticket.addCPR(context);
+                        await ticket.openInCS(context);
                         Navigator.of(context).pop();
                       }),
                   ListTile(
                       title: Text("Delete"),
                       leading: Icon(NsIcons.delete, color: Colors.red),
                       onTap: () async {
+                        //TODO set delete url
+                        OnlineDB.apiPost("tickets/delete", {"id": ticket.id.toString()}).then((response) async {
+                          print('TICKET DELETED');
+                          print(response.data);
+                          print(response.statusCode);
+                        });
                         Navigator.of(context).pop();
                       }),
                 ])),
@@ -619,22 +598,6 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
       ticket.inPrint = 0;
       return 0;
     }
-  }
-
-  _actionChip(String f, onDelete) {
-    return Chip(
-      deleteIcon: Icon(Icons.close, color: Colors.white),
-      label: Text(
-        f,
-        style: TextStyle(color: Colors.white),
-      ),
-      onDeleted: () {
-        onDelete();
-        // reloadData(0, reset: true);
-        setState(() {});
-      },
-      backgroundColor: Colors.blue,
-    );
   }
 
   tabListener() {
@@ -681,8 +644,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     }
   }
 
-  showAlertDialog(BuildContext context,ticket) {
-
+  showAlertDialog(BuildContext context, ticket) {
     showDialog(
       context: context,
       builder: (BuildContext context1) {
@@ -698,8 +660,9 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
             ),
             TextButton(
               child: Text("Yes"),
-              onPressed: () { Navigator.of(context1).pop();
-                OnlineDB.apiPost("tickets/crossProduction/removeCrossProduction", {'ticketId':  ticket.id.toString() }).then((  response) async {
+              onPressed: () {
+                Navigator.of(context1).pop();
+                OnlineDB.apiPost("tickets/crossProduction/removeCrossProduction", {'ticketId': ticket.id.toString()}).then((response) async {
                   print(response.data);
                 });
               },
@@ -757,13 +720,18 @@ class TicketTile extends StatelessWidget {
             children: [
               if ((ticket.mo ?? "").trim().isNotEmpty) Text((ticket.oe ?? "")),
               if (ticket.crossPro == 1) Chip(avatar: CircleAvatar(child: Icon(Icons.merge_type_outlined)), label: Text(ticket.crossProList)),
-              Text(ticket.getUpdateDateTime())
-              // Wrap(
-              //   children: [
-              //     Text(ticket.getUpdateDateTime()),
-              //     if ((ticket.production ?? "").isNotEmpty) Wrap(children: [Text("   "), Text("${ticket.production}", style: TextStyle(color: Colors.red))])
-              //   ],
-              // ),
+              // Text(ticket.getUpdateDateTime())
+              if (ticket.shipDate.isNotEmpty)
+                Wrap(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 4),
+                      child: Icon(Icons.directions_boat_outlined, size: 12, color: Colors.grey),
+                    ),
+                    Text(ticket.shipDate)
+                    // Icon(Icons.delivery_dining_rounded),    Text(ticket.deliveryDate),
+                  ],
+                ),
             ],
           ),
           // subtitle: Text(ticket.fileVersion.toString()),

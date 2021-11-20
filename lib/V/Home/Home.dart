@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:animations/animations.dart';
 import 'package:device_information/device_information.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartwind/C/App.dart';
 import 'package:smartwind/C/DB/DB.dart';
@@ -39,7 +43,7 @@ class Home extends StatefulWidget {
   }
 }
 
-enum MenuItems { logout, dbReload, changeSection, cpanel }
+enum MenuItems { logout, dbReload, changeSection, cpanel, DeleteDownloadedFiles }
 
 class _HomeState extends State<Home> {
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -85,7 +89,8 @@ class _HomeState extends State<Home> {
         content: Text('Marked as done!'),
       ));
   }
- double iconSize=100.0;
+
+  double iconSize = 100.0;
 
   @override
   Widget build(BuildContext context) {
@@ -273,6 +278,22 @@ class _HomeState extends State<Home> {
           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => SectionSelector(nsUser!)), (Route<dynamic> route) => false);
         } else if (result == MenuItems.cpanel) {
           Navigator.push(context, MaterialPageRoute(builder: (context) => AdminCpanel()));
+        } else if (result == MenuItems.DeleteDownloadedFiles) {
+          var ed = await getExternalStorageDirectory();
+          if (ed != null) {
+            List<FileSystemEntity> files = ed.listSync();
+
+            for (FileSystemEntity file in files) {
+              if (p.extension(file.path).toLowerCase() == ".pdf") {
+                print(p.extension(file.path).toLowerCase());
+                file.deleteSync(recursive: true);
+              }
+            }
+
+            DB.getDB().then((db) => db!.rawQuery("delete from files" ).then((data) {
+                  print(data);
+                }));
+          }
         }
 
         setState(() {});
@@ -282,6 +303,10 @@ class _HomeState extends State<Home> {
         const PopupMenuItem<MenuItems>(
           value: MenuItems.dbReload,
           child: Text('Reload Database'),
+        ),
+        const PopupMenuItem<MenuItems>(
+          value: MenuItems.DeleteDownloadedFiles,
+          child: Text('Delete Downloaded Files'),
         ),
         const PopupMenuItem<MenuItems>(
           value: MenuItems.logout,
@@ -300,8 +325,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  _menuButton(openContainer,Icon image, title) {
-
+  _menuButton(openContainer, Icon image, title) {
     return SizedBox(
         height: 170,
         width: 170,
@@ -310,10 +334,7 @@ class _HomeState extends State<Home> {
             child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
               Expanded(child: Container(height: 170, child: Center(child: image))),
               Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
-                  child: Text(title, textScaleFactor: 1)
-                ),
+                child: Padding(padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0), child: Text(title, textScaleFactor: 1)),
               )
             ])));
   }

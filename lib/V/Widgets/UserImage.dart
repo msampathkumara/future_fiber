@@ -11,7 +11,9 @@ class UserImage extends StatefulWidget {
   double? radius;
   Function(NsUser)? onUserLoad;
 
-  UserImage({this.nsUser, this.nsUserId, this.backgroundColor, this.radius, this.onUserLoad});
+  bool disable;
+
+  UserImage({this.nsUser, this.nsUserId, this.backgroundColor, this.radius, this.onUserLoad, this.disable = false});
 
   @override
   _UserImageState createState() => _UserImageState();
@@ -46,7 +48,15 @@ class _UserImageState extends State<UserImage> {
 
   @override
   Widget build(BuildContext context) {
-    // return CircleAvatar(radius: widget.radius, backgroundImage: getUserImage(nsUser), backgroundColor: widget.backgroundColor ?? Colors.transparent);
+
+    if (widget.disable || nsUser!.disabled) {
+      return ColorFiltered(
+          colorFilter: ColorFilter.mode(
+            Colors.white,
+            BlendMode.saturation,
+          ),
+          child: CircleAvatar(radius: widget.radius, backgroundImage: _loaded ? img : placeholder, backgroundColor: widget.backgroundColor ?? Colors.transparent));
+    }
     return CircleAvatar(radius: widget.radius, backgroundImage: _loaded ? img : placeholder, backgroundColor: widget.backgroundColor ?? Colors.transparent);
   }
 
