@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -45,6 +46,7 @@ class _BlueBookState extends State<BlueBook> {
 
   var pdfView;
   var path;
+  int loginAttemps = 0;
 
   @override
   initState() {
@@ -57,22 +59,34 @@ class _BlueBookState extends State<BlueBook> {
         // initialUrlRequest: URLRequest(url: Uri.parse("https://smartupwind.nsslsupportservices.com/FileBrowser/Files/ppp/upwind/upwind")),
         initialOptions: InAppWebViewGroupOptions(crossPlatform: InAppWebViewOptions(useOnDownloadStart: true), android: AndroidInAppWebViewOptions(useHybridComposition: true)),
         onReceivedHttpAuthRequest: (InAppWebViewController controller, URLAuthenticationChallenge challenge) async {
-          BlueBookCredentials? blueBookCredentials = await showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return BlurBookLogin();
-              });
-
-          if (blueBookCredentials != null) {
-            return HttpAuthResponse(username: blueBookCredentials.userName, password: blueBookCredentials.password, action: HttpAuthResponseAction.PROCEED);
+          print('onReceivedHttpAuthRequest');
+          loginAttemps++;
+          if (loginAttemps > 2) {
+            BlueBookCredentials? blueBookCredentials = await showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return BlurBookLogin();
+                });
+            if (blueBookCredentials != null) {
+              return HttpAuthResponse(username: blueBookCredentials.userName, password: blueBookCredentials.password, action: HttpAuthResponseAction.PROCEED);
+            } else {
+              Navigator.pop(context);
+            }
           } else {
-            Navigator.pop(context);
+            var blueBookCredentials = await BlurBookLogin.getBlueBookCredentials();
+            if (blueBookCredentials != null) {
+              return HttpAuthResponse(username: blueBookCredentials.userName, password: blueBookCredentials.password, action: HttpAuthResponseAction.PROCEED);
+            } else {
+              return HttpAuthResponse(action: HttpAuthResponseAction.PROCEED);
+            }
           }
+
           return HttpAuthResponse(action: HttpAuthResponseAction.CANCEL);
         },
         onDownloadStart: (controller, url) async {
           print("onDownloadStart $url");
-          File file = await _getFile(context, url.toString());
+          var blueBookCredentials = await BlurBookLogin.getBlueBookCredentials();
+          File file = await _getFile(context, url.toString(), blueBookCredentials);
           await Navigator.push(context, MaterialPageRoute(builder: (context) => PdfFileViewer(file)));
         });
     print('LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL');
@@ -192,7 +206,9 @@ class _BlueBookState extends State<BlueBook> {
     );
   }
 
-  Future<File> _getFile(context, url, {onReceiveProgress}) async {
+  Future<File> _getFile(context, url, BlueBookCredentials? credentials, {onReceiveProgress}) async {
+
+    if(credentials==null){return Future.value(new File(""));}
     var loadingWidget = Loading(
       loadingText: "Downloading File",
       showProgress: false,
@@ -203,8 +219,9 @@ class _BlueBookState extends State<BlueBook> {
     var ed = await getExternalStorageDirectory();
     final user = FirebaseAuth.instance.currentUser;
     final idToken = await user!.getIdToken();
+    String basicAuth = 'Basic ' + base64Encode(utf8.encode('${credentials.userName}:${credentials.password}'));
     dio.options.headers['content-Type'] = 'application/json';
-
+    dio.options.headers[HttpHeaders.authorizationHeader] = basicAuth;
     // dio.options.headers["authorization"] = '$idToken';
     // String queryString = Uri(queryParameters: {"id": id.toString()}).query;
     var id = UniqueKey();

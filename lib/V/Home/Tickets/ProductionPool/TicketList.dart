@@ -246,8 +246,8 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
                     "Sort By",
-                    textScaleFactor: 1.2,
-                  ),
+                    textScaleFactor: 1.2
+                  )
                 ),
                 Expanded(
                   child: Padding(

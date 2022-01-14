@@ -2,41 +2,47 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'BlueBookCredentials.dart';
-
-
 
 class BlurBookLogin extends StatefulWidget {
   const BlurBookLogin({Key? key}) : super(key: key);
 
   @override
   _BlurBookLoginState createState() => _BlurBookLoginState();
+
+  static Future<BlueBookCredentials?> getBlueBookCredentials() async {
+    var prefs = await SharedPreferences.getInstance();
+    String? u = prefs.getString("BlueBookCredentials");
+    if (u != null) {
+      return BlueBookCredentials.fromJson(jsonDecode(u));
+    }
+    return null;
+  }
 }
 
 class _BlurBookLoginState extends State<BlurBookLogin> {
   BlueBookCredentials blueBookCredentials = new BlueBookCredentials();
 
-  TextEditingController unameController=TextEditingController();
-  TextEditingController pwordController=TextEditingController();
+  TextEditingController unameController = TextEditingController();
+  TextEditingController pwordController = TextEditingController();
 
   @override
   initState() {
     super.initState();
-    getBlueBookCredentials().then((value) {
+    BlurBookLogin.getBlueBookCredentials().then((value) {
       if (value != null) {
         print('xxxxxxxxxxxx ${value.userName}');
         setState(() {
           blueBookCredentials = value;
-          unameController.text=blueBookCredentials.userName;
-          pwordController.text=blueBookCredentials.userName;
+          unameController.text = blueBookCredentials.userName;
+          pwordController.text = blueBookCredentials.userName;
         });
       }
     });
-    unameController.text=blueBookCredentials.userName;
-    pwordController.text=blueBookCredentials.userName;
+    unameController.text = blueBookCredentials.userName;
+    pwordController.text = blueBookCredentials.userName;
   }
 
   bool hidePassword = true;
@@ -56,7 +62,8 @@ class _BlurBookLoginState extends State<BlurBookLogin> {
           textScaleFactor: 1.2,
         )),
         SizedBox(height: 60),
-        TextFormField(controller: unameController,
+        TextFormField(
+            controller: unameController,
             autofocus: true,
             onFieldSubmitted: (d) {
               _passwordFocusNode.requestFocus();
@@ -85,7 +92,8 @@ class _BlurBookLoginState extends State<BlurBookLogin> {
               blueBookCredentials.userName = uname;
             }),
         SizedBox(height: 60),
-        TextFormField(controller: pwordController,
+        TextFormField(
+            controller: pwordController,
             focusNode: _passwordFocusNode,
             cursorColor: Colors.blue,
             onFieldSubmitted: (f) {
@@ -143,11 +151,11 @@ class _BlurBookLoginState extends State<BlurBookLogin> {
   void _login() {
     errorMsg = "";
 
-    if ((blueBookCredentials.userName  ).trim().isEmpty) {
+    if ((blueBookCredentials.userName).trim().isEmpty) {
       errorMsg = "Enter UserName";
       setState(() {});
       return;
-    } else if ((blueBookCredentials.password  ).trim().isEmpty) {
+    } else if ((blueBookCredentials.password).trim().isEmpty) {
       errorMsg = "Enter Password";
       setState(() {});
       return;
@@ -157,20 +165,8 @@ class _BlurBookLoginState extends State<BlurBookLogin> {
     Navigator.pop(context, blueBookCredentials);
   }
 
-  static Future<BlueBookCredentials?> getBlueBookCredentials() async {
-    var prefs = await SharedPreferences.getInstance();
-    String? u = prefs.getString("BlueBookCredentials");
-    if (u != null) {
-      return    BlueBookCredentials.fromJson(jsonDecode(u)) ;
-    }
-    return null;
-  }
-
   static Future setBlueBookCredentials(blueBookCredentials) async {
     var prefs = await SharedPreferences.getInstance();
-    prefs.setString("BlueBookCredentials", jsonEncode(blueBookCredentials)  );
+    prefs.setString("BlueBookCredentials", jsonEncode(blueBookCredentials));
   }
 }
-
-
-

@@ -156,85 +156,85 @@ class _CPRListState extends State<CPRList> {
                   child: (_cprList.length == 0 && (!requested))
                       ? Center(child: Text("No CPR Found", textScaleFactor: 1.5))
                       : ListView.separated(
-                    padding: const EdgeInsets.all(4),
-                    itemCount: _cprList.length < dataCount ? _cprList.length + 1 : _cprList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      if (_cprList.length == index) {
-                        if (!requested) {
-                          var x = ((_cprList.length) / 20);
+                          padding: const EdgeInsets.all(4),
+                          itemCount: _cprList.length < dataCount ? _cprList.length + 1 : _cprList.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            if (_cprList.length == index) {
+                              if (!requested) {
+                                var x = ((_cprList.length) / 20);
 
-                          reloadData(x.toInt());
-                        }
-                        return Container(
-                            height: 100,
-                            child: Center(
-                                child: Padding(
-                                    padding: const EdgeInsets.all(8),
-                                    child: SizedBox(
-                                        height: 48,
-                                        width: 48,
-                                        child: Card(
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(100.0),
-                                            ),
-                                            child: Padding(padding: const EdgeInsets.all(12.0), child: CircularProgressIndicator(color: Colors.red, strokeWidth: 2)))))));
-                      }
+                                reloadData(x.toInt());
+                              }
+                              return Container(
+                                  height: 100,
+                                  child: Center(
+                                      child: Padding(
+                                          padding: const EdgeInsets.all(8),
+                                          child: SizedBox(
+                                              height: 48,
+                                              width: 48,
+                                              child: Card(
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(100.0),
+                                                  ),
+                                                  child: Padding(padding: const EdgeInsets.all(12.0), child: CircularProgressIndicator(color: Colors.red, strokeWidth: 2)))))));
+                            }
 
-                      CPR cpr = _cprList[index];
-                      // print(cpr.toJson());
-                      return GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onLongPress: () async {
-                          await showCPROptions(cpr, context);
-                          setState(() {});
-                        },
-                        onTap: () {
-                          CprDetails.show(context, cpr);
-                        },
-                        onDoubleTap: () async {
-                          // print(await ticket.getLocalFileVersion());
-                          // ticket.open(context);
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(border: Border(left: BorderSide(color: getColor(cpr.status), width: 3.0))),
-                          child: ListTile(
-                            leading: Text("${index + 1}"),
-                            title: Text(cpr.mo ?? cpr.oe),
-                            subtitle: Wrap(
-                              direction: Axis.vertical,
-                              children: [
-                                Text(cpr.mo != null ? cpr.oe ?? "" : ""),
-                                Text(cpr.dnt ?? ""),
-                              ],
-                            ),
-                            trailing: Wrap(children: [
-                              SizedBox(
-                                width: 150,
-                                child: Wrap(
-                                  direction: Axis.vertical,
-                                  children: [Text(cpr.client ?? ""), Text(cpr.supplier, style: TextStyle(color: Colors.red))],
+                            CPR cpr = _cprList[index];
+                            // print(cpr.toJson());
+                            return GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onLongPress: () async {
+                                await showCPROptions(cpr, context);
+                                setState(() {});
+                              },
+                              onTap: () {
+                                CprDetails.show(context, cpr);
+                              },
+                              onDoubleTap: () async {
+                                // print(await ticket.getLocalFileVersion());
+                                // ticket.open(context);
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(border: Border(left: BorderSide(color: getColor(cpr.status), width: 3.0))),
+                                child: ListTile(
+                                  leading: Text("${index + 1}"),
+                                  title: Text(cpr.mo ?? cpr.oe),
+                                  subtitle: Wrap(
+                                    direction: Axis.vertical,
+                                    children: [
+                                      Text(cpr.mo != null ? cpr.oe ?? "" : ""),
+                                      Text(cpr.dnt ?? ""),
+                                    ],
+                                  ),
+                                  trailing: Wrap(children: [
+                                    SizedBox(
+                                      width: 150,
+                                      child: Wrap(
+                                        direction: Axis.vertical,
+                                        children: [Text(cpr.client ?? ""), Text(cpr.supplier, style: TextStyle(color: Colors.red))],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 100,
+                                      child: Wrap(
+                                        direction: Axis.vertical,
+                                        children: [Text(cpr.shortageType ?? ""), Text(cpr.cprType ?? "", style: TextStyle(color: Colors.red))],
+                                      ),
+                                    )
+                                  ]),
                                 ),
                               ),
-                              SizedBox(
-                                width: 100,
-                                child: Wrap(
-                                  direction: Axis.vertical,
-                                  children: [Text(cpr.shortageType ?? ""), Text(cpr.cprType ?? "", style: TextStyle(color: Colors.red))],
-                                ),
-                              )
-                            ]),
-                          ),
+                            );
+                          },
+                          separatorBuilder: (BuildContext context, int index) {
+                            return Divider(
+                              height: 1,
+                              endIndent: 0.5,
+                              color: Colors.black12,
+                            );
+                          },
                         ),
-                      );
-                    },
-                    separatorBuilder: (BuildContext context, int index) {
-                      return Divider(
-                        height: 1,
-                        endIndent: 0.5,
-                        color: Colors.black12,
-                      );
-                    },
-                  ),
                 ),
               ),
             ],
@@ -275,7 +275,7 @@ class _CPRListState extends State<CPRList> {
 
   var __statusList = ["All", "Ready", "Pending", "Sent"];
   var __clients = ["All", "Upwind", "Nylon", "OD", "OEM"];
-  var __suppliers = ["All","Cutting", "SA", "Printing"];
+  var __suppliers = ["All", "Cutting", "SA", "Printing"];
   var __shortageTypes = ["All", "Short", "Damage", "Unreceived"];
   var __cprTypes = ["All", "Pocket", "Rope Luff", "Purchase Cover", "Overhead Tape", "Tape Cover", "Take Down", "Soft Hanks", "Windows", "Stow pouch", "VPC**", "Other"];
 
@@ -351,16 +351,23 @@ class _CPRListState extends State<CPRList> {
     );
   }
 
-  var listSortBy = "";
+  var listSortBy = "uptime";
+  bool listSortDirectionIsDESC = false;
 
   void _sortByBottomSheetMenu() {
     getListItem(String title, icon, key) {
       return ListTile(
+        trailing: (listSortBy == key ? (listSortDirectionIsDESC ? Icon(Icons.arrow_upward_rounded) : Icon(Icons.arrow_downward_rounded)) : null),
         title: Text(title),
         selectedTileColor: Colors.black12,
         selected: listSortBy == key,
         leading: icon is IconData ? Icon(icon) : icon,
         onTap: () {
+          if (listSortBy == key) {
+            listSortDirectionIsDESC = !listSortDirectionIsDESC;
+          } else {
+            listSortDirectionIsDESC = true;
+          }
           listSortBy = key;
           sortedBy = title;
           Navigator.pop(context);
@@ -426,9 +433,11 @@ class _CPRListState extends State<CPRList> {
     setState(() {});
     return OnlineDB.apiGet("cpr/search", {
       'shortageType': _selectedShortageType,
-      'cprType': _selectedCprTypes, 'client': _client, 'supplier': _supplier,
+      'cprType': _selectedCprTypes,
+      'client': _client,
+      'supplier': _supplier,
       'status': _selectedStatus,
-      'sortDirection': "asc",
+      'sortDirection': listSortDirectionIsDESC ? "DESC" : "asc",
       'page': page,
       'npp': 20,
       'query': searchText
