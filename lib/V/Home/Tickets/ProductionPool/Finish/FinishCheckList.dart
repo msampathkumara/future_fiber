@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:smartwind/C/App.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/C/ServerResponce/ServerResponceMap.dart';
+import 'package:smartwind/M/AppUser.dart';
+import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Widgets/Loading.dart';
 
@@ -119,19 +121,30 @@ class _FinishCheckListState extends State<FinishCheckList> {
                           } else {
                             SystemNavigator.pop();
                           }
-                          App.getCurrentUser().then((user) async {
-                            var isQc = false;
-                            if (user!.section!.sectionTitle.toLowerCase() == "qc") {
-                              isQc = true;
-                            }
 
-                            var xx = await platform.invokeMethod('qcEdit', {
-                              'ticket': {'id': ticket.id, "qc": isQc}.toString()
-                            });
+                          NsUser? nsuser = AppUser.getUser();
+
+                          var isQc = false;
+                          if (nsuser!.section!.sectionTitle.toLowerCase() == "qc") {
+                            isQc = true;
+                          }
+
+                          var xx = await platform.invokeMethod('qcEdit', {
+                            'ticket': {'id': ticket.id, "qc": isQc}.toString()
                           });
 
 
 
+                          // App.getCurrentUser().then((user) async {
+                          //   var isQc = false;
+                          //   if (user!.section!.sectionTitle.toLowerCase() == "qc") {
+                          //     isQc = true;
+                          //   }
+                          //
+                          //   var xx = await platform.invokeMethod('qcEdit', {
+                          //     'ticket': {'id': ticket.id, "qc": isQc}.toString()
+                          //   });
+                          // });
                         },
                         child: Text("Disagree"))
                   ],

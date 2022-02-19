@@ -146,7 +146,7 @@ class _UserDetailsState extends State<UserDetails> {
                       ),
                     ),
                   ),
-                  floatingActionButton: nsUser.disabled
+                  floatingActionButton: nsUser.isDisabled
                       ? null
                       : FloatingActionButton(
                           onPressed: () {

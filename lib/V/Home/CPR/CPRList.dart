@@ -430,7 +430,7 @@ class _CPRListState extends State<CPRList> {
 
   Future _reloadData(int page) {
     requested = true;
-    setState(() {});
+    // setState(() {});
     return OnlineDB.apiGet("cpr/search", {
       'shortageType': _selectedShortageType,
       'cprType': _selectedCprTypes,

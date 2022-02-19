@@ -69,7 +69,8 @@ class _SearchBarState extends State<SearchBar> {
                     leading: Icon(Icons.search),
                     title: TextField(
                       controller: widget.searchController,
-                      decoration: InputDecoration(hintText: 'Search', border: InputBorder.none),
+                      decoration: InputDecoration(
+                          hintText: 'Search', border: InputBorder.none),
                       onSubmitted: widget.onSubmitted,
                       onChanged: (val) {},
                     ),
@@ -92,9 +93,15 @@ class _SearchBarState extends State<SearchBar> {
                       child: IconButton(
                         icon: Icon(Icons.qr_code_scanner_outlined),
                         onPressed: () async {
-                          var permissionStatus = await Permission.camera.request();
+                          var permissionStatus =
+                              await Permission.camera.request();
                           if (permissionStatus.isGranted) {
-                            String barcode = await FlutterBarcodeScanner.scanBarcode("#ff6666", "Cancel", false, ScanMode.DEFAULT);
+                            String barcode =
+                                await FlutterBarcodeScanner.scanBarcode(
+                                    "#ff6666",
+                                    "Cancel",
+                                    false,
+                                    ScanMode.DEFAULT);
                             if (barcode == '-1') {
                               print('nothing return.');
                             } else {

@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:smartwind/C/DB/DB.dart';
-import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
@@ -61,7 +60,8 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
       if (_refreshIndicatorKey.currentState != null) _refreshIndicatorKey.currentState!.deactivate();
     });
     _dbChangeCallBack = DB.setOnDBChangeListener(() {
-      reloadData();
+      // reloadData();
+      print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
     }, context, collection: DataTables.Users);
   }
 
@@ -213,8 +213,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                 itemBuilder: (BuildContext context, int index) {
                   NsUser nsUser = filesList[index];
                   // print("nsUser.hasNfc ${nsUser.hasNfc}");
-                  return GestureDetector(
-                    behavior: HitTestBehavior.opaque,
+                  return ListTile(
                     onLongPress: () async {
                       await showUserOptions(nsUser, context);
                       setState(() {});
@@ -222,34 +221,24 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                     onTap: () {
                       UserDetails.show(context, nsUser);
                     },
-                    onDoubleTap: () async {
-                      // print(await ticket.getLocalFileVersion());
-                      // ticket.open(context);
-                    },
-                    child: ListTile(
-                      leading: UserImage(nsUser: nsUser),
-                      title: Text(nsUser.name),
-                      subtitle: Text("#" + nsUser.uname),
-                      trailing: Wrap(children: [
-                        if (_setIdCards)
-                          IconButton(
-                              icon: Icon(Icons.badge_outlined, color: nsUser.hasNfc == 0 ? Colors.grey : Colors.green),
-                              tooltip: ' ',
-                              onPressed: () {
-                                setState(() {
-                                  showAddNfcDialog(nsUser);
-                                });
-                              })
-                      ]),
-                    ),
+                    leading: UserImage(nsUser: nsUser, radius: 24),
+                    title: Text(nsUser.name),
+                    subtitle: Text("#" + nsUser.uname),
+                    trailing: Wrap(children: [
+                      if (_setIdCards)
+                        IconButton(
+                            icon: Icon(Icons.badge_outlined, color: nsUser.hasNfc == 0 ? Colors.grey : Colors.green),
+                            tooltip: ' ',
+                            onPressed: () {
+                              setState(() {
+                                showAddNfcDialog(nsUser);
+                              });
+                            })
+                    ]),
                   );
                 },
                 separatorBuilder: (BuildContext context, int index) {
-                  return Divider(
-                    height: 1,
-                    endIndent: 0.5,
-                    color: Colors.black12,
-                  );
+                  return Divider(height: 1, endIndent: 0.5, color: Colors.black12);
                 },
               ),
             ),
@@ -279,10 +268,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 ListTile(
-                  leading: CircleAvatar(
-                      radius: 24.0,
-                      backgroundImage: NetworkImage(Server.getServerApiPath("users/getImage?img=" + nsUser.img + "&size=48"), headers: {"authorization": '$idToken'}),
-                      backgroundColor: Colors.transparent),
+                  leading: UserImage(nsUser: nsUser, radius: 24),
                   title: Text(nsUser.name),
                   subtitle: Text("#" + nsUser.uname),
                 ),
@@ -325,8 +311,8 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                   },
                 ),
                 ListTile(
-                  title: Text(nsUser.disabled ? "Activate User" : "Deactivate User"),
-                  subtitle: Text(nsUser.disabled ? "Activate all activities on system for this user" : "Deactivate all activities on system for this user"),
+                  title: Text(nsUser.isDisabled ? "Activate User" : "Deactivate User"),
+                  subtitle: Text(nsUser.isDisabled ? "Activate all activities on system for this user" : "Deactivate all activities on system for this user"),
                   leading: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Icon(Icons.person_off_rounded),

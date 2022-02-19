@@ -1,18 +1,12 @@
-import 'dart:convert';
-
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/NsUser.dart';
-import 'package:smartwind/V/Home/BlueBook/BlueBookLogin.dart';
 
 class App {
+  App();
 
-
-  App()  ;
-
- static Future getAppInfo(){
-   return PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
-
+  static Future getAppInfo() {
+    return PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
       String version = packageInfo.version;
       print('version $version');
       return packageInfo;
@@ -31,12 +25,11 @@ class App {
   static NsUser? currentUser;
 
   static Future<NsUser?> getCurrentUser() async {
-    var prefs = await SharedPreferences.getInstance();
-    var u = prefs.getString("user");
-    if (u != null) {
-      currentUser = NsUser.fromJson(json.decode(u));
-    }
-    return currentUser;
+    // var prefs = await SharedPreferences.getInstance();
+    // var u = prefs.getString("user");
+    // if (u != null) {
+    //   currentUser = NsUser.fromJson(json.decode(u));
+    // }
+    return Future.value(AppUser.getUser());
   }
-
 }

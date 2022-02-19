@@ -18,8 +18,7 @@ class RF extends StatefulWidget {
   OperationMinMax operationMinMax;
   List<Progress> progressList;
 
-  RF(this.ticket, this.userRFCredentials, this.operationMinMax,
-      this.progressList);
+  RF(this.ticket, this.userRFCredentials, this.operationMinMax, this.progressList);
 
   @override
   _RFState createState() {
@@ -28,7 +27,7 @@ class RF extends StatefulWidget {
 }
 
 class _RFState extends State<RF> with SingleTickerProviderStateMixin {
-  final DatabaseReference db = FirebaseDatabase().reference();
+  final DatabaseReference db = FirebaseDatabase.instance.ref();
   final tabs = ["Ticket", "Progress"];
   TabController? _tabBarcontroller;
   Map? checkListMap;
@@ -98,19 +97,22 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
     });
     print('cxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
 
-    db.child("settings").once().then((DataSnapshot result) {
-      erpNotWorking = result.value["erpNotWorking"] == 0;
+    db.child("settings").once().then((DatabaseEvent databaseEvent) {
+      DataSnapshot result = databaseEvent.snapshot;
+
+      erpNotWorking = result.child("erpNotWorking").value == 0;
     });
-    db.child("settings").onChildChanged.listen((Event event) {
-      db.child("settings").once().then((DataSnapshot result) {
-        erpNotWorking = result.value["erpNotWorking"] == 0;
+    db.child("settings").onChildChanged.listen((DatabaseEvent event) {
+      db.child("settings").once().then((DatabaseEvent databaseEvent) {
+        DataSnapshot result = databaseEvent.snapshot;
+        erpNotWorking = result.child("erpNotWorking").value == 0;
         print('------------ ${erpNotWorking}');
         setState(() {});
       });
     });
   }
 
-  setupTimeout(){
+  setupTimeout() {
     Future.delayed(const Duration(milliseconds: 15000), () {
       if (loading) {
         loading = false;
@@ -143,11 +145,7 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
               icon: Icon(Icons.check_circle_outline_outlined),
               label: Text("Finish"),
               onPressed: () async {
-                var r = await OnlineDB.apiGet("tickets/finish", {
-                  'erpDone': erpNotWorking ? 0 : 1,
-                  'ticket': ticket.id.toString(),
-                  'doAt': operationMinMax.doAt.toString()
-                });
+                var r = await OnlineDB.apiGet("tickets/finish", {'erpDone': erpNotWorking ? 0 : 1, 'ticket': ticket.id.toString(), 'doAt': operationMinMax.doAt.toString()});
                 print(json.decode(r.data));
                 // ServerResponceMap res1 = ServerResponceMap.fromJson(json.decode(r.body));
                 Navigator.pop(context, true);
@@ -171,70 +169,52 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
                                 indicatorWeight: 4.0,
                                 indicatorColor: Colors.white,
                                 isScrollable: true,
-                                tabs: [
-                                  for (final tab in tabs) Tab(text: tab)
-                                ])),
-                        body: TabBarView(
-                            controller: _tabBarcontroller,
-                            physics: NeverScrollableScrollPhysics(),
-                            children: [
-                              Scaffold(
-                                  body: PDFViewWidget(ticket.ticketFile!.path)),
-                              Scaffold(
-                                body: ListView.builder(
-                                  itemCount: progressList.length,
-                                  itemBuilder: (context, i) {
-                                    print(progressList[i].toJson());
-                                    Progress progress = progressList[i];
-                                    print(progress);
-                                    bool now = false;
-                                    bool done = false;
-                                    if (progress.operationNo! >=
-                                            operationMinMax.min! &&
-                                        progress.operationNo! <=
-                                            operationMinMax.max!) {
-                                      now = true;
-                                    }
-                                    if (progress.operationNo! <
-                                        operationMinMax.min!) {
-                                      done = true;
-                                    }
-                                    return Padding(
-                                      padding:
-                                          const EdgeInsets.fromLTRB(8, 4, 8, 4),
-                                      child: ListTile(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(5)),
-                                        ),
-                                        tileColor: (now)
-                                            ? Colors.deepOrange[200]
-                                            : (done)
-                                                ? Colors.green[200]
-                                                : Colors.white,
-                                        leading: progress.status == 1
-                                            ? Icon(
-                                                Icons
-                                                    .check_circle_outline_outlined,
-                                                color: Colors.green,
-                                              )
-                                            : Icon(Icons.pending_outlined),
-                                        title: now
-                                            ? Text(progress.operation!)
-                                            : Text(progress.operation!),
-                                        subtitle: Text(""),
-                                        trailing: Wrap(
-                                          children: [
-                                            Text(
-                                                progress.operationNo.toString())
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              )
-                            ]))),
+                                tabs: [for (final tab in tabs) Tab(text: tab)])),
+                        body: TabBarView(controller: _tabBarcontroller, physics: NeverScrollableScrollPhysics(), children: [
+                          Scaffold(body: PDFViewWidget(ticket.ticketFile!.path)),
+                          Scaffold(
+                            body: ListView.builder(
+                              itemCount: progressList.length,
+                              itemBuilder: (context, i) {
+                                print(progressList[i].toJson());
+                                Progress progress = progressList[i];
+                                print(progress);
+                                bool now = false;
+                                bool done = false;
+                                if (progress.operationNo! >= operationMinMax.min! && progress.operationNo! <= operationMinMax.max!) {
+                                  now = true;
+                                }
+                                if (progress.operationNo! < operationMinMax.min!) {
+                                  done = true;
+                                }
+                                return Padding(
+                                  padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                                  child: ListTile(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                                    ),
+                                    tileColor: (now)
+                                        ? Colors.deepOrange[200]
+                                        : (done)
+                                            ? Colors.green[200]
+                                            : Colors.white,
+                                    leading: progress.status == 1
+                                        ? Icon(
+                                            Icons.check_circle_outline_outlined,
+                                            color: Colors.green,
+                                          )
+                                        : Icon(Icons.pending_outlined),
+                                    title: now ? Text(progress.operation!) : Text(progress.operation!),
+                                    subtitle: Text(""),
+                                    trailing: Wrap(
+                                      children: [Text(progress.operationNo.toString())],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+                        ]))),
               ),
               Divider(),
               if (_webView != null && (erpNotWorking))
@@ -247,8 +227,7 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
                               direction: Axis.vertical,
                               alignment: WrapAlignment.center,
                               children: [
-                                Text("No Network Or Not In Factory Network",
-                                    textScaleFactor: 1.2),
+                                Text("No Network Or Not In Factory Network", textScaleFactor: 1.2),
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: ElevatedButton(
@@ -256,9 +235,7 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
                                         webPageConnectionError = false;
                                         loading = true;
                                         setupTimeout();
-                                        setState(() {
-
-                                        });
+                                        setState(() {});
                                         _controller!.reload();
                                       },
                                       child: Text("Retry")),
@@ -287,15 +264,11 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
 
   String setupData(loadData) {
     print(userRFCredentials.toJson());
-    loadData =
-        loadData.toString().replaceAll("@@user", userRFCredentials.uname ?? "");
-    loadData =
-        loadData.toString().replaceAll("@@pass", userRFCredentials.pword ?? "");
+    loadData = loadData.toString().replaceAll("@@user", userRFCredentials.uname ?? "");
+    loadData = loadData.toString().replaceAll("@@pass", userRFCredentials.pword ?? "");
     loadData = loadData.toString().replaceAll("@@mo", widget.ticket.mo ?? "");
-    loadData =
-        loadData.toString().replaceAll("@@low", operationMinMax.min.toString());
-    loadData =
-        loadData.toString().replaceAll("@@max", operationMinMax.max.toString());
+    loadData = loadData.toString().replaceAll("@@low", operationMinMax.min.toString());
+    loadData = loadData.toString().replaceAll("@@max", operationMinMax.max.toString());
 
     return loadData;
   }

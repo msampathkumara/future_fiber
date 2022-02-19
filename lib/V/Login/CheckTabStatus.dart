@@ -2,6 +2,7 @@ import 'package:device_info/device_info.dart';
 import 'package:device_information/device_information.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smartwind/C/OnlineDB.dart';
@@ -35,11 +36,7 @@ class _CheckTabStatusState extends State<CheckTabStatus> {
     double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-        appBar: AppBar(
-          brightness: Brightness.light,
-          backgroundColor: Colors.white,
-          elevation: 0,
-        ),
+        appBar: AppBar(backgroundColor: Colors.white, elevation: 0, systemOverlayStyle: SystemUiOverlayStyle.dark),
         backgroundColor: Colors.white,
         body: SafeArea(
           child: Padding(
@@ -48,11 +45,12 @@ class _CheckTabStatusState extends State<CheckTabStatus> {
               children: [
                 Expanded(
                   child: Center(
-                    child: Wrap(
-                      direction: Axis.vertical,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [UserImage(nsUser: widget.nsUser, radius: 100), SizedBox(height: 48), Text("Hi", textScaleFactor: 3), Text(widget.nsUser.name, textScaleFactor: 3)],
-                    ),
+                    child: Wrap(direction: Axis.vertical, crossAxisAlignment: WrapCrossAlignment.center, children: [
+                      UserImage(nsUser: widget.nsUser, radius: 100),
+                      SizedBox(height: 48),
+                      Text("Hi", textScaleFactor: 3),
+                      Text(widget.nsUser.name, textScaleFactor: 3)
+                    ]),
                   ),
                 ),
                 // Spacer(),

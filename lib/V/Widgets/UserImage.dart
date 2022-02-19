@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/AppUser.dart';
@@ -8,12 +8,11 @@ class UserImage extends StatefulWidget {
   NsUser? nsUser;
   int? nsUserId;
   Color? backgroundColor;
-  double? radius;
-  Function(NsUser)? onUserLoad;
+  double radius;
 
   bool disable;
 
-  UserImage({this.nsUser, this.nsUserId, this.backgroundColor, this.radius, this.onUserLoad, this.disable = false});
+  UserImage({this.nsUser, this.nsUserId, this.backgroundColor, required this.radius, this.disable = false});
 
   @override
   _UserImageState createState() => _UserImageState();
@@ -33,23 +32,16 @@ class _UserImageState extends State<UserImage> {
     if (nsUser == null && widget.nsUserId != null) {
       NsUser.fromId(widget.nsUserId).then((value) {
         nsUser = value;
-        loadImage();
-        if (widget.onUserLoad != null) {
-          widget.onUserLoad!(nsUser!);
-        }
       });
     } else {
-      loadImage();
-      if (widget.onUserLoad != null) {
-        widget.onUserLoad!(nsUser!);
-      }
+      // loadImage();
+
     }
   }
 
   @override
   Widget build(BuildContext context) {
-
-    if (widget.disable || nsUser!.disabled) {
+    if (widget.disable || nsUser!.isDisabled) {
       return ColorFiltered(
           colorFilter: ColorFilter.mode(
             Colors.white,
@@ -57,19 +49,21 @@ class _UserImageState extends State<UserImage> {
           ),
           child: CircleAvatar(radius: widget.radius, backgroundImage: _loaded ? img : placeholder, backgroundColor: widget.backgroundColor ?? Colors.transparent));
     }
-    return CircleAvatar(radius: widget.radius, backgroundImage: _loaded ? img : placeholder, backgroundColor: widget.backgroundColor ?? Colors.transparent);
-  }
 
-  void loadImage() {
-    img = NetworkImage(Server.getServerApiPath("users/getImage?img=" + nsUser!.img + "&size=500"), headers: {"authorization": '${AppUser.getIdToken()}'});
-    img.resolve(ImageConfiguration()).addListener(ImageStreamListener((info, call) {
-          if (mounted) {
-            setState(() {
-              _loaded = true;
-            });
-          }
-        }, onError: (exception, stack) {
-          _loaded = false;
-        }));
-  }
+    return CircleAvatar(
+        backgroundColor: Colors.white,
+        radius: widget.radius,
+        child: ClipOval(
+            child: CachedNetworkImage(
+                imageUrl: Server.getServerApiPath("users/getImage?img=" + nsUser!.img + "&size=${(widget.radius * 3)}"),
+                httpHeaders: {"authorization": '${AppUser.getIdToken()}'},
+                width: widget.radius * 2,
+                height: widget.radius * 2,
+                fit: BoxFit.cover,
+                errorWidget: (context, url, error) {
+                  return Image.asset('assets/images/user.png', fit: BoxFit.cover, width: widget.radius * 2, height: widget.radius * 2);
+                },
+                progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress))));
+
+   }
 }

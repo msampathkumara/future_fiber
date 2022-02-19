@@ -5,7 +5,7 @@ description: NorthSails Smart Wind
 publish_to: 'none'
 
 
-version: 1.1.11+30
+version: 1.1.12+31
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -14,7 +14,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^1.0.4
+  #  cupertino_icons: ^1.0.4
 
   #  firebase------------------------------------------
   firebase_core: ^1.10.0
@@ -22,22 +22,22 @@ dependencies:
   firebase_crashlytics: ^2.3.0
   firebase_auth: ^3.2.0
   firebase_messaging: ^11.1.0
-  google_ml_vision: ^0.0.7
+  #  google_ml_vision: ^0.0.7
 
   #  --------------------------------------------------
   dio: ^4.0.3
-  percent_indicator: ^3.4.0
+  percent_indicator: ^4.0.0
   nfc_manager: ^3.1.0
-  shared_preferences: ^2.0.8
+#  shared_preferences: ^2.0.8
   animations: ^2.0.2
   image_picker: ^0.8.4+4
-   
+
   jwt_decode: ^0.3.1
   flutter_share: ^2.0.0
   flutter_barcode_scanner: ^2.0.0
 
-  webview_flutter: ^2.3.1
-  permission_handler: ^8.3.0
+  webview_flutter: ^3.0.0
+  permission_handler: ^9.1.0
   sqflite: ^2.0.0+4
   path_provider: ^2.0.7
   flutter_pdfview: ^1.2.1
@@ -50,18 +50,29 @@ dependencies:
   #  imei_plugin: ^1.2.0
   device_information: ^0.0.4
   device_info: ^2.0.3
-  firebase_database: ^8.1.0
-  native_pdf_view: ^5.0.0
+  firebase_database: ^9.0.5
+  native_pdf_view: ^6.0.0+1
+  cached_network_image: ^3.2.0
+  video_player: ^2.2.11
+  group_list_view: ^1.1.1
 
 
   custom_webview:
     path: ./Pugins/custom_webview
-  json_annotation: ^4.3.0
+  json_annotation: ^4.4.0
   flutter_inappwebview: ^5.3.2
+  graphql_flutter: ^5.0.0
+  hive: ^2.0.4
+  hive_flutter: ^1.1.0
+  uuid: ^3.0.5
+
+  splash_screen_view: ^3.0.0
+  decorated_icon: ^1.2.1
 
 dev_dependencies:
+  hive_generator: ^1.1.1
   json_serializable:
-  build_runner: ^2.1.5
+  build_runner: ^2.1.7
   flutter_test:
     sdk: flutter
   integration_test:
@@ -81,3 +92,28 @@ flutter:
     - assets/images/
     - assets/
 
+splash_screen_view:
+
+  color: "#ffffff"
+  #background_image: "assets/splashscreen_image.png"
+
+  # Optional parameters are listed below.
+  image: assets/splash.png
+
+  #color_dark: "#042a49"
+  #background_image_dark: "assets/dark-background.png"
+  #image_dark: assets/splash-invert.png
+
+  #android: false
+  #ios: false
+  #web: false
+
+  #android_gravity: center
+  #ios_content_mode: center
+  #web_image_mode: center
+
+  fullscreen: true
+
+  #info_plist_files:
+  #  - 'ios/Runner/Info-Debug.plist'
+  #  - 'ios/Runner/Info-Release.plist'

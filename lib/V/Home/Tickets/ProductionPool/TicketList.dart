@@ -1,8 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:smartwind/C/App.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Enums.dart';
@@ -13,6 +11,7 @@ import 'package:smartwind/V/Widgets/FlagDialog.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 import 'package:smartwind/ns_icons_icons.dart';
 
+import '../../../../M/AppUser.dart';
 import '../TicketInfo/TicketInfo.dart';
 import 'CrossProduction.dart';
 
@@ -37,8 +36,11 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
   bool _showAllTickets = false;
   late DbChangeCallBack dbChangeCallBack;
 
+  NsUser? nsUser;
+
   @override
   initState() {
+    nsUser = AppUser.getUser();
     super.initState();
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _tabBarController = TabController(length: tabs.length, vsync: this);
@@ -49,15 +51,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
         reloadData();
       }, context, collection: DataTables.Tickets);
     });
-    App.getCurrentUser().then((value) {
-      if (value != null) {
-        nsUser = value;
-        setState(() {});
-      }
-    });
   }
-
-  NsUser? nsUser;
 
   late List listsArray;
 
@@ -242,13 +236,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
             color: Colors.transparent,
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    "Sort By",
-                    textScaleFactor: 1.2
-                  )
-                ),
+                Padding(padding: const EdgeInsets.all(16.0), child: Text("Sort By", textScaleFactor: 1.2)),
                 Expanded(
                   child: Padding(
                       padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
@@ -371,7 +359,6 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     _selectedTabIndex = _tabBarController!.index;
     print('loadData listSortBy $listSortBy');
 
-    NsUser? nsUser = await App.getCurrentUser();
     var section = nsUser!.section!.id;
     String canOpen = _showAllTickets ? "  file=1 and completed=0" : " canOpen=1   and file=1   and completed=0 ";
     String searchQ = "";
@@ -409,12 +396,12 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     } else {
       _allFilesList = await database.rawQuery("SELECT * FROM tickets where  $searchQ   " +
           canOpen +
-          " and openSections like '%|" +
+          " and openSections like '%\"" +
           section.toString() +
-          "|%'  order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}");
+          "\"%'  order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}");
       _crossProductionFilesList = await database.rawQuery('SELECT * FROM tickets where  $searchQ   ' +
           canOpen +
-          " and openSections like '%|$section|%' and crossPro=1 order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}");
+          " and openSections like '%\"|$section|\"%' and crossPro=1 order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}");
 
       listsArray = [_allFilesList, _crossProductionFilesList];
     }
@@ -778,9 +765,9 @@ class TicketTile extends StatelessWidget {
                   },
                 ),
               Padding(
-                padding: const EdgeInsets.only(top: 4),
+                padding: const EdgeInsets.all(4),
                 child: CircularPercentIndicator(
-                  radius: 40.0,
+                  radius: 20.0,
                   lineWidth: 5.0,
                   percent: ticket.progress / 100,
                   center: new Text(

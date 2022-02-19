@@ -394,7 +394,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                                   Padding(
                                     padding: const EdgeInsets.only(top: 4),
                                     child: CircularPercentIndicator(
-                                      radius: 40.0,
+                                      radius: 18.0,
                                       lineWidth: 5.0,
                                       percent: ticket.progress / 100,
                                       center: new Text(

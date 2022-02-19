@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/NsUser.dart';
+import 'package:smartwind/V/Widgets/UserImage.dart';
 
 class CurrentUserDetails extends StatefulWidget {
   final NsUser nsUser;
@@ -50,12 +50,7 @@ class _CurrentUserDetailsState extends State<CurrentUserDetails> {
               direction: Axis.vertical,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                CircleAvatar(
-                    radius: 124.0,
-                    backgroundImage: idToken != null
-                        ? NetworkImage(Server.getServerApiPath("users/getImage?img=" + nsUser.img + "&size=1000"), headers: {"authorization": '$idToken'})
-                        : NsUser.getDefaultImage(),
-                    backgroundColor: Colors.transparent),
+                UserImage(nsUser: nsUser, radius: 100),
                 Padding(
                   padding: const EdgeInsets.only(top: 16.0),
                   child: Text(
@@ -109,7 +104,7 @@ class _CurrentUserDetailsState extends State<CurrentUserDetails> {
                         child: Column(
                           children: [
                             ListTile(leading: Icon(Icons.badge_outlined), title: Text("EPF"), subtitle: Text(nsUser.epf, style: stStyle)),
-                            ListTile(leading: Icon(Icons.alternate_email_outlined), title: Text("Loft"), subtitle: Text(nsUser.loft.toString(), style: stStyle)),
+                            ListTile(leading: Icon(Icons.apartment_rounded), title: Text("Loft"), subtitle: Text(nsUser.loft.toString(), style: stStyle)),
                             ListTile(leading: Icon(Icons.location_on_outlined), title: Text("Section"), subtitle: Text(nsUser.sectionName, style: stStyle)),
                           ],
                         ),

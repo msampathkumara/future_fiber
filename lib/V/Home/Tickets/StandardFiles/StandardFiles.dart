@@ -6,6 +6,7 @@ import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/StandardTicket.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 
+import '../../../../M/AppUser.dart';
 import 'ChangeFactory.dart';
 import 'StandardTicketInfo.dart';
 
@@ -334,7 +335,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
 
     // String canOpen = _showAllTickets ? " " : " and canOpen=1  and openSections like '%#1#%' ";
 
-    NsUser? nsUser = await App.getCurrentUser();
+    NsUser? nsUser = AppUser.getUser();
     var section = nsUser!.section!.id;
     // String canOpen = _showAllTickets ? "  file=1 and completed=0" : " canOpen=1   and file=1   and completed=0 ";
     String canOpen = " ";
@@ -398,7 +399,6 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
                         // TODO add link
                         OnlineDB.apiPost("tickets/standard/delete", {'id': ticket.id.toString()}).then((response) async {
                           print(response.data);
-
                         });
                         Navigator.of(context).pop();
                       }),

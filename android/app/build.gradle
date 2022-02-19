@@ -1,5 +1,5 @@
 ext {
-    kotlin_version = '1.5.20'
+    kotlin_version = '1.6.10'
 }
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
@@ -83,7 +83,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    buildToolsVersion '31.0.0 rc4'
+    buildToolsVersion '32.0.0'
 }
 
 flutter {

@@ -214,21 +214,15 @@ class _TicketInfoState extends State<TicketInfo> {
                 Spacer(),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      new CircularPercentIndicator(
-                          radius: 100.0,
-                          lineWidth: 4.0,
-                          percent: (_progress / 100).toDouble(),
-                          center: new Text(_ticket.progress.toString() + "%", style: ts),
-                          progressColor: Colors.blue,
-                          animateFromLastPercent: true,
-                          animation: true,
-                          animationDuration: 500)
-                    ],
-                  ),
+                  child: new CircularPercentIndicator(
+                      radius: 50.0,
+                      lineWidth: 4.0,
+                      percent: (_progress / 100).toDouble(),
+                      center:   Text(_ticket.progress.toString() + "%", style: ts),
+                      progressColor: Colors.blue,
+                      animateFromLastPercent: true,
+                      animation: true,
+                      animationDuration: 500),
                 )
               ],
             ),

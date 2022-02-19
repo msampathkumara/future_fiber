@@ -1,11 +1,14 @@
 import 'dart:convert';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:smartwind/M/AppUser.dart';
 
 import 'DB/DB.dart';
 
 class FCM {
-  static listen(context) {
+  static get userId => AppUser.getUser()?.id;
+
+  static subscribe() async {
     FirebaseMessaging.instance.subscribeToTopic('ticketDelete');
     FirebaseMessaging.instance.subscribeToTopic('ticketComplete');
     FirebaseMessaging.instance.subscribeToTopic('file_update');
@@ -13,11 +16,21 @@ class FCM {
     FirebaseMessaging.instance.subscribeToTopic('userUpdates');
     FirebaseMessaging.instance.subscribeToTopic('resetDb');
 
+    var userId = AppUser.getUser()?.id;
+    if (AppUser.getUser() != null) {
+      FirebaseMessaging.instance.subscribeToTopic('userUpdate_${userId}');
+    }
+  }
+
+  static setListener(context) {
+    subscribe();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print("---------------- FCM ------------------");
       print(message.from);
-
-      if (message.from == "/topics/ticketComplete") {
+      print(message.messageId);
+      if (message.from == "/topics/userUpdate_$userId") {
+        AppUser.refreshUserData();
+      } else if (message.from == "/topics/ticketComplete") {
         DB.updateCompletedTicket(context, json.decode(message.data["ticketId"]));
       } else if (message.from == "/topics/resetDb") {
         DB.updateDatabase(context, reset: true);
@@ -41,11 +54,15 @@ class FCM {
     });
   }
 
-  static unsubscribe() {
-    FirebaseMessaging.instance.unsubscribeFromTopic('ticketDelete');
-    FirebaseMessaging.instance.subscribeToTopic('ticketComplete');
-    FirebaseMessaging.instance.subscribeToTopic('file_update');
-    FirebaseMessaging.instance.subscribeToTopic('TicketDbReset');
-    FirebaseMessaging.instance.subscribeToTopic('userUpdates');
+  static unsubscribe() async {
+    await FirebaseMessaging.instance.unsubscribeFromTopic('ticketDelete');
+    await FirebaseMessaging.instance.unsubscribeFromTopic('ticketComplete');
+    await FirebaseMessaging.instance.unsubscribeFromTopic('file_update');
+    await FirebaseMessaging.instance.unsubscribeFromTopic('TicketDbReset');
+    await FirebaseMessaging.instance.unsubscribeFromTopic('userUpdates');
+    var userId = AppUser.getUser()?.id;
+    if (AppUser.getUser() != null) {
+      await FirebaseMessaging.instance.unsubscribeFromTopic('userUpdate_${userId}');
+    }
   }
 }

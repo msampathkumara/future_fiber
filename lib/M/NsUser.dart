@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
 
 import 'AppUser.dart';
+import 'HiveClass.dart';
 import 'Section.dart';
 
 part 'NsUser.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-class NsUser {
+@HiveType(typeId: 6)
+class NsUser extends HiveClass {
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int id = 0;
   String uname = "";
@@ -46,13 +49,25 @@ class NsUser {
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int hasNfc = 0;
 
-  bool disabled = false;
+  @JsonKey(defaultValue: 0, includeIfNull: true)
+  int disabled = 0;
+
+  String? password = "";
+
+  var emailVerified;
+
+  var email;
+
+  @JsonKey(defaultValue: [], includeIfNull: true)
+  List<String> permissions = [];
 
   NsUser() {
     loadSections();
   }
 
   factory NsUser.fromJson(Map<String, dynamic> json) => _$NsUserFromJson(json);
+
+  bool get isDisabled => disabled == 1;
 
   Map<String, dynamic> toJson() => _$NsUserToJson(this);
 
@@ -131,7 +146,7 @@ class NsUser {
   }
 
   static getUserImageById(int? nsUserId) {
-    return UserImage(nsUserId: nsUserId);
+    return UserImage(nsUserId: nsUserId, radius: 16);
   }
 
   static Future<NsUser?> fromId(int? id) {
@@ -153,5 +168,13 @@ class NsUser {
     var s = await db!.rawQuery(" select * from userSections us left join factorySections fs on fs.id=us.sectionId where userid='$id'  ");
     sections = List<Section>.from(s.map((model) => Section.fromJson(model)));
     return sections;
+  }
+
+  String getImage({size = 300}) {
+    return Server.getServerPath("images2/userImages/$size/$img");
+  }
+
+  static List<NsUser> fromJsonArray(nsUsers) {
+    return List<NsUser>.from(nsUsers.map((model) => NsUser.fromJson(model)));
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:animations/animations.dart';
+import 'package:decorated_icon/decorated_icon.dart';
 import 'package:device_information/device_information.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -9,12 +10,14 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:smartwind/C/App.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/C/FCM.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/C/Server.dart';
+import 'package:smartwind/M/AppUser.dart';
+import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/NsUser.dart';
+import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/V/Home/CPR/CPRList.dart';
 import 'package:smartwind/V/Home/CurrentUser/CurrentUserDetails.dart';
 import 'package:smartwind/V/Home/HR/HRSystem.dart';
@@ -52,27 +55,30 @@ class _HomeState extends State<Home> {
 
   var appVersion;
 
+  late Function onUserUpdate;
+
   @override
   void initState() {
     super.initState();
-    FCM.listen(context);
+    FCM.setListener(context);
     DB.updateDatabase(context);
-    App.getCurrentUser().then((value) {
-      if (value != null) {
-        final user = FirebaseAuth.instance.currentUser;
-        user!.getIdToken().then((t) {
-          idToken = t;
-          nsUser = value;
-          setState(() {});
-        });
-      } else {
-        _logout();
-      }
-    });
+
     PackageInfo.fromPlatform().then((appInfo) {
       print(appInfo);
       appVersion = appInfo.version;
     });
+    onUserUpdate = () {
+      print('USER UPDATE');
+      if (mounted) {
+        nsUser = AppUser.getUser();
+        if (nsUser == null) {
+          _logout();
+        }
+      }
+      setState(() {});
+    };
+    onUserUpdate();
+    AppUser.onUpdate(onUserUpdate);
   }
 
   var idToken;
@@ -81,9 +87,10 @@ class _HomeState extends State<Home> {
   void dispose() {
     super.dispose();
     FCM.unsubscribe();
+    AppUser.removeOnUpdate(onUserUpdate);
   }
 
-  void _showMarkedAsDoneSnackbar(bool? isMarkedAsDone) {
+  void _showMarkedAsDoneSnackBar(bool? isMarkedAsDone) {
     if (isMarkedAsDone ?? false)
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Marked as done!'),
@@ -112,7 +119,7 @@ class _HomeState extends State<Home> {
                   // leading: CircleAvatar(radius: 24.0, backgroundImage: nsUser.getUserImage(), backgroundColor: Colors.transparent),
                   leading: UserImage(
                     nsUser: nsUser,
-                    radius: 36,
+                    radius: 24,
                   ),
                   title: Text(nsUser!.name, textScaleFactor: 1.2),
                   subtitle: nsUser!.section != null ? Text("${nsUser!.section!.sectionTitle} @ ${nsUser!.section!.factory}") : Text(""),
@@ -148,68 +155,80 @@ class _HomeState extends State<Home> {
                           crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
                             _OpenContainerWrapper(
-                              closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                return _menuButton(openContainer, Icon(Icons.precision_manufacturing_outlined, size: iconSize), "Production Pool");
-                              },
-                              openWidget: ProductionPool(),
-                              onClosed: _showMarkedAsDoneSnackbar,
-                            ),
-                            _OpenContainerWrapper(
-                              closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                return _menuButton(openContainer, Icon(Icons.local_mall_rounded, color: Colors.amber, size: iconSize), "CPR");
-                              },
-                              openWidget: CPRList(),
-                              onClosed: _showMarkedAsDoneSnackbar,
-                            ),
+                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                  return _menuButton(openContainer, Icon(Icons.precision_manufacturing_outlined, size: iconSize), "Production Pool");
+                                },
+                                openWidget: ProductionPool(),
+                                onClosed: _showMarkedAsDoneSnackBar),
+                            if (AppUser.havePermissionFor(Permissions.CPR))
+                              _OpenContainerWrapper(
+                                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                    return _menuButton(openContainer, Icon(Icons.local_mall_rounded, color: Colors.amber, size: iconSize), "CPR");
+                                  },
+                                  openWidget: CPRList(),
+                                  onClosed: _showMarkedAsDoneSnackBar),
                             _OpenContainerWrapper(
                                 closedBuilder: (BuildContext _, VoidCallback openContainer) {
                                   return _menuButton(openContainer, Icon(Icons.inventory_2_rounded, color: Colors.deepOrange, size: iconSize), "Finished Goods");
                                 },
                                 openWidget: FinishedGoods(),
-                                onClosed: _showMarkedAsDoneSnackbar),
+                                onClosed: _showMarkedAsDoneSnackBar),
                             _OpenContainerWrapper(
                               closedBuilder: (BuildContext _, VoidCallback openContainer) {
                                 return _menuButton(openContainer, Icon(Icons.collections_bookmark_outlined, size: iconSize), "Standard Library");
                               },
                               openWidget: StandardFiles(),
-                              onClosed: _showMarkedAsDoneSnackbar,
+                              onClosed: _showMarkedAsDoneSnackBar,
                             ),
-                            _OpenContainerWrapper(
-                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                  return _menuButton(openContainer, Icon(Icons.people_outline_outlined, color: Colors.lightGreen, size: iconSize), "User Manager");
+                            if (AppUser.havePermissionFor(Permissions.USER_MANAGER))
+                              _OpenContainerWrapper(
+                                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                    return _menuButton(openContainer, Icon(Icons.people_outline_outlined, color: Colors.lightGreen, size: iconSize), "User Manager");
+                                  },
+                                  openWidget: UserManager(),
+                                  onClosed: _showMarkedAsDoneSnackBar),
+                            if (AppUser.havePermissionFor(Permissions.PRINTING))
+                              _OpenContainerWrapper(
+                                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                    return _menuButton(openContainer, Icon(Icons.print_rounded, size: iconSize, color: Colors.blue), "Print");
+                                  },
+                                  openWidget: PrintManager(),
+                                  onClosed: _showMarkedAsDoneSnackBar),
+                            if (AppUser.havePermissionFor(Permissions.QC))
+                              _OpenContainerWrapper(
+                                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                    return _menuButton(openContainer, Icon(Icons.verified_rounded, size: iconSize, color: Colors.green), "QA & QC");
+                                  },
+                                  openWidget: QCList(),
+                                  onClosed: _showMarkedAsDoneSnackBar),
+                            if (AppUser.havePermissionFor(Permissions.J109))
+                              _OpenContainerWrapper(
+                                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                    return _menuButton(openContainer, Icon(Icons.subject_rounded, size: iconSize, color: Colors.pinkAccent), "J109");
+                                  },
+                                  openWidget: J109(),
+                                  onClosed: _showMarkedAsDoneSnackBar),
+                            if (AppUser.havePermissionFor(Permissions.BLUE_BOOK))
+                              _OpenContainerWrapper(
+                                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                    return _menuButton(openContainer, Icon(Icons.menu_book_rounded, size: iconSize, color: Colors.blueAccent), "Blue Book");
+                                  },
+                                  openWidget: BlueBook(),
+                                  onClosed: _showMarkedAsDoneSnackBar),
+                            if (AppUser.havePermissionFor(Permissions.HR))
+                              _OpenContainerWrapper(
+                                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                    return _menuButton(openContainer, Icon(Icons.groups_rounded, size: iconSize, color: Colors.orange), "HR System");
+                                  },
+                                  openWidget: HESystem(),
+                                  onClosed: _showMarkedAsDoneSnackBar),
+                            ElevatedButton(
+                                onPressed: () {
+                                  HiveBox.getDataFromServer();
+                                  AppUser.refreshUserData();
+
                                 },
-                                openWidget: UserManager(),
-                                onClosed: _showMarkedAsDoneSnackbar),
-                            _OpenContainerWrapper(
-                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                  return _menuButton(openContainer, Icon(Icons.print_rounded, size: iconSize, color: Colors.blue), "Print");
-                                },
-                                openWidget: PrintManager(),
-                                onClosed: _showMarkedAsDoneSnackbar),
-                            _OpenContainerWrapper(
-                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                  return _menuButton(openContainer, Icon(Icons.verified_rounded, size: iconSize, color: Colors.green), "QA & QC");
-                                },
-                                openWidget: QCList(),
-                                onClosed: _showMarkedAsDoneSnackbar),
-                            _OpenContainerWrapper(
-                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                  return _menuButton(openContainer, Icon(Icons.subject_rounded, size: iconSize, color: Colors.pinkAccent), "J109");
-                                },
-                                openWidget: J109(),
-                                onClosed: _showMarkedAsDoneSnackbar),
-                            _OpenContainerWrapper(
-                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                  return _menuButton(openContainer, Icon(Icons.menu_book_rounded, size: iconSize, color: Colors.blueAccent), "Blue Book");
-                                },
-                                openWidget: BlueBook(),
-                                onClosed: _showMarkedAsDoneSnackbar),
-                            _OpenContainerWrapper(
-                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                  return _menuButton(openContainer, Icon(Icons.groups_rounded, size: iconSize, color: Colors.orange), "HR System");
-                                },
-                                openWidget: HESystem(),
-                                onClosed: _showMarkedAsDoneSnackbar),
+                                child: Text("ssssssssssss"))
                           ],
                         ),
                       ),
@@ -290,7 +309,7 @@ class _HomeState extends State<Home> {
               }
             }
 
-            DB.getDB().then((db) => db!.rawQuery("delete from files" ).then((data) {
+            DB.getDB().then((db) => db!.rawQuery("delete from files").then((data) {
                   print(data);
                 }));
           }
@@ -332,7 +351,16 @@ class _HomeState extends State<Home> {
         child: InkWell(
             onTap: openContainer,
             child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
-              Expanded(child: Container(height: 170, child: Center(child: image))),
+              Expanded(
+                  child: Container(
+                      height: 170,
+                      child: Center(
+                          child: DecoratedIcon(
+                        image.icon ?? Icons.android,
+                        color: image.color,
+                        size: image.size,
+                        // shadows: [BoxShadow(blurRadius: 5.0, color: Colors.black45 ),BoxShadow(blurRadius: 20.0, color: Colors.black38 )],
+                      )))),
               Center(
                 child: Padding(padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0), child: Text(title, textScaleFactor: 1)),
               )

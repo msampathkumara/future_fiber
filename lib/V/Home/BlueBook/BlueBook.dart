@@ -125,7 +125,7 @@ class _BlueBookState extends State<BlueBook> {
               renderer: (PdfPage page) => page.render(
                 width: page.width * 3,
                 height: page.height * 3,
-                format: PdfPageFormat.PNG,
+                format: PdfPageImageFormat.webp,
                 backgroundColor: '#ffffff',
               ),
               documentLoader: Center(child: CircularProgressIndicator()),
