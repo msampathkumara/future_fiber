@@ -39,8 +39,8 @@ class _SectionSelectorState extends State<SectionSelector> {
               Section section = widget.nsUser.sections[i];
               return ListTile(
                 onTap: () async {
-                  widget.nsUser.section = section;
-                  AppUser.setUser(widget.nsUser);
+                 
+                  AppUser.setSelectedSection(section);
 
                   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (Route<dynamic> route) => false);
                 },

@@ -38,72 +38,76 @@ class _CheckTabStatusState extends State<CheckTabStatus> {
     return Scaffold(
         appBar: AppBar(backgroundColor: Colors.white, elevation: 0, systemOverlayStyle: SystemUiOverlayStyle.dark),
         backgroundColor: Colors.white,
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(32.0),
-            child: Column(
-              children: [
-                Expanded(
-                  child: Center(
-                    child: Wrap(direction: Axis.vertical, crossAxisAlignment: WrapCrossAlignment.center, children: [
-                      UserImage(nsUser: widget.nsUser, radius: 100),
-                      SizedBox(height: 48),
-                      Text("Hi", textScaleFactor: 3),
-                      Text(widget.nsUser.name, textScaleFactor: 3)
-                    ]),
+        body: _loading
+            ? Center(child: CircularProgressIndicator())
+            : SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: Center(
+                          child: Wrap(direction: Axis.vertical, crossAxisAlignment: WrapCrossAlignment.center, children: [
+                            UserImage(nsUser: widget.nsUser, radius: 100),
+                            SizedBox(height: 48),
+                            Text("Hi", textScaleFactor: 3),
+                            Text(widget.nsUser.name, textScaleFactor: 3)
+                          ]),
+                        ),
+                      ),
+                      // Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 24),
+                        child: SizedBox(
+                            width: width - 200,
+                            child: Column(
+                              children: [
+                                CheckboxListTile(
+                                    controlAffinity: ListTileControlAffinity.leading,
+                                    value: isTabWorking,
+                                    onChanged: (bool? value) {
+                                      isTabWorking = value!;
+                                      setState(() {});
+                                    },
+                                    title: Text("Is Tab working without any problem ? \n( ටැබ් යන්ත්‍රය ගැටලුවකින් තොරව ක්‍රියා කරයිද ? )"),
+                                    subtitle: Text("")),
+                                CheckboxListTile(
+                                    controlAffinity: ListTileControlAffinity.leading,
+                                    value: haveStylus,
+                                    onChanged: (bool? value) {
+                                      haveStylus = value!;
+                                      setState(() {});
+                                    },
+                                    title: Text("Is Stylus pen available ?\n( ස්ටයිලස් පෑන තිබේද ? )"),
+                                    subtitle: Text("")),
+                                Text(
+                                  "If you are unable to agree with all of above conditions. please contact a production leader. \n( ඉහත සඳහන් කොන්දේසි සමග එකඟ විය නොහැකි නම්. ප්‍රොඩක්ශන් ලීඩර් අමතන්න ) ",
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                                SizedBox(
+                                  height: 16,
+                                ),
+                                if (!(isTabWorking && haveStylus)) SizedBox(height: 50),
+                                if (isTabWorking && haveStylus)
+                                  ElevatedButton(
+                                    child: SizedBox(width: double.infinity, height: 50, child: Center(child: Text("Continue"))),
+                                    onPressed: () {
+                                      check();
+                                      // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => SectionSelector(widget.nsUser)), (Route<dynamic> route) => false);
+                                    },
+                                  )
+                              ],
+                            )),
+                      )
+                    ],
                   ),
                 ),
-                // Spacer(),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 24),
-                  child: SizedBox(
-                      width: width - 200,
-                      child: Column(
-                        children: [
-                          CheckboxListTile(
-                              controlAffinity: ListTileControlAffinity.leading,
-                              value: isTabWorking,
-                              onChanged: (bool? value) {
-                                isTabWorking = value!;
-                                setState(() {});
-                              },
-                              title: Text("Is Tab working without any problem ? \n( ටැබ් යන්ත්‍රය ගැටලුවකින් තොරව ක්‍රියා කරයිද ? )"),
-                              subtitle: Text("")),
-                          CheckboxListTile(
-                              controlAffinity: ListTileControlAffinity.leading,
-                              value: haveStylus,
-                              onChanged: (bool? value) {
-                                haveStylus = value!;
-                                setState(() {});
-                              },
-                              title: Text("Is Stylus pen available ?\n( ස්ටයිලස් පෑන තිබේද ? )"),
-                              subtitle: Text("")),
-                          Text(
-                            "If you are unable to agree with all of above conditions. please contact a production leader. \n( ඉහත සඳහන් කොන්දේසි සමග එකඟ විය නොහැකි නම්. ප්‍රොඩක්ශන් ලීඩර් අමතන්න ) ",
-                            style: TextStyle(color: Colors.red),
-                          ),
-                          SizedBox(
-                            height: 16,
-                          ),
-                          if (!(isTabWorking && haveStylus)) SizedBox(height: 50),
-                          if (isTabWorking && haveStylus)
-                            ElevatedButton(
-                              child: SizedBox(width: double.infinity, height: 50, child: Center(child: Text("Continue"))),
-                              onPressed: () {
-                                check();
-                                // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => SectionSelector(widget.nsUser)), (Route<dynamic> route) => false);
-                              },
-                            )
-                        ],
-                      )),
-                )
-              ],
-            ),
-          ),
-        ));
+              ));
   }
 
   Future check() async {
+    setLoading(true);
+
     PermissionStatus ps = await Permission.phone.request();
     if (!ps.isGranted) {
       return;
@@ -165,13 +169,22 @@ class _CheckTabStatusState extends State<CheckTabStatus> {
         ErrorMessageView(errorMessage: response.data).show(context);
       }
       print(response.data);
-
+      setLoading(false);
       return 1;
     }).catchError((onError) {
+      setLoading(false);
       print(onError);
     });
   }
 
   bool isTabWorking = false;
   bool haveStylus = false;
+
+  bool _loading = false;
+
+  void setLoading(bool bool) {
+    setState(() {
+      _loading = bool;
+    });
+  }
 }

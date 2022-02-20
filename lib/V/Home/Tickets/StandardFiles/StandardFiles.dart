@@ -336,7 +336,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
     // String canOpen = _showAllTickets ? " " : " and canOpen=1  and openSections like '%#1#%' ";
 
     NsUser? nsUser = AppUser.getUser();
-    var section = nsUser!.section!.id;
+    var section = AppUser.getSelectedSection()?.id;
     // String canOpen = _showAllTickets ? "  file=1 and completed=0" : " canOpen=1   and file=1   and completed=0 ";
     String canOpen = " ";
     String searchQ = " uptime > 0 ";

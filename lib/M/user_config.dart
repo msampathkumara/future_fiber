@@ -3,6 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 import 'HiveClass.dart';
 import 'NsUser.dart';
+import 'Section.dart';
 
 part 'user_config.g.dart';
 
@@ -17,6 +18,10 @@ class UserConfig extends HiveClass {
   @HiveField(1, defaultValue: false)
   @JsonKey(defaultValue: false, includeIfNull: true)
   bool welcomeScreenShown = false;
+
+  @HiveField(2, defaultValue: null)
+  @JsonKey(defaultValue: null, includeIfNull: true)
+  Section? selectedSection;
 
   factory UserConfig.fromJson(Map<String, dynamic> json) => _$UserConfigFromJson(json);
 

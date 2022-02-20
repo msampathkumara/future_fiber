@@ -15,7 +15,7 @@ import 'mainFuncs.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  HiveBox.create();
+  await HiveBox.create();
   if (Firebase.apps.isEmpty) {
     if (kIsWeb) {
       await Firebase.initializeApp(
@@ -117,7 +117,9 @@ class _MyHomePageState extends State<MyHomePage> {
           future: _mainFuncs.initializeFlutterFireFuture,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
+              print('-----------------------------------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
               if (FirebaseAuth.instance.currentUser != null && App.currentUser != null) {
+                print('-----------------------------------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx__2222222222222222222222');
                 return Home();
               }
               return Login();

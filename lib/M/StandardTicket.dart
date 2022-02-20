@@ -1,10 +1,11 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/C/Server.dart';
@@ -13,19 +14,24 @@ import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/Loading.dart';
 import 'package:smartwind/V/Widgets/PdfEditor.dart';
 
- 
 part 'StandardTicket.g.dart';
+
 @JsonSerializable(explicitToJson: true)
+@HiveType(typeId: 9)
 class StandardTicket extends Ticket {
+  @HiveField(50, defaultValue: null)
+  @JsonKey(defaultValue: null, includeIfNull: true)
   String? production;
+
+  @HiveField(51, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int usedCount = 0;
+
+  @HiveField(52, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int uptime = 0;
 
   StandardTicket();
-
-   
 
   Future<void> open(context, {onReceiveProgress}) async {
     File file = await getLocalFile();
@@ -134,7 +140,11 @@ class StandardTicket extends Ticket {
     return file;
   }
 
-factory StandardTicket.fromJson(Map<String, dynamic> json) => _$StandardTicketFromJson(json);
+  factory StandardTicket.fromJson(Map<String, dynamic> json) => _$StandardTicketFromJson(json);
 
-Map<String, dynamic> toJson() => _$StandardTicketToJson(this);
+  Map<String, dynamic> toJson() => _$StandardTicketToJson(this);
+
+  static List<StandardTicket> fromJsonArray(StandardTickets) {
+    return List<StandardTicket>.from(StandardTickets.map((model) => StandardTicket.fromJson(model)));
+  }
 }

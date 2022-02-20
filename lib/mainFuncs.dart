@@ -13,7 +13,7 @@ class mainFuncs {
   mainFuncs();
 
   Future<bool> initializeFlutterFire() async {
-    await DB.getDB();
+    // await DB.getDB();
     // Wait for Firebase to initialize
     await Firebase.initializeApp();
     // FirebaseCrashlytics.instance.crash();
@@ -33,6 +33,7 @@ class mainFuncs {
       await _testAsyncErrorOnInit();
     }
       App.getCurrentUser();
+    print('ccccccccccccccccccccccccccccccccccccccccccccccccccccccccc');
     return true;
   }
 

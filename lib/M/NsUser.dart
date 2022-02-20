@@ -14,52 +14,86 @@ part 'NsUser.g.dart';
 @JsonSerializable(explicitToJson: true)
 @HiveType(typeId: 6)
 class NsUser extends HiveClass {
+  @HiveField(0, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int id = 0;
+
+  @HiveField(1, defaultValue: "")
+  @JsonKey(defaultValue: "", includeIfNull: true)
   String uname = "";
+
+  @HiveField(2, defaultValue: "")
   @JsonKey(defaultValue: "", includeIfNull: true)
   String pword = "";
+
+  @HiveField(3, defaultValue: "")
   String name = "";
+
+  @HiveField(4, defaultValue: "")
   @JsonKey(defaultValue: "", includeIfNull: true)
   String utype = "";
+
+  @HiveField(5, defaultValue: "")
   @JsonKey(defaultValue: "", includeIfNull: true)
   String epf = "";
+
+  @HiveField(6, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int etype = 0;
+
+  @HiveField(7, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int sectionId = 0;
+
+  @HiveField(8, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int loft = 0;
+
+  @HiveField(9, defaultValue: "")
   @JsonKey(defaultValue: "", includeIfNull: true)
   String phone = "";
-  @JsonKey(defaultValue: "0", includeIfNull: true)
+
+  @HiveField(10, defaultValue: "")
+  @JsonKey(defaultValue: "", includeIfNull: true)
   String img = "";
+
+  @HiveField(11, defaultValue: "")
   @JsonKey(defaultValue: "-", includeIfNull: true)
   String sectionName = "";
+
+  @HiveField(12, defaultValue: "")
   @JsonKey(defaultValue: "-", includeIfNull: true)
   String emailAddress = "";
+
+  @HiveField(13, defaultValue: [])
   @JsonKey(defaultValue: [], includeIfNull: true)
   List<Section> sections = [];
 
-  // List<Section> _sections = [];
+  // @HiveField(14, defaultValue: null)
+  // @JsonKey(defaultValue: null, includeIfNull: true)
+  // Section? section;
 
-  @JsonKey(defaultValue: null, includeIfNull: true)
-  Section? section;
+  Section? get section {
+    return AppUser.getSelectedSection();
+  }
 
+  @HiveField(15, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int hasNfc = 0;
 
+  @HiveField(16, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int disabled = 0;
+
+  @HiveField(17, defaultValue: [])
+  @JsonKey(defaultValue: [], includeIfNull: true)
+  List<String> permissions = [];
 
   String? password = "";
 
   var emailVerified;
 
   var email;
-
-  @JsonKey(defaultValue: [], includeIfNull: true)
-  List<String> permissions = [];
 
   NsUser() {
     loadSections();

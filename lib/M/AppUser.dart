@@ -4,6 +4,7 @@ import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/user_config.dart';
 
 import '../C/Server.dart';
+import 'Section.dart';
 import 'hive.dart';
 
 class AppUser extends NsUser {
@@ -29,6 +30,16 @@ class AppUser extends NsUser {
 
   static NsUser? getUser() {
     return (HiveBox.userConfigBox.get(configKey, defaultValue: UserConfig()) ?? UserConfig()).user;
+  }
+
+  static Section? getSelectedSection() {
+    return getUserConfig().selectedSection;
+  }
+
+  static setSelectedSection(Section section) {
+    UserConfig userConfig = getUserConfig();
+    userConfig.selectedSection = section;
+    userConfig.save();
   }
 
   static Future refreshUserData() {
@@ -82,5 +93,11 @@ class AppUser extends NsUser {
 
   static havePermissionFor(Permissions permission) {
     return (getUser()?.permissions.indexOf(permission.getValue()) ?? -1) > -1;
+  }
+
+  static void logout() {
+    _userIsAdmin = null;
+    FirebaseAuth.instance.signOut();
+    HiveBox.userConfigBox.clear();
   }
 }

@@ -9,10 +9,12 @@ import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/C/form_input_decoration.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/NsUser.dart';
+import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../C/FCM.dart';
+import '../../M/Section.dart';
 import 'CheckTabStatus.dart';
 import 'PasswordRecovery.dart';
 
@@ -45,7 +47,7 @@ class _LoginState extends State<Login> {
   @override
   initState() {
     super.initState();
-
+    print('-----------------------------------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx__login');
     NfcManager.instance.isAvailable().then((value) {
       nfcIsAvailable = value;
       if (nfcIsAvailable) {
@@ -242,6 +244,7 @@ class _LoginState extends State<Login> {
   }
 
   _login() {
+    print('-----------------------------------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx__login__');
     errorMessage = "";
     if (nfcCode.isEmpty && (_user.uname.isEmpty || _user.pword.isEmpty)) {
       errorMessage = "Enter username and password";
@@ -254,12 +257,14 @@ class _LoginState extends State<Login> {
 
     Dio dio = new Dio();
     dio.options.headers['content-Type'] = 'application/json';
-
+    print('-----------------------------------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx__login__1');
     dio.post(
       Server.getServerPath("user/login"),
       data: {"uname": _user.uname, "pword": _user.pword, "nfc": nfcCode},
     ).then((response) async {
+      print('-----------------------------------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx__login__2');
       print(response.data);
+
       Map res = response.data;
 
       if (res["user"] == null) {
@@ -284,28 +289,21 @@ class _LoginState extends State<Login> {
       // nsUser.section = nsUser.sections.length > 0 ? nsUser.sections[0] : null;
       // await prefs.setString("user", json.encode(nsUser));
       // AppUser.setUser(nsUser);
+      final UserCredential googleUserCredential = await FirebaseAuth.instance.signInWithCustomToken(res["token"]);
+      if (googleUserCredential.user != null) {
+        NfcManager.instance.stopSession();
+        AppUser.refreshUserData().then((nsUser) async {
+          Section section = nsUser.sections.length > 0 ? nsUser.sections[0] : null;
+          AppUser.setSelectedSection(section);
+          AppUser.setUser(nsUser);
+          HiveBox.getDataFromServer();
 
-      AppUser.refreshUserData().then((nsUser) async {
-        nsUser.section = nsUser.sections.length > 0 ? nsUser.sections[0] : null;
-        AppUser.setUser(nsUser);
+          FCM.subscribe();
 
-        FCM.subscribe();
-
-        print("saving user to SharedPreferences");
-        // print(json.encode(nsUser));
-
-        final UserCredential googleUserCredential = await FirebaseAuth.instance.signInWithCustomToken(res["token"]);
-        if (googleUserCredential.user != null) {
-          NfcManager.instance.stopSession();
-          // if (nsUser.sections.length > 1) {
           await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => CheckTabStatus(nsUser)), (Route<dynamic> route) => false);
-          // } else {
-          //   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (Route<dynamic> route) => false);
-          // }
-
-        }
-        setLoading(false);
-      });
+          setLoading(false);
+        });
+      }
     }).onError((error, stackTrace) {
       nfcCode = "";
       print(stackTrace.toString());

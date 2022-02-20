@@ -125,7 +125,7 @@ class _FinishCheckListState extends State<FinishCheckList> {
                           NsUser? nsuser = AppUser.getUser();
 
                           var isQc = false;
-                          if (nsuser!.section!.sectionTitle.toLowerCase() == "qc") {
+                          if (AppUser.getSelectedSection()?.sectionTitle.toLowerCase() == "qc") {
                             isQc = true;
                           }
 

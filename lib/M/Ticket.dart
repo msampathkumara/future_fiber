@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_share/flutter_share.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:path_provider/path_provider.dart';
@@ -26,60 +28,109 @@ import 'DataObject.dart';
 part 'Ticket.g.dart';
 
 @JsonSerializable(explicitToJson: true)
+@HiveType(typeId: 1)
 class Ticket extends DataObject {
+  @HiveField(0, defaultValue: null)
+  @JsonKey(defaultValue: null, includeIfNull: true)
   String? mo;
+
+  @HiveField(1, defaultValue: null)
+  @JsonKey(defaultValue: null, includeIfNull: true)
   String? oe;
+
+  @HiveField(2, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int finished = 0;
 
-  // @JsonKey(defaultValue: 0, includeIfNull: true, fromJson: _stringToInt)
+  @HiveField(3, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int uptime = 0;
+
+  @HiveField(4, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int file = 0;
+
+  @HiveField(5, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int sheet = 0;
+
+  @HiveField(6, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int dir = 0;
+
+  @HiveField(7, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int id = 0;
+
+  @HiveField(8, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int isRed = 0;
+
+  @HiveField(9, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int isRush = 0;
+
+  @HiveField(10, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int isSk = 0;
+
+  @HiveField(11, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int inPrint = 0;
+
+  @HiveField(12, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int isGr = 0;
+
+  @HiveField(13, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int isError = 0;
+
+  @HiveField(14, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int canOpen = 1;
+
+  @HiveField(15, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int isSort = 0;
+
+  @HiveField(16, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int isHold = 0;
+
+  @HiveField(17, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int fileVersion = 0;
+
+  @HiveField(18, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int progress = 0;
+
+  @HiveField(19, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int completed = 0;
+
+  @HiveField(20, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int nowAt = 0;
+
+  @HiveField(21, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int crossPro = 0;
+
+  @HiveField(22, defaultValue: '')
   @JsonKey(defaultValue: "", includeIfNull: true)
   String crossProList = "";
 
-  @JsonKey(defaultValue: "", includeIfNull: true)
-  String openSections = "";
+  @HiveField(23, defaultValue: [])
+  @JsonKey(defaultValue: [], includeIfNull: true, fromJson: stringToList)
+  List openSections = [];
 
+  @HiveField(24, defaultValue: '')
   @JsonKey(defaultValue: "", includeIfNull: true)
   String shipDate = "";
 
+  @HiveField(25, defaultValue: '')
   @JsonKey(defaultValue: "", includeIfNull: true)
   String deliveryDate = "";
 
@@ -100,23 +151,13 @@ class Ticket extends DataObject {
 
   static String? _stringFromInt(int number) => number.toString();
 
+  static stringToList(string) => (string == null || string.toString().isEmpty) ? [] : json.decode(string);
+
   String getUpdateDateTime() {
     var date = DateTime.fromMicrosecondsSinceEpoch(uptime * 1000);
     var formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(date);
     return formattedDate;
   }
-
-  // String getShipDate() {
-  //   if (shipDate == 0) {
-  //     return "";
-  //   }
-  //   if (_shipDate != "") {
-  //     return _shipDate;
-  //   }
-  //   var date = DateTime.fromMicrosecondsSinceEpoch(shipDate * 1000);
-  //   _shipDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(date).split(" ")[0];
-  //   return _shipDate;
-  // }
 
   Future<int> getLocalFileVersion() {
     return DB.getDB().then((db) {
@@ -325,5 +366,9 @@ class Ticket extends DataObject {
 
   getName() {
     return mo ?? oe;
+  }
+
+  static List<Ticket> fromJsonArray(tickets) {
+    return List<Ticket>.from(tickets.map((model) => Ticket.fromJson(model)));
   }
 }

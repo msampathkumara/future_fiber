@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/C/FCM.dart';
 import 'package:smartwind/C/OnlineDB.dart';
@@ -71,6 +70,7 @@ class _HomeState extends State<Home> {
       print('USER UPDATE');
       if (mounted) {
         nsUser = AppUser.getUser();
+
         if (nsUser == null) {
           _logout();
         }
@@ -122,7 +122,7 @@ class _HomeState extends State<Home> {
                     radius: 24,
                   ),
                   title: Text(nsUser!.name, textScaleFactor: 1.2),
-                  subtitle: nsUser!.section != null ? Text("${nsUser!.section!.sectionTitle} @ ${nsUser!.section!.factory}") : Text(""),
+                  subtitle: AppUser.getSelectedSection() != null ? Text("${AppUser.getSelectedSection()?.sectionTitle} @ ${AppUser.getSelectedSection()?.factory}") : Text(""),
                   trailing: _currentUserOperionMenu(),
                   onTap: () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => CurrentUserDetails(nsUser!)));
@@ -226,7 +226,11 @@ class _HomeState extends State<Home> {
                                 onPressed: () {
                                   HiveBox.getDataFromServer();
                                   AppUser.refreshUserData();
-
+                                },
+                                child: Text("ssssssssssss")), ElevatedButton(
+                                onPressed: () {
+                                  HiveBox.getDataFromServer(clean: true);
+                                  AppUser.refreshUserData();
                                 },
                                 child: Text("ssssssssssss"))
                           ],
@@ -278,9 +282,7 @@ class _HomeState extends State<Home> {
       print(onError);
     });
     FirebaseAuth.instance.signOut();
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove("user");
-
+    AppUser.logout();
     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Login()), (Route<dynamic> route) => false);
   }
 

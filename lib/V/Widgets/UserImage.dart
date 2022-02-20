@@ -4,6 +4,8 @@ import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/NsUser.dart';
 
+import '../../M/hive.dart';
+
 class UserImage extends StatefulWidget {
   NsUser? nsUser;
   int? nsUserId;
@@ -30,9 +32,7 @@ class _UserImageState extends State<UserImage> {
     nsUser = widget.nsUser;
 
     if (nsUser == null && widget.nsUserId != null) {
-      NsUser.fromId(widget.nsUserId).then((value) {
-        nsUser = value;
-      });
+      nsUser = HiveBox.usersBox.get(widget.nsUserId);
     } else {
       // loadImage();
 
@@ -64,6 +64,5 @@ class _UserImageState extends State<UserImage> {
                   return Image.asset('assets/images/user.png', fit: BoxFit.cover, width: widget.radius * 2, height: widget.radius * 2);
                 },
                 progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress))));
-
-   }
+  }
 }

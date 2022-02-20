@@ -6,6 +6,7 @@ import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Ticket.dart';
+import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/V/Home/Tickets/ProductionPool/Finish/FinishCheckList.dart';
 import 'package:smartwind/V/Widgets/FlagDialog.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
@@ -133,7 +134,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                     setState(() {});
                     if (_barcodeResult) {
                       if (currentFileList.length > 0) {
-                        Ticket ticket = Ticket.fromJson(currentFileList[0]);
+                        Ticket ticket = (currentFileList[0]);
                         var ticketInfo = TicketInfo(ticket);
                         ticketInfo.show(context);
                       }
@@ -300,7 +301,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
           );
   }
 
-  getTicketListByCategory(List<Map<String, dynamic>> filesList) {
+  getTicketListByCategory(List<Ticket> filesList) {
     return Column(
       children: [
         Expanded(
@@ -320,7 +321,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                         itemCount: filesList.length,
                         itemBuilder: (BuildContext context, int index) {
                           // print(FilesList[index]);
-                          Ticket ticket = Ticket.fromJson(filesList[index]);
+                          Ticket ticket = (filesList[index]);
                           // print(ticket.toJson());
                           return TicketTile(index, ticket, () async {
                             print('Long pres');
@@ -346,20 +347,56 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     );
   }
 
-  List<Map<String, dynamic>> currentFileList = [];
-  List<Map<String, dynamic>> _allFilesList = [];
-  List<Map<String, dynamic>> _crossProductionFilesList = [];
-  List<Map<String, dynamic>> _upwindFilesList = [];
-  List<Map<String, dynamic>> _oDFilesList = [];
-  List<Map<String, dynamic>> _nylonFilesList = [];
-  List<Map<String, dynamic>> _oEMFilesList = [];
-  List<Map<String, dynamic>> _noPoolFilesList = [];
+  List<Ticket> currentFileList = [];
+  List<Ticket> _allFilesList = [];
+  List<Ticket> _crossProductionFilesList = [];
+  List<Ticket> _upwindFilesList = [];
+  List<Ticket> _oDFilesList = [];
+  List<Ticket> _nylonFilesList = [];
+  List<Ticket> _oEMFilesList = [];
+  List<Ticket> _noPoolFilesList = [];
 
   Future<void> loadData() async {
+    String searchText = this.searchText.toLowerCase();
     _selectedTabIndex = _tabBarController!.index;
     print('loadData listSortBy $listSortBy');
 
-    var section = nsUser!.section!.id;
+    var section = AppUser.getSelectedSection()?.id;
+    print('section ==== $section');
+    if (true) {
+      if (_showAllTickets) {
+        //   TODO check canopen=1
+
+      } else {
+        _allFilesList = HiveBox.ticketBox.values.where((t) {
+          return filters([section()]);
+
+          if (t.file != 1 || t.completed != 0 || (!t.openSections.contains(section.toString()))) {
+            return false;
+          }
+
+          if (dataFilter != Filters.none) {
+            Map _t = t.toJson();
+            if (_t[dataFilter.getValue()] != 1) {
+              return false;
+            }
+          }
+
+          if (searchText.isNotEmpty) {
+            if ((t.mo ?? "").toLowerCase().contains(searchText) || (t.mo ?? "").toLowerCase().contains(searchText)) {
+            } else {
+              return false;
+            }
+          }
+          return true;
+        }).toList();
+        listsArray = [_allFilesList, _crossProductionFilesList];
+        currentFileList = listsArray[_selectedTabIndex];
+      }
+
+      return;
+    }
+
     String canOpen = _showAllTickets ? "  file=1 and completed=0" : " canOpen=1   and file=1   and completed=0 ";
     String searchQ = "";
     String _dataFilter = "";
@@ -430,34 +467,37 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                   child: Container(
                 child: SingleChildScrollView(
                     child: Column(children: [
-                  ListTile(
-                    title: Text(ticket.isRed == 1 ? "Remove Red Flag" : "Set Red Flag"),
-                    leading: Icon(Icons.flag),
-                    onTap: () async {
-                      Navigator.of(context).pop();
-                      bool resul = await FlagDialog.showRedFlagDialog(context1, ticket);
-                      ticket.isRed = resul ? 1 : 0;
-                    },
-                  ),
-                  ListTile(
-                    title: Text(ticket.isHold == 1 ? "Restart Production" : "Stop Production"),
-                    leading: Icon(Icons.pan_tool_rounded, color: Colors.red),
-                    onTap: () async {
-                      Navigator.of(context).pop();
-                      bool resul = await FlagDialog.showStopProductionFlagDialog(context1, ticket);
-                      ticket.isHold = resul ? 1 : 0;
-                    },
-                  ),
-                  ListTile(
-                    onTap: () async {
-                      Navigator.of(context).pop();
-                      await FlagDialog.showGRDialog(context1, ticket);
-                    },
-                    title: Text(ticket.isGr == 1 ? "Remove GR" : "Set GR"),
-                    // leading: SizedBox(
-                    //     width: 24, height: 24, child: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))))
-                    leading: Icon(NsIcons.gr, color: Colors.blue),
-                  ),
+                  if (AppUser.havePermissionFor(Permissions.SET_RED_FLAG))
+                    ListTile(
+                      title: Text(ticket.isRed == 1 ? "Remove Red Flag" : "Set Red Flag"),
+                      leading: Icon(Icons.flag),
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                        bool resul = await FlagDialog.showRedFlagDialog(context1, ticket);
+                        ticket.isRed = resul ? 1 : 0;
+                      },
+                    ),
+                  if (AppUser.havePermissionFor(Permissions.STOP_PRODUCTION))
+                    ListTile(
+                      title: Text(ticket.isHold == 1 ? "Restart Production" : "Stop Production"),
+                      leading: Icon(Icons.pan_tool_rounded, color: Colors.red),
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                        bool resul = await FlagDialog.showStopProductionFlagDialog(context1, ticket);
+                        ticket.isHold = resul ? 1 : 0;
+                      },
+                    ),
+                  if (AppUser.havePermissionFor(Permissions.SET_GR))
+                    ListTile(
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                        await FlagDialog.showGRDialog(context1, ticket);
+                      },
+                      title: Text(ticket.isGr == 1 ? "Remove GR" : "Set GR"),
+                      // leading: SizedBox(
+                      //     width: 24, height: 24, child: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))))
+                      leading: Icon(NsIcons.gr, color: Colors.blue),
+                    ),
                   // ListTile(
                   //     onTap: () async {
                   //       Navigator.of(context).pop();
@@ -466,35 +506,38 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                   //     title: Text(ticket.isSk == 1 ? "Remove SK" : "Set SK"),
                   //     leading: SizedBox(
                   //         width: 24, height: 24, child: CircleAvatar(backgroundColor: Colors.pink, child: Center(child: Text("SK", style: TextStyle(color: Colors.white)))))),
-                  ListTile(
-                      title: Text(ticket.isRush == 1 ? "Remove Rush" : "Set Rush"),
-                      leading: Icon(Icons.offline_bolt_outlined, color: Colors.orangeAccent),
-                      onTap: () async {
-                        Navigator.of(context).pop();
-                        // await FlagDialog.showRushDialog(context1, ticket);
-                        var u = ticket.isRush == 1 ? "removeFlag" : "setFlag";
-                        OnlineDB.apiPost("tickets/flags/" + u, {"ticket": ticket.id.toString(), "comment": "", "type": "rush"}).then((response) async {});
-                      }),
-                  ListTile(
-                      title: Text(ticket.inPrint == 1 ? "Cancel Printing" : "Send To Print"),
-                      leading: Icon(ticket.inPrint == 1 ? Icons.print_disabled_outlined : Icons.print_outlined, color: Colors.deepOrangeAccent),
-                      onTap: () async {
-                        Navigator.of(context).pop();
-                        await sendToPrint(ticket);
-                      }),
-                  ListTile(
-                      title: Text("Finish"),
-                      leading: Icon(Icons.check_circle_outline_outlined, color: Colors.green),
-                      onTap: () async {
-                        Navigator.of(context).pop();
-                        await showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return FinishCheckList(ticket);
-                            });
-                        // await Navigator.push(context1, MaterialPageRoute(builder: (context) => FinishCheckList(ticket)));
-                      }),
-                  if (ticket.crossPro == 0)
+                  if (AppUser.havePermissionFor(Permissions.SET_RUSH))
+                    ListTile(
+                        title: Text(ticket.isRush == 1 ? "Remove Rush" : "Set Rush"),
+                        leading: Icon(Icons.offline_bolt_outlined, color: Colors.orangeAccent),
+                        onTap: () async {
+                          Navigator.of(context).pop();
+                          // await FlagDialog.showRushDialog(context1, ticket);
+                          var u = ticket.isRush == 1 ? "removeFlag" : "setFlag";
+                          OnlineDB.apiPost("tickets/flags/" + u, {"ticket": ticket.id.toString(), "comment": "", "type": "rush"}).then((response) async {});
+                        }),
+                  if (AppUser.havePermissionFor(Permissions.SEND_TO_PRINTING))
+                    ListTile(
+                        title: Text(ticket.inPrint == 1 ? "Cancel Printing" : "Send To Print"),
+                        leading: Icon(ticket.inPrint == 1 ? Icons.print_disabled_outlined : Icons.print_outlined, color: Colors.deepOrangeAccent),
+                        onTap: () async {
+                          Navigator.of(context).pop();
+                          await sendToPrint(ticket);
+                        }),
+                  if (AppUser.havePermissionFor(Permissions.FINISH_TICKET))
+                    ListTile(
+                        title: Text("Finish"),
+                        leading: Icon(Icons.check_circle_outline_outlined, color: Colors.green),
+                        onTap: () async {
+                          Navigator.of(context).pop();
+                          await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return FinishCheckList(ticket);
+                              });
+                          // await Navigator.push(context1, MaterialPageRoute(builder: (context) => FinishCheckList(ticket)));
+                        }),
+                  if (ticket.crossPro == 0 && AppUser.havePermissionFor(Permissions.SET_CROSS_PRODUCTION))
                     ListTile(
                         title: Text("Set Cross Production"),
                         leading: Icon(NsIcons.crossProduction, color: Colors.green),
@@ -502,7 +545,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                           await Navigator.push(context1, MaterialPageRoute(builder: (context) => CrossProduction(ticket)));
                           Navigator.of(context).pop();
                         }),
-                  if (ticket.crossPro == 1)
+                  if (ticket.crossPro == 1 && AppUser.havePermissionFor(Permissions.SET_CROSS_PRODUCTION))
                     ListTile(
                         title: Text("Remove Cross Production"),
                         leading: Icon(NsIcons.crossProduction, color: Colors.green),
@@ -510,46 +553,51 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                           Navigator.of(context).pop();
                           showAlertDialog(context, ticket);
                         }),
-                  ListTile(
-                      title: Text("Share Work Ticket"),
-                      leading: Icon(NsIcons.share, color: Colors.lightBlue),
-                      onTap: () async {
-                        await ticket.sharePdf(context);
-                        Navigator.of(context).pop();
-                      }),
-                  ListTile(
-                      title: Text("Add CPR"),
-                      leading: Icon(NsIcons.cpr, color: Colors.amber),
-                      onTap: () async {
-                        await ticket.addCPR(context);
-                        Navigator.of(context).pop();
-                      }),
-                  ListTile(
-                      title: Text("Shipping"),
-                      leading: Icon(NsIcons.shipping, color: Colors.brown),
-                      onTap: () async {
-                        await ticket.openInShippingSystem(context);
-                        Navigator.of(context).pop();
-                      }),
-                  ListTile(
-                      title: Text("CS"),
-                      leading: Icon(Icons.pivot_table_chart_rounded, color: Colors.green),
-                      onTap: () async {
-                        await ticket.openInCS(context);
-                        Navigator.of(context).pop();
-                      }),
-                  ListTile(
-                      title: Text("Delete"),
-                      leading: Icon(NsIcons.delete, color: Colors.red),
-                      onTap: () async {
-                        //TODO set delete url
-                        OnlineDB.apiPost("tickets/delete", {"id": ticket.id.toString()}).then((response) async {
-                          print('TICKET DELETED');
-                          print(response.data);
-                          print(response.statusCode);
-                        });
-                        Navigator.of(context).pop();
-                      }),
+                  if (AppUser.havePermissionFor(Permissions.SHARE_TICKETS))
+                    ListTile(
+                        title: Text("Share Work Ticket"),
+                        leading: Icon(NsIcons.share, color: Colors.lightBlue),
+                        onTap: () async {
+                          await ticket.sharePdf(context);
+                          Navigator.of(context).pop();
+                        }),
+                  if (AppUser.havePermissionFor(Permissions.ADD_CPR))
+                    ListTile(
+                        title: Text("Add CPR"),
+                        leading: Icon(NsIcons.cpr, color: Colors.amber),
+                        onTap: () async {
+                          await ticket.addCPR(context);
+                          Navigator.of(context).pop();
+                        }),
+                  if (AppUser.havePermissionFor(Permissions.SHIPPING_SYSTEM))
+                    ListTile(
+                        title: Text("Shipping"),
+                        leading: Icon(NsIcons.shipping, color: Colors.brown),
+                        onTap: () async {
+                          await ticket.openInShippingSystem(context);
+                          Navigator.of(context).pop();
+                        }),
+                  if (AppUser.havePermissionFor(Permissions.CS))
+                    ListTile(
+                        title: Text("CS"),
+                        leading: Icon(Icons.pivot_table_chart_rounded, color: Colors.green),
+                        onTap: () async {
+                          await ticket.openInCS(context);
+                          Navigator.of(context).pop();
+                        }),
+                  if (AppUser.havePermissionFor(Permissions.DELETE_TICKETS))
+                    ListTile(
+                        title: Text("Delete"),
+                        leading: Icon(NsIcons.delete, color: Colors.red),
+                        onTap: () async {
+                          //TODO set delete url
+                          OnlineDB.apiPost("tickets/delete", {"id": ticket.id.toString()}).then((response) async {
+                            print('TICKET DELETED');
+                            print(response.data);
+                            print(response.statusCode);
+                          });
+                          Navigator.of(context).pop();
+                        }),
                 ])),
               ))
             ],
@@ -658,6 +706,17 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
         );
       },
     );
+  }
+
+  bool filters(List<Function> list) {
+    bool status = true;
+    for (var f in list) {
+      if (!f()) {
+        status = false;
+        break;
+      }
+    }
+    return status;
   }
 }
 
