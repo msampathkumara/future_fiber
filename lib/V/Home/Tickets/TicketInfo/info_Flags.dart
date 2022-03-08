@@ -25,7 +25,7 @@ class _info_FlagsState extends State<info_Flags> {
     "red": {"title": "Red Flag", "icon": CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white), "expanded": false},
     "rush": {"title": "Rush", "icon": CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white), "expanded": false},
     "hold": {"title": "Stop Production", "icon": CircleAvatar(child: Icon(Icons.pan_tool_rounded, color: Colors.black), backgroundColor: Colors.white), "expanded": false},
-    "gr": {"title": "Graphics", "icon": CircleAvatar(child: Icon(NsIcons.gr , color: Colors.red), backgroundColor: Colors.white), "expanded": false},
+    "gr": {"title": "Graphics", "icon": CircleAvatar(child: Icon(NsIcons.gr, color: Colors.red), backgroundColor: Colors.white), "expanded": false},
     "sk": {"title": "SK", "icon": CircleAvatar(child: Icon(NsIcons.sk, color: Colors.red), backgroundColor: Colors.white), "expanded": false},
   };
 
@@ -81,7 +81,6 @@ class _info_FlagsState extends State<info_Flags> {
                                     Text(ticketFlag.getDateTime(), style: TextStyle(color: Colors.blue)),
                                   ],
                                 ),
-
                                 if (list.length > 0) getXXX(list, x)
                               ],
                             ),
@@ -111,7 +110,7 @@ class _info_FlagsState extends State<info_Flags> {
 
   getHistory(List<TicketFlag> ticketFlags) {
     return Padding(
-      padding: const EdgeInsets.only(left: 8.0,right: 8,bottom: 8),
+      padding: const EdgeInsets.only(left: 8.0, right: 8, bottom: 8),
       child: Container(
         child: ListView.separated(
           physics: const NeverScrollableScrollPhysics(),
@@ -171,11 +170,13 @@ class _info_FlagsState extends State<info_Flags> {
         dividerColor: Colors.red,
         elevation: 0,
         children: [
-          ExpansionPanel(backgroundColor:   Colors.grey[200],canTapOnHeader: true,
+          ExpansionPanel(
+            backgroundColor: Colors.grey[200],
+            canTapOnHeader: true,
             body: getHistory(ticketFlags),
             headerBuilder: (BuildContext context, bool isExpanded) {
               return Padding(
-                padding: const EdgeInsets.only(top:16.0,left: 16.0),
+                padding: const EdgeInsets.only(top: 16.0, left: 16.0),
                 child: Text("History"),
               );
             },

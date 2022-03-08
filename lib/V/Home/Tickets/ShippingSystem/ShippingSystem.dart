@@ -13,8 +13,7 @@ class ShippingSystem extends StatefulWidget {
   _ShippingSystemState createState() => _ShippingSystemState();
 }
 
-class _ShippingSystemState extends State<ShippingSystem>
-    with TickerProviderStateMixin {
+class _ShippingSystemState extends State<ShippingSystem> with TickerProviderStateMixin {
   var tabs = ["All", "Cross Production"];
   TabController? _tabBarController;
   late Ticket ticket;
@@ -79,8 +78,7 @@ class _ShippingSystemState extends State<ShippingSystem>
                         automaticallyImplyLeading: false,
                         elevation: 4.0,
                       ),
-                      body: Scaffold(
-                          body: PDFViewWidget(ticket.ticketFile!.path)))),
+                      body: Scaffold(body: PDFViewWidget(ticket.ticketFile!.path)))),
             ),
             Divider(),
             if (_webView != null)

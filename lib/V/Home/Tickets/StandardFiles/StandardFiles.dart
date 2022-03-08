@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:smartwind/C/App.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/C/OnlineDB.dart';
-import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/StandardTicket.dart';
+import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 
-import '../../../../M/AppUser.dart';
+import '../../../../M/Enums.dart';
 import 'ChangeFactory.dart';
 import 'StandardTicketInfo.dart';
 
@@ -33,7 +33,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
         print("Selected Index: " + _tabBarController!.index.toString());
       });
 
-      loadOnlineData().then((value) {
+      reloadData().then((value) {
         DB.setOnDBChangeListener(() {
           reloadData();
         }, context, collection: DataTables.standardTickets);
@@ -261,17 +261,13 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
           );
   }
 
-  getTicketListByCategory(List<Map<String, dynamic>> _filesList) {
+  getTicketListByCategory(List<StandardTicket> _filesList) {
     return Column(
       children: [
         Expanded(
           child: RefreshIndicator(
             onRefresh: () {
-              return loadOnlineData().then((value) {
-                // return loadData().then((value) {
-                //   setState(() {});
-                // });
-              });
+              return reloadData();
             },
             child: _filesList.length == 0
                 ? Center(child: Text(searchText.isEmpty ? "No Tickets Found" : "⛔ Work Ticket not found.\n Please contact  Ticket Checking department", textScaleFactor: 1.5))
@@ -281,7 +277,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
                       padding: const EdgeInsets.all(8),
                       itemCount: _filesList.length,
                       itemBuilder: (BuildContext context, int index) {
-                        StandardTicket ticket = StandardTicket.fromJson(_filesList[index]);
+                        StandardTicket ticket = (_filesList[index]);
                         // print(ticket.toJson());
                         return GestureDetector(
                           behavior: HitTestBehavior.opaque,
@@ -321,53 +317,132 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
     );
   }
 
-  List<Map<String, dynamic>> _allFilesList = [];
+  List<StandardTicket> _allFilesList = [];
 
-  List<Map<String, dynamic>> _upwindFilesList = [];
-  List<Map<String, dynamic>> _oDFilesList = [];
-  List<Map<String, dynamic>> _nylonFilesList = [];
-  List<Map<String, dynamic>> _oEMFilesList = [];
-  List<Map<String, dynamic>> _noPoolFilesList = [];
+  List<StandardTicket> _upwindFilesList = [];
+  List<StandardTicket> _oDFilesList = [];
+  List<StandardTicket> _nylonFilesList = [];
+  List<StandardTicket> _oEMFilesList = [];
+  List<StandardTicket> _noPoolFilesList = [];
 
-  Future<void> loadData() async {
-    _selectedTabIndex = _tabBarController!.index;
-    print('loadData listSortBy $listSortBy');
+  List<StandardTicket> _load(selectedProduction, section, _showAllTickets, searchText, {crossProduction = false}) {
+    List<StandardTicket> l = HiveBox.standardTicketsBox.values.where((t) {
+      if (t.file != 1 || t.completed != 0) {
+        return false;
+      }
+      if (crossProduction && t.crossPro != 1) {
+        return false;
+      }
+      if (_showAllTickets ? (!searchByProduction(t, selectedProduction)) : (!searchBySection(t, section))) {
+        return false;
+      }
 
-    // String canOpen = _showAllTickets ? " " : " and canOpen=1  and openSections like '%#1#%' ";
+      if (!searchByText(t, searchText)) {
+        return false;
+      }
 
-    NsUser? nsUser = AppUser.getUser();
-    var section = AppUser.getSelectedSection()?.id;
-    // String canOpen = _showAllTickets ? "  file=1 and completed=0" : " canOpen=1   and file=1   and completed=0 ";
-    String canOpen = " ";
-    String searchQ = " uptime > 0 ";
-    if (searchText.isNotEmpty) {
-      searchQ = "   oe like '%$searchText%'   ";
-    }
-
-    print('current user $section');
-    // listSortBy = "uptime";
-
-    _allFilesList = await database.rawQuery('SELECT * FROM standardTickets where  $searchQ   ' + canOpen + '   order by $listSortBy  ');
-
-    _upwindFilesList = await database.rawQuery('SELECT * FROM standardTickets where $searchQ   ' + canOpen + ' and production=\'Upwind\' order by $listSortBy ');
-
-    _oDFilesList = await database.rawQuery('SELECT * FROM standardTickets where $searchQ   ' + canOpen + ' and production=\'OD\' order by $listSortBy  ');
-
-    _nylonFilesList = await database.rawQuery('SELECT * FROM standardTickets where $searchQ   ' + canOpen + ' and production=\'Nylon\' order by $listSortBy  ');
-
-    _oEMFilesList = await database.rawQuery('SELECT * FROM standardTickets where $searchQ   ' + canOpen + ' and production=\'OEM\' order by $listSortBy  ');
-
-    _noPoolFilesList = await database.rawQuery('SELECT * FROM standardTickets where $searchQ   ' + canOpen + ' and production is null or production=""  order by $listSortBy  ');
-
-    listsArray = [_allFilesList, _upwindFilesList, _oDFilesList, _nylonFilesList, _oEMFilesList, _noPoolFilesList];
-    currentFileList = listsArray[_selectedTabIndex];
-    print("currentFileList.length == " + currentFileList.length.toString());
+      return true;
+    }).toList();
+    l.sort((a, b) => (a.toJson()[listSortBy] ?? "").compareTo((b.toJson()[listSortBy] ?? "")));
+    // if (listSortDirectionIsDESC) {
+    //   l = l.reversed.toList();
+    // }
+    return l;
   }
+
+  setLoading(l) {
+    setState(() {
+      _loading = l;
+    });
+  }
+
+  bool _loading = true;
+
+  loadData() {
+    print('---------------------------------------------- Start loading');
+    _selectedTabIndex = _tabBarController!.index;
+    setLoading(true);
+    String searchText = this.searchText.toLowerCase();
+
+    if (_showAllTickets) {
+      _allFilesList = _load(Production.All, 0, true, searchText);
+      _upwindFilesList = _load(Production.Upwind, 0, true, searchText);
+      _oDFilesList = _load(Production.OD, 0, true, searchText);
+      _nylonFilesList = _load(Production.Nylon, 0, true, searchText);
+      _oEMFilesList = _load(Production.OEM, 0, true, searchText);
+      _noPoolFilesList = _load(Production.None, 0, true, searchText);
+      listsArray = [_allFilesList, _upwindFilesList, _oDFilesList, _nylonFilesList, _oEMFilesList, _noPoolFilesList];
+    } else {
+      _allFilesList = _load(Production.All, 0, false, searchText);
+    }
+    currentFileList = listsArray[_selectedTabIndex];
+    print('---------------------------------------------- end loading');
+  }
+
+  bool searchBySection(t, section) {
+    return (!t.openSections.contains(section.toString()));
+  }
+
+  searchByProduction(StandardTicket t, Production selectedProduction) {
+    if (selectedProduction == Production.All) {
+      return true;
+    }
+    if (selectedProduction == Production.None && ((t.production ?? '').trim().isEmpty)) {
+      return true;
+    }
+    return (t.production ?? '').toLowerCase() == selectedProduction.getValue().toLowerCase();
+  }
+
+  bool searchByText(t, searchText) {
+    if (searchText.isNotEmpty) {
+      if ((t.mo ?? "").toLowerCase().contains(searchText) || (t.mo ?? "").toLowerCase().contains(searchText)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return true;
+  }
+
+// Future<void> loadData() async {
+//   _selectedTabIndex = _tabBarController!.index;
+//   print('loadData listSortBy $listSortBy');
+//
+//   // String canOpen = _showAllTickets ? " " : " and canOpen=1  and openSections like '%#1#%' ";
+//
+//   NsUser? nsUser = AppUser.getUser();
+//   var section = AppUser.getSelectedSection()?.id;
+//   // String canOpen = _showAllTickets ? "  file=1 and completed=0" : " canOpen=1   and file=1   and completed=0 ";
+//   String canOpen = " ";
+//   String searchQ = " uptime > 0 ";
+//   if (searchText.isNotEmpty) {
+//     searchQ = "   oe like '%$searchText%'   ";
+//   }
+//
+//   print('current user $section');
+//   // listSortBy = "uptime";
+//
+//   _allFilesList = await database.rawQuery('SELECT * FROM standardTickets where  $searchQ   ' + canOpen + '   order by $listSortBy  ');
+//
+//   _upwindFilesList = await database.rawQuery('SELECT * FROM standardTickets where $searchQ   ' + canOpen + ' and production=\'Upwind\' order by $listSortBy ');
+//
+//   _oDFilesList = await database.rawQuery('SELECT * FROM standardTickets where $searchQ   ' + canOpen + ' and production=\'OD\' order by $listSortBy  ');
+//
+//   _nylonFilesList = await database.rawQuery('SELECT * FROM standardTickets where $searchQ   ' + canOpen + ' and production=\'Nylon\' order by $listSortBy  ');
+//
+//   _oEMFilesList = await database.rawQuery('SELECT * FROM standardTickets where $searchQ   ' + canOpen + ' and production=\'OEM\' order by $listSortBy  ');
+//
+//   _noPoolFilesList = await database.rawQuery('SELECT * FROM standardTickets where $searchQ   ' + canOpen + ' and production is null or production=""  order by $listSortBy  ');
+//
+//   listsArray = [_allFilesList, _upwindFilesList, _oDFilesList, _nylonFilesList, _oEMFilesList, _noPoolFilesList];
+//   currentFileList = listsArray[_selectedTabIndex];
+//   print("currentFileList.length == " + currentFileList.length.toString());
+// }
 
   Future<void> showTicketOptions(StandardTicket ticket, BuildContext context1) async {
     print(ticket.toJson());
     await showModalBottomSheet<void>(
-      context: context,
+      context: context1,
       builder: (BuildContext context) {
         return Container(
           decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
@@ -411,26 +486,31 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
     );
   }
 
-  Future reloadData() {
-    return DB.getDB().then((value) async {
-      database = value;
-      return loadData().then((value) {
-        try {
-          this.setState(() {});
-        } catch (e) {}
-      });
-    });
-  }
+  Future reloadData() async {
+    await HiveBox.getDataFromServer();
+    loadData();
 
-  Future loadOnlineData() {
-    // return OnlineDB.updateStandardTicketsDB(context).then((response) async {
-    //   loading = false;
-    //   return reloadData();
+    // return DB.getDB().then((value) async {
+    //   database = value;
+    //   return loadData().then((value) {
+    //     try {
+    //       this.setState(() {});
+    //     } catch (e) {}
+    //   });
     // });
-
-    return DB.updateDatabase(context).then((response) async {
-      loading = false;
-      return reloadData();
-    });
   }
 }
+
+// Future loadOnlineData() {
+//   // return OnlineDB.updateStandardTicketsDB(context).then((response) async {
+//   //   loading = false;
+//   //   return reloadData();
+//   // });
+//
+//   // return DB.updateDatabase(context).then((response) async {
+//   //   loading = false;
+//   //   return reloadData();
+//   // });
+// }
+
+// }

@@ -2,7 +2,6 @@ import 'package:custom_webview/webview_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:native_pdf_view/native_pdf_view.dart';
-
 // import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:smartwind/M/Ticket.dart';
 

@@ -2,6 +2,8 @@ package com.pdfEditor;
 
 import android.util.Log;
 
+import androidx.annotation.Keep;
+
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -9,6 +11,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 
+@Keep
 public class Ticket {
     String  mo;
     String  oe;

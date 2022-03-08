@@ -3,10 +3,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:smartwind/C/DB/DB.dart';
+import 'package:smartwind/C/Server.dart';
+import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/NsUser.dart';
+import 'package:smartwind/M/hive.dart';
+import 'package:smartwind/V/Widgets/Loading.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
 
+import '../../../C/OnlineDB.dart';
+import '../../../M/AppUser.dart';
 import 'AddNfcCard.dart';
 import 'AddUser.dart';
 import 'UpdateUserDetails.dart';
@@ -56,13 +62,14 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
       });
     });
     _refreshIndicatorKey.currentState?.show();
-    reloadData().then((value) {
-      if (_refreshIndicatorKey.currentState != null) _refreshIndicatorKey.currentState!.deactivate();
-    });
+
     _dbChangeCallBack = DB.setOnDBChangeListener(() {
-      // reloadData();
-      print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+      print('on update tickets');
+      if (mounted) {
+        filterUsers();
+      }
     }, context, collection: DataTables.Users);
+    filterUsers();
   }
 
   late DbChangeCallBack _dbChangeCallBack;
@@ -203,7 +210,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
           child: RefreshIndicator(
             key: _refreshIndicatorKey,
             onRefresh: () {
-              return reloadData();
+              return HiveBox.getDataFromServer();
             },
             child: Padding(
               padding: const EdgeInsets.only(top: 16),
@@ -221,10 +228,14 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                     onTap: () {
                       UserDetails.show(context, nsUser);
                     },
-                    leading: UserImage(nsUser: nsUser, radius: 24),
+                    leading: UserImage(nsUser: nsUser, radius: 24, key: Key("${nsUser.uptime}")),
                     title: Text(nsUser.name),
                     subtitle: Text("#" + nsUser.uname),
                     trailing: Wrap(children: [
+                      if (nsUser.isDisabled)
+                        Icon(
+                          Icons.person_off_outlined,
+                        ),
                       if (_setIdCards)
                         IconButton(
                             icon: Icon(Icons.badge_outlined, color: nsUser.hasNfc == 0 ? Colors.grey : Colors.green),
@@ -249,11 +260,6 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
   }
 
   List<NsUser> AllUsersList = [];
-  List<NsUser> UpwindUsersList = [];
-  List<NsUser> ODUsersList = [];
-  List<NsUser> NylonUsersList = [];
-  List<NsUser> OEMUsersList = [];
-  List<NsUser> NoPoolUsersList = [];
 
   Future<void> showUserOptions(NsUser nsUser, BuildContext context1) async {
     await showModalBottomSheet<void>(
@@ -288,39 +294,50 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                       }
                     },
                   ),
-                ListTile(
-                  title: Text("Edit"),
-                  subtitle: Text("Update user details"),
-                  leading: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(Icons.edit),
+                if (AppUser.havePermissionFor(Permissions.UPDATE_USER))
+                  ListTile(
+                    title: Text("Edit"),
+                    subtitle: Text("Update user details"),
+                    leading: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(Icons.edit),
+                    ),
+                    onTap: () async {
+                      UpdateUserDetails.show(context, nsUser);
+                    },
                   ),
-                  onTap: () async {
-                    UpdateUserDetails.show(context, nsUser);
-                  },
-                ),
-                ListTile(
-                  title: Text("Permissions"),
-                  subtitle: Text("Update,Add or Remove Permissions"),
-                  leading: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(Icons.gpp_good_outlined),
+                if (AppUser.havePermissionFor(Permissions.SET_USER_PERMISSIONS))
+                  ListTile(
+                    title: Text("Permissions"),
+                    subtitle: Text("Update,Add or Remove Permissions"),
+                    leading: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(Icons.gpp_good_outlined),
+                    ),
+                    onTap: () async {
+                      UserPermissions.show(context, nsUser);
+                    },
                   ),
-                  onTap: () async {
-                    UserPermissions.show(context, nsUser);
-                  },
-                ),
-                ListTile(
-                  title: Text(nsUser.isDisabled ? "Activate User" : "Deactivate User"),
-                  subtitle: Text(nsUser.isDisabled ? "Activate all activities on system for this user" : "Deactivate all activities on system for this user"),
-                  leading: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(Icons.person_off_rounded),
+                if (AppUser.havePermissionFor(Permissions.DEACTIVATE_USERS))
+                  ListTile(
+                    title: Text(nsUser.isDisabled ? "Activate User" : "Deactivate User"),
+                    subtitle: Text(nsUser.isDisabled ? "Activate all activities on system for this user" : "Deactivate all activities on system for this user"),
+                    leading: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(Icons.person_off_rounded),
+                    ),
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                      Loading loading = Loading();
+                      loading.show(context1);
+
+                      OnlineDB.apiPost('users/deactivate', {"userId": nsUser.id, "deactivate": (!nsUser.isDisabled)}).then((value) {
+                        print('cccccccccccccccccccccccccc');
+                        HiveBox.getDataFromServer();
+                        loading.close(context1);
+                      });
+                    },
                   ),
-                  onTap: () async {
-                    //  TODO , add server call
-                  },
-                ),
                 Spacer(),
               ],
             ),
@@ -330,12 +347,12 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
     );
   }
 
-  Future<void> reloadData() {
-    filterUsers();
-    return DB.updateDatabase(context).then((value) {
-      return filterUsers();
-    });
-  }
+  // Future<void> reloadData() {
+  //   filterUsers();
+  //   return DB.updateDatabase(context).then((value) {
+  //     return filterUsers();
+  //   });
+  // }
 
   void showAddNfcDialog(nsUser) {
     showDialog(
@@ -350,18 +367,21 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
     if (_showDeactivatedUsers) {
       q = " select * from users where deactivate=1";
     }
-    await DB.getDB().then((value) => value!.rawQuery(q).then((users) {
-          AllUsersList = List<NsUser>.from(users.map((model) => NsUser.fromJson(model)));
-        }));
+    // await DB.getDB().then((value) => value!.rawQuery(q).then((users) {
+    //       AllUsersList = List<NsUser>.from(users.map((model) => NsUser.fromJson(model)));
+    //     }));
 
-    if (searchText.trim().isEmpty) {
+    AllUsersList = HiveBox.usersBox.values.toList();
+
+    if (searchText.trim().isEmpty && (!_showDeactivatedUsers)) {
       filteredAllUsersList = AllUsersList;
     } else {
       filteredAllUsersList = AllUsersList.where((element) {
-        return (element.name.toLowerCase().contains(searchText) |
-            element.uname.toLowerCase().contains(searchText) |
-            element.emailAddress.toLowerCase().contains(searchText) |
-            element.phone.toLowerCase().contains(searchText));
+        return (_showDeactivatedUsers ? element.isDisabled : false) &&
+            (element.name.toLowerCase().contains(searchText) |
+                element.uname.toLowerCase().contains(searchText) |
+                element.emailAddress.toLowerCase().contains(searchText) |
+                element.phone.toLowerCase().contains(searchText));
       }).toList();
     }
     setState(() {});

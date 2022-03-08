@@ -1,11 +1,11 @@
 package com;
 
 public class Server {
-  public  static boolean local = false;
+  public  static boolean local = true;
 
     public static String getServerAddress() {
         if (local) {
-            return "http://192.168.0.104:3000/";
+            return "http://192.168.0.100:3000/";
         } else {
             return "http://smartwind.nsslsupportservices.com/";
         }

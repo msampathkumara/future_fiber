@@ -107,42 +107,42 @@ class _PdfEditorState extends State<PdfEditor> {
 
               errorMessage.isEmpty
                   ? ((!isReady)
-                  ? Center(
-                child: CircularProgressIndicator(),
-              )
-                  : Container())
+                      ? Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : Container())
                   : Center(
-                child: Text(errorMessage),
-              )
+                      child: Text(errorMessage),
+                    )
             ],
           ),
         )
-      // ,
-      // floatingActionButton: FutureBuilder<PDFViewController>(
-      //   future: _controller.future,
-      //   builder: (context, AsyncSnapshot<PDFViewController> snapshot) {
-      //     if (snapshot.hasData) {
-      //       // return FloatingActionButton.extended(
-      //       //   label: Text("Go to ${pages ~/ 2}"),
-      //       //   onPressed: () async {
-      //       //     await snapshot.data.setPage(pages ~/ 2);
-      //       //   },
-      //       // );
-      //
-      //       return FloatingActionButton.extended(
-      //         icon: Icon(Icons.edit_outlined),
-      //         label: Text("Edit"),
-      //         onPressed: () async {
-      //           await widget.ticket.openEditor();
-      //           await DB.updateDatabase(  context, showLoadingDialog: true);
-      //           Navigator.pop(context, true);
-      //         },
-      //       );
-      //     }
-      //
-      //     return Container();
-      //   },
-      // )
-    );
+        // ,
+        // floatingActionButton: FutureBuilder<PDFViewController>(
+        //   future: _controller.future,
+        //   builder: (context, AsyncSnapshot<PDFViewController> snapshot) {
+        //     if (snapshot.hasData) {
+        //       // return FloatingActionButton.extended(
+        //       //   label: Text("Go to ${pages ~/ 2}"),
+        //       //   onPressed: () async {
+        //       //     await snapshot.data.setPage(pages ~/ 2);
+        //       //   },
+        //       // );
+        //
+        //       return FloatingActionButton.extended(
+        //         icon: Icon(Icons.edit_outlined),
+        //         label: Text("Edit"),
+        //         onPressed: () async {
+        //           await widget.ticket.openEditor();
+        //           await DB.updateDatabase(  context, showLoadingDialog: true);
+        //           Navigator.pop(context, true);
+        //         },
+        //       );
+        //     }
+        //
+        //     return Container();
+        //   },
+        // )
+        );
   }
 }

@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/user_config.dart';
 
-import '../C/Server.dart';
 import 'Section.dart';
 import 'hive.dart';
 
@@ -44,7 +44,7 @@ class AppUser extends NsUser {
 
   static Future refreshUserData() {
     _userIsAdmin = null;
-    return Server.apiGet("user/getUserData", {}).then((value) {
+    return OnlineDB.apiGet("user/getUserData", {}).then((value) {
       Map res = value.data;
       NsUser nsUser = NsUser.fromJson(res["user"]);
       AppUser.setUser(nsUser);

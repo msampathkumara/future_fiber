@@ -1289,24 +1289,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         }
     }
 
-    public void savePDF(String parent, final RunAfterUpload runAfterUpload) {
-        uploadEdits(new RunAfterSave() {
-            @Override
-            public void run(File sourceFile) {
 
-            }
-
-            @Override
-            public void run(JSONObject value, Ticket nsFile) {
-                runAfterUpload.run(null);
-            }
-
-            @Override
-            public void error(Exception exception) {
-
-            }
-        });
-    }
 
     public void uploadEdits(RunAfterSave afterSaveToServer) {
         runAfterSave = afterSaveToServer;

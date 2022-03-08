@@ -1,51 +1,36 @@
 package com.pdfEditor;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.StrictMode;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.BitmapCompat;
 
 import com.Dialogs.LoadingDialog;
-import com.Server;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
 import com.pdfEditor.EditorTools.data;
-import com.pdfviewer.util.SizeF;
 import com.sampathkumara.northsails.smartwind.R;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
 import com.tom_roush.pdfbox.pdmodel.PDPage;
 import com.tom_roush.pdfbox.pdmodel.PDPageContentStream;
-import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 
 public class QCEditor extends AppCompatActivity {
@@ -55,7 +40,8 @@ public class QCEditor extends AppCompatActivity {
     public Editor pdfEditor;
     Ticket SELECTED_FILE;
     int RequestedOrientation;
-boolean isQc=false;
+    boolean isQc = false;
+    private String serverUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,14 +58,16 @@ boolean isQc=false;
             System.out.println("--------------------------------------------------------- getExtras");
             System.out.println(getIntent().getExtras().getString("ticket"));
             SELECTED_FILE = Ticket.formJsonString(getIntent().getExtras().getString("ticket"));
-            isQc =  (getIntent().getExtras().getBoolean("qc"));
-
+            isQc = (getIntent().getExtras().getBoolean("qc"));
+            serverUrl = (getIntent().getExtras().getString("serverUrl"));
+            System.out.println("---------------------------------------------------------");
+            System.out.println(SELECTED_FILE.id);
         } else {
             SELECTED_FILE = Ticket.formJsonString("{oe: cat-001, finished: 0, uptime: 1628192673367, file: 1, sheet: 0, dir: 20218, id: 40913, isRed: 0, isRush: 1, isSk: 0, inPrint: 0, isGr: 0, isError: 0, canOpen: 1, isSort: 0, isHold: 0, fileVersion: 1628192673126, progress: 0, completed: 0, nowAt: 0, crossPro: 0}");
         }
 
 
-        SELECTED_FILE.ticketFile = new File(FILE_PATH); 
+        SELECTED_FILE.ticketFile = new File(FILE_PATH);
         loadEditor();
         loadFile(SELECTED_FILE.ticketFile);
 
@@ -140,7 +128,7 @@ boolean isQc=false;
 
         System.out.println("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR ______ " + requestCode + " __  " + resultCode);
 
-        int SAVE_FOLDER_SELECTED = 1;
+
         int rfResult = 222;
         if (requestCode == rfResult) {
             if (resultCode == Activity.RESULT_OK) {
@@ -197,30 +185,6 @@ boolean isQc=false;
 
     }
 
-    public void savePDF(String Folder, String filename, Boolean temp, RunAfterUpload runAfterUpload) {
-
-        System.out.println("FOLDER ===================== " + Folder);
-
-        new x(Folder, filename, runAfterUpload).execute(temp);
-    }
-
-    private void showDialog() {
-        System.out.println("show Dialog");
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        builder.setTitle("Error");
-
-        builder.setMessage("Access is denied")
-                .setCancelable(false)
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(@NonNull DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-    }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -240,21 +204,7 @@ boolean isQc=false;
     }
 
 
-    private void startNewActivity(@NonNull String packageName) {
-        Intent intent = getPackageManager().getLaunchIntentForPackage(packageName);
-        if (intent == null) {
-            // Bring user to the market or let them choose an app?
-            intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("market://details?id=" + packageName));
-        }
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
-
     final LoadingDialog loadingDialog = new LoadingDialog("Saving. Please wait...", true);
-
-
-    static final int BUFFER = 2048;
 
 
     public void uploadPdfEdits(final RunAfterUpload runAfterUpload, Context context) {
@@ -277,24 +227,21 @@ boolean isQc=false;
                 System.out.println("-----------------------------------------------------------------------+++++++");
                 HashMap<String, String> vals = new HashMap<>();
 
-                vals.put("file", SELECTED_NS_FILE.id + "");
-                vals.put("ticketId", SELECTED_NS_FILE.id + "");
+                vals.put("file", SELECTED_FILE.id + "");
+                vals.put("ticketId", SELECTED_FILE.id + "");
                 vals.put("svgs", value.toString());
-                vals.put("type", isQc?"qc":"qa");
+                vals.put("type", isQc ? "qc" : "qa");
+
+                System.out.println(vals);
 
                 long sizeInBytes = value.toString().getBytes().length;
 
                 System.out.println("____________SVG SIZE_________________" + (sizeInBytes / 1024));
                 HashMap<String, ArrayList<File>> images = pdfEditor.getImages();
-//                if (true) {
-//                    return;
-//                }
-                String requestURL = Server.getServerApiPath("tickets/qc/uploadEdits");
+                String requestURL = serverUrl.concat("/api/tickets/qc/uploadEdits");
                 uploadMultyParts(context, requestURL, images, vals, new RunAfterMultipartUpload() {
                     @Override
                     public void run() {
-
-                        System.out.println("333333333333333333333333333333333333333333333333333333333333333333");
 
                         loadingDialog.dismiss();
                         pdfEditor.resetEdits();
@@ -390,150 +337,4 @@ boolean isQc=false;
     }
 
 
-    class x extends AsyncTask<Boolean, Boolean, Void> {
-        final String folder;
-        ProgressDialog savingDialog;
-        final boolean ERR = false;
-        String fileName;
-        boolean EDITED = false;
-        final RunAfterUpload runAfterUpload;
-
-        x(String folder, String fileName, RunAfterUpload runAfterUpload) {
-            this.folder = folder;
-            this.fileName = fileName;
-            this.runAfterUpload = runAfterUpload;
-        }
-
-        @Nullable
-        @Override
-        protected Void doInBackground(Boolean... b) {
-            System.out.println("started");
-
-            savePDF(b[0]);
-
-            return null;
-        }
-
-        @Override
-        protected void onPreExecute() {
-
-//            runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-            savingDialog = new ProgressDialog(QCEditor.this);
-            savingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            savingDialog.setMessage("Saving.. Please wait...");
-            savingDialog.setIndeterminate(true);
-            savingDialog.setCanceledOnTouchOutside(false);
-            savingDialog.show();
-//                }
-//            });
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-            savingDialog.dismiss();
-
-            if (ERR) {
-                showDialog();
-            }
-        }
-
-        private void savePDF(boolean temp) {
-            final long x = System.currentTimeMillis();
-
-            try {
-                final File FILE = pdfEditor.getFile();
-                File outFile;
-                if (!fileName.toLowerCase().endsWith(".pdf")) {
-                    fileName += ".pdf";
-                }
-                new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS) + "/Edits").mkdirs();
-                outFile = new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS) + "/Edits", fileName);
-
-                System.out.println("FILE NAME = " + outFile);
-                System.out.println("FILE NAME = " + folder + fileName);
-                PDDocument doc = null;
-                try {
-                    doc = PDDocument.load(FILE);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-
-                ExecutorService es = Executors.newCachedThreadPool();
-                for (int i = 0; i < pdfEditor.pdfView.getPageCount(); ++i) {
-
-                    final PDDocument finalDoc = doc;
-                    final int finalI = i;
-                    final int finalI1 = i;
-                    es.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                File imageFile = new File(Environment.getExternalStorageDirectory()
-                                        .getAbsolutePath() + "/" + FILE.getName(), finalI1 + ".png");
-                                PAGE page = pdfEditor.getPages().get(finalI);
-                                if (page.hasBitmap()) {
-                                    EDITED = true;
-                                    System.out.println("Page " + finalI + " saving...\n page position = " + page.position);
-                                    SizeF pageSize = pdfEditor.pdfView.getPageSize(finalI);
-
-                                    PDPage p = finalDoc.getPage(finalI);
-                                    System.out.println("PAGE ROTATION = " + p.getRotation());
-                                    try {
-                                        page.getBitmap().compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(imageFile));
-                                        System.out.println("image saved " + (System.currentTimeMillis() - x));
-                                        PDImageXObject pdImage = PDImageXObject.createFromFile(imageFile, finalDoc);
-                                        System.out.println("image PDImageXObject " + (System.currentTimeMillis() - x));
-                                        PDPageContentStream contentStream = new PDPageContentStream(finalDoc, p, true, true, true);
-                                        contentStream.drawImage(pdImage, 0, 0, p.getMediaBox().getWidth(), p.getMediaBox().getHeight());
-                                        System.out.println("drowing  " + (System.currentTimeMillis() - x));
-                                        contentStream.close();
-                                        System.out.println("close " + (System.currentTimeMillis() - x));
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                    System.out.println("Image size = " + BitmapCompat.getAllocationByteCount(page.getBitmap()) / 8);
-                                    System.out.println("Page " + finalI + " savied...");
-                                    page.setBitmap(null);
-                                } else {
-                                    System.out.println("Skiped page " + finalI);
-                                }
-                                System.out.println("FILE PATH === " + imageFile.getAbsolutePath());
-//                                imageFile.delete();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            System.out.println("TASK " + finalI + " Added");
-                        }
-                    });
-
-                }
-                System.out.println("_________________________________________shutdoun");
-                es.shutdown();
-                boolean finshed = es.awaitTermination(1, TimeUnit.MINUTES);
-                if (EDITED) {
-                    doc.save(outFile);
-                    long y = System.currentTimeMillis();
-                    System.out.println("saved to local............." + (y - x));
-                    doc.close();
-                    outFile.exists();
-
-                    System.out.println("saved to server............." + (System.currentTimeMillis() - y));
-                    System.out.println("total time............." + (System.currentTimeMillis() - x));
-//                    dialog.dismiss();
-                }
-
-            } catch (InterruptedException | IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-
-    }
 }

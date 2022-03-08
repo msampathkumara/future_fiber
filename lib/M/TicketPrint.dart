@@ -13,6 +13,9 @@ class TicketPrint {
   int done = 0;
   String doneOn = "";
 
+  @JsonKey(defaultValue: 0, includeIfNull: true)
+  int doneBy = 0;
+
   TicketPrint();
 
   factory TicketPrint.fromJson(Map<String, dynamic> json) => _$TicketPrintFromJson(json);

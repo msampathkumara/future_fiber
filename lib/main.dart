@@ -47,19 +47,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Widget example1 = SplashScreenView(
-    //   navigateRoute: ,
-    //   duration: 20,
-    //   imageSize: 130,
-    //   imageSrc: "assets/splash.png",
-    //   text: "Smart Wind",
-    //   textType: TextType.TyperAnimatedText,
-    //   textStyle: TextStyle(
-    //     fontSize: 40.0,
-    //   ),
-    //   backgroundColor: Colors.white,
-    // );
-
     return MaterialApp(
         title: 'Smart Wind',
         theme: ThemeData(

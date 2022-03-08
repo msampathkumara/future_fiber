@@ -54,7 +54,6 @@ class _UserButtonState extends State<UserButton> {
                         ))
                 ], direction: widget.direction ?? Axis.horizontal),
               );
-
   }
 
   var nsUser;

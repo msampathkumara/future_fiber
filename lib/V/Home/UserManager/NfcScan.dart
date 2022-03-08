@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:smartwind/M/NsUser.dart';
 
 class NfcScan extends StatefulWidget {
-    late _NfcScanState state;
+  late _NfcScanState state;
   final NsUser nsUser;
 
   NfcScan(this.nsUser);
@@ -39,7 +39,6 @@ class _NfcScanState extends State<NfcScan> {
 
   @override
   Widget build(BuildContext context) {
-
     return Container();
 
     // TODO: implement build

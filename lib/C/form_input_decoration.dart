@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class FormInputDecoration {
-  static InputDecoration getDeco({hintText, labelText, helperText,Icon? prefixIcon, Icon? icon, String? suffixText}) {
+  static InputDecoration getDeco({hintText, labelText, helperText, Icon? prefixIcon, Icon? icon, String? suffixText}) {
     return InputDecoration(
         suffixText: suffixText,
         icon: icon,
@@ -26,6 +26,7 @@ class FormInputDecoration {
   static ButtonStyle buttonStyle({hintText, labelText, helperText, Icon? icon}) {
     return ButtonStyle(
         // padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(15)),
-        shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0), side: const BorderSide(color: Colors.lightBlue))));
+        shape:
+            MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0), side: const BorderSide(color: Colors.lightBlue))));
   }
 }

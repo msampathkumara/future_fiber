@@ -40,7 +40,6 @@ class _AboutState extends State<About> {
           padding: const EdgeInsets.all(8.0),
           child: CircleAvatar(radius: 100, child: Image.asset("assets/north_sails-logo.png")),
         ),
-
         Text("NS Smart Wind", textScaleFactor: 1.5),
         Text("$appVersion", textScaleFactor: 1)
       ],

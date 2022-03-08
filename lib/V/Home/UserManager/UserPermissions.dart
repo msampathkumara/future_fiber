@@ -5,6 +5,8 @@ import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/user_permission.dart';
 
+import '../../../C/OnlineDB.dart';
+
 class UserPermissions extends StatefulWidget {
   NsUser nsUser;
 
@@ -95,7 +97,7 @@ class _UserPermissionsState extends State<UserPermissions> {
   late Map<String, List<UserPermission>> userPermissionsGrouped = {};
 
   void loadPermissions() {
-    Server.apiGet("permissions/userPermissions", {'userId': widget.nsUser.id}).then((value) {
+    OnlineDB.apiGet("permissions/userPermissions", {'userId': widget.nsUser.id}).then((value) {
       Map data = value.data;
       userPermissions = UserPermission.fromJsonArray(data['userPermissions']);
       userPermissionsGrouped = groupBy(userPermissions, (a) => a.category);
@@ -107,7 +109,7 @@ class _UserPermissionsState extends State<UserPermissions> {
     setLoading(true);
     List permitionsIds = userPermissions.where((element) => element.permit == 1).map((e) => e.id).toList();
 
-    Server.apiPost("permissions/saveUserPermissions", {'userId': widget.nsUser.id, 'permissions': permitionsIds}).then((v) {
+    OnlineDB.apiPost("permissions/saveUserPermissions", {'userId': widget.nsUser.id, 'permissions': permitionsIds}).then((v) {
       setLoading(false);
     });
   }

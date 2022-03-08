@@ -108,16 +108,18 @@ class _PdfFileViewerState extends State<PdfFileViewer> {
                 documentLoader: Center(child: CircularProgressIndicator()),
                 pageLoader: Center(child: CircularProgressIndicator()),
                 controller: _pdfController,
-                onDocumentLoaded: (document) {isReady=true;
+                onDocumentLoaded: (document) {
+                  isReady = true;
                   setState(() {
                     _allPagesCount = document.pagesCount;
                   });
                 },
                 onPageChanged: (page) {
                   // setState(() {
-                    _actualPageNumber = page;
+                  _actualPageNumber = page;
                   // });
-                },scrollDirection: Axis.vertical,
+                },
+                scrollDirection: Axis.vertical,
               ),
               errorMessage.isEmpty
                   ? ((!isReady)

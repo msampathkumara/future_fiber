@@ -1,7 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/NsUser.dart';
@@ -12,9 +13,12 @@ import 'package:smartwind/V/Widgets/FlagDialog.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 import 'package:smartwind/ns_icons_icons.dart';
 
+import '../../../../C/DB/DB.dart';
 import '../../../../M/AppUser.dart';
 import '../TicketInfo/TicketInfo.dart';
 import 'CrossProduction.dart';
+
+part 'TicketListOptions.dart';
 
 class TicketList extends StatefulWidget {
   TicketList();
@@ -27,17 +31,17 @@ class TicketList extends StatefulWidget {
 
 class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
   var database;
-  late int _selectedTabIndex;
+  late int _selectedTabIndex = 0;
 
-  String listSortBy = "shipDate";
-  bool listSortDirectionIsDESC = false;
-  String sortedBy = "Date";
   String searchText = "";
   var subscription;
   bool _showAllTickets = false;
-  late DbChangeCallBack dbChangeCallBack;
 
   NsUser? nsUser;
+
+  var _refreshIndicatorKey;
+
+  late DbChangeCallBack _dbChangeCallBack;
 
   @override
   initState() {
@@ -46,19 +50,22 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _tabBarController = TabController(length: tabs.length, vsync: this);
       updateTabControler();
-      reloadData();
-      dbChangeCallBack = DB.setOnDBChangeListener(() {
-        print('callChangesCallBacks TicketList');
-        reloadData();
-      }, context, collection: DataTables.Tickets);
+      loadData();
     });
+
+    _dbChangeCallBack = DB.setOnDBChangeListener(() {
+      print('on update tickets');
+      if (mounted) {
+        loadData();
+      }
+    }, context, collection: DataTables.Users);
   }
 
   late List listsArray;
 
   @override
   void dispose() {
-    dbChangeCallBack.dispose();
+    _dbChangeCallBack.dispose();
     super.dispose();
   }
 
@@ -92,7 +99,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
 
                   _tabBarController = TabController(length: tabs.length, vsync: this);
                   updateTabControler();
-                  loadData().then((value) => setState(() {}));
+                  loadData();
                 },
                 itemBuilder: (BuildContext context) {
                   return {"Show All Tickets"}.map((String choice) {
@@ -130,17 +137,15 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                   }
                   searchText = text;
 
-                  loadData().then((value) {
-                    setState(() {});
-                    if (_barcodeResult) {
-                      if (currentFileList.length > 0) {
-                        Ticket ticket = (currentFileList[0]);
-                        var ticketInfo = TicketInfo(ticket);
-                        ticketInfo.show(context);
-                      }
+                  loadData();
+                  if (_barcodeResult) {
+                    if (currentFileList.length > 0) {
+                      Ticket ticket = (currentFileList[0]);
+                      var ticketInfo = TicketInfo(ticket);
+                      ticketInfo.show(context);
                     }
-                    _barcodeResult = false;
-                  });
+                  }
+                  _barcodeResult = false;
                 },
                 onSubmitted: (text) {}),
             centerTitle: true),
@@ -177,7 +182,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                       child: IconButton(
                         icon: Icon(Icons.sort_by_alpha_rounded),
                         onPressed: () {
-                          _sortByBottomSheetMenu();
+                          _sortByBottomSheetMenu(context, loadData);
                         },
                       ),
                     ),
@@ -202,60 +207,6 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
             )));
   }
 
-  void _sortByBottomSheetMenu() {
-    getListItem(String title, icon, key) {
-      return ListTile(
-        trailing: (listSortBy == key ? (listSortDirectionIsDESC ? Icon(Icons.arrow_upward_rounded) : Icon(Icons.arrow_downward_rounded)) : null),
-        title: Text(title),
-        selectedTileColor: Colors.black12,
-        selected: listSortBy == key,
-        leading: icon is IconData ? Icon(icon) : icon,
-        onTap: () {
-          if (listSortBy == key) {
-            listSortDirectionIsDESC = !listSortDirectionIsDESC;
-          } else {
-            listSortDirectionIsDESC = true;
-          }
-          listSortBy = key;
-          sortedBy = title;
-          Navigator.pop(context);
-          loadData().then((value) {
-            setState(() {});
-          });
-        },
-      );
-    }
-
-    showModalBottomSheet(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        backgroundColor: Colors.white,
-        context: context,
-        builder: (builder) {
-          return Container(
-            color: Colors.transparent,
-            child: Column(
-              children: [
-                Padding(padding: const EdgeInsets.all(16.0), child: Text("Sort By", textScaleFactor: 1.2)),
-                Expanded(
-                  child: Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
-                      child: ListView(
-                        children: [
-                          getListItem("Shipping Date", Icons.date_range_rounded, "shipDate"),
-                          getListItem("Modification Date", Icons.date_range_rounded, "uptime"),
-                          getListItem("Name", Icons.sort_by_alpha_rounded, "mo")
-                        ],
-                      )),
-                ),
-              ],
-            ),
-          );
-        });
-  }
-
-  // final tabs = ["All", "Upwind", "OD", "Nylon", "OEM", "No Pool"];
   var tabs = ["All", "Cross Production"];
   TabController? _tabBarController;
   var themeColor = Colors.green;
@@ -297,6 +248,20 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                       getTicketListByCategory(_allFilesList),
                       getTicketListByCategory(_crossProductionFilesList),
                     ]),
+
+              // body: _showAllTickets
+              //     ? TabBarView(controller: _tabBarController, children: [
+              //         getTicketListByCategory(_allFilesList),
+              //         getTicketListByCategory(_upwindFilesList),
+              //         getTicketListByCategory(_oDFilesList),
+              //         getTicketListByCategory(_nylonFilesList),
+              //         getTicketListByCategory(_oEMFilesList),
+              //         getTicketListByCategory(_noPoolFilesList),
+              //       ])
+              //     : TabBarView(controller: _tabBarController, children: [
+              //         getTicketListByCategory(_allFilesList),
+              //         getTicketListByCategory(_crossProductionFilesList),
+              //       ]),
             ),
           );
   }
@@ -306,11 +271,10 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
       children: [
         Expanded(
           child: RefreshIndicator(
+            key: _refreshIndicatorKey,
             onRefresh: () {
-              return DB.updateDatabase(context).then((value) {
-                return loadData().then((value) {
-                  setState(() {});
-                });
+              return HiveBox.getDataFromServer(clean: true).then((value) {
+                loadData();
               });
             },
             child: Padding(
@@ -319,17 +283,17 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                     ? ListView.separated(
                         padding: const EdgeInsets.all(8),
                         itemCount: filesList.length,
-                        itemBuilder: (BuildContext context, int index) {
+                        itemBuilder: (BuildContext context1, int index) {
                           // print(FilesList[index]);
                           Ticket ticket = (filesList[index]);
                           // print(ticket.toJson());
                           return TicketTile(index, ticket, () async {
                             print('Long pres');
-                            await showTicketOptions(ticket, context);
+                            await showTicketOptions(ticket, context1, context);
                             setState(() {});
                           }, () {
                             var ticketInfo = TicketInfo(ticket);
-                            ticketInfo.show(context);
+                            ticketInfo.show(context1);
                           }, () {});
                         },
                         separatorBuilder: (BuildContext context, int index) {
@@ -347,6 +311,43 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     );
   }
 
+  bool _loading = true;
+
+  setLoading(l) {
+    setState(() {
+      _loading = l;
+    });
+  }
+
+  List<Ticket> _load(selectedProduction, section, _showAllTickets, searchText, {crossProduction = false}) {
+    List<Ticket> l = HiveBox.ticketBox.values.where((t) {
+      if (t.file != 1 || t.completed != 0) {
+        return false;
+      }
+      if (crossProduction && t.crossPro != 1) {
+        return false;
+      }
+      if (_showAllTickets ? (!searchByProduction(t, selectedProduction)) : (!searchBySection(t, section))) {
+        return false;
+      }
+
+      if (!searchByFilters(t)) {
+        return false;
+      }
+
+      if (!searchByText(t)) {
+        return false;
+      }
+
+      return true;
+    }).toList();
+    l.sort((a, b) => (a.toJson()[listSortBy] ?? "").compareTo((b.toJson()[listSortBy] ?? "")));
+    if (listSortDirectionIsDESC) {
+      l = l.reversed.toList();
+    }
+    return l;
+  }
+
   List<Ticket> currentFileList = [];
   List<Ticket> _allFilesList = [];
   List<Ticket> _crossProductionFilesList = [];
@@ -356,290 +357,122 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
   List<Ticket> _oEMFilesList = [];
   List<Ticket> _noPoolFilesList = [];
 
-  Future<void> loadData() async {
-    String searchText = this.searchText.toLowerCase();
+  loadData() {
+    print('---------------------------------------------- Start loading');
     _selectedTabIndex = _tabBarController!.index;
-    print('loadData listSortBy $listSortBy');
-
-    var section = AppUser.getSelectedSection()?.id;
-    print('section ==== $section');
-    if (true) {
-      if (_showAllTickets) {
-        //   TODO check canopen=1
-
-      } else {
-        _allFilesList = HiveBox.ticketBox.values.where((t) {
-          return filters([section()]);
-
-          if (t.file != 1 || t.completed != 0 || (!t.openSections.contains(section.toString()))) {
-            return false;
-          }
-
-          if (dataFilter != Filters.none) {
-            Map _t = t.toJson();
-            if (_t[dataFilter.getValue()] != 1) {
-              return false;
-            }
-          }
-
-          if (searchText.isNotEmpty) {
-            if ((t.mo ?? "").toLowerCase().contains(searchText) || (t.mo ?? "").toLowerCase().contains(searchText)) {
-            } else {
-              return false;
-            }
-          }
-          return true;
-        }).toList();
-        listsArray = [_allFilesList, _crossProductionFilesList];
-        currentFileList = listsArray[_selectedTabIndex];
-      }
-
-      return;
-    }
-
-    String canOpen = _showAllTickets ? "  file=1 and completed=0" : " canOpen=1   and file=1   and completed=0 ";
-    String searchQ = "";
-    String _dataFilter = "";
-
-    if (dataFilter != Filters.none) {
-      _dataFilter = "   " + dataFilter.getValue() + "=1 and ";
-    }
-    if (searchText.isNotEmpty) {
-      searchQ = "  ( mo like '%$searchText%' or oe like '%$searchText%') and ";
-    }
-
-    print('current user $section');
-
-    searchQ += _dataFilter;
+    setLoading(true);
+    String searchText = this.searchText.toLowerCase();
 
     if (_showAllTickets) {
-      _allFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ ' + canOpen + '   order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}');
-
-      _upwindFilesList = await database
-          .rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Upwind\' order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}');
-
-      _oDFilesList =
-          await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OD\' order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}');
-
-      _nylonFilesList = await database
-          .rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Nylon\' order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}');
-
-      _oEMFilesList =
-          await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OEM\' order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}');
-
-      _noPoolFilesList = await database.rawQuery(
-          'SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production is null or production=""  order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}');
+      _allFilesList = _load(Production.All, 0, true, searchText);
+      _upwindFilesList = _load(Production.Upwind, 0, true, searchText);
+      _oDFilesList = _load(Production.OD, 0, true, searchText);
+      _nylonFilesList = _load(Production.Nylon, 0, true, searchText);
+      _oEMFilesList = _load(Production.OEM, 0, true, searchText);
+      _noPoolFilesList = _load(Production.None, 0, true, searchText);
       listsArray = [_allFilesList, _upwindFilesList, _oDFilesList, _nylonFilesList, _oEMFilesList, _noPoolFilesList];
     } else {
-      _allFilesList = await database.rawQuery("SELECT * FROM tickets where  $searchQ   " +
-          canOpen +
-          " and openSections like '%\"" +
-          section.toString() +
-          "\"%'  order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}");
-      _crossProductionFilesList = await database.rawQuery('SELECT * FROM tickets where  $searchQ   ' +
-          canOpen +
-          " and openSections like '%\"|$section|\"%' and crossPro=1 order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}");
-
+      _allFilesList = _load(Production.All, 0, false, searchText);
+      _crossProductionFilesList = _load(Production.Upwind, 0, false, searchText, crossProduction: true);
       listsArray = [_allFilesList, _crossProductionFilesList];
     }
     currentFileList = listsArray[_selectedTabIndex];
-    print(currentFileList.length);
+    print('---------------------------------------------- end loading');
+    // _selectedTabIndex = _tabBarController!.index;
+    // print('loadData listSortBy $listSortBy');
+    //
+    // var section = AppUser.getSelectedSection()?.id;
+    // print('section ==== $section');
+    //
+    // Production selectedProduction =
+    //     (_showAllTickets ? [Production.All, Production.Upwind, Production.OD, Production.Nylon, Production.OEM, Production.None] : []).elementAt(_selectedTabIndex);
+    //
+    // print('Production ==== $selectedProduction');
+    // if (true) {
+    //   currentFileList = HiveBox.ticketBox.values.where((t) {
+    //     if (t.file != 1 || t.completed != 0) {
+    //       return false;
+    //     }
+    //     if (_showAllTickets ? (!searchByProduction(t, selectedProduction)) : searchBySection(t, section)) {
+    //       return false;
+    //     }
+    //
+    //     if (!searchByFilters(t)) {
+    //       return false;
+    //     }
+    //
+    //     if (!searchByText(t)) {
+    //       return false;
+    //     }
+    //
+    //     return true;
+    //   }).toList();
+    //   setLoading(false);
+    // }
+
+    // String canOpen = _showAllTickets ? "  file=1 and completed=0" : " canOpen=1   and file=1   and completed=0 ";
+    // String searchQ = "";
+    // String _dataFilter = "";
+    //
+    // if (dataFilter != Filters.none) {
+    //   _dataFilter = "   " + dataFilter.getValue() + "=1 and ";
+    // }
+    // if (searchText.isNotEmpty) {
+    //   searchQ = "  ( mo like '%$searchText%' or oe like '%$searchText%') and ";
+    // }
+    //
+    // print('current user $section');
+    //
+    // searchQ += _dataFilter;
+    //
+    // if (_showAllTickets) {
+    //   _allFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ ' + canOpen + '   order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}');
+    //
+    //   _upwindFilesList = await database
+    //       .rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Upwind\' order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}');
+    //
+    //   _oDFilesList =
+    //       await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OD\' order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}');
+    //
+    //   _nylonFilesList = await database
+    //       .rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Nylon\' order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}');
+    //
+    //   _oEMFilesList =
+    //       await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OEM\' order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}');
+    //
+    //   _noPoolFilesList = await database.rawQuery(
+    //       'SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production is null or production=""  order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}');
+    //   listsArray = [_allFilesList, _upwindFilesList, _oDFilesList, _nylonFilesList, _oEMFilesList, _noPoolFilesList];
+    // } else {
+    //   _allFilesList = await database.rawQuery("SELECT * FROM tickets where  $searchQ   " +
+    //       canOpen +
+    //       " and openSections like '%\"" +
+    //       section.toString() +
+    //       "\"%'  order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}");
+    //   _crossProductionFilesList = await database.rawQuery('SELECT * FROM tickets where  $searchQ   ' +
+    //       canOpen +
+    //       " and openSections like '%\"|$section|\"%' and crossPro=1 order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}");
+    //
+    //   listsArray = [_allFilesList, _crossProductionFilesList];
+    // }
+    // currentFileList = listsArray[_selectedTabIndex];
+    // print(currentFileList.length);
   }
 
-  Future<void> showTicketOptions(Ticket ticket, BuildContext context1) async {
-    print(ticket.toJson());
-    await showModalBottomSheet<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
-          height: 650,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              ListTile(
-                title: Text(ticket.mo ?? ticket.oe!),
-                subtitle: Text(ticket.oe!),
-              ),
-              Divider(),
-              Expanded(
-                  child: Container(
-                child: SingleChildScrollView(
-                    child: Column(children: [
-                  if (AppUser.havePermissionFor(Permissions.SET_RED_FLAG))
-                    ListTile(
-                      title: Text(ticket.isRed == 1 ? "Remove Red Flag" : "Set Red Flag"),
-                      leading: Icon(Icons.flag),
-                      onTap: () async {
-                        Navigator.of(context).pop();
-                        bool resul = await FlagDialog.showRedFlagDialog(context1, ticket);
-                        ticket.isRed = resul ? 1 : 0;
-                      },
-                    ),
-                  if (AppUser.havePermissionFor(Permissions.STOP_PRODUCTION))
-                    ListTile(
-                      title: Text(ticket.isHold == 1 ? "Restart Production" : "Stop Production"),
-                      leading: Icon(Icons.pan_tool_rounded, color: Colors.red),
-                      onTap: () async {
-                        Navigator.of(context).pop();
-                        bool resul = await FlagDialog.showStopProductionFlagDialog(context1, ticket);
-                        ticket.isHold = resul ? 1 : 0;
-                      },
-                    ),
-                  if (AppUser.havePermissionFor(Permissions.SET_GR))
-                    ListTile(
-                      onTap: () async {
-                        Navigator.of(context).pop();
-                        await FlagDialog.showGRDialog(context1, ticket);
-                      },
-                      title: Text(ticket.isGr == 1 ? "Remove GR" : "Set GR"),
-                      // leading: SizedBox(
-                      //     width: 24, height: 24, child: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))))
-                      leading: Icon(NsIcons.gr, color: Colors.blue),
-                    ),
-                  // ListTile(
-                  //     onTap: () async {
-                  //       Navigator.of(context).pop();
-                  //       await FlagDialog.showSKDialog(context1, ticket);
-                  //     },
-                  //     title: Text(ticket.isSk == 1 ? "Remove SK" : "Set SK"),
-                  //     leading: SizedBox(
-                  //         width: 24, height: 24, child: CircleAvatar(backgroundColor: Colors.pink, child: Center(child: Text("SK", style: TextStyle(color: Colors.white)))))),
-                  if (AppUser.havePermissionFor(Permissions.SET_RUSH))
-                    ListTile(
-                        title: Text(ticket.isRush == 1 ? "Remove Rush" : "Set Rush"),
-                        leading: Icon(Icons.offline_bolt_outlined, color: Colors.orangeAccent),
-                        onTap: () async {
-                          Navigator.of(context).pop();
-                          // await FlagDialog.showRushDialog(context1, ticket);
-                          var u = ticket.isRush == 1 ? "removeFlag" : "setFlag";
-                          OnlineDB.apiPost("tickets/flags/" + u, {"ticket": ticket.id.toString(), "comment": "", "type": "rush"}).then((response) async {});
-                        }),
-                  if (AppUser.havePermissionFor(Permissions.SEND_TO_PRINTING))
-                    ListTile(
-                        title: Text(ticket.inPrint == 1 ? "Cancel Printing" : "Send To Print"),
-                        leading: Icon(ticket.inPrint == 1 ? Icons.print_disabled_outlined : Icons.print_outlined, color: Colors.deepOrangeAccent),
-                        onTap: () async {
-                          Navigator.of(context).pop();
-                          await sendToPrint(ticket);
-                        }),
-                  if (AppUser.havePermissionFor(Permissions.FINISH_TICKET))
-                    ListTile(
-                        title: Text("Finish"),
-                        leading: Icon(Icons.check_circle_outline_outlined, color: Colors.green),
-                        onTap: () async {
-                          Navigator.of(context).pop();
-                          await showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return FinishCheckList(ticket);
-                              });
-                          // await Navigator.push(context1, MaterialPageRoute(builder: (context) => FinishCheckList(ticket)));
-                        }),
-                  if (ticket.crossPro == 0 && AppUser.havePermissionFor(Permissions.SET_CROSS_PRODUCTION))
-                    ListTile(
-                        title: Text("Set Cross Production"),
-                        leading: Icon(NsIcons.crossProduction, color: Colors.green),
-                        onTap: () async {
-                          await Navigator.push(context1, MaterialPageRoute(builder: (context) => CrossProduction(ticket)));
-                          Navigator.of(context).pop();
-                        }),
-                  if (ticket.crossPro == 1 && AppUser.havePermissionFor(Permissions.SET_CROSS_PRODUCTION))
-                    ListTile(
-                        title: Text("Remove Cross Production"),
-                        leading: Icon(NsIcons.crossProduction, color: Colors.green),
-                        onTap: () async {
-                          Navigator.of(context).pop();
-                          showAlertDialog(context, ticket);
-                        }),
-                  if (AppUser.havePermissionFor(Permissions.SHARE_TICKETS))
-                    ListTile(
-                        title: Text("Share Work Ticket"),
-                        leading: Icon(NsIcons.share, color: Colors.lightBlue),
-                        onTap: () async {
-                          await ticket.sharePdf(context);
-                          Navigator.of(context).pop();
-                        }),
-                  if (AppUser.havePermissionFor(Permissions.ADD_CPR))
-                    ListTile(
-                        title: Text("Add CPR"),
-                        leading: Icon(NsIcons.cpr, color: Colors.amber),
-                        onTap: () async {
-                          await ticket.addCPR(context);
-                          Navigator.of(context).pop();
-                        }),
-                  if (AppUser.havePermissionFor(Permissions.SHIPPING_SYSTEM))
-                    ListTile(
-                        title: Text("Shipping"),
-                        leading: Icon(NsIcons.shipping, color: Colors.brown),
-                        onTap: () async {
-                          await ticket.openInShippingSystem(context);
-                          Navigator.of(context).pop();
-                        }),
-                  if (AppUser.havePermissionFor(Permissions.CS))
-                    ListTile(
-                        title: Text("CS"),
-                        leading: Icon(Icons.pivot_table_chart_rounded, color: Colors.green),
-                        onTap: () async {
-                          await ticket.openInCS(context);
-                          Navigator.of(context).pop();
-                        }),
-                  if (AppUser.havePermissionFor(Permissions.DELETE_TICKETS))
-                    ListTile(
-                        title: Text("Delete"),
-                        leading: Icon(NsIcons.delete, color: Colors.red),
-                        onTap: () async {
-                          //TODO set delete url
-                          OnlineDB.apiPost("tickets/delete", {"id": ticket.id.toString()}).then((response) async {
-                            print('TICKET DELETED');
-                            print(response.data);
-                            print(response.statusCode);
-                          });
-                          Navigator.of(context).pop();
-                        }),
-                ])),
-              ))
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  void reloadData() {
-    DB.getDB().then((value) async {
-      database = value;
-      await loadData();
-      try {
-        this.setState(() {});
-      } catch (e) {}
-    });
-  }
-
-  Future sendToPrint(Ticket ticket) async {
-    if (ticket.inPrint == 0) {
-      OnlineDB.apiPost("tickets/print", {"ticket": ticket.id.toString(), "action": "sent"}).then((value) {
-        print('Send to print  ${value.data}');
-        ticket.inPrint = 1;
-        setState(() {});
-      }).onError((error, stackTrace) {
-        print(error);
-      });
-
-      return 1;
-    } else {
-      await OnlineDB.apiPost("tickets/print", {"ticket": ticket.id.toString(), "action": "cancel"});
-      ticket.inPrint = 0;
-      return 0;
-    }
-  }
+  // void reloadData() {
+  //   loadData();
+  //   // DB.getDB().then((value) async {
+  //   //   database = value;
+  //   //   await loadData();
+  //   //   try {
+  //   //     this.setState(() {});
+  //   //   } catch (e) {}
+  //   // });
+  // }
 
   tabListener() {
     print("Selected Index: " + _tabBarController!.index.toString());
-    if (currentFileList == listsArray[_tabBarController!.index]) {
-      return;
-    }
+
     currentFileList = listsArray[_tabBarController!.index];
     setState(() {
       print('${currentFileList.length}');
@@ -671,52 +504,56 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
   }
 
   Future<void> openTicketByBarcode(barcode) async {
-    var _currentFileList = await database.rawQuery("SELECT * FROM tickets where mo like '%" + barcode + "%' or oe like '%" + barcode + "%' ");
-    if (_currentFileList.length > 0) {
-      Ticket ticket = Ticket.fromJson(_currentFileList[0]);
+    try {
+      Ticket ticket = HiveBox.ticketBox.values.singleWhere((t) => [(t.mo ?? "").toLowerCase(), (t.oe ?? "").toLowerCase()].contains(barcode.toString().toLowerCase()));
       var ticketInfo = TicketInfo(ticket);
       ticketInfo.show(context);
+    } catch (e) {
+      print('Ticket not found');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Ticket not found", style: TextStyle(color: Colors.white)), backgroundColor: Colors.red));
     }
+
+    // var _currentFileList = await database.rawQuery("SELECT * FROM tickets where mo like '%" + barcode + "%' or oe like '%" + barcode + "%' ");
+    // if (_currentFileList.length > 0) {
+    //   Ticket ticket = Ticket.fromJson(_currentFileList[0]);
+    //   var ticketInfo = TicketInfo(ticket);
+    //   ticketInfo.show(context);
+    // }
   }
 
-  showAlertDialog(BuildContext context, ticket) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context1) {
-        return AlertDialog(
-          title: Text("Remove Cross Production"),
-          content: Text("Do you really want to remove cross production from this ticket ? "),
-          actions: [
-            TextButton(
-              child: Text("No"),
-              onPressed: () {
-                Navigator.of(context1).pop();
-              },
-            ),
-            TextButton(
-              child: Text("Yes"),
-              onPressed: () {
-                Navigator.of(context1).pop();
-                OnlineDB.apiPost("tickets/crossProduction/removeCrossProduction", {'ticketId': ticket.id.toString()}).then((response) async {
-                  print(response.data);
-                });
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  bool filters(List<Function> list) {
-    bool status = true;
-    for (var f in list) {
-      if (!f()) {
-        status = false;
-        break;
+  bool searchByText(t) {
+    if (searchText.isNotEmpty) {
+      if ((t.mo ?? "").toLowerCase().contains(searchText) || (t.mo ?? "").toLowerCase().contains(searchText)) {
+        return true;
+      } else {
+        return false;
       }
     }
-    return status;
+    return true;
+  }
+
+  bool searchByFilters(t) {
+    if (dataFilter != Filters.none) {
+      Map _t = t.toJson();
+      if (_t[dataFilter.getValue()] != 1) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool searchBySection(t, section) {
+    return (!t.openSections.contains(section.toString()));
+  }
+
+  searchByProduction(Ticket t, Production selectedProduction) {
+    if (selectedProduction == Production.All) {
+      return true;
+    }
+    if (selectedProduction == Production.None && ((t.production ?? '').trim().isEmpty)) {
+      return true;
+    }
+    return (t.production ?? '').toLowerCase() == selectedProduction.getValue().toLowerCase();
   }
 }
 

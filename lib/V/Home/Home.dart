@@ -6,10 +6,11 @@ import 'package:device_information/device_information.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:ota_update/ota_update.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:smartwind/C/DB/DB.dart';
+import 'package:smartwind/C/App.dart';
 import 'package:smartwind/C/FCM.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/C/Server.dart';
@@ -60,11 +61,13 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     FCM.setListener(context);
-    DB.updateDatabase(context);
+    // DB.updateDatabase(context);
 
     PackageInfo.fromPlatform().then((appInfo) {
       print(appInfo);
-      appVersion = appInfo.version;
+      setState(() {
+        appVersion = appInfo.version;
+      });
     });
     onUserUpdate = () {
       print('USER UPDATE');
@@ -227,12 +230,20 @@ class _HomeState extends State<Home> {
                                   HiveBox.getDataFromServer();
                                   AppUser.refreshUserData();
                                 },
-                                child: Text("ssssssssssss")), ElevatedButton(
+                                child: Text("ssssssssssss")),
+                            ElevatedButton(
                                 onPressed: () {
                                   HiveBox.getDataFromServer(clean: true);
                                   AppUser.refreshUserData();
                                 },
-                                child: Text("ssssssssssss"))
+                                child: Text("ssssssssssss")),
+                            // ElevatedButton(
+                            //     onPressed: () {
+                            //       App.tryOtaUpdate((OtaEvent event) {
+                            //         print('OTA status: ${event.status} : ${event.value} \n');
+                            //       });
+                            //     },
+                            //     child: Text("Update Apk"))
                           ],
                         ),
                       ),
@@ -292,9 +303,10 @@ class _HomeState extends State<Home> {
         if (result == MenuItems.logout) {
           await _logout();
         } else if (result == MenuItems.dbReload) {
-          await DB.dropDatabase();
-          await DB.loadDB();
-          DB.updateDatabase(context, showLoadingDialog: true, reset: true);
+          // await DB.dropDatabase();
+          // await DB.loadDB();
+          // DB.updateDatabase(context, showLoadingDialog: true, reset: true);
+          HiveBox.getDataFromServer(clean: true);
         } else if (result == MenuItems.changeSection) {
           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => SectionSelector(nsUser!)), (Route<dynamic> route) => false);
         } else if (result == MenuItems.cpanel) {
@@ -311,9 +323,11 @@ class _HomeState extends State<Home> {
               }
             }
 
-            DB.getDB().then((db) => db!.rawQuery("delete from files").then((data) {
-                  print(data);
-                }));
+            HiveBox.localFileVersionsBox.clear();
+
+            // DB.getDB().then((db) => db!.rawQuery("delete from files").then((data) {
+            //       print(data);
+            //     }));
           }
         }
 

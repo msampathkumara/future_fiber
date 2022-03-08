@@ -30,20 +30,20 @@ class _info_ProgressState extends State<info_Progress> {
         String? nDate = progressList[i].finishedOn;
         if (prevDate != null || prevDate!.isNotEmpty) {
           if (nDate != null || nDate!.isNotEmpty) {
-           try{
-             DateTime d = DateTime.parse(prevDate);
-             DateTime d1 = DateTime.parse(nDate);
-             int timeInMinutes = d1.difference(d).inMinutes;
-             if (timeInMinutes == 0) {
-               progressList[i].timeToFinish = "";
-             } else {
-               final minutes = (timeInMinutes % 60).toInt();
-               final hours = (((timeInMinutes - minutes) / 60) % 24).toInt();
-               progressList[i].timeToFinish = "${hours}h ${minutes}m";
-             }
-           }catch(e){
-             progressList[i].timeToFinish = "";
-           }
+            try {
+              DateTime d = DateTime.parse(prevDate);
+              DateTime d1 = DateTime.parse(nDate);
+              int timeInMinutes = d1.difference(d).inMinutes;
+              if (timeInMinutes == 0) {
+                progressList[i].timeToFinish = "";
+              } else {
+                final minutes = (timeInMinutes % 60).toInt();
+                final hours = (((timeInMinutes - minutes) / 60) % 24).toInt();
+                progressList[i].timeToFinish = "${hours}h ${minutes}m";
+              }
+            } catch (e) {
+              progressList[i].timeToFinish = "";
+            }
           }
         }
       }

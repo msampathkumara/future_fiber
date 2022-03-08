@@ -78,29 +78,32 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 if (_image != null) CircleAvatar(radius: 124.0, backgroundImage: Image.file(_image!).image, backgroundColor: Colors.transparent),
-                if (_image == null) CircleAvatar(radius: 124.0, backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"), backgroundColor: Colors.transparent),
+                if (_image == null)
+                  CircleAvatar(radius: 124.0, backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"), backgroundColor: Colors.transparent),
                 Row(
                   children: [
                     SizedBox(
                       child: TextButton(onPressed: getImage, child: Text("Change Profile Picture")),
                       width: 170,
                     ),
-                    if (_image != null) SizedBox(
-                      child: VerticalDivider(color: Colors.grey, thickness: 1),
-                      height: 20,
-                    ),
-                    if (_image != null)  SizedBox(
-                        child: TextButton(
-                            onPressed: () {
-                              setState(() {
-                                _image = null;
-                              });
-                            },
-                            child: Text(
-                              "Reset",
-                              textAlign: TextAlign.left,
-                            )),
-                        width: 170)
+                    if (_image != null)
+                      SizedBox(
+                        child: VerticalDivider(color: Colors.grey, thickness: 1),
+                        height: 20,
+                      ),
+                    if (_image != null)
+                      SizedBox(
+                          child: TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  _image = null;
+                                });
+                              },
+                              child: Text(
+                                "Reset",
+                                textAlign: TextAlign.left,
+                              )),
+                          width: 170)
                   ],
                 ),
                 Padding(
@@ -166,7 +169,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                 Card(
                   child: Column(
                     children: [
-                      ListTile(title: Text("Phone Details"), leading: Icon(Icons. contact_phone_outlined)),
+                      ListTile(title: Text("Phone Details"), leading: Icon(Icons.contact_phone_outlined)),
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(children: [
@@ -373,9 +376,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
             ),
           ),
         ),
-        floatingActionButton: FloatingActionButton(onPressed: () {
-
-        }, child: Icon(Icons.save_outlined)),
+        floatingActionButton: FloatingActionButton(onPressed: () {}, child: Icon(Icons.save_outlined)),
       ),
     );
   }

@@ -38,7 +38,7 @@ class _QCViewState extends State<QCView> {
         body: idToken != null
             ? WebView(
                 onWebViewCreated: (WebViewController webViewController) {
-                  Map<String, String> headers = {"Authorization": "" + idToken};
+                  Map<String, String> headers = {"authorization": "" + idToken};
                   webViewController.loadUrl(uRL, headers: headers);
                 },
               )

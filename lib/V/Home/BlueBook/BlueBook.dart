@@ -11,8 +11,8 @@ import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:native_pdf_view/native_pdf_view.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:smartwind/C/ServerResponce/OperationMinMax.dart';
-import 'package:smartwind/C/ServerResponce/UserRFCredentials.dart';
 import 'package:smartwind/M/Ticket.dart';
+import 'package:smartwind/M/UserRFCredentials.dart';
 import 'package:smartwind/V/Home/BlueBook/BlueBookLogin.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/Loading.dart';
@@ -207,8 +207,9 @@ class _BlueBookState extends State<BlueBook> {
   }
 
   Future<File> _getFile(context, url, BlueBookCredentials? credentials, {onReceiveProgress}) async {
-
-    if(credentials==null){return Future.value(new File(""));}
+    if (credentials == null) {
+      return Future.value(new File(""));
+    }
     var loadingWidget = Loading(
       loadingText: "Downloading File",
       showProgress: false,

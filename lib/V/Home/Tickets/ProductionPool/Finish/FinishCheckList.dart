@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:smartwind/C/App.dart';
 import 'package:smartwind/C/OnlineDB.dart';
+import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/C/ServerResponce/ServerResponceMap.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/NsUser.dart';
@@ -89,9 +89,9 @@ class _FinishCheckListState extends State<FinishCheckList> {
                           loadingWidget.show(context);
                           OnlineDB.apiGet("users/getRfCredentials", {}).then((response) async {
                             print(response.data);
-                            ServerResponceMap res = ServerResponceMap.fromJson((response.data));
+                            ServerResponseMap res = ServerResponseMap.fromJson((response.data));
                             var r = await OnlineDB.apiGet("tickets/finish/getProgress", {'ticket': ticket.id.toString()});
-                            ServerResponceMap res1 = ServerResponceMap.fromJson((r.data));
+                            ServerResponseMap res1 = ServerResponseMap.fromJson((r.data));
 
                             loadingWidget.close(context);
                             if (res.userRFCredentials != null) {
@@ -130,10 +130,10 @@ class _FinishCheckListState extends State<FinishCheckList> {
                           }
 
                           var xx = await platform.invokeMethod('qcEdit', {
+                            "qc": isQc,
+                            "serverUrl": Server.getServerAddress(),
                             'ticket': {'id': ticket.id, "qc": isQc}.toString()
                           });
-
-
 
                           // App.getCurrentUser().then((user) async {
                           //   var isQc = false;

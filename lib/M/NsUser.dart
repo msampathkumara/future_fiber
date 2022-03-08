@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/C/Server.dart';
+import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
 
 import 'AppUser.dart';
@@ -83,7 +83,7 @@ class NsUser extends HiveClass {
 
   @HiveField(16, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
-  int disabled = 0;
+  int deactivate = 0;
 
   @HiveField(17, defaultValue: [])
   @JsonKey(defaultValue: [], includeIfNull: true)
@@ -101,7 +101,7 @@ class NsUser extends HiveClass {
 
   factory NsUser.fromJson(Map<String, dynamic> json) => _$NsUserFromJson(json);
 
-  bool get isDisabled => disabled == 1;
+  bool get isDisabled => deactivate == 1;
 
   Map<String, dynamic> toJson() => _$NsUserToJson(this);
 
@@ -173,8 +173,9 @@ class NsUser extends HiveClass {
     return AssetImage('assets/images/user.png');
   }
 
-  getUserImage() {
-    var img = NetworkImage(Server.getServerApiPath("users/getImage?img=" + this.img + "&size=500"), headers: {"authorization": '${AppUser.getIdToken()}'});
+  getUserImage() async {
+    var token = await AppUser.getIdToken();
+    var img = NetworkImage(Server.getServerApiPath("users/getImage?img=" + this.img + "&size=500"), headers: {"authorization": '${token}'});
 
     return (this.img).isEmpty ? getDefaultImage() : img;
   }
@@ -183,24 +184,26 @@ class NsUser extends HiveClass {
     return UserImage(nsUserId: nsUserId, radius: 16);
   }
 
-  static Future<NsUser?> fromId(int? id) {
+  static NsUser? fromId(int? id) {
     if (id == null) {
-      return Future.value(null);
+      return null;
     }
 
-    return DB.getDB().then((value) => value!.rawQuery(" select * from users  where id=$id  ").then((s) {
-          if (s.length > 0) {
-            return NsUser.fromJson(s[0]);
-          } else {
-            return null;
-          }
-        }));
+    return HiveBox.usersBox.get(id, defaultValue: null);
+
+    // return DB.getDB().then((value) => value!.rawQuery(" select * from users  where id=$id  ").then((s) {
+    //       if (s.length > 0) {
+    //         return NsUser.fromJson(s[0]);
+    //       } else {
+    //         return null;
+    //       }
+    //     }));
   }
 
   Future<List> loadSections() async {
-    var db = await DB.getDB();
-    var s = await db!.rawQuery(" select * from userSections us left join factorySections fs on fs.id=us.sectionId where userid='$id'  ");
-    sections = List<Section>.from(s.map((model) => Section.fromJson(model)));
+    // var db = await DB.getDB();
+    // var s = await db!.rawQuery(" select * from userSections us left join factorySections fs on fs.id=us.sectionId where userid='$id'  ");
+    // sections = List<Section>.from(s.map((model) => Section.fromJson(model)));
     return sections;
   }
 

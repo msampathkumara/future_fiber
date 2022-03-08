@@ -1,9 +1,6 @@
-import 'dart:convert';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:smartwind/M/AppUser.dart';
-
-import 'DB/DB.dart';
+import 'package:smartwind/M/hive.dart';
 
 class FCM {
   static get userId => AppUser.getUser()?.id;
@@ -31,19 +28,18 @@ class FCM {
       if (message.from == "/topics/userUpdate_$userId") {
         AppUser.refreshUserData();
       } else if (message.from == "/topics/ticketComplete") {
-        DB.updateCompletedTicket(context, json.decode(message.data["ticketId"]));
+        HiveBox.getDataFromServer();
       } else if (message.from == "/topics/resetDb") {
-        DB.updateDatabase(context, reset: true);
+        HiveBox.getDataFromServer(clean: true);
         print('--------------------------RESEING DATABASE-----------------');
-        // } else if (json.decode(message.data["FILE_DB_UPDATE"]) != null) {
-      } else if (message.from == "/topics/file_update") {
-        DB.updateDatabase(context);
-      } else if (json.decode(message.data["updateTicketDB"]) != null) {
-        DB.updateDatabase(context, reset: true);
-        print('--------------------------RESEING DATABASE-----------------');
-      } else if (json.decode(message.data["userUpdates"]) != null) {
-        DB.updateDatabase(context, reset: true);
+      } else if (message.from == "/topics/userUpdates") {
+        HiveBox.getDataFromServer();
         print('--------------------------UPDATING USER DATABASE-----------------');
+      } else if (message.from == "/topics/file_update") {
+        HiveBox.getDataFromServer();
+      } else if (message.data["updateTicketDB"] != null) { 
+        HiveBox.getDataFromServer();
+        print('--------------------------RESEING DATABASE-----------------');
       }
       print('Got a message whilst in the foreground!');
       print('Message data: ${message.data}');

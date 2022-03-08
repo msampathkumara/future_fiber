@@ -1,9 +1,5 @@
 import 'HiveClass.dart';
 
-class DataObject extends HiveClass{
-
-    DataObject( );
-
-
-
+class DataObject extends HiveClass {
+  DataObject();
 }

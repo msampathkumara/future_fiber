@@ -8,7 +8,7 @@ import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 
 class AddCPR extends StatefulWidget {
- final Ticket ticket;
+  final Ticket ticket;
 
   AddCPR(this.ticket);
 
@@ -341,7 +341,7 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
   }
 
   List<String> _matList = [];
-  var _qtyController = TextEditingController(); 
+  var _qtyController = TextEditingController();
   CprItem currentMaterial = new CprItem();
   final _dropdownSearchKey = GlobalKey<DropdownSearchState<String>>();
 

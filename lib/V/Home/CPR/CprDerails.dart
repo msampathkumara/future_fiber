@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/OnlineDB.dart';
@@ -24,8 +23,6 @@ class CprDetails extends StatefulWidget {
 }
 
 class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
-
-
   late CPR _cpr;
   bool saving = false;
 
@@ -137,10 +134,7 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
                           title: Text("Sail"),
                           subtitle: ListTile(
                               title: Text(_cpr.mo ?? _cpr.oe ?? "", style: st),
-                              subtitle: Text(
-                                _cpr.mo != null ? _cpr.oe ?? "" : "",
-                                style: TextStyle(fontWeight: FontWeight.bold)
-                              ))),
+                              subtitle: Text(_cpr.mo != null ? _cpr.oe ?? "" : "", style: TextStyle(fontWeight: FontWeight.bold)))),
                       ListTile(title: Text("Sail Type"), subtitle: Text("${_cpr.sailType}", style: st)),
                       ListTile(title: Text("Client"), subtitle: Text("${_cpr.client}", style: st)),
                       ListTile(title: Text("Supplier"), subtitle: Text("${_cpr.supplier}", style: st)),
@@ -153,13 +147,15 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
                       if (_cpr.sentBy != null)
                         ListTile(
                             title: Text("Sent By "),
-                            subtitle:
-                                ListTile(leading: UserImage(nsUserId: _cpr.sentBy!.id, radius: 24), title: Text(_cpr.sentBy!.uname, style: st), subtitle: Text("${_cpr.sentOn??""}"))),
+                            subtitle: ListTile(
+                                leading: UserImage(nsUserId: _cpr.sentBy!.id, radius: 24), title: Text(_cpr.sentBy!.uname, style: st), subtitle: Text("${_cpr.sentOn ?? ""}"))),
                       if (_cpr.recivedBy != null)
                         ListTile(
                             title: Text("Sent By "),
                             subtitle: ListTile(
-                                leading: UserImage(nsUserId: _cpr.recivedBy!.id, radius: 24), title: Text(_cpr.recivedBy!.uname, style: st), subtitle: Text("${_cpr.recivedOn??""}"))),
+                                leading: UserImage(nsUserId: _cpr.recivedBy!.id, radius: 24),
+                                title: Text(_cpr.recivedBy!.uname, style: st),
+                                subtitle: Text("${_cpr.recivedOn ?? ""}"))),
                     ])),
                   ),
                 ),
@@ -182,10 +178,7 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
                                       setState(() {});
                                     },
                                     child: ListTile(
-                                        title: Text(
-                                          material.item,
-                                          style: st
-                                        ),
+                                        title: Text(material.item, style: st),
                                         // leading: Checkbox(
                                         //     value: material.isChecked(),
                                         //      onChanged: (checked){setState(() {
@@ -232,8 +225,6 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
     data.add(filter);
     return Future.value(data);
   }
-
-
 
   var _suppliers = ["Cutting", "SA", "Printing"];
   var _supplier1;

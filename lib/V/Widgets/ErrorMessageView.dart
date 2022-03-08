@@ -16,8 +16,8 @@ class ErrorMessageView extends StatefulWidget {
     return state;
   }
 
-    show(context) async{
-  await  Navigator.push(
+  show(context) async {
+    await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => this),
     );
@@ -30,7 +30,6 @@ class ErrorMessageView extends StatefulWidget {
 
 class _ErrorMessageViewState extends State<ErrorMessageView> with TickerProviderStateMixin {
   late AnimationController controller;
-
 
   @override
   void initState() {

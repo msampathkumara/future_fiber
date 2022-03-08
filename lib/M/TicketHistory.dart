@@ -1,9 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
 
-@JsonSerializable(explicitToJson: true)
 part 'TicketHistory.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class TicketHistory {
   int? id;
 

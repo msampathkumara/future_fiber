@@ -8,7 +8,7 @@ import 'Section.dart';
 part 'user_config.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-@HiveType(typeId: 10)
+@HiveType(typeId: 3)
 class UserConfig extends HiveClass {
   UserConfig();
 

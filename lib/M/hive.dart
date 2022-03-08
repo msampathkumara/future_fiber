@@ -1,17 +1,23 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:smartwind/C/DB/DB.dart';
+import 'package:smartwind/C/OnlineDB.dart';
+import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/StandardTicket.dart';
 import 'package:smartwind/M/Ticket.dart';
+import 'package:smartwind/M/TicketFlag.dart';
 import 'package:smartwind/M/user_config.dart';
 
 import '../C/Server.dart';
 import '../V/Home/UserManager/UserPermissions.dart';
 import 'AppUser.dart';
+import 'HiveClass.dart';
+import 'LocalFileVersion.dart';
 import 'NsUser.dart';
 import 'Section.dart';
-import 'enums.dart';
 import 'up_on.dart';
 
 class HiveBox {
@@ -19,6 +25,9 @@ class HiveBox {
   static late final Box<Ticket> ticketBox;
   static late final Box<Section> sectionsBox;
   static late final Box<StandardTicket> standardTicketsBox;
+  static late final Box<LocalFileVersion> localFileVersionsBox;
+
+  // static late final Box<TicketFlag> ticketFlagBox;
 
   static late final Box userConfigBox;
 
@@ -26,12 +35,14 @@ class HiveBox {
 
   /// Create an instance of HiveBox to use throughout the app.
   static Future create() async {
+    var packageInfo = await PackageInfo.fromPlatform();
     if (kIsWeb) {
-      Hive.init('smartwinddb');
+      Hive.init('smartwind_${packageInfo.buildNumber}');
     } else {
       var directory = await getApplicationDocumentsDirectory();
       print("dddddddddddddddddddddddd = ${directory.path}");
-      Hive.init(directory.path + '/booksDb2');
+      Hive.init(directory.path + '/smartwind_${packageInfo.buildNumber}');
+      print('build number == ${packageInfo.buildNumber}');
     }
 
     Hive.registerAdapter(NsUserAdapter());
@@ -40,24 +51,29 @@ class HiveBox {
     Hive.registerAdapter(SectionAdapter());
     Hive.registerAdapter(UponsAdapter());
     Hive.registerAdapter(StandardTicketAdapter());
+    Hive.registerAdapter(LocalFileVersionAdapter());
+    Hive.registerAdapter(TicketFlagAdapter());
 
     usersBox = await Hive.openBox<NsUser>('userBox');
     ticketBox = await Hive.openBox<Ticket>('ticketBox');
     sectionsBox = await Hive.openBox<Section>('sectionsBox');
-    userConfigBox = await Hive.openBox('userConfigBox');
+    userConfigBox = await Hive.openBox<HiveClass>('userConfigBox');
     userPermissions = await Hive.openBox<UserPermissions>('userPermissionsBox');
     standardTicketsBox = await Hive.openBox<StandardTicket>('standardTicketsBox');
+    localFileVersionsBox = await Hive.openBox<LocalFileVersion>('localFileVersionsBox');
+    // ticketFlagBox = await Hive.openBox<TicketFlag>('ticketFlagBox');
   }
 
   static Future getDataFromServer({clean = false}) {
+    print('__________________________________________________________________________________________________________getDataFromServer');
     if (clean) {
       setUptimes(Upons());
     }
     Upons uptimes = getUptimes();
     print(uptimes.toJson());
 
-    return Server.apiGet(("data/getData"), uptimes.toJson()).then((Response response) async {
-      print('__________________________________________________________________________________________________________');
+    return OnlineDB.apiGet(("data/getData"), uptimes.toJson()).then((Response response) async {
+      print('__________________________________________________________________________________________________________getDataFromServer');
       if (clean) {
         await usersBox.clear();
         await ticketBox.clear();
@@ -68,7 +84,7 @@ class HiveBox {
 
       print('5');
       Map res = response.data;
-
+      print(res["users"]);
       List<NsUser> usersList = NsUser.fromJsonArray(res["users"] ?? []);
       List<Ticket> ticketsList = Ticket.fromJsonArray(res["tickets"] ?? []);
       List<Section> factorySectionsList = Section.fromJsonArray(res["factorySections"] ?? []);
@@ -77,7 +93,14 @@ class HiveBox {
       List<Ticket> deletedTicketsIdsList = Ticket.fromJsonArray(res["deletedTicketsIds"] ?? []);
       List<Ticket> completedTicketsIdsList = Ticket.fromJsonArray(res["completedTicketsIds"] ?? []);
 
+      usersList.forEach((element) {
+        print('------------------------------------------------------------------------------------------------');
+        print(element.toJson());
+      });
+
       usersBox.putMany(usersList);
+
+      print('ticketsList length == ${ticketsList.length}');
       ticketBox.putMany(ticketsList);
       sectionsBox.putMany(factorySectionsList);
       standardTicketsBox.putMany(standardTicketsList);
@@ -92,14 +115,38 @@ class HiveBox {
       if (usersList.where((element) => element.id == AppUser.getUser()?.id).isNotEmpty) {
         AppUser.refreshUserData();
       }
+
+      bool updated = false;
+
+      if (HiveBox.usersBox.length > 0) {
+        DB.callChangesCallBack(DataTables.Users);
+        updated = true;
+      }
+      if (HiveBox.ticketBox.length > 0 || deletedTicketsIdsList.length > 0 || completedTicketsIdsList.length > 0) {
+        DB.callChangesCallBack(DataTables.Tickets);
+        updated = true;
+      }
+      if (HiveBox.sectionsBox.length > 0) {
+        DB.callChangesCallBack(DataTables.Sections);
+        updated = true;
+      }
+      if (HiveBox.standardTicketsBox.length > 0) {
+        DB.callChangesCallBack(DataTables.standardTickets);
+        updated = true;
+      }
+      if (updated) {
+        DB.callChangesCallBack(DataTables.Any);
+      }
+
       print('__________________________________________________________________________________________________________');
       print(HiveBox.usersBox.length);
       print(HiveBox.ticketBox.length);
       print(HiveBox.sectionsBox.length);
       print(HiveBox.standardTicketsBox.length);
       print('__________________________________________________________________________________________________________');
+      print('uptimes : ${res["uptimes"]}');
 
-      callOnUpdates();
+      // callOnUpdates();
       print("data loaded from server ");
       print(res["uptimes"]);
       setUptimes(Upons.fromJson(res["uptimes"]));
@@ -113,23 +160,21 @@ class HiveBox {
 
   static final List<Function> listeners = [];
 
-  static onUpdate(Function function) {
+  static onUpdate(Function function, {List<Collection>? collections}) {
     listeners.add(function);
   }
 
-  static void removeOnUpdate(onupdate) {
-    listeners.remove(onupdate);
-  }
+  // static void removeOnUpdate(onupdate) {
+  //   listeners.remove(onupdate);
+  // }
 
-  static void loadUserBooksList() {}
-
-  static void callOnUpdates() {
-    listeners.forEach((element) {
-      try {
-        element();
-      } catch (e) {}
-    });
-  }
+  // static void callOnUpdates() {
+  //   listeners.forEach((element) {
+  //     try {
+  //       element();
+  //     } catch (e) {}
+  //   });
+  // }
 
   static Upons getUptimes() {
     return userConfigBox.get("upons", defaultValue: Upons());
@@ -139,6 +184,8 @@ class HiveBox {
     print(upons.toJson());
     var x = {...getUptimes().toJson(), ...upons.toJson()};
     var upons2 = Upons.fromJson(x);
+    print("+++++++++++++++++++++++++++++++++++++++++ upons ");
+    print(upons2.toJson());
     userConfigBox.put("upons", upons2);
   }
 }

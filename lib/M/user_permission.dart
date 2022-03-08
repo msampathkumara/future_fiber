@@ -34,5 +34,3 @@ class UserPermission {
     return List<UserPermission>.from(books.map((model) => UserPermission.fromJson(model)));
   }
 }
-
-

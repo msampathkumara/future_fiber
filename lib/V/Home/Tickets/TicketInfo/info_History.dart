@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/C/ServerResponce/TicketHistory.dart';
+import 'package:smartwind/M/TicketHistory.dart';
 import 'package:smartwind/V/Widgets/UserButton.dart';
 
 class InfoHistory extends StatefulWidget {

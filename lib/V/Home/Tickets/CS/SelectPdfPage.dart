@@ -45,17 +45,12 @@ class _SelectPdfPageState extends State<SelectPdfPage> {
               icon: Icon(Icons.touch_app_rounded),
               label: Text("Select Current Page"),
               onPressed: () async {
-
-              await  selectCurrentPage().then((value) {
-                print(value);
+                await selectCurrentPage().then((value) {
+                  print(value);
                   OnPageSelect(value);
                 });
 
-
-
-                setState(() {
-
-                });
+                setState(() {});
               },
             );
           }
@@ -101,8 +96,10 @@ class _SelectPdfPageState extends State<SelectPdfPage> {
       ),
     );
   }
+
   static const platform = MethodChannel('editPdf');
+
   Future selectCurrentPage() async {
-  return  await platform.invokeMethod('splitPage', {'path': ticket.ticketFile!.path, 'page': currentPage});
+    return await platform.invokeMethod('splitPage', {'path': ticket.ticketFile!.path, 'page': currentPage});
   }
 }

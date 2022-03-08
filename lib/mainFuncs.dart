@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:smartwind/C/App.dart';
-import 'package:smartwind/C/DB/DB.dart';
 
 class mainFuncs {
   final _kShouldTestAsyncErrorOnInit = false;
@@ -23,7 +22,6 @@ class mainFuncs {
       await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(!kDebugMode);
     }
 
-
     Function originalOnError = FlutterError.onError as Function;
     FlutterError.onError = (FlutterErrorDetails errorDetails) async {
       await FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
@@ -32,7 +30,7 @@ class mainFuncs {
     if (_kShouldTestAsyncErrorOnInit) {
       await _testAsyncErrorOnInit();
     }
-      App.getCurrentUser();
+    App.getCurrentUser();
     print('ccccccccccccccccccccccccccccccccccccccccccccccccccccccccc');
     return true;
   }

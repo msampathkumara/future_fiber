@@ -89,24 +89,27 @@ class _PDFViewWidget extends State<PDFViewWidget> {
           );
         });
   }
+
   static final int _initialPage = 2;
   int _actualPageNumber = _initialPage, _allPagesCount = 0;
   bool isSampleDoc = true;
   late PdfController _pdfController;
+
   @override
   Widget build(BuildContext context) => PdfView(
-    documentLoader: Center(child: CircularProgressIndicator()),
-    pageLoader: Center(child: CircularProgressIndicator()),
-    controller: _pdfController,
-    onDocumentLoaded: (document) {
-      setState(() {
-        _allPagesCount = document.pagesCount;
-      });
-    },
-    onPageChanged: (page) {
-      setState(() {
-        _actualPageNumber = page;
-      });
-    },scrollDirection: Axis.vertical,
-  );
+        documentLoader: Center(child: CircularProgressIndicator()),
+        pageLoader: Center(child: CircularProgressIndicator()),
+        controller: _pdfController,
+        onDocumentLoaded: (document) {
+          setState(() {
+            _allPagesCount = document.pagesCount;
+          });
+        },
+        onPageChanged: (page) {
+          setState(() {
+            _actualPageNumber = page;
+          });
+        },
+        scrollDirection: Axis.vertical,
+      );
 }

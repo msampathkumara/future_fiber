@@ -85,6 +85,7 @@ class MainActivity : FlutterActivity() {
                     editPdfResult = result
                     val ticket = call.argument<String>("ticket")
                     val qc = call.argument<Boolean>("qc")
+                    val serverUrl = call.argument<String>("serverUrl")
 
                     println(" $qc---------------------------------- _$ticket")
 
@@ -93,6 +94,7 @@ class MainActivity : FlutterActivity() {
 //                    i.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                     i.putExtra("ticket", ticket)
                     i.putExtra("qc", qc)
+                    i.putExtra("serverUrl", serverUrl)
                     startActivityForResult(i, qaEdit)
 
 

@@ -14,7 +14,8 @@ class UserImage extends StatefulWidget {
 
   bool disable;
 
-  UserImage({this.nsUser, this.nsUserId, this.backgroundColor, required this.radius, this.disable = false});
+  UserImage({this.nsUser, this.nsUserId, this.backgroundColor, required this.radius, this.disable = false, key})
+      : super(key: key ?? Key('${nsUser?.id}${nsUserId}${nsUser?.uptime}'));
 
   @override
   _UserImageState createState() => _UserImageState();
@@ -37,19 +38,27 @@ class _UserImageState extends State<UserImage> {
       // loadImage();
 
     }
+    print("${nsUser?.name}   ${nsUser?.isDisabled}");
+
   }
 
   @override
   Widget build(BuildContext context) {
     if (widget.disable || nsUser!.isDisabled) {
       return ColorFiltered(
+          key: Key("${nsUser?.uptime}"),
           colorFilter: ColorFilter.mode(
             Colors.white,
             BlendMode.saturation,
           ),
-          child: CircleAvatar(radius: widget.radius, backgroundImage: _loaded ? img : placeholder, backgroundColor: widget.backgroundColor ?? Colors.transparent));
+          child: getImage());
+      // child: CircleAvatar(radius: widget.radius, backgroundImage: _loaded ? img : placeholder, backgroundColor: widget.backgroundColor ?? Colors.transparent));
     }
 
+    return getImage();
+  }
+
+  Widget getImage() {
     return CircleAvatar(
         backgroundColor: Colors.white,
         radius: widget.radius,

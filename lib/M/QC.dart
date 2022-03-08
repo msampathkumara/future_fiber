@@ -1,6 +1,7 @@
+import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:smartwind/M/NsUser.dart';
-import 'package:intl/intl.dart';
+
 import 'Ticket.dart';
 
 part 'QC.g.dart';

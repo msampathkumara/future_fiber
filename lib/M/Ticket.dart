@@ -12,7 +12,6 @@ import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/TicketFlag.dart';
@@ -24,6 +23,8 @@ import 'package:smartwind/V/Widgets/Loading.dart';
 import 'package:smartwind/V/Widgets/TicketPdfViwer.dart';
 
 import 'DataObject.dart';
+import 'LocalFileVersion.dart';
+import 'hive.dart';
 
 part 'Ticket.g.dart';
 
@@ -136,6 +137,8 @@ class Ticket extends DataObject {
 
   String _shipDate = "";
 
+  @HiveField(26, defaultValue: null)
+  @JsonKey(defaultValue: null, includeIfNull: true)
   String? production;
 
   @JsonKey(ignore: true)
@@ -159,21 +162,28 @@ class Ticket extends DataObject {
     return formattedDate;
   }
 
-  Future<int> getLocalFileVersion() {
-    return DB.getDB().then((db) {
-      return db!.rawQuery("select  ver  from files where ticket=$id ").then((value) {
-        if (value.length > 0) {
-          String uptime = value[0]["ver"].toString();
-          print("getLocalFileVersion == $uptime");
-          return int.parse(uptime);
-        } else {
-          return 0;
-        }
-      });
-    });
+  int getLocalFileVersion() {
+    try {
+      var f = HiveBox.localFileVersionsBox.values.where((element) => element.type == TicketTypes.Ticket.getValue() && element.ticketId == id).first;
+      return f.version;
+    } catch (e) {
+      return 0;
+    }
+
+    // return DB.getDB().then((db) {
+    //   return db!.rawQuery("select  ver  from files where ticket=$id ").then((value) {
+    //     if (value.length > 0) {
+    //       String uptime = value[0]["ver"].toString();
+    //       print("getLocalFileVersion == $uptime");
+    //       return int.parse(uptime);
+    //     } else {
+    //       return 0;
+    //     }
+    //   });
+    // });
   }
 
-  Future<File> _getFile(context, {onReceiveProgress}) async {
+  Future<File?> _getFile(context, {onReceiveProgress}) async {
     var loadingWidget = Loading(
       loadingText: "Downloading Ticket",
     );
@@ -190,7 +200,8 @@ class Ticket extends DataObject {
 
     var response;
     try {
-      await dio.download(Server.getServerApiPath('tickets/getTicketFile?' + queryString), filePath, onReceiveProgress: (received, total) {
+      await dio.download(Server.getServerApiPath('tickets/getTicketFile?' + queryString), filePath, deleteOnError: true, onReceiveProgress: (received, total) {
+        // print("${received}/${total}");
         int percentage = ((received / total) * 100).floor();
         loadingWidget.setProgress(percentage);
         if (onReceiveProgress != null) {
@@ -257,10 +268,12 @@ class Ticket extends DataObject {
     } else {
       print("File not exists or old ");
       _getFile(context).then((file) async {
-        var data = await Navigator.push(context, MaterialPageRoute(builder: (context) => TicketPdfViwer(this)));
-        // var data = await Navigator.push(context, MaterialPageRoute(builder: (context) => PdfEditor(this)));
-        if (data != null && data) {
-          open(context);
+        if (file != null) {
+          var data = await Navigator.push(context, MaterialPageRoute(builder: (context) => TicketPdfViwer(this)));
+          // var data = await Navigator.push(context, MaterialPageRoute(builder: (context) => PdfEditor(this)));
+          if (data != null && data) {
+            open(context);
+          }
         }
       });
     }
@@ -291,22 +304,53 @@ class Ticket extends DataObject {
   static const platform = const MethodChannel('editPdf');
 
   isFileNew() async {
-    return DB.getDB().then((db) {
-      return db!.rawQuery("SELECT * FROM tickets t left join  files f on f.ticket=t.id    where t.id=$id and type='ticket' and  fileVersion > ver ").then((value) {
-        print(value);
-        if (value.length > 0) {
-          return false;
-        } else {
+    var standardTicket = HiveBox.ticketBox.get(id);
+    var f = HiveBox.localFileVersionsBox.values.where((element) => element.type == TicketTypes.Ticket.getValue() && element.ticketId == id);
+    if (f.isNotEmpty) {
+      LocalFileVersion fileVersion = f.first;
+
+      if (standardTicket != null && f.isNotEmpty) {
+        if (standardTicket.fileVersion > fileVersion.version) {
           return true;
         }
-      });
-    });
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return true;
+    }
+
+    // return DB.getDB().then((db) {
+    //   return db!.rawQuery("SELECT * FROM tickets t left join  files f on f.ticket=t.id    where t.id=$id and type='ticket' and  fileVersion > ver ").then((value) {
+    //     print(value);
+    //     if (value.length > 0) {
+    //       return false;
+    //     } else {
+    //       return true;
+    //     }
+    //   });
+    // });
   }
 
   setLocalFileVersion(newFileVersion) {
-    return DB.getDB().then((db) => db!.rawQuery("replace into files (ticket,ver,type)values(?,?,?) ", [id, newFileVersion, 'ticket']).then((data) {
-          print(data);
-        }));
+    // LocalFileVersion f = HiveBox.fileVersionsBox.values.where((element) => element.type == TicketTypes.Ticket && element.ticketId == id).first;
+    // f.version = newFileVersion;
+
+    HiveBox.localFileVersionsBox.toMap().forEach((key, value) {
+      if (value.type == TicketTypes.Ticket.getValue() && value.ticketId == id) {
+        value.version = newFileVersion;
+        HiveBox.localFileVersionsBox.put(key, value);
+      }
+    });
+
+    HiveBox.localFileVersionsBox.toMap().forEach((key, value) {
+      print(key + " ${value.toJson()}");
+    });
+
+    // return DB.getDB().then((db) => db!.rawQuery("replace into files (ticket,ver,type)values(?,?,?) ", [id, newFileVersion, 'ticket']).then((data) {
+    //       print(data);
+    //     }));
   }
 
   Future<List> getFlagList(String flagType) async {

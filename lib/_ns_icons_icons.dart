@@ -11,14 +11,12 @@
 ///      fonts:
 ///       - asset: fonts/NsIcons.ttf
 ///
-/// 
+///
 ///
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class NsIconsSuper {
-
-
   static const IconData rush = Icons.offline_bolt_outlined;
   static const IconData print = Icons.print_outlined;
   static const IconData printDisable = Icons.print_disabled_outlined;

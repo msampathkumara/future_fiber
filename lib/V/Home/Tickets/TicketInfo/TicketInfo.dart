@@ -1,19 +1,18 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/C/ServerResponce/Progress.dart';
 import 'package:smartwind/C/ServerResponce/ServerResponceMap.dart';
-import 'package:smartwind/C/ServerResponce/TicketHistory.dart';
-import 'package:smartwind/C/ServerResponce/TicketPrint.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/TicketFlag.dart';
+import 'package:smartwind/M/TicketHistory.dart';
 import 'package:smartwind/V/Home/Tickets/TicketInfo/info_Printing.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/ns_icons_icons.dart';
 
+import '../../../../M/TicketPrint.dart';
 import 'info_Flags.dart';
 import 'info_History.dart';
 import 'info_Progress.dart';
@@ -118,7 +117,6 @@ class _TicketInfoState extends State<TicketInfo> {
     var ts = TextStyle(color: Colors.white, fontSize: 24);
     var smallText = TextStyle(fontSize: 16);
 
-
     return AppBar(
       backgroundColor: Colors.orange,
       elevation: 10,
@@ -155,7 +153,8 @@ class _TicketInfoState extends State<TicketInfo> {
                       Text(
                         "Ship Date : ${_ticket.shipDate}",
                         style: ts.merge(smallText),
-                      ),Text(
+                      ),
+                      Text(
                         "Delivery Date : ${_ticket.deliveryDate}",
                         style: ts.merge(smallText),
                       ),
@@ -218,7 +217,7 @@ class _TicketInfoState extends State<TicketInfo> {
                       radius: 50.0,
                       lineWidth: 4.0,
                       percent: (_progress / 100).toDouble(),
-                      center:   Text(_ticket.progress.toString() + "%", style: ts),
+                      center: Text(_ticket.progress.toString() + "%", style: ts),
                       progressColor: Colors.blue,
                       animateFromLastPercent: true,
                       animation: true,
@@ -259,7 +258,7 @@ class _TicketInfoState extends State<TicketInfo> {
       print(' data recived---------------');
       print((value.data));
       setState(() {
-        ServerResponceMap res = ServerResponceMap.fromJson((value.data));
+        ServerResponseMap res = ServerResponseMap.fromJson((value.data));
         progressList = res.progressList;
         flags = res.flags;
         flagsHistory = res.flagsHistory;

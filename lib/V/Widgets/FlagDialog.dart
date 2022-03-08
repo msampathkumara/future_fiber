@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/Ticket.dart';
@@ -332,11 +331,13 @@ class FlagDialog {
 
     title = Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [(titleIcon), Text('$titleText')]));
 
-    var db = await DB.getDB();
-    var data = await db!.rawQuery("select * from flags where ticket='${ticket.id}' and type='${flagType.getValue()}' ");
-    print(data);
+    // var db = await DB.getDB();
+    // var data = await db!.rawQuery("select * from flags where ticket='${ticket.id}' and type='${flagType.getValue()}' ");
+    // print(data);
 
-    TicketFlag ticketFlag = TicketFlag.fromJson(data[0]);
+    // TicketFlag ticketFlag = TicketFlag.fromJson(data[0]);
+    TicketFlag ticketFlag = TicketFlag.fromJson({});
+    // TicketFlag ticketFlag = HiveBox.ticketFlagBox.values.where((element) => element.ticket == ticket.id && element.type == flagType.getValue()).first;
     double w = MediaQuery.of(context).size.width;
     showDialog(
         context: context,

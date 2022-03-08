@@ -5,7 +5,7 @@ description: NorthSails Smart Wind
 publish_to: 'none'
 
 
-version: 1.1.12+31
+version: 1.1.14+34
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -51,7 +51,6 @@ dependencies:
   device_information: ^0.0.4
   device_info: ^2.0.3
   firebase_database: ^9.0.5
-  native_pdf_view: ^6.0.0+1
   cached_network_image: ^3.2.0
   video_player: ^2.2.11
   group_list_view: ^1.1.1
@@ -68,6 +67,8 @@ dependencies:
 
   splash_screen_view: ^3.0.0
   decorated_icon: ^1.2.1
+  native_pdf_view: ^6.0.0+1
+  ota_update: ^4.0.1
 
 dev_dependencies:
   hive_generator: ^1.1.1

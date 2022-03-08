@@ -1,20 +1,21 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:smartwind/M/TicketFlag.dart';
 
-import 'ErrorResponce.dart';
+import '../../M/TicketHistory.dart';
+import '../../M/TicketPrint.dart';
+import '../../M/UserRFCredentials.dart';
 import 'OperationMinMax.dart';
 import 'Progress.dart';
-import 'TicketHistory.dart';
-import 'TicketPrint.dart';
-import 'UserRFCredentials.dart';
 
 part 'ServerResponceMap.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-class ServerResponceMap {
+class ServerResponseMap {
   UserRFCredentials? userRFCredentials;
   OperationMinMax? operationMinMax;
-  ErrorResponce? errorResponce;
+
+  // ErrorResponce? errorResponce;
+
   @JsonKey(defaultValue: null, includeIfNull: true)
   bool? done;
   @JsonKey(defaultValue: [], includeIfNull: true)
@@ -29,13 +30,9 @@ class ServerResponceMap {
   @JsonKey(defaultValue: [], includeIfNull: true)
   List<TicketHistory> ticketHistory = [];
 
-  ServerResponceMap();
+  ServerResponseMap();
 
-  factory ServerResponceMap.fromJson(Map<String, dynamic> json) => _$ServerResponceMapFromJson(json);
+  factory ServerResponseMap.fromJson(Map<String, dynamic> json) => _$ServerResponseMapFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ServerResponceMapToJson(this);
+  Map<String, dynamic> toJson() => _$ServerResponseMapToJson(this);
 }
-
-
-
-

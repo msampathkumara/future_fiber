@@ -1,9 +1,10 @@
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-@JsonSerializable(explicitToJson: true)
 part 'TicketFlag.g.dart';
 
+@HiveType(typeId: 2)
 @JsonSerializable(explicitToJson: true)
 class TicketFlag {
   @JsonKey(ignore: true)
@@ -17,22 +18,31 @@ class TicketFlag {
   @JsonKey(ignore: true)
   static String flagTypeHOLD = "hold";
 
-  @JsonKey(defaultValue: 0, includeIfNull: true)
-  int id = 0;
+  @HiveField(1, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int ticket = 0;
+
+  @HiveField(2, defaultValue: '')
   @JsonKey(defaultValue: "", includeIfNull: true)
   String type = "";
+
+  @HiveField(3, defaultValue: '')
   @JsonKey(defaultValue: "-", includeIfNull: true)
   String comment = "";
+
+  @HiveField(4, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int user = 0;
-  @JsonKey(   fromJson: _stringFromInt)
+
+  @HiveField(5, defaultValue: '')
+  @JsonKey(fromJson: _stringFromInt)
   String dnt = "";
+
+  @HiveField(6, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int flaged = 0;
 
-  static String _stringFromInt(number) => (number??"").toString();
+  static String _stringFromInt(number) => (number ?? "").toString();
 
   TicketFlag();
 

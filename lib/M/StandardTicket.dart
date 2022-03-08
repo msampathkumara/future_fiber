@@ -7,9 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/C/Server.dart';
+import 'package:smartwind/M/LocalFileVersion.dart';
 import 'package:smartwind/M/Ticket.dart';
+import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/Loading.dart';
 import 'package:smartwind/V/Widgets/PdfEditor.dart';
@@ -65,22 +66,49 @@ class StandardTicket extends Ticket {
   }
 
   setLocalFileVersion(newFileVersion) {
-    return DB.getDB().then((db) => db!.rawQuery("replace into files (ticket,ver,type)values(?,?,?) ", [id, newFileVersion, 'standardTicket']).then((data) {
-          print(data);
-        }));
+    LocalFileVersion f = HiveBox.localFileVersionsBox.values.where((element) => element.type == TicketTypes.Standard.getValue() && element.ticketId == id).first;
+    f.version = newFileVersion;
+
+    HiveBox.localFileVersionsBox.toMap().forEach((key, value) {
+      if (value.type == TicketTypes.Standard.getValue() && value.ticketId == id) {
+        value.version = newFileVersion;
+        HiveBox.localFileVersionsBox.put(key, value);
+      }
+    });
+
+    HiveBox.localFileVersionsBox.toMap().forEach((key, value) {
+      print(key + " ${value.toJson()}");
+    });
+
+    // return DB.getDB().then((db) => db!.rawQuery("replace into files (ticket,ver,type)values(?,?,?) ", [id, newFileVersion, 'standardTicket']).then((data) {
+    //       print(data);
+    //     }));
   }
 
   isFileNew() async {
-    return DB.getDB().then((db) {
-      return db!.rawQuery("SELECT * FROM standardTickets t left join  files f on f.ticket=t.id    where t.id=$id and type='standardTicket' and  fileVersion > ver ").then((value) {
-        print(value);
-        if (value.length > 0) {
-          return false;
-        } else {
-          return true;
-        }
-      });
-    });
+    var standardTicket = HiveBox.standardTicketsBox.get(id);
+    var f = HiveBox.localFileVersionsBox.values.where((element) => element.type == TicketTypes.Standard.getValue() && element.ticketId == id);
+    LocalFileVersion fileVersion = f.first;
+
+    if (standardTicket != null && f.isNotEmpty) {
+      if (standardTicket.fileVersion > fileVersion.version) {
+        return true;
+      }
+      return false;
+    } else {
+      return true;
+    }
+
+    // return DB.getDB().then((db) {
+    //   return db!.rawQuery("SELECT * FROM standardTickets t left join  files f on f.ticket=t.id    where t.id=$id and type='standardTicket' and  fileVersion > ver ").then((value) {
+    //     print(value);
+    //     if (value.length > 0) {
+    //       return false;
+    //     } else {
+    //       return true;
+    //     }
+    //   });
+    // });
   }
 
   Future<File> _getFile(context, {onReceiveProgress}) async {

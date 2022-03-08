@@ -77,8 +77,7 @@ class _changeFactoryState extends State<changeFactory> {
               ElevatedButton(
                 onPressed: () {
                   // TODO add link
-                  OnlineDB.apiPost("tickets/", {'ticketId': widget.ticket.id.toString(), "factory": selectedSection.factory})
-                      .then((response) async {
+                  OnlineDB.apiPost("tickets/", {'ticketId': widget.ticket.id.toString(), "factory": selectedSection.factory}).then((response) async {
                     print(response.data);
                     Navigator.of(context).pop();
                   });

@@ -227,8 +227,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
           backgroundColor: themeColor,
           // elevation: (!_showFilters && _showFiltersEnd) ? 4 : 0,
           elevation: 4,
-          actions: [
-          ],
+          actions: [],
           title: Wrap(
             spacing: 5,
             children: [
@@ -461,8 +460,8 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                           print('TICKET DELETED');
                           print(response.data);
                           print(response.statusCode);
-                        }).catchError((error){
-                          ErrorMessageView(  errorMessage: error.toString()).show(context);
+                        }).catchError((error) {
+                          ErrorMessageView(errorMessage: error.toString()).show(context);
                         });
                         Navigator.of(context).pop();
                       }),

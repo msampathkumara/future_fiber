@@ -35,7 +35,9 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
   void dispose() {
     super.dispose();
   }
+
   TextEditingController searchController = new TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +51,8 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
             onPressed: () => Navigator.pop(context),
           ),
           title: Text("QA & QC", textScaleFactor: 1.2),
-          bottom: SearchBar(searchController: searchController,
+          bottom: SearchBar(
+            searchController: searchController,
             delay: 300,
             onSearchTextChanged: (text) {
               searchText = text;
@@ -258,10 +261,8 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
                               // subtitle: Text(ticket.fileVersion.toString()),
                               trailing: Wrap(
                                   alignment: WrapAlignment.center,
-                                  children: [UserImage(nsUserId: _ticketQc.userId, radius: 20), Text("${_ticketQc.user!=null?_ticketQc.user!.uname:""}", textScaleFactor: 1)],
-                                  direction: Axis.vertical)
-
-                          )));
+                                  children: [UserImage(nsUserId: _ticketQc.userId, radius: 20), Text("${_ticketQc.user != null ? _ticketQc.user!.uname : ""}", textScaleFactor: 1)],
+                                  direction: Axis.vertical))));
                 },
                 separatorBuilder: (BuildContext context, int index) {
                   return Divider(
@@ -347,17 +348,19 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
         requested = false;
       });
     }).catchError((err) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(err.toString()),
-          action: SnackBarAction(
-              label: 'Retry',
-              onPressed: () {
-                loadData(page);
-              })));
-      setState(() {
-        _dataLoadingError = true;
-      });
-      throw err;
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(err.toString()),
+            action: SnackBarAction(
+                label: 'Retry',
+                onPressed: () {
+                  loadData(page);
+                })));
+        setState(() {
+          _dataLoadingError = true;
+        });
+        throw err;
+      }
     });
   }
 

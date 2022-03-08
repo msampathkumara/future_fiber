@@ -6,6 +6,7 @@ import 'package:smartwind/C/form_input_decoration.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
 
+import '../../C/OnlineDB.dart';
 import 'new_password.dart';
 
 class PasswordRecovery extends StatefulWidget {
@@ -115,7 +116,7 @@ class _PasswordRecoveryState extends State<PasswordRecovery> {
 
   void checkNic() {
     setLoading(true);
-    Server.apiGet("user/getUserByNic", {"nic": userNic}).then((value) {
+    OnlineDB.apiGet("user/getUserByNic", {"nic": userNic}).then((value) {
       nicChecked = true;
       Map map = value.data;
       print(value.data);
@@ -273,7 +274,7 @@ class _PasswordRecoveryState extends State<PasswordRecovery> {
 
     setLoading(true);
     print(_otp);
-    Server.apiPost("user/recoverPassword/validateOtp", {"userId": user?.id, "otp": _otp}).then((value) {
+    OnlineDB.apiPost("user/recoverPassword/validateOtp", {"userId": user?.id, "otp": _otp}).then((value) {
       Map data = value.data;
       if (data.containsKey("done")) {
         _enterPassword = true;
@@ -289,7 +290,7 @@ class _PasswordRecoveryState extends State<PasswordRecovery> {
 
   void requestOTP() {
     setLoading(true);
-    Server.apiGet("user/recoverPassword/sendOTPToLibrarian", {"userId": user?.id}).then((value) async {
+    OnlineDB.apiGet("user/recoverPassword/sendOTPToLibrarian", {"userId": user?.id}).then((value) async {
       // await MessageBox.show(context, "", "OTP sent to Admin. please contact Librarian.");
 
       setLoading(false);
@@ -300,7 +301,7 @@ class _PasswordRecoveryState extends State<PasswordRecovery> {
 
   void sendOtp() {
     setLoading(true);
-    Server.apiGet("user/recoverPassword/sendOTP", {"userId": user?.id}).then((value) {
+    OnlineDB.apiGet("user/recoverPassword/sendOTP", {"userId": user?.id}).then((value) {
       _enterOTP = true;
       setLoading(false);
     }).onError((error, stackTrace) {

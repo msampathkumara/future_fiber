@@ -3,6 +3,8 @@ import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/C/form_input_decoration.dart';
 import 'package:smartwind/M/NsUser.dart';
 
+import '../../C/OnlineDB.dart';
+
 class NewPassword extends StatefulWidget {
   Null Function() onEnd;
   var userId;
@@ -158,7 +160,7 @@ class _NewPasswordState extends State<NewPassword> {
     setState(() {
       saving = true;
     });
-    Server.apiPost("user/recoverPassword/savePassword", {"userId": widget.userId, 'password': _user.password}).then((value) {
+    OnlineDB.apiPost("user/recoverPassword/savePassword", {"userId": widget.userId, 'password': _user.password}).then((value) {
       Map data = value.data;
 
       if (data["error"] != null) {

@@ -40,5 +40,6 @@
 #-keep class com.sampathkumara.northsails.upwind.pdfEditor.uploadEdits.EditsList { *; }
 #-keep class com.sampathkumara.northsails.upwind.V.TicketInfo.* { *; }
 -keep class com.NsFile.** { *; }
+-keep class com.pdfEditor.** { *; }
 -keep class android.view.WindowInsetsAnimation { *; }
 #-keep class com.shockwave.**

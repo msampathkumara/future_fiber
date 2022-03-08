@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
-
 part 'BlueBookCredentials.g.dart';
+
 @JsonSerializable(explicitToJson: true)
 class BlueBookCredentials {
   String userName = "jayantha.podimanike";
@@ -9,9 +9,7 @@ class BlueBookCredentials {
 
   BlueBookCredentials();
 
+  factory BlueBookCredentials.fromJson(Map<String, dynamic> json) => _$BlueBookCredentialsFromJson(json);
 
-
-factory BlueBookCredentials.fromJson(Map<String, dynamic> json) => _$BlueBookCredentialsFromJson(json);
-
-Map<String, dynamic> toJson() => _$BlueBookCredentialsToJson(this);
+  Map<String, dynamic> toJson() => _$BlueBookCredentialsToJson(this);
 }
