@@ -8,6 +8,7 @@ import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/V/Home/BlueBook/BlueBook.dart';
 import 'package:smartwind/V/Home/Tickets/ProductionPool/Finish/FinishCheckList.dart';
+import 'package:smartwind/V/Widgets/Loading.dart';
 
 class TicketPdfViwer extends StatefulWidget {
   // String pathPDF = "";
@@ -76,9 +77,11 @@ class _TicketPdfViwerState extends State<TicketPdfViwer> {
   bool isReady = false;
   String errorMessage = '';
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(key: _scaffoldKey,
+    return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text((widget.ticket.mo ?? widget.ticket.oe ?? "") + " ${widget.ticket.mo != null ? "(${widget.ticket.oe})" : ""}  ", style: TextStyle(color: Colors.white)),
         actions: <Widget>[
@@ -143,10 +146,14 @@ class _TicketPdfViwerState extends State<TicketPdfViwer> {
           var x = await widget.ticket.openEditor();
           print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
           print(x);
+
           await HiveBox.getDataFromServer();
           // await DB.updateDatabase(context, showLoadingDialog: true);
           // Navigator.pop(context, true);
-          // Navigator.of(context).pop(true);
+          if (x == true) {
+            print('reloading');
+            Navigator.of(context).pop(true);
+          }
         },
       ),
     );

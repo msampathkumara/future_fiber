@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:smartwind/C/Validations.dart';
+import 'package:smartwind/C/form_input_decoration.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Section.dart';
 
@@ -82,15 +83,8 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                   CircleAvatar(radius: 124.0, backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"), backgroundColor: Colors.transparent),
                 Row(
                   children: [
-                    SizedBox(
-                      child: TextButton(onPressed: getImage, child: Text("Change Profile Picture")),
-                      width: 170,
-                    ),
-                    if (_image != null)
-                      SizedBox(
-                        child: VerticalDivider(color: Colors.grey, thickness: 1),
-                        height: 20,
-                      ),
+                    SizedBox(child: TextButton(onPressed: getImage, child: Text("Change Profile Picture")), width: 170),
+                    if (_image != null) SizedBox(child: VerticalDivider(color: Colors.grey, thickness: 1), height: 20),
                     if (_image != null)
                       SizedBox(
                           child: TextButton(
@@ -138,7 +132,8 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                             },
                             child: TextFormField(
                               initialValue: nsUser.name,
-                              decoration: new InputDecoration(labelText: "Full Name"),
+                              decoration: FormInputDecoration.getDeco(labelText: "Full Name"),
+                              // decoration: new InputDecoration(labelText: "Full Name"),
                               // controller: _nameFieldControll,
                               onChanged: (text) {
                                 nsUser.name = text;

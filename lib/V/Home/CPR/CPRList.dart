@@ -33,7 +33,7 @@ class _CPRListState extends State<CPRList> {
       _refreshIndicatorKey.currentState?.show();
     });
 
-    _reloadData(0);
+    // _reloadData(0);
   }
 
   @override
@@ -52,6 +52,7 @@ class _CPRListState extends State<CPRList> {
   @override
   Widget build(BuildContext context) {
     haveFilters = (_selectedStatus != "All" || _selectedShortageType != "All" || _selectedCprTypes != "All" || _supplier != "All" || _client != "All");
+    var bodyHeight = MediaQuery.of(context).size.height;
     return Scaffold(
         appBar: AppBar(
           elevation: (_showFilters || haveFilters) ? 0 : 5,
@@ -61,10 +62,7 @@ class _CPRListState extends State<CPRList> {
             icon: Icon(Icons.arrow_back),
             onPressed: () => Navigator.pop(context),
           ),
-          title: Text(
-            "CPR",
-            textScaleFactor: 1.2,
-          ),
+          title: Text("CPR", textScaleFactor: 1.2),
           bottom: SearchBar(
               delay: 500,
               searchController: searchController,
@@ -154,7 +152,10 @@ class _CPRListState extends State<CPRList> {
                     return _reloadData(0);
                   },
                   child: (_cprList.length == 0 && (!requested))
-                      ? Center(child: Text("No CPR Found", textScaleFactor: 1.5))
+                      ? Stack(children: [
+                          ListView(shrinkWrap: true, children: [Container(height: bodyHeight)]),
+                          Center(child: Text("No CPR Found", textScaleFactor: 1.5))
+                        ])
                       : ListView.separated(
                           padding: const EdgeInsets.all(4),
                           itemCount: _cprList.length < dataCount ? _cprList.length + 1 : _cprList.length,

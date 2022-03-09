@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
 class FormInputDecoration {
-  static InputDecoration getDeco({hintText, labelText, helperText, Icon? prefixIcon, Icon? icon, String? suffixText}) {
+  static InputDecoration getDeco({hintText, labelText, labelStyle, helperText, Icon? prefixIcon, Icon? icon, String? suffixText}) {
     return InputDecoration(
         suffixText: suffixText,
         icon: icon,
         prefixIcon: prefixIcon,
         helperText: helperText,
         labelText: labelText,
+        labelStyle: labelStyle,
         border: InputBorder.none,
         hintText: hintText,
         filled: true,

@@ -113,21 +113,21 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
               ),
             ],
             elevation: 0.0,
-            toolbarHeight: 82,
+            toolbarHeight: 100,
             backgroundColor: Colors.green,
             leading: IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () => Navigator.pop(context),
             ),
-            title: Column(
-              children: [
-                Text(
-                  "Production Pool",
-                  textScaleFactor: 1.2,
-                ),
-                (nsUser != null && nsUser!.section != null) ? Text("${nsUser!.section!.sectionTitle} @ ${nsUser!.section!.factory}") : Text("")
-              ],
-            ),
+            title: SizedBox(
+                height: 50,
+                child: Column(children: [
+                  Text(
+                    "Production Pool",
+                    textScaleFactor: 1.2,
+                  ),
+                  (nsUser != null && nsUser!.section != null) ? Text("${nsUser!.section!.sectionTitle} @ ${nsUser!.section!.factory}" ) : Text("")
+                ])),
             bottom: SearchBar(
                 searchController: searchController,
                 delay: 300,

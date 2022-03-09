@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:smartwind/C/DB/DB.dart';
-import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/hive.dart';
@@ -116,10 +115,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
           ),
           title: Column(
             children: [
-              Text(
-                "User Manager",
-                textScaleFactor: 1.2,
-              ),
+              Text("User Manager", textScaleFactor: 1.2),
               if (_showDeactivatedUsers)
                 Text(
                   "(Deactivated Users)",
@@ -363,21 +359,18 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
   }
 
   Future<void> filterUsers() async {
-    String q = " select * from users ";
-    if (_showDeactivatedUsers) {
-      q = " select * from users where deactivate=1";
-    }
-    // await DB.getDB().then((value) => value!.rawQuery(q).then((users) {
-    //       AllUsersList = List<NsUser>.from(users.map((model) => NsUser.fromJson(model)));
-    //     }));
+    // if (_showDeactivatedUsers) {
+    //
+    // }
 
     AllUsersList = HiveBox.usersBox.values.toList();
+    print('Searching users ${searchText} __ ${AllUsersList.length} __ ${_showDeactivatedUsers}');
 
-    if (searchText.trim().isEmpty && (!_showDeactivatedUsers)) {
-      filteredAllUsersList = AllUsersList;
+    if (searchText.trim().isEmpty) {
+      filteredAllUsersList = AllUsersList.where((element) => element.isDisabled == (_showDeactivatedUsers)).toList();
     } else {
       filteredAllUsersList = AllUsersList.where((element) {
-        return (_showDeactivatedUsers ? element.isDisabled : false) &&
+        return (_showDeactivatedUsers == element.isDisabled) &&
             (element.name.toLowerCase().contains(searchText) |
                 element.uname.toLowerCase().contains(searchText) |
                 element.emailAddress.toLowerCase().contains(searchText) |
