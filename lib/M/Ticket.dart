@@ -14,6 +14,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/C/Server.dart';
+import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/TicketFlag.dart';
 import 'package:smartwind/V/Home/CPR/AddCPR.dart';
 import 'package:smartwind/V/Home/Tickets/CS/CS.dart';
@@ -212,7 +213,7 @@ class Ticket extends DataObject {
         print('+++++++++++++++++++++++++++++++++++++++++++++');
         print(response.headers["fileVersion"]);
         String fileVersion = response.headers["fileVersion"][0];
-        await setLocalFileVersion(fileVersion);
+        await setLocalFileVersion(int.parse(fileVersion));
       });
     } on DioError catch (e) {
       if (e.response != null) {
@@ -292,13 +293,13 @@ class Ticket extends DataObject {
   }
 
   Future openEditor() async {
-    var t = Ticket.fromJson(toJson()).toJson();
+    Map t = toJson();
     t["openSections"] = "";
     t["crossProList"] = "";
     t.keys.where((k) => (t[k] ?? "").toString().isEmpty).toList().forEach(t.remove);
     print("____________________________________________________________________________________________________________________________*****");
     print(t);
-    return await platform.invokeMethod('editPdf', {'path': ticketFile!.path, 'fileID': id, 'ticket': t.toString()});
+    return await platform.invokeMethod('editPdf', {'path': ticketFile!.path, 'fileID': id, 'ticket': t.toString(), "serverUrl": Server.getServerApiPath("tickets/uploadEdits")});
   }
 
   static const platform = const MethodChannel('editPdf');
@@ -308,17 +309,19 @@ class Ticket extends DataObject {
     var f = HiveBox.localFileVersionsBox.values.where((element) => element.type == TicketTypes.Ticket.getValue() && element.ticketId == id);
     if (f.isNotEmpty) {
       LocalFileVersion fileVersion = f.first;
+      print("---------------------------fileVersion.toJson()");
+      print(fileVersion.toJson());
 
       if (standardTicket != null && f.isNotEmpty) {
         if (standardTicket.fileVersion > fileVersion.version) {
-          return true;
+          return false;
         }
-        return false;
-      } else {
         return true;
+      } else {
+        return false;
       }
     } else {
-      return true;
+      return false;
     }
 
     // return DB.getDB().then((db) {
@@ -337,20 +340,24 @@ class Ticket extends DataObject {
     // LocalFileVersion f = HiveBox.fileVersionsBox.values.where((element) => element.type == TicketTypes.Ticket && element.ticketId == id).first;
     // f.version = newFileVersion;
 
-    HiveBox.localFileVersionsBox.toMap().forEach((key, value) {
-      if (value.type == TicketTypes.Ticket.getValue() && value.ticketId == id) {
-        value.version = newFileVersion;
-        HiveBox.localFileVersionsBox.put(key, value);
-      }
-    });
+    var fv = HiveBox.localFileVersionsBox.values.singleWhere((value) => value.type == TicketTypes.Ticket.getValue() && value.ticketId == id,
+        orElse: () => LocalFileVersion(id, newFileVersion, TicketTypes.Ticket.getValue()));
 
-    HiveBox.localFileVersionsBox.toMap().forEach((key, value) {
-      print(key + " ${value.toJson()}");
-    });
+    print(fv);
 
-    // return DB.getDB().then((db) => db!.rawQuery("replace into files (ticket,ver,type)values(?,?,?) ", [id, newFileVersion, 'ticket']).then((data) {
-    //       print(data);
-    //     }));
+    fv.version = newFileVersion;
+
+    if (fv.isInBox) {
+      fv.save();
+    } else {
+      HiveBox.localFileVersionsBox.putObject(fv);
+    }
+    //
+    // print('---------------------------------------------------------------------------------xxxxxxxxxxxxxxxxxxxxxxxx');
+    // HiveBox.localFileVersionsBox.toMap().forEach((key, value) {
+    //   print(key + " ${value.toJson()}");
+    // });
+
   }
 
   Future<List> getFlagList(String flagType) async {

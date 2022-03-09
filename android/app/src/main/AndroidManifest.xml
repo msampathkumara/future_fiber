@@ -98,7 +98,7 @@
             android:grantUriPermissions="true"
             android:label="main Editor"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme1"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
             android:windowSoftInputMode="adjustPan">
 
 <!--                        <intent-filter>-->

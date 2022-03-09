@@ -13,12 +13,5 @@ public class Super {
         return gson.toJson(this);
     }
 
-    public Map toHashMap() {
-        Type type = new TypeToken<Map>() {
-        }.getType();
-        Gson gson = new Gson();
-        String jsonString = gson.toJson(this);
 
-        return gson.fromJson(jsonString, type);
-    }
 }

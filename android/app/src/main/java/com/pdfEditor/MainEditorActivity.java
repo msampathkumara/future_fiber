@@ -24,8 +24,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.BitmapCompat;
 
 import com.Dialogs.LoadingDialog;
-import com.NsFile.NsFile;
-import com.Server;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -57,15 +55,10 @@ public class MainEditorActivity extends AppCompatActivity {
     public static String FILE_NAME;
     static String FILE_PATH;
     public Editor pdfEditor;
-    //    NsFile SELECTED_FILE;
-    public static   Ticket SELECTED_FILE;
-    //    FloatingActionButton fab;
+    public static Ticket SELECTED_FILE;
     int RequestedOrientation;
-    private NsFile CURRENT_FOLDER;
-    private boolean QA;
-    private boolean FIELD_FORMS;
-    public static  Ticket ticket;
-
+    public static Ticket ticket;
+    private String serverUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,22 +69,42 @@ public class MainEditorActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
         setContentView(R.layout.activity_main_editor);
 
+        findViewById(R.id.doneButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+        findViewById(R.id.closeButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
         if (getIntent().getExtras() != null) {
             SELECTED_FILE = Ticket.formJsonString(getIntent().getExtras().getString("ticket"));
             FILE_PATH = getIntent().getExtras().getString("path");
-            System.out.println("--------------------------------------------------------------------------------------------------------");
-            System.out.println(getIntent().getExtras().getString("ticket"));
             SELECTED_FILE.id = getIntent().getExtras().getInt("ticketId");
             ticket = Ticket.formJsonString(getIntent().getExtras().getString("ticket"));
+            serverUrl = (getIntent().getExtras().getString("serverUrl"));
+
+            System.out.println("--------------------------------------------------------------------------------------------------------");
+            System.out.println(getIntent().getExtras().getString("ticket"));
+            System.out.println((getIntent().getExtras().getString("path")));
+            System.out.println(getIntent().getExtras().getInt("ticketId"));
+            System.out.println(getIntent().getExtras().getString("serverUrl"));
+
         } else {
-            SELECTED_FILE = Ticket.formJsonString("{mo: MO-00317003, oe: OIT104823-002Fs, finished: 0, uptime: 1634860233960, file: 1, sheet: 1, dir: 20219, id: 38715, isRed: 0, isRush: 0, isSk: 1, inPrint: 0, isGr: 0, isError: 0, canOpen: 1, isSort: 1, isHold: 0, fileVersion: 1634205686450, progress: 0, completed: 0, nowAt: 3, crossPro: 1, shipDate: 1609698600000, production: OD}");
-            FILE_PATH = "/storage/emulated/0/Android/data/com.sampathkumara.northsails.smartwind/files/38715.pdf";
-            SELECTED_FILE.id = 38715;
-            ticket = Ticket.formJsonString("{mo: MO-00317003, oe: OIT104823-002Fs, finished: 0, uptime: 1634860233960, file: 1, sheet: 1, dir: 20219, id: 38715, isRed: 0, isRush: 0, isSk: 1, inPrint: 0, isGr: 0, isError: 0, canOpen: 1, isSort: 1, isHold: 0, fileVersion: 1634205686450, progress: 0, completed: 0, nowAt: 3, crossPro: 1, shipDate: 1609698600000, production: OD}");
+
+            String t = "{mo: MO-00332444, oe: OAU112630-001Fs, finished: 0, uptime: 1646755954799, file: 1, sheet: 1, dir: 202110, id: 39923, isRed: 0, isRush: 1, isSk: 0, inPrint: 0, isGr: 1, isError: 0, canOpen: 0, isSort: 0, isHold: 0, fileVersion: 1646755954551, progress: 0, completed: 0, nowAt: 17, crossPro: 1, deliveryDate: 2021-02-17, production: OD}";
+            SELECTED_FILE = Ticket.formJsonString(t);
+            FILE_PATH = "/storage/emulated/0/Android/data/com.sampathkumara.northsails.smartwind/files/39923.pdf";
+            SELECTED_FILE.id = 39923;
+            ticket = Ticket.formJsonString(t);
+            serverUrl = "https://smartwind.nsslsupportservices.com/api/tickets/uploadEdits";
         }
         SELECTED_FILE.ticketFile = new File(FILE_PATH);
-
-
 
 
         loadEditor();
@@ -129,6 +142,7 @@ public class MainEditorActivity extends AppCompatActivity {
         savedInstanceState.putString("xx", "Welcome back to Android");
 
     }
+
     @Override
     public void onConfigurationChanged(@NotNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -137,11 +151,10 @@ public class MainEditorActivity extends AppCompatActivity {
         // Checks the orientation of the screen
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
         }
-//        loadEditor();
-//        loadFile(SELECTED_FILE.ticketFile);
+
 
     }
 
@@ -208,12 +221,7 @@ public class MainEditorActivity extends AppCompatActivity {
 
     }
 
-    public void savePDF(String Folder, String filename, Boolean temp, RunAfterUpload runAfterUpload) {
 
-        System.out.println("FOLDER ===================== " + Folder);
-
-        new x(Folder, filename, runAfterUpload).execute(temp);
-    }
 
     private void showDialog() {
         System.out.println("show Dialog");
@@ -298,10 +306,11 @@ public class MainEditorActivity extends AppCompatActivity {
 
                 System.out.println("____________SVG SIZE_________________" + (sizeInBytes / 1024));
                 HashMap<String, ArrayList<File>> images = pdfEditor.getImages();
-//                if (true) {
-//                    return;
-//                }
-                String requestURL = Server.getServerApiPath("tickets/uploadEdits");
+//                String requestURL = Server.getServerApiPath("tickets/uploadEdits");
+                String requestURL = serverUrl;
+                System.out.println("********************************************serverUrl");
+                System.out.println(serverUrl);
+
                 uploadMultyParts(context, requestURL, images, vals, new RunAfterMultipartUpload() {
                     @Override
                     public void run() {
@@ -348,19 +357,6 @@ public class MainEditorActivity extends AppCompatActivity {
         });
     }
 
-    private File getSVGFile(String data) {
-        File dir = new File(getExternalFilesDir(null) + "/" + SELECTED_FILE.id);
-        dir.mkdirs();
-        File file = new File(dir, "svg.svgdata");
-        try {
-            try (FileOutputStream stream = new FileOutputStream(file)) {
-                stream.write(data.getBytes());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return file;
-    }
 
     public static void uploadMultyParts(Context context, String requestURL, final HashMap<String, ArrayList<File>> sourceFiles, final HashMap<String, String> keyvalues, RunAfterMultipartUpload runAfterUpload) {
 

@@ -42,6 +42,7 @@ class MainActivity : FlutterActivity() {
                     val fileID = call.argument<Int>("fileID")
                     val path = call.argument<String>("path")
                     val ticket = call.argument<String>("ticket")
+                    val serverUrl = call.argument<String>("serverUrl")
 
                     println("$fileID _$path _$ticket")
 
@@ -51,6 +52,7 @@ class MainActivity : FlutterActivity() {
                     i.putExtra("ticketId", fileID)
                     i.putExtra("path", path)
                     i.putExtra("ticket", ticket)
+                    i.putExtra("serverUrl", serverUrl)
                     startActivityForResult(i, editPdf)
 
                 }
@@ -62,7 +64,7 @@ class MainActivity : FlutterActivity() {
 
 
                     val splitter = Splitter()
-                    val out: File;
+                    val out: File
                     try {
                         val document: PDDocument = PDDocument.load(File(filePath))
                         val pages: List<PDDocument> = splitter.split(document)

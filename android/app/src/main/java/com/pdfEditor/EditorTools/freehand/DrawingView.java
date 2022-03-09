@@ -241,7 +241,8 @@ public class DrawingView extends FrameLayout {
             p.setXfermode(null);
 
 
-        float translateX = Math.abs(pdfView.getCurrentXOffset() / zoom);
+//        float translateX = Math.abs(pdfView.getCurrentXOffset() / zoom);
+        float translateX =  (pdfView.getCurrentXOffset() / zoom)*-1;
         float translateY = Math.abs((pdfView.getCurrentYOffset() / zoom)) - (Yposition);
         for (int i = 0; i < points.size(); i++) {
             editPoint editPoint = points.get(i);
@@ -279,6 +280,10 @@ public class DrawingView extends FrameLayout {
 
         points = new ArrayList<>();
 
+        System.out.println("page.getMatrix().getTranslateX()");
+        System.out.println(pdfView.getCurrentXOffset());
+        System.out.println(translateX);
+
     }
 
     static int nthOdd(int n) {
@@ -315,6 +320,8 @@ public class DrawingView extends FrameLayout {
         mBitmap = page.getBitmap();
         mCanvas = new Canvas(mBitmap);
         pageNo = page.id;
+
+
 
 
     }

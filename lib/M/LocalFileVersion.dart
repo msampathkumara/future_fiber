@@ -1,13 +1,12 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:smartwind/M/HiveClass.dart';
 
 part 'LocalFileVersion.g.dart';
 
 @JsonSerializable()
 @HiveType(typeId: 8)
-class LocalFileVersion {
-  LocalFileVersion();
-
+class LocalFileVersion extends HiveClass {
   @HiveField(0, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int ticketId = 0;
@@ -23,6 +22,8 @@ class LocalFileVersion {
   factory LocalFileVersion.fromJson(Map<String, dynamic> json) => _$LocalFileVersionFromJson(json);
 
   Map<String, dynamic> toJson() => _$LocalFileVersionToJson(this);
+
+  LocalFileVersion(  this.ticketId, this.version, this.type) ;
 }
 
 enum TicketTypes { Standard, Completed, Ticket }

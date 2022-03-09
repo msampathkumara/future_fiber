@@ -75,10 +75,10 @@ class _TicketPdfViwerState extends State<TicketPdfViwer> {
   int currentPage = 0;
   bool isReady = false;
   String errorMessage = '';
-
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(key: _scaffoldKey,
       appBar: AppBar(
         title: Text((widget.ticket.mo ?? widget.ticket.oe ?? "") + " ${widget.ticket.mo != null ? "(${widget.ticket.oe})" : ""}  ", style: TextStyle(color: Colors.white)),
         actions: <Widget>[
@@ -140,10 +140,13 @@ class _TicketPdfViwerState extends State<TicketPdfViwer> {
         onPressed: () async {
           print('EDIT CLICK');
 
-          await widget.ticket.openEditor();
+          var x = await widget.ticket.openEditor();
+          print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+          print(x);
           await HiveBox.getDataFromServer();
           // await DB.updateDatabase(context, showLoadingDialog: true);
-          Navigator.pop(context, true);
+          // Navigator.pop(context, true);
+          // Navigator.of(context).pop(true);
         },
       ),
     );

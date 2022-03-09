@@ -348,6 +348,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         pv.onDraw(this);
         pv.pageFitPolicy(FitPolicy.BOTH);
 
+
         pv.pageSnap(true);
         pv.pageFling(true);
 

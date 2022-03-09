@@ -7,7 +7,7 @@ part 'HiveClass.g.dart';
 @JsonSerializable(explicitToJson: true)
 class HiveClass extends HiveObject {
   @HiveField(100, defaultValue: -1)
-  int id = -1;
+  var id = -1;
 
   @JsonKey(defaultValue: 0, includeIfNull: true)
   @HiveField(101, defaultValue: 0)

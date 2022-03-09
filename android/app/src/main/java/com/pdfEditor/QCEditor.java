@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
@@ -48,8 +49,12 @@ public class QCEditor extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+        StrictMode.ThreadPolicy policy = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD) {
+            policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
+
         setContentView(R.layout.activity_main_editor);
 
         FILE_PATH = createNewPDFFile();
@@ -82,7 +87,9 @@ public class QCEditor extends AppCompatActivity {
         try {
             contentStream = new PDPageContentStream(doc, page);
             contentStream.close();
-            path = this.getExternalFilesDir("Files").getPath() + "/QAtemplate.pdf";
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+                path = this.getExternalFilesDir("Files").getPath() + "/QAtemplate.pdf";
+            }
             doc.save(path);
         } catch (IOException e) {
             e.printStackTrace();
