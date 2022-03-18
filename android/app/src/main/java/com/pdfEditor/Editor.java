@@ -133,7 +133,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     public static List<PAGE> pages;
     private p_image_view imageView;
     private String imageFilePath;
-//    private final boolean button_arrow_clicked = false;
+    //    private final boolean button_arrow_clicked = false;
     private File file;
     @Nullable
     private p_drawing_view drawingView;
@@ -1050,13 +1050,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         mListener = null;
     }
 
-    public void showExtraTools() {
-        extraTools.setVisibility(View.VISIBLE);
-    }
 
-    public void hideExtraTools() {
-        extraTools.setVisibility(View.INVISIBLE);
-    }
 
     public HashMap<Long, File> getImagesList() {
         if (images == null) {
@@ -1214,24 +1208,9 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
     }
 
-    private void checkToolButton(View view) {
-        if (view instanceof ImageButton) {
-            ImageButton v1 = (ImageButton) view;
-//            v1.setColorFilter(Color.WHITE);
-        }
-    }
 
 
-    public void setRunAfterLoad(runAfterLoad runAfterLoad) {
-        this.runAfterLoad = runAfterLoad;
-        if (FragmentLoaded) {
-            runAfterLoad.run(Editor.this);
-        }
-    }
 
-    static int nthOdd(int n) {
-        return (2 * n - 1);
-    }
 
     private void DrawBitmap(Canvas canvas) {
 
@@ -1291,9 +1270,9 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     }
 
 
-
     public void uploadEdits(RunAfterSave afterSaveToServer) {
         runAfterSave = afterSaveToServer;
+        System.out.println(getPdfEditsList().getList());
         webView.evaluateJavascript("getSvgList(" + getPdfEditsList().getList() + " );", null);
 //        System.out.println("__3 __"+new Date());
 

@@ -1,5 +1,9 @@
 package com.pdfEditor.EditorTools.textEditor;
 
+import static android.graphics.Typeface.BOLD;
+import static android.graphics.Typeface.ITALIC;
+import static android.graphics.Typeface.NORMAL;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -23,10 +27,6 @@ import com.pdfEditor.uploadEdits.editsPaint;
 import com.pdfEditor.xEdits;
 import com.pdfviewer.PDFView;
 import com.sampathkumara.northsails.smartwind.R;
-
-import static android.graphics.Typeface.BOLD;
-import static android.graphics.Typeface.ITALIC;
-import static android.graphics.Typeface.NORMAL;
 
 public class TextEditor extends RelativeLayout {
 
@@ -148,8 +148,11 @@ public class TextEditor extends RelativeLayout {
         paint.setTextSize(textFld.getTextSize() / zoom);
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, getTypeFace()));
 
-        float translateX = Math.abs(pdfView.getCurrentXOffset() / zoom);
-        float translateY = Math.abs((pdfView.getCurrentYOffset() / zoom)) - (Yposition);
+//        float translateX = Math.abs(pdfView.getCurrentXOffset() / zoom);
+//        float translateY = Math.abs((pdfView.getCurrentYOffset() / zoom)) - (Yposition);
+
+        float translateX = (pdfView.getCurrentXOffset() / zoom) * -1;
+        float translateY = ((pdfView.getCurrentYOffset() / zoom) * -1) - (Yposition);
 
         float dheight = (getHeight() - pdfView.pdfFile.getMaxPageHeight()) / 2;
         xText xText = new xText(textFld.getText().toString(), paint, translateX, translateY - dheight, (TEXT_X) / zoom, (TEXT_Y) / zoom, pageNo, pdfView.pdfFile.getMaxPageWidth(), pdfView.pdfFile.getMaxPageHeight(), zoom);
@@ -168,9 +171,9 @@ public class TextEditor extends RelativeLayout {
 
         pdfEdit.setText(text);
         pdfEdit.setEditsPaint(editsPaint);
-        float sp = ((((pdfView.pdfFile.getPageSpacing(pdfView.getCurrentPage(), zoom) / 2)/zoom) * (2*(pdfView.getCurrentPage()+1)-1 ))  );
+        float sp = ((((pdfView.pdfFile.getPageSpacing(pdfView.getCurrentPage(), zoom) / 2) / zoom) * (2 * (pdfView.getCurrentPage() + 1) - 1)));
         pdfEdit.setPositionX((translateX + ((TEXT_X) / zoom)) / (pdfView.pdfFile.getMaxPageWidth()));
-        pdfEdit.setPositionY((translateY + ((TEXT_Y) / zoom)-sp) / (pdfView.pdfFile.getMaxPageHeight()));
+        pdfEdit.setPositionY((translateY + ((TEXT_Y) / zoom) - sp) / (pdfView.pdfFile.getMaxPageHeight()));
         pdfEdit.setTextBold(bold);
         pdfEdit.setTextItelic(italic);
         pdfEdit.setTextSize(size);
@@ -211,23 +214,34 @@ public class TextEditor extends RelativeLayout {
         mCanvas.save();
 
         Paint p = new Paint(kk.getPaint());
-//        p.setTextSize(p.getTextSize() * pdfView.getZoom());
-        p.setTextSize(p.getTextSize() );
+        p.setTextSize(p.getTextSize());
 
         float xp = (kk.translateX() / kk.getPageWidth()) * pdfView.pdfFile.getMaxPageWidth();
         float yp = (kk.translateY() / kk.getPageHeight()) * pdfView.pdfFile.getMaxPageHeight();
 
 
-        mCanvas.translate(xp, yp-Yposition+(page.dy*pdfView.getCurrentPage()) );
+        mCanvas.translate(xp, yp - Yposition + (page.dy * pdfView.getCurrentPage()));
 
-//        mCanvas.drawText(kk.getText(), kk.getCanvasX() * pdfView.getZoom() * x1, kk.getCanvasY() * pdfView.getZoom() * y1, p);
-        mCanvas.drawText(kk.getText(), kk.getCanvasX()  , kk.getCanvasY()  , p);
+        String[] lines = kk.getText().split("\n");
+
+        if (lines.length > 1) {
+            for (int i = 0; i < lines.length; i++) {
+                mCanvas.drawText(lines[i], kk.getCanvasX(), kk.getCanvasY() + (p.getTextSize() * (i)) - p.getTextSize(), p);
+            }
+        } else {
+            mCanvas.drawText(kk.getText(), kk.getCanvasX(), kk.getCanvasY(), p);
+        }
+
+
+//
 
         mCanvas.restore();
         invalidate();
 
     }
-PAGE page;
+
+    PAGE page;
+
     public void setPage(PAGE page) {
 
         System.out.println(page.id + "____" + page.position);
@@ -235,7 +249,7 @@ PAGE page;
         Bitmap mBitmap = page.getBitmap();
         mCanvas = new Canvas(mBitmap);
         pageNo = page.id;
-       this. page=page;
+        this.page = page;
     }
 
     @Override

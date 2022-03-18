@@ -1,5 +1,4 @@
 import 'package:animations/animations.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:smartwind/C/DB/DB.dart';
@@ -17,6 +16,8 @@ import 'AddUser.dart';
 import 'UpdateUserDetails.dart';
 import 'UserDetails.dart';
 import 'UserPermissions.dart';
+
+part 'user_manager_user_list_options.dart';
 
 class UserManagerUserList extends StatefulWidget {
   var idToken;
@@ -107,7 +108,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                     ])
           ],
           elevation: 0.0,
-          toolbarHeight: 80,
+          toolbarHeight: 100,
           backgroundColor: _themeColor,
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
@@ -118,7 +119,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
               Text("User Manager", textScaleFactor: 1.2),
               if (_showDeactivatedUsers)
                 Text(
-                  "(Deactivated Users)",
+                  "(Deactivated Users)",textScaleFactor: 0.7,
                 ),
             ],
           ),
@@ -188,7 +189,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
   TabController? _tabBarController;
 
   getBody() {
-    return _tabBarController == null ? Container() : Scaffold(backgroundColor: Colors.white, body: getTicketListByCategory(filteredAllUsersList));
+    return _tabBarController == null ? Container() : Scaffold(backgroundColor: Colors.white, body: getTicketListByCategory(filteredAllUsersList, context));
   }
 
   final int CAT_ALL = 0;
@@ -199,7 +200,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
 
   // var indicator = new GlobalKey<RefreshIndicatorState>();
 
-  getTicketListByCategory(List<NsUser> filesList) {
+  getTicketListByCategory(List<NsUser> filesList, _context) {
     return Column(
       children: [
         Expanded(
@@ -218,7 +219,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                   // print("nsUser.hasNfc ${nsUser.hasNfc}");
                   return ListTile(
                     onLongPress: () async {
-                      await showUserOptions(nsUser, context);
+                      await showUserOptions(nsUser, context, _context, nfcIsAvailable);
                       setState(() {});
                     },
                     onTap: () {
@@ -238,7 +239,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                             tooltip: ' ',
                             onPressed: () {
                               setState(() {
-                                showAddNfcDialog(nsUser);
+                                showAddNfcDialog(nsUser, _context);
                               });
                             })
                     ]),
@@ -257,106 +258,12 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
 
   List<NsUser> AllUsersList = [];
 
-  Future<void> showUserOptions(NsUser nsUser, BuildContext context1) async {
-    await showModalBottomSheet<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
-          height: 500,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                ListTile(
-                  leading: UserImage(nsUser: nsUser, radius: 24),
-                  title: Text(nsUser.name),
-                  subtitle: Text("#" + nsUser.uname),
-                ),
-                Divider(),
-                if (nfcIsAvailable)
-                  ListTile(
-                    title: Text(nsUser.userHasNfc() ? "Remove ID Card" : "Add ID Card"),
-                    leading: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Icon(Icons.nfc_outlined),
-                    ),
-                    onTap: () async {
-                      Navigator.of(context).pop();
-                      if (nsUser.userHasNfc()) {
-                      } else {
-                        showAddNfcDialog(nsUser);
-                      }
-                    },
-                  ),
-                if (AppUser.havePermissionFor(Permissions.UPDATE_USER))
-                  ListTile(
-                    title: Text("Edit"),
-                    subtitle: Text("Update user details"),
-                    leading: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Icon(Icons.edit),
-                    ),
-                    onTap: () async {
-                      UpdateUserDetails.show(context, nsUser);
-                    },
-                  ),
-                if (AppUser.havePermissionFor(Permissions.SET_USER_PERMISSIONS))
-                  ListTile(
-                    title: Text("Permissions"),
-                    subtitle: Text("Update,Add or Remove Permissions"),
-                    leading: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Icon(Icons.gpp_good_outlined),
-                    ),
-                    onTap: () async {
-                      UserPermissions.show(context, nsUser);
-                    },
-                  ),
-                if (AppUser.havePermissionFor(Permissions.DEACTIVATE_USERS))
-                  ListTile(
-                    title: Text(nsUser.isDisabled ? "Activate User" : "Deactivate User"),
-                    subtitle: Text(nsUser.isDisabled ? "Activate all activities on system for this user" : "Deactivate all activities on system for this user"),
-                    leading: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Icon(Icons.person_off_rounded),
-                    ),
-                    onTap: () async {
-                      Navigator.of(context).pop();
-                      Loading loading = Loading();
-                      loading.show(context1);
-
-                      OnlineDB.apiPost('users/deactivate', {"userId": nsUser.id, "deactivate": (!nsUser.isDisabled)}).then((value) {
-                        print('cccccccccccccccccccccccccc');
-                        HiveBox.getDataFromServer();
-                        loading.close(context1);
-                      });
-                    },
-                  ),
-                Spacer(),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   // Future<void> reloadData() {
   //   filterUsers();
   //   return DB.updateDatabase(context).then((value) {
   //     return filterUsers();
   //   });
   // }
-
-  void showAddNfcDialog(nsUser) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AddNfcCard(nsUser);
-        });
-  }
 
   Future<void> filterUsers() async {
     // if (_showDeactivatedUsers) {

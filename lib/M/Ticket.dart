@@ -15,6 +15,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/Enums.dart';
+import 'package:smartwind/M/StandardTicket.dart';
 import 'package:smartwind/M/TicketFlag.dart';
 import 'package:smartwind/V/Home/CPR/AddCPR.dart';
 import 'package:smartwind/V/Home/Tickets/CS/CS.dart';
@@ -170,18 +171,6 @@ class Ticket extends DataObject {
     } catch (e) {
       return 0;
     }
-
-    // return DB.getDB().then((db) {
-    //   return db!.rawQuery("select  ver  from files where ticket=$id ").then((value) {
-    //     if (value.length > 0) {
-    //       String uptime = value[0]["ver"].toString();
-    //       print("getLocalFileVersion == $uptime");
-    //       return int.parse(uptime);
-    //     } else {
-    //       return 0;
-    //     }
-    //   });
-    // });
   }
 
   Future<File?> _getFile(context, {onReceiveProgress}) async {
@@ -213,7 +202,7 @@ class Ticket extends DataObject {
         print('+++++++++++++++++++++++++++++++++++++++++++++');
         print(response.headers["fileVersion"]);
         String fileVersion = response.headers["fileVersion"][0];
-        await setLocalFileVersion(int.parse(fileVersion));
+        await setLocalFileVersion(int.parse(fileVersion), TicketTypes.Ticket);
       });
     } on DioError catch (e) {
       if (e.response != null) {
@@ -258,11 +247,11 @@ class Ticket extends DataObject {
   Future<void> open(context, {onReceiveProgress}) async {
     File file = await getLocalFile();
     var isNew = await isFileNew();
-    print(isNew);
-    // isNew = false;
+
     if (isNew && file.existsSync()) {
       print("File exists ");
       var data = await Navigator.push(context, MaterialPageRoute(builder: (context) => TicketPdfViwer(this)));
+
       if (data != null && data) {
         open(context);
       }
@@ -299,7 +288,8 @@ class Ticket extends DataObject {
     t.keys.where((k) => (t[k] ?? "").toString().isEmpty).toList().forEach(t.remove);
     print("____________________________________________________________________________________________________________________________*****");
     print(t);
-    return await platform.invokeMethod('editPdf', {'path': ticketFile!.path, 'fileID': id, 'ticket': t.toString(), "serverUrl": Server.getServerApiPath("tickets/uploadEdits")});
+    return await platform
+        .invokeMethod('editPdf', {'path': ticketFile!.path, 'fileID': id, 'ticket': t.toString(), "serverUrl": Server.getServerApiPath("tickets/standard/uploadEdits")});
   }
 
   static const platform = const MethodChannel('editPdf');
@@ -323,25 +313,14 @@ class Ticket extends DataObject {
     } else {
       return false;
     }
-
-    // return DB.getDB().then((db) {
-    //   return db!.rawQuery("SELECT * FROM tickets t left join  files f on f.ticket=t.id    where t.id=$id and type='ticket' and  fileVersion > ver ").then((value) {
-    //     print(value);
-    //     if (value.length > 0) {
-    //       return false;
-    //     } else {
-    //       return true;
-    //     }
-    //   });
-    // });
   }
 
-  setLocalFileVersion(newFileVersion) {
+  setLocalFileVersion(newFileVersion, TicketTypes ticketType) {
     // LocalFileVersion f = HiveBox.fileVersionsBox.values.where((element) => element.type == TicketTypes.Ticket && element.ticketId == id).first;
     // f.version = newFileVersion;
 
-    var fv = HiveBox.localFileVersionsBox.values.singleWhere((value) => value.type == TicketTypes.Ticket.getValue() && value.ticketId == id,
-        orElse: () => LocalFileVersion(id, newFileVersion, TicketTypes.Ticket.getValue()));
+    var fv = HiveBox.localFileVersionsBox.values
+        .singleWhere((value) => value.type == TicketTypes.Ticket.getValue() && value.ticketId == id, orElse: () => LocalFileVersion(id, newFileVersion, ticketType.getValue()));
 
     print(fv);
 
@@ -357,7 +336,6 @@ class Ticket extends DataObject {
     // HiveBox.localFileVersionsBox.toMap().forEach((key, value) {
     //   print(key + " ${value.toJson()}");
     // });
-
   }
 
   Future<List> getFlagList(String flagType) async {
@@ -422,4 +400,6 @@ class Ticket extends DataObject {
   static List<Ticket> fromJsonArray(tickets) {
     return List<Ticket>.from(tickets.map((model) => Ticket.fromJson(model)));
   }
+
+  get isStandard => this is StandardTicket;
 }

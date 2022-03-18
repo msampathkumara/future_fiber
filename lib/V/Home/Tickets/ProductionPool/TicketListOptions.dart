@@ -252,6 +252,7 @@ void _sortByBottomSheetMenu(context, loadData) {
                       children: [
                         getListItem("Shipping Date", Icons.date_range_rounded, "shipDate"),
                         getListItem("Modification Date", Icons.date_range_rounded, "uptime"),
+                        getListItem("Delivery Date", Icons.date_range_rounded, "deliveryDate"),
                         getListItem("Name", Icons.sort_by_alpha_rounded, "mo")
                       ],
                     )),

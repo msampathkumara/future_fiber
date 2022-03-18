@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -48,14 +49,26 @@ public class QCEditor extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         StrictMode.ThreadPolicy policy = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD) {
-            policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-        }
+        policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         setContentView(R.layout.activity_main_editor);
+
+
+        findViewById(R.id.doneButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+        findViewById(R.id.closeButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
 
         FILE_PATH = createNewPDFFile();
 
@@ -69,6 +82,7 @@ public class QCEditor extends AppCompatActivity {
             System.out.println(SELECTED_FILE.id);
         } else {
             SELECTED_FILE = Ticket.formJsonString("{oe: cat-001, finished: 0, uptime: 1628192673367, file: 1, sheet: 0, dir: 20218, id: 40913, isRed: 0, isRush: 1, isSk: 0, inPrint: 0, isGr: 0, isError: 0, canOpen: 1, isSort: 0, isHold: 0, fileVersion: 1628192673126, progress: 0, completed: 0, nowAt: 0, crossPro: 0}");
+            serverUrl = "http://192.168.0.101:3000/api/tickets/qc/uploadEdits";
         }
 
 
@@ -172,7 +186,7 @@ public class QCEditor extends AppCompatActivity {
                             Intent data = new Intent();
                             data.putExtra("saved", true);
                             setResult(Activity.RESULT_OK, data);
-                            finish();
+//                            finish();
 
                         }
 
@@ -245,7 +259,8 @@ public class QCEditor extends AppCompatActivity {
 
                 System.out.println("____________SVG SIZE_________________" + (sizeInBytes / 1024));
                 HashMap<String, ArrayList<File>> images = pdfEditor.getImages();
-                String requestURL = serverUrl.concat("/api/tickets/qc/uploadEdits");
+//                String requestURL = serverUrl.concat("/api/tickets/qc/uploadEdits");
+                String requestURL = serverUrl;
                 uploadMultyParts(context, requestURL, images, vals, new RunAfterMultipartUpload() {
                     @Override
                     public void run() {

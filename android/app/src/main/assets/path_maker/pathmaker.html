@@ -22,7 +22,7 @@ and open the template in the editor.
 
             $.each(page.edits, function (i, v) {
                 console.log("_____________________________________________" + i);
-               ctx .setCurrentElementId(i);
+                ctx.setCurrentElementId(i);
                 if (v.type === 1) {
                     drawPath(v, ctx, page.width, page.height, i);
                     ctx.fill();
@@ -46,9 +46,9 @@ and open the template in the editor.
                 } else if (v.type === 6) {
                     drawTriangle(v, ctx, page.width, page.height, i);
 
-                }else if (v.type === 7) {
-                    drawImage(v, ctx, page.width, page.height, i );
-                    
+                } else if (v.type === 7) {
+                    drawImage(v, ctx, page.width, page.height, i);
+
                 }
             });
 
@@ -72,18 +72,19 @@ and open the template in the editor.
             ctx.save();
 
         }
-        function drawImage(path, ctx, $maxWidth, $maxHeight, id ) {
+
+        function drawImage(path, ctx, $maxWidth, $maxHeight, id) {
 
             var image = new Image();
 
-            image.src = "../images/"+id+".png";
+            image.src = "../images/" + id + ".png";
 
             ctx.drawImage(
-            image,path.positionX*$maxWidth,
-             path.positionY*$maxHeight,
-             path.rect_width*$maxWidth,
-             path.rect_height*$maxHeight
-             );
+                image, path.positionX * $maxWidth,
+                path.positionY * $maxHeight,
+                path.rect_width * $maxWidth,
+                path.rect_height * $maxHeight
+            );
 
             ctx.restore();
             ctx.save();
@@ -117,18 +118,18 @@ and open the template in the editor.
         }
 
         function drawCercle(path, ctx, $maxWidth, $maxHeight, id) {
-            stroke= path.editsPaint.stroke;
+            stroke = path.editsPaint.stroke;
             ctx.lineWidth = path.editsPaint.stroke;
             ctx.strokeStyle = path.editsPaint.color;
             ctx.beginPath();
 
             ctx.arc(
-            path.positionX+(path.radius/2) ,
-             path.positionY+(path.radius/2) ,
-             ( path.radius / 2)-stroke, 0,
-              2 * Math.PI,
-               1
-               );
+                path.positionX + (path.radius / 2),
+                path.positionY + (path.radius / 2),
+                (path.radius / 2) - stroke, 0,
+                2 * Math.PI,
+                1
+            );
 
             if (path.fill) {
                 ctx.fillStyle = path.editsPaint.color;
@@ -208,7 +209,7 @@ and open the template in the editor.
         }
 
         function drawText(text, ctx, $maxWidth, $maxHeight, id) {
-            style = '';
+            let style = '';
 
             if (text.textBold) {
                 style = "bold";
@@ -225,7 +226,18 @@ and open the template in the editor.
             <!--            ctx.font = style + " 36px iskpota";-->
             ctx.font = style + "   helvetica";
             ctx.fillStyle = text.editsPaint.color;
-            ctx.fillText(encodeText(text.text), text.positionX*$maxWidth, text.positionY*$maxHeight, id);
+
+
+            const lines = text.text.split("\n");
+
+            if (lines.length > 1) {
+
+                for (let i = 0; i < lines.length; i++) {
+                    ctx.fillText(encodeText(lines[i]), text.positionX * $maxWidth, ((text.positionY) * $maxHeight) + (text.textSize * (i - 1)), id);
+                }
+            } else {
+                ctx.fillText(encodeText(text.text), text.positionX * $maxWidth, text.positionY * $maxHeight, id);
+            }
             ctx.id = id;
         }
 
@@ -233,8 +245,7 @@ and open the template in the editor.
             svgList = {};
             $.each(pp.pageList, function (i, v) {
                 console.log(i, v);
-                s = (getSvg(v));
-                svgList[i] = s;
+                svgList[i] = (getSvg(v));
 
             });
 
@@ -257,13 +268,6 @@ and open the template in the editor.
 
             return encodeURIComponent(text);
         }
-
-
-
-
-
-
-
 
 
     </script>

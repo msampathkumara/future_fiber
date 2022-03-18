@@ -52,21 +52,17 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
           ),
           title: Text("QA & QC", textScaleFactor: 1.2),
           bottom: SearchBar(
-            searchController: searchController,
-            delay: 300,
-            onSearchTextChanged: (text) {
-              searchText = text;
-              _ticketQcList = [];
+              searchController: searchController,
+              delay: 300,
+              onSearchTextChanged: (text) {
+                searchText = text;
+                _ticketQcList = [];
 
-              loadData(0).then((value) {
-                setState(() {});
-              });
-            },
-            onSubmitted: (text) {},
-            onBarCode: (barcode) {
-              print("xxxxxxxxxxxxxxxxxx $barcode");
-            },
-          ),
+                loadData(0).then((value) {
+                  setState(() {});
+                });
+              },
+              onSubmitted: (text) {}),
           centerTitle: true,
         ),
         body: getBody(),

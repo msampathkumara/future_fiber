@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 
 class Server {
-  static bool local = true;
+  static bool local = false;
 
   static String getServerAddress({onlineServer = false}) {
-    local = false;
+    local = true;
     if (kDebugMode && local) {
-      return "http://192.168.0.100:3000";
+      return "http://192.168.0.101:3000";
     } else {
       return "https://smartwind.nsslsupportservices.com";
     }

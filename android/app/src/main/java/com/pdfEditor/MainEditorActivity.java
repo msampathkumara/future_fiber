@@ -103,6 +103,7 @@ public class MainEditorActivity extends AppCompatActivity {
             SELECTED_FILE.id = 39923;
             ticket = Ticket.formJsonString(t);
             serverUrl = "https://smartwind.nsslsupportservices.com/api/tickets/uploadEdits";
+            serverUrl = "https://192.168.0.100:3000/api";
         }
         SELECTED_FILE.ticketFile = new File(FILE_PATH);
 

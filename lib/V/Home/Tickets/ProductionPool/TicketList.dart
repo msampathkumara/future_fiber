@@ -582,6 +582,7 @@ class TicketTile extends StatelessWidget {
       onDoubleTap: () async {
         print(await ticket.getLocalFileVersion());
         ticket.open(context);
+
       },
       child: Ink(
         decoration: BoxDecoration(

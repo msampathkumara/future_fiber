@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:measured_size/measured_size.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/CPR.dart';
+import 'package:smartwind/V/Widgets/RefreshIndicatorMessageBox.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 
 import 'CprDerails.dart';
@@ -25,6 +26,13 @@ class _CPRListState extends State<CPRList> {
   var searchText;
 
   var themeColor = Colors.amber;
+
+  bool _dataLoading = true;
+
+  /**
+   * items per page
+   */
+  num npp=50;
 
   @override
   void initState() {
@@ -149,20 +157,18 @@ class _CPRListState extends State<CPRList> {
                   key: _refreshIndicatorKey,
                   onRefresh: () {
                     _cprList = [];
+                    _dataLoading = true;
                     return _reloadData(0);
                   },
                   child: (_cprList.length == 0 && (!requested))
-                      ? Stack(children: [
-                          ListView(shrinkWrap: true, children: [Container(height: bodyHeight)]),
-                          Center(child: Text("No CPR Found", textScaleFactor: 1.5))
-                        ])
+                      ? RefreshIndicatorMessageBox("NO CPRs Found")
                       : ListView.separated(
                           padding: const EdgeInsets.all(4),
                           itemCount: _cprList.length < dataCount ? _cprList.length + 1 : _cprList.length,
                           itemBuilder: (BuildContext context, int index) {
                             if (_cprList.length == index) {
                               if (!requested) {
-                                var x = ((_cprList.length) / 20);
+                                var x = ((_cprList.length) / npp);
 
                                 reloadData(x.toInt());
                               }
@@ -440,7 +446,7 @@ class _CPRListState extends State<CPRList> {
       'status': _selectedStatus,
       'sortDirection': listSortDirectionIsDESC ? "DESC" : "asc",
       'page': page,
-      'npp': 20,
+      'npp': npp,
       'query': searchText
     }).then((res) {
       print(res.data);
@@ -456,6 +462,7 @@ class _CPRListState extends State<CPRList> {
       setState(() {});
     }).whenComplete(() {
       requested = false;
+      _dataLoading = false;
     });
   }
 

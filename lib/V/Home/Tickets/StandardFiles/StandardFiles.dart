@@ -4,10 +4,10 @@ import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/StandardTicket.dart';
 import 'package:smartwind/M/hive.dart';
+import 'package:smartwind/V/Home/Tickets/StandardFiles/factory_selector.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 
 import '../../../../M/Enums.dart';
-import 'ChangeFactory.dart';
 import 'StandardTicketInfo.dart';
 
 class StandardFiles extends StatefulWidget {
@@ -35,7 +35,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
 
       reloadData().then((value) {
         DB.setOnDBChangeListener(() {
-          reloadData();
+          loadData();
         }, context, collection: DataTables.standardTickets);
       });
     });
@@ -54,7 +54,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    return loading
+    return _loading
         ? Container(
             child: Center(
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -75,7 +75,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
                     // tabs = ["All", "Upwind", "OD", "Nylon", "OEM", "No Pool"];
 
                     _tabBarController = TabController(length: tabs.length, vsync: this);
-                    loadData().then((value) => setState(() {}));
+                    loadData();
                   },
                   itemBuilder: (BuildContext context) {
                     return {"Show All Tickets"}.map((String choice) {
@@ -104,9 +104,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
                 delay: 300,
                 onSearchTextChanged: (text) {
                   searchText = text;
-                  loadData().then((value) {
-                    setState(() {});
-                  });
+                  loadData();
                 },
                 onSubmitted: (text) {},
               ),
@@ -155,7 +153,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
   String searchText = "";
   var subscription;
 
-  List<Map> currentFileList = [];
+  List<StandardTicket> currentFileList = [];
 
   void _sortByBottomSheetMenu() {
     getListItem(String title, icon, key) {
@@ -168,9 +166,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
           listSortBy = key;
           sortedBy = title;
           Navigator.pop(context);
-          loadData().then((value) {
-            setState(() {});
-          });
+          loadData();
         },
       );
     }
@@ -278,7 +274,8 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
                       itemCount: _filesList.length,
                       itemBuilder: (BuildContext context, int index) {
                         StandardTicket ticket = (_filesList[index]);
-                        // print(ticket.toJson());
+                        print("#####################################################################################################");
+                        print(ticket.toJson());
                         return GestureDetector(
                           behavior: HitTestBehavior.opaque,
                           onLongPress: () async {
@@ -325,22 +322,21 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
   List<StandardTicket> _oEMFilesList = [];
   List<StandardTicket> _noPoolFilesList = [];
 
-  List<StandardTicket> _load(selectedProduction, section, _showAllTickets, searchText, {crossProduction = false}) {
+  List<StandardTicket> _load(Production selectedProduction, section, _showAllTickets, searchText, {crossProduction = false}) {
     List<StandardTicket> l = HiveBox.standardTicketsBox.values.where((t) {
-      if (t.file != 1 || t.completed != 0) {
-        return false;
-      }
-      if (crossProduction && t.crossPro != 1) {
-        return false;
-      }
-      if (_showAllTickets ? (!searchByProduction(t, selectedProduction)) : (!searchBySection(t, section))) {
-        return false;
+      if (selectedProduction == Production.None) {
+        if ((t.production ?? "") != "") {
+          return false;
+        }
+      } else if (selectedProduction != Production.All) {
+        if (selectedProduction.getValue() != t.production) {
+          return false;
+        }
       }
 
       if (!searchByText(t, searchText)) {
         return false;
       }
-
       return true;
     }).toList();
     l.sort((a, b) => (a.toJson()[listSortBy] ?? "").compareTo((b.toJson()[listSortBy] ?? "")));
@@ -361,7 +357,6 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
   loadData() {
     print('---------------------------------------------- Start loading');
     _selectedTabIndex = _tabBarController!.index;
-    setLoading(true);
     String searchText = this.searchText.toLowerCase();
 
     if (_showAllTickets) {
@@ -404,41 +399,6 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
     return true;
   }
 
-// Future<void> loadData() async {
-//   _selectedTabIndex = _tabBarController!.index;
-//   print('loadData listSortBy $listSortBy');
-//
-//   // String canOpen = _showAllTickets ? " " : " and canOpen=1  and openSections like '%#1#%' ";
-//
-//   NsUser? nsUser = AppUser.getUser();
-//   var section = AppUser.getSelectedSection()?.id;
-//   // String canOpen = _showAllTickets ? "  file=1 and completed=0" : " canOpen=1   and file=1   and completed=0 ";
-//   String canOpen = " ";
-//   String searchQ = " uptime > 0 ";
-//   if (searchText.isNotEmpty) {
-//     searchQ = "   oe like '%$searchText%'   ";
-//   }
-//
-//   print('current user $section');
-//   // listSortBy = "uptime";
-//
-//   _allFilesList = await database.rawQuery('SELECT * FROM standardTickets where  $searchQ   ' + canOpen + '   order by $listSortBy  ');
-//
-//   _upwindFilesList = await database.rawQuery('SELECT * FROM standardTickets where $searchQ   ' + canOpen + ' and production=\'Upwind\' order by $listSortBy ');
-//
-//   _oDFilesList = await database.rawQuery('SELECT * FROM standardTickets where $searchQ   ' + canOpen + ' and production=\'OD\' order by $listSortBy  ');
-//
-//   _nylonFilesList = await database.rawQuery('SELECT * FROM standardTickets where $searchQ   ' + canOpen + ' and production=\'Nylon\' order by $listSortBy  ');
-//
-//   _oEMFilesList = await database.rawQuery('SELECT * FROM standardTickets where $searchQ   ' + canOpen + ' and production=\'OEM\' order by $listSortBy  ');
-//
-//   _noPoolFilesList = await database.rawQuery('SELECT * FROM standardTickets where $searchQ   ' + canOpen + ' and production is null or production=""  order by $listSortBy  ');
-//
-//   listsArray = [_allFilesList, _upwindFilesList, _oDFilesList, _nylonFilesList, _oEMFilesList, _noPoolFilesList];
-//   currentFileList = listsArray[_selectedTabIndex];
-//   print("currentFileList.length == " + currentFileList.length.toString());
-// }
-
   Future<void> showTicketOptions(StandardTicket ticket, BuildContext context1) async {
     print(ticket.toJson());
     await showModalBottomSheet<void>(
@@ -464,8 +424,9 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
                       title: Text("Change Factory"),
                       leading: Icon(Icons.send_outlined, color: Colors.lightBlue),
                       onTap: () async {
-                        await Navigator.push(context1, MaterialPageRoute(builder: (context) => changeFactory(ticket)));
-                        Navigator.of(context).pop();
+                        showFactories(ticket, context1);
+                        // await Navigator.push(context1, MaterialPageRoute(builder: (context) => changeFactory(ticket)));
+                        // Navigator.of(context).pop();
                       }),
                   ListTile(
                       title: Text("Delete"),
@@ -486,31 +447,25 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
     );
   }
 
+  Future<void> showFactories(StandardTicket ticket, BuildContext context1) async {
+    print(ticket.toJson());
+    await showModalBottomSheet<void>(
+      context: context1,
+      builder: (BuildContext context) {
+        return Container(
+          decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
+          height: 650,
+          child: FactorySelector(ticket.production ?? "", (factory) {
+            print(factory);
+          }),
+        );
+      },
+    );
+  }
+
   Future reloadData() async {
     await HiveBox.getDataFromServer();
     loadData();
-
-    // return DB.getDB().then((value) async {
-    //   database = value;
-    //   return loadData().then((value) {
-    //     try {
-    //       this.setState(() {});
-    //     } catch (e) {}
-    //   });
-    // });
+    setLoading(false);
   }
 }
-
-// Future loadOnlineData() {
-//   // return OnlineDB.updateStandardTicketsDB(context).then((response) async {
-//   //   loading = false;
-//   //   return reloadData();
-//   // });
-//
-//   // return DB.updateDatabase(context).then((response) async {
-//   //   loading = false;
-//   //   return reloadData();
-//   // });
-// }
-
-// }

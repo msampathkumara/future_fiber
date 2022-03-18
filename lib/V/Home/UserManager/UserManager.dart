@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/V/Home/UserManager/UserManagerUserList.dart';
+import 'package:smartwind/V/Home/UserManager/user_manager_user_list.dart';
 
 class UserManager extends StatelessWidget {
   @override

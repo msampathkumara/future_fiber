@@ -131,7 +131,7 @@ class _FinishCheckListState extends State<FinishCheckList> {
 
                           var xx = await platform.invokeMethod('qcEdit', {
                             "qc": isQc,
-                            "serverUrl": Server.getServerAddress(),
+                            "serverUrl": Server.getServerApiPath("tickets/qc/uploadEdits"),
                             'ticket': {'id': ticket.id, "qc": isQc}.toString()
                           });
 
