@@ -117,10 +117,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
           title: Column(
             children: [
               Text("User Manager", textScaleFactor: 1.2),
-              if (_showDeactivatedUsers)
-                Text(
-                  "(Deactivated Users)",textScaleFactor: 0.7,
-                ),
+              if (_showDeactivatedUsers) Text("(Deactivated Users)", textScaleFactor: 0.7),
             ],
           ),
           bottom: SearchBar(
