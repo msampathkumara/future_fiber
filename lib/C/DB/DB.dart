@@ -3,7 +3,6 @@ import 'package:sqflite/sqflite.dart';
 class DB {
   static Database? db;
 
-  static var _dbName = 'NS_smart_wind.db';
 
   // static Future<Database?> getDB() async {
   //   db = (db != null ? db : await loadDB());
