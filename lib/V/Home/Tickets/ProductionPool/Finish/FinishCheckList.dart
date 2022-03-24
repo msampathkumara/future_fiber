@@ -4,13 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/C/Server.dart';
-import 'package:smartwind/C/ServerResponce/ServerResponceMap.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Widgets/Loading.dart';
-
-import 'RF.dart';
 
 class FinishCheckList extends StatefulWidget {
   final Ticket ticket;
@@ -88,28 +85,28 @@ class _FinishCheckListState extends State<FinishCheckList> {
 
                           loadingWidget.show(context);
                           OnlineDB.apiGet("users/getRfCredentials", {}).then((response) async {
-                            print(response.data);
-                            ServerResponseMap res = ServerResponseMap.fromJson((response.data));
-                            var r = await OnlineDB.apiGet("tickets/finish/getProgress", {'ticket': ticket.id.toString()});
-                            ServerResponseMap res1 = ServerResponseMap.fromJson((r.data));
-
-                            loadingWidget.close(context);
-                            if (res.userRFCredentials != null) {
-                              print("-------------------------------------");
-                              print(res1.toJson());
-                              await ticket.getFile(context);
-                              if (res1.done != null) {
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.red, content: Text('Already Completed')));
-                              } else if (ticket.ticketFile != null) {
-                                await Navigator.push(
-                                    context, MaterialPageRoute(builder: (context) => RF(ticket, res.userRFCredentials!, res1.operationMinMax!, res1.progressList)));
-                              }
-                              if (Navigator.canPop(context)) {
-                                Navigator.pop(context);
-                              } else {
-                                SystemNavigator.pop();
-                              }
-                            }
+                            // print(response.data);
+                            // // ServerResponseMap res = ServerResponseMap.fromJson((response.data));
+                            // var r = await OnlineDB.apiGet("tickets/finish/getProgress", {'ticket': ticket.id.toString()});
+                            // ServerResponseMap res1 = ServerResponseMap.fromJson((r.data));
+                            //
+                            // loadingWidget.close(context);
+                            // if (res.userRFCredentials != null) {
+                            //   print("-------------------------------------");
+                            //   print(res1.toJson());
+                            //   await ticket.getFile(context);
+                            //   if (res1.done != null) {
+                            //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.red, content: Text('Already Completed')));
+                            //   } else if (ticket.ticketFile != null) {
+                            //     await Navigator.push(
+                            //         context, MaterialPageRoute(builder: (context) => RF(ticket, res.userRFCredentials!, res1.operationMinMax!, res1.progressList)));
+                            //   }
+                            //   if (Navigator.canPop(context)) {
+                            //     Navigator.pop(context);
+                            //   } else {
+                            //     SystemNavigator.pop();
+                            //   }
+                            // }
                           });
                         },
                         child: Text("Agree")),

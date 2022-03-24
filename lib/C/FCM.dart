@@ -37,7 +37,8 @@ class FCM {
         print('--------------------------UPDATING USER DATABASE-----------------');
       } else if (message.from == "/topics/file_update") {
         HiveBox.getDataFromServer();
-      } else if (message.data["updateTicketDB"] != null) { 
+        print('--------------------------UPDATING DATABASE-----------------');
+      } else if (message.data["updateTicketDB"] != null) {
         HiveBox.getDataFromServer();
         print('--------------------------RESEING DATABASE-----------------');
       }

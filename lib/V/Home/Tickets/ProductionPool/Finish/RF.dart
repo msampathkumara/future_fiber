@@ -1,15 +1,15 @@
 import 'dart:convert';
 
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/OnlineDB.dart';
-import 'package:smartwind/C/ServerResponce/OperationMinMax.dart';
-import 'package:smartwind/C/ServerResponce/Progress.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/UserRFCredentials.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+
+import '../../../../../C/ServerResponse/OperationMinMax.dart';
+import '../../../../../C/ServerResponse/Progress.dart';
 import 'PDFViewWidget.dart';
 
 class RF extends StatefulWidget {

@@ -20,9 +20,9 @@ class Section extends HiveClass {
   @JsonKey(defaultValue: "-", includeIfNull: true)
   String factory = "";
 
-  @HiveField(3, defaultValue: '')
-  @JsonKey(defaultValue: "-", includeIfNull: true)
-  String loft = "";
+  @HiveField(3, defaultValue: 0)
+  @JsonKey(defaultValue: 0, includeIfNull: true)
+  int loft = 0;
 
   Section();
 

@@ -58,7 +58,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
       if (mounted) {
         loadData();
       }
-    }, context, collection: DataTables.Users);
+    }, context, collection: DataTables.Tickets);
   }
 
   late List listsArray;
@@ -120,13 +120,13 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
               onPressed: () => Navigator.pop(context),
             ),
             title: SizedBox(
-                height: 50,
+                height: ((!_showAllTickets) && nsUser != null && nsUser!.section != null) ? 50 : 30,
                 child: Column(children: [
                   Text(
                     "Production Pool",
                     textScaleFactor: 1.2,
                   ),
-                  (nsUser != null && nsUser!.section != null) ? Text("${nsUser!.section!.sectionTitle} @ ${nsUser!.section!.factory}" ) : Text("")
+                  if ((!_showAllTickets) && nsUser != null && nsUser!.section != null) Text("${nsUser!.section!.sectionTitle} @ ${nsUser!.section!.factory}")
                 ])),
             bottom: SearchBar(
                 searchController: searchController,
@@ -319,8 +319,13 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     });
   }
 
-  List<Ticket> _load(selectedProduction, section, _showAllTickets, searchText, {crossProduction = false}) {
+  List<Ticket> _load(selectedProduction, section, _showAllTickets, searchText, {crossProduction = false, bySection = false}) {
+    print('ticket count == ${HiveBox.ticketBox.length}');
     List<Ticket> l = HiveBox.ticketBox.values.where((t) {
+      if (bySection && t.nowAt != nsUser?.section?.id) {
+        return false;
+      }
+
       if (t.file != 1 || t.completed != 0) {
         return false;
       }
@@ -372,103 +377,13 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
       _noPoolFilesList = _load(Production.None, 0, true, searchText);
       listsArray = [_allFilesList, _upwindFilesList, _oDFilesList, _nylonFilesList, _oEMFilesList, _noPoolFilesList];
     } else {
-      _allFilesList = _load(Production.All, 0, false, searchText);
+      _allFilesList = _load(Production.All, 0, false, searchText, bySection: true);
       _crossProductionFilesList = _load(Production.Upwind, 0, false, searchText, crossProduction: true);
       listsArray = [_allFilesList, _crossProductionFilesList];
     }
     currentFileList = listsArray[_selectedTabIndex];
     print('---------------------------------------------- end loading');
-    // _selectedTabIndex = _tabBarController!.index;
-    // print('loadData listSortBy $listSortBy');
-    //
-    // var section = AppUser.getSelectedSection()?.id;
-    // print('section ==== $section');
-    //
-    // Production selectedProduction =
-    //     (_showAllTickets ? [Production.All, Production.Upwind, Production.OD, Production.Nylon, Production.OEM, Production.None] : []).elementAt(_selectedTabIndex);
-    //
-    // print('Production ==== $selectedProduction');
-    // if (true) {
-    //   currentFileList = HiveBox.ticketBox.values.where((t) {
-    //     if (t.file != 1 || t.completed != 0) {
-    //       return false;
-    //     }
-    //     if (_showAllTickets ? (!searchByProduction(t, selectedProduction)) : searchBySection(t, section)) {
-    //       return false;
-    //     }
-    //
-    //     if (!searchByFilters(t)) {
-    //       return false;
-    //     }
-    //
-    //     if (!searchByText(t)) {
-    //       return false;
-    //     }
-    //
-    //     return true;
-    //   }).toList();
-    //   setLoading(false);
-    // }
-
-    // String canOpen = _showAllTickets ? "  file=1 and completed=0" : " canOpen=1   and file=1   and completed=0 ";
-    // String searchQ = "";
-    // String _dataFilter = "";
-    //
-    // if (dataFilter != Filters.none) {
-    //   _dataFilter = "   " + dataFilter.getValue() + "=1 and ";
-    // }
-    // if (searchText.isNotEmpty) {
-    //   searchQ = "  ( mo like '%$searchText%' or oe like '%$searchText%') and ";
-    // }
-    //
-    // print('current user $section');
-    //
-    // searchQ += _dataFilter;
-    //
-    // if (_showAllTickets) {
-    //   _allFilesList = await database.rawQuery('SELECT * FROM tickets where $searchQ ' + canOpen + '   order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}');
-    //
-    //   _upwindFilesList = await database
-    //       .rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Upwind\' order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}');
-    //
-    //   _oDFilesList =
-    //       await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OD\' order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}');
-    //
-    //   _nylonFilesList = await database
-    //       .rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'Nylon\' order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}');
-    //
-    //   _oEMFilesList =
-    //       await database.rawQuery('SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production=\'OEM\' order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}');
-    //
-    //   _noPoolFilesList = await database.rawQuery(
-    //       'SELECT * FROM tickets where $searchQ   ' + canOpen + ' and production is null or production=""  order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}');
-    //   listsArray = [_allFilesList, _upwindFilesList, _oDFilesList, _nylonFilesList, _oEMFilesList, _noPoolFilesList];
-    // } else {
-    //   _allFilesList = await database.rawQuery("SELECT * FROM tickets where  $searchQ   " +
-    //       canOpen +
-    //       " and openSections like '%\"" +
-    //       section.toString() +
-    //       "\"%'  order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}");
-    //   _crossProductionFilesList = await database.rawQuery('SELECT * FROM tickets where  $searchQ   ' +
-    //       canOpen +
-    //       " and openSections like '%\"|$section|\"%' and crossPro=1 order by $listSortBy ${listSortDirectionIsDESC ? "DESC" : "ASC"}");
-    //
-    //   listsArray = [_allFilesList, _crossProductionFilesList];
-    // }
-    // currentFileList = listsArray[_selectedTabIndex];
-    // print(currentFileList.length);
   }
-
-  // void reloadData() {
-  //   loadData();
-  //   // DB.getDB().then((value) async {
-  //   //   database = value;
-  //   //   await loadData();
-  //   //   try {
-  //   //     this.setState(() {});
-  //   //   } catch (e) {}
-  //   // });
-  // }
 
   tabListener() {
     print("Selected Index: " + _tabBarController!.index.toString());
@@ -512,13 +427,6 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
       print('Ticket not found');
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Ticket not found", style: TextStyle(color: Colors.white)), backgroundColor: Colors.red));
     }
-
-    // var _currentFileList = await database.rawQuery("SELECT * FROM tickets where mo like '%" + barcode + "%' or oe like '%" + barcode + "%' ");
-    // if (_currentFileList.length > 0) {
-    //   Ticket ticket = Ticket.fromJson(_currentFileList[0]);
-    //   var ticketInfo = TicketInfo(ticket);
-    //   ticketInfo.show(context);
-    // }
   }
 
   bool searchByText(t) {
@@ -582,7 +490,6 @@ class TicketTile extends StatelessWidget {
       onDoubleTap: () async {
         print(await ticket.getLocalFileVersion());
         ticket.open(context);
-
       },
       child: Ink(
         decoration: BoxDecoration(
@@ -604,7 +511,8 @@ class TicketTile extends StatelessWidget {
             children: [
               if ((ticket.mo ?? "").trim().isNotEmpty) Text((ticket.oe ?? "")),
               if (ticket.crossPro == 1) Chip(avatar: CircleAvatar(child: Icon(Icons.merge_type_outlined)), label: Text(ticket.crossProList)),
-              // Text(ticket.getUpdateDateTime())
+              // Text(" t${ticket.nowAt}"),
+              Text("  ${ticket.production}"),
               if (ticket.shipDate.isNotEmpty)
                 Wrap(
                   children: [

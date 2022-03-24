@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:smartwind/C/OnlineDB.dart';
-import 'package:smartwind/C/ServerResponce/Progress.dart';
-import 'package:smartwind/C/ServerResponce/ServerResponceMap.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/TicketFlag.dart';
 import 'package:smartwind/M/TicketHistory.dart';
@@ -12,7 +10,11 @@ import 'package:smartwind/V/Home/Tickets/TicketInfo/info_Printing.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/ns_icons_icons.dart';
 
+import '../../../../C/DB/DB.dart';
+import '../../../../C/ServerResponse/Progress.dart';
+import '../../../../C/ServerResponse/ServerResponceMap.dart';
 import '../../../../M/TicketPrint.dart';
+import '../../../../M/hive.dart';
 import 'info_Flags.dart';
 import 'info_History.dart';
 import 'info_Progress.dart';
@@ -40,6 +42,7 @@ class _TicketInfoState extends State<TicketInfo> {
   late int _progress = 0;
 
   bool _loading = true;
+  late DbChangeCallBack _dbChangeCallBack;
 
   @override
   void initState() {
@@ -52,10 +55,21 @@ class _TicketInfoState extends State<TicketInfo> {
     });
 
     getData(_ticket);
+    _dbChangeCallBack = DB.setOnDBChangeListener(() {
+      print('on update tickets');
+      if (mounted) {
+        var _ticket_ = HiveBox.ticketBox.get(_ticket.id);
+        if (_ticket_ != null && _ticket_.uptime != _ticket.uptime) {
+          _ticket = _ticket_;
+          getData(_ticket);
+        }
+      }
+    }, context, collection: DataTables.standardTickets);
   }
 
   @override
   void dispose() {
+    _dbChangeCallBack.dispose();
     super.dispose();
   }
 
@@ -257,6 +271,7 @@ class _TicketInfoState extends State<TicketInfo> {
     OnlineDB.apiGet(("tickets/info/getTicketInfo"), {'ticket': _ticket.id.toString()}).then((value) {
       print(' data recived---------------');
       print((value.data));
+
       setState(() {
         ServerResponseMap res = ServerResponseMap.fromJson((value.data));
         progressList = res.progressList;
@@ -270,6 +285,7 @@ class _TicketInfoState extends State<TicketInfo> {
     }).onError((error, stackTrace) {
       print(stackTrace.toString());
       ErrorMessageView(errorMessage: error.toString()).show(context);
+      ErrorMessageView(errorMessage: stackTrace.toString()).show(context);
     }).whenComplete(() {
       setState(() {
         _loading = false;

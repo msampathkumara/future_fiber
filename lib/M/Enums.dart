@@ -66,7 +66,7 @@ var uuid = const Uuid();
 extension f on Box {
   putObject(HiveClass value) {
     Object id = value.id != -1 ? value.id : uuid.v4();
-
+    print(id);
     put(id, value);
   }
 

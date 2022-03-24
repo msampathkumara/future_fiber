@@ -39,6 +39,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
   }
 
   TextEditingController searchController = new TextEditingController();
+  bool _isBarcodeScan = false;
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +52,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                 print('nothing return.');
               } else {
                 searchController.value = TextEditingValue(text: barcode, selection: TextSelection.fromPosition(TextPosition(offset: barcode.length)));
+                _isBarcodeScan = true;
               }
             },
             child: const Icon(Icons.qr_code_rounded),
@@ -521,6 +523,15 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
       final ids = _ticketList.map((e) => e.id).toSet();
       _ticketList.retainWhere((x) => ids.remove(x.id));
       _dataLoadingError = false;
+
+      if(_isBarcodeScan && _ticketList.isNotEmpty){
+        var ticketInfo = TicketInfo(_ticketList.first);
+        ticketInfo.show(context);
+
+      }
+      _isBarcodeScan=false;
+      searchController.value = TextEditingValue(text: '', selection: TextSelection.fromPosition(TextPosition(offset: 0)));
+
       setState(() {});
     }).whenComplete(() {
       setState(() {

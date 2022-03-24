@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:smartwind/C/App.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/StandardTicket.dart';
@@ -24,6 +23,8 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
   late int _selectedTabIndex;
   bool loading = true;
 
+  late DbChangeCallBack _dbChangeCallBack;
+
   @override
   initState() {
     super.initState();
@@ -33,21 +34,24 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
         print("Selected Index: " + _tabBarController!.index.toString());
       });
 
-      reloadData().then((value) {
-        DB.setOnDBChangeListener(() {
-          loadData();
-        }, context, collection: DataTables.standardTickets);
-      });
+      reloadData().then((value) {});
     });
-    App.getAppInfo();
-  }
 
-  late List listsArray;
+    _dbChangeCallBack = DB.setOnDBChangeListener(() {
+      print('on update tickets');
+      if (mounted) {
+        loadData();
+      }
+    }, context, collection: DataTables.standardTickets);
+  }
 
   @override
   void dispose() {
+    _dbChangeCallBack.dispose();
     super.dispose();
   }
+
+  late List listsArray;
 
   bool _showAllTickets = true;
   TextEditingController searchController = new TextEditingController();
@@ -372,6 +376,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
     }
     currentFileList = listsArray[_selectedTabIndex];
     print('---------------------------------------------- end loading');
+    setState(() {});
   }
 
   bool searchBySection(t, section) {
@@ -424,6 +429,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
                       title: Text("Change Factory"),
                       leading: Icon(Icons.send_outlined, color: Colors.lightBlue),
                       onTap: () async {
+                        Navigator.of(context).pop();
                         showFactories(ticket, context1);
                         // await Navigator.push(context1, MaterialPageRoute(builder: (context) => changeFactory(ticket)));
                         // Navigator.of(context).pop();
@@ -455,7 +461,10 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
         return Container(
           decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
           height: 650,
-          child: FactorySelector(ticket.production ?? "", (factory) {
+          child: FactorySelector(ticket.production ?? "", (factory) async {
+            await OnlineDB.apiPost("tickets/standard/changeFactory", {'production': factory, 'ticketId': ticket.id});
+            // await HiveBox.getDataFromServer();
+
             print(factory);
           }),
         );
@@ -464,7 +473,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
   }
 
   Future reloadData() async {
-    await HiveBox.getDataFromServer();
+    await HiveBox.getDataFromServer(clean: true);
     loadData();
     setLoading(false);
   }

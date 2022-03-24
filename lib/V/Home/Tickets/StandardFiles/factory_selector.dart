@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/M/hive.dart';
 
 class FactorySelector extends StatefulWidget {
   String selectedFactory = "";
@@ -38,7 +37,7 @@ class _FactorySelectorState extends State<FactorySelector> {
                         groupValue: widget.selectedFactory,
                         onChanged: (v) async {
                           setLoading(true);
-                          await HiveBox.getDataFromServer();
+
                           widget.onSelect(v);
                           Navigator.of(context).pop(x);
                         },

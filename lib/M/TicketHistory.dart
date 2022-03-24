@@ -16,4 +16,8 @@ class TicketHistory {
   factory TicketHistory.fromJson(Map<String, dynamic> json) => _$TicketHistoryFromJson(json);
 
   Map<String, dynamic> toJson() => _$TicketHistoryToJson(this);
+
+  static List<TicketHistory> fromJsonArray(historyList) {
+    return List<TicketHistory>.from(historyList.map((model) => TicketHistory.fromJson(model)));
+  }
 }

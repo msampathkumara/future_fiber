@@ -115,14 +115,14 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                         await ticket.sharePdf(context);
                         Navigator.of(context).pop();
                       }),
-                if (AppUser.havePermissionFor(Permissions.ADD_CPR))
-                  ListTile(
-                      title: Text("Add CPR"),
-                      leading: Icon(NsIcons.cpr, color: Colors.amber),
-                      onTap: () async {
-                        await ticket.addCPR(context);
-                        Navigator.of(context).pop();
-                      }),
+                // if (AppUser.havePermissionFor(Permissions.ADD_CPR))
+                //   ListTile(
+                //       title: Text("Add CPR"),
+                //       leading: Icon(NsIcons.cpr, color: Colors.amber),
+                //       onTap: () async {
+                //         await ticket.addCPR(context);
+                //         Navigator.of(context).pop();
+                //       }),
                 if (AppUser.havePermissionFor(Permissions.SHIPPING_SYSTEM))
                   ListTile(
                       title: Text("Shipping"),

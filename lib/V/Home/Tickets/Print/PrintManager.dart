@@ -17,6 +17,8 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
   var database;
   var themeColor = Colors.blue;
 
+  Production _selectedProduction = Production.All;
+
   @override
   initState() {
     super.initState();
@@ -160,17 +162,44 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          toolbarHeight: 50,
+          toolbarHeight: 100,
           automaticallyImplyLeading: false,
           backgroundColor: themeColor,
           elevation: 10,
           actions: [],
-          title: Wrap(spacing: 5, children: [_statusChip(Status.All), _statusChip(Status.Sent), _statusChip(Status.Done), _statusChip(Status.Cancel)]),
+          title: Column(
+            children: [
+              Wrap(spacing: 5, children: [
+                _productionChip(Production.All),
+                _productionChip(Production.Upwind),
+                _productionChip(Production.OD),
+                _productionChip(Production.Nylon),
+                _productionChip(Production.OEM)
+              ]),
+              Wrap(spacing: 5, children: [_statusChip(Status.All), _statusChip(Status.Sent), _statusChip(Status.Done), _statusChip(Status.Cancel)]),
+            ],
+          ),
         ),
         body: _getTicketsList());
   }
 
   var _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+
+  _productionChip(Production p) {
+    return FilterChip(
+        selectedColor: Colors.white,
+        checkmarkColor: themeColor,
+        label: Text(
+          p.toShortString(),
+          style: TextStyle(color: _selectedProduction == p ? themeColor : Colors.black),
+        ),
+        selected: _selectedProduction == p,
+        onSelected: (bool value) {
+          _selectedProduction = p;
+          loadData(0);
+          setState(() {});
+        });
+  }
 
   _getTicketsList() {
     return Column(

@@ -73,6 +73,7 @@ class _LoginState extends State<Login> {
           setState(() {});
         });
     }
+
   }
 
   @override
@@ -99,9 +100,9 @@ class _LoginState extends State<Login> {
             : Stack(
                 children: [
                   SizedBox.expand(
-                      child: FittedBox(
-                    fit: BoxFit.cover,
-                    child: SizedBox(width: _videoPlayerController.value.size.width, height: _videoPlayerController.value.size.height, child: VideoPlayer(_videoPlayerController)),
+                      child: FittedBox(clipBehavior: Clip.antiAlias,
+                    fit: BoxFit.fill,
+                    child: SizedBox(width: _videoPlayerController.value.size.width , height: _videoPlayerController.value.size.height, child: VideoPlayer(_videoPlayerController)),
                   )),
                   Center(
                       child: Container(
@@ -129,7 +130,7 @@ class _LoginState extends State<Login> {
                                     height: 62,
                                   ),
                                   TextFormField(
-                                      autofocus: true,
+                                      autofocus: false,
                                       onFieldSubmitted: (d) {
                                         _passwordFocusNode.requestFocus();
                                       },

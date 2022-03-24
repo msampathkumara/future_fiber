@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/TicketFlag.dart';
+import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/V/Widgets/UserButton.dart';
 import 'package:smartwind/ns_icons_icons.dart';
 
@@ -29,6 +31,10 @@ class _info_FlagsState extends State<info_Flags> {
     "sk": {"title": "SK", "icon": CircleAvatar(child: Icon(NsIcons.sk, color: Colors.red), backgroundColor: Colors.white), "expanded": false},
   };
 
+  TextStyle defaultStyle = TextStyle(color: Colors.black);
+  TextStyle linkStyle = TextStyle(color: Colors.blue);
+  TextStyle timeStyle = TextStyle(color: Colors.grey);
+
   @override
   Widget build(BuildContext context) {
     ticketFlags = widget.ticketFlag;
@@ -43,53 +49,41 @@ class _info_FlagsState extends State<info_Flags> {
                 itemCount: ticketFlags.length,
                 itemBuilder: (BuildContext context, int index) {
                   TicketFlag ticketFlag = ticketFlags[index];
-                  var list = flagsHistory.where((i) => i.type == ticketFlag.type).toList();
+                  // var list = flagsHistory.where((i) => i.type == ticketFlag.type).toList();
                   var x = titles[ticketFlag.type];
 
-                  print(x.toString());
+                  NsUser? user = HiveBox.usersBox.get(ticketFlag.user);
 
-                  return Column(
-                    children: [
-                      ListTile(
-                        title: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(child: Row(children: [x["icon"] ?? Container(), Text(x["title"] ?? "", style: TextStyle(fontSize: 23))])),
-                        ),
-                        subtitle: Material(
-                          elevation: 3,
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.grey[200],
-                          child: ListTile(
-                            title: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Padding(
-                                      padding: const EdgeInsets.only(bottom: 8.0, top: 8),
-                                      child: Text(ticketFlag.flaged == 1 ? "Flag Added" : "Flag Removed", style: TextStyle(fontWeight: FontWeight.bold)))),
-                              Text(ticketFlag.comment),
-                              Divider()
-                            ]),
-                            subtitle: Column(
+                  // print(x.toString());
+
+                  return ListTile(
+                    title: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(child: Row(children: [x["icon"] ?? Container(), Text(x["title"] ?? "", style: TextStyle(fontSize: 23))])),
+                    ),
+                    subtitle: Material(
+                      elevation: 1,
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.grey[200],
+                      child: ListTile(
+                        title: Column(
+                          children: [
+                            Row(
                               children: [
-                                Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(bottom: 4.0),
-                                      child: UserButton(nsUserId: ticketFlag.user, imageRadius: 16),
-                                    ),
-                                    Spacer(),
-                                    Text(ticketFlag.getDateTime(), style: TextStyle(color: Colors.blue)),
-                                  ],
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 4.0),
+                                  child: UserButton(nsUserId: ticketFlag.user, imageRadius: 16),
                                 ),
-                                if (list.length > 0) getXXX(list, x)
+                                Spacer(),
+                                Text(ticketFlag.getDateTime(), style: TextStyle(color: Colors.blue)),
                               ],
                             ),
-                            // leading: UserImage(nsUserId: ticketFlag.user, radius: 24),
-                          ),
+                            Padding(padding: const EdgeInsets.only(bottom: 8.0, left: 36), child: Align(child: Text('"${ticketFlag.comment}"'),alignment: Alignment.bottomLeft,))
+                          ],
                         ),
+                        // leading: UserImage(nsUserId: ticketFlag.user, radius: 24),
                       ),
-                      // Container(child: getHistory(list))
-                    ],
+                    ),
                   );
                 },
                 separatorBuilder: (BuildContext context, int index) {

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:native_pdf_view/native_pdf_view.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/Ticket.dart';
-import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/V/Home/BlueBook/BlueBook.dart';
 import 'package:smartwind/V/Home/Tickets/ProductionPool/Finish/FinishCheckList.dart';
 
@@ -12,7 +11,9 @@ class TicketPdfViwer extends StatefulWidget {
   // int fileID = 0;
   final Ticket ticket;
 
-  TicketPdfViwer(this.ticket);
+  var onClickEdit;
+
+  TicketPdfViwer(this.ticket, {required this.onClickEdit});
 
   @override
   _TicketPdfViwerState createState() {
@@ -27,8 +28,6 @@ class _TicketPdfViwerState extends State<TicketPdfViwer> {
   late PdfControllerPinch pdfPinchController;
 
   bool _loading = false;
-
-  // var pdfView;
 
   Widget pdfView() => PdfViewPinch(controller: pdfPinchController, pageSnapping: (!kIsWeb), padding: 10, scrollDirection: Axis.vertical);
 
@@ -124,19 +123,7 @@ class _TicketPdfViwerState extends State<TicketPdfViwer> {
         icon: Icon(Icons.edit_outlined),
         label: Text("Edit"),
         onPressed: () async {
-          print('EDIT CLICK');
-          setLoading(true);
-          var x = await widget.ticket.openEditor();
-          print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-          print(x);
-
-          if (x == true) {
-            await HiveBox.getDataFromServer();
-            print('reloading');
-            Navigator.of(context).pop(true);
-          } else {
-            setLoading(false);
-          }
+          widget.onClickEdit();
         },
       ),
     );

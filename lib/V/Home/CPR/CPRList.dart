@@ -32,7 +32,7 @@ class _CPRListState extends State<CPRList> {
   /**
    * items per page
    */
-  num npp=50;
+  num npp = 50;
 
   @override
   void initState() {
@@ -341,6 +341,22 @@ class _CPRListState extends State<CPRList> {
                           _supplier = st;
                         })
                     ])),
+                // ListTile(
+                //     title: Text("From", style: TextStyle(color: Colors.white)),
+                //     subtitle: Wrap(spacing: 5, children: [
+                //       for (final st in __suppliers)
+                //         _filterChip(_supplier, st, () {
+                //           _supplier = st;
+                //         })
+                //     ])),
+                // ListTile(
+                //     title: Text("To", style: TextStyle(color: Colors.white)),
+                //     subtitle: Wrap(spacing: 5, children: [
+                //       for (final st in __suppliers)
+                //         _filterChip(_supplier, st, () {
+                //           _supplier = st;
+                //         })
+                //     ])),
                 ListTile(
                     trailing: ElevatedButton(
                         onPressed: () {
@@ -423,9 +439,11 @@ class _CPRListState extends State<CPRList> {
   var sortedBy = "Date";
   int dataCount = 0;
   bool requested = false;
+  int currentPage = 0;
 
   Future reloadData(int page, {bool reset = false}) {
     print('Reload Data');
+    currentPage = page;
     if (page == 0 || reset) {
       _refreshIndicatorKey.currentState?.show();
       _cprList = [];
@@ -497,9 +515,11 @@ class _CPRListState extends State<CPRList> {
                     title: Text("Delete"),
                     leading: Icon(Icons.delete_forever_rounded, color: Colors.red),
                     onTap: () async {
-                      // _cpr.materials.removeWhere((item) => item == material);
+                      await OnlineDB.apiPost("cpr/delete", {"cpr": cpr.id});
+                      _cprList.removeWhere((element) => element.id == cpr.id);
+                      // _reloadData(currentPage);
                       Navigator.of(context).pop();
-                    }),
+                    })
               ])
             ],
           ),

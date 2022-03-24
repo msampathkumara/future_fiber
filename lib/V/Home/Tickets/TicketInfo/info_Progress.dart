@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/C/ServerResponce/Progress.dart';
+
 import 'package:smartwind/V/Widgets/UserButton.dart';
+
+import '../../../../C/ServerResponse/Progress.dart';
 
 class info_Progress extends StatefulWidget {
   List<Progress> progressList;

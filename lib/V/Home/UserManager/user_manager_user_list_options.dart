@@ -1,6 +1,6 @@
 part of 'user_manager_user_list.dart';
 
-Future<void> showUserOptions(NsUser nsUser, BuildContext context1,context,nfcIsAvailable) async {
+Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcIsAvailable) async {
   await showModalBottomSheet<void>(
     context: context,
     builder: (BuildContext context) {
@@ -28,9 +28,11 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1,context,nfcIsA
                   onTap: () async {
                     Navigator.of(context).pop();
                     if (nsUser.userHasNfc()) {
-                    // todo add remove id card code
+                      // todo add remove id card code
+
+                      showRemoveCardAlertDialog(context);
                     } else {
-                      showAddNfcDialog(nsUser,context);
+                      showAddNfcDialog(nsUser, context);
                     }
                   },
                 ),
@@ -87,7 +89,39 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1,context,nfcIsA
   );
 }
 
-void showAddNfcDialog(nsUser,context) {
+showRemoveCardAlertDialog(BuildContext context) {
+  // set up the buttons
+  Widget cancelButton = TextButton(
+    child: Text("Cancel"),
+    onPressed: () {
+      Navigator.of(context).pop();
+    },
+  );
+  Widget continueButton = TextButton(
+    child: Text("Continue"),
+    onPressed: () {},
+  );
+
+  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    title: Text("Remove ID card ?"),
+    content: Text("this will remove id card from user "),
+    actions: [
+      cancelButton,
+      continueButton,
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
+}
+
+void showAddNfcDialog(nsUser, context) {
   showDialog(
       context: context,
       builder: (BuildContext context) {

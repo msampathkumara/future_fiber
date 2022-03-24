@@ -11,7 +11,6 @@ import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/TicketFlag.dart';
 import 'package:smartwind/M/user_config.dart';
 
-import '../C/Server.dart';
 import '../V/Home/UserManager/UserPermissions.dart';
 import 'AppUser.dart';
 import 'HiveClass.dart';
@@ -93,10 +92,10 @@ class HiveBox {
       List<Ticket> deletedTicketsIdsList = Ticket.fromJsonArray(res["deletedTicketsIds"] ?? []);
       List<Ticket> completedTicketsIdsList = Ticket.fromJsonArray(res["completedTicketsIds"] ?? []);
 
-      usersList.forEach((element) {
-        print('------------------------------------------------------------------------------------------------');
-        print(element.toJson());
-      });
+      // usersList.forEach((element) {
+      //   print('------------------------------------------------------------------------------------------------');
+      //   print(element.toJson());
+      // });
 
       usersBox.putMany(usersList);
 

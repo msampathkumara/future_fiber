@@ -176,19 +176,19 @@ class DB {
   //   }
   // }
 
-  static Future<void> insertTickets(List<dynamic> tickets) async {
-    await db!.transaction((txn) async {
-      Batch batch = txn.batch();
-      tickets.forEach((ticket) {
-        insertFlags(ticket["flags"] ?? [], batch);
-        ticket.remove("flags");
-        // print(ticket);
-        batch.insert('tickets', ticket, conflictAlgorithm: ConflictAlgorithm.replace);
-      });
-      await batch.commit(noResult: true);
-      print('tickets inserted ');
-    });
-  }
+  // static Future<void> insertTickets(List<dynamic> tickets) async {
+  //   await db!.transaction((txn) async {
+  //     Batch batch = txn.batch();
+  //     tickets.forEach((ticket) {
+  //       insertFlags(ticket["flags"] ?? [], batch);
+  //       ticket.remove("flags");
+  //       // print(ticket);
+  //       batch.insert('tickets', ticket, conflictAlgorithm: ConflictAlgorithm.replace);
+  //     });
+  //     await batch.commit(noResult: true);
+  //     print('tickets inserted ');
+  //   });
+  // }
 
   static Future<void> deleteTickets(List<dynamic> deletedTickets) async {
     Batch batch = db!.batch();
