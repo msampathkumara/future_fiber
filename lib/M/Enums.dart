@@ -3,7 +3,7 @@ import 'package:uuid/uuid.dart';
 
 import 'HiveClass.dart';
 
-enum Production { All, Upwind, OD, Nylon, OEM, None }
+enum Production { All, Upwind, OD, Nylon, OEM, _38_Upwind, _38_Nylon, _38_OEM, _38_OD, None }
 enum SortByItem { id, mo, oe, finished, dir, uptime, file, sheet, production, isRed, isRush, inPrint, isError, isGr, isSk, isHold, delete, reNamed, progress, fileVersion }
 enum Status { All, Sent, Cancel, Done }
 enum Type { All, QA, QC }
@@ -13,15 +13,15 @@ enum Collection { User, Ticket, Any }
 
 extension ProductionExtension on Production {
   String getValue() {
-    return (this).toString().split('.').last;
+    return (this).toString().split('.').last.replaceAll('_', " ").trim();
   }
 }
 
-extension ParseToString on Production {
-  String toShortString() {
-    return (this).toString().split('.').last;
-  }
-}
+// extension ParseToString on Production {
+//   String toShortString() {
+//     return (this).toString().split('.').last;
+//   }
+// }
 
 extension SortByExtension on SortByItem {
   String getValue() {

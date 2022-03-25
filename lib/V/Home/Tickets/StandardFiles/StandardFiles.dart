@@ -25,9 +25,13 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
 
   late DbChangeCallBack _dbChangeCallBack;
 
+  List<Production> _productions = [];
+
   @override
   initState() {
     super.initState();
+    _productions = Production.values.where((element) => element != Production.None).toList();
+    tabs = _productions.map<String>((e) => e.getValue()).toList();
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _tabBarController = TabController(length: tabs.length, vsync: this);
       _tabBarController!.addListener(() {
@@ -51,9 +55,9 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
     super.dispose();
   }
 
-  late List listsArray;
+  // late List listsArray;
 
-  bool _showAllTickets = true;
+  // bool _showAllTickets = true;
   TextEditingController searchController = new TextEditingController();
 
   @override
@@ -70,28 +74,25 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
           ])))
         : Scaffold(
             appBar: AppBar(
-              actions: <Widget>[
-                PopupMenuButton<String>(
-                  onSelected: (s) {
-                    print(s);
-                    _showAllTickets = !_showAllTickets;
-
-                    // tabs = ["All", "Upwind", "OD", "Nylon", "OEM", "No Pool"];
-
-                    _tabBarController = TabController(length: tabs.length, vsync: this);
-                    loadData();
-                  },
-                  itemBuilder: (BuildContext context) {
-                    return {"Show All Tickets"}.map((String choice) {
-                      return CheckedPopupMenuItem<String>(
-                        value: choice,
-                        child: Text(choice),
-                        checked: _showAllTickets,
-                      );
-                    }).toList();
-                  },
-                ),
-              ],
+              // actions: <Widget>[
+              //   PopupMenuButton<String>(
+              //     onSelected: (s) {
+              //       print(s);
+              //       _showAllTickets = !_showAllTickets;
+              //       _tabBarController = TabController(length: tabs.length, vsync: this);
+              //       loadData();
+              //     },
+              //     itemBuilder: (BuildContext context) {
+              //       return {"Show All Tickets"}.map((String choice) {
+              //         return CheckedPopupMenuItem<String>(
+              //           value: choice,
+              //           child: Text(choice),
+              //           checked: _showAllTickets,
+              //         );
+              //       }).toList();
+              //     },
+              //   ),
+              // ],
               elevation: 0.0,
               toolbarHeight: 80,
               backgroundColor: Colors.green,
@@ -210,7 +211,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
         });
   }
 
-  final tabs = ["All", "Upwind", "OD", "Nylon", "OEM", "No Pool"];
+  var tabs = [];
   final tabsColors = [null, "Upwind", "OD", "Nylon", "OEM", "No Pool"];
 
   TabController? _tabBarController;
@@ -250,15 +251,17 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
                     ],
                   ),
                 ),
-                body: TabBarView(controller: _tabBarController, children: [
-                  getTicketListByCategory(_allFilesList),
-                  getTicketListByCategory(_upwindFilesList),
-                  getTicketListByCategory(_oDFilesList),
-                  getTicketListByCategory(_nylonFilesList),
-                  getTicketListByCategory(_oEMFilesList),
-                  getTicketListByCategory(_noPoolFilesList),
-                ])),
-          );
+                body: TabBarView(controller: _tabBarController, children: listsMap.values.map<Widget>((e) => getTicketListByCategory(e)).toList()))
+            // body: TabBarView(controller: _tabBarController, children: [
+            //   getTicketListByCategory(_allFilesList),
+            //   getTicketListByCategory(_upwindFilesList),
+            //   getTicketListByCategory(_oDFilesList),
+            //   getTicketListByCategory(_nylonFilesList),
+            //   getTicketListByCategory(_oEMFilesList),
+            //   getTicketListByCategory(_noPoolFilesList),
+            // ])
+            // ),
+            );
   }
 
   getTicketListByCategory(List<StandardTicket> _filesList) {
@@ -318,15 +321,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
     );
   }
 
-  List<StandardTicket> _allFilesList = [];
-
-  List<StandardTicket> _upwindFilesList = [];
-  List<StandardTicket> _oDFilesList = [];
-  List<StandardTicket> _nylonFilesList = [];
-  List<StandardTicket> _oEMFilesList = [];
-  List<StandardTicket> _noPoolFilesList = [];
-
-  List<StandardTicket> _load(Production selectedProduction, section, _showAllTickets, searchText, {crossProduction = false}) {
+  List<StandardTicket> _load(Production selectedProduction, section, _showAllTickets, searchText) {
     List<StandardTicket> l = HiveBox.standardTicketsBox.values.where((t) {
       if (selectedProduction == Production.None) {
         if ((t.production ?? "") != "") {
@@ -357,24 +352,30 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
   }
 
   bool _loading = true;
+  Map listsMap = {};
 
   loadData() {
     print('---------------------------------------------- Start loading');
     _selectedTabIndex = _tabBarController!.index;
     String searchText = this.searchText.toLowerCase();
 
-    if (_showAllTickets) {
-      _allFilesList = _load(Production.All, 0, true, searchText);
-      _upwindFilesList = _load(Production.Upwind, 0, true, searchText);
-      _oDFilesList = _load(Production.OD, 0, true, searchText);
-      _nylonFilesList = _load(Production.Nylon, 0, true, searchText);
-      _oEMFilesList = _load(Production.OEM, 0, true, searchText);
-      _noPoolFilesList = _load(Production.None, 0, true, searchText);
-      listsArray = [_allFilesList, _upwindFilesList, _oDFilesList, _nylonFilesList, _oEMFilesList, _noPoolFilesList];
-    } else {
-      _allFilesList = _load(Production.All, 0, false, searchText);
-    }
-    currentFileList = listsArray[_selectedTabIndex];
+    // if (_showAllTickets) {
+
+    _productions.forEach((element) {
+      listsMap[element] = _load(element, 0, true, searchText);
+    });
+
+    // _allFilesList = _load(Production.All, 0, true, searchText);
+    // _upwindFilesList = _load(Production.Upwind, 0, true, searchText);
+    // _oDFilesList = _load(Production.OD, 0, true, searchText);
+    // _nylonFilesList = _load(Production.Nylon, 0, true, searchText);
+    // _oEMFilesList = _load(Production.OEM, 0, true, searchText);
+    // _noPoolFilesList = _load(Production.None, 0, true, searchText);
+    // listsArray = [_allFilesList, _upwindFilesList, _oDFilesList, _nylonFilesList, _oEMFilesList, _noPoolFilesList];
+    // } else {
+    //   _allFilesList = _load(Production.All, 0, false, searchText);
+    // }
+    // currentFileList = listsArray[_selectedTabIndex];
     print('---------------------------------------------- end loading');
     setState(() {});
   }

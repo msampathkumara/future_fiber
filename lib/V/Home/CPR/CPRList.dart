@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/widgets.dart';
 import 'package:measured_size/measured_size.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/CPR.dart';
 import 'package:smartwind/V/Widgets/RefreshIndicatorMessageBox.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 
+import '../../../M/Enums.dart';
 import 'CprDerails.dart';
 
 class CPRList extends StatefulWidget {
@@ -27,7 +27,7 @@ class _CPRListState extends State<CPRList> {
 
   var themeColor = Colors.amber;
 
-  bool _dataLoading = true;
+  // bool _dataLoading = true;
 
   /**
    * items per page
@@ -60,7 +60,7 @@ class _CPRListState extends State<CPRList> {
   @override
   Widget build(BuildContext context) {
     haveFilters = (_selectedStatus != "All" || _selectedShortageType != "All" || _selectedCprTypes != "All" || _supplier != "All" || _client != "All");
-    var bodyHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
         appBar: AppBar(
           elevation: (_showFilters || haveFilters) ? 0 : 5,
@@ -157,7 +157,7 @@ class _CPRListState extends State<CPRList> {
                   key: _refreshIndicatorKey,
                   onRefresh: () {
                     _cprList = [];
-                    _dataLoading = true;
+
                     return _reloadData(0);
                   },
                   child: (_cprList.length == 0 && (!requested))
@@ -281,7 +281,7 @@ class _CPRListState extends State<CPRList> {
   var _supplier = "All";
 
   var __statusList = ["All", "Ready", "Pending", "Sent"];
-  var __clients = ["All", "Upwind", "Nylon", "OD", "OEM"];
+  var __clients = Production.values.where((element) => element != Production.None).map((e) => e.getValue()).toList();
   var __suppliers = ["All", "Cutting", "SA", "Printing"];
   var __shortageTypes = ["All", "Short", "Damage", "Unreceived"];
   var __cprTypes = ["All", "Pocket", "Rope Luff", "Purchase Cover", "Overhead Tape", "Tape Cover", "Take Down", "Soft Hanks", "Windows", "Stow pouch", "VPC**", "Other"];
@@ -480,7 +480,6 @@ class _CPRListState extends State<CPRList> {
       setState(() {});
     }).whenComplete(() {
       requested = false;
-      _dataLoading = false;
     });
   }
 

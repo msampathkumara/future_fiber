@@ -24,7 +24,7 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
     super.initState();
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _refreshIndicatorKey.currentState?.show();
-      loadData(0);
+      // loadData(0);
     });
   }
 
@@ -169,14 +169,8 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
           actions: [],
           title: Column(
             children: [
-              Wrap(spacing: 5, children: [
-                _productionChip(Production.All),
-                _productionChip(Production.Upwind),
-                _productionChip(Production.OD),
-                _productionChip(Production.Nylon),
-                _productionChip(Production.OEM)
-              ]),
-              Wrap(spacing: 5, children: [_statusChip(Status.All), _statusChip(Status.Sent), _statusChip(Status.Done), _statusChip(Status.Cancel)]),
+              SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: Production.values.map<Widget>((e) => _productionChip(e)).toList())),
+              Row(children: [_statusChip(Status.All), _statusChip(Status.Sent), _statusChip(Status.Done), _statusChip(Status.Cancel)])
             ],
           ),
         ),
@@ -186,19 +180,23 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
   var _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   _productionChip(Production p) {
-    return FilterChip(
-        selectedColor: Colors.white,
-        checkmarkColor: themeColor,
-        label: Text(
-          p.toShortString(),
-          style: TextStyle(color: _selectedProduction == p ? themeColor : Colors.black),
-        ),
-        selected: _selectedProduction == p,
-        onSelected: (bool value) {
-          _selectedProduction = p;
-          loadData(0);
-          setState(() {});
-        });
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: FilterChip(
+          selectedColor: Colors.white,
+          checkmarkColor: themeColor,
+          label: Text(
+            p.getValue(),
+            style: TextStyle(color: _selectedProduction == p ? themeColor : Colors.black),
+          ),
+          selected: _selectedProduction == p,
+          onSelected: (bool value) {
+            _selectedProduction = p;
+            _ticketPrintList = [];
+            loadData(0);
+            setState(() {});
+          }),
+    );
   }
 
   _getTicketsList() {
@@ -379,8 +377,15 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
 
   Future loadData(int page) {
     requested = true;
-    return OnlineDB.apiGet("tickets/print/getList",
-        {'status': _selectedStatus.getValue(), 'sortDirection': "desc", 'sortBy': listSortBy, 'pageIndex': page, 'pageSize': 20, 'searchText': searchText}).then((res) {
+    return OnlineDB.apiGet("tickets/print/getList", {
+      'status': _selectedStatus.getValue(),
+      'sortDirection': "desc",
+      'sortBy': listSortBy,
+      'pageIndex': page,
+      'pageSize': 20,
+      'searchText': searchText,
+      'production': _selectedProduction.getValue()
+    }).then((res) {
       print(res.data);
       List prints = res.data["prints"];
       dataCount = res.data["count"];
@@ -414,19 +419,22 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
   Status _selectedStatus = Status.All;
 
   _statusChip(Status p) {
-    return FilterChip(
-        selectedColor: Colors.white,
-        checkmarkColor: themeColor,
-        label: Text(
-          p.getValue(),
-          style: TextStyle(color: _selectedStatus == p ? themeColor : Colors.black),
-        ),
-        selected: _selectedStatus == p,
-        onSelected: (bool value) {
-          _selectedStatus = p;
-          _ticketPrintList = [];
-          loadData(0);
-          setState(() {});
-        });
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: FilterChip(
+          selectedColor: Colors.white,
+          checkmarkColor: themeColor,
+          label: Text(
+            p.getValue(),
+            style: TextStyle(color: _selectedStatus == p ? themeColor : Colors.black),
+          ),
+          selected: _selectedStatus == p,
+          onSelected: (bool value) {
+            _selectedStatus = p;
+            _ticketPrintList = [];
+            loadData(0);
+            setState(() {});
+          }),
+    );
   }
 }

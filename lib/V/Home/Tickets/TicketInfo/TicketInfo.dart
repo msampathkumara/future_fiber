@@ -127,7 +127,6 @@ class _TicketInfoState extends State<TicketInfo> {
   }
 
   _appBar() {
-    double height = MediaQuery.of(context).size.height;
     var ts = TextStyle(color: Colors.white, fontSize: 24);
     var smallText = TextStyle(fontSize: 16);
 
@@ -148,75 +147,31 @@ class _TicketInfoState extends State<TicketInfo> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text(
-                        _ticket.mo ?? "_",
-                        style: ts,
-                      ),
-                      Text(
-                        _ticket.oe ?? "_",
-                        style: ts,
-                      ),
-                      Text(
-                        _ticket.production ?? "_",
-                        style: ts.merge(smallText),
-                      ),
-                      Text(
-                        "update on : " + (_ticket.getUpdateDateTime()),
-                        style: ts.merge(smallText),
-                      ),
-                      Text(
-                        "Ship Date : ${_ticket.shipDate}",
-                        style: ts.merge(smallText),
-                      ),
-                      Text(
-                        "Delivery Date : ${_ticket.deliveryDate}",
-                        style: ts.merge(smallText),
-                      ),
+                      Text(_ticket.mo ?? "_", style: ts),
+                      Text(_ticket.oe ?? "_", style: ts),
+                      Text(_ticket.production ?? "_", style: ts.merge(smallText)),
+                      Text("update on : " + (_ticket.getUpdateDateTime()), style: ts.merge(smallText)),
+                      Text("Ship Date : ${_ticket.shipDate}", style: ts.merge(smallText)),
+                      Text("Delivery Date : ${_ticket.deliveryDate}", style: ts.merge(smallText)),
                       Padding(
                         padding: const EdgeInsets.only(top: 8),
                         child: Container(
                           child: Wrap(
                             children: [
                               if (_ticket.inPrint == 1)
-                                IconButton(
-                                  icon: CircleAvatar(child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white),
-                                  onPressed: () {},
-                                ),
+                                IconButton(icon: CircleAvatar(child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white), onPressed: () {}),
                               if (_ticket.isHold == 1)
-                                IconButton(
-                                  icon: CircleAvatar(child: Icon(Icons.pan_tool_rounded, color: Colors.black), backgroundColor: Colors.white),
-                                  onPressed: () {},
-                                ),
-                              if (_ticket.isGr == 1)
-                                IconButton(
-                                  icon: CircleAvatar(child: Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white),
-                                  onPressed: () {},
-                                ),
-                              if (_ticket.isSk == 1)
-                                IconButton(
-                                  icon: CircleAvatar(child: Icon(NsIcons.sk, color: Colors.pink), backgroundColor: Colors.white),
-                                  onPressed: () {},
-                                ),
+                                IconButton(icon: CircleAvatar(child: Icon(Icons.pan_tool_rounded, color: Colors.black), backgroundColor: Colors.white), onPressed: () {}),
+                              if (_ticket.isGr == 1) IconButton(icon: CircleAvatar(child: Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white), onPressed: () {}),
+                              if (_ticket.isSk == 1) IconButton(icon: CircleAvatar(child: Icon(NsIcons.sk, color: Colors.pink), backgroundColor: Colors.white), onPressed: () {}),
                               if (_ticket.isError == 1)
-                                IconButton(
-                                  icon: CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white),
-                                  onPressed: () {},
-                                ),
+                                IconButton(icon: CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white), onPressed: () {}),
                               if (_ticket.isSort == 1)
-                                IconButton(
-                                  icon: CircleAvatar(child: Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white),
-                                  onPressed: () {},
-                                ),
+                                IconButton(icon: CircleAvatar(child: Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white), onPressed: () {}),
                               if (_ticket.isRush == 1)
-                                IconButton(
-                                  icon: CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white),
-                                  onPressed: () {},
-                                ),
+                                IconButton(icon: CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white), onPressed: () {}),
                               if (_ticket.isRed == 1)
-                                IconButton(
-                                  icon: CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white),
-                                  onPressed: () {},
-                                )
+                                IconButton(icon: CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white), onPressed: () {})
                             ],
                           ),
                         ),

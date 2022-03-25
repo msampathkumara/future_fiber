@@ -22,12 +22,14 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
   var database;
   var themeColor = Colors.deepOrange;
 
+  List<Widget> factoryChipsList = [];
+
   @override
   initState() {
     super.initState();
+    factoryChipsList = Production.values.map<Widget>((e) => e == Production.None ? Container() : _productionChip(e)).toList();
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _refreshIndicatorKey.currentState?.show();
-      loadData(0);
     });
   }
 
@@ -233,13 +235,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
           actions: [],
           title: Wrap(
             spacing: 5,
-            children: [
-              _productionChip(Production.All),
-              _productionChip(Production.Upwind),
-              _productionChip(Production.OD),
-              _productionChip(Production.Nylon),
-              _productionChip(Production.OEM),
-            ],
+            children: factoryChipsList,
           ),
         ),
         body: _getTicketsList());
@@ -254,9 +250,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
           child: RefreshIndicator(
             key: _refreshIndicatorKey,
             onRefresh: () {
-              return loadData(0).then((value) {
-                setState(() {});
-              });
+              return loadData(0);
             },
             child: (_ticketList.length == 0 && (!requested))
                 ? Center(child: Text(searchText.isEmpty ? "No Tickets Found" : "⛔ Work Ticket not found.\n Please contact  Ticket Checking department", textScaleFactor: 1.5))
@@ -505,7 +499,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
       requested = true;
     });
     return OnlineDB.apiGet("tickets/completed/getList", {
-      'production': _selectedProduction.toShortString(),
+      'production': _selectedProduction.getValue(),
       "flag": dataFilter.getValue(),
       'sortDirection': "desc",
       'sortBy': listSortBy,
@@ -524,12 +518,11 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
       _ticketList.retainWhere((x) => ids.remove(x.id));
       _dataLoadingError = false;
 
-      if(_isBarcodeScan && _ticketList.isNotEmpty){
+      if (_isBarcodeScan && _ticketList.isNotEmpty) {
         var ticketInfo = TicketInfo(_ticketList.first);
         ticketInfo.show(context);
-
       }
-      _isBarcodeScan=false;
+      _isBarcodeScan = false;
       searchController.value = TextEditingValue(text: '', selection: TextSelection.fromPosition(TextPosition(offset: 0)));
 
       setState(() {});
@@ -558,7 +551,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
         selectedColor: Colors.white,
         checkmarkColor: themeColor,
         label: Text(
-          p.toShortString(),
+          p.getValue(),
           style: TextStyle(color: _selectedProduction == p ? themeColor : Colors.black),
         ),
         selected: _selectedProduction == p,

@@ -61,7 +61,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     }, context, collection: DataTables.Tickets);
   }
 
-  late List listsArray;
+  // late List listsArray;
 
   @override
   void dispose() {
@@ -92,7 +92,8 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                   _showAllTickets = !_showAllTickets;
 
                   if (_showAllTickets) {
-                    tabs = ["All", "Upwind", "OD", "Nylon", "OEM", "No Pool"];
+                    // tabs = ["All", "Upwind", "OD", "Nylon", "OEM", "No Pool"];
+                    tabs = Production.values.map<String>((e) => e.getValue()).toList();
                   } else {
                     tabs = ["All", "Cross Production"];
                   }
@@ -198,10 +199,6 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                   ),
                   const Spacer(),
                   SizedBox(width: 36)
-                  // Text(
-                  //   "Sorted by $sortedBy",
-                  //   style: TextStyle(color: Colors.white),
-                  // ),
                 ],
               ),
             )));
@@ -219,50 +216,23 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
         : DefaultTabController(
             length: tabs.length,
             child: Scaffold(
-              backgroundColor: Colors.white,
-              appBar: AppBar(
-                toolbarHeight: 10,
-                automaticallyImplyLeading: false,
-                backgroundColor: themeColor,
-                elevation: 4.0,
-                bottom: TabBar(
-                  controller: _tabBarController,
-                  indicatorWeight: 4.0,
-                  indicatorColor: Colors.white,
-                  isScrollable: true,
-                  tabs: [
-                    for (final tab in tabs) Tab(text: tab),
-                  ],
+                backgroundColor: Colors.white,
+                appBar: AppBar(
+                  toolbarHeight: 10,
+                  automaticallyImplyLeading: false,
+                  backgroundColor: themeColor,
+                  elevation: 4.0,
+                  bottom: TabBar(
+                    controller: _tabBarController,
+                    indicatorWeight: 4.0,
+                    indicatorColor: Colors.white,
+                    isScrollable: true,
+                    tabs: [
+                      for (final tab in tabs) Tab(text: tab),
+                    ],
+                  ),
                 ),
-              ),
-              body: _showAllTickets
-                  ? TabBarView(controller: _tabBarController, children: [
-                      getTicketListByCategory(_allFilesList),
-                      getTicketListByCategory(_upwindFilesList),
-                      getTicketListByCategory(_oDFilesList),
-                      getTicketListByCategory(_nylonFilesList),
-                      getTicketListByCategory(_oEMFilesList),
-                      getTicketListByCategory(_noPoolFilesList),
-                    ])
-                  : TabBarView(controller: _tabBarController, children: [
-                      getTicketListByCategory(_allFilesList),
-                      getTicketListByCategory(_crossProductionFilesList),
-                    ]),
-
-              // body: _showAllTickets
-              //     ? TabBarView(controller: _tabBarController, children: [
-              //         getTicketListByCategory(_allFilesList),
-              //         getTicketListByCategory(_upwindFilesList),
-              //         getTicketListByCategory(_oDFilesList),
-              //         getTicketListByCategory(_nylonFilesList),
-              //         getTicketListByCategory(_oEMFilesList),
-              //         getTicketListByCategory(_noPoolFilesList),
-              //       ])
-              //     : TabBarView(controller: _tabBarController, children: [
-              //         getTicketListByCategory(_allFilesList),
-              //         getTicketListByCategory(_crossProductionFilesList),
-              //       ]),
-            ),
+                body: TabBarView(controller: _tabBarController, children: listsMap.values.map<Widget>((e) => getTicketListByCategory(e)).toList())),
           );
   }
 
@@ -321,6 +291,8 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
 
   List<Ticket> _load(selectedProduction, section, _showAllTickets, searchText, {crossProduction = false, bySection = false}) {
     print('ticket count == ${HiveBox.ticketBox.length}');
+    var _production = nsUser?.section?.factory;
+    print('====== == ${_production}');
     List<Ticket> l = HiveBox.ticketBox.values.where((t) {
       if (bySection && t.nowAt != nsUser?.section?.id) {
         return false;
@@ -329,8 +301,15 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
       if (t.file != 1 || t.completed != 0) {
         return false;
       }
-      if (crossProduction && t.crossPro != 1) {
-        return false;
+      if (crossProduction) {
+        if (t.crossPro == 1) {
+          if (t.crossProList.contains("${_production}") == false) {
+            return false;
+          }
+        } else {
+          return false;
+        }
+        print('${t.crossProList}');
       }
       if (_showAllTickets ? (!searchByProduction(t, selectedProduction)) : (!searchBySection(t, section))) {
         return false;
@@ -354,41 +333,31 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
   }
 
   List<Ticket> currentFileList = [];
-  List<Ticket> _allFilesList = [];
-  List<Ticket> _crossProductionFilesList = [];
-  List<Ticket> _upwindFilesList = [];
-  List<Ticket> _oDFilesList = [];
-  List<Ticket> _nylonFilesList = [];
-  List<Ticket> _oEMFilesList = [];
-  List<Ticket> _noPoolFilesList = [];
+  Map listsMap = {};
 
   loadData() {
+    listsMap = {};
     print('---------------------------------------------- Start loading');
     _selectedTabIndex = _tabBarController!.index;
     setLoading(true);
     String searchText = this.searchText.toLowerCase();
 
     if (_showAllTickets) {
-      _allFilesList = _load(Production.All, 0, true, searchText);
-      _upwindFilesList = _load(Production.Upwind, 0, true, searchText);
-      _oDFilesList = _load(Production.OD, 0, true, searchText);
-      _nylonFilesList = _load(Production.Nylon, 0, true, searchText);
-      _oEMFilesList = _load(Production.OEM, 0, true, searchText);
-      _noPoolFilesList = _load(Production.None, 0, true, searchText);
-      listsArray = [_allFilesList, _upwindFilesList, _oDFilesList, _nylonFilesList, _oEMFilesList, _noPoolFilesList];
+      Production.values.forEach((element) {
+        listsMap[element] = _load(element, 0, true, searchText);
+      });
     } else {
-      _allFilesList = _load(Production.All, 0, false, searchText, bySection: true);
-      _crossProductionFilesList = _load(Production.Upwind, 0, false, searchText, crossProduction: true);
-      listsArray = [_allFilesList, _crossProductionFilesList];
+      listsMap[Production.All] = _load(Production.All, 0, false, searchText, bySection: true);
+      listsMap["crossProduct"] = _load(Production.Upwind, 0, false, searchText, crossProduction: true);
     }
-    currentFileList = listsArray[_selectedTabIndex];
+    tabListener();
     print('---------------------------------------------- end loading');
   }
 
   tabListener() {
     print("Selected Index: " + _tabBarController!.index.toString());
 
-    currentFileList = listsArray[_tabBarController!.index];
+    currentFileList = listsMap.values.toList()[_tabBarController!.index];
     setState(() {
       print('${currentFileList.length}');
     });
@@ -510,9 +479,9 @@ class TicketTile extends StatelessWidget {
             direction: Axis.vertical,
             children: [
               if ((ticket.mo ?? "").trim().isNotEmpty) Text((ticket.oe ?? "")),
-              if (ticket.crossPro == 1) Chip(avatar: CircleAvatar(child: Icon(Icons.merge_type_outlined)), label: Text(ticket.crossProList)),
+              if (ticket.crossPro == 1) Chip(padding:const EdgeInsets.all(4.0),avatar: CircleAvatar(child: Icon(Icons.merge_type_outlined,size: 12),radius: 8), label: Text(ticket.crossProList)),
               // Text(" t${ticket.nowAt}"),
-              Text("  ${ticket.production}"),
+              // Text("  ${ticket.production}"),
               if (ticket.shipDate.isNotEmpty)
                 Wrap(
                   children: [

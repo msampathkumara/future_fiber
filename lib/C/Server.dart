@@ -4,7 +4,7 @@ class Server {
   static bool local = false;
 
   static String getServerAddress({onlineServer = false}) {
-    local = false;
+    local = true;
     if (kDebugMode && local) {
       return "http://192.168.0.100:3000";
     } else {
