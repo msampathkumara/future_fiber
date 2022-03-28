@@ -11,6 +11,7 @@ import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
+import 'package:smartwind/Web/home_page.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../C/FCM.dart';
@@ -48,24 +49,25 @@ class _LoginState extends State<Login> {
   initState() {
     super.initState();
     print('-----------------------------------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx__login');
-    NfcManager.instance.isAvailable().then((value) {
-      nfcIsAvailable = value;
-      if (nfcIsAvailable) {
-        NfcManager.instance.startSession(
-          onDiscovered: (NfcTag tag) async {
-            List<int> l = NfcA.from(tag)!.identifier;
-            nfcCode = HEX.encode(l);
-            _login();
-          },
-        );
-      }
-      setState(() {});
-    });
+
     if (kDebugMode) {
       nfcCode = "04f68ad2355e80";
       _login();
     }
     if (!kIsWeb) {
+      NfcManager.instance.isAvailable().then((value) {
+        nfcIsAvailable = value;
+        if (nfcIsAvailable) {
+          NfcManager.instance.startSession(
+            onDiscovered: (NfcTag tag) async {
+              List<int> l = NfcA.from(tag)!.identifier;
+              nfcCode = HEX.encode(l);
+              _login();
+            },
+          );
+        }
+        setState(() {});
+      });
       _videoPlayerController = VideoPlayerController.asset("assets/loginVideo.mp4")
         ..initialize().then((_) {
           _videoPlayerController.play();
@@ -73,14 +75,15 @@ class _LoginState extends State<Login> {
           setState(() {});
         });
     }
-
   }
 
   @override
   void dispose() {
-    _videoPlayerController.dispose();
+    if (!kIsWeb) {
+      _videoPlayerController.dispose();
+      NfcManager.instance.stopSession();
+    }
     super.dispose();
-    NfcManager.instance.stopSession();
   }
 
   var _passwordFocusNode = FocusNode();
@@ -99,10 +102,11 @@ class _LoginState extends State<Login> {
               )))
             : Stack(
                 children: [
-                  SizedBox.expand(
-                      child: FittedBox(clipBehavior: Clip.antiAlias,
+              if(!kIsWeb)    SizedBox.expand(
+                      child: FittedBox(
+                    clipBehavior: Clip.antiAlias,
                     fit: BoxFit.fill,
-                    child: SizedBox(width: _videoPlayerController.value.size.width , height: _videoPlayerController.value.size.height, child: VideoPlayer(_videoPlayerController)),
+                    child: SizedBox(width: _videoPlayerController.value.size.width, height: _videoPlayerController.value.size.height, child: VideoPlayer(_videoPlayerController)),
                   )),
                   Center(
                       child: Container(
@@ -292,16 +296,21 @@ class _LoginState extends State<Login> {
       // AppUser.setUser(nsUser);
       final UserCredential googleUserCredential = await FirebaseAuth.instance.signInWithCustomToken(res["token"]);
       if (googleUserCredential.user != null) {
-        NfcManager.instance.stopSession();
+        if (!kIsWeb) {
+          NfcManager.instance.stopSession();
+        }
         AppUser.refreshUserData().then((nsUser) async {
           Section section = nsUser.sections.length > 0 ? nsUser.sections[0] : null;
           AppUser.setSelectedSection(section);
           AppUser.setUser(nsUser);
           HiveBox.getDataFromServer();
 
-          FCM.subscribe();
-
-          await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => CheckTabStatus(nsUser)), (Route<dynamic> route) => false);
+          if (kIsWeb) {
+            await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => WebHomePage()), (Route<dynamic> route) => false);
+          } else {
+            FCM.subscribe();
+            await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => CheckTabStatus(nsUser)), (Route<dynamic> route) => false);
+          }
           setLoading(false);
         });
       }

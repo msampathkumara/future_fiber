@@ -17,8 +17,9 @@ import '../../../../C/DB/DB.dart';
 import '../../../../M/AppUser.dart';
 import '../TicketInfo/TicketInfo.dart';
 import 'CrossProduction.dart';
+import 'TicketListOptions.dart';
 
-part 'TicketListOptions.dart';
+
 
 class TicketList extends StatefulWidget {
   TicketList();
@@ -183,7 +184,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                       child: IconButton(
                         icon: Icon(Icons.sort_by_alpha_rounded),
                         onPressed: () {
-                          _sortByBottomSheetMenu(context, loadData);
+                          sortByBottomSheetMenu(context, loadData);
                         },
                       ),
                     ),
@@ -315,7 +316,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
         return false;
       }
 
-      if (!searchByFilters(t)) {
+      if (!searchByFilters(t,dataFilter)) {
         return false;
       }
 
@@ -369,7 +370,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
 
   Filters dataFilter = Filters.none;
 
-  flagIcon(Filters filter, IconData icon) {
+   flagIcon(Filters filter, IconData icon) {
     return IconButton(
       icon: CircleAvatar(child: Icon(icon, color: dataFilter == filter ? Colors.red : Colors.black), backgroundColor: Colors.white),
       tooltip: 'Increase volume by 10',
@@ -409,15 +410,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     return true;
   }
 
-  bool searchByFilters(t) {
-    if (dataFilter != Filters.none) {
-      Map _t = t.toJson();
-      if (_t[dataFilter.getValue()] != 1) {
-        return false;
-      }
-    }
-    return true;
-  }
+
 
   bool searchBySection(t, section) {
     return (!t.openSections.contains(section.toString()));

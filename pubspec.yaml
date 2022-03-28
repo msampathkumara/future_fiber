@@ -5,7 +5,7 @@ description: NorthSails Smart Wind
 publish_to: 'none'
 
 
-version: 1.1.15+47
+version: 1.1.15+48
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -38,7 +38,7 @@ dependencies:
 
   webview_flutter: ^3.0.0
   permission_handler: ^9.1.0
-  sqflite: ^2.0.0+4
+  #  sqflite: ^2.0.0+4
   path_provider: ^2.0.7
   flutter_pdfview: ^1.2.1
   hex: ^0.2.0
@@ -54,6 +54,7 @@ dependencies:
   cached_network_image: ^3.2.0
   video_player: ^2.2.11
   group_list_view: ^1.1.1
+  data_table_2: ^2.2.1
 
 
   custom_webview:
@@ -70,7 +71,9 @@ dependencies:
   native_pdf_view: ^6.0.0+1
   ota_update: ^4.0.1
   timeline_tile: ^2.0.0
-#  pdfx: ^1.0.1+1
+  flutter_dropzone: ^3.0.5
+  excel: ^2.0.0-null-safety-3
+  dotted_border: ^2.0.0+2
 
 dev_dependencies:
   hive_generator: ^1.1.1

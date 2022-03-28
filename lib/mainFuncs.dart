@@ -14,22 +14,28 @@ class mainFuncs {
   Future<bool> initializeFlutterFire() async {
     // await DB.getDB();
     // Wait for Firebase to initialize
-    await Firebase.initializeApp();
-    // FirebaseCrashlytics.instance.crash();
-    if (_kTestingCrashlytics) {
-      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-    } else {
-      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(!kDebugMode);
+    if (!kIsWeb) {
+      await Firebase.initializeApp();
+      print('dddddddddddddd');
+      // FirebaseCrashlytics.instance.crash();
+      if (_kTestingCrashlytics) {
+        await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+      } else {
+        await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(!kDebugMode);
+      }
+      print('dddddddddddddd');
+
+      Function originalOnError = FlutterError.onError as Function;
+      FlutterError.onError = (FlutterErrorDetails errorDetails) async {
+        await FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
+        originalOnError(errorDetails);
+      };
+      print('dddddddddddddd');
+      if (_kShouldTestAsyncErrorOnInit) {
+        await _testAsyncErrorOnInit();
+      }
     }
 
-    Function originalOnError = FlutterError.onError as Function;
-    FlutterError.onError = (FlutterErrorDetails errorDetails) async {
-      await FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
-      originalOnError(errorDetails);
-    };
-    if (_kShouldTestAsyncErrorOnInit) {
-      await _testAsyncErrorOnInit();
-    }
     App.getCurrentUser();
     print('ccccccccccccccccccccccccccccccccccccccccccccccccccccccccc');
     return true;

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/C/OnlineDB.dart';
@@ -286,7 +287,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
                         return GestureDetector(
                           behavior: HitTestBehavior.opaque,
                           onLongPress: () async {
-                            await showTicketOptions(ticket, context);
+                            await showStandardTicketOptions(ticket, context);
                             setState(() {});
                           },
                           onTap: () {
@@ -405,77 +406,79 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
     return true;
   }
 
-  Future<void> showTicketOptions(StandardTicket ticket, BuildContext context1) async {
-    print(ticket.toJson());
-    await showModalBottomSheet<void>(
-      context: context1,
-      builder: (BuildContext context) {
-        return Container(
-          decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
-          height: 650,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              ListTile(
-                title: Text(ticket.mo ?? ticket.oe!),
-                subtitle: Text(ticket.oe!),
-              ),
-              Divider(),
-              Expanded(
-                  child: Container(
-                child: SingleChildScrollView(
-                    child: Column(children: [
-                  ListTile(
-                      title: Text("Change Factory"),
-                      leading: Icon(Icons.send_outlined, color: Colors.lightBlue),
-                      onTap: () async {
-                        Navigator.of(context).pop();
-                        showFactories(ticket, context1);
-                        // await Navigator.push(context1, MaterialPageRoute(builder: (context) => changeFactory(ticket)));
-                        // Navigator.of(context).pop();
-                      }),
-                  ListTile(
-                      title: Text("Delete"),
-                      leading: Icon(Icons.delete_forever, color: Colors.red),
-                      onTap: () async {
-                        // TODO add link
-                        OnlineDB.apiPost("tickets/standard/delete", {'id': ticket.id.toString()}).then((response) async {
-                          print(response.data);
-                        });
-                        Navigator.of(context).pop();
-                      }),
-                ])),
-              ))
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> showFactories(StandardTicket ticket, BuildContext context1) async {
-    print(ticket.toJson());
-    await showModalBottomSheet<void>(
-      context: context1,
-      builder: (BuildContext context) {
-        return Container(
-          decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
-          height: 650,
-          child: FactorySelector(ticket.production ?? "", (factory) async {
-            await OnlineDB.apiPost("tickets/standard/changeFactory", {'production': factory, 'ticketId': ticket.id});
-            // await HiveBox.getDataFromServer();
-
-            print(factory);
-          }),
-        );
-      },
-    );
-  }
-
   Future reloadData() async {
     await HiveBox.getDataFromServer(clean: true);
     loadData();
     setLoading(false);
   }
+}
+
+Future<void> showStandardTicketOptions(StandardTicket ticket, BuildContext context1) async {
+  print(ticket.toJson());
+  await showModalBottomSheet<void>(
+    constraints: kIsWeb ? BoxConstraints(maxWidth: 600) : null,
+    context: context1,
+    builder: (BuildContext context) {
+      return Container(
+        decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
+        height: 650,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            ListTile(
+              title: Text(ticket.mo ?? ticket.oe!),
+              subtitle: Text(ticket.oe!),
+            ),
+            Divider(),
+            Expanded(
+                child: Container(
+              child: SingleChildScrollView(
+                  child: Column(children: [
+                ListTile(
+                    title: Text("Change Factory"),
+                    leading: Icon(Icons.send_outlined, color: Colors.lightBlue),
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                      showFactories(ticket, context1);
+                      // await Navigator.push(context1, MaterialPageRoute(builder: (context) => changeFactory(ticket)));
+                      // Navigator.of(context).pop();
+                    }),
+                ListTile(
+                    title: Text("Delete"),
+                    leading: Icon(Icons.delete_forever, color: Colors.red),
+                    onTap: () async {
+                      // TODO add link
+                      OnlineDB.apiPost("tickets/standard/delete", {'id': ticket.id.toString()}).then((response) async {
+                        print(response.data);
+                      });
+                      Navigator.of(context).pop();
+                    }),
+              ])),
+            ))
+          ],
+        ),
+      );
+    },
+  );
+}
+
+Future<void> showFactories(StandardTicket ticket, BuildContext context1) async {
+  print(ticket.toJson());
+  await showModalBottomSheet<void>(
+    constraints: kIsWeb ? BoxConstraints(maxWidth: 600) : null,
+    context: context1,
+    builder: (BuildContext context) {
+      return Container(
+        decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
+        height: 650,
+        child: FactorySelector(ticket.production ?? "", (factory) async {
+          await OnlineDB.apiPost("tickets/standard/changeFactory", {'production': factory, 'ticketId': ticket.id});
+          // await HiveBox.getDataFromServer();
+
+          print(factory);
+        }),
+      );
+    },
+  );
 }

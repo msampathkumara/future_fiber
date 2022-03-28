@@ -15,6 +15,10 @@ extension ProductionExtension on Production {
   String getValue() {
     return (this).toString().split('.').last.replaceAll('_', " ").trim();
   }
+
+  bool equalCaseInsensitive(String production) {
+    return (this).toString().split('.').last.replaceAll('_', " ").trim().toLowerCase() == production.toLowerCase().trim();
+  }
 }
 
 // extension ParseToString on Production {
@@ -66,7 +70,7 @@ var uuid = const Uuid();
 extension f on Box {
   putObject(HiveClass value) {
     Object id = value.id != -1 ? value.id : uuid.v4();
-    print(id);
+    // print(id);
     put(id, value);
   }
 

@@ -143,6 +143,10 @@ class Ticket extends DataObject {
   @JsonKey(ignore: true)
   File? ticketFile;
 
+  @HiveField(27, defaultValue: "")
+  @JsonKey(defaultValue: "", includeIfNull: true)
+  String atSection = "";
+
   Ticket();
 
   static stringToList(string) => (string == null || string.toString().isEmpty) ? [] : json.decode(string);

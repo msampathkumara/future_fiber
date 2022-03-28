@@ -41,4 +41,8 @@ class CPR {
   factory CPR.fromJson(Map<String, dynamic> json) => _$CPRFromJson(json);
 
   Map<String, dynamic> toJson() => _$CPRToJson(this);
+
+  static List<CPR> fromJsonArray(cprs) {
+    return List<CPR>.from(cprs.map((model) => Ticket.fromJson(model)));
+  }
 }

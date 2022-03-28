@@ -1,13 +1,39 @@
-part of 'TicketList.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+import '../../../../C/OnlineDB.dart';
+import '../../../../M/AppUser.dart';
+import '../../../../M/Enums.dart';
+import '../../../../M/Ticket.dart';
+import '../../../../ns_icons_icons.dart';
+import '../../../Widgets/FlagDialog.dart';
+import 'CrossProduction.dart';
+import 'Finish/FinishCheckList.dart';
+
+class TicketOption {
+  TicketOption(this.title, this.onTap, this.icon, this.permissions);
+
+  final String title;
+
+  final Icon? icon;
+
+  final Function onTap;
+
+  final List<Permission> permissions;
+}
 
 Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContext context) async {
   print(ticket.toJson());
   await showModalBottomSheet<void>(
+    constraints: kIsWeb ? BoxConstraints(maxWidth: 600) : null,
     context: context,
     builder: (BuildContext context) {
       return Container(
         decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
         height: 650,
+        width: 500,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
@@ -211,7 +237,7 @@ String listSortBy = "shipDate";
 bool listSortDirectionIsDESC = false;
 String sortedBy = "Date";
 
-void _sortByBottomSheetMenu(context, loadData) {
+sortByBottomSheetMenu(context, loadData) {
   getListItem(String title, icon, key) {
     return ListTile(
       trailing: (listSortBy == key ? (listSortDirectionIsDESC ? Icon(Icons.arrow_upward_rounded) : Icon(Icons.arrow_downward_rounded)) : null),
@@ -261,4 +287,14 @@ void _sortByBottomSheetMenu(context, loadData) {
           ),
         );
       });
+}
+
+bool searchByFilters(Ticket t, Filters dataFilter) {
+  if (dataFilter != Filters.none) {
+    Map _t = t.toJson();
+    if (_t[dataFilter.getValue()] != 1) {
+      return false;
+    }
+  }
+  return true;
 }
