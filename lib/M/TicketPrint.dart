@@ -21,4 +21,8 @@ class TicketPrint {
   factory TicketPrint.fromJson(Map<String, dynamic> json) => _$TicketPrintFromJson(json);
 
   Map<String, dynamic> toJson() => _$TicketPrintToJson(this);
+
+  static List<TicketPrint> fromJsonArray(ticketPrintList) {
+    return List<TicketPrint>.from(ticketPrintList.map((model) => TicketPrint.fromJson(model)));
+  }
 }

@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/Web/V/AddSheet/add_sheet.dart';
 import 'package:smartwind/Web/V/AddTicket/add_ticket.dart';
@@ -27,11 +27,26 @@ class _WebProductionPoolState extends State<WebProductionPool> {
 
   Production selectedProduction = Production.All;
 
+  late DbChangeCallBack _dbChangeCallBack;
+
   get ticketCount => _dataSource == null ? 0 : _dataSource?.rowCount;
 
   @override
   void initState() {
     super.initState();
+
+    _dbChangeCallBack = DB.setOnDBChangeListener(() {
+      print('on update tickets');
+      if (mounted) {
+        loadData();
+      }
+    }, context, collection: DataTables.Tickets);
+  }
+
+  @override
+  void dispose() {
+    _dbChangeCallBack.dispose();
+    super.dispose();
   }
 
   @override

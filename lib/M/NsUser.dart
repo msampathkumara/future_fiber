@@ -89,6 +89,10 @@ class NsUser extends HiveClass {
   @JsonKey(defaultValue: [], includeIfNull: true)
   List<String> permissions = [];
 
+  @HiveField(18, defaultValue: 0)
+  @JsonKey(defaultValue: 0, includeIfNull: true)
+  int upon = 0;
+
   String? password = "";
 
   var emailVerified;
@@ -102,6 +106,8 @@ class NsUser extends HiveClass {
   factory NsUser.fromJson(Map<String, dynamic> json) => _$NsUserFromJson(json);
 
   bool get isDisabled => deactivate == 1;
+
+  get haveImage => img.trim().isNotEmpty;
 
   Map<String, dynamic> toJson() => _$NsUserToJson(this);
 
@@ -181,7 +187,7 @@ class NsUser extends HiveClass {
   }
 
   static getUserImageById(int? nsUserId) {
-    return UserImage(nsUserId: nsUserId, radius: 16);
+    return UserImage(nsUser: fromId(nsUserId), radius: 16);
   }
 
   static NsUser? fromId(int? id) {
@@ -208,7 +214,7 @@ class NsUser extends HiveClass {
   }
 
   String getImage({size = 300}) {
-    return Server.getServerPath("images2/userImages/$size/$img");
+    return Server.getServerPath("images/profilePictures/$size/$img");
   }
 
   static List<NsUser> fromJsonArray(nsUsers) {

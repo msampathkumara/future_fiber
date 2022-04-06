@@ -1,9 +1,10 @@
 import "package:collection/collection.dart";
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:group_list_view/group_list_view.dart';
-import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/user_permission.dart';
+import 'package:smartwind/Web/Widgets/DialogView.dart';
 
 import '../../../C/OnlineDB.dart';
 
@@ -17,12 +18,13 @@ class UserPermissions extends StatefulWidget {
     return _UserPermissionsState();
   }
 
-  static show(context, NsUser nsUser) {
-    print(nsUser.toJson());
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => UserPermissions(nsUser)),
-    );
+  show(context) {
+    kIsWeb ? showDialog(context: context, builder: (_) => this) : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
+    // print(nsUser.toJson());
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(builder: (context) => UserPermissions(nsUser)),
+    // );
   }
 }
 
@@ -46,6 +48,10 @@ class _UserPermissionsState extends State<UserPermissions> {
 
   @override
   Widget build(BuildContext context) {
+    return kIsWeb ? DialogView(child: getUi(), width: 500) : getUi();
+  }
+
+  getUi() {
     return isLoading
         ? Scaffold(body: Center(child: CircularProgressIndicator()))
         : Scaffold(

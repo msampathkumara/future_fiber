@@ -105,22 +105,27 @@ class _MyHomePageState extends State<MyHomePage> {
       body: FutureBuilder(
           future: _mainFuncs.initializeFlutterFireFuture,
           builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              print('-----------------------------------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-              if (FirebaseAuth.instance.currentUser != null && App.currentUser != null) {
-                print('-----------------------------------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx__2222222222222222222222');
-                return Home();
-              }
-              return Login();
-            } else {
-              return Center(
-                  child: Container(
-                      child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [CircularProgressIndicator(), Padding(padding: const EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
-              )));
-            }
+            return _getUi(snapshot.hasData);
           }),
     );
+  }
+
+  Widget _getUi(hasData) {
+    if (hasData) {
+      print('-----------------------------------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx ' + (FirebaseAuth.instance.currentUser != null ? "have" : ""));
+      if (FirebaseAuth.instance.currentUser != null && App.currentUser != null) {
+        print('-----------------------------------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx__2222222222222222222222');
+
+        return Home();
+      }
+      return Login();
+    } else {
+      return Center(
+          child: Container(
+              child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [CircularProgressIndicator(), Padding(padding: const EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
+      )));
+    }
   }
 }

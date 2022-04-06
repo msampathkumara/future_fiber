@@ -22,7 +22,9 @@ class AppUser extends NsUser {
     });
   }
 
-  static getIdToken() {
+  static getIdToken([reFreshToken=false]) async {
+    final user = FirebaseAuth.instance.currentUser;
+    final _idToken = await user!.getIdToken(reFreshToken);
     return _idToken;
   }
 

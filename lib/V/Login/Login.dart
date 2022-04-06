@@ -50,10 +50,10 @@ class _LoginState extends State<Login> {
     super.initState();
     print('-----------------------------------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx__login');
 
-    if (kDebugMode) {
-      nfcCode = "04f68ad2355e80";
-      _login();
-    }
+    // if (kDebugMode) {
+    //   nfcCode = "04f68ad2355e80";
+    //   _login();
+    // }
     if (!kIsWeb) {
       NfcManager.instance.isAvailable().then((value) {
         nfcIsAvailable = value;
@@ -75,6 +75,7 @@ class _LoginState extends State<Login> {
           setState(() {});
         });
     }
+
   }
 
   @override
@@ -102,12 +103,13 @@ class _LoginState extends State<Login> {
               )))
             : Stack(
                 children: [
-              if(!kIsWeb)    SizedBox.expand(
-                      child: FittedBox(
-                    clipBehavior: Clip.antiAlias,
-                    fit: BoxFit.fill,
-                    child: SizedBox(width: _videoPlayerController.value.size.width, height: _videoPlayerController.value.size.height, child: VideoPlayer(_videoPlayerController)),
-                  )),
+                  if (!kIsWeb)
+                    SizedBox.expand(
+                        child: FittedBox(
+                      clipBehavior: Clip.antiAlias,
+                      fit: BoxFit.fill,
+                      child: SizedBox(width: _videoPlayerController.value.size.width, height: _videoPlayerController.value.size.height, child: VideoPlayer(_videoPlayerController)),
+                    )),
                   Center(
                       child: Container(
                           decoration: BoxDecoration(
@@ -282,18 +284,6 @@ class _LoginState extends State<Login> {
         return;
       }
 
-      // await DB.updateDatabase(context,showLoadingDialog: true);
-
-      // Map<String, dynamic> payload = Jwt.parseJwt(res["user"]);
-      // // payload["sections"]=[];
-      // print(payload);
-      // print(payload['permissions']);
-      //
-      // NsUser nsUser = NsUser.fromJson(payload);
-      // SharedPreferences prefs = await SharedPreferences.getInstance();
-      // nsUser.section = nsUser.sections.length > 0 ? nsUser.sections[0] : null;
-      // await prefs.setString("user", json.encode(nsUser));
-      // AppUser.setUser(nsUser);
       final UserCredential googleUserCredential = await FirebaseAuth.instance.signInWithCustomToken(res["token"]);
       if (googleUserCredential.user != null) {
         if (!kIsWeb) {

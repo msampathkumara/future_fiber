@@ -74,6 +74,8 @@ dependencies:
   flutter_dropzone: ^3.0.5
   excel: ^2.0.0-null-safety-3
   dotted_border: ^2.0.0+2
+  socket_io_client: ^2.0.0-beta.4-nullsafety.0
+  file_picker: ^4.2.7
 
 dev_dependencies:
   hive_generator: ^1.1.1

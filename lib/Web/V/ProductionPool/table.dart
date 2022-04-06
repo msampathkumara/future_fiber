@@ -110,22 +110,6 @@ class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
         columnSpacing: 16,
         wrapInCard: false,
         showFirstLastButtons: true,
-        // header:
-        // Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        //   Text('PaginatedDataTable2'),
-        //   // if (kDebugMode && getCurrentRouteOption(context) == custPager)
-        //     Row(children: [
-        //       OutlinedButton(
-        //           onPressed: () => _controller!.goToPageWithRow(25),
-        //           child: Text('Go to row 25')),
-        //       OutlinedButton(
-        //           onPressed: () => _controller!.goToRow(5),
-        //           child: Text('Go to row 5'))
-        //     ]),
-        //   if (getCurrentRouteOption(context) == custPager &&
-        //       _controller != null)
-        //     PageNumber(controller: _controller!)
-        // ]),
         rowsPerPage: _rowsPerPage,
         autoRowsToHeight: false,
         minWidth: 800,

@@ -150,7 +150,7 @@ class _UserDetailsState extends State<UserDetails> {
                       ? null
                       : FloatingActionButton(
                           onPressed: () {
-                            UpdateUserDetails.show(context, nsUser);
+                            UpdateUserDetails(nsUser).show(context);
                           },
                           child: Icon(Icons.edit_outlined)),
                 ),

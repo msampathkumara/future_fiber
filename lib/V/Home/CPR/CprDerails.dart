@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/CPR.dart';
 import 'package:smartwind/M/CprItem.dart';
+import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
 
@@ -143,17 +144,20 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
                       if (_cpr.user != null)
                         ListTile(
                             title: Text("Added By "),
-                            subtitle: ListTile(leading: UserImage(nsUserId: _cpr.user!.id, radius: 24), title: Text(_cpr.user!.uname, style: st), subtitle: Text(_cpr.dnt))),
+                            subtitle:
+                                ListTile(leading: UserImage(nsUser: NsUser.fromId(_cpr.user!.id), radius: 24), title: Text(_cpr.user!.uname, style: st), subtitle: Text(_cpr.dnt))),
                       if (_cpr.sentBy != null)
                         ListTile(
                             title: Text("Sent By "),
                             subtitle: ListTile(
-                                leading: UserImage(nsUserId: _cpr.sentBy!.id, radius: 24), title: Text(_cpr.sentBy!.uname, style: st), subtitle: Text("${_cpr.sentOn ?? ""}"))),
+                                leading: UserImage(nsUser: NsUser.fromId(_cpr.sentBy!.id), radius: 24),
+                                title: Text(_cpr.sentBy!.uname, style: st),
+                                subtitle: Text("${_cpr.sentOn ?? ""}"))),
                       if (_cpr.recivedBy != null)
                         ListTile(
                             title: Text("Sent By "),
                             subtitle: ListTile(
-                                leading: UserImage(nsUserId: _cpr.recivedBy!.id, radius: 24),
+                                leading: UserImage(nsUser: NsUser.fromId(_cpr.recivedBy!.id), radius: 24),
                                 title: Text(_cpr.recivedBy!.uname, style: st),
                                 subtitle: Text("${_cpr.recivedOn ?? ""}"))),
                     ])),
@@ -188,7 +192,7 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
                                         subtitle: material.isChecked()
                                             ? Row(
                                                 children: [
-                                                  UserImage(nsUserId: material.user!.id, radius: 12),
+                                                  UserImage(nsUser: NsUser.fromId(material.user!.id), radius: 12),
                                                   Padding(
                                                       padding: const EdgeInsets.only(left: 8, right: 8),
                                                       child: Text(material.user!.uname, style: TextStyle(fontWeight: FontWeight.bold))),

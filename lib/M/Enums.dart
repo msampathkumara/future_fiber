@@ -132,7 +132,7 @@ enum Permissions {
   SET_USER_PERMISSIONS,
   DEACTIVATE_USERS,
   SET_ID_CARD,
-  REMOVE_ID_CARD
+  REMOVE_ID_CARD,PENDING_TO_FINISH,SHEET_DATA,ADMIN
 }
 
 extension PermissionsExtension on Permissions {

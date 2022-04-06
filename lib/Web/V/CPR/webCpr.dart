@@ -48,7 +48,7 @@ class _WebCprState extends State<WebCpr> {
         appBar: AppBar(
             title: Row(
               children: [
-                Text("Standard Library", style: mainWidgetsTitleTextStyle),
+                Text("CPR", style: mainWidgetsTitleTextStyle),
                 Spacer(),
                 Wrap(children: [
                   Material(

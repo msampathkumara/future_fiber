@@ -1,77 +1,79 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/C/Server.dart';
-import 'package:smartwind/M/AppUser.dart';
-import 'package:smartwind/M/NsUser.dart';
 
-import '../../M/hive.dart';
+import '../../M/AppUser.dart';
+import '../../M/NsUser.dart';
 
 class UserImage extends StatefulWidget {
   NsUser? nsUser;
-  int? nsUserId;
+
   Color? backgroundColor;
   double radius;
 
   bool disable;
 
-  UserImage({this.nsUser, this.nsUserId, this.backgroundColor, required this.radius, this.disable = false, key})
-      : super(key: key ?? Key('${nsUser?.id}${nsUserId}${nsUser?.uptime}'));
+  double padding;
+
+  UserImage({this.padding = 0, required this.nsUser, this.backgroundColor, required this.radius, this.disable = false, Key? key})
+      : super(key: key ?? Key("ui${nsUser?.id}${nsUser?.upon}${radius}"));
 
   @override
   _UserImageState createState() => _UserImageState();
 }
 
 class _UserImageState extends State<UserImage> {
-  NsUser? nsUser;
-  var img;
-  bool _loaded = false;
-  var placeholder = AssetImage('assets/images/user.png');
+  late NsUser nsUser;
+  var placeholder = const AssetImage('assets/images/user.png');
 
   @override
   void initState() {
     super.initState();
-    nsUser = widget.nsUser;
 
-    if (nsUser == null && widget.nsUserId != null) {
-      nsUser = HiveBox.usersBox.get(widget.nsUserId);
-    } else {
-      // loadImage();
-
-    }
-    print("${nsUser?.name}   ${nsUser?.isDisabled}");
-
+    nsUser = widget.nsUser!;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.disable || nsUser!.isDisabled) {
-      return ColorFiltered(
-          key: Key("${nsUser?.uptime}"),
-          colorFilter: ColorFilter.mode(
-            Colors.white,
-            BlendMode.saturation,
-          ),
-          child: getImage());
-      // child: CircleAvatar(radius: widget.radius, backgroundImage: _loaded ? img : placeholder, backgroundColor: widget.backgroundColor ?? Colors.transparent));
+    if (widget.disable || nsUser.isDisabled) {
+      return Padding(
+        padding: EdgeInsets.all(widget.padding),
+        child: Stack(
+          children: [
+            ClipOval(
+              child: ColorFiltered(
+                  colorFilter: const ColorFilter.mode(
+                    Colors.white,
+                    BlendMode.saturation,
+                  ),
+                  child: getImage()),
+            ),
+            Icon(Icons.no_accounts_rounded, color: Colors.red, size: widget.radius * 0.6)
+          ],
+        ),
+      );
     }
 
-    return getImage();
+    return Padding(
+      padding: EdgeInsets.all(widget.padding),
+      child: getImage(),
+    );
   }
 
   Widget getImage() {
     return CircleAvatar(
-        backgroundColor: Colors.white,
-        radius: widget.radius,
-        child: ClipOval(
-            child: CachedNetworkImage(
-                imageUrl: Server.getServerApiPath("users/getImage?img=" + nsUser!.img + "&size=${(widget.radius * 3)}"),
-                httpHeaders: {"authorization": '${AppUser.getIdToken()}'},
-                width: widget.radius * 2,
-                height: widget.radius * 2,
-                fit: BoxFit.cover,
-                errorWidget: (context, url, error) {
-                  return Image.asset('assets/images/user.png', fit: BoxFit.cover, width: widget.radius * 2, height: widget.radius * 2);
-                },
-                progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress))));
+      backgroundColor: Colors.white,
+      radius: widget.radius,
+      child: ClipOval(
+          child: CachedNetworkImage(
+              imageUrl: nsUser.getImage(size: widget.radius * 3),
+              httpHeaders: {"authorization": '${AppUser.getIdToken()}'},
+              width: widget.radius * 2,
+              height: widget.radius * 2,
+              fit: BoxFit.cover,
+              errorWidget: (context, url, error) {
+                return Image.asset('images/userPlaceholder.jpg', fit: BoxFit.cover, width: widget.radius * 2, height: widget.radius * 2);
+              },
+              progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress))),
+    );
   }
 }

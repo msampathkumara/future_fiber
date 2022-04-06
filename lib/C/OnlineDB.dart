@@ -23,15 +23,15 @@ class OnlineDB {
     return dio.post(Server.getServerApiPath(url), data: (data));
   }
 
-  static Future<Response> apiGet(String url, Map<String, dynamic> data, {onlineServer = false}) async {
+  static Future<Response> apiGet(String url, Map<String, dynamic> data, {onlineServer = false,bool reFreshToken=false}) async {
     final user = FirebaseAuth.instance.currentUser;
-    final idToken = await user!.getIdToken();
+    final idToken = await user!.getIdToken(reFreshToken);
     // final idToken = await AppUser.getIdToken();
     Dio dio = new Dio();
     dio.options.headers['content-Type'] = 'application/json';
     dio.options.headers["authorization"] = "$idToken";
 
-    return dio.get(Server.getServerApiPath('$url', onlineServer: onlineServer), queryParameters: data);
+    return dio.get(Server.getServerApiPath('$url', onlineServer: onlineServer), queryParameters: data,);
   }
 
 

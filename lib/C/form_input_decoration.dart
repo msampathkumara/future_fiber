@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 class FormInputDecoration {
-  static InputDecoration getDeco({hintText, labelText, labelStyle, helperText, Icon? prefixIcon, Icon? icon, String? suffixText}) {
+  static InputDecoration getDeco({hintText, labelText, labelStyle, helperText, Icon? prefixIcon, Icon? icon, String? suffixText, Widget? suffixIcon}) {
     return InputDecoration(
         suffixText: suffixText,
+        suffixIcon: suffixIcon,
         icon: icon,
         prefixIcon: prefixIcon,
         helperText: helperText,

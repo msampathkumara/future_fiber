@@ -2,6 +2,7 @@ part of 'user_manager_user_list.dart';
 
 Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcIsAvailable) async {
   await showModalBottomSheet<void>(
+    constraints: kIsWeb ? BoxConstraints(maxWidth: 600) : null,
     context: context,
     builder: (BuildContext context) {
       return Container(
@@ -45,7 +46,7 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
                     child: Icon(Icons.edit),
                   ),
                   onTap: () async {
-                    UpdateUserDetails.show(context, nsUser);
+                    UpdateUserDetails(nsUser).show(context);
                   },
                 ),
               if (AppUser.havePermissionFor(Permissions.SET_USER_PERMISSIONS))
@@ -57,7 +58,8 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
                     child: Icon(Icons.gpp_good_outlined),
                   ),
                   onTap: () async {
-                    UserPermissions.show(context, nsUser);
+                    Navigator.of(context).pop();
+                    UserPermissions(nsUser).show(context);
                   },
                 ),
               if (AppUser.havePermissionFor(Permissions.DEACTIVATE_USERS))

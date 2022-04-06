@@ -24,15 +24,15 @@ class App {
     return data;
   }
 
-  static NsUser? currentUser;
+  static NsUser? get currentUser => getCurrentUser();
 
-  static Future<NsUser?> getCurrentUser() async {
+  static NsUser? getCurrentUser() {
     // var prefs = await SharedPreferences.getInstance();
     // var u = prefs.getString("user");
     // if (u != null) {
     //   currentUser = NsUser.fromJson(json.decode(u));
     // }
-    return Future.value(AppUser.getUser());
+    return AppUser.getUser();
   }
 
   static Future<void> tryOtaUpdate(Function(OtaEvent) onChange) async {
@@ -40,7 +40,7 @@ class App {
       //LINK CONTAINS APK OF FLUTTER HELLO WORLD FROM FLUTTER SDK EXAMPLES
       OtaUpdate()
           .execute(
-        Server.getServerAddress()+"/apk/app.apk",
+        Server.getServerAddress() + "/apk/app.apk",
         destinationFilename: 'app.apk',
         //FOR NOW ANDROID ONLY - ABILITY TO VALIDATE CHECKSUM OF FILE:
         // sha256checksum: 'd6da28451a1e15cf7a75f2c3f151befad3b80ad0bb232ab15c20897e54f21478',

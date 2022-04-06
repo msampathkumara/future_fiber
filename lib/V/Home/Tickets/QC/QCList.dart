@@ -1,8 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Enums.dart';
+import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/QC.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
@@ -257,7 +256,10 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
                               // subtitle: Text(ticket.fileVersion.toString()),
                               trailing: Wrap(
                                   alignment: WrapAlignment.center,
-                                  children: [UserImage(nsUserId: _ticketQc.userId, radius: 20), Text("${_ticketQc.user != null ? _ticketQc.user!.uname : ""}", textScaleFactor: 1)],
+                                  children: [
+                                    UserImage(nsUser: NsUser.fromId(_ticketQc.userId), radius: 20),
+                                    Text("${_ticketQc.user != null ? _ticketQc.user!.uname : ""}", textScaleFactor: 1)
+                                  ],
                                   direction: Axis.vertical))));
                 },
                 separatorBuilder: (BuildContext context, int index) {

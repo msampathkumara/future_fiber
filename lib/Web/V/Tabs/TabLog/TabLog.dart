@@ -1,0 +1,105 @@
+import 'package:data_table_2/data_table_2.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:smartwind/M/DeviceLog.dart';
+
+import '../../../../C/Api.dart';
+import '../../../../M/Device.dart';
+import '../../../../M/NsUser.dart';
+import '../../../../V/Widgets/UserImage.dart';
+import '../../../Widgets/DialogView.dart';
+
+part 'tabLog.table.dart';
+
+class TabLog extends StatefulWidget {
+  final Device device;
+
+  const TabLog(this.device, {Key? key}) : super(key: key);
+
+  @override
+  State<TabLog> createState() => _TabLogState();
+
+  void show(context) {
+    kIsWeb ? showDialog(context: context, builder: (_) => this) : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
+  }
+}
+
+class _TabLogState extends State<TabLog> {
+  late Device device;
+
+  late TabLogDataSourceAsync _dataSource;
+
+  @override
+  void initState() {
+    device = widget.device;
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DialogView(
+        child: Scaffold(
+            appBar: AppBar(title: Text("Tab Log")),
+            body: Row(
+              children: [
+                Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Material(
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                        elevation: 4,
+                        borderRadius: BorderRadius.circular(8),
+                        child: Container(
+                            width: 250,
+                            child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(children: [
+                                  Text("${device.name}", textScaleFactor: 1.2, style: TextStyle(color: Colors.red)),
+                                  Text("${device.imei}"),
+                                  Text("${device.model}"),
+                                  Text("${device.modelNumber}")
+                                ]))))),
+                Expanded(
+                    child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 16.0, 16, 16),
+                  child: Material(
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      elevation: 4,
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                          child: TabLogDataTable(
+                        onInit: (TabLogDataSourceAsync dataSource) {
+                          _dataSource = dataSource;
+                        },
+                        onRequestData: (int page, int startingAt, int count, String sortedBy, bool sortedAsc) {
+                          return getData(page, startingAt, count, sortedBy, sortedAsc);
+                        },
+                        onTap: (_sheetData) {},
+                      ))),
+                ))
+              ],
+            )),
+        width: 1000);
+  }
+
+  getData(int page, int startingAt, int count, String sortedBy, bool sortedAsc) {
+    return Api.get("tabs/logList", {'tab': device.id, 'type': 'All', 'sortDirection': sortedAsc ? "asc" : "desc", 'sortBy': sortedBy, 'pageIndex': page, 'pageSize': count})
+        .then((res) {
+          print(res.data);
+          List log = res.data["tabLog"];
+          var dataCount = res.data["count"];
+          return DataResponse(dataCount, DeviceLog.fromJsonArray(log));
+        })
+        .whenComplete(() {})
+        .catchError((err) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(err.toString()),
+              action: SnackBarAction(
+                  label: 'Retry',
+                  onPressed: () {
+                    getData(page, startingAt, count, sortedBy, sortedAsc);
+                  })));
+          setState(() {});
+        });
+  }
+}

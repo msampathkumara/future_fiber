@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -9,7 +10,7 @@ import 'package:permission_handler/permission_handler.dart';
 class SearchBar extends StatefulWidget implements PreferredSizeWidget {
   TextEditingController searchController;
 
-  var onSearchTextChanged;
+  Function(String text) onSearchTextChanged;
   var onBarCode;
   var onSubmitted;
 
@@ -56,6 +57,31 @@ class _SearchBarState extends State<SearchBar> {
 
   @override
   Widget build(BuildContext context) {
+    if (kIsWeb) {
+      return Material(
+        elevation: 4,
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+            height: 40,
+            width: 200,
+            child: TextFormField(
+              controller: widget.searchController,
+              onChanged: (text) {},
+              cursorColor: Colors.black,
+              decoration: new InputDecoration(
+                  prefixIcon: Icon(Icons.search_rounded),
+                  suffixIcon: IconButton(icon: Icon(Icons.clear), onPressed: widget.searchController.clear),
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  errorBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  contentPadding: EdgeInsets.only(left: 15, bottom: 11, top: 10, right: 15),
+                  hintText: "Search Text"),
+            )),
+      );
+    }
+
     return Container(
       // color: Colors.deepOrangeAccent,
       child: Padding(

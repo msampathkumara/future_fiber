@@ -38,7 +38,7 @@ class mainFuncs {
 
     App.getCurrentUser();
     print('ccccccccccccccccccccccccccccccccccccccccccccccccccccccccc');
-    return true;
+    return Future.value(true);
   }
 
   Future<void> _testAsyncErrorOnInit() async {

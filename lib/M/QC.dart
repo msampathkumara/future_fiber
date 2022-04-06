@@ -41,4 +41,8 @@ class QC {
     var formattedDate = DateFormat('yyyy-MM-dd HH:mm').format(date);
     return formattedDate;
   }
+
+  static List<QC> fromJsonArray(qcList) {
+    return List<QC>.from(qcList.map((model) => QC.fromJson(model)));
+  }
 }
