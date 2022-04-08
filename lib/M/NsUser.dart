@@ -69,6 +69,8 @@ class NsUser extends HiveClass {
   @JsonKey(defaultValue: [], includeIfNull: true)
   List<Section> sections = [];
 
+  var nic;
+
   // @HiveField(14, defaultValue: null)
   // @JsonKey(defaultValue: null, includeIfNull: true)
   // Section? section;
@@ -112,7 +114,9 @@ class NsUser extends HiveClass {
   Map<String, dynamic> toJson() => _$NsUserToJson(this);
 
   List getPhonesList() {
-    if (phone.isEmpty) {
+    print('ssssssssssssssss');
+    if (phone.trim().isEmpty) {
+      print('ssssssssssssssss11');
       return [];
     }
     return phone.split(",");
@@ -168,6 +172,7 @@ class NsUser extends HiveClass {
     });
     if (!have) {
       sections.add(selectedSection);
+      print('addddd');
     }
   }
 

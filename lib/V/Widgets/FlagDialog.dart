@@ -3,11 +3,106 @@ import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/TicketFlag.dart';
+import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/ns_icons_icons.dart';
 
 import 'UserButton.dart';
 
-class FlagDialog {
+class FlagDialog extends StatefulWidget {
+  FlagDialog({Key? key}) : super(key: key);
+
+  @override
+  State<FlagDialog> createState() => _FlagDialogState();
+
+  late Ticket ticket;
+  late TicketFlagTypes ticketFlagTypes;
+
+  void showFlagView(context, Ticket _ticket, TicketFlagTypes _ticketFlagTypes) {
+    ticket = _ticket;
+    ticketFlagTypes = _ticketFlagTypes;
+
+    showDialog(context: context, builder: (_) => this);
+  }
+}
+
+class _FlagDialogState extends State<FlagDialog> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DialogView(child: _getUi(widget.ticketFlagTypes), width: 500, height: 500);
+  }
+
+  _getUi(flagType) {
+    var title;
+    var titleText;
+    var titleIcon;
+    switch (flagType) {
+      case TicketFlagTypes.HOLD:
+        titleText = "Hold";
+        titleIcon = Icon(Icons.pan_tool_rounded);
+        break;
+      case TicketFlagTypes.RED:
+        titleText = "Red Flag";
+        titleIcon = Icon(Icons.tour_rounded);
+        break;
+      case TicketFlagTypes.GR:
+        titleText = "Graphics";
+        titleIcon = Icon(NsIcons.gr);
+        break;
+
+      case TicketFlagTypes.RUSH:
+        titleText = "Rush";
+        titleIcon = Icon(Icons.flash_on_rounded);
+        break;
+      case TicketFlagTypes.SK:
+        titleText = "SK";
+        titleIcon = Icon(NsIcons.sk);
+        break;
+    }
+
+    title = Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [(titleIcon), Text('$titleText')]));
+    TicketFlag ticketFlag = TicketFlag.fromJson({});
+    double w = MediaQuery.of(context).size.width;
+
+    return Scaffold(
+      appBar: AppBar(title: Wrap(children: [Icon(NsIcons.sk, size: 24),SizedBox(width: 16), Text(titleText)])),
+      body: Container(
+        width: w,
+        child: ListTile(
+          title: Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Align(
+                alignment: Alignment.topLeft,
+                child: Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0, top: 8),
+                    child: Text(ticketFlag.flaged == 1 ? "Flag Added" : "Flag Removed", style: TextStyle(fontWeight: FontWeight.bold)))),
+            Text(ticketFlag.comment),
+            Divider(),
+          ]),
+          subtitle: SizedBox(
+            width: double.infinity,
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 4.0),
+                  child: UserButton(nsUserId: ticketFlag.user, imageRadius: 16),
+                ),
+                Spacer(),
+                Text(ticketFlag.getDateTime(), style: TextStyle(color: Colors.blue)),
+              ],
+            ),
+          ),
+          // leading: UserImage(nsUserId: ticketFlag.user, radius: 24),
+        ),
+      ),
+    );
+  }
+}
+
+class FlagDialog1 {
   static int FLAG_TYPE_RED = 1;
 
   static showRedFlagDialog(BuildContext context, Ticket ticket) async {
@@ -18,100 +113,6 @@ class FlagDialog {
     _commentPlaceHolder = "Red Flag Comment";
 
     _showDialog(context, ticket);
-
-    //
-    // TextEditingController redCommentController = TextEditingController();
-    // showLoadingDialog(context);
-    // bool dataLoaded = false;
-    // ticket.getFlagList(TicketFlag.flagTypeRED).then((list) {
-    //   dataLoaded = true;
-    //   Navigator.of(context).pop(false);
-    //   TicketFlag lastFlag;
-    //   bool isRed;
-    //   if (list.isEmpty) {
-    //     isRed = false;
-    //   } else {
-    //     lastFlag = list[0];
-    //     isRed = lastFlag.isFlaged;
-    //   }
-    //   showDialog<void>(
-    //     context: context,
-    //     barrierDismissible: false, // user must tap button!
-    //     builder: (BuildContext context) {
-    //       return AlertDialog(
-    //           title: ListTile(title: Text(isRed ? 'Remove Red Flag' : "Add Red Flag",textScaleFactor: 1.2), leading: Icon(Icons.flag)),
-    //           content: Container(
-    //             height: 500,
-    //             width: 500,
-    //             child: Column(
-    //               children: [
-    //                 Container(
-    //                   height: 400,
-    //                   child: ListView.builder(
-    //                       itemCount: list.length,
-    //                       itemBuilder: (context, i) {
-    //                         TicketFlag tf = list[i];
-    //                         return Card(
-    //                           child: ListTile(
-    //                             title: Text(tf.isFlaged ? "Flag Added" : "Flag Removed"),
-    //                             subtitle: Column(
-    //                               crossAxisAlignment: CrossAxisAlignment.start,
-    //                               children: [
-    //                                 Padding(padding: const EdgeInsets.all(8.0), child: Text(tf.comment, textScaleFactor: 1.2, style: TextStyle(color: Colors.black))),
-    //                                 Align(alignment: Alignment.bottomRight, child: Text(tf.getDateTime()))
-    //                               ],
-    //                             ),
-    //                             leading: CircleAvatar(
-    //                                 radius: 24.0, backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"), backgroundColor: Colors.transparent),
-    //                           ),
-    //                         );
-    //                       }),
-    //                 ),
-    //                 if (!isRed)
-    //                   Container(
-    //                     width: 500,
-    //                     child: TextFormField(
-    //                       controller: redCommentController,
-    //                       decoration: InputDecoration(hintText: 'Red Flag Comment'),
-    //                       keyboardType: TextInputType.multiline,
-    //                       maxLines: null,
-    //                     ),
-    //                   ),
-    //                 if (isRed)
-    //                   Container(
-    //                     child: Text(""),
-    //                   ),
-    //               ],
-    //             ),
-    //           ),
-    //           actions: <Widget>[
-    //             TextButton(
-    //               child: const Text('Cancel'),
-    //               onPressed: () {
-    //                 Navigator.of(context).pop(false);
-    //               },
-    //             ),
-    //             (!isRed && dataLoaded)
-    //                 ? ElevatedButton(
-    //                     child: const Text('Add Red Flag'),
-    //                     onPressed: () {
-    //                       setFlag(TicketFlag.flagTypeRED, redCommentController.value.text, ticket).then((value) {
-    //                         print(value);
-    //                         Navigator.of(context).pop(true);
-    //                       });
-    //                     })
-    //                 : ElevatedButton(
-    //                     child: const Text('Remove Red Flag'),
-    //                     onPressed: () {
-    //                       removeFlag(TicketFlag.flagTypeRED, ticket).then((value) {
-    //                         print(value);
-    //                         Navigator.of(context).pop(false);
-    //                       });
-    //                     })
-    //           ]);
-    //     },
-    //   );
-    // });
   }
 
   static showLoadingDialog(context, String text) {

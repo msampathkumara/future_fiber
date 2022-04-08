@@ -1,9 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_share/flutter_share.dart';
@@ -22,12 +23,16 @@ import 'package:smartwind/V/Home/Tickets/ShippingSystem/ShippingSystem.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/Loading.dart';
 import 'package:smartwind/V/Widgets/TicketPdfViwer.dart';
+import 'package:universal_html/html.dart' as html;
 
+import 'AppUser.dart';
 import 'DataObject.dart';
 import 'LocalFileVersion.dart';
 import 'hive.dart';
 
 part 'Ticket.g.dart';
+
+part 'Ticket.options.dart';
 
 @JsonSerializable(explicitToJson: true)
 @HiveType(typeId: 1)
@@ -147,6 +152,14 @@ class Ticket extends DataObject {
   @JsonKey(defaultValue: "", includeIfNull: true)
   String atSection = "";
 
+  @HiveField(28, defaultValue: 0)
+  @JsonKey(defaultValue: 0, includeIfNull: true)
+  int isQc = 0;
+
+  @HiveField(29, defaultValue: 0)
+  @JsonKey(defaultValue: 0, includeIfNull: true)
+  int isQa = 0;
+
   Ticket();
 
   static stringToList(string) => (string == null || string.toString().isEmpty) ? [] : json.decode(string);
@@ -173,13 +186,19 @@ class Ticket extends DataObject {
     loadingWidget.show(context);
 
     var dio = Dio();
-    var ed = await getExternalStorageDirectory();
+    var filePath;
+    if (kIsWeb) {
+      filePath = isStandard ? '/st$id.pdf' : '/$id.pdf';
+    } else {
+      var ed = await getExternalStorageDirectory();
+      filePath = isStandard ? ed!.path + '/st$id.pdf' : ed!.path + '/$id.pdf';
+    }
+
     final user = FirebaseAuth.instance.currentUser;
     final idToken = await user!.getIdToken();
     dio.options.headers['content-Type'] = 'application/json';
     dio.options.headers["authorization"] = '$idToken';
     String queryString = Uri(queryParameters: {"id": id.toString()}).query;
-    var filePath = isStandard ? ed!.path + '/st$id.pdf' : ed!.path + '/$id.pdf';
 
     var response;
     try {
@@ -240,6 +259,44 @@ class Ticket extends DataObject {
   }
 
   Future<void> open(context, {onReceiveProgress}) async {
+    if (kIsWeb) {
+      var loadingWidget = Loading(loadingText: "Downloading Ticket");
+      loadingWidget.show(context);
+
+      var path = isStandard ? "tickets/standard/getPdf?" : 'tickets/getTicketFile?';
+      String queryString = Uri(queryParameters: {"id": id.toString()}).query;
+      final idToken = await AppUser.getIdToken(false);
+
+      Dio dio = Dio();
+      dio.options.headers["authorization"] = "$idToken";
+      Response<List<int>>? rs;
+      try {
+        rs = await dio.get<List<int>>(Server.getServerApiPath(path + queryString), options: Options(responseType: ResponseType.bytes));
+      } catch (e) {
+        if (e is DioError) {
+          print("------------------------------------------------------------------------${e.response?.statusCode}");
+          // print(e);
+          if (e.response?.statusCode == 404) {
+            print('404');
+            ErrorMessageView(errorMessage: 'Ticket Not Found', icon: Icons.broken_image_rounded).show(context);
+          } else {
+            print(e.message);
+          }
+        } else {}
+        loadingWidget.close(context);
+      }
+
+      if (rs != null) {
+        loadingWidget.close(context);
+        final blob = html.Blob([rs.data], 'application/pdf');
+        final url = html.Url.createObjectUrlFromBlob(blob);
+        html.window.open(url, "_blank");
+        html.Url.revokeObjectUrl(url);
+      }
+
+      return;
+    }
+
     File file = await getLocalFile();
     var isNew = await isFileNew();
 

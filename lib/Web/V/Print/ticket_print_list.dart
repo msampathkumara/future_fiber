@@ -1,6 +1,7 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:smartwind/M/Ticket.dart';
 
 import '../../../C/Api.dart';
 import '../../../M/NsUser.dart';
@@ -11,9 +12,9 @@ import '../../Widgets/DialogView.dart';
 part 'ticket_print_list.table.dart';
 
 class TicketPrintList extends StatefulWidget {
-  final TicketPrint ticketPrint;
+  final Ticket ticket;
 
-  const TicketPrintList(this.ticketPrint, {Key? key}) : super(key: key);
+  const TicketPrintList(this.ticket, {Key? key}) : super(key: key);
 
   @override
   State<TicketPrintList> createState() => _TicketPrintListState();
@@ -24,13 +25,13 @@ class TicketPrintList extends StatefulWidget {
 }
 
 class _TicketPrintListState extends State<TicketPrintList> {
-  late TicketPrint ticketPrint;
+  late Ticket ticket;
   late TicketPrintDataSourceAsync _dataSource;
 
   @override
   void initState() {
     // TODO: implement initState
-    ticketPrint = widget.ticketPrint;
+    ticket = widget.ticket;
     super.initState();
   }
 
@@ -51,7 +52,7 @@ class _TicketPrintListState extends State<TicketPrintList> {
             automaticallyImplyLeading: false,
             actions: [IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.close))],
             title: Column(
-              children: [Text("${ticketPrint.ticket?.mo ?? ''}"), Text("${ticketPrint.ticket?.oe ?? ''}")],
+              children: [Text("${ticket.mo ?? ''}"), Text("${ticket.oe ?? ''}")],
             )),
         body: TicketPrintListTable(
             onInit: (TicketPrintDataSourceAsync dataSource) {
@@ -64,16 +65,8 @@ class _TicketPrintListState extends State<TicketPrintList> {
   }
 
   Future<DataResponse> getData() {
-    return Api.get("tickets/print/getHistoryList", {
-      'ticketId': widget.ticketPrint.ticket?.id,
-      'status': 'all',
-      'sortDirection': "asc",
-      'sortBy': 'doneOn',
-      'pageIndex': 0,
-      'pageSize': 1,
-      'searchText': '',
-      'production': 'all'
-    })
+    return Api.get("tickets/print/getHistoryList",
+            {'ticketId': widget.ticket.id, 'status': 'all', 'sortDirection': "asc", 'sortBy': 'doneOn', 'pageIndex': 0, 'pageSize': 1, 'searchText': '', 'production': 'all'})
         .then((res) {
           print(res.data);
           List ticketPrint = res.data["prints"];

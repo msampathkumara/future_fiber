@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/NsUser.dart';
@@ -10,7 +11,7 @@ import 'hive.dart';
 class AppUser extends NsUser {
   static var _idToken;
 
-  AppUser() {
+  AppUser(context) {
     print('AppUser');
     FirebaseAuth.instance.idTokenChanges().listen((firebaseUser) {
       if (firebaseUser != null) {
@@ -22,7 +23,11 @@ class AppUser extends NsUser {
     });
   }
 
-  static getIdToken([reFreshToken=false]) async {
+  static bool get isLogged => (FirebaseAuth.instance.currentUser != null);
+
+  static bool get isNotLogged => !isLogged;
+
+  static getIdToken([reFreshToken = false]) async {
     final user = FirebaseAuth.instance.currentUser;
     final _idToken = await user!.getIdToken(reFreshToken);
     return _idToken;
@@ -97,9 +102,10 @@ class AppUser extends NsUser {
     return (getUser()?.permissions.indexOf(permission.getValue()) ?? -1) > -1;
   }
 
-  static void logout() {
+  static void logout(context) {
     _userIsAdmin = null;
     FirebaseAuth.instance.signOut();
     HiveBox.userConfigBox.clear();
+    Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
   }
 }

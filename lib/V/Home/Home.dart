@@ -291,7 +291,7 @@ class _HomeState extends State<Home> {
       print(onError);
     });
     FirebaseAuth.instance.signOut();
-    AppUser.logout();
+    AppUser.logout(context);
     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Login()), (Route<dynamic> route) => false);
   }
 

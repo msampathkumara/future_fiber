@@ -1,6 +1,7 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/Web/webMain.dart';
 
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'C/App.dart';
 import 'V/Home/Home.dart';
 import 'V/Login/Login.dart';
@@ -39,6 +39,18 @@ main() async {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: Colors.transparent, // transparent status bar
   ));
+
+  if (kIsWeb) {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) async {
+      if (user == null) {
+        FirebaseDatabase.instance.ref('db_upon').onValue.listen((DatabaseEvent event) {
+          final data = event.snapshot.value;
+          print('db_upon___db_upon');
+          HiveBox.getDataFromServer();
+        });
+      }
+    });
+  }
 
   runApp(kIsWeb ? webApp() : MyApp());
 }

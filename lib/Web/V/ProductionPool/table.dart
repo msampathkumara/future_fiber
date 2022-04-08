@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/hive.dart';
+import 'package:smartwind/Web/V/Print/ticket_print_list.dart';
 
 import '../../../M/Enums.dart';
 import '../../../M/hive.dart';
@@ -193,13 +194,7 @@ class DessertDataSource extends DataTableSource {
           content: Text('Tapped on ${ticket.mo}'),
         ));
       },
-      onDoubleTap: hasRowTaps
-          ? () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                duration: Duration(seconds: 1),
-                backgroundColor: Theme.of(context).focusColor,
-                content: Text('Double Tapped on ${ticket.mo}'),
-              ))
-          : null,
+      onDoubleTap: hasRowTaps ? () => {ticket.open(context)} : null,
       onSecondaryTap: hasRowTaps
           ? () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 duration: Duration(seconds: 1),
@@ -227,23 +222,39 @@ class DessertDataSource extends DataTableSource {
         DataCell(Text(ticket.shipDate.toString())),
         DataCell(Wrap(
           children: [
+            if (ticket.isQc == 1)
+              IconButton(
+                icon: CircleAvatar(backgroundColor: Colors.red, radius: 8, child: const Text('QC', style: TextStyle(fontSize: 8, color: Colors.white))),
+                onPressed: () {
+                  // TicketPrintList(ticket).show(context);
+                },
+              ),
+            if (ticket.isQa == 1)
+              IconButton(
+                icon: CircleAvatar(backgroundColor: Colors.deepOrangeAccent, radius: 8, child: const Text('QA', style: TextStyle(fontSize: 8, color: Colors.white))),
+                onPressed: () {
+                  // TicketPrintList(ticket).show(context);
+                },
+              ),
             if (ticket.inPrint == 1)
               IconButton(
                 icon: CircleAvatar(child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white),
-                onPressed: () {},
+                onPressed: () {
+                  TicketPrintList(ticket).show(context);
+                },
               ),
             if (ticket.isHold == 1)
               IconButton(
                 icon: CircleAvatar(child: Icon(NsIcons.stop, color: Colors.black), backgroundColor: Colors.white),
                 onPressed: () {
-                  FlagDialog.showFlagView(context, ticket, TicketFlagTypes.HOLD);
+                  FlagDialog().showFlagView(context, ticket, TicketFlagTypes.HOLD);
                 },
               ),
             if (ticket.isGr == 1)
               IconButton(
                 icon: CircleAvatar(child: Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white),
                 onPressed: () {
-                  FlagDialog.showFlagView(context, ticket, TicketFlagTypes.GR);
+                  FlagDialog().showFlagView(context, ticket, TicketFlagTypes.GR);
                 },
               ),
             if (ticket.isSk == 1)
@@ -257,13 +268,13 @@ class DessertDataSource extends DataTableSource {
               IconButton(
                   icon: CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white),
                   onPressed: () {
-                    FlagDialog.showFlagView(context, ticket, TicketFlagTypes.RUSH);
+                    FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RUSH);
                   }),
             if (ticket.isRed == 1)
               IconButton(
                 icon: CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white),
                 onPressed: () {
-                  FlagDialog.showFlagView(context, ticket, TicketFlagTypes.RED);
+                  FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RED);
                 },
               )
           ],

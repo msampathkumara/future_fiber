@@ -9,6 +9,7 @@ import 'package:smartwind/M/TicketFlag.dart';
 import 'package:smartwind/M/TicketHistory.dart';
 import 'package:smartwind/V/Home/Tickets/TicketInfo/info_Printing.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
+import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/ns_icons_icons.dart';
 
 import '../../../../C/DB/DB.dart';
@@ -102,7 +103,7 @@ class _TicketInfoState extends State<TicketInfo> {
   @override
   Widget build(BuildContext context) {
     return kIsWeb
-        ? getWebUi()
+        ? DialogView(child: getWebUi(), width: 1000)
         : Scaffold(
             body: _loading ? Center(child: CircularProgressIndicator()) : _body(bottomNavigationBarSelectedIndex),
             appBar: _appBar(),
@@ -275,127 +276,118 @@ class _TicketInfoState extends State<TicketInfo> {
   }
 
   getWebUi() {
-    return Material(
-      color: Colors.transparent,
-      child: Padding(
-        padding: const EdgeInsets.all(64.0),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(8.0),
-          child: Scaffold(
-            backgroundColor: Colors.white,
-            body: Row(
-              children: [
-                Container(
-                    width: 300,
-                    child: Container(
-                      color: Colors.orange,
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Row(
+        children: [
+          Container(
+              width: 300,
+              child: Container(
+                color: Colors.orange,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
+                          Text(_ticket.mo ?? "_", style: ts),
+                          Text(_ticket.oe ?? "_", style: ts),
+                          Text(_ticket.production ?? "_", style: ts.merge(smallText)),
+                          Text("update on : " + (_ticket.getUpdateDateTime()), style: ts.merge(smallText)),
+                          Text("Ship Date : ${_ticket.shipDate}", style: ts.merge(smallText)),
+                          Text("Delivery Date : ${_ticket.deliveryDate}", style: ts.merge(smallText)),
                           Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(_ticket.mo ?? "_", style: ts),
-                                Text(_ticket.oe ?? "_", style: ts),
-                                Text(_ticket.production ?? "_", style: ts.merge(smallText)),
-                                Text("update on : " + (_ticket.getUpdateDateTime()), style: ts.merge(smallText)),
-                                Text("Ship Date : ${_ticket.shipDate}", style: ts.merge(smallText)),
-                                Text("Delivery Date : ${_ticket.deliveryDate}", style: ts.merge(smallText)),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 8),
-                                  child: Container(
-                                    child: Wrap(
-                                      children: [
-                                        if (_ticket.inPrint == 1)
-                                          IconButton(
-                                              icon: CircleAvatar(child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white),
-                                              onPressed: () {}),
-                                        if (_ticket.isHold == 1)
-                                          IconButton(icon: CircleAvatar(child: Icon(Icons.pan_tool_rounded, color: Colors.black), backgroundColor: Colors.white), onPressed: () {}),
-                                        if (_ticket.isGr == 1)
-                                          IconButton(icon: CircleAvatar(child: Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white), onPressed: () {}),
-                                        if (_ticket.isSk == 1)
-                                          IconButton(icon: CircleAvatar(child: Icon(NsIcons.sk, color: Colors.pink), backgroundColor: Colors.white), onPressed: () {}),
-                                        if (_ticket.isError == 1)
-                                          IconButton(
-                                              icon: CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white), onPressed: () {}),
-                                        if (_ticket.isSort == 1)
-                                          IconButton(
-                                              icon: CircleAvatar(child: Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white), onPressed: () {}),
-                                        if (_ticket.isRush == 1)
-                                          IconButton(
-                                              icon: CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white), onPressed: () {}),
-                                        if (_ticket.isRed == 1)
-                                          IconButton(icon: CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white), onPressed: () {})
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              ],
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Container(
+                              child: Wrap(
+                                children: [
+                                  if (_ticket.inPrint == 1)
+                                    IconButton(
+                                        icon: CircleAvatar(child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white),
+                                        onPressed: () {}),
+                                  if (_ticket.isHold == 1)
+                                    IconButton(icon: CircleAvatar(child: Icon(Icons.pan_tool_rounded, color: Colors.black), backgroundColor: Colors.white), onPressed: () {}),
+                                  if (_ticket.isGr == 1)
+                                    IconButton(icon: CircleAvatar(child: Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white), onPressed: () {}),
+                                  if (_ticket.isSk == 1)
+                                    IconButton(icon: CircleAvatar(child: Icon(NsIcons.sk, color: Colors.pink), backgroundColor: Colors.white), onPressed: () {}),
+                                  if (_ticket.isError == 1)
+                                    IconButton(
+                                        icon: CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white), onPressed: () {}),
+                                  if (_ticket.isSort == 1)
+                                    IconButton(
+                                        icon: CircleAvatar(child: Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white), onPressed: () {}),
+                                  if (_ticket.isRush == 1)
+                                    IconButton(
+                                        icon: CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white), onPressed: () {}),
+                                  if (_ticket.isRed == 1)
+                                    IconButton(icon: CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white), onPressed: () {})
+                                ],
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: new CircularPercentIndicator(
-                                radius: 50.0,
-                                lineWidth: 4.0,
-                                percent: (_progress / 100).toDouble(),
-                                center: Text(_ticket.progress.toString() + "%", style: ts),
-                                progressColor: Colors.blue,
-                                animateFromLastPercent: true,
-                                animation: true,
-                                animationDuration: 500),
                           )
                         ],
                       ),
-                    )),
-                Expanded(
-                  child: Scaffold(
-                    appBar: AppBar(
-                        automaticallyImplyLeading: false,
-                        title: Row(children: [
-                          Spacer(),
-                          IconButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              icon: Icon(Icons.close, color: Colors.black))
-                        ]),
-                        backgroundColor: Colors.white),
-                    body: _loading ? Center(child: CircularProgressIndicator()) : _body(bottomNavigationBarSelectedIndex),
-                    backgroundColor: Colors.white,
-                    bottomNavigationBar: BottomAppBar(
-                        color: Colors.orange,
-                        shape: CircularNotchedRectangle(),
-                        notchMargin: 4.0,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: <Widget>[
-                              _getBottomNavigationBarItem(Icons.tour_rounded, ("Flags"), 0),
-                              _getBottomNavigationBarItem(Icons.data_usage_rounded, ("Progress"), 1),
-                              _getBottomNavigationBarItem(Icons.print_rounded, ("Printing"), 2),
-                              _getBottomNavigationBarItem(Icons.history_rounded, ("History"), 3),
-                            ],
-                          ),
-                        )),
-                    floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-                    floatingActionButton: FloatingActionButton(
-                      child: Icon(Icons.import_contacts),
-                      onPressed: () {
-                        _ticket.open(context);
-                      },
                     ),
-                  ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: new CircularPercentIndicator(
+                          radius: 50.0,
+                          lineWidth: 4.0,
+                          percent: (_progress / 100).toDouble(),
+                          center: Text(_ticket.progress.toString() + "%", style: ts),
+                          progressColor: Colors.blue,
+                          animateFromLastPercent: true,
+                          animation: true,
+                          animationDuration: 500),
+                    )
+                  ],
                 ),
-              ],
+              )),
+          Expanded(
+            child: Scaffold(
+              appBar: AppBar(
+                  automaticallyImplyLeading: false,
+                  title: Row(children: [
+                    Spacer(),
+                    IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: Icon(Icons.close, color: Colors.black))
+                  ]),
+                  backgroundColor: Colors.white),
+              body: _loading ? Center(child: CircularProgressIndicator()) : _body(bottomNavigationBarSelectedIndex),
+              backgroundColor: Colors.white,
+              bottomNavigationBar: BottomAppBar(elevation: 16,
+                  color: Colors.orange,
+                  shape: CircularNotchedRectangle(),
+                  notchMargin: 4.0,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        _getBottomNavigationBarItem(Icons.tour_rounded, ("Flags"), 0),
+                        _getBottomNavigationBarItem(Icons.data_usage_rounded, ("Progress"), 1),
+                        _getBottomNavigationBarItem(Icons.print_rounded, ("Printing"), 2),
+                        _getBottomNavigationBarItem(Icons.history_rounded, ("History"), 3),
+                      ],
+                    ),
+                  )),
+              floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+              floatingActionButton: FloatingActionButton(
+                child: Icon(Icons.import_contacts),
+                onPressed: () {
+                  _ticket.open(context);
+                },
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

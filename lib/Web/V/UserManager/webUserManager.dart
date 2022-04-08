@@ -136,9 +136,10 @@ class _WebUserManagerState extends State<WebUserManager> {
               ),
             )),
         floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
-        floatingActionButton: FloatingActionButton.small(
+        floatingActionButton: FloatingActionButton(
             onPressed: () async {
-              UpdateUserDetails(new NsUser()).show(context);
+              await UpdateUserDetails(new NsUser()).show(context);
+              HiveBox.getDataFromServer();
             },
             child: const Icon(Icons.add),
             backgroundColor: Colors.green));
@@ -225,7 +226,7 @@ class _WebUserManagerState extends State<WebUserManager> {
               ListTile(title: Text('Type', style: lt), subtitle: Text('${selectedUser.utype}', style: lst)),
               ListTile(title: Text('EPF', style: lt), subtitle: Text('${selectedUser.epf}', style: lst)),
               ListTile(title: Text('Phone', style: lt), subtitle: Text('${selectedUser.phone}', style: lst)),
-              ListTile(title: Text('Email', style: lt), subtitle: Text('${selectedUser.emailAddress}', style: lst)),
+              ListTile(title: Text('Email', style: lt), subtitle: Text('${selectedUser.emailAddress}', style: lst))
             ],
           ),
           bottomNavigationBar: BottomAppBar(

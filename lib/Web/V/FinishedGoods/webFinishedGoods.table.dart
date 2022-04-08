@@ -326,14 +326,14 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                     IconButton(
                       icon: CircleAvatar(child: Icon(NsIcons.stop, color: Colors.black), backgroundColor: Colors.white),
                       onPressed: () {
-                        FlagDialog.showFlagView(context, ticket, TicketFlagTypes.HOLD);
+                        FlagDialog().showFlagView(context, ticket, TicketFlagTypes.HOLD);
                       },
                     ),
                   if (ticket.isGr == 1)
                     IconButton(
                       icon: CircleAvatar(child: Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white),
                       onPressed: () {
-                        FlagDialog.showFlagView(context, ticket, TicketFlagTypes.GR);
+                        FlagDialog().showFlagView(context, ticket, TicketFlagTypes.GR);
                       },
                     ),
                   if (ticket.isSk == 1)
@@ -349,13 +349,13 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                     IconButton(
                         icon: CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white),
                         onPressed: () {
-                          FlagDialog.showFlagView(context, ticket, TicketFlagTypes.RUSH);
+                          FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RUSH);
                         }),
                   if (ticket.isRed == 1)
                     IconButton(
                       icon: CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white),
                       onPressed: () {
-                        FlagDialog.showFlagView(context, ticket, TicketFlagTypes.RED);
+                        FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RED);
                       },
                     )
                 ],

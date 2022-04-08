@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/DB/DB.dart';
@@ -68,6 +70,8 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                   flagIcon(Filters.isSk, NsIcons.sk, "Filter by SK"),
                   flagIcon(Filters.isGr, NsIcons.gr, "Filter by GR"),
                   flagIcon(Filters.isSort, NsIcons.short, "Filter by CPR"),
+                  flagIcon(Filters.isQc, NsIcons.short, "Filter by QC", text: "QC"),
+                  flagIcon(Filters.isQa, NsIcons.short, "Filter by QA", text: "QA"),
                   SizedBox(width: 50),
                   Material(
                     elevation: 4,
@@ -185,9 +189,14 @@ class _WebProductionPoolState extends State<WebProductionPool> {
 
   Filters dataFilter = Filters.none;
 
-  flagIcon(Filters filter, IconData icon, tooltip) {
+  flagIcon(Filters filter, IconData? icon, tooltip, {String? text}) {
     return IconButton(
-      icon: CircleAvatar(child: Icon(icon, color: dataFilter == filter ? Colors.red : Colors.black, size: 20), backgroundColor: Colors.white, radius: 16),
+      icon: CircleAvatar(
+          child: (text != null)
+              ? Text(text, style: TextStyle(color: dataFilter == filter ? Colors.red : Colors.black, fontWeight: FontWeight.bold))
+              : Icon(icon, color: dataFilter == filter ? Colors.red : Colors.black, size: 20),
+          backgroundColor: Colors.white,
+          radius: 16),
       tooltip: tooltip,
       onPressed: () async {
         dataFilter = dataFilter == filter ? Filters.none : filter;
@@ -252,7 +261,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
   }
 
   bool searchByProduction(Ticket ticket, Production selectedProduction) {
-    print('${ticket.production} === ${selectedProduction.getValue()}');
+    // print('${ticket.production} === ${selectedProduction.getValue()}');
     if (selectedProduction == Production.None && (ticket.production == null || ticket.production == '')) {
       return true;
     }

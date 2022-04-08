@@ -69,6 +69,8 @@ class HiveBox {
       setUptimes(Upons());
     }
     Upons uptimes = getUptimes();
+    Map d=uptimes.toJson();
+    d["z"]=DateTime.now().millisecondsSinceEpoch;
     print(uptimes.toJson());
 
     return OnlineDB.apiGet(("data/getData"), uptimes.toJson()).then((Response response) async {

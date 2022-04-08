@@ -13,6 +13,7 @@ import 'package:smartwind/C/form_input_decoration.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Section.dart';
 import 'package:smartwind/M/hive.dart';
+import 'package:smartwind/V/Home/UserManager/section_list.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 
 class UpdateUserDetails extends StatefulWidget {
@@ -61,6 +62,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
     super.initState();
     nsUser = widget.nsUser;
     orginalNsUser = widget.nsUser;
+    _epfNumberControll.text = nsUser.epf;
   }
 
   @override
@@ -91,7 +93,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
     setImage();
     print('--------------------------------------------------------------------------');
     setState(() {});
-    imageId='';
+    imageId = '';
   }
 
   var placeholder = const AssetImage('assets/images/userPlaceholder.jpg');
@@ -109,304 +111,6 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
   @override
   Widget build(BuildContext context) {
     return kIsWeb ? DialogView(child: getDialogUi(), width: 1000) : getUi();
-  }
-
-  getUi() {
-    //   return SafeArea(
-    //     child: Scaffold(
-    //       appBar: AppBar(
-    //         backgroundColor: Colors.white,
-    //         elevation: 1,
-    //         toolbarHeight: 400,
-    //         flexibleSpace: Center(
-    //           child: Wrap(
-    //             direction: Axis.vertical,
-    //             crossAxisAlignment: WrapCrossAlignment.center,
-    //             children: [
-    //               if (_image != null)
-    //                 CircleAvatar(
-    //                     radius: 150,
-    //                     foregroundImage: img ?? (nsUser.haveImage ? NetworkImage(nsUser.getImage()) : (img ?? placeholder)),
-    //                     backgroundImage: const AssetImage("assets/images/userPlaceholder.jpg")),
-    //               if (_image == null)
-    //                 CircleAvatar(radius: 124.0, backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"), backgroundColor: Colors.transparent),
-    //               Row(
-    //                 children: [
-    //                   SizedBox(child: TextButton(onPressed: getImage, child: Text("Change Profile Picture ${nsUser.id}")), width: 170),
-    //                   if (_image != null) SizedBox(child: VerticalDivider(color: Colors.grey, thickness: 1), height: 20),
-    //                   if (_image != null)
-    //                     SizedBox(
-    //                         child: TextButton(
-    //                             onPressed: () {
-    //                               setState(() {
-    //                                 _image = null;
-    //                               });
-    //                             },
-    //                             child: Text(
-    //                               "Reset",
-    //                               textAlign: TextAlign.left,
-    //                             )),
-    //                         width: 170)
-    //                 ],
-    //               ),
-    //               Padding(
-    //                 padding: const EdgeInsets.only(top: 16.0),
-    //                 child: Text(
-    //                   nsUser.name,
-    //                   textScaleFactor: 1.5,
-    //                 ),
-    //               ),
-    //               Text('#' + nsUser.uname, style: TextStyle(color: Colors.blue)),
-    //             ],
-    //           ),
-    //         ),
-    //       ),
-    //       body: SingleChildScrollView(
-    //         child: Padding(
-    //           padding: const EdgeInsets.all(16.0),
-    //           child: Column(
-    //             children: [
-    //               Card(
-    //                 child: Column(
-    //                   children: [
-    //                     ListTile(title: Text("Basic Info"), leading: Icon(Icons.account_box_outlined)),
-    //                     Padding(
-    //                       padding: const EdgeInsets.all(8.0),
-    //                       child: Column(children: [
-    //                         TextFormField(
-    //                           initialValue: nsUser.name,
-    //                           decoration: FormInputDecoration.getDeco(labelText: "Full Name"),
-    //                           onChanged: (text) {
-    //                             nsUser.name = text;
-    //                           },
-    //                         ),
-    //                         SizedBox(height: 16),
-    //                         TextFormField(
-    //                           initialValue: nsUser.uname,
-    //                           decoration: FormInputDecoration.getDeco(labelText: "User Name"),
-    //                           onChanged: (text) {
-    //                             nsUser.uname = text;
-    //                             setState(() {});
-    //                           },
-    //                         )
-    //                       ]),
-    //                     )
-    //                   ],
-    //                 ),
-    //               ),
-    //               Card(
-    //                 child: Column(
-    //                   children: [
-    //                     ListTile(title: Text("Contact info"), leading: Icon(Icons.contact_phone_outlined)),
-    //                     Padding(
-    //                       padding: const EdgeInsets.all(16.0),
-    //                       child: Column(children: [
-    //                         ListTile(
-    //                             leading: Icon(Icons.phone_android_outlined),
-    //                             title: Text("Phone"),
-    //                             subtitle: Column(
-    //                               children: [
-    //                                 TextFormField(
-    //                                   decoration: new InputDecoration(labelText: "Enter your number"),
-    //                                   keyboardType: TextInputType.number,
-    //                                   inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
-    //                                   controller: _phoneNumberControll,
-    //                                   onFieldSubmitted: (t) {
-    //                                     nsUser.addPhone(t);
-    //                                     _phoneNumberControll.text = "";
-    //                                   },
-    //                                 ),
-    //                                 Row(
-    //                                     children: List.generate(nsUser.getPhonesList().length, (index) {
-    //                                   String number = nsUser.getPhonesList()[index];
-    //                                   return Padding(
-    //                                     padding: const EdgeInsets.all(8.0),
-    //                                     child: GestureDetector(
-    //                                         onTapDown: (TapDownDetails details) {
-    //                                           _showPopupmenu(details.globalPosition, (val) {
-    //                                             if (val == 1) {
-    //                                               _phoneNumberControll.text = number;
-    //                                               nsUser.removePhone(number);
-    //                                             } else {
-    //                                               nsUser.removePhone(number);
-    //                                             }
-    //                                             setState(() {});
-    //                                           });
-    //                                         },
-    //                                         child: Chip(avatar: Icon(Icons.call_outlined), label: Text(number))),
-    //                                   );
-    //                                 }))
-    //                               ],
-    //                             )),
-    //                         ListTile(
-    //                             leading: Icon(Icons.alternate_email_outlined),
-    //                             title: Text("Email"),
-    //                             subtitle: Column(children: [
-    //                               TextFormField(
-    //                                 decoration: new InputDecoration(labelText: "Enter your Email"),
-    //                                 keyboardType: TextInputType.emailAddress,
-    //                                 autovalidateMode: AutovalidateMode.onUserInteraction,
-    //                                 validator: (input) => Validations.isValidEmail(input) ? null : "Check your email",
-    //                                 controller: _emaiAddressControll,
-    //                                 onFieldSubmitted: (t) {
-    //                                   nsUser.addEmailAddress(t);
-    //                                   _emaiAddressControll.text = "";
-    //                                 },
-    //                               ),
-    //                               Align(
-    //                                   alignment: Alignment.topLeft,
-    //                                   child: Wrap(
-    //                                       direction: Axis.horizontal,
-    //                                       crossAxisAlignment: WrapCrossAlignment.start,
-    //                                       // runSpacing: 5.0,
-    //                                       // spacing: 5.0,
-    //                                       children: List.generate(nsUser.getEmailList().length, (index) {
-    //                                         String email = nsUser.getEmailList()[index];
-    //                                         return Padding(
-    //                                             padding: const EdgeInsets.only(right: 8.0),
-    //                                             child: GestureDetector(
-    //                                                 onTapDown: (TapDownDetails details) {
-    //                                                   _showPopupmenu(details.globalPosition, (val) {
-    //                                                     if (val == 1) {
-    //                                                       _emaiAddressControll.text = email;
-    //                                                       nsUser.removeEmail(email);
-    //                                                     } else {
-    //                                                       nsUser.removeEmail(email);
-    //                                                     }
-    //                                                     setState(() {});
-    //                                                   });
-    //                                                 },
-    //                                                 child: Chip(avatar: Icon(Icons.alternate_email_outlined), label: Text(email))));
-    //                                       })))
-    //                             ])),
-    //                         // ListTile(leading: Icon(Icons.location_on_outlined), title: Text("Address"), subtitle: TextFormField(controller: _emaiAddressControll)),
-    //                       ]),
-    //                     )
-    //                   ],
-    //                 ),
-    //               ),
-    //               Card(
-    //                 child: Column(
-    //                   children: [
-    //                     ListTile(title: Text("Job Details"), leading: Icon(Icons.work_outline_outlined)),
-    //                     Padding(
-    //                       padding: const EdgeInsets.all(16.0),
-    //                       child: Column(
-    //                         children: [
-    //                           ListTile(
-    //                               leading: Icon(Icons.badge_outlined),
-    //                               subtitle: TextFormField(
-    //                                   decoration: new InputDecoration(labelText: "EPF"),
-    //                                   keyboardType: TextInputType.number,
-    //                                   inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
-    //                                   controller: _epfNumberControll)),
-    //                           ListTile(
-    //                               leading: Icon(Icons.location_on_outlined),
-    //                               title: Text("Section"),
-    //                               subtitle: Column(
-    //                                 children: [
-    //                                   Row(children: [
-    //                                     Padding(
-    //                                       padding: const EdgeInsets.only(right: 8.0),
-    //                                       child: DropdownButton<String>(
-    //                                         isDense: true,
-    //                                         hint: Text("Factory"),
-    //                                         value: selectedSection!.factory == "" ? null : selectedSection!.factory,
-    //                                         iconSize: 24,
-    //                                         elevation: 16,
-    //                                         style: const TextStyle(color: Colors.deepPurple),
-    //                                         underline: Container(
-    //                                           height: 2,
-    //                                           color: Colors.deepPurpleAccent,
-    //                                         ),
-    //                                         onChanged: (String? newValue) {
-    //                                           setState(() {
-    //                                             selectedSection!.factory = newValue!;
-    //                                           });
-    //                                         },
-    //                                         items: <String>['Upwind', 'OD', 'Nylon', 'OEM'].map<DropdownMenuItem<String>>((String value) {
-    //                                           return DropdownMenuItem<String>(
-    //                                             value: value,
-    //                                             child: SizedBox(width: 150, child: Text(value)),
-    //                                           );
-    //                                         }).toList(),
-    //                                       ),
-    //                                     ),
-    //                                     Padding(
-    //                                       padding: const EdgeInsets.all(8.0),
-    //                                       child: DropdownButton<String>(
-    //                                           iconEnabledColor: Color(0xFF595959),
-    //                                           hint: Text(
-    //                                             "Section",
-    //                                             style: TextStyle(color: Color(0xFF8B8B8B), fontSize: 15),
-    //                                           ),
-    //                                           value: selectedSection!.sectionTitle == "" ? null : selectedSection!.sectionTitle,
-    //                                           // icon: const Icon(Icons.arrow_downward),
-    //                                           iconSize: 24,
-    //                                           elevation: 16,
-    //                                           style: const TextStyle(color: Colors.deepPurple),
-    //                                           underline: Container(height: 2, color: Colors.deepPurpleAccent),
-    //                                           onChanged: (String? newValue) {
-    //                                             setState(() {
-    //                                               selectedSection!.sectionTitle = newValue!;
-    //                                             });
-    //                                           },
-    //                                           items: <String>[
-    //                                             'Cutting',
-    //                                             '3D Drawing',
-    //                                             'Stickup',
-    //                                             'Layout',
-    //                                             'Sewing',
-    //                                             'Hand Work',
-    //                                             'Qc',
-    //                                             'Hardware Stores',
-    //                                             'Cloth Stores',
-    //                                             '3DL',
-    //                                             'Textile',
-    //                                             'Printing',
-    //                                             'SA'
-    //                                           ].map<DropdownMenuItem<String>>((String value) {
-    //                                             return DropdownMenuItem<String>(
-    //                                               value: value,
-    //                                               child: SizedBox(width: 150, child: Text(value)),
-    //                                             );
-    //                                           }).toList()),
-    //                                     ),
-    //                                     if (selectedSection!.sectionTitle.isNotEmpty && selectedSection!.factory.isNotEmpty)
-    //                                       Padding(
-    //                                           padding: const EdgeInsets.all(8.0),
-    //                                           child: ElevatedButton(
-    //                                               onPressed: () {
-    //                                                 nsUser.addSection(selectedSection!);
-    //                                                 selectedSection = new Section();
-    //                                                 setState(() {});
-    //                                               },
-    //                                               child: Text("Add")))
-    //                                   ]),
-    //                                   Align(
-    //                                       alignment: Alignment.topLeft,
-    //                                       child: Wrap(
-    //                                           direction: Axis.horizontal,
-    //                                           crossAxisAlignment: WrapCrossAlignment.start,
-    //                                           children: List.generate(nsUser.sections.length, (index) {
-    //                                             Section section = nsUser.sections[index];
-    //                                             return Padding(padding: const EdgeInsets.only(right: 8.0), child: Chip(label: Text(section.sectionTitle + " @ " + section.factory)));
-    //                                           })))
-    //                                 ],
-    //                               )),
-    //                         ],
-    //                       ),
-    //                     )
-    //                   ],
-    //                 ),
-    //               )
-    //             ],
-    //           ),
-    //         ),
-    //       ),
-    //       floatingActionButton: FloatingActionButton(onPressed: () {}, child: Icon(Icons.save_outlined)),
-    //     ),
-    //   );
   }
 
   String? dropdownValue;
@@ -560,7 +264,6 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                                           TextFormField(
                                               decoration: FormInputDecoration.getDeco(labelText: "Email Address", icon: Icon(Icons.email_rounded), hintText: "Enter your Email"),
                                               keyboardType: TextInputType.emailAddress,
-                                              inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                                               validator: (input) => Validations.isValidEmail(input) ? null : "Check your email",
                                               controller: _emaiAddressControll,
                                               onFieldSubmitted: (t) {
@@ -574,7 +277,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                                               padding: const EdgeInsets.only(left: 32.0),
                                               child: Wrap(
                                                   alignment: WrapAlignment.start,
-                                                  children: List.generate(nsUser.getPhonesList().length, (index) {
+                                                  children: List.generate(nsUser.getEmailList().length, (index) {
                                                     String number = nsUser.getEmailList()[index];
                                                     return Padding(
                                                       padding: const EdgeInsets.all(8.0),
@@ -590,7 +293,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                                                               setState(() {});
                                                             });
                                                           },
-                                                          child: Chip(avatar: Icon(Icons.call_outlined), label: Text(number))),
+                                                          child: Chip(avatar: Icon(Icons.email_outlined), label: Text(number))),
                                                     );
                                                   })),
                                             ),
@@ -607,111 +310,120 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                                 children: [
                                   ListTile(title: Text("Job Details"), leading: Icon(Icons.work_outline_outlined)),
                                   Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Column(
-                                      children: [
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Column(children: [
                                         TextFormField(
                                             decoration: FormInputDecoration.getDeco(labelText: "EPF", icon: Icon(Icons.numbers_rounded)),
                                             keyboardType: TextInputType.number,
                                             inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+                                            onChanged: (t) {
+                                              nsUser.epf = t;
+                                            },
                                             controller: _epfNumberControll),
+                                        SizedBox(height: 20),
                                         ListTile(
                                             leading: Icon(Icons.location_on_outlined),
                                             title: Text("Section"),
-                                            subtitle: Column(
-                                              children: [
-                                                Row(children: [
+                                            subtitle: Column(children: [
+                                              Row(children: [
+                                                ElevatedButton(
+                                                  onPressed: () async {
+                                                    SectionList(nsUser.sections, (p0) {
+                                                      nsUser.sections = p0;
+                                                      setState(() {});
+                                                    }).show(context);
+                                                  },
+                                                  child: Text('Select Section'),
+                                                ),
+                                                // Padding(
+                                                //   padding: const EdgeInsets.only(right: 8.0),
+                                                //   child: DropdownButton<String>(
+                                                //     isDense: true,
+                                                //     hint: Text("Factory"),
+                                                //     value: selectedSection!.factory == "" ? null : selectedSection!.factory,
+                                                //     iconSize: 24,
+                                                //     elevation: 16,
+                                                //     style: const TextStyle(color: Colors.deepPurple),
+                                                //     underline: Container(
+                                                //       height: 2,
+                                                //       color: Colors.deepPurpleAccent,
+                                                //     ),
+                                                //     onChanged: (String? newValue) {
+                                                //       setState(() {
+                                                //         selectedSection!.factory = newValue!;
+                                                //       });
+                                                //     },
+                                                //     items: <String>['Upwind', 'OD', 'Nylon', 'OEM', '38 Upwind', '38 OD', '38 Nylon', '38 OEM']
+                                                //         .map<DropdownMenuItem<String>>((String value) {
+                                                //       return DropdownMenuItem<String>(value: value, child: SizedBox(width: 150, child: Text(value)));
+                                                //     }).toList(),
+                                                //   ),
+                                                // ),
+                                                // Padding(
+                                                //   padding: const EdgeInsets.all(8.0),
+                                                //   child: DropdownButton<String>(
+                                                //       iconEnabledColor: Color(0xFF595959),
+                                                //       hint: Text(
+                                                //         "Section",
+                                                //         style: TextStyle(color: Color(0xFF8B8B8B), fontSize: 15),
+                                                //       ),
+                                                //       value: selectedSection!.sectionTitle == "" ? null : selectedSection!.sectionTitle,
+                                                //       // icon: const Icon(Icons.arrow_downward),
+                                                //       iconSize: 24,
+                                                //       elevation: 16,
+                                                //       style: const TextStyle(color: Colors.deepPurple),
+                                                //       underline: Container(height: 2, color: Colors.deepPurpleAccent),
+                                                //       onChanged: (String? newValue) {
+                                                //         setState(() {
+                                                //           selectedSection!.sectionTitle = newValue!;
+                                                //         });
+                                                //       },
+                                                //       items: <String>[
+                                                //         'Cutting',
+                                                //         '3D Drawing',
+                                                //         'Stickup',
+                                                //         'Layout',
+                                                //         'Sewing',
+                                                //         'Hand Work',
+                                                //         'Qc',
+                                                //         'Hardware Stores',
+                                                //         'Cloth Stores',
+                                                //         '3DL',
+                                                //         'Textile',
+                                                //         'Printing',
+                                                //         'SA'
+                                                //       ].map<DropdownMenuItem<String>>((String value) {
+                                                //         return DropdownMenuItem<String>(
+                                                //           value: value,
+                                                //           child: SizedBox(width: 150, child: Text(value)),
+                                                //         );
+                                                //       }).toList()),
+                                                // ),
+                                                if (selectedSection!.sectionTitle.isNotEmpty && selectedSection!.factory.isNotEmpty)
                                                   Padding(
-                                                    padding: const EdgeInsets.only(right: 8.0),
-                                                    child: DropdownButton<String>(
-                                                      isDense: true,
-                                                      hint: Text("Factory"),
-                                                      value: selectedSection!.factory == "" ? null : selectedSection!.factory,
-                                                      iconSize: 24,
-                                                      elevation: 16,
-                                                      style: const TextStyle(color: Colors.deepPurple),
-                                                      underline: Container(
-                                                        height: 2,
-                                                        color: Colors.deepPurpleAccent,
-                                                      ),
-                                                      onChanged: (String? newValue) {
-                                                        setState(() {
-                                                          selectedSection!.factory = newValue!;
-                                                        });
-                                                      },
-                                                      items: <String>['Upwind', 'OD', 'Nylon', 'OEM', '38 Upwind', '38 OD', '38 Nylon', '38 OEM']
-                                                          .map<DropdownMenuItem<String>>((String value) {
-                                                        return DropdownMenuItem<String>(value: value, child: SizedBox(width: 150, child: Text(value)));
-                                                      }).toList(),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: DropdownButton<String>(
-                                                        iconEnabledColor: Color(0xFF595959),
-                                                        hint: Text(
-                                                          "Section",
-                                                          style: TextStyle(color: Color(0xFF8B8B8B), fontSize: 15),
-                                                        ),
-                                                        value: selectedSection!.sectionTitle == "" ? null : selectedSection!.sectionTitle,
-                                                        // icon: const Icon(Icons.arrow_downward),
-                                                        iconSize: 24,
-                                                        elevation: 16,
-                                                        style: const TextStyle(color: Colors.deepPurple),
-                                                        underline: Container(height: 2, color: Colors.deepPurpleAccent),
-                                                        onChanged: (String? newValue) {
-                                                          setState(() {
-                                                            selectedSection!.sectionTitle = newValue!;
-                                                          });
-                                                        },
-                                                        items: <String>[
-                                                          'Cutting',
-                                                          '3D Drawing',
-                                                          'Stickup',
-                                                          'Layout',
-                                                          'Sewing',
-                                                          'Hand Work',
-                                                          'Qc',
-                                                          'Hardware Stores',
-                                                          'Cloth Stores',
-                                                          '3DL',
-                                                          'Textile',
-                                                          'Printing',
-                                                          'SA'
-                                                        ].map<DropdownMenuItem<String>>((String value) {
-                                                          return DropdownMenuItem<String>(
-                                                            value: value,
-                                                            child: SizedBox(width: 150, child: Text(value)),
-                                                          );
-                                                        }).toList()),
-                                                  ),
-                                                  if (selectedSection!.sectionTitle.isNotEmpty && selectedSection!.factory.isNotEmpty)
-                                                    Padding(
-                                                        padding: const EdgeInsets.all(8.0),
-                                                        child: ElevatedButton(
-                                                            onPressed: () {
-                                                              nsUser.addSection(selectedSection!);
-                                                              selectedSection = new Section();
-                                                              setState(() {});
-                                                            },
-                                                            child: Text("Add")))
-                                                ]),
-                                                Align(
-                                                    alignment: Alignment.topLeft,
-                                                    child: Wrap(
-                                                        direction: Axis.horizontal,
-                                                        crossAxisAlignment: WrapCrossAlignment.start,
-                                                        children: List.generate(nsUser.sections.length, (index) {
-                                                          Section section = nsUser.sections[index];
-                                                          return Padding(
-                                                              padding: const EdgeInsets.only(right: 8.0, bottom: 8),
-                                                              child: Chip(label: Text(section.sectionTitle + " @ " + section.factory)));
-                                                        })))
-                                              ],
-                                            )),
-                                      ],
-                                    ),
-                                  )
+                                                      padding: const EdgeInsets.all(8.0),
+                                                      child: ElevatedButton(
+                                                          onPressed: () {
+                                                            nsUser.addSection(selectedSection!);
+                                                            selectedSection = new Section();
+                                                            setState(() {});
+                                                          },
+                                                          child: Text("Add")))
+                                              ]),
+                                              SizedBox(height: 20),
+                                              Align(
+                                                  alignment: Alignment.topLeft,
+                                                  child: Wrap(
+                                                      direction: Axis.horizontal,
+                                                      crossAxisAlignment: WrapCrossAlignment.start,
+                                                      children: List.generate(nsUser.sections.length, (index) {
+                                                        Section section = nsUser.sections[index];
+                                                        return Padding(
+                                                            padding: const EdgeInsets.only(right: 8.0, bottom: 8),
+                                                            child: Chip(label: Text(section.sectionTitle + " @ " + section.factory)));
+                                                      })))
+                                            ]))
+                                      ]))
                                 ],
                               ),
                             )
@@ -837,7 +549,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
     }
 
     return x;
-
-    return _userNameCheking == 1 ? Padding(padding: const EdgeInsets.all(16.0), child: SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2))) : null;
   }
+
+  getUi() {}
 }

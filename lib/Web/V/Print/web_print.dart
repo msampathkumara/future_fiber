@@ -52,12 +52,8 @@ class _WebPrintState extends State<WebPrint> {
                 Spacer(),
                 Wrap(children: [
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Wrap(
-                      spacing: 8,
-                      children: [_statusChip(Status.All), _statusChip(Status.Done), _statusChip(Status.Sent), _statusChip(Status.Cancel)],
-                    ),
-                  ),
+                      padding: const EdgeInsets.all(8.0),
+                      child: Wrap(spacing: 8, children: [_statusChip(Status.All), _statusChip(Status.Done), _statusChip(Status.Sent), _statusChip(Status.Cancel)])),
                   SizedBox(width: 20),
                   Material(
                     elevation: 4,
@@ -113,7 +109,9 @@ class _WebPrintState extends State<WebPrint> {
               }, onRequestData: (int page, int startingAt, int count, String sortedBy, bool sortedAsc) {
                 return getData(page, startingAt, count, sortedBy, sortedAsc);
               }, onTap: (TicketPrint ticketPrint) {
-                TicketPrintList(ticketPrint).show(context);
+                if (ticketPrint.ticket != null) {
+                  TicketPrintList(ticketPrint.ticket!).show(context);
+                }
               })),
         ),
         bottomNavigationBar: BottomAppBar(

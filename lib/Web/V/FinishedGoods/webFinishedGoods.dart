@@ -204,7 +204,7 @@ class _WebFinishedGoodsState extends State<WebFinishedGoods> {
       print(res.data);
       List tickets = res.data["tickets"];
       dataCount = res.data["count"];
-      return DataResponse(dataCount, StandardTicket.fromJsonArray(tickets));
+      return DataResponse(dataCount, Ticket.fromJsonArray(tickets));
     }).whenComplete(() {
       setState(() {
         requested = false;

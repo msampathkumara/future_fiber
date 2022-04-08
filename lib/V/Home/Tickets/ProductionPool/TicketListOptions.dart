@@ -53,7 +53,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                     leading: Icon(Icons.flag),
                     onTap: () async {
                       Navigator.of(context).pop();
-                      bool resul = await FlagDialog.showRedFlagDialog(context1, ticket);
+                      bool resul = await FlagDialog1.showRedFlagDialog(context1, ticket);
                       ticket.isRed = resul ? 1 : 0;
                     },
                   ),
@@ -63,7 +63,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                     leading: Icon(Icons.pan_tool_rounded, color: Colors.red),
                     onTap: () async {
                       Navigator.of(context).pop();
-                      bool resul = await FlagDialog.showStopProductionFlagDialog(context1, ticket);
+                      bool resul = await FlagDialog1.showStopProductionFlagDialog(context1, ticket);
                       ticket.isHold = resul ? 1 : 0;
                     },
                   ),
@@ -71,21 +71,13 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                   ListTile(
                     onTap: () async {
                       Navigator.of(context).pop();
-                      await FlagDialog.showGRDialog(context1, ticket);
+                      await FlagDialog1.showGRDialog(context1, ticket);
                     },
                     title: Text(ticket.isGr == 1 ? "Remove GR" : "Set GR"),
                     // leading: SizedBox(
                     //     width: 24, height: 24, child: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))))
                     leading: Icon(NsIcons.gr, color: Colors.blue),
                   ),
-                // ListTile(
-                //     onTap: () async {
-                //       Navigator.of(context).pop();
-                //       await FlagDialog.showSKDialog(context1, ticket);
-                //     },
-                //     title: Text(ticket.isSk == 1 ? "Remove SK" : "Set SK"),
-                //     leading: SizedBox(
-                //         width: 24, height: 24, child: CircleAvatar(backgroundColor: Colors.pink, child: Center(child: Text("SK", style: TextStyle(color: Colors.white)))))),
                 if (AppUser.havePermissionFor(Permissions.SET_RUSH))
                   ListTile(
                       title: Text(ticket.isRush == 1 ? "Remove Rush" : "Set Rush"),
@@ -104,7 +96,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                         Navigator.of(context).pop();
                         await sendToPrint(ticket);
                       }),
-                if (AppUser.havePermissionFor(Permissions.FINISH_TICKET))
+                if (AppUser.havePermissionFor(Permissions.FINISH_TICKET) && (!kIsWeb))
                   ListTile(
                       title: Text("Finish"),
                       leading: Icon(Icons.check_circle_outline_outlined, color: Colors.green),
@@ -133,7 +125,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                         Navigator.of(context).pop();
                         showAlertDialog(context, ticket);
                       }),
-                if (AppUser.havePermissionFor(Permissions.SHARE_TICKETS))
+                if (AppUser.havePermissionFor(Permissions.SHARE_TICKETS) && (!kIsWeb))
                   ListTile(
                       title: Text("Share Work Ticket"),
                       leading: Icon(NsIcons.share, color: Colors.lightBlue),
@@ -141,15 +133,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                         await ticket.sharePdf(context);
                         Navigator.of(context).pop();
                       }),
-                // if (AppUser.havePermissionFor(Permissions.ADD_CPR))
-                //   ListTile(
-                //       title: Text("Add CPR"),
-                //       leading: Icon(NsIcons.cpr, color: Colors.amber),
-                //       onTap: () async {
-                //         await ticket.addCPR(context);
-                //         Navigator.of(context).pop();
-                //       }),
-                if (AppUser.havePermissionFor(Permissions.SHIPPING_SYSTEM))
+                if (AppUser.havePermissionFor(Permissions.SHIPPING_SYSTEM) && (!kIsWeb))
                   ListTile(
                       title: Text("Shipping"),
                       leading: Icon(NsIcons.shipping, color: Colors.brown),
@@ -157,7 +141,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                         await ticket.openInShippingSystem(context);
                         Navigator.of(context).pop();
                       }),
-                if (AppUser.havePermissionFor(Permissions.CS))
+                if (AppUser.havePermissionFor(Permissions.CS) && (!kIsWeb))
                   ListTile(
                       title: Text("CS"),
                       leading: Icon(Icons.pivot_table_chart_rounded, color: Colors.green),
