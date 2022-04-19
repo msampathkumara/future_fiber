@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -61,6 +63,20 @@ class HiveBox {
     standardTicketsBox = await Hive.openBox<StandardTicket>('standardTicketsBox');
     localFileVersionsBox = await Hive.openBox<LocalFileVersion>('localFileVersionsBox');
     // ticketFlagBox = await Hive.openBox<TicketFlag>('ticketFlagBox');
+
+
+    if (kIsWeb) {
+      FirebaseAuth.instance.authStateChanges().listen((User? user) async {
+        if (user != null) {
+          FirebaseDatabase.instance.ref('db_upon').onValue.listen((DatabaseEvent event) {
+            final data = event.snapshot.value;
+            print('db_upon___db_upon');
+            HiveBox.getDataFromServer();
+          });
+        }
+      });
+    }
+
   }
 
   static Future getDataFromServer({clean = false}) {
@@ -69,11 +85,11 @@ class HiveBox {
       setUptimes(Upons());
     }
     Upons uptimes = getUptimes();
-    Map d=uptimes.toJson();
-    d["z"]=DateTime.now().millisecondsSinceEpoch;
+    Map<String, dynamic> d = uptimes.toJson();
+    d["z"] = DateTime.now().millisecondsSinceEpoch;
     print(uptimes.toJson());
 
-    return OnlineDB.apiGet(("data/getData"), uptimes.toJson()).then((Response response) async {
+    return OnlineDB.apiGet(("data/getData"), d).then((Response response) async {
       print('__________________________________________________________________________________________________________getDataFromServer');
       if (clean) {
         await usersBox.clear();

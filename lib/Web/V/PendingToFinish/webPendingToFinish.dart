@@ -128,8 +128,8 @@ class _webPendingToFinishState extends State<webPendingToFinish> {
                     ),
                   ),
                   const Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
                     child: Text(
                       "${0}",
                       textScaleFactor: 1.1,
@@ -137,7 +137,7 @@ class _webPendingToFinishState extends State<webPendingToFinish> {
                     ),
                   ),
                   const Spacer(),
-                  SizedBox(width: 36)
+                  const SizedBox(width: 36)
                 ],
               ),
             )));

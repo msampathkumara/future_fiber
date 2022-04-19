@@ -14,7 +14,6 @@
 ///
 ///
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import '_ns_icons_icons.dart';
 

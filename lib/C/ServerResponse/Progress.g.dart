@@ -24,7 +24,7 @@ Progress _$ProgressFromJson(Map<String, dynamic> json) => Progress()
   ..user = json['user'] == null
       ? null
       : NsUser.fromJson(json['user'] as Map<String, dynamic>)
-  ..timeToFinish = json['timeToFinish'] as String;
+  ..timeToFinish = json['timeToFinish'] as String?;
 
 Map<String, dynamic> _$ProgressToJson(Progress instance) => <String, dynamic>{
       'doAt': instance.doAt,
@@ -38,7 +38,7 @@ Map<String, dynamic> _$ProgressToJson(Progress instance) => <String, dynamic>{
       'status': instance.status,
       'ticketId': instance.ticketId,
       'upon': instance.upon,
-      'section': instance.section,
-      'user': instance.user,
+      'section': instance.section?.toJson(),
+      'user': instance.user?.toJson(),
       'timeToFinish': instance.timeToFinish,
     };

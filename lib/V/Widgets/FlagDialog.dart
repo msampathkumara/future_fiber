@@ -70,7 +70,10 @@ class _FlagDialogState extends State<FlagDialog> {
 
     return Scaffold(
       appBar: AppBar(title: Wrap(children: [Icon(NsIcons.sk, size: 24),SizedBox(width: 16), Text(titleText)])),
-      body: Container(
+      body:
+
+
+      Container(
         width: w,
         child: ListTile(
           title: Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -327,6 +330,9 @@ class FlagDialog1 {
         titleText = "SK";
         // titleIcon = CircleAvatar(backgroundColor: Colors.pink, child: Center(child: Text("SK", style: TextStyle(color: Colors.white))));
         titleIcon = Icon(NsIcons.sk);
+        break;
+      case TicketFlagTypes.CROSS:
+        // TODO: Handle this case.
         break;
     }
 

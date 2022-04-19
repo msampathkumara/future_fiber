@@ -259,6 +259,9 @@ class Ticket extends DataObject {
   }
 
   Future<void> open(context, {onReceiveProgress}) async {
+    if (isHold == 1) {
+      return;
+    }
     if (kIsWeb) {
       var loadingWidget = Loading(loadingText: "Downloading Ticket");
       loadingWidget.show(context);
@@ -468,4 +471,6 @@ class Ticket extends DataObject {
   TicketTypes getTicketType() {
     return isStandard ? TicketTypes.Standard : TicketTypes.Ticket;
   }
+
+  List<String> getCrossProList() => crossProList.split('>');
 }

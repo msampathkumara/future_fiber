@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/Api.dart';
-import 'package:smartwind/M/StandardTicket.dart';
 import 'package:smartwind/Web/V/FinishedGoods/webFinishedGoods.table.dart';
 
 import '../../../M/Enums.dart';

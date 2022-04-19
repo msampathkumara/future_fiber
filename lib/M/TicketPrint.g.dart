@@ -13,7 +13,8 @@ TicketPrint _$TicketPrintFromJson(Map<String, dynamic> json) => TicketPrint()
       : Ticket.fromJson(json['ticket'] as Map<String, dynamic>)
   ..action = json['action'] as String?
   ..done = json['done'] as int? ?? 0
-  ..doneOn = json['doneOn'] as String;
+  ..doneOn = json['doneOn'] as String
+  ..doneBy = json['doneBy'] as int? ?? 0;
 
 Map<String, dynamic> _$TicketPrintToJson(TicketPrint instance) =>
     <String, dynamic>{
@@ -22,4 +23,5 @@ Map<String, dynamic> _$TicketPrintToJson(TicketPrint instance) =>
       'action': instance.action,
       'done': instance.done,
       'doneOn': instance.doneOn,
+      'doneBy': instance.doneBy,
     };

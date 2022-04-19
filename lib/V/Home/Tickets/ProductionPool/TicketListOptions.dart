@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:smartwind/Web/V/ProductionPool/CrossProductionChangeList.dart';
 
 import '../../../../C/OnlineDB.dart';
 import '../../../../M/AppUser.dart';
@@ -114,8 +115,11 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                       title: Text("Set Cross Production"),
                       leading: Icon(NsIcons.crossProduction, color: Colors.green),
                       onTap: () async {
-                        await Navigator.push(context1, MaterialPageRoute(builder: (context) => CrossProduction(ticket)));
+
                         Navigator.of(context).pop();
+                        CrossProduction(ticket).show(context1);
+                        // await Navigator.push(context1, MaterialPageRoute(builder: (context) => CrossProduction(ticket)));
+                        //
                       }),
                 if (ticket.crossPro == 1 && AppUser.havePermissionFor(Permissions.SET_CROSS_PRODUCTION))
                   ListTile(

@@ -6,8 +6,8 @@ part of 'ServerResponceMap.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ServerResponceMap _$ServerResponceMapFromJson(Map<String, dynamic> json) =>
-    ServerResponceMap()
+ServerResponseMap _$ServerResponseMapFromJson(Map<String, dynamic> json) =>
+    ServerResponseMap()
       ..userRFCredentials = json['userRFCredentials'] == null
           ? null
           : UserRFCredentials.fromJson(
@@ -16,10 +16,6 @@ ServerResponceMap _$ServerResponceMapFromJson(Map<String, dynamic> json) =>
           ? null
           : OperationMinMax.fromJson(
               json['operationMinMax'] as Map<String, dynamic>)
-      ..errorResponce = json['errorResponce'] == null
-          ? null
-          : ErrorResponce.fromJson(
-              json['errorResponce'] as Map<String, dynamic>)
       ..done = json['done'] as bool?
       ..progressList = (json['progressList'] as List<dynamic>?)
               ?.map((e) => Progress.fromJson(e as Map<String, dynamic>))
@@ -42,11 +38,10 @@ ServerResponceMap _$ServerResponceMapFromJson(Map<String, dynamic> json) =>
               .toList() ??
           [];
 
-Map<String, dynamic> _$ServerResponceMapToJson(ServerResponceMap instance) =>
+Map<String, dynamic> _$ServerResponseMapToJson(ServerResponseMap instance) =>
     <String, dynamic>{
       'userRFCredentials': instance.userRFCredentials?.toJson(),
       'operationMinMax': instance.operationMinMax?.toJson(),
-      'errorResponce': instance.errorResponce?.toJson(),
       'done': instance.done,
       'progressList': instance.progressList.map((e) => e.toJson()).toList(),
       'flags': instance.flags.map((e) => e.toJson()).toList(),

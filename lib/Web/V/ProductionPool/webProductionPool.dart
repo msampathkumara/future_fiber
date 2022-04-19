@@ -119,7 +119,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                             loadData();
                           },
                           cursorColor: Colors.black,
-                          decoration: new InputDecoration(
+                          decoration: InputDecoration(
                               prefixIcon: Icon(Icons.search_rounded),
                               suffixIcon: IconButton(icon: Icon(Icons.clear), onPressed: _controller.clear),
                               border: InputBorder.none,
@@ -159,7 +159,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                       child: IconButton(
                         icon: Icon(Icons.refresh),
                         onPressed: () {
-                          HiveBox.getDataFromServer().then((value) => loadData());
+                          HiveBox.getDataFromServer(clean: true).then((value) => loadData());
                         },
                       ),
                     ),

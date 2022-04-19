@@ -1,7 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Section.dart';
 import 'package:smartwind/M/Ticket.dart';
+import 'package:smartwind/Web/Widgets/DialogView.dart';
+import 'package:smartwind/Web/Widgets/IfWeb.dart';
+
+import '../../../../C/OnlineDB.dart';
 
 class CrossProduction extends StatefulWidget {
   final Ticket ticket;
@@ -11,6 +15,11 @@ class CrossProduction extends StatefulWidget {
   @override
   _CrossProductionState createState() {
     return _CrossProductionState();
+  }
+
+  show(context) {
+    print('ssssssss');
+    return kIsWeb ? showDialog(context: context, builder: (_) => this) : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
   }
 }
 
@@ -29,20 +38,22 @@ class _CrossProductionState extends State<CrossProduction> {
 
   @override
   Widget build(BuildContext context) {
+    return IfWeb(elseIf: getUi(), child: DialogView(height: 200, width: 300, child: getUi()));
+  }
+
+  getUi() {
     return Scaffold(
+      appBar: AppBar(title: Text("Cross Production")),
       body: Center(
         child: Container(
           child: Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
             direction: Axis.vertical,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  "Cross Production",
-                  textScaleFactor: 2.5,
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.all(16.0),
+              //   child: Text("Cross Production", textScaleFactor: 2.5),
+              // ),
               Padding(
                 padding: const EdgeInsets.all(32.0),
                 child: DropdownButton<String>(

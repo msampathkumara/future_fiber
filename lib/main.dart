@@ -1,7 +1,6 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,7 +19,7 @@ main() async {
   if (Firebase.apps.isEmpty) {
     if (kIsWeb) {
       await Firebase.initializeApp(
-          options: FirebaseOptions(
+          options: const FirebaseOptions(
               apiKey: "AIzaSyCgW6bXgp0PmoKNcAUsAzTqOS8YYFPd0dM",
               authDomain: "smart-wind.firebaseapp.com",
               databaseURL: "https://smart-wind-default-rtdb.firebaseio.com",
@@ -39,18 +38,6 @@ main() async {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: Colors.transparent, // transparent status bar
   ));
-
-  if (kIsWeb) {
-    FirebaseAuth.instance.authStateChanges().listen((User? user) async {
-      if (user == null) {
-        FirebaseDatabase.instance.ref('db_upon').onValue.listen((DatabaseEvent event) {
-          final data = event.snapshot.value;
-          print('db_upon___db_upon');
-          HiveBox.getDataFromServer();
-        });
-      }
-    });
-  }
 
   runApp(kIsWeb ? webApp() : MyApp());
 }
@@ -136,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Container(
               child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: [CircularProgressIndicator(), Padding(padding: const EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
+        children: const [CircularProgressIndicator(), Padding(padding: EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
       )));
     }
   }

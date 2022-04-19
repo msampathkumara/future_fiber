@@ -37,11 +37,7 @@ class _TicketPrintListState extends State<TicketPrintList> {
 
   @override
   Widget build(BuildContext context) {
-    return kIsWeb
-        ? DialogView(
-            child: editUserUi(),
-          )
-        : editUserUi();
+    return kIsWeb ? DialogView(child: editUserUi()) : editUserUi();
   }
 
   editUserUi() {

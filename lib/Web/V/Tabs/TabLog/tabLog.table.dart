@@ -24,11 +24,9 @@ class _WebPrintTableState extends State<TabLogDataTable> {
   @override
   void didChangeDependencies() {
     // initState is to early to access route options, context is invalid at that stage
-    if (_dessertsDataSource == null) {
-      _dessertsDataSource = TabLogDataSourceAsync(context, onRequestData: widget.onRequestData, onTap: (DeviceLog deviceLog) {
-        widget.onTap(deviceLog);
-      });
-    }
+    _dessertsDataSource ??= TabLogDataSourceAsync(context, onRequestData: widget.onRequestData, onTap: (DeviceLog deviceLog) {
+      widget.onTap(deviceLog);
+    });
 
     widget.onInit(_dessertsDataSource!);
 
@@ -66,10 +64,9 @@ class _WebPrintTableState extends State<TabLogDataTable> {
 
   List<DataColumn> get _columns {
     return [
-      DataColumn2(size: ColumnSize.S, label: Text('#')),
+      const DataColumn2(size: ColumnSize.S, label: Text('#')),
       DataColumn2(size: ColumnSize.L, label: Text('User'), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(size: ColumnSize.M, label: Text('Date & Time'), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-
     ];
   }
 
@@ -88,13 +85,13 @@ class _WebPrintTableState extends State<TabLogDataTable> {
           columnSpacing: 16,
           rowsPerPage: _rowsPerPage,
           autoRowsToHeight: false,
-          availableRowsPerPage: [20, 50, 100, 200],
+          availableRowsPerPage: const [20, 50, 100, 200],
           wrapInCard: false,
           pageSyncApproach: PageSyncApproach.goToFirst,
           minWidth: 400,
           fit: FlexFit.tight,
           border: TableBorder(
-              top: BorderSide(color: Colors.transparent),
+              top: const BorderSide(color: Colors.transparent),
               bottom: BorderSide(color: Colors.grey[300]!),
               left: BorderSide(color: Colors.grey[300]!),
               right: BorderSide(color: Colors.grey[300]!),
@@ -141,13 +138,7 @@ class _ErrorAndRetry extends StatelessWidget {
               Text('Oops! $errorMessage', style: TextStyle(color: Colors.white)),
               TextButton(
                   onPressed: retry,
-                  child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    Icon(
-                      Icons.refresh,
-                      color: Colors.white,
-                    ),
-                    Text('Retry', style: TextStyle(color: Colors.white))
-                  ]))
+                  child: Row(mainAxisSize: MainAxisSize.min, children: const [Icon(Icons.refresh, color: Colors.white), Text('Retry', style: TextStyle(color: Colors.white))]))
             ])),
       );
 }
@@ -167,12 +158,12 @@ class __LoadingState extends State<_Loading> {
             future: Future.delayed(Duration(milliseconds: 500), () => true),
             builder: (context, snapshot) {
               return !snapshot.hasData
-                  ? SizedBox()
+                  ? const SizedBox()
                   : Center(
                       child: Container(
                       color: Colors.yellow,
-                      padding: EdgeInsets.all(7),
-                      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+                      padding: const EdgeInsets.all(7),
+                      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: const [
                         CircularProgressIndicator(
                           strokeWidth: 2,
                           color: Colors.black,

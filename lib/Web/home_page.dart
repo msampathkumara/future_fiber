@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/Enums.dart';
+import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/Web/V/Admin/webAdmin.dart';
+import 'package:smartwind/Web/V/CPR/TicketSortMaterials.dart';
 import 'package:smartwind/Web/V/CPR/webCpr.dart';
 import 'package:smartwind/Web/V/FinishedGoods/webFinishedGoods.dart';
 import 'package:smartwind/Web/V/Print/web_print.dart';
@@ -28,7 +30,11 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
 
   @override
   void initState() {
-    // WidgetsBinding.instance?.addPostFrameCallback((_) => UpdateUserDetails(NsUser()).show(context));
+    var t = HiveBox.ticketBox.get(38886);
+
+    if (t != null) {
+      WidgetsBinding.instance?.addPostFrameCallback((_) => TicketSortMaterials(t).show(context));
+    }
 
     // Future(() {
     //   if (!AppUser.isLogged) {
@@ -121,8 +127,8 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                                                 icon: Icon(Icons.star_border), selectedIcon: Icon(Icons.star), label: Text('CPR', style: TextStyle(fontSize: size))),
                                           if (AppUser.havePermissionFor(Permissions.QC))
                                             NavigationRailDestination(
-                                                icon: Icon(Icons.supervised_user_circle_outlined),
-                                                selectedIcon: Icon(Icons.supervised_user_circle_rounded),
+                                                icon: const Icon(Icons.supervised_user_circle_outlined),
+                                                selectedIcon: const Icon(Icons.supervised_user_circle_rounded),
                                                 label: Text('User Manager', style: TextStyle(fontSize: size))),
                                           if (AppUser.havePermissionFor(Permissions.PRINTING))
                                             NavigationRailDestination(

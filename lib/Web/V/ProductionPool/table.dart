@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/hive.dart';
+import 'package:smartwind/Web/V/CPR/TicketSortMaterials.dart';
 import 'package:smartwind/Web/V/Print/ticket_print_list.dart';
+import 'package:smartwind/Web/V/ProductionPool/CrossProductionChangeList.dart';
 
 import '../../../M/Enums.dart';
 import '../../../M/hive.dart';
@@ -11,6 +13,7 @@ import '../../../V/Home/Tickets/ProductionPool/TicketListOptions.dart';
 import '../../../V/Home/Tickets/TicketInfo/TicketInfo.dart';
 import '../../../V/Widgets/FlagDialog.dart';
 import '../../../ns_icons_icons.dart';
+import '../QC/webQView.dart';
 
 class PaginatedDataTable2Demo extends StatefulWidget {
   final Null Function(DessertDataSource dataSource) onInit;
@@ -194,7 +197,13 @@ class DessertDataSource extends DataTableSource {
           content: Text('Tapped on ${ticket.mo}'),
         ));
       },
-      onDoubleTap: hasRowTaps ? () => {ticket.open(context)} : null,
+      onDoubleTap: hasRowTaps
+          ? () {
+              if (ticket.isHold == 0) {
+                ticket.open(context);
+              }
+            }
+          : null,
       onSecondaryTap: hasRowTaps
           ? () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 duration: Duration(seconds: 1),
@@ -224,25 +233,31 @@ class DessertDataSource extends DataTableSource {
           children: [
             if (ticket.isQc == 1)
               IconButton(
-                icon: CircleAvatar(backgroundColor: Colors.red, radius: 8, child: const Text('QC', style: TextStyle(fontSize: 8, color: Colors.white))),
+                icon: const CircleAvatar(backgroundColor: Colors.red, radius: 8, child: Text('QC', style: TextStyle(fontSize: 8, color: Colors.white))),
                 onPressed: () {
-                  // TicketPrintList(ticket).show(context);
+                  webQView(ticket, true).show(context);
                 },
               ),
             if (ticket.isQa == 1)
               IconButton(
-                icon: CircleAvatar(backgroundColor: Colors.deepOrangeAccent, radius: 8, child: const Text('QA', style: TextStyle(fontSize: 8, color: Colors.white))),
+                icon: const CircleAvatar(backgroundColor: Colors.deepOrangeAccent, radius: 8, child: Text('QA', style: TextStyle(fontSize: 8, color: Colors.white))),
                 onPressed: () {
-                  // TicketPrintList(ticket).show(context);
+                  webQView(ticket, false).show(context);
                 },
               ),
             if (ticket.inPrint == 1)
               IconButton(
-                icon: CircleAvatar(child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white),
+                icon: const CircleAvatar(child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white),
                 onPressed: () {
                   TicketPrintList(ticket).show(context);
                 },
               ),
+            if (ticket.crossPro == 1)
+              IconButton(
+                  icon: const CircleAvatar(child: Icon(Icons.merge_type_rounded, color: Colors.green), backgroundColor: Colors.white),
+                  onPressed: () {
+                    CrossProductionChangeList(ticket).show(context);
+                  }),
             if (ticket.isHold == 1)
               IconButton(
                 icon: CircleAvatar(child: Icon(NsIcons.stop, color: Colors.black), backgroundColor: Colors.white),
@@ -263,7 +278,12 @@ class DessertDataSource extends DataTableSource {
                 onPressed: () {},
               ),
             if (ticket.isError == 1) IconButton(icon: CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white), onPressed: () {}),
-            if (ticket.isSort == 1) IconButton(icon: CircleAvatar(child: Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white), onPressed: () {}),
+            if (ticket.isSort == 1)
+              IconButton(
+                  icon: CircleAvatar(child: const Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white),
+                  onPressed: () {
+                    TicketSortMaterials(ticket).show(context);
+                  }),
             if (ticket.isRush == 1)
               IconButton(
                   icon: CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white),

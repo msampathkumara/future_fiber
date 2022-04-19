@@ -124,7 +124,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
             title: SizedBox(
                 height: ((!_showAllTickets) && nsUser != null && nsUser!.section != null) ? 50 : 30,
                 child: Column(children: [
-                  Text(
+                  const Text(
                     "Production Pool",
                     textScaleFactor: 1.2,
                   ),
@@ -141,7 +141,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
 
                   loadData();
                   if (_barcodeResult) {
-                    if (currentFileList.length > 0) {
+                    if (currentFileList.isNotEmpty) {
                       Ticket ticket = (currentFileList[0]);
                       var ticketInfo = TicketInfo(ticket);
                       ticketInfo.show(context);
@@ -250,7 +250,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
             },
             child: Padding(
                 padding: const EdgeInsets.only(top: 16),
-                child: filesList.length > 0
+                child: filesList.isNotEmpty
                     ? ListView.separated(
                         padding: const EdgeInsets.all(8),
                         itemCount: filesList.length,

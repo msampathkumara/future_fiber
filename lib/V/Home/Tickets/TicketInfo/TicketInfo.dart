@@ -126,12 +126,14 @@ class _TicketInfoState extends State<TicketInfo> {
                   ),
                 )),
             floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-            floatingActionButton: FloatingActionButton(
-              child: Icon(Icons.import_contacts),
-              onPressed: () {
-                _ticket.open(context);
-              },
-            ),
+            floatingActionButton: _ticket.isHold == 1
+                ? null
+                : FloatingActionButton(
+                    child: Icon(Icons.import_contacts),
+                    onPressed: () {
+                      _ticket.open(context);
+                    },
+                  ),
           );
   }
 
@@ -305,8 +307,7 @@ class _TicketInfoState extends State<TicketInfo> {
                                 children: [
                                   if (_ticket.inPrint == 1)
                                     IconButton(
-                                        icon: CircleAvatar(child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white),
-                                        onPressed: () {}),
+                                        icon: CircleAvatar(child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white), onPressed: () {}),
                                   if (_ticket.isHold == 1)
                                     IconButton(icon: CircleAvatar(child: Icon(Icons.pan_tool_rounded, color: Colors.black), backgroundColor: Colors.white), onPressed: () {}),
                                   if (_ticket.isGr == 1)
@@ -314,11 +315,9 @@ class _TicketInfoState extends State<TicketInfo> {
                                   if (_ticket.isSk == 1)
                                     IconButton(icon: CircleAvatar(child: Icon(NsIcons.sk, color: Colors.pink), backgroundColor: Colors.white), onPressed: () {}),
                                   if (_ticket.isError == 1)
-                                    IconButton(
-                                        icon: CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white), onPressed: () {}),
+                                    IconButton(icon: CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white), onPressed: () {}),
                                   if (_ticket.isSort == 1)
-                                    IconButton(
-                                        icon: CircleAvatar(child: Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white), onPressed: () {}),
+                                    IconButton(icon: CircleAvatar(child: Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white), onPressed: () {}),
                                   if (_ticket.isRush == 1)
                                     IconButton(
                                         icon: CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white), onPressed: () {}),
@@ -361,7 +360,8 @@ class _TicketInfoState extends State<TicketInfo> {
                   backgroundColor: Colors.white),
               body: _loading ? Center(child: CircularProgressIndicator()) : _body(bottomNavigationBarSelectedIndex),
               backgroundColor: Colors.white,
-              bottomNavigationBar: BottomAppBar(elevation: 16,
+              bottomNavigationBar: BottomAppBar(
+                  elevation: 16,
                   color: Colors.orange,
                   shape: CircularNotchedRectangle(),
                   notchMargin: 4.0,
@@ -379,12 +379,14 @@ class _TicketInfoState extends State<TicketInfo> {
                     ),
                   )),
               floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-              floatingActionButton: FloatingActionButton(
-                child: Icon(Icons.import_contacts),
-                onPressed: () {
-                  _ticket.open(context);
-                },
-              ),
+              floatingActionButton: _ticket.isHold == 1
+                  ? null
+                  : FloatingActionButton(
+                      child: Icon(Icons.import_contacts),
+                      onPressed: () {
+                        _ticket.open(context);
+                      },
+                    ),
             ),
           ),
         ],
