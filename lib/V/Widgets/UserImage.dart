@@ -5,17 +5,17 @@ import '../../M/AppUser.dart';
 import '../../M/NsUser.dart';
 
 class UserImage extends StatefulWidget {
-  NsUser? nsUser;
+  final NsUser? nsUser;
 
-  Color? backgroundColor;
-  double radius;
+  final Color? backgroundColor;
+  final double radius;
 
-  bool disable;
+  final bool disable;
 
-  double padding;
+  final double padding;
 
   UserImage({this.padding = 0, required this.nsUser, this.backgroundColor, required this.radius, this.disable = false, Key? key})
-      : super(key: key ?? Key("ui${nsUser?.id}${nsUser?.upon}${radius}"));
+      : super(key: key ?? Key("ui${nsUser?.id}${nsUser?.upon}$radius${nsUser?.deactivate}${nsUser?.img}"));
 
   @override
   _UserImageState createState() => _UserImageState();
@@ -61,19 +61,18 @@ class _UserImageState extends State<UserImage> {
 
   Widget getImage() {
     return CircleAvatar(
-      backgroundColor: Colors.white,
-      radius: widget.radius,
-      child: ClipOval(
-          child: CachedNetworkImage(
-              imageUrl: nsUser.getImage(size: widget.radius * 3),
-              httpHeaders: {"authorization": '${AppUser.getIdToken()}'},
-              width: widget.radius * 2,
-              height: widget.radius * 2,
-              fit: BoxFit.cover,
-              errorWidget: (context, url, error) {
-                return Image.asset('images/userPlaceholder.jpg', fit: BoxFit.cover, width: widget.radius * 2, height: widget.radius * 2);
-              },
-              progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress))),
-    );
+        backgroundColor: Colors.white,
+        radius: widget.radius,
+        child: ClipOval(
+            child: CachedNetworkImage(
+                imageUrl: nsUser.getImage(size: widget.radius * 3),
+                httpHeaders: {"authorization": '${AppUser.getIdToken()}'},
+                width: widget.radius * 2,
+                height: widget.radius * 2,
+                fit: BoxFit.cover,
+                errorWidget: (context, url, error) {
+                  return Image.asset('images/userPlaceholder.jpg', fit: BoxFit.cover, width: widget.radius * 2, height: widget.radius * 2);
+                },
+                progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress))));
   }
 }

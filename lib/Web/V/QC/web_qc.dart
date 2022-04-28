@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:data_table_2/data_table_2.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/QC.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
@@ -55,7 +54,7 @@ class _WebQcState extends State<WebQc> {
             title: Row(
               children: [
                 Text("QA & QC", style: mainWidgetsTitleTextStyle),
-                Spacer(),
+                const Spacer(),
                 Wrap(children: [
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -87,10 +86,10 @@ class _WebQcState extends State<WebQc> {
               })),
         ),
         bottomNavigationBar: BottomAppBar(
-            shape: CircularNotchedRectangle(),
+            shape: const CircularNotchedRectangle(),
             color: Colors.green,
             child: IconTheme(
-              data: IconThemeData(color: Colors.white),
+              data: const IconThemeData(color: Colors.white),
               child: Row(
                 children: [
                   InkWell(
@@ -98,7 +97,7 @@ class _WebQcState extends State<WebQc> {
                     splashColor: Colors.red,
                     child: Ink(
                       child: IconButton(
-                        icon: Icon(Icons.refresh),
+                        icon: const Icon(Icons.refresh),
                         onPressed: () {
                           _dataSource.refreshDatasource();
                         },
@@ -106,8 +105,8 @@ class _WebQcState extends State<WebQc> {
                     ),
                   ),
                   const Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
                     child: Text(
                       "${0}",
                       textScaleFactor: 1.1,
@@ -115,7 +114,7 @@ class _WebQcState extends State<WebQc> {
                     ),
                   ),
                   const Spacer(),
-                  SizedBox(width: 36)
+                  const SizedBox(width: 36)
                 ],
               ),
             )));

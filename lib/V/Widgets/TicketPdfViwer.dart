@@ -1,6 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:native_pdf_view/native_pdf_view.dart';
+import 'package:pdfx/pdfx.dart';
+
+// import 'package:native_pdf_view/native_pdf_view.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Home/BlueBook/BlueBook.dart';
@@ -29,7 +30,7 @@ class _TicketPdfViwerState extends State<TicketPdfViwer> {
 
   bool _loading = false;
 
-  Widget pdfView() => PdfViewPinch(controller: pdfPinchController, pageSnapping: (!kIsWeb), padding: 10, scrollDirection: Axis.vertical);
+  Widget pdfView() => PdfViewPinch(controller: pdfPinchController, padding: 10, scrollDirection: Axis.vertical);
 
   // Widget pdfView() => PdfView(
   //     scrollDirection: Axis.vertical,

@@ -7,8 +7,8 @@ enum Production { All, Upwind, OD, Nylon, OEM, _38_Upwind, _38_Nylon, _38_OEM, _
 enum SortByItem { id, mo, oe, finished, dir, uptime, file, sheet, production, isRed, isRush, inPrint, isError, isGr, isSk, isHold, delete, reNamed, progress, fileVersion }
 enum Status { All, Sent, Cancel, Done }
 enum Type { All, QA, QC }
-enum TicketFlagTypes { RED, GR, RUSH, SK, HOLD ,CROSS}
-enum Filters { isRed, isRush, inPrint, isError, isGr, isSk, isHold, none, isSort, crossPro,isQc,isQa }
+enum TicketFlagTypes { RED, GR, RUSH, SK, HOLD, CROSS }
+enum Filters { isRed, isRush, inPrint, isError, isGr, isSk, isHold, none, isSort, crossPro, isQc, isQa }
 enum Collection { User, Ticket, Any }
 
 extension ProductionExtension on Production {
@@ -86,6 +86,7 @@ extension f on Box {
 }
 
 enum Permissions {
+  STANDARD_FILES,
   TAB,
   ALERT_MANAGER,
   SHORT_MANAGER_RESPOND,
@@ -132,11 +133,39 @@ enum Permissions {
   SET_USER_PERMISSIONS,
   DEACTIVATE_USERS,
   SET_ID_CARD,
-  REMOVE_ID_CARD,PENDING_TO_FINISH,SHEET_DATA,ADMIN
+  REMOVE_ID_CARD,
+  PENDING_TO_FINISH,
+  SHEET_DATA,
+  ADMIN
 }
 
 extension PermissionsExtension on Permissions {
   String getValue() {
     return (this).toString().split('.').last;
+  }
+}
+
+extension StringContainsInArrayExtension on String {
+  bool containsInArrayIgnoreCase(List<String?> list) {
+    return list.where((element) => element != null && element.toLowerCase().contains(toLowerCase())).isNotEmpty;
+  }
+
+  bool containsInArray(List<String> list) {
+    return list.where((element) => element.contains(this)).isNotEmpty;
+  }
+
+  bool isReady({trim = false, caseInsensitive = true}) {
+    String t = this;
+    if (trim) {
+      t = this.trim();
+    }
+    if (caseInsensitive) {
+      t = toLowerCase();
+    }
+    return t == 'ready';
+  }
+
+  bool equalIgnoreCase(String text) {
+    return toLowerCase() == text.toLowerCase();
   }
 }

@@ -4,7 +4,8 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
-import 'package:native_pdf_view/native_pdf_view.dart';
+import 'package:pdfx/pdfx.dart';
+// import 'package:native_pdf_view/native_pdf_view.dart';
 
 class PdfFileViewer extends StatefulWidget {
   // String pathPDF = "";
@@ -105,8 +106,8 @@ class _PdfFileViewerState extends State<PdfFileViewer> {
           child: Stack(
             children: <Widget>[
               PdfView(
-                documentLoader: Center(child: CircularProgressIndicator()),
-                pageLoader: Center(child: CircularProgressIndicator()),
+                // documentLoader: Center(child: CircularProgressIndicator()),
+                // pageLoader: Center(child: CircularProgressIndicator()),
                 controller: _pdfController,
                 onDocumentLoaded: (document) {
                   isReady = true;

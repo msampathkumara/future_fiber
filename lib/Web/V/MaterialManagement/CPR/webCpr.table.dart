@@ -1,31 +1,29 @@
 part of 'webCpr.dart';
 
-class WebStandardLibraryTable extends StatefulWidget {
+class WebCPRTable extends StatefulWidget {
   final Null Function(DessertDataSourceAsync dataSource) onInit;
   final Future<DataResponse> Function(int page, int startingAt, int count, String sortedBy, bool sortedAsc) onRequestData;
 
-  const WebStandardLibraryTable({required this.onInit, required this.onRequestData});
+  const WebCPRTable({required this.onInit, required this.onRequestData});
 
   @override
-  _WebStandardLibraryTableState createState() => _WebStandardLibraryTableState();
+  _WebCPRTableState createState() => _WebCPRTableState();
 }
 
-class _WebStandardLibraryTableState extends State<WebStandardLibraryTable> {
+class _WebCPRTableState extends State<WebCPRTable> {
   int _rowsPerPage = 20;
   bool _sortAscending = true;
   int? _sortColumnIndex;
   DessertDataSourceAsync? _dessertsDataSource;
-  PaginatorController _controller = PaginatorController();
+  final PaginatorController _controller = PaginatorController();
 
-  bool _dataSourceLoading = false;
-  int _initialRow = 0;
+  final bool _dataSourceLoading = false;
+  final int _initialRow = 0;
 
   @override
   void didChangeDependencies() {
     // initState is to early to access route options, context is invalid at that stage
-    if (_dessertsDataSource == null) {
-      _dessertsDataSource = DessertDataSourceAsync(context, onRequestData: widget.onRequestData);
-    }
+    _dessertsDataSource ??= DessertDataSourceAsync(context, onRequestData: widget.onRequestData);
 
     widget.onInit(_dessertsDataSource!);
 
@@ -63,22 +61,15 @@ class _WebStandardLibraryTableState extends State<WebStandardLibraryTable> {
 
   List<DataColumn> get _columns {
     return [
-      DataColumn2(
-        size: ColumnSize.M,
-        label: Text('Ticket'),
-        onSort: (columnIndex, ascending) => sort(columnIndex, ascending),
-      ),
-      DataColumn2(
-        size: ColumnSize.M,
-        label: Text('Production'),
-        onSort: (columnIndex, ascending) => sort(columnIndex, ascending),
-      ),
-      DataColumn2(
-        size: ColumnSize.M,
-        label: Text('Usage'),
-        numeric: true,
-        onSort: (columnIndex, ascending) => sort(columnIndex, ascending),
-      )
+      DataColumn2(size: ColumnSize.M, label: const Text('Ticket'), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('Client'), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('Supplier'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('Shortage Type'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('Date & Time'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('CPR Type'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('Delivery Date'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('Status'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.S, label: const Text('Options'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
     ];
   }
 
@@ -97,13 +88,13 @@ class _WebStandardLibraryTableState extends State<WebStandardLibraryTable> {
           columnSpacing: 16,
           rowsPerPage: _rowsPerPage,
           autoRowsToHeight: false,
-          availableRowsPerPage: [20, 50, 100, 200],
+          availableRowsPerPage: const [20, 50, 100, 200],
           wrapInCard: false,
           pageSyncApproach: PageSyncApproach.goToFirst,
           minWidth: 800,
           fit: FlexFit.tight,
           border: TableBorder(
-              top: BorderSide(color: Colors.transparent),
+              top: const BorderSide(color: Colors.transparent),
               bottom: BorderSide(color: Colors.grey[300]!),
               left: BorderSide(color: Colors.grey[300]!),
               right: BorderSide(color: Colors.grey[300]!),
@@ -126,9 +117,12 @@ class _WebStandardLibraryTableState extends State<WebStandardLibraryTable> {
           controller: _controller,
           hidePaginator: false,
           columns: _columns,
-          empty: Center(child: Container(padding: EdgeInsets.all(20), color: Colors.grey[200], child: Text('No data'))),
+          empty: Center(child: Container(padding: const EdgeInsets.all(20), color: Colors.grey[200], child: const Text('No data'))),
           loading: _Loading(),
-          errorBuilder: (e) => _ErrorAndRetry(e.toString(), () => _dessertsDataSource!.refreshDatasource()),
+          errorBuilder: (e) {
+            print(e);
+            return _ErrorAndRetry(e.toString(), () => _dessertsDataSource!.refreshDatasource());
+          },
           source: _dessertsDataSource!),
     ]);
   }
@@ -143,20 +137,14 @@ class _ErrorAndRetry extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Center(
         child: Container(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             height: 170,
             color: Colors.red,
             child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text('Oops! $errorMessage', style: TextStyle(color: Colors.white)),
+              Text('Oops! $errorMessage', style: const TextStyle(color: Colors.white)),
               TextButton(
                   onPressed: retry,
-                  child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    Icon(
-                      Icons.refresh,
-                      color: Colors.white,
-                    ),
-                    Text('Retry', style: TextStyle(color: Colors.white))
-                  ]))
+                  child: Row(mainAxisSize: MainAxisSize.min, children: const [Icon(Icons.refresh, color: Colors.white), Text('Retry', style: TextStyle(color: Colors.white))]))
             ])),
       );
 }
@@ -173,21 +161,16 @@ class __LoadingState extends State<_Loading> {
         color: Colors.white.withAlpha(128),
         // at first show shade, if loading takes longer than 0,5s show spinner
         child: FutureBuilder(
-            future: Future.delayed(Duration(milliseconds: 500), () => true),
+            future: Future.delayed(const Duration(milliseconds: 500), () => true),
             builder: (context, snapshot) {
               return !snapshot.hasData
-                  ? SizedBox()
+                  ? const SizedBox()
                   : Center(
                       child: Container(
                       color: Colors.yellow,
-                      padding: EdgeInsets.all(7),
-                      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                        CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.black,
-                        ),
-                        Text('Loading..')
-                      ]),
+                      padding: const EdgeInsets.all(7),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround, children: const [CircularProgressIndicator(strokeWidth: 2, color: Colors.black), Text('Loading..')]),
                       width: 150,
                       height: 50,
                     ));
@@ -202,17 +185,8 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
     print('DessertDataSourceAsync created');
   }
 
-  // DessertDataSourceAsync.empty() {
-  //   _empty = true;
-  //   print('DessertDataSourceAsync.empty created');
-  // }
-  //
-  // DessertDataSourceAsync.error() {
-  //   _errorCounter = 0;
-  //   print('DessertDataSourceAsync.error created');
-  // }
   final BuildContext context;
-  bool _empty = false;
+  final bool _empty = false;
   int? _errorCounter;
 
   RangeValues? _caloriesFilter;
@@ -235,10 +209,6 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
     refreshDatasource();
   }
 
-  // Future<int> getTotalRecords() {
-  //   return Future<int>.delayed(Duration(milliseconds: 0), () => _empty ? 0 : _dessertsX3.length);
-  // }
-
   @override
   Future<AsyncRowsResponse> getRows(int startIndex, int count) async {
     print('getRows($startIndex, $count)');
@@ -255,35 +225,52 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
 
     assert(index >= 0);
 
+    print('xxxxxxxxxxxxxxxxxxxxxxx == ${int.parse("${startIndex / count}")}');
+
     // List returned will be empty is there're fewer items than startingAt
     var x = _empty
-        ? await Future.delayed(Duration(milliseconds: 2000), () => DataResponse(0, []))
+        ? await Future.delayed(const Duration(milliseconds: 2000), () => DataResponse(0, []))
         : await onRequestData(int.parse("${startIndex / count}"), startIndex, count, _sortColumn, _sortAscending);
-
+    print('****************************************************************************xxxxxxxxxxxxx${x.totalRecords}');
     var r = AsyncRowsResponse(
         x.totalRecords,
         x.data.map((cpr) {
           return DataRow2(
+            specificRowHeight: 55,
             selected: false,
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                duration: Duration(seconds: 1),
-                content: Text('Tapped on ${cpr.oe}'),
-              ));
+            onTap: () async {
+              bool c = false;
+              await CprView(cpr, (p0) {
+                c = true;
+                print('7777777777');
+              }).show(context);
+              if (c == true) {
+                refreshDatasource();
+              }
+              // ScaffoldMessenger.of(context).showSnackBar(SnackBar(duration: const Duration(seconds: 1), content: Text('Tapped on ${cpr.ticket?.mo}')));
             },
-
-            onSecondaryTap: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              duration: Duration(seconds: 1),
-              backgroundColor: Theme.of(context).errorColor,
-              content: Text('Right clicked on ${cpr.oe}'),
-            )),
-            // specificRowHeight: this.hasRowHeightOverrides && cpr.fat >= 25 ? 100 : null,
+            onSecondaryTap: () => ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(duration: const Duration(seconds: 1), backgroundColor: Theme.of(context).errorColor, content: Text('Right clicked on ${cpr.ticket?.oe}'))),
             cells: [
-              DataCell(Text((cpr.oe) ?? "")),
-              DataCell(Text('${cpr.client}')),
+              DataCell(ListTile(
+                  visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+                  title: Text('${cpr.ticket?.mo}'),
+                  subtitle: Text('${cpr.ticket?.oe}', style: const TextStyle(color: Colors.deepOrange, fontSize: 12)))),
+              DataCell(Text((cpr.client) ?? "")),
+              DataCell(Text((cpr.suppliers.join(',')))),
+              DataCell(Text((cpr.shortageType) ?? "")),
+              DataCell(Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.end,
+                  direction: Axis.vertical,
+                  children: [Text((cpr.date) ?? ""), Text((cpr.time) ?? "", style: const TextStyle(color: Colors.grey, fontSize: 12))])),
+              DataCell(Text((cpr.cprType) ?? "")),
+              DataCell(Text((cpr.date) ?? "")),
+              DataCell(Text((cpr.status))),
               DataCell(IconButton(
-                icon: Icon(Icons.more_vert_rounded),
-                onPressed: () {},
+                icon: const Icon(Icons.more_vert_rounded),
+                onPressed: () {
+                  showCprOptions(cpr, context, context);
+                },
               ))
             ],
           );

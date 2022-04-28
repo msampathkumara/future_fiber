@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:measured_size/measured_size.dart';
 import 'package:smartwind/C/OnlineDB.dart';
-import 'package:smartwind/M/CPR.dart';
+import 'package:smartwind/M/CPR/CPR.dart';
 import 'package:smartwind/V/Widgets/RefreshIndicatorMessageBox.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 
@@ -67,15 +67,15 @@ class _CPRListState extends State<CPRList> {
           toolbarHeight: 82,
           backgroundColor: Colors.amber,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.pop(context),
           ),
-          title: Text("CPR", textScaleFactor: 1.2),
+          title: const Text("CPR", textScaleFactor: 1.2),
           bottom: SearchBar(
               delay: 500,
               searchController: searchController,
               child: IconButton(
-                  icon: Icon(Icons.filter_alt_rounded, color: Colors.white),
+                  icon: const Icon(Icons.filter_alt_rounded, color: Colors.white),
                   onPressed: () {
                     setState(() {
                       _showFilters = !_showFilters;
@@ -184,7 +184,7 @@ class _CPRListState extends State<CPRList> {
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius: BorderRadius.circular(100.0),
                                                   ),
-                                                  child: Padding(padding: const EdgeInsets.all(12.0), child: CircularProgressIndicator(color: Colors.red, strokeWidth: 2)))))));
+                                                  child: const Padding(padding: EdgeInsets.all(12.0), child: CircularProgressIndicator(color: Colors.red, strokeWidth: 2)))))));
                             }
 
                             CPR cpr = _cprList[index];
@@ -206,12 +206,12 @@ class _CPRListState extends State<CPRList> {
                                 decoration: BoxDecoration(border: Border(left: BorderSide(color: getColor(cpr.status), width: 3.0))),
                                 child: ListTile(
                                   leading: Text("${index + 1}"),
-                                  title: Text(cpr.mo ?? cpr.oe),
+                                  title: Text(cpr.ticket?.mo != null ? "${cpr.ticket?.mo}" : "${cpr.ticket?.oe}"),
                                   subtitle: Wrap(
                                     direction: Axis.vertical,
                                     children: [
-                                      Text(cpr.mo != null ? cpr.oe ?? "" : ""),
-                                      Text(cpr.dnt ?? ""),
+                                      Text(cpr.ticket?.mo != null ? cpr.ticket?.oe ?? "" : ""),
+                                      Text(cpr.addedOn),
                                     ],
                                   ),
                                   trailing: Wrap(children: [
@@ -219,14 +219,14 @@ class _CPRListState extends State<CPRList> {
                                       width: 150,
                                       child: Wrap(
                                         direction: Axis.vertical,
-                                        children: [Text(cpr.client ?? ""), Text(cpr.supplier, style: TextStyle(color: Colors.red))],
+                                        children: [Text(cpr.client ?? ""), Text(cpr.suppliers.join(','), style: const TextStyle(color: Colors.red))],
                                       ),
                                     ),
                                     SizedBox(
                                       width: 100,
                                       child: Wrap(
                                         direction: Axis.vertical,
-                                        children: [Text(cpr.shortageType ?? ""), Text(cpr.cprType ?? "", style: TextStyle(color: Colors.red))],
+                                        children: [Text(cpr.shortageType ?? ""), Text(cpr.cprType ?? "", style: const TextStyle(color: Colors.red))],
                                       ),
                                     )
                                   ]),
@@ -235,7 +235,7 @@ class _CPRListState extends State<CPRList> {
                             );
                           },
                           separatorBuilder: (BuildContext context, int index) {
-                            return Divider(
+                            return const Divider(
                               height: 1,
                               endIndent: 0.5,
                               color: Colors.black12,
@@ -248,21 +248,21 @@ class _CPRListState extends State<CPRList> {
           ),
         ),
         bottomNavigationBar: BottomAppBar(
-            shape: CircularNotchedRectangle(),
+            shape: const CircularNotchedRectangle(),
             color: themeColor,
             child: IconTheme(
-              data: IconThemeData(color: Colors.white),
+              data: const IconThemeData(color: Colors.white),
               child: Row(
                 children: [
-                  Padding(padding: const EdgeInsets.all(8.0), child: Text("$dataCount", textScaleFactor: 1.1, style: TextStyle(color: Colors.white))),
+                  Padding(padding: const EdgeInsets.all(8.0), child: Text("$dataCount", textScaleFactor: 1.1, style: const TextStyle(color: Colors.white))),
                   const Spacer(),
-                  Text("Sorted by $sortedBy", style: TextStyle(color: Colors.white)),
+                  Text("Sorted by $sortedBy", style: const TextStyle(color: Colors.white)),
                   InkWell(
                     onTap: () {},
                     splashColor: Colors.red,
                     child: Ink(
                       child: IconButton(
-                        icon: Icon(Icons.sort_by_alpha_rounded),
+                        icon: const Icon(Icons.sort_by_alpha_rounded),
                         onPressed: () {
                           _sortByBottomSheetMenu();
                         },
@@ -302,7 +302,7 @@ class _CPRListState extends State<CPRList> {
             child: Wrap(
               children: [
                 ListTile(
-                    title: Text("Production", style: TextStyle(color: Colors.white)),
+                    title: const Text("Production", style: const TextStyle(color: Colors.white)),
                     subtitle: Wrap(spacing: 5, children: [
                       for (final st in __statusList)
                         _filterChip(_selectedStatus, st, () {
@@ -310,7 +310,7 @@ class _CPRListState extends State<CPRList> {
                         })
                     ])),
                 ListTile(
-                    title: Text("Shortage Type", style: TextStyle(color: Colors.white)),
+                    title: const Text("Shortage Type", style: const TextStyle(color: Colors.white)),
                     subtitle: Wrap(spacing: 5, children: [
                       for (final st in __shortageTypes)
                         _filterChip(_selectedShortageType, st, () {
@@ -318,7 +318,7 @@ class _CPRListState extends State<CPRList> {
                         })
                     ])),
                 ListTile(
-                    title: Text("Cpr Types", style: TextStyle(color: Colors.white)),
+                    title: const Text("Cpr Types", style: TextStyle(color: Colors.white)),
                     subtitle: Wrap(spacing: 5, children: [
                       for (final st in __cprTypes)
                         _filterChip(_selectedCprTypes, st, () {
@@ -326,7 +326,7 @@ class _CPRListState extends State<CPRList> {
                         })
                     ])),
                 ListTile(
-                    title: Text("Client", style: TextStyle(color: Colors.white)),
+                    title: const Text("Client", style: TextStyle(color: Colors.white)),
                     subtitle: Wrap(spacing: 5, children: [
                       for (final st in __clients)
                         _filterChip(_client, st, () {
@@ -334,7 +334,7 @@ class _CPRListState extends State<CPRList> {
                         })
                     ])),
                 ListTile(
-                    title: Text("Supplier", style: TextStyle(color: Colors.white)),
+                    title: const Text("Supplier", style: const TextStyle(color: Colors.white)),
                     subtitle: Wrap(spacing: 5, children: [
                       for (final st in __suppliers)
                         _filterChip(_supplier, st, () {
@@ -365,7 +365,7 @@ class _CPRListState extends State<CPRList> {
                             _showFilters = false;
                           });
                         },
-                        child: Text("Done")))
+                        child: const Text("Done")))
               ],
             ),
           ),
@@ -380,7 +380,7 @@ class _CPRListState extends State<CPRList> {
   void _sortByBottomSheetMenu() {
     getListItem(String title, icon, key) {
       return ListTile(
-        trailing: (listSortBy == key ? (listSortDirectionIsDESC ? Icon(Icons.arrow_upward_rounded) : Icon(Icons.arrow_downward_rounded)) : null),
+        trailing: (listSortBy == key ? (listSortDirectionIsDESC ? const Icon(Icons.arrow_upward_rounded) : const Icon(Icons.arrow_downward_rounded)) : null),
         title: Text(title),
         selectedTileColor: Colors.black12,
         selected: listSortBy == key,
@@ -412,9 +412,9 @@ class _CPRListState extends State<CPRList> {
             color: Colors.transparent,
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: const Text(
                     "Sort By",
                     textScaleFactor: 1.2,
                   ),
@@ -501,18 +501,18 @@ class _CPRListState extends State<CPRList> {
       builder: (BuildContext context) {
         return Container(
           height: 100,
-          decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
+          decoration: const BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
               Column(children: [
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 ListTile(
-                    title: Text("Delete"),
-                    leading: Icon(Icons.delete_forever_rounded, color: Colors.red),
+                    title: const Text("Delete"),
+                    leading: const Icon(Icons.delete_forever_rounded, color: Colors.red),
                     onTap: () async {
                       await OnlineDB.apiPost("cpr/delete", {"cpr": cpr.id});
                       _cprList.removeWhere((element) => element.id == cpr.id);
@@ -544,10 +544,10 @@ class _CPRListState extends State<CPRList> {
 
   _actionChip(String f, onDelete, {preFix = ""}) {
     return Chip(
-      deleteIcon: Icon(Icons.close, color: Colors.white),
+      deleteIcon: const Icon(Icons.close, color: Colors.white),
       label: Text(
         preFix + f,
-        style: TextStyle(color: Colors.white),
+        style: const TextStyle(color: Colors.white),
       ),
       onDeleted: () {
         onDelete();

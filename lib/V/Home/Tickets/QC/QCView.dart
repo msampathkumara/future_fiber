@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/QC.dart';
@@ -42,6 +41,6 @@ class _QCViewState extends State<QCView> {
                   webViewController.loadUrl(uRL, headers: headers);
                 },
               )
-            : Center(child: CircularProgressIndicator()));
+            : const Center(child: CircularProgressIndicator()));
   }
 }

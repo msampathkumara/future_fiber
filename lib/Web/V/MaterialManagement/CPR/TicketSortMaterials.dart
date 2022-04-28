@@ -27,7 +27,7 @@ class _TicketSortMaterialsState extends State<TicketSortMaterials> {
 
   getWebUi() {
     return Scaffold(
-        appBar: AppBar(title: const Text("Sort Materials")),
+        appBar: AppBar(title: const Text("Short Materials")),
         body: Row(
           children: [
             SizedBox(

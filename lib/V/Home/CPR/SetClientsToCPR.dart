@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/M/CPR.dart';
+import 'package:smartwind/M/CPR/CPR.dart';
 
 class SetClientToCPR extends StatefulWidget {
   CPR cpr;

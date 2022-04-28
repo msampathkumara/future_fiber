@@ -7,18 +7,22 @@ part of 'CprItem.dart';
 // **************************************************************************
 
 CprItem _$CprItemFromJson(Map<String, dynamic> json) => CprItem()
-  ..item = json['item'] as String
-  ..qty = json['qty'] as String
-  ..checked = json['checked'] as int
-  ..dnt = json['dnt'] as String
-  ..user = json['user'] == null
-      ? null
-      : NsUser.fromJson(json['user'] as Map<String, dynamic>);
+  ..item = json['item'] as String? ?? ''
+  ..qty = json['qty'] as String? ?? ''
+  ..checked = json['checked'] as int? ?? 0
+  ..dnt = json['dnt'] as String? ?? ''
+  ..userId = json['userId'] as int? ?? -1
+  ..id = json['id'] as int? ?? 0
+  ..supplier = json['supplier'] as String?
+  ..selected = json['selected'] as bool? ?? false;
 
 Map<String, dynamic> _$CprItemToJson(CprItem instance) => <String, dynamic>{
       'item': instance.item,
       'qty': instance.qty,
       'checked': instance.checked,
       'dnt': instance.dnt,
-      'user': instance.user?.toJson(),
+      'userId': instance.userId,
+      'id': instance.id,
+      'supplier': instance.supplier,
+      'selected': instance.selected,
     };

@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -10,6 +11,8 @@ import 'package:timeline_tile/timeline_tile.dart';
 
 import '../../../../C/DB/DB.dart';
 import '../../../../M/hive.dart';
+import '../../../../Web/Widgets/DialogView.dart';
+import '../../../../Web/Widgets/IfWeb.dart';
 import '../../../Widgets/UserImage.dart';
 
 class StandardTicketInfo extends StatefulWidget {
@@ -17,11 +20,8 @@ class StandardTicketInfo extends StatefulWidget {
 
   StandardTicketInfo(this.standardTicket);
 
-  void show(context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => this),
-    );
+  Future show(context) {
+    return kIsWeb ? showDialog(context: context, builder: (_) => this) : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
   }
 
   @override
@@ -76,9 +76,13 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle defaultStyle = TextStyle(color: Colors.black);
-    TextStyle linkStyle = TextStyle(color: Colors.blue);
-    TextStyle timeStyle = TextStyle(color: Colors.grey);
+    return IfWeb(elseIf: getUi(), child: DialogView(child: getUi()));
+  }
+
+  getUi() {
+    TextStyle defaultStyle = const TextStyle(color: Colors.black);
+    TextStyle linkStyle = const TextStyle(color: Colors.blue);
+    TextStyle timeStyle = const TextStyle(color: Colors.grey);
 
     return Scaffold(
       appBar: _appBar(),
@@ -159,7 +163,7 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
                 Spacer(),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: new CircularPercentIndicator(
+                  child: CircularPercentIndicator(
                       radius: 50.0,
                       lineWidth: 4.0,
                       percent: (_progress / 100).toDouble(),
@@ -187,4 +191,6 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
       setState(() {});
     });
   }
+
+  getWebUi() {}
 }

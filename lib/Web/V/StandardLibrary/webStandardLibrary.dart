@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:smartwind/M/StandardTicket.dart';
 
 import '../../../C/Api.dart';
+import '../../../C/DB/DB.dart';
 import '../../../M/Enums.dart';
 import '../../../M/Ticket.dart';
 import '../../Styles/styles.dart';
@@ -16,7 +17,7 @@ class WebStandardLibrary extends StatefulWidget {
 }
 
 class _WebStandardLibraryState extends State<WebStandardLibrary> {
-  var _controller = TextEditingController();
+  final _controller = TextEditingController();
   bool loading = false;
 
   // DessertDataSource? _dataSource;
@@ -35,11 +36,24 @@ class _WebStandardLibraryState extends State<WebStandardLibrary> {
   late DessertDataSourceAsync _dataSource;
 
   // get ticketCount => _dataSource == null ? 0 : _dataSource?.rowCount;
+  late DbChangeCallBack _dbChangeCallBack;
 
   @override
   void initState() {
-    // getData(0);
+    _dbChangeCallBack = DB.setOnDBChangeListener(() {
+      print('on update tickets');
+      if (mounted) {
+        loadData();
+      }
+    }, context, collection: DataTables.standardTickets);
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _dbChangeCallBack.dispose();
+    super.dispose();
   }
 
   @override

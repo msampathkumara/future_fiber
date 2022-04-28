@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
-import 'package:native_pdf_view/native_pdf_view.dart';
+import 'package:pdfx/pdfx.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class PDFViewWidget extends StatefulWidget {
@@ -97,8 +97,8 @@ class _PDFViewWidget extends State<PDFViewWidget> {
 
   @override
   Widget build(BuildContext context) => PdfView(
-        documentLoader: Center(child: CircularProgressIndicator()),
-        pageLoader: Center(child: CircularProgressIndicator()),
+        // onDocumentLoaded: Center(child: CircularProgressIndicator()),
+        // pageLoader: Center(child: CircularProgressIndicator()),
         controller: _pdfController,
         onDocumentLoaded: (document) {
           setState(() {

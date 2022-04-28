@@ -3,12 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/hive.dart';
-import 'package:smartwind/V/Home/Tickets/ProductionPool/Finish/FinishCheckList.dart';
 import 'package:smartwind/V/Widgets/FlagDialog.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 import 'package:smartwind/ns_icons_icons.dart';
@@ -16,10 +14,7 @@ import 'package:smartwind/ns_icons_icons.dart';
 import '../../../../C/DB/DB.dart';
 import '../../../../M/AppUser.dart';
 import '../TicketInfo/TicketInfo.dart';
-import 'CrossProduction.dart';
 import 'TicketListOptions.dart';
-
-
 
 class TicketList extends StatefulWidget {
   TicketList();
@@ -70,7 +65,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  TextEditingController searchController = new TextEditingController();
+  TextEditingController searchController = TextEditingController();
   bool _barcodeResult = false;
 
   @override
@@ -118,7 +113,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
             toolbarHeight: 100,
             backgroundColor: Colors.green,
             leading: IconButton(
-              icon: Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back),
               onPressed: () => Navigator.pop(context),
             ),
             title: SizedBox(
@@ -171,10 +166,10 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
           ),
         ),
         bottomNavigationBar: BottomAppBar(
-            shape: CircularNotchedRectangle(),
+            shape: const CircularNotchedRectangle(),
             color: Colors.green,
             child: IconTheme(
-              data: IconThemeData(color: Colors.white),
+              data: const IconThemeData(color: Colors.white),
               child: Row(
                 children: [
                   InkWell(
@@ -182,7 +177,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                     splashColor: Colors.red,
                     child: Ink(
                       child: IconButton(
-                        icon: Icon(Icons.sort_by_alpha_rounded),
+                        icon: const Icon(Icons.sort_by_alpha_rounded),
                         onPressed: () {
                           sortByBottomSheetMenu(context, loadData);
                         },
@@ -195,11 +190,11 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                     child: Text(
                       "${currentFileList.length}",
                       textScaleFactor: 1.1,
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ),
                   const Spacer(),
-                  SizedBox(width: 36)
+                  const SizedBox(width: 36)
                 ],
               ),
             )));
@@ -268,7 +263,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                           }, () {});
                         },
                         separatorBuilder: (BuildContext context, int index) {
-                          return Divider(
+                          return const Divider(
                             height: 1,
                             endIndent: 0.5,
                             color: Colors.black12,
@@ -316,7 +311,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
         return false;
       }
 
-      if (!searchByFilters(t,dataFilter)) {
+      if (!searchByFilters(t, dataFilter)) {
         return false;
       }
 
@@ -370,7 +365,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
 
   Filters dataFilter = Filters.none;
 
-   flagIcon(Filters filter, IconData icon) {
+  flagIcon(Filters filter, IconData icon) {
     return IconButton(
       icon: CircleAvatar(child: Icon(icon, color: dataFilter == filter ? Colors.red : Colors.black), backgroundColor: Colors.white),
       tooltip: 'Increase volume by 10',
@@ -395,7 +390,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
       ticketInfo.show(context);
     } catch (e) {
       print('Ticket not found');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Ticket not found", style: TextStyle(color: Colors.white)), backgroundColor: Colors.red));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Ticket not found", style: TextStyle(color: Colors.white)), backgroundColor: Colors.red));
     }
   }
 
@@ -409,8 +404,6 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     }
     return true;
   }
-
-
 
   bool searchBySection(t, section) {
     return (!t.openSections.contains(section.toString()));
@@ -459,12 +452,12 @@ class TicketTile extends StatelessWidget {
             border: Border.all(
               color: Colors.white,
             ),
-            borderRadius: BorderRadius.all(Radius.circular(20))),
+            borderRadius: const BorderRadius.all(Radius.circular(20))),
         child: ListTile(
-          leading: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[Text("${index + 1}", style: TextStyle(fontWeight: FontWeight.bold))]),
+          leading: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[Text("${index + 1}", style: const TextStyle(fontWeight: FontWeight.bold))]),
           title: Text(
             (ticket.mo ?? "").trim().isEmpty ? (ticket.oe ?? "") : ticket.mo ?? "",
-            style: TextStyle(
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -472,14 +465,18 @@ class TicketTile extends StatelessWidget {
             direction: Axis.vertical,
             children: [
               if ((ticket.mo ?? "").trim().isNotEmpty) Text((ticket.oe ?? "")),
-              if (ticket.crossPro == 1) Chip(padding:const EdgeInsets.all(4.0),avatar: CircleAvatar(child: Icon(Icons.merge_type_outlined,size: 12),radius: 8), label: Text(ticket.crossProList)),
+              if (ticket.crossPro == 1)
+                Chip(
+                    padding: const EdgeInsets.all(4.0),
+                    avatar: const CircleAvatar(child: const Icon(Icons.merge_type_outlined, size: 12), radius: 8),
+                    label: Text(ticket.crossProList)),
               // Text(" t${ticket.nowAt}"),
               // Text("  ${ticket.production}"),
               if (ticket.shipDate.isNotEmpty)
                 Wrap(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 4),
+                    const Padding(
+                      padding: EdgeInsets.only(right: 4),
                       child: Icon(Icons.directions_boat_outlined, size: 12, color: Colors.grey),
                     ),
                     Text(ticket.shipDate)
@@ -493,40 +490,41 @@ class TicketTile extends StatelessWidget {
             children: [
               if (ticket.inPrint == 1)
                 IconButton(
-                  icon: CircleAvatar(child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white),
+                  icon: const CircleAvatar(child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white),
                   onPressed: () {},
                 ),
               if (ticket.isHold == 1)
                 IconButton(
-                  icon: CircleAvatar(child: Icon(NsIcons.stop, color: Colors.black), backgroundColor: Colors.white),
+                  icon: const CircleAvatar(child: Icon(NsIcons.stop, color: Colors.black), backgroundColor: Colors.white),
                   onPressed: () {
                     FlagDialog().showFlagView(context, ticket, TicketFlagTypes.HOLD);
                   },
                 ),
               if (ticket.isGr == 1)
                 IconButton(
-                  icon: CircleAvatar(child: Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white),
+                  icon: const CircleAvatar(child: const Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white),
                   onPressed: () {
                     FlagDialog().showFlagView(context, ticket, TicketFlagTypes.GR);
                   },
                 ),
               if (ticket.isSk == 1)
                 IconButton(
-                  icon: CircleAvatar(child: Icon(NsIcons.sk, color: Colors.pink), backgroundColor: Colors.white),
+                  icon: const CircleAvatar(child: Icon(NsIcons.sk, color: Colors.pink), backgroundColor: Colors.white),
                   onPressed: () {},
                 ),
               if (ticket.isError == 1)
-                IconButton(icon: CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white), onPressed: () {}),
-              if (ticket.isSort == 1) IconButton(icon: CircleAvatar(child: Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white), onPressed: () {}),
+                IconButton(icon: const CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white), onPressed: () {}),
+              if (ticket.isSort == 1)
+                IconButton(icon: const CircleAvatar(child: Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white), onPressed: () {}),
               if (ticket.isRush == 1)
                 IconButton(
-                    icon: CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white),
+                    icon: const CircleAvatar(child: const Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white),
                     onPressed: () {
                       FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RUSH);
                     }),
               if (ticket.isRed == 1)
                 IconButton(
-                  icon: CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white),
+                  icon: const CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white),
                   onPressed: () {
                     FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RED);
                   },
@@ -537,9 +535,9 @@ class TicketTile extends StatelessWidget {
                   radius: 20.0,
                   lineWidth: 5.0,
                   percent: ticket.progress / 100,
-                  center: new Text(
+                  center: Text(
                     ticket.progress.toString() + "%",
-                    style: TextStyle(fontSize: 12),
+                    style: const TextStyle(fontSize: 12),
                   ),
                   progressColor: Colors.green,
                 ),

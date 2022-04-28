@@ -22,7 +22,7 @@ class WebProductionPool extends StatefulWidget {
 }
 
 class _WebProductionPoolState extends State<WebProductionPool> {
-  var _controller = TextEditingController();
+  final _controller = TextEditingController();
   bool loading = false;
   DessertDataSource? _dataSource;
   String searchText = "";
@@ -59,7 +59,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
             title: Row(
               children: [
                 Text("Production Pool", style: mainWidgetsTitleTextStyle),
-                Spacer(),
+                const Spacer(),
                 Wrap(children: [
                   flagIcon(Filters.crossPro, Icons.merge_type_rounded, "Filter by cross production"),
                   flagIcon(Filters.isError, Icons.warning_rounded, "Filter by Error Route"),
@@ -72,7 +72,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                   flagIcon(Filters.isSort, NsIcons.short, "Filter by CPR"),
                   flagIcon(Filters.isQc, NsIcons.short, "Filter by QC", text: "QC"),
                   flagIcon(Filters.isQa, NsIcons.short, "Filter by QA", text: "QA"),
-                  SizedBox(width: 50),
+                  const SizedBox(width: 50),
                   Material(
                     elevation: 4,
                     borderRadius: BorderRadius.circular(8),
@@ -105,7 +105,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   Material(
                     elevation: 4,
                     borderRadius: BorderRadius.circular(8),
@@ -120,14 +120,14 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                           },
                           cursorColor: Colors.black,
                           decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.search_rounded),
-                              suffixIcon: IconButton(icon: Icon(Icons.clear), onPressed: _controller.clear),
+                              prefixIcon: const Icon(Icons.search_rounded),
+                              suffixIcon: IconButton(icon: const Icon(Icons.clear), onPressed: _controller.clear),
                               border: InputBorder.none,
                               focusedBorder: InputBorder.none,
                               enabledBorder: InputBorder.none,
                               errorBorder: InputBorder.none,
                               disabledBorder: InputBorder.none,
-                              contentPadding: EdgeInsets.only(left: 15, bottom: 11, top: 10, right: 15),
+                              contentPadding: const EdgeInsets.only(left: 15, bottom: 11, top: 10, right: 15),
                               hintText: "Search Text"),
                         )),
                   ),
@@ -146,10 +146,10 @@ class _WebProductionPoolState extends State<WebProductionPool> {
               })),
         ),
         bottomNavigationBar: BottomAppBar(
-            shape: CircularNotchedRectangle(),
+            shape: const CircularNotchedRectangle(),
             color: Colors.green,
             child: IconTheme(
-              data: IconThemeData(color: Colors.white),
+              data: const IconThemeData(color: Colors.white),
               child: Row(
                 children: [
                   InkWell(
@@ -157,7 +157,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                     splashColor: Colors.red,
                     child: Ink(
                       child: IconButton(
-                        icon: Icon(Icons.refresh),
+                        icon: const Icon(Icons.refresh),
                         onPressed: () {
                           HiveBox.getDataFromServer(clean: true).then((value) => loadData());
                         },
@@ -170,11 +170,11 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                     child: Text(
                       "${ticketCount}",
                       textScaleFactor: 1.1,
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ),
                   const Spacer(),
-                  SizedBox(width: 36)
+                  const SizedBox(width: 36)
                 ],
               ),
             )),
@@ -209,14 +209,14 @@ class _WebProductionPoolState extends State<WebProductionPool> {
   void loadData() {
     print(dataFilter);
     var tickets = HiveBox.ticketBox.values.where((ticket) {
-      return ((ticket.mo ?? "").toLowerCase().contains(searchText.toLowerCase())) && searchByFilters(ticket, dataFilter) && searchByProduction(ticket, selectedProduction);
+      return searchText.containsInArrayIgnoreCase([ticket.mo, ticket.oe]) && searchByFilters(ticket, dataFilter) && searchByProduction(ticket, selectedProduction);
     }).toList();
     _dataSource?.setData(tickets);
   }
 
   addItemsBottomSheetMenu(context) {
     showModalBottomSheet(
-        constraints: kIsWeb ? BoxConstraints(maxWidth: 600) : null,
+        constraints: kIsWeb ? const BoxConstraints(maxWidth: 600) : null,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
@@ -227,28 +227,28 @@ class _WebProductionPoolState extends State<WebProductionPool> {
             color: Colors.transparent,
             child: Column(
               children: [
-                Padding(padding: const EdgeInsets.all(16.0), child: Text("Add", textScaleFactor: 1.2)),
+                const Padding(padding: EdgeInsets.all(16.0), child: Text("Add", textScaleFactor: 1.2)),
                 Expanded(
                   child: Padding(
                       padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
                       child: ListView(
                         children: [
                           ListTile(
-                            title: Text("Add Tickets"),
+                            title: const Text("Add Tickets"),
                             selectedTileColor: Colors.black12,
-                            leading: Icon(Icons.picture_as_pdf),
+                            leading: const Icon(Icons.picture_as_pdf),
                             onTap: () {
                               Navigator.pop(context);
-                              AddTicket().show(context);
+                              const AddTicket().show(context);
                             },
                           ),
                           ListTile(
-                            title: Text("Add Data Sheet"),
+                            title: const Text("Add Data Sheet"),
                             selectedTileColor: Colors.black12,
-                            leading: Icon(Icons.list_alt_rounded),
+                            leading: const Icon(Icons.list_alt_rounded),
                             onTap: () {
                               Navigator.pop(context);
-                              AddSheet().show(context);
+                              const AddSheet().show(context);
                             },
                           )
                         ],

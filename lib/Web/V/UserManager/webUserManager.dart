@@ -24,7 +24,7 @@ class WebUserManager extends StatefulWidget {
 }
 
 class _WebUserManagerState extends State<WebUserManager> {
-  var _controller = TextEditingController();
+  final _controller = TextEditingController();
   bool loading = false;
   DessertDataSource? _dataSource;
   String searchText = "";
@@ -63,7 +63,7 @@ class _WebUserManagerState extends State<WebUserManager> {
             title: Row(
               children: [
                 Text("User Manager", style: mainWidgetsTitleTextStyle),
-                Spacer(),
+                const Spacer(),
                 Wrap(children: [
                   SizedBox(
                     child: SearchBar(
@@ -97,16 +97,16 @@ class _WebUserManagerState extends State<WebUserManager> {
                       },
                     )),
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               if (_selectedUser != null) getUserDetailsUi(_selectedUser!)
             ],
           ),
         ),
         bottomNavigationBar: BottomAppBar(
-            shape: CircularNotchedRectangle(),
+            shape: const CircularNotchedRectangle(),
             color: Colors.green,
             child: IconTheme(
-              data: IconThemeData(color: Colors.white),
+              data: const IconThemeData(color: Colors.white),
               child: Row(
                 children: [
                   InkWell(
@@ -114,7 +114,7 @@ class _WebUserManagerState extends State<WebUserManager> {
                     splashColor: Colors.red,
                     child: Ink(
                       child: IconButton(
-                        icon: Icon(Icons.refresh),
+                        icon: const Icon(Icons.refresh),
                         onPressed: () {
                           HiveBox.getDataFromServer().then((value) => loadData());
                         },
@@ -127,18 +127,18 @@ class _WebUserManagerState extends State<WebUserManager> {
                     child: Text(
                       "${nsUserCount}",
                       textScaleFactor: 1.1,
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ),
                   const Spacer(),
-                  SizedBox(width: 36)
+                  const SizedBox(width: 36)
                 ],
               ),
             )),
         floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
         floatingActionButton: FloatingActionButton(
             onPressed: () async {
-              await UpdateUserDetails(new NsUser()).show(context);
+              await UpdateUserDetails(NsUser()).show(context);
               HiveBox.getDataFromServer();
             },
             child: const Icon(Icons.add),
@@ -150,11 +150,15 @@ class _WebUserManagerState extends State<WebUserManager> {
       return ((nsUser.name).toLowerCase().contains(searchText.toLowerCase()));
     }).toList();
     _dataSource?.setData(nsUser);
+    if (_selectedUser != null) {
+      _selectedUser = HiveBox.usersBox.get(_selectedUser?.id);
+    }
+    setState(() {});
   }
 
   addItemsBottomSheetMenu(context) {
     showModalBottomSheet(
-        constraints: kIsWeb ? BoxConstraints(maxWidth: 600) : null,
+        constraints: kIsWeb ? const BoxConstraints(maxWidth: 600) : null,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
@@ -165,24 +169,24 @@ class _WebUserManagerState extends State<WebUserManager> {
             color: Colors.transparent,
             child: Column(
               children: [
-                Padding(padding: const EdgeInsets.all(16.0), child: Text("Add", textScaleFactor: 1.2)),
+                const Padding(padding: EdgeInsets.all(16.0), child: Text("Add", textScaleFactor: 1.2)),
                 Expanded(
                   child: Padding(
                       padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
                       child: ListView(
                         children: [
                           ListTile(
-                            title: Text("Add Tickets"),
+                            title: const Text("Add Tickets"),
                             selectedTileColor: Colors.black12,
-                            leading: Icon(Icons.picture_as_pdf),
+                            leading: const Icon(Icons.picture_as_pdf),
                             onTap: () {
                               Navigator.pop(context);
                             },
                           ),
                           ListTile(
-                            title: Text("Add Data Sheet"),
+                            title: const Text("Add Data Sheet"),
                             selectedTileColor: Colors.black12,
-                            leading: Icon(Icons.list_alt_rounded),
+                            leading: const Icon(Icons.list_alt_rounded),
                             onTap: () {
                               Navigator.pop(context);
                             },
@@ -196,16 +200,16 @@ class _WebUserManagerState extends State<WebUserManager> {
         });
   }
 
-  var lt = TextStyle(fontSize: 12, color: Colors.grey);
-  var lst = TextStyle(fontSize: 16, color: Colors.black);
-  var cp = EdgeInsets.only(bottom: 0.0, top: -10);
+  var lt = const TextStyle(fontSize: 12, color: Colors.grey);
+  var lst = const TextStyle(fontSize: 16, color: Colors.black);
+  var cp = const EdgeInsets.only(bottom: 0.0, top: -10);
 
   getUserDetailsUi(NsUser selectedUser) {
     return Material(
       elevation: 4,
       clipBehavior: Clip.antiAlias,
       borderRadius: BorderRadius.circular(8),
-      child: Container(
+      child: SizedBox(
         width: 350,
         child: Scaffold(
           appBar: AppBar(
@@ -216,29 +220,49 @@ class _WebUserManagerState extends State<WebUserManager> {
                 child: Column(
                   children: [
                     Padding(padding: const EdgeInsets.all(8.0), child: UserImage(nsUser: selectedUser, radius: 64, padding: 2)),
-                    Text("${selectedUser.name}", style: TextStyle(color: Colors.black), textScaleFactor: 0.7),
-                    Text("${selectedUser.uname}", style: TextStyle(color: Colors.blue), textScaleFactor: 0.7),
+                    Text(selectedUser.name, style: const TextStyle(color: Colors.black), textScaleFactor: 0.7),
+                    Text(selectedUser.uname, style: const TextStyle(color: Colors.blue), textScaleFactor: 0.7),
                   ],
                 ),
               )),
           body: ListView(
             children: [
-              ListTile(title: Text('Type', style: lt), subtitle: Text('${selectedUser.utype}', style: lst)),
-              ListTile(title: Text('EPF', style: lt), subtitle: Text('${selectedUser.epf}', style: lst)),
-              ListTile(title: Text('Phone', style: lt), subtitle: Text('${selectedUser.phone}', style: lst)),
-              ListTile(title: Text('Email', style: lt), subtitle: Text('${selectedUser.emailAddress}', style: lst))
+              ListTile(title: Text('Type', style: lt), subtitle: Text(selectedUser.utype, style: lst)),
+              ListTile(title: Text('EPF', style: lt), subtitle: Text(selectedUser.epf, style: lst)),
+              ListTile(
+                  title: Text('Phone', style: lt),
+                  subtitle: Wrap(
+                      children: (selectedUser.phone.split(','))
+                          .map((e) => Padding(padding: const EdgeInsets.all(4.0), child: Chip(avatar: const Icon(Icons.phone), label: Text(e))))
+                          .toList())),
+              ListTile(
+                  title: Text('Email(s)', style: lt),
+                  subtitle: Wrap(
+                      children: (selectedUser.emailAddress.split(','))
+                          .map((e) => Padding(padding: const EdgeInsets.all(4.0), child: Chip(avatar: const Icon(Icons.alternate_email_rounded), label: Text(e))))
+                          .toList())),
+              ListTile(
+                  title: Text('Sections', style: lt),
+                  subtitle: Wrap(
+                      children:
+                          selectedUser.sections.map((e) => Padding(padding: const EdgeInsets.all(4.0), child: Chip(label: Text("${e.sectionTitle} @ ${e.factory}")))).toList()))
             ],
           ),
           bottomNavigationBar: BottomAppBar(
-              shape: CircularNotchedRectangle(),
+              shape: const CircularNotchedRectangle(),
               color: Colors.white,
               child: IconTheme(
-                data: IconThemeData(color: Colors.black),
+                data: const IconThemeData(color: Colors.black),
                 child: Row(
                   children: [
-                    IconButton(tooltip: "Edit", icon: Icon(Icons.edit_rounded), onPressed: () {}),
-                    const Spacer(),
-                    IconButton(tooltip: "Delete", icon: Icon(Icons.delete_rounded, color: Colors.red), onPressed: () {}),
+                    IconButton(
+                        tooltip: "Edit",
+                        icon: const Icon(Icons.edit_rounded),
+                        onPressed: () {
+                          UpdateUserDetails(_selectedUser!).show(context);
+                        }),
+                    const Spacer()
+                    // IconButton(tooltip: "Delete", icon: const Icon(Icons.delete_rounded, color: Colors.red), onPressed: () {}),
                   ],
                 ),
               )),

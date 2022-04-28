@@ -30,7 +30,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   static var appUser;
-  NsUser _user = new NsUser();
+  final NsUser _user = NsUser();
   late bool nfcIsAvailable = false;
 
   bool loading = false;
@@ -100,7 +100,7 @@ class _LoginState extends State<Login> {
     super.dispose();
   }
 
-  var _passwordFocusNode = FocusNode();
+  final _passwordFocusNode = FocusNode();
   late VideoPlayerController _videoPlayerController;
 
   @override
@@ -109,36 +109,31 @@ class _LoginState extends State<Login> {
         backgroundColor: Colors.white,
         body: loading
             ? Center(
-                child: Container(
-                    child: Column(
+                child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: [CircularProgressIndicator(), Padding(padding: const EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
-              )))
+                children: const [CircularProgressIndicator(), Padding(padding: EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
+              ))
             : kIsWeb
                 ? getWebUi()
                 : Stack(
                     children: [
                       if (kIsWeb)
                         Container(
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage("assets/images/background.jpg"),
-                              fit: BoxFit.cover,
-                            ),
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(image: AssetImage("assets/images/background.jpg"), fit: BoxFit.cover),
                           ),
                           child: null /* add child content here */,
                         ),
                       if (!kIsWeb)
                         SizedBox.expand(
                             child: FittedBox(
-                          clipBehavior: Clip.antiAlias,
-                          fit: BoxFit.fill,
-                          child: SizedBox(
-                              width: _videoPlayerController.value.size.width, height: _videoPlayerController.value.size.height, child: VideoPlayer(_videoPlayerController)),
-                        )),
+                                clipBehavior: Clip.antiAlias,
+                                fit: BoxFit.fill,
+                                child: SizedBox(
+                                    width: _videoPlayerController.value.size.width, height: _videoPlayerController.value.size.height, child: VideoPlayer(_videoPlayerController)))),
                       Center(
                           child: Container(
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                 borderRadius: BorderRadius.all(Radius.circular(15)),
                                 color: Colors.white70,
                               ),
@@ -147,18 +142,16 @@ class _LoginState extends State<Login> {
                                 child: SizedBox(
                                     width: 300,
                                     child: Wrap(direction: Axis.horizontal, children: [
-                                      Container(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(24.0),
-                                          child: Center(
-                                            child: CircleAvatar(
-                                              radius: 100,
-                                              child: Image.asset("assets/north_sails-logo.png"),
-                                            ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(24.0),
+                                        child: Center(
+                                          child: CircleAvatar(
+                                            radius: 100,
+                                            child: Image.asset("assets/north_sails-logo.png"),
                                           ),
                                         ),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 62,
                                       ),
                                       TextFormField(
@@ -166,31 +159,29 @@ class _LoginState extends State<Login> {
                                           onFieldSubmitted: (d) {
                                             _passwordFocusNode.requestFocus();
                                           },
-                                          style: TextStyle(fontSize: 20, color: Colors.blue),
+                                          style: const TextStyle(fontSize: 20, color: Colors.blue),
                                           cursorColor: Colors.blue,
                                           initialValue: _user.uname,
                                           // decoration: FormInputDecoration.getDeco(hintText: 'Enter User Name', prefixIcon: Icon(Icons.account_circle_outlined, color: Colors.lightBlue)),
                                           decoration: InputDecoration(
                                             border: OutlineInputBorder(
                                               borderRadius: BorderRadius.circular(5.0),
-                                              borderSide: BorderSide(
-                                                color: Colors.black,
-                                              ),
+                                              borderSide: const BorderSide(color: Colors.black),
                                             ),
-                                            prefixIcon: Padding(
-                                              padding: const EdgeInsets.only(left: 8.0),
-                                              child: new Icon(Icons.account_circle_outlined, color: Colors.blue),
+                                            prefixIcon: const Padding(
+                                              padding: EdgeInsets.only(left: 8.0),
+                                              child: Icon(Icons.account_circle_outlined, color: Colors.blue),
                                             ),
                                             hintText: 'Enter User Name',
                                             hintStyle: TextStyle(color: Colors.blue.shade200),
                                             fillColor: Colors.white,
                                             filled: true,
-                                            contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                                            contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                                           ),
                                           onChanged: (uname) {
                                             _user.uname = uname;
                                           }),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 84,
                                       ),
                                       // Text("Password",
@@ -202,7 +193,7 @@ class _LoginState extends State<Login> {
                                           onFieldSubmitted: (f) {
                                             _login();
                                           },
-                                          style: TextStyle(fontSize: 20, color: Colors.blue),
+                                          style: const TextStyle(fontSize: 20, color: Colors.blue),
                                           initialValue: _user.pword,
                                           obscureText: hidePassword,
                                           autofocus: false,
@@ -217,19 +208,19 @@ class _LoginState extends State<Login> {
                                               ),
                                               border: OutlineInputBorder(
                                                 borderRadius: BorderRadius.circular(5.0),
-                                                borderSide: BorderSide(
+                                                borderSide: const BorderSide(
                                                   color: Colors.black,
                                                 ),
                                               ),
-                                              prefixIcon: Padding(
-                                                padding: const EdgeInsets.only(left: 8.0),
-                                                child: new Icon(Icons.lock_outlined, color: Colors.blue),
+                                              prefixIcon: const Padding(
+                                                padding: EdgeInsets.only(left: 8.0),
+                                                child: Icon(Icons.lock_outlined, color: Colors.blue),
                                               ),
                                               hintText: 'Enter Password',
                                               hintStyle: TextStyle(color: Colors.blue.shade200),
                                               fillColor: Colors.white,
                                               filled: true,
-                                              contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                                              contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                                               focusedBorder:
                                                   OutlineInputBorder(borderSide: const BorderSide(color: Colors.blueAccent, width: 1.0), borderRadius: BorderRadius.circular(5.0)),
                                               enabledBorder:
@@ -237,21 +228,21 @@ class _LoginState extends State<Login> {
                                           onChanged: (pword) {
                                             _user.pword = pword;
                                           }),
-                                      SizedBox(height: 64),
+                                      const SizedBox(height: 64),
 
-                                      Text(errorMessage, style: TextStyle(color: Colors.red, fontSize: 20)),
+                                      Text(errorMessage, style: const TextStyle(color: Colors.red, fontSize: 20)),
                                       Align(
                                           alignment: Alignment.centerRight,
                                           child: Padding(
                                               padding: const EdgeInsets.all(4.0),
-                                              child: TextButton(onPressed: _recoverPassword, child: Text("Forgot Password ?", style: TextStyle(color: Colors.white))))),
+                                              child: TextButton(onPressed: _recoverPassword, child: const Text("Forgot Password ?", style: TextStyle(color: Colors.white))))),
 
                                       SizedBox(
                                           width: double.infinity,
                                           height: 50,
                                           child: ElevatedButton(
                                               onPressed: _login,
-                                              child: Text("Login", style: TextStyle(color: Colors.white, fontSize: 20)),
+                                              child: const Text("Login", style: TextStyle(color: Colors.white, fontSize: 20)),
                                               style: FormInputDecoration.buttonStyle())),
                                       SizedBox(
                                           width: double.infinity,
@@ -262,16 +253,16 @@ class _LoginState extends State<Login> {
                                             child: const Text('forgot my password'),
                                             // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0), side: const BorderSide(color: Colors.orange)),
                                           )),
-                                      if (nfcIsAvailable) SizedBox(height: 84),
+                                      if (nfcIsAvailable) const SizedBox(height: 84),
                                       if (nfcIsAvailable)
-                                        Center(
+                                        const Center(
                                             child: Text(
                                           "  Or ",
                                           style: TextStyle(color: Colors.grey, fontSize: 20),
                                           textAlign: TextAlign.center,
                                         )),
-                                      if (nfcIsAvailable) SizedBox(height: 32),
-                                      if (nfcIsAvailable) Center(child: Text("Use NFC card to login ", style: TextStyle(color: Colors.black, fontSize: 25)))
+                                      if (nfcIsAvailable) const SizedBox(height: 32),
+                                      if (nfcIsAvailable) const Center(child: Text("Use NFC card to login ", style: TextStyle(color: Colors.black, fontSize: 25)))
                                     ])),
                               ))),
                     ],
@@ -291,7 +282,7 @@ class _LoginState extends State<Login> {
 
     setLoading(true);
 
-    Dio dio = new Dio();
+    Dio dio = Dio();
     dio.options.headers['content-Type'] = 'application/json';
     print('-----------------------------------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx__login__1');
     dio.post(
@@ -303,7 +294,10 @@ class _LoginState extends State<Login> {
 
       Map res = response.data;
 
-      if (res["user"] == null) {
+      if (res["deactivate"] != null) {
+        setLoading(false);
+        return showAlertDialog(context);
+      } else if (res["user"] == null) {
         if (nfcCode.isNotEmpty) {
           ErrorMessageView(errorMessage: "Scan Valid ID Card", icon: Icons.badge_outlined).show(context);
           nfcCode = "";
@@ -347,7 +341,7 @@ class _LoginState extends State<Login> {
 
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => PasswordRecovery()),
+      MaterialPageRoute(builder: (context) => const PasswordRecovery()),
     );
   }
 
@@ -355,6 +349,25 @@ class _LoginState extends State<Login> {
     setState(() {
       loading = show;
     });
+  }
+
+  showAlertDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context1) {
+        return AlertDialog(
+          title: const Text("Deactivated User"),
+          content: const Text("Your Account has been deactivated .. please contact admin to activate your account"),
+          actions: [
+            TextButton(
+                child: const Text("Ok"),
+                onPressed: () {
+                  Navigator.of(context1).pop();
+                })
+          ],
+        );
+      },
+    );
   }
 
   getWebUi() {

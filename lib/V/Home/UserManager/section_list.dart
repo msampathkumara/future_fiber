@@ -41,21 +41,21 @@ class _SectionListState extends State<SectionList> {
 
   getWebUi() {
     return Scaffold(
-        appBar: AppBar(title: Text("Select Section")),
+        appBar: AppBar(title: const Text("Select Section")),
         body: ListView.builder(
             itemCount: sectionList.length,
             itemBuilder: (context, i) {
               Section section = sectionList[i];
-              bool selected = widget.SelectedSections.where((element) => section.id == element.id).length > 0;
+              bool selected = SelectedSections.where((element) => section.id == element.id).isNotEmpty;
 
               return CheckboxListTile(
                 title: Text(section.sectionTitle, textScaleFactor: 1),
-                subtitle: Text(section.factory, style: TextStyle(color: Colors.red)),
+                subtitle: Text(section.factory, style: const TextStyle(color: Colors.red)),
                 onChanged: (bool? value) {
                   if (value == true) {
                     SelectedSections.add(section);
                   } else {
-                    SelectedSections.remove(section);
+                    SelectedSections.removeWhere((e) => e.id == section.id);
                   }
                   widget.onSelect(SelectedSections);
                   setState(() {});

@@ -1,7 +1,9 @@
 import 'package:custom_webview/webview_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:native_pdf_view/native_pdf_view.dart';
+import 'package:pdfx/pdfx.dart';
+
+// import 'package:native_pdf_view/native_pdf_view.dart';
 // import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:smartwind/M/Ticket.dart';
 
@@ -136,8 +138,8 @@ class _CSState extends State<CS> with TickerProviderStateMixin {
         format: PdfPageImageFormat.webp,
         backgroundColor: '#ffffff',
       ),
-      documentLoader: Center(child: CircularProgressIndicator()),
-      pageLoader: Center(child: CircularProgressIndicator()),
+      // documentLoader: Center(child: CircularProgressIndicator()),
+      // pageLoader: Center(child: CircularProgressIndicator()),
       controller: id == 1 ? _pdfController : _pdfController1,
       onDocumentLoaded: (document) {
         setState(() {

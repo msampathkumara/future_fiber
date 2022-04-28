@@ -32,7 +32,7 @@ class _SectionSelectorState extends State<SectionSelector> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return  Scaffold(
-        appBar: AppBar(title: Text("Select Section")),
+        appBar: AppBar(title: const Text("Select Section")),
         body: ListView.builder(
             itemCount: widget.nsUser.sections.length,
             itemBuilder: (context, i) {

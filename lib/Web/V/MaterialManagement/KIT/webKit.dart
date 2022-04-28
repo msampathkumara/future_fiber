@@ -1,22 +1,21 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/M/CPR.dart';
+import 'package:smartwind/C/Api.dart';
+import 'package:smartwind/M/CPR/KIT.dart';
+import 'package:smartwind/M/Enums.dart';
+import 'package:smartwind/Web/Styles/styles.dart';
 
-import '../../../C/Api.dart';
-import '../../../M/Enums.dart';
-import '../../Styles/styles.dart';
+part 'webKit.table.dart';
 
-part 'webCpr.table.dart';
-
-class WebCpr extends StatefulWidget {
-  const WebCpr({Key? key}) : super(key: key);
+class WebKit extends StatefulWidget {
+  const WebKit({Key? key}) : super(key: key);
 
   @override
-  State<WebCpr> createState() => _WebCprState();
+  State<WebKit> createState() => _WebKitState();
 }
 
-class _WebCprState extends State<WebCpr> {
+class _WebKitState extends State<WebKit> {
   var _controller = TextEditingController();
   bool loading = false;
 
@@ -33,7 +32,7 @@ class _WebCprState extends State<WebCpr> {
 
   late DessertDataSourceAsync _dataSource;
 
-  // get cprCount => _dataSource == null ? 0 : _dataSource?.rowCount;
+  // get kitCount => _dataSource == null ? 0 : _dataSource?.rowCount;
 
   @override
   void initState() {
@@ -48,8 +47,8 @@ class _WebCprState extends State<WebCpr> {
         appBar: AppBar(
             title: Row(
               children: [
-                Text("CPR", style: mainWidgetsTitleTextStyle),
-                Spacer(),
+                Text("KIT", style: mainWidgetsTitleTextStyle),
+                const Spacer(),
                 Wrap(children: [
                   Material(
                     elevation: 4,
@@ -83,7 +82,7 @@ class _WebCprState extends State<WebCpr> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   Material(
                     elevation: 4,
                     borderRadius: BorderRadius.circular(8),
@@ -98,14 +97,14 @@ class _WebCprState extends State<WebCpr> {
                           },
                           cursorColor: Colors.black,
                           decoration: new InputDecoration(
-                              prefixIcon: Icon(Icons.search_rounded),
-                              suffixIcon: IconButton(icon: Icon(Icons.clear), onPressed: _controller.clear),
+                              prefixIcon: const Icon(Icons.search_rounded),
+                              suffixIcon: IconButton(icon: const Icon(Icons.clear), onPressed: _controller.clear),
                               border: InputBorder.none,
                               focusedBorder: InputBorder.none,
                               enabledBorder: InputBorder.none,
                               errorBorder: InputBorder.none,
                               disabledBorder: InputBorder.none,
-                              contentPadding: EdgeInsets.only(left: 15, bottom: 11, top: 10, right: 15),
+                              contentPadding: const EdgeInsets.only(left: 15, bottom: 11, top: 10, right: 15),
                               hintText: "Search Text"),
                         )),
                   ),
@@ -119,17 +118,17 @@ class _WebCprState extends State<WebCpr> {
           child: Material(
               elevation: 4,
               borderRadius: BorderRadius.circular(8),
-              child: WebStandardLibraryTable(onInit: (DessertDataSourceAsync dataSource) {
+              child: WebKITTable(onInit: (DessertDataSourceAsync dataSource) {
                 _dataSource = dataSource;
               }, onRequestData: (int page, int startingAt, int count, String sortedBy, bool sortedAsc) {
                 return getData(page, startingAt, count, sortedBy, sortedAsc);
               })),
         ),
         bottomNavigationBar: BottomAppBar(
-            shape: CircularNotchedRectangle(),
+            shape: const CircularNotchedRectangle(),
             color: Colors.green,
             child: IconTheme(
-              data: IconThemeData(color: Colors.white),
+              data: const IconThemeData(color: Colors.white),
               child: Row(
                 children: [
                   InkWell(
@@ -137,7 +136,7 @@ class _WebCprState extends State<WebCpr> {
                     splashColor: Colors.red,
                     child: Ink(
                       child: IconButton(
-                        icon: Icon(Icons.refresh),
+                        icon: const Icon(Icons.refresh),
                         onPressed: () {
                           _dataSource.refreshDatasource();
                         },
@@ -145,8 +144,8 @@ class _WebCprState extends State<WebCpr> {
                     ),
                   ),
                   const Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
                     child: Text(
                       "${0}",
                       textScaleFactor: 1.1,
@@ -154,7 +153,7 @@ class _WebCprState extends State<WebCpr> {
                     ),
                   ),
                   const Spacer(),
-                  SizedBox(width: 36)
+                  const SizedBox(width: 36)
                 ],
               ),
             )));
@@ -170,7 +169,7 @@ class _WebCprState extends State<WebCpr> {
     setState(() {
       requested = true;
     });
-    return Api.get("cpr/search", {
+    return Api.get("materialManagement/kit/search", {
       'production': selectedProduction.getValue(),
       'sortDirection': sortedAsc ? "asc" : "desc",
       'sortBy': sortedBy,
@@ -179,13 +178,13 @@ class _WebCprState extends State<WebCpr> {
       'searchText': searchText
     }).then((res) {
       print(res.data);
-      List cprs = res.data["cprs"];
+      List kits = res.data["kits"];
       dataCount = res.data["count"];
 
       _dataLoadingError = false;
-
+      var x = KIT.fromJsonArray(kits);
       setState(() {});
-      return DataResponse(dataCount, CPR.fromJsonArray(cprs));
+      return DataResponse(dataCount, x);
     }).whenComplete(() {
       setState(() {
         requested = false;

@@ -2,8 +2,8 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/OnlineDB.dart';
-import 'package:smartwind/M/CPR.dart';
-import 'package:smartwind/M/CprItem.dart';
+import 'package:smartwind/M/CPR/CPR.dart';
+import 'package:smartwind/M/CPR/CprItem.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 
@@ -467,13 +467,13 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
       builder: (BuildContext context) {
         return Container(
           height: 100,
-          decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
+          decoration: const BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
               Column(children: [
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 ListTile(

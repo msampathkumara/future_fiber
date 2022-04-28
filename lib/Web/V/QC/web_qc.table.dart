@@ -15,10 +15,10 @@ class _WebQcTableState extends State<WebQcTable> {
   bool _sortAscending = true;
   int? _sortColumnIndex;
   QcDataSourceAsync? _dessertsDataSource;
-  PaginatorController _controller = PaginatorController();
+  final PaginatorController _controller = PaginatorController();
 
-  bool _dataSourceLoading = false;
-  int _initialRow = 0;
+  final bool _dataSourceLoading = false;
+  final int _initialRow = 0;
 
   @override
   void didChangeDependencies() {
@@ -42,7 +42,7 @@ class _WebQcTableState extends State<WebQcTable> {
         columnName = "usedCount";
         break;
       case 3:
-        columnName = "uptime";
+        columnName = "dnt";
         break;
     }
     _dessertsDataSource!.sort(columnName, ascending);
@@ -95,7 +95,7 @@ class _WebQcTableState extends State<WebQcTable> {
           columnSpacing: 16,
           rowsPerPage: _rowsPerPage,
           autoRowsToHeight: false,
-          availableRowsPerPage: [20, 50, 100, 200],
+          availableRowsPerPage: const [20, 50, 100, 200],
           wrapInCard: false,
           pageSyncApproach: PageSyncApproach.goToFirst,
           minWidth: 800,
@@ -226,7 +226,7 @@ class QcDataSourceAsync extends AsyncDataTableSource {
 
   // final DesertsFakeWebService _repo = DesertsFakeWebService();
 
-  String _sortColumn = "name";
+  String _sortColumn = "dnt";
   bool _sortAscending = true;
 
   void sort(String columnName, bool ascending) {
@@ -273,19 +273,20 @@ class QcDataSourceAsync extends AsyncDataTableSource {
             },
 
             onSecondaryTap: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              duration: Duration(seconds: 1),
+              duration: const Duration(seconds: 1),
               backgroundColor: Theme.of(context).errorColor,
               content: Text('Right clicked on ${qc.ticket?.id}'),
             )),
             // specificRowHeight: this.hasRowHeightOverrides && qc.fat >= 25 ? 100 : null,
             cells: [
-              DataCell(Wrap(direction: Axis.vertical, children: [Text((qc.ticket?.mo) ?? ""), Text((qc.ticket?.oe) ?? "", style: TextStyle(color: Colors.red, fontSize: 12))])),
+              DataCell(
+                  Wrap(direction: Axis.vertical, children: [Text((qc.ticket?.mo) ?? ""), Text((qc.ticket?.oe) ?? "", style: const TextStyle(color: Colors.red, fontSize: 12))])),
               DataCell(Text('${qc.getDateTime()}')),
               DataCell(Text(qc.qc == 1 ? 'QC' : 'QA')),
               DataCell(Row(
                 children: [
                   UserImage(nsUser: qc.user, radius: 16, padding: 2),
-                  SizedBox(width: 4),
+                  const SizedBox(width: 4),
                   Wrap(
                     direction: Axis.vertical,
                     children: [Text("${qc.user?.name}"), Text("${qc.user?.uname}")],

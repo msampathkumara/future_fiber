@@ -14,15 +14,7 @@ class AddSheet extends StatefulWidget {
   State<AddSheet> createState() => _AddSheetState();
 
   void show(context) {
-    kIsWeb
-        ? showDialog(
-            context: context,
-            builder: (_) => this,
-          )
-        : Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => this),
-          );
+    kIsWeb ? showDialog(context: context, builder: (_) => this) : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
   }
 }
 
@@ -51,22 +43,26 @@ class _AddSheetState extends State<AddSheet> {
     return Material(
       color: Colors.transparent,
       child: Padding(
-        padding: (width - 1000) > 10 ? EdgeInsets.fromLTRB((width - 1000) / 2, 16, (width - 1000) / 2, 16) : EdgeInsets.all(16),
+        padding: (width - 1000) > 10 ? EdgeInsets.fromLTRB((width - 1000) / 2, 16, (width - 1000) / 2, 16) : const EdgeInsets.all(16),
         child: ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
             child: Scaffold(
-              appBar: AppBar(automaticallyImplyLeading: false,actions: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.close, color: Colors.white),
-                  onPressed: () => Navigator.of(context).pop(),
-                )
-              ], title: Text("Upload Data Sheet"), centerTitle: true),
+              appBar: AppBar(
+                  automaticallyImplyLeading: false,
+                  actions: <Widget>[
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.white),
+                      onPressed: () => Navigator.of(context).pop(),
+                    )
+                  ],
+                  title: const Text("Upload Data Sheet"),
+                  centerTitle: true),
               backgroundColor: Colors.white,
               body: Row(
                 children: [
                   Expanded(
                     child: Container(
-                      constraints: BoxConstraints(minWidth: 500, maxWidth: 500),
+                      constraints: const BoxConstraints(minWidth: 500, maxWidth: 500),
                       width: 500,
                       child: sheetUploadingError
                           ? Center(
@@ -74,14 +70,14 @@ class _AddSheetState extends State<AddSheet> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                const Padding(
+                                  padding: EdgeInsets.all(8.0),
                                   child: Icon(Icons.error_rounded, color: Colors.red, size: 48),
                                 ),
                                 Text("${errorMessage}"),
                                 Padding(
                                   padding: const EdgeInsets.all(24.0),
-                                  child: ElevatedButton(child: Text("Upload Another"), onPressed: reset),
+                                  child: ElevatedButton(child: const Text("Upload Another"), onPressed: reset),
                                 )
                               ],
                             ))
@@ -91,14 +87,14 @@ class _AddSheetState extends State<AddSheet> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
+                                    const Padding(
+                                      padding: EdgeInsets.all(8.0),
                                       child: Icon(Icons.done_rounded, color: Colors.green, size: 48),
                                     ),
-                                    Text("Done"),
+                                    const Text("Done"),
                                     Padding(
                                       padding: const EdgeInsets.all(24.0),
-                                      child: ElevatedButton(child: Text("Upload Another"), onPressed: reset),
+                                      child: ElevatedButton(child: const Text("Upload Another"), onPressed: reset),
                                     )
                                   ],
                                 ))
@@ -107,9 +103,9 @@ class _AddSheetState extends State<AddSheet> {
                                       child: Column(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
+                                        children: const [
                                         Padding(
-                                          padding: const EdgeInsets.all(8.0),
+                                          padding: EdgeInsets.all(8.0),
                                           child: CircularProgressIndicator(),
                                         ),
                                         Text("Uploading data")
@@ -123,8 +119,8 @@ class _AddSheetState extends State<AddSheet> {
                                           child: DottedBorder(
                                             color: highlighted1 ? Colors.lightBlue : Colors.black,
                                             borderType: BorderType.RRect,
-                                            radius: Radius.circular(8),
-                                            padding: EdgeInsets.all(6),
+                                            radius: const Radius.circular(8),
+                                            padding: const EdgeInsets.all(6),
                                             child: ClipRRect(
                                               borderRadius: BorderRadius.circular(8.0),
                                               child: buildZone1(context),
@@ -136,8 +132,8 @@ class _AddSheetState extends State<AddSheet> {
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
-                                            Padding(padding: const EdgeInsets.all(8.0), child: Icon(Icons.cloud_upload_rounded, color: Colors.grey, size: 64)),
-                                            Text("Drop csv file", textScaleFactor: 1),
+                                            const Padding(padding: EdgeInsets.all(8.0), child: Icon(Icons.cloud_upload_rounded, color: Colors.grey, size: 64)),
+                                            const Text("Drop csv file", textScaleFactor: 1),
                                             Padding(
                                               padding: const EdgeInsets.all(8.0),
                                               child: ElevatedButton(
@@ -163,7 +159,7 @@ class _AddSheetState extends State<AddSheet> {
 
   Widget buildZone1(BuildContext context) => Builder(
         builder: (context) => DropzoneView(
-          mime: ['text/csv'],
+          mime: const ['text/csv'],
           operation: DragOperation.copy,
           cursor: CursorType.grab,
           onCreated: (ctrl) => controller1 = ctrl,
@@ -182,23 +178,6 @@ class _AddSheetState extends State<AddSheet> {
 
             await upload(ev);
 
-            // var excel = Excel.decodeBytes(bytes);
-
-            // print(excel);
-
-            // sheet/upload
-
-            // for (var table in excel.tables.keys) {
-            //   print(table); //sheet Name
-            //   var t = excel.tables[table];
-            //   if (t != null) {
-            //     print(t.maxCols);
-            //     print(t.maxRows);
-            //     for (var row in t.rows) {
-            //       // print("$row");
-            //     }
-            //   }
-            // }
             print('dddddddddddddddddddddddddddd');
             setState(() => highlighted1 = false);
           },

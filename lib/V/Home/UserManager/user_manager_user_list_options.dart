@@ -2,11 +2,11 @@ part of 'user_manager_user_list.dart';
 
 Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcIsAvailable) async {
   await showModalBottomSheet<void>(
-    constraints: kIsWeb ? BoxConstraints(maxWidth: 600) : null,
+    constraints: kIsWeb ? const BoxConstraints(maxWidth: 600) : null,
     context: context,
     builder: (BuildContext context) {
       return Container(
-        decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
+        decoration: const BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
         height: 500,
         child: Center(
           child: Column(
@@ -18,12 +18,12 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
                 title: Text(nsUser.name),
                 subtitle: Text("#" + nsUser.uname),
               ),
-              Divider(),
+              const Divider(),
               if (nfcIsAvailable)
                 ListTile(
                   title: Text(nsUser.userHasNfc() ? "Remove ID Card" : "Add ID Card"),
-                  leading: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                  leading: const Padding(
+                    padding: EdgeInsets.all(8.0),
                     child: Icon(Icons.nfc_outlined),
                   ),
                   onTap: () async {
@@ -39,22 +39,23 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
                 ),
               if (AppUser.havePermissionFor(Permissions.UPDATE_USER))
                 ListTile(
-                  title: Text("Edit"),
-                  subtitle: Text("Update user details"),
-                  leading: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                  title: const Text("Edit"),
+                  subtitle: const Text("Update user details"),
+                  leading: const Padding(
+                    padding: EdgeInsets.all(8.0),
                     child: Icon(Icons.edit),
                   ),
                   onTap: () async {
+                    Navigator.of(context).pop();
                     UpdateUserDetails(nsUser).show(context);
                   },
                 ),
               if (AppUser.havePermissionFor(Permissions.SET_USER_PERMISSIONS))
                 ListTile(
-                  title: Text("Permissions"),
-                  subtitle: Text("Update,Add or Remove Permissions"),
-                  leading: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                  title: const Text("Permissions"),
+                  subtitle: const Text("Update,Add or Remove Permissions"),
+                  leading: const Padding(
+                    padding: EdgeInsets.all(8.0),
                     child: Icon(Icons.gpp_good_outlined),
                   ),
                   onTap: () async {
@@ -66,8 +67,8 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
                 ListTile(
                   title: Text(nsUser.isDisabled ? "Activate User" : "Deactivate User"),
                   subtitle: Text(nsUser.isDisabled ? "Activate all activities on system for this user" : "Deactivate all activities on system for this user"),
-                  leading: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                  leading: const Padding(
+                    padding: EdgeInsets.all(8.0),
                     child: Icon(Icons.person_off_rounded),
                   ),
                   onTap: () async {
@@ -82,7 +83,7 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
                     });
                   },
                 ),
-              Spacer(),
+              const Spacer(),
             ],
           ),
         ),
@@ -94,20 +95,20 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
 showRemoveCardAlertDialog(BuildContext context) {
   // set up the buttons
   Widget cancelButton = TextButton(
-    child: Text("Cancel"),
+    child: const Text("Cancel"),
     onPressed: () {
       Navigator.of(context).pop();
     },
   );
   Widget continueButton = TextButton(
-    child: Text("Continue"),
+    child: const Text("Continue"),
     onPressed: () {},
   );
 
   // set up the AlertDialog
   AlertDialog alert = AlertDialog(
-    title: Text("Remove ID card ?"),
-    content: Text("this will remove id card from user "),
+    title: const Text("Remove ID card ?"),
+    content: const Text("this will remove id card from user "),
     actions: [
       cancelButton,
       continueButton,

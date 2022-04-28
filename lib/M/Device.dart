@@ -19,7 +19,7 @@ class Device {
 
   @HiveField(3, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)
-  String? imei = null;
+  String? imei;
 
   @HiveField(4, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)

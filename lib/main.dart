@@ -14,6 +14,17 @@ import 'V/Login/Login.dart';
 import 'mainFuncs.dart';
 
 main() async {
+  bool x = Uri.base.host.contains('mm.');
+  if (kDebugMode) {
+    x = true;
+  }
+  await mainThings(viewIssMaterialManagement: x);
+}
+
+bool isMaterialManagement = false;
+
+Future<void> mainThings({viewIssMaterialManagement = false}) async {
+  isMaterialManagement = viewIssMaterialManagement;
   WidgetsFlutterBinding.ensureInitialized();
   await HiveBox.create();
   if (Firebase.apps.isEmpty) {
@@ -35,7 +46,7 @@ main() async {
     Firebase.app();
   }
 
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent, // transparent status bar
   ));
 
@@ -54,9 +65,9 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.blue,
             bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.black.withOpacity(0)),
             inputDecorationTheme: InputDecorationTheme(
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(vertical: 22, horizontal: 26),
-                labelStyle: TextStyle(fontSize: 18, decorationColor: Colors.red),
+                border: const OutlineInputBorder(),
+                contentPadding: const EdgeInsets.symmetric(vertical: 22, horizontal: 26),
+                labelStyle: const TextStyle(fontSize: 18, decorationColor: Colors.red),
                 focusedBorder: OutlineInputBorder(
                   borderSide: const BorderSide(color: Colors.lightBlue),
                   borderRadius: BorderRadius.circular(4.0),

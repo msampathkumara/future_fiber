@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:smartwind/Web/materialManagementHomePage.dart';
+import 'package:smartwind/main.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
 
@@ -14,11 +15,8 @@ import 'home_page.dart';
 class webApp extends StatelessWidget {
   webApp({Key? key}) : super(key: key);
 
-
   @override
   Widget build(BuildContext context) {
-
-
 
     // connectSocket();
     AppUser(context);
@@ -26,13 +24,13 @@ class webApp extends StatelessWidget {
     return MaterialApp(
       title: 'Smart Wind',
       theme: ThemeData(
-          iconTheme: IconThemeData(size: 16.0),
+          iconTheme: const IconThemeData(size: 16.0),
           primarySwatch: Colors.blue,
           bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.black.withOpacity(0)),
           inputDecorationTheme: InputDecorationTheme(
-              border: OutlineInputBorder(),
-              contentPadding: EdgeInsets.symmetric(vertical: 22, horizontal: 26),
-              labelStyle: TextStyle(fontSize: 18, decorationColor: Colors.red),
+              border: const OutlineInputBorder(),
+              contentPadding: const EdgeInsets.symmetric(vertical: 22, horizontal: 26),
+              labelStyle: const TextStyle(fontSize: 18, decorationColor: Colors.red),
               focusedBorder: OutlineInputBorder(
                 borderSide: const BorderSide(color: Colors.lightBlue),
                 borderRadius: BorderRadius.circular(4.0),
@@ -45,9 +43,12 @@ class webApp extends StatelessWidget {
       navigatorObservers: [],
       initialRoute: "/",
       onUnknownRoute: (RouteSettings settings) {
-        return MaterialPageRoute<void>(settings: settings, builder: (BuildContext context) => Scaffold(body: Center(child: Text('Not Found'))));
+        return MaterialPageRoute<void>(settings: settings, builder: (BuildContext context) => const Scaffold(body: Center(child: Text('Not Found'))));
       },
-      routes: <String, WidgetBuilder>{'/login': (BuildContext context) => Login(), '/': (BuildContext context) => WebHomePage()},
+      routes: <String, WidgetBuilder>{
+        '/login': (BuildContext context) => Login(),
+        '/': (BuildContext context) => (isMaterialManagement ? const MaterialManagementHomePage() : const WebHomePage())
+      },
     );
   }
 
@@ -143,7 +144,9 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ((FirebaseAuth.instance.currentUser != null && App.currentUser != null)) ? Center(child: CircularProgressIndicator()) : WebHomePage();
+    return ((FirebaseAuth.instance.currentUser != null && App.currentUser != null))
+        ? const Center(child: CircularProgressIndicator())
+        : (isMaterialManagement ? const MaterialManagementHomePage() : const WebHomePage());
 
     // return loading
     //     ? Center(child: CircularProgressIndicator())

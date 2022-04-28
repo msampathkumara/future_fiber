@@ -66,20 +66,20 @@ class _webUserManagerTableState extends State<webUserManagerTable> {
     return [
       DataColumn2(
         size: ColumnSize.S,
-        label: Text('Photo'),
+        label: const Text('Photo'),
         onSort: (columnIndex, ascending) => sort<String>((d) => (d.name), columnIndex, ascending),
       ),
       DataColumn2(
         size: ColumnSize.L,
-        label: Text('Name'),
+        label: const Text('Name'),
         onSort: (columnIndex, ascending) => sort<String>((d) => (d.name), columnIndex, ascending),
       ),
       DataColumn2(
         size: ColumnSize.M,
-        label: Text('EPF'),
+        label: const Text('EPF'),
         onSort: (columnIndex, ascending) => sort<String>((d) => d.epf, columnIndex, ascending),
       ),
-      DataColumn2(numeric: true, size: ColumnSize.S, tooltip: "Options", label: Text('Options'))
+      const DataColumn2(numeric: true, size: ColumnSize.S, tooltip: "Options", label: const Text('Options'))
     ];
   }
 
@@ -100,7 +100,7 @@ class _webUserManagerTableState extends State<webUserManagerTable> {
         fit: FlexFit.tight,
         showCheckboxColumn: false,
         border: TableBorder(
-            top: BorderSide(color: Colors.transparent),
+            top: const BorderSide(color: Colors.transparent),
             bottom: BorderSide(color: Colors.grey[300]!),
             left: BorderSide(color: Colors.grey[300]!),
             right: BorderSide(color: Colors.grey[300]!),
@@ -119,8 +119,8 @@ class _webUserManagerTableState extends State<webUserManagerTable> {
         controller: _controller,
         hidePaginator: false,
         columns: _columns,
-        availableRowsPerPage: [20, 50, 100],
-        empty: Center(child: Container(padding: EdgeInsets.all(20), color: Colors.grey[200], child: Text('No data'))),
+        availableRowsPerPage: const [20, 50, 100, 200],
+        empty: Center(child: Container(padding: const EdgeInsets.all(20), color: Colors.grey[200], child: const Text('No data'))),
         source: _dessertsDataSource,
       ),
       // Positioned(bottom: 16, child: CustomPager(_controller!))
@@ -173,21 +173,21 @@ class DessertDataSource extends DataTableSource {
       onTap: () {
         onTap(nsUser);
 
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          duration: Duration(seconds: 1),
-          content: Text('Tapped on ${nsUser.name}'),
-        ));
+        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        //   duration: Duration(seconds: 1),
+        //   content: Text('Tapped on ${nsUser.name}'),
+        // ));
       },
       onDoubleTap: hasRowTaps
           ? () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                duration: Duration(seconds: 1),
+        duration: const Duration(seconds: 1),
                 backgroundColor: Theme.of(context).focusColor,
                 content: Text('Double Tapped on ${nsUser.name}'),
               ))
           : null,
       onSecondaryTap: hasRowTaps
           ? () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                duration: Duration(seconds: 1),
+        duration: const Duration(seconds: 1),
                 backgroundColor: Theme.of(context).errorColor,
                 content: Text('Right clicked on ${nsUser.name}'),
               ))
@@ -199,19 +199,19 @@ class DessertDataSource extends DataTableSource {
           direction: Axis.vertical,
           children: [
             Text((nsUser.name)),
-            Text((nsUser.uname), style: TextStyle(color: Colors.red, fontSize: 12)),
+            Text((nsUser.uname), style: const TextStyle(color: Colors.red, fontSize: 12)),
           ],
         )),
         DataCell(Wrap(
           direction: Axis.vertical,
           children: [
-            Text('${nsUser.epf}'),
+            Text('${nsUser.epf} '),
           ],
         )),
         DataCell(nsUser.id == 0
-            ? Text("")
+            ? const Text("")
             : IconButton(
-                icon: Icon(Icons.more_vert_rounded),
+                icon: const Icon(Icons.more_vert_rounded),
                 onPressed: () {
                   showUserOptions(nsUser, context, context, false);
                 },

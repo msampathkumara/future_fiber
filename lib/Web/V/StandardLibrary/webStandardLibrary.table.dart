@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:smartwind/M/StandardTicket.dart';
 
 import '../../../V/Home/Tickets/StandardFiles/StandardFiles.dart';
-import '../../../V/Home/Tickets/TicketInfo/TicketInfo.dart';
+import '../../../V/Home/Tickets/StandardFiles/StandardTicketInfo.dart';
 
 class WebStandardLibraryTable extends StatefulWidget {
   final Null Function(DessertDataSourceAsync dataSource) onInit;
@@ -111,7 +111,7 @@ class _WebStandardLibraryTableState extends State<WebStandardLibraryTable> {
           columnSpacing: 16,
           rowsPerPage: _rowsPerPage,
           autoRowsToHeight: false,
-          availableRowsPerPage: [20, 50, 100, 200],
+          availableRowsPerPage: const [20, 50, 100, 200],
           wrapInCard: false,
           pageSyncApproach: PageSyncApproach.goToFirst,
           minWidth: 800,
@@ -280,18 +280,16 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
           return DataRow2(
             selected: false,
             onTap: () {
+              StandardTicketInfo(ticket).show(context);
 
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                duration: Duration(seconds: 1),
-                content: Text('Tapped on ${ticket.oe}'),
-              ));
+              // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              //   duration: const Duration(seconds: 1),
+              //   content: Text('Tapped on ${ticket.oe}'),
+              // ));
             },
 
-            onSecondaryTap: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              duration: Duration(seconds: 1),
-              backgroundColor: Theme.of(context).errorColor,
-              content: Text('Right clicked on ${ticket.oe}'),
-            )),
+            onSecondaryTap: () => ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(duration: const Duration(seconds: 1), backgroundColor: Theme.of(context).errorColor, content: Text('Right clicked on ${ticket.oe}'))),
             // specificRowHeight: this.hasRowHeightOverrides && ticket.fat >= 25 ? 100 : null,
             cells: [
               DataCell(Text((ticket.oe) ?? "")),
@@ -299,7 +297,7 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
               DataCell(Text("${ticket.usedCount}")),
               DataCell(Text(ticket.getUpdateDateTime().toString())),
               DataCell(IconButton(
-                icon: Icon(Icons.more_vert_rounded),
+                icon: const Icon(Icons.more_vert_rounded),
                 onPressed: () {
                   showStandardTicketOptions(ticket, context);
                 },

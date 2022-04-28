@@ -5,12 +5,16 @@ description: NorthSails Smart Wind
 publish_to: 'none'
 
 
-version: 1.1.15+49
+version: 1.1.15+55
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
+  flutter:
+    sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
 
   #  cupertino_icons: ^1.0.4
 
@@ -66,17 +70,24 @@ dependencies:
 
   splash_screen_view: ^3.0.0
   decorated_icon: ^1.2.1
-  native_pdf_view: ^6.0.0+1
+  #  native_pdf_view: ^6.0.0+1
   ota_update: ^4.0.1
   timeline_tile: ^2.0.0
   flutter_dropzone: ^3.0.5
-#  excel: ^1.1.5
+  #  excel: ^1.1.5
   dotted_border: ^2.0.0+2
   socket_io_client: ^1.0.2
   file_picker: ^4.5.1
   universal_html: ^2.0.8
+  dropdown_button2: ^1.4.0
+  pdfx: ^2.0.1+2
+  textfield_search: ^0.10.0
+  searchfield: ^0.6.4
+  csv: ^5.0.1
+
 
 dev_dependencies:
+
   hive_generator: ^1.1.2
   json_serializable:
   build_runner: ^2.1.8

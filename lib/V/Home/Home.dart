@@ -135,7 +135,7 @@ class _HomeState extends State<Home> {
                 height: double.maxFinite,
                 width: double.maxFinite,
                 child: Stack(children: [
-                  new Positioned(
+                  Positioned(
                     bottom: 10,
                     right: 0,
                     child: ColorFiltered(

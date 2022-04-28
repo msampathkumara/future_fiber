@@ -91,7 +91,7 @@ class _WebPrintTableState extends State<DeviceDataTable> {
           columnSpacing: 16,
           rowsPerPage: _rowsPerPage,
           autoRowsToHeight: false,
-          availableRowsPerPage: [20, 50, 100, 200],
+          availableRowsPerPage: const [20, 50, 100, 200],
           wrapInCard: false,
           pageSyncApproach: PageSyncApproach.goToFirst,
           minWidth: 800,

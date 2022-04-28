@@ -6,7 +6,7 @@ class Server {
   static String getServerAddress({onlineServer = false}) {
     local = true;
     if (kDebugMode && local) {
-      return "http://192.168.0.100:3000";
+      return "http://192.168.0.101:3000";
     } else {
       return "https://smartwind.nsslsupportservices.com";
     }

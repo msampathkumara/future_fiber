@@ -5,11 +5,10 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:native_pdf_view/native_pdf_view.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pdfx/pdfx.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/UserRFCredentials.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
@@ -43,7 +42,7 @@ class _BlueBookState extends State<BlueBook> {
 
   late PdfControllerPinch pdfPinchController;
 
-  Widget pdfView() => PdfViewPinch(controller: pdfPinchController, pageSnapping: (!kIsWeb), padding: 10, scrollDirection: Axis.vertical);
+  Widget pdfView() => PdfViewPinch(controller: pdfPinchController, padding: 10, scrollDirection: Axis.vertical);
   var path;
   int loginAttemps = 0;
 

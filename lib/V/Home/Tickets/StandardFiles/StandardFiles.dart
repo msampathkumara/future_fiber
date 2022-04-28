@@ -188,8 +188,8 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
             color: Colors.transparent,
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
                   child: Text(
                     "Sort By",
                     textScaleFactor: 1.2,
@@ -252,17 +252,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
                     ],
                   ),
                 ),
-                body: TabBarView(controller: _tabBarController, children: listsMap.values.map<Widget>((e) => getTicketListByCategory(e)).toList()))
-            // body: TabBarView(controller: _tabBarController, children: [
-            //   getTicketListByCategory(_allFilesList),
-            //   getTicketListByCategory(_upwindFilesList),
-            //   getTicketListByCategory(_oDFilesList),
-            //   getTicketListByCategory(_nylonFilesList),
-            //   getTicketListByCategory(_oEMFilesList),
-            //   getTicketListByCategory(_noPoolFilesList),
-            // ])
-            // ),
-            );
+                body: TabBarView(controller: _tabBarController, children: listsMap.values.map<Widget>((e) => getTicketListByCategory(e)).toList())));
   }
 
   getTicketListByCategory(List<StandardTicket> _filesList) {
@@ -362,21 +352,10 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
 
     // if (_showAllTickets) {
 
-    _productions.forEach((element) {
+    for (var element in _productions) {
       listsMap[element] = _load(element, 0, true, searchText);
-    });
+    }
 
-    // _allFilesList = _load(Production.All, 0, true, searchText);
-    // _upwindFilesList = _load(Production.Upwind, 0, true, searchText);
-    // _oDFilesList = _load(Production.OD, 0, true, searchText);
-    // _nylonFilesList = _load(Production.Nylon, 0, true, searchText);
-    // _oEMFilesList = _load(Production.OEM, 0, true, searchText);
-    // _noPoolFilesList = _load(Production.None, 0, true, searchText);
-    // listsArray = [_allFilesList, _upwindFilesList, _oDFilesList, _nylonFilesList, _oEMFilesList, _noPoolFilesList];
-    // } else {
-    //   _allFilesList = _load(Production.All, 0, false, searchText);
-    // }
-    // currentFileList = listsArray[_selectedTabIndex];
     print('---------------------------------------------- end loading');
     setState(() {});
   }
@@ -416,11 +395,11 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
 Future<void> showStandardTicketOptions(StandardTicket ticket, BuildContext context1) async {
   print(ticket.toJson());
   await showModalBottomSheet<void>(
-    constraints: kIsWeb ? BoxConstraints(maxWidth: 600) : null,
+    constraints: kIsWeb ? const BoxConstraints(maxWidth: 600) : null,
     context: context1,
     builder: (BuildContext context) {
       return Container(
-        decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
+        decoration: const BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
         height: 650,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -430,32 +409,30 @@ Future<void> showStandardTicketOptions(StandardTicket ticket, BuildContext conte
               title: Text(ticket.mo ?? ticket.oe!),
               subtitle: Text(ticket.oe!),
             ),
-            Divider(),
+            const Divider(),
             Expanded(
-                child: Container(
-              child: SingleChildScrollView(
-                  child: Column(children: [
-                ListTile(
-                    title: Text("Change Factory"),
-                    leading: Icon(Icons.send_outlined, color: Colors.lightBlue),
-                    onTap: () async {
-                      Navigator.of(context).pop();
-                      showFactories(ticket, context1);
-                      // await Navigator.push(context1, MaterialPageRoute(builder: (context) => changeFactory(ticket)));
-                      // Navigator.of(context).pop();
-                    }),
-                ListTile(
-                    title: Text("Delete"),
-                    leading: Icon(Icons.delete_forever, color: Colors.red),
-                    onTap: () async {
-                      // TODO add link
-                      OnlineDB.apiPost("tickets/standard/delete", {'id': ticket.id.toString()}).then((response) async {
-                        print(response.data);
-                      });
-                      Navigator.of(context).pop();
-                    }),
-              ])),
-            ))
+                child: SingleChildScrollView(
+                    child: Column(children: [
+              ListTile(
+                  title: const Text("Change Factory"),
+                  leading: const Icon(Icons.send_outlined, color: Colors.lightBlue),
+                  onTap: () async {
+                    Navigator.of(context).pop();
+                    showFactories(ticket, context1);
+                    // await Navigator.push(context1, MaterialPageRoute(builder: (context) => changeFactory(ticket)));
+                    // Navigator.of(context).pop();
+                  }),
+              ListTile(
+                  title: const Text("Delete"),
+                  leading: const Icon(Icons.delete_forever, color: Colors.red),
+                  onTap: () async {
+                    // TODO add link
+                    OnlineDB.apiPost("tickets/standard/delete", {'id': ticket.id.toString()}).then((response) async {
+                      print(response.data);
+                    });
+                    Navigator.of(context).pop();
+                  }),
+            ])))
           ],
         ),
       );
@@ -466,11 +443,11 @@ Future<void> showStandardTicketOptions(StandardTicket ticket, BuildContext conte
 Future<void> showFactories(StandardTicket ticket, BuildContext context1) async {
   print(ticket.toJson());
   await showModalBottomSheet<void>(
-    constraints: kIsWeb ? BoxConstraints(maxWidth: 600) : null,
+    constraints: kIsWeb ? const BoxConstraints(maxWidth: 600) : null,
     context: context1,
     builder: (BuildContext context) {
       return Container(
-        decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
+        decoration: const BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
         height: 650,
         child: FactorySelector(ticket.production ?? "", (factory) async {
           await OnlineDB.apiPost("tickets/standard/changeFactory", {'production': factory, 'ticketId': ticket.id});

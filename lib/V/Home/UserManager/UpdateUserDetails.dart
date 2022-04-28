@@ -37,13 +37,13 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
   late NsUser nsUser;
   late NsUser orginalNsUser;
 
-  TextStyle stStyle = TextStyle(color: Colors.black, fontSize: 18);
+  TextStyle stStyle = const TextStyle(color: Colors.black, fontSize: 18);
 
-  TextEditingController _phoneNumberControll = new TextEditingController();
-  TextEditingController _emaiAddressControll = new TextEditingController();
-  TextEditingController _epfNumberControll = new TextEditingController();
+  final TextEditingController _phoneNumberControll = TextEditingController();
+  final TextEditingController _emaiAddressControll = TextEditingController();
+  final TextEditingController _epfNumberControll = TextEditingController();
 
-  Section? selectedSection = new Section();
+  Section? selectedSection = Section();
 
   Uint8List? imageByte;
 
@@ -126,8 +126,8 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
         screenSize.height - offset.dy,
       ),
       items: [
-        PopupMenuItem(value: 1, child: Text("Edit")),
-        PopupMenuItem(value: 2, child: Text("Remove")),
+        const PopupMenuItem(value: 1, child: const Text("Edit")),
+        const PopupMenuItem(value: 2, child: const Text("Remove")),
       ],
       elevation: 8.0,
     ).then((value) {
@@ -139,7 +139,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
     return Scaffold(
       appBar: AppBar(title: Text(isNew ? "Add User" : "Edit User")),
       body: isSaving
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.only(bottom: 16.0),
               child: Row(
@@ -154,7 +154,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                           backgroundImage: const AssetImage("assets/images/userPlaceholder.jpg")),
                       Row(children: [
                         SizedBox(child: TextButton(onPressed: getImage, child: Text(isNew ? "Add Profile Picture" : "Change Profile Picture")), width: 170),
-                        if (_image != null) SizedBox(child: VerticalDivider(color: Colors.grey, thickness: 1), height: 20),
+                        if (_image != null) const SizedBox(child: const VerticalDivider(color: Colors.grey, thickness: 1), height: 20),
                         if (_image != null)
                           SizedBox(
                               child: TextButton(
@@ -163,7 +163,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                                       _image = null;
                                     });
                                   },
-                                  child: Text("Reset", textAlign: TextAlign.left)),
+                                  child: const Text("Reset", textAlign: TextAlign.left)),
                               width: 170)
                       ]),
                       Padding(
@@ -173,7 +173,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                           textScaleFactor: 1.5,
                         ),
                       ),
-                      Text('#' + nsUser.uname, style: TextStyle(color: Colors.blue))
+                Text('#' + nsUser.uname, style: const TextStyle(color: Colors.blue))
                     ]),
                   ),
                   Expanded(
@@ -185,7 +185,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                             Card(
                               child: Column(
                                 children: [
-                                  ListTile(title: Text("Basic Info"), leading: Icon(Icons.account_box_outlined)),
+                                  const ListTile(title: const Text("Basic Info"), leading: const Icon(Icons.account_box_outlined)),
                                   Padding(
                                     padding: const EdgeInsets.all(16.0),
                                     child: Column(children: [
@@ -196,7 +196,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                                           nsUser.name = text;
                                         },
                                       ),
-                                      SizedBox(height: 16),
+                                      const SizedBox(height: 16),
                                       TextFormField(
                                           initialValue: nsUser.uname,
                                           decoration: FormInputDecoration.getDeco(labelText: "User Name", suffixIcon: getSusfix(_userNameCheking)),
@@ -213,14 +213,14 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                             Card(
                               child: Column(
                                 children: [
-                                  ListTile(title: Text("Contacts Details"), leading: Icon(Icons.contact_phone_outlined)),
+                                  const ListTile(title: const Text("Contacts Details"), leading: const Icon(Icons.contact_phone_outlined)),
                                   Padding(
                                     padding: const EdgeInsets.all(16.0),
                                     child: Column(children: [
                                       Column(
                                         children: [
                                           TextFormField(
-                                              decoration: FormInputDecoration.getDeco(labelText: "Phone Number", hintText: "Enter phone number", icon: Icon(Icons.phone)),
+                                              decoration: FormInputDecoration.getDeco(labelText: "Phone Number", hintText: "Enter phone number", icon: const Icon(Icons.phone)),
                                               keyboardType: TextInputType.number,
                                               inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                                               controller: _phoneNumberControll,
@@ -251,18 +251,19 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                                                               setState(() {});
                                                             });
                                                           },
-                                                          child: Chip(avatar: Icon(Icons.call_outlined), label: Text(number))),
+                                                          child: Chip(avatar: const Icon(Icons.call_outlined), label: Text(number))),
                                                     );
                                                   })),
                                             ),
                                           )
                                         ],
                                       ),
-                                      SizedBox(height: 20),
+                                      const SizedBox(height: 20),
                                       Column(
                                         children: [
                                           TextFormField(
-                                              decoration: FormInputDecoration.getDeco(labelText: "Email Address", icon: Icon(Icons.email_rounded), hintText: "Enter your Email"),
+                                              decoration:
+                                                  FormInputDecoration.getDeco(labelText: "Email Address", icon: const Icon(Icons.email_rounded), hintText: "Enter your Email"),
                                               keyboardType: TextInputType.emailAddress,
                                               validator: (input) => Validations.isValidEmail(input) ? null : "Check your email",
                                               controller: _emaiAddressControll,
@@ -293,7 +294,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                                                               setState(() {});
                                                             });
                                                           },
-                                                          child: Chip(avatar: Icon(Icons.email_outlined), label: Text(number))),
+                                                          child: Chip(avatar: const Icon(Icons.email_outlined), label: Text(number))),
                                                     );
                                                   })),
                                             ),
@@ -308,109 +309,45 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                             Card(
                               child: Column(
                                 children: [
-                                  ListTile(title: Text("Job Details"), leading: Icon(Icons.work_outline_outlined)),
+                                  const ListTile(title: Text("Job Details"), leading: Icon(Icons.work_outline_outlined)),
                                   Padding(
                                       padding: const EdgeInsets.all(16.0),
                                       child: Column(children: [
                                         TextFormField(
-                                            decoration: FormInputDecoration.getDeco(labelText: "EPF", icon: Icon(Icons.numbers_rounded)),
+                                            decoration: FormInputDecoration.getDeco(labelText: "EPF", icon: const Icon(Icons.numbers_rounded)),
                                             keyboardType: TextInputType.number,
                                             inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                                             onChanged: (t) {
                                               nsUser.epf = t;
                                             },
-                                            controller: _epfNumberControll),
-                                        SizedBox(height: 20),
+                                            controller: _epfNumberControll,
+                                            enabled: isNew),
+                                        const SizedBox(height: 20),
                                         ListTile(
-                                            leading: Icon(Icons.location_on_outlined),
-                                            title: Text("Section"),
+                                            leading: const Icon(Icons.location_on_outlined),
+                                            title: const Text("Section"),
                                             subtitle: Column(children: [
                                               Row(children: [
                                                 ElevatedButton(
-                                                  onPressed: () async {
-                                                    SectionList(nsUser.sections, (p0) {
-                                                      nsUser.sections = p0;
-                                                      setState(() {});
-                                                    }).show(context);
-                                                  },
-                                                  child: Text('Select Section'),
-                                                ),
-                                                // Padding(
-                                                //   padding: const EdgeInsets.only(right: 8.0),
-                                                //   child: DropdownButton<String>(
-                                                //     isDense: true,
-                                                //     hint: Text("Factory"),
-                                                //     value: selectedSection!.factory == "" ? null : selectedSection!.factory,
-                                                //     iconSize: 24,
-                                                //     elevation: 16,
-                                                //     style: const TextStyle(color: Colors.deepPurple),
-                                                //     underline: Container(
-                                                //       height: 2,
-                                                //       color: Colors.deepPurpleAccent,
-                                                //     ),
-                                                //     onChanged: (String? newValue) {
-                                                //       setState(() {
-                                                //         selectedSection!.factory = newValue!;
-                                                //       });
-                                                //     },
-                                                //     items: <String>['Upwind', 'OD', 'Nylon', 'OEM', '38 Upwind', '38 OD', '38 Nylon', '38 OEM']
-                                                //         .map<DropdownMenuItem<String>>((String value) {
-                                                //       return DropdownMenuItem<String>(value: value, child: SizedBox(width: 150, child: Text(value)));
-                                                //     }).toList(),
-                                                //   ),
-                                                // ),
-                                                // Padding(
-                                                //   padding: const EdgeInsets.all(8.0),
-                                                //   child: DropdownButton<String>(
-                                                //       iconEnabledColor: Color(0xFF595959),
-                                                //       hint: Text(
-                                                //         "Section",
-                                                //         style: TextStyle(color: Color(0xFF8B8B8B), fontSize: 15),
-                                                //       ),
-                                                //       value: selectedSection!.sectionTitle == "" ? null : selectedSection!.sectionTitle,
-                                                //       // icon: const Icon(Icons.arrow_downward),
-                                                //       iconSize: 24,
-                                                //       elevation: 16,
-                                                //       style: const TextStyle(color: Colors.deepPurple),
-                                                //       underline: Container(height: 2, color: Colors.deepPurpleAccent),
-                                                //       onChanged: (String? newValue) {
-                                                //         setState(() {
-                                                //           selectedSection!.sectionTitle = newValue!;
-                                                //         });
-                                                //       },
-                                                //       items: <String>[
-                                                //         'Cutting',
-                                                //         '3D Drawing',
-                                                //         'Stickup',
-                                                //         'Layout',
-                                                //         'Sewing',
-                                                //         'Hand Work',
-                                                //         'Qc',
-                                                //         'Hardware Stores',
-                                                //         'Cloth Stores',
-                                                //         '3DL',
-                                                //         'Textile',
-                                                //         'Printing',
-                                                //         'SA'
-                                                //       ].map<DropdownMenuItem<String>>((String value) {
-                                                //         return DropdownMenuItem<String>(
-                                                //           value: value,
-                                                //           child: SizedBox(width: 150, child: Text(value)),
-                                                //         );
-                                                //       }).toList()),
-                                                // ),
+                                                    onPressed: () async {
+                                                      SectionList(nsUser.sections, (p0) {
+                                                        nsUser.sections = p0;
+                                                        setState(() {});
+                                                      }).show(context);
+                                                    },
+                                                    child: const Text('Select Section')),
                                                 if (selectedSection!.sectionTitle.isNotEmpty && selectedSection!.factory.isNotEmpty)
                                                   Padding(
                                                       padding: const EdgeInsets.all(8.0),
                                                       child: ElevatedButton(
                                                           onPressed: () {
                                                             nsUser.addSection(selectedSection!);
-                                                            selectedSection = new Section();
+                                                            selectedSection = Section();
                                                             setState(() {});
                                                           },
-                                                          child: Text("Add")))
+                                                          child: const Text("Add")))
                                               ]),
-                                              SizedBox(height: 20),
+                                              const SizedBox(height: 20),
                                               Align(
                                                   alignment: Alignment.topLeft,
                                                   child: Wrap(
@@ -439,7 +376,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
           onPressed: () {
             saveUser();
           },
-          child: Icon(Icons.save_outlined)),
+          child: const Icon(Icons.save_outlined)),
     );
   }
 
@@ -515,7 +452,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
     if (_timer != null) {
       _timer.cancel();
     }
-    _timer = Timer(Duration(milliseconds: 1000), () {
+    _timer = Timer(const Duration(milliseconds: 1000), () {
       Api.post("users/checkDuplicate", {"k": key, "v": value}).then((res) async {
         print(res.data);
         _userNameCheking = 0;
@@ -538,13 +475,13 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
         x = null;
         break;
       case 1:
-        x = Padding(padding: const EdgeInsets.all(16.0), child: SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2)));
+        x = const Padding(padding: EdgeInsets.all(16.0), child: const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2)));
         break;
       case 2:
-        x = Icon(Icons.error_rounded, color: Colors.red);
+        x = const Icon(Icons.error_rounded, color: Colors.red);
         break;
       case 3:
-        x = Icon(Icons.done_rounded, color: Colors.green);
+        x = const Icon(Icons.done_rounded, color: Colors.green);
         break;
     }
 

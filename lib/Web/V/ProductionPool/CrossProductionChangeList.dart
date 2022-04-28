@@ -42,28 +42,30 @@ class _CrossProductionChangeListState extends State<CrossProductionChangeList> {
             appBar: AppBar(
               title: const Text("Cross Production"),
             ),
-            body: Center(
-                child: Column(children: <Widget>[
-              Container(
-                  margin: const EdgeInsets.all(10),
-                  child: Table(border: TableBorder.all(color: Colors.white), children: [
-                    const TableRow(children: [Text("From"), Text("To"), Text("Date Time"), Text("By")]),
-                    const TableRow(children: [Padding(padding: EdgeInsets.all(8.0), child: Text("")), Text(""), Text(""), Text("")]),
-                    ...crossProList.map((crossPro) {
-                      Map fromFactory = crossPro['fromFactory'];
-                      Map toFactory = crossPro['toFactory'];
-                      int upBy = crossPro['upBy'];
-                      var upOn = crossPro['upOn'];
-                      NsUser? nsUser = NsUser.fromId(upBy);
-                      return TableRow(children: [
-                        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text("${fromFactory["factory"]}"), Text("${fromFactory["sectionTitle"]}")]),
-                        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text("${toFactory["factory"]}"), Text("${toFactory["sectionTitle"]}")]),
-                        Text("$upOn"),
-                        Wrap(children: [UserImage(nsUser: nsUser, radius: 12, padding: 2), Padding(padding: const EdgeInsets.all(8.0), child: Text("${nsUser?.name}"))])
-                      ]);
-                    }).toList()
-                  ]))
-            ]))),
+            body: SingleChildScrollView(
+              child: Center(
+                  child: Column(children: <Widget>[
+                Container(
+                    margin: const EdgeInsets.all(10),
+                    child: Table(border: TableBorder.all(color: Colors.white), children: [
+                      const TableRow(children: [Text("From"), Text("To"), Text("Date Time"), Text("By")]),
+                      const TableRow(children: [Padding(padding: EdgeInsets.all(8.0), child: Text("")), Text(""), Text(""), Text("")]),
+                      ...crossProList.map((crossPro) {
+                        Map fromFactory = crossPro['fromFactory'];
+                        Map toFactory = crossPro['toFactory'];
+                        int upBy = crossPro['upBy'];
+                        var upOn = crossPro['upOn'];
+                        NsUser? nsUser = NsUser.fromId(upBy);
+                        return TableRow(children: [
+                          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text("${fromFactory["factory"]}"), Text("${fromFactory["sectionTitle"]}")]),
+                          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text("${toFactory["factory"]}"), Text("${toFactory["sectionTitle"]}")]),
+                          Text("$upOn"),
+                          Wrap(children: [UserImage(nsUser: nsUser, radius: 12, padding: 2), Padding(padding: const EdgeInsets.all(8.0), child: Text("${nsUser?.name}"))])
+                        ]);
+                      }).toList()
+                    ]))
+              ])),
+            )),
         // body: ListView.separated(
         //     padding: const EdgeInsets.all(8),
         //     itemCount: crossProList.length,

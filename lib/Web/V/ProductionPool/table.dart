@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/hive.dart';
-import 'package:smartwind/Web/V/CPR/TicketSortMaterials.dart';
+import 'package:smartwind/Web/V/MaterialManagement/CPR/TicketSortMaterials.dart';
 import 'package:smartwind/Web/V/Print/ticket_print_list.dart';
 import 'package:smartwind/Web/V/ProductionPool/CrossProductionChangeList.dart';
 
@@ -78,28 +78,28 @@ class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
     return [
       DataColumn2(
         size: ColumnSize.M,
-        label: Text('Ticket'),
+        label: const Text('Ticket'),
         onSort: (columnIndex, ascending) => sort<String>((d) => (d.mo ?? ""), columnIndex, ascending),
       ),
       DataColumn2(
         size: ColumnSize.M,
-        label: Text('Production'),
+        label: const Text('Production'),
         onSort: (columnIndex, ascending) => sort<String>((d) => d.production ?? "", columnIndex, ascending),
       ),
       DataColumn2(
         size: ColumnSize.M,
-        label: Text('Progress'),
+        label: const Text('Progress'),
         numeric: true,
         onSort: (columnIndex, ascending) => sort<num>((d) => d.progress, columnIndex, ascending),
       ),
       DataColumn2(
         size: ColumnSize.M,
-        label: Text('Shipping Date'),
+        label: const Text('Shipping Date'),
         numeric: true,
         onSort: (columnIndex, ascending) => sort<String>((d) => d.shipDate, columnIndex, ascending),
       ),
-      DataColumn2(size: ColumnSize.L, label: Text('Status'), numeric: true),
-      DataColumn2(numeric: true, size: ColumnSize.S, tooltip: "Options", label: Text('Options'))
+      const DataColumn2(size: ColumnSize.L, label: Text('Flags'), numeric: true),
+      const DataColumn2(numeric: true, size: ColumnSize.S, tooltip: "Options", label: Text('Options'))
     ];
   }
 
@@ -120,7 +120,7 @@ class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
         fit: FlexFit.tight,
         showCheckboxColumn: false,
         border: TableBorder(
-            top: BorderSide(color: Colors.transparent),
+            top: const BorderSide(color: Colors.transparent),
             bottom: BorderSide(color: Colors.grey[300]!),
             left: BorderSide(color: Colors.grey[300]!),
             right: BorderSide(color: Colors.grey[300]!),
@@ -139,8 +139,8 @@ class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
         controller: _controller,
         hidePaginator: false,
         columns: _columns,
-        availableRowsPerPage: [20, 50, 100],
-        empty: Center(child: Container(padding: EdgeInsets.all(20), color: Colors.grey[200], child: Text('No data'))),
+        availableRowsPerPage: const [20, 50, 100],
+        empty: Center(child: Container(padding: const EdgeInsets.all(20), color: Colors.grey[200], child: const Text('No data'))),
         source: _dessertsDataSource,
       ),
       // Positioned(bottom: 16, child: CustomPager(_controller!))
@@ -193,7 +193,7 @@ class DessertDataSource extends DataTableSource {
         var ticketInfo = TicketInfo(ticket);
         ticketInfo.show(context);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          duration: Duration(seconds: 1),
+          duration: const Duration(seconds: 1),
           content: Text('Tapped on ${ticket.mo}'),
         ));
       },
@@ -206,7 +206,7 @@ class DessertDataSource extends DataTableSource {
           : null,
       onSecondaryTap: hasRowTaps
           ? () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                duration: Duration(seconds: 1),
+        duration: const Duration(seconds: 1),
                 backgroundColor: Theme.of(context).errorColor,
                 content: Text('Right clicked on ${ticket.mo}'),
               ))
@@ -217,14 +217,14 @@ class DessertDataSource extends DataTableSource {
           direction: Axis.vertical,
           children: [
             Text((ticket.mo ?? ticket.oe) ?? ""),
-            Text((ticket.oe) ?? "", style: TextStyle(color: Colors.red, fontSize: 12)),
+            Text((ticket.oe) ?? "", style: const TextStyle(color: Colors.red, fontSize: 12)),
           ],
         )),
         DataCell(Wrap(
           direction: Axis.vertical,
           children: [
             Text('${ticket.production}'),
-            Text('${ticket.atSection}', style: TextStyle(color: Colors.red, fontSize: 12)),
+            Text('${ticket.atSection}', style: const TextStyle(color: Colors.red, fontSize: 12)),
           ],
         )),
         DataCell(Text("${ticket.progress}%")),
@@ -240,11 +240,10 @@ class DessertDataSource extends DataTableSource {
               ),
             if (ticket.isQa == 1)
               IconButton(
-                icon: const CircleAvatar(backgroundColor: Colors.deepOrangeAccent, radius: 8, child: Text('QA', style: TextStyle(fontSize: 8, color: Colors.white))),
-                onPressed: () {
-                  webQView(ticket, false).show(context);
-                },
-              ),
+                  icon: const CircleAvatar(backgroundColor: Colors.deepOrangeAccent, radius: 8, child: Text('QA', style: TextStyle(fontSize: 8, color: Colors.white))),
+                  onPressed: () {
+                    webQView(ticket, false).show(context);
+                  }),
             if (ticket.inPrint == 1)
               IconButton(
                 icon: const CircleAvatar(child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white),
@@ -260,39 +259,40 @@ class DessertDataSource extends DataTableSource {
                   }),
             if (ticket.isHold == 1)
               IconButton(
-                icon: CircleAvatar(child: Icon(NsIcons.stop, color: Colors.black), backgroundColor: Colors.white),
+                icon: const CircleAvatar(child: Icon(NsIcons.stop, color: Colors.black), backgroundColor: Colors.white),
                 onPressed: () {
                   FlagDialog().showFlagView(context, ticket, TicketFlagTypes.HOLD);
                 },
               ),
             if (ticket.isGr == 1)
               IconButton(
-                icon: CircleAvatar(child: Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white),
+                icon: const CircleAvatar(child: Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white),
                 onPressed: () {
                   FlagDialog().showFlagView(context, ticket, TicketFlagTypes.GR);
                 },
               ),
             if (ticket.isSk == 1)
               IconButton(
-                icon: CircleAvatar(child: Icon(NsIcons.sk, color: Colors.pink), backgroundColor: Colors.white),
+                icon: const CircleAvatar(child: Icon(NsIcons.sk, color: Colors.pink), backgroundColor: Colors.white),
                 onPressed: () {},
               ),
-            if (ticket.isError == 1) IconButton(icon: CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white), onPressed: () {}),
+            if (ticket.isError == 1)
+              IconButton(icon: const CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white), onPressed: () {}),
             if (ticket.isSort == 1)
               IconButton(
-                  icon: CircleAvatar(child: const Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white),
+                  icon: const CircleAvatar(child: Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white),
                   onPressed: () {
                     TicketSortMaterials(ticket).show(context);
                   }),
             if (ticket.isRush == 1)
               IconButton(
-                  icon: CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white),
+                  icon: const CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white),
                   onPressed: () {
                     FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RUSH);
                   }),
             if (ticket.isRed == 1)
               IconButton(
-                icon: CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white),
+                icon: const CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white),
                 onPressed: () {
                   FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RED);
                 },
@@ -300,7 +300,7 @@ class DessertDataSource extends DataTableSource {
           ],
         )),
         DataCell(IconButton(
-          icon: Icon(Icons.more_vert_rounded),
+          icon: const Icon(Icons.more_vert_rounded),
           onPressed: () {
             showTicketOptions(ticket, context, context);
           },

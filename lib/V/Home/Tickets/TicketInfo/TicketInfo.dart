@@ -22,9 +22,9 @@ import 'info_History.dart';
 import 'info_Progress.dart';
 
 class TicketInfo extends StatefulWidget {
-  Ticket ticket;
+  final Ticket ticket;
 
-  TicketInfo(this.ticket, {Key? key}) : super(key: key);
+  const TicketInfo(this.ticket, {Key? key}) : super(key: key);
 
   @override
   _TicketInfoState createState() {
@@ -55,7 +55,7 @@ class _TicketInfoState extends State<TicketInfo> {
   void initState() {
     super.initState();
     _ticket = widget.ticket;
-    new Timer(const Duration(milliseconds: 1000), () {
+    Timer(const Duration(milliseconds: 1000), () {
       setState(() {
         _progress = _ticket.progress;
       });
@@ -81,20 +81,20 @@ class _TicketInfoState extends State<TicketInfo> {
   }
 
   var bottomNavigationBarItems = <BottomNavigationBarItem>[
-    BottomNavigationBarItem(
-      icon: const Icon(Icons.data_usage),
+    const BottomNavigationBarItem(
+      icon: Icon(Icons.data_usage),
       label: "Progress",
     ),
-    BottomNavigationBarItem(
-      icon: const Icon(Icons.flag),
+    const BottomNavigationBarItem(
+      icon: Icon(Icons.flag),
       label: "Flags",
     ),
-    BottomNavigationBarItem(
-      icon: const Icon(Icons.print),
+    const BottomNavigationBarItem(
+      icon: Icon(Icons.print),
       label: "Printing",
     ),
-    BottomNavigationBarItem(
-      icon: const Icon(Icons.history),
+    const BottomNavigationBarItem(
+      icon: Icon(Icons.history),
       label: "History",
     ),
   ];
@@ -105,12 +105,12 @@ class _TicketInfoState extends State<TicketInfo> {
     return kIsWeb
         ? DialogView(child: getWebUi(), width: 1000)
         : Scaffold(
-            body: _loading ? Center(child: CircularProgressIndicator()) : _body(bottomNavigationBarSelectedIndex),
+      body: _loading ? const Center(child: CircularProgressIndicator()) : _body(bottomNavigationBarSelectedIndex),
             appBar: _appBar(),
             backgroundColor: Colors.white,
             bottomNavigationBar: BottomAppBar(
                 color: Colors.orange,
-                shape: CircularNotchedRectangle(),
+                shape: const CircularNotchedRectangle(),
                 notchMargin: 4.0,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -129,7 +129,7 @@ class _TicketInfoState extends State<TicketInfo> {
             floatingActionButton: _ticket.isHold == 1
                 ? null
                 : FloatingActionButton(
-                    child: Icon(Icons.import_contacts),
+                    child: const Icon(Icons.import_contacts),
                     onPressed: () {
                       _ticket.open(context);
                     },
@@ -137,8 +137,9 @@ class _TicketInfoState extends State<TicketInfo> {
           );
   }
 
-  var ts = TextStyle(color: Colors.white, fontSize: 24);
-  var smallText = TextStyle(fontSize: 16);
+  var ts = const TextStyle(color: Colors.white, fontSize: 24);
+  var smallText = const TextStyle(fontSize: 16);
+  var xsmallText = const TextStyle(fontSize: 12);
 
   _appBar() {
     return AppBar(
@@ -170,19 +171,23 @@ class _TicketInfoState extends State<TicketInfo> {
                           child: Wrap(
                             children: [
                               if (_ticket.inPrint == 1)
-                                IconButton(icon: CircleAvatar(child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white), onPressed: () {}),
+                                IconButton(
+                                    icon: const CircleAvatar(child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white), onPressed: () {}),
                               if (_ticket.isHold == 1)
-                                IconButton(icon: CircleAvatar(child: Icon(Icons.pan_tool_rounded, color: Colors.black), backgroundColor: Colors.white), onPressed: () {}),
-                              if (_ticket.isGr == 1) IconButton(icon: CircleAvatar(child: Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white), onPressed: () {}),
-                              if (_ticket.isSk == 1) IconButton(icon: CircleAvatar(child: Icon(NsIcons.sk, color: Colors.pink), backgroundColor: Colors.white), onPressed: () {}),
+                                IconButton(icon: const CircleAvatar(child: Icon(Icons.pan_tool_rounded, color: Colors.black), backgroundColor: Colors.white), onPressed: () {}),
+                              if (_ticket.isGr == 1)
+                                IconButton(icon: const CircleAvatar(child: Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white), onPressed: () {}),
+                              if (_ticket.isSk == 1)
+                                IconButton(icon: const CircleAvatar(child: Icon(NsIcons.sk, color: Colors.pink), backgroundColor: Colors.white), onPressed: () {}),
                               if (_ticket.isError == 1)
-                                IconButton(icon: CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white), onPressed: () {}),
+                                IconButton(icon: const CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white), onPressed: () {}),
                               if (_ticket.isSort == 1)
-                                IconButton(icon: CircleAvatar(child: Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white), onPressed: () {}),
+                                IconButton(icon: const CircleAvatar(child: Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white), onPressed: () {}),
                               if (_ticket.isRush == 1)
-                                IconButton(icon: CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white), onPressed: () {}),
+                                IconButton(
+                                    icon: const CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white), onPressed: () {}),
                               if (_ticket.isRed == 1)
-                                IconButton(icon: CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white), onPressed: () {})
+                                IconButton(icon: const CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white), onPressed: () {})
                             ],
                           ),
                         ),
@@ -190,10 +195,10 @@ class _TicketInfoState extends State<TicketInfo> {
                     ],
                   ),
                 ),
-                Spacer(),
+                const Spacer(),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: new CircularPercentIndicator(
+                  child: CircularPercentIndicator(
                       radius: 50.0,
                       lineWidth: 4.0,
                       percent: (_progress / 100).toDouble(),
@@ -206,7 +211,7 @@ class _TicketInfoState extends State<TicketInfo> {
               ],
             ),
           ),
-          preferredSize: Size.fromHeight(4.0)),
+          preferredSize: const Size.fromHeight(4.0)),
     );
   }
 
@@ -277,12 +282,14 @@ class _TicketInfoState extends State<TicketInfo> {
         });
   }
 
+  var visualDensity = const VisualDensity(horizontal: 0, vertical: -4);
+
   getWebUi() {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Row(
         children: [
-          Container(
+          SizedBox(
               width: 300,
               child: Container(
                 color: Colors.orange,
@@ -294,12 +301,25 @@ class _TicketInfoState extends State<TicketInfo> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Text(_ticket.mo ?? "_", style: ts),
-                          Text(_ticket.oe ?? "_", style: ts),
-                          Text(_ticket.production ?? "_", style: ts.merge(smallText)),
-                          Text("update on : " + (_ticket.getUpdateDateTime()), style: ts.merge(smallText)),
-                          Text("Ship Date : ${_ticket.shipDate}", style: ts.merge(smallText)),
-                          Text("Delivery Date : ${_ticket.deliveryDate}", style: ts.merge(smallText)),
+                          ListTile(visualDensity: visualDensity, title: Text(_ticket.mo ?? "_", style: ts), subtitle: Text(_ticket.oe ?? "_", style: ts)),
+                          ListTile(
+                              visualDensity: visualDensity,
+                              title: Text(_ticket.production ?? "_", style: ts.merge(smallText)),
+                              subtitle: Text(_ticket.atSection, style: ts.merge(smallText))),
+                          ListTile(
+                              visualDensity: visualDensity,
+                              title: Text("Update on : ", style: ts.merge(xsmallText)),
+                              subtitle: Text(_ticket.getUpdateDateTime(), style: ts.merge(smallText))),
+                          if (_ticket.shipDate.isNotEmpty)
+                            ListTile(
+                                visualDensity: visualDensity,
+                                title: Text("Ship Date : ", style: ts.merge(xsmallText)),
+                                subtitle: Text(_ticket.shipDate, style: ts.merge(smallText))),
+                          if (_ticket.deliveryDate.isNotEmpty)
+                            ListTile(
+                                visualDensity: visualDensity,
+                                title: Text("Delivery Date : ", style: ts.merge(xsmallText)),
+                                subtitle: Text(_ticket.deliveryDate, style: ts.merge(smallText))),
                           Padding(
                             padding: const EdgeInsets.only(top: 8),
                             child: Container(
@@ -307,32 +327,38 @@ class _TicketInfoState extends State<TicketInfo> {
                                 children: [
                                   if (_ticket.inPrint == 1)
                                     IconButton(
-                                        icon: CircleAvatar(child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white), onPressed: () {}),
+                                        icon: const CircleAvatar(child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white),
+                                        onPressed: () {}),
                                   if (_ticket.isHold == 1)
-                                    IconButton(icon: CircleAvatar(child: Icon(Icons.pan_tool_rounded, color: Colors.black), backgroundColor: Colors.white), onPressed: () {}),
+                                    IconButton(icon: const CircleAvatar(child: Icon(Icons.pan_tool_rounded, color: Colors.black), backgroundColor: Colors.white), onPressed: () {}),
                                   if (_ticket.isGr == 1)
-                                    IconButton(icon: CircleAvatar(child: Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white), onPressed: () {}),
+                                    IconButton(icon: const CircleAvatar(child: Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white), onPressed: () {}),
                                   if (_ticket.isSk == 1)
-                                    IconButton(icon: CircleAvatar(child: Icon(NsIcons.sk, color: Colors.pink), backgroundColor: Colors.white), onPressed: () {}),
+                                    IconButton(icon: const CircleAvatar(child: Icon(NsIcons.sk, color: Colors.pink), backgroundColor: Colors.white), onPressed: () {}),
                                   if (_ticket.isError == 1)
-                                    IconButton(icon: CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white), onPressed: () {}),
+                                    IconButton(
+                                        icon: const CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white), onPressed: () {}),
                                   if (_ticket.isSort == 1)
-                                    IconButton(icon: CircleAvatar(child: Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white), onPressed: () {}),
+                                    IconButton(
+                                        icon: const CircleAvatar(child: Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white), onPressed: () {}),
                                   if (_ticket.isRush == 1)
                                     IconButton(
-                                        icon: CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white), onPressed: () {}),
+                                        icon: const CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white), onPressed: () {}),
                                   if (_ticket.isRed == 1)
-                                    IconButton(icon: CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white), onPressed: () {})
+                                    IconButton(icon: const CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white), onPressed: () {}),
+                                  if (_ticket.crossPro == 1)
+                                    IconButton(
+                                        icon: const CircleAvatar(child: Icon(Icons.merge_type_rounded, color: Colors.green), backgroundColor: Colors.white), onPressed: () {})
                                 ],
                               ),
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(16.0),
-                      child: new CircularPercentIndicator(
+                      child: CircularPercentIndicator(
                           radius: 50.0,
                           lineWidth: 4.0,
                           percent: (_progress / 100).toDouble(),
@@ -350,20 +376,20 @@ class _TicketInfoState extends State<TicketInfo> {
               appBar: AppBar(
                   automaticallyImplyLeading: false,
                   title: Row(children: [
-                    Spacer(),
+                    const Spacer(),
                     IconButton(
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        icon: Icon(Icons.close, color: Colors.black))
+                        icon: const Icon(Icons.close, color: Colors.black))
                   ]),
                   backgroundColor: Colors.white),
-              body: _loading ? Center(child: CircularProgressIndicator()) : _body(bottomNavigationBarSelectedIndex),
+              body: _loading ? const Center(child: CircularProgressIndicator()) : _body(bottomNavigationBarSelectedIndex),
               backgroundColor: Colors.white,
               bottomNavigationBar: BottomAppBar(
                   elevation: 16,
                   color: Colors.orange,
-                  shape: CircularNotchedRectangle(),
+                  shape: const CircularNotchedRectangle(),
                   notchMargin: 4.0,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -382,7 +408,7 @@ class _TicketInfoState extends State<TicketInfo> {
               floatingActionButton: _ticket.isHold == 1
                   ? null
                   : FloatingActionButton(
-                      child: Icon(Icons.import_contacts),
+                child: const Icon(Icons.import_contacts),
                       onPressed: () {
                         _ticket.open(context);
                       },

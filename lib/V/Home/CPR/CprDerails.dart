@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/OnlineDB.dart';
-import 'package:smartwind/M/CPR.dart';
-import 'package:smartwind/M/CprItem.dart';
+import 'package:smartwind/M/CPR/CPR.dart';
+import 'package:smartwind/M/CPR/CprItem.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
@@ -27,7 +27,7 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
   late CPR _cpr;
   bool saving = false;
 
-  var st = TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold);
+  var st = const TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold);
 
   @override
   void initState() {
@@ -67,7 +67,7 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
           ? Container(
               child: Center(
                   child: Column(
-              children: [CircularProgressIndicator(), Text("Saving")],
+                    children: [const CircularProgressIndicator(), const Text("Saving")],
             )))
           : Container();
     } else {
@@ -92,7 +92,7 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
             //   ),
             // ),
             appBar: AppBar(
-                title: Text("CPR Details"),
+                title: const Text("CPR Details"),
                 bottom: TabBar(
                   controller: _tabBarController,
                   indicatorWeight: 4.0,
@@ -101,23 +101,23 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
                   tabs: [
                     Tab(
                       child: Wrap(alignment: WrapAlignment.center, children: [
-                        Icon(
+                        const Icon(
                           Icons.info_rounded,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 4, bottom: 4, left: 4),
-                          child: Text("Info"),
+                        const Padding(
+                          padding: EdgeInsets.only(top: 4, bottom: 4, left: 4),
+                          child: const Text("Info"),
                         )
                       ]),
                     ),
                     Tab(
                       child: Wrap(alignment: WrapAlignment.center, children: [
-                        Icon(
+                        const Icon(
                           Icons.settings_suggest_rounded,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 4, bottom: 4, left: 4),
-                          child: Text("Materials"),
+                        const Padding(
+                          padding: EdgeInsets.only(top: 4, bottom: 4, left: 4),
+                          child: const Text("Materials"),
                         )
                       ]),
                     ),
@@ -132,42 +132,35 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
                     child: Container(
                         child: Column(children: [
                       ListTile(
-                          title: Text("Sail"),
+                          title: const Text("Sail"),
                           subtitle: ListTile(
-                              title: Text(_cpr.mo ?? _cpr.oe ?? "", style: st),
-                              subtitle: Text(_cpr.mo != null ? _cpr.oe ?? "" : "", style: TextStyle(fontWeight: FontWeight.bold)))),
-                      ListTile(title: Text("Sail Type"), subtitle: Text("${_cpr.sailType}", style: st)),
-                      ListTile(title: Text("Client"), subtitle: Text("${_cpr.client}", style: st)),
-                      ListTile(title: Text("Supplier"), subtitle: Text("${_cpr.supplier}", style: st)),
-                      ListTile(title: Text("Shortage Type"), subtitle: Text("${_cpr.shortageType}", style: st)),
-                      ListTile(title: Text("CPR Type"), subtitle: Text("${_cpr.cprType}", style: st)),
+                              title: Text(_cpr.ticket?.mo ?? _cpr.ticket?.oe ?? "", style: st),
+                              subtitle: Text(_cpr.ticket?.mo != null ? _cpr.ticket?.oe ?? "" : "", style: const TextStyle(fontWeight: FontWeight.bold)))),
+                      ListTile(title: const Text("Sail Type"), subtitle: Text("${_cpr.sailType}", style: st)),
+                      ListTile(title: const Text("Client"), subtitle: Text("${_cpr.client}", style: st)),
+                      ListTile(title: const Text("Suppliers"), subtitle: Text("${_cpr.suppliers.join(',')}", style: st)),
+                      ListTile(title: const Text("Shortage Type"), subtitle: Text("${_cpr.shortageType}", style: st)),
+                      ListTile(title: const Text("CPR Type"), subtitle: Text("${_cpr.cprType}", style: st)),
                       if (_cpr.user != null)
                         ListTile(
-                            title: Text("Added By "),
-                            subtitle:
-                                ListTile(leading: UserImage(nsUser: NsUser.fromId(_cpr.user!.id), radius: 24), title: Text(_cpr.user!.uname, style: st), subtitle: Text(_cpr.dnt))),
-                      if (_cpr.sentBy != null)
-                        ListTile(
-                            title: Text("Sent By "),
+                            title: const Text("Added By "),
                             subtitle: ListTile(
-                                leading: UserImage(nsUser: NsUser.fromId(_cpr.sentBy!.id), radius: 24),
-                                title: Text(_cpr.sentBy!.uname, style: st),
+                                leading: UserImage(nsUser: NsUser.fromId(_cpr.user!.id), radius: 24), title: Text(_cpr.user!.uname, style: st), subtitle: Text(_cpr.addedOn))),
+                      if (_cpr.sentUser != null)
+                        ListTile(
+                            title: const Text("Sent By "),
+                            subtitle: ListTile(
+                                leading: UserImage(nsUser: NsUser.fromId(_cpr.sentUser!.id), radius: 24),
+                                title: Text(_cpr.sentUser!.uname, style: st),
                                 subtitle: Text("${_cpr.sentOn ?? ""}"))),
-                      if (_cpr.recivedBy != null)
-                        ListTile(
-                            title: Text("Sent By "),
-                            subtitle: ListTile(
-                                leading: UserImage(nsUser: NsUser.fromId(_cpr.recivedBy!.id), radius: 24),
-                                title: Text(_cpr.recivedBy!.uname, style: st),
-                                subtitle: Text("${_cpr.recivedOn ?? ""}"))),
                     ])),
                   ),
                 ),
                 Container(
                     child: ListTile(
-                  title: Text("Materials"),
+                      title: const Text("Materials"),
                   subtitle: Padding(
-                      padding: EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(16.0),
                       child: Column(children: [
                         Expanded(
                           child: Card(
@@ -195,9 +188,9 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
                                                   UserImage(nsUser: NsUser.fromId(material.user!.id), radius: 12),
                                                   Padding(
                                                       padding: const EdgeInsets.only(left: 8, right: 8),
-                                                      child: Text(material.user!.uname, style: TextStyle(fontWeight: FontWeight.bold))),
-                                                  Icon(Icons.query_builder_rounded, color: Colors.grey, size: 16),
-                                                  Text(" ${material.dnt}", style: TextStyle(fontWeight: FontWeight.bold))
+                                                      child: Text(material.user!.uname, style: const TextStyle(fontWeight: FontWeight.bold))),
+                                                  const Icon(Icons.query_builder_rounded, color: Colors.grey, size: 16),
+                                                  Text(" ${material.dnt}", style: const TextStyle(fontWeight: FontWeight.bold))
                                                 ],
                                               )
                                             : null,
@@ -208,7 +201,7 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
                                 },
                                 itemCount: _cpr.items.length,
                                 separatorBuilder: (BuildContext context, int index) {
-                                  return Divider(height: 1, endIndent: 0.5, color: Colors.black12);
+                                  return const Divider(height: 1, endIndent: 0.5, color: Colors.black12);
                                 }),
                           ),
                         )
@@ -245,7 +238,7 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
       child: Column(
         children: [
           ListTile(
-            title: Text("First Supplier"),
+            title: const Text("First Supplier"),
             isThreeLine: true,
             subtitle: Row(
               children: [
@@ -274,7 +267,7 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
           ),
           if (_supplier1 != null)
             ListTile(
-              title: Text("Second Supplier"),
+              title: const Text("Second Supplier"),
               isThreeLine: true,
               subtitle: Row(
                 children: [
@@ -302,7 +295,7 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
             ),
           if (_supplier1 != null && _supplier2 != null)
             ListTile(
-              title: Text("Third Supplier"),
+              title: const Text("Third Supplier"),
               isThreeLine: true,
               subtitle: Row(
                 children: [
@@ -333,31 +326,23 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
   Future<void> showMaterialOptions(CprItem material, BuildContext context1) async {
     print(material.toJson());
     await showModalBottomSheet<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          height: 100,
-          decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              Column(children: [
-                SizedBox(
-                  height: 20,
-                ),
-                ListTile(
-                    title: Text("Delete"),
-                    leading: Icon(Icons.delete_forever_rounded, color: Colors.red),
-                    onTap: () async {
-                      _cpr.items.removeWhere((item) => item == material);
-                      Navigator.of(context).pop();
-                    }),
-              ])
-            ],
-          ),
-        );
-      },
-    );
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+              height: 100,
+              decoration: const BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
+              child: Column(mainAxisAlignment: MainAxisAlignment.start, mainAxisSize: MainAxisSize.max, children: <Widget>[
+                Column(children: [
+                  const SizedBox(height: 20),
+                  ListTile(
+                      title: const Text("Delete"),
+                      leading: const Icon(Icons.delete_forever_rounded, color: Colors.red),
+                      onTap: () async {
+                        _cpr.items.removeWhere((item) => item == material);
+                        Navigator.of(context).pop();
+                      })
+                ])
+              ]));
+        });
   }
 }
