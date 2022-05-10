@@ -6,6 +6,7 @@ import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/hive.dart';
+import 'package:smartwind/V/Home/UserManager/GenerateOTP.dart';
 import 'package:smartwind/V/Widgets/Loading.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
@@ -21,9 +22,9 @@ import 'UserPermissions.dart';
 part 'user_manager_user_list_options.dart';
 
 class UserManagerUserList extends StatefulWidget {
-  var idToken;
+  final idToken;
 
-  UserManagerUserList(this.idToken, {Key? key}) : super(key: key);
+  const UserManagerUserList(this.idToken, {Key? key}) : super(key: key);
 
   @override
   _UserManagerUserListState createState() => _UserManagerUserListState();
@@ -33,8 +34,8 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
   var database;
 
   var _themeColor = Colors.orange;
-  var _deactivateThemeColor = Colors.grey;
-  var _activeThemeColor = Colors.orange;
+  final _deactivateThemeColor = Colors.grey;
+  final _activeThemeColor = Colors.orange;
 
   late bool nfcIsAvailable;
 
@@ -42,7 +43,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
 
   List<NsUser> filteredAllUsersList = [];
 
-  var _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+  final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   bool _setIdCards = false;
 
@@ -103,22 +104,23 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                   print(s);
                   setState(() {});
                 },
-                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                      CheckedPopupMenuItem<String>(value: "deactivatedUsers", child: Text("Deactivated Users"), checked: _showDeactivatedUsers),
-                      if (!_showDeactivatedUsers) CheckedPopupMenuItem<String>(value: "id", child: Text("Set ID Cards"), checked: _setIdCards),
+                itemBuilder: (BuildContext context) =>
+                <PopupMenuEntry<String>>[
+                      CheckedPopupMenuItem<String>(value: "deactivatedUsers", child: const Text("Deactivated Users"), checked: _showDeactivatedUsers),
+                      if (!_showDeactivatedUsers) CheckedPopupMenuItem<String>(value: "id", child: const Text("Set ID Cards"), checked: _setIdCards),
                     ])
           ],
           elevation: 0.0,
           toolbarHeight: 100,
           backgroundColor: _themeColor,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.pop(context),
           ),
           title: Column(
             children: [
-              Text("User Manager", textScaleFactor: 1.2),
-              if (_showDeactivatedUsers) Text("(Deactivated Users)", textScaleFactor: 0.7),
+              const Text("User Manager", textScaleFactor: 1.2),
+              if (_showDeactivatedUsers) const Text("(Deactivated Users)", textScaleFactor: 0.7),
             ],
           ),
           bottom: SearchBar(
@@ -137,10 +139,10 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
         ),
         body: getBody(),
         bottomNavigationBar: BottomAppBar(
-            shape: CircularNotchedRectangle(),
+            shape: const CircularNotchedRectangle(),
             color: _themeColor,
             child: IconTheme(
-              data: IconThemeData(color: Colors.white),
+              data: const IconThemeData(color: Colors.white),
               child: Row(
                 children: [
                   Padding(
@@ -148,7 +150,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                     child: Text(
                       filteredAllUsersList == AllUsersList ? filteredAllUsersList.length.toString() : "${filteredAllUsersList.length.toString()}/${AllUsersList.length.toString()}",
                       textScaleFactor: 1.1,
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ),
                   const Spacer()
@@ -159,19 +161,19 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
         floatingActionButton: _showDeactivatedUsers
             ? null
             : OpenContainer(
-                closedShape: RoundedRectangleBorder(
+            closedShape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(50.0),
                 ),
                 closedElevation: 2,
                 closedColor: _themeColor,
-                transitionDuration: Duration(milliseconds: 500),
+                transitionDuration: const Duration(milliseconds: 500),
                 openBuilder: (BuildContext context, void Function({Object? returnValue}) action) {
-                  return AddUser();
+                  return const AddUser();
                 },
                 closedBuilder: (BuildContext context, void Function() action) {
-                  return InkWell(
+                  return const InkWell(
                       child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(16.0),
                     child: Icon(Icons.person_add_outlined, size: 24, color: Colors.white),
                   ));
                 }));
@@ -228,7 +230,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                     subtitle: Text("#" + nsUser.uname),
                     trailing: Wrap(children: [
                       if (nsUser.isDisabled)
-                        Icon(
+                        const Icon(
                           Icons.person_off_outlined,
                         ),
                       if (_setIdCards)
@@ -244,7 +246,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                   );
                 },
                 separatorBuilder: (BuildContext context, int index) {
-                  return Divider(height: 1, endIndent: 0.5, color: Colors.black12);
+                  return const Divider(height: 1, endIndent: 0.5, color: Colors.black12);
                 },
               ),
             ),

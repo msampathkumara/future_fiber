@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -61,9 +60,9 @@ class QC {
 
   getFile(context, {onReceiveProgress}) async {
     var path = 'tickets/qc/qcImageView?';
-    if (kIsWeb) {
-      // var loadingWidget = Loading(loadingText: "Downloading Ticket");
-      // loadingWidget.show(context);
+    // if (kIsWeb) {
+    // var loadingWidget = Loading(loadingText: "Downloading Ticket");
+    // loadingWidget.show(context);
       String queryString = Uri(queryParameters: {"id": id.toString()}).query;
       final idToken = await AppUser.getIdToken(false);
 
@@ -86,15 +85,7 @@ class QC {
         // loadingWidget.close(context);
       }
 
-      if (rs != null) {
-        // loadingWidget.close(context);
-        // final blob = html.Blob([rs.data], 'application/pdf');
-        // final url = html.Url.createObjectUrlFromBlob(blob);
-        // html.window.open(url, "_blank");
-        // html.Url.revokeObjectUrl(url);
-      }
-
-      return rs?.data;
+    return rs?.data;
     }
-  }
+// }
 }

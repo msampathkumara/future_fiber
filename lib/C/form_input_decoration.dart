@@ -25,6 +25,32 @@ class FormInputDecoration {
         ));
   }
 
+  static InputDecoration getDeco1({hintText, labelText, labelStyle, helperText, Icon? prefixIcon, Icon? icon, String? suffixText, Widget? suffixIcon}) {
+    return InputDecoration(
+      isDense: true,
+      suffixText: suffixText,
+      suffixIcon: suffixIcon,
+      icon: icon,
+      prefixIcon: prefixIcon,
+      helperText: helperText,
+      labelText: labelText,
+      labelStyle: labelStyle,
+      hintText: hintText,
+      fillColor: Colors.grey[150],
+      // contentPadding: const EdgeInsets.only(left: 8.0, bottom: 8.0, top: 8.0),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.black.withOpacity(0.8),
+        ),
+      ),
+      // enabledBorder: UnderlineInputBorder(
+      //   borderSide: const BorderSide(color: Colors.grey),
+      //   borderRadius: BorderRadius.circular(4.0),
+      // ),
+      border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.red), gapPadding: 0),
+    );
+  }
+
   static ButtonStyle buttonStyle({hintText, labelText, helperText, Icon? icon}) {
     return ButtonStyle(
         // padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(15)),

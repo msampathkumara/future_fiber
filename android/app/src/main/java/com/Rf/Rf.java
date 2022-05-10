@@ -25,7 +25,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.NsFile.NsFile;
 import com.NsFile.OnDetailsLoad;
 import com.NsFile.updateData;
 import com.google.zxing.BinaryBitmap;
@@ -226,7 +225,7 @@ public class Rf extends AppCompatActivity {
 //                        "\n" +
 //                        "    }\n" +
 //                        ")();;";
-                String javaScript = "javascript:" + setupData(LoadData("js.txt"));
+                String javaScript = "javascript:" + setupData(LoadData("js1.txt"));
 
 
                 webView.loadUrl(javaScript);

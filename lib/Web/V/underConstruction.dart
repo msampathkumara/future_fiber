@@ -14,7 +14,7 @@ class UnderConstructions extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Image.asset("uc.png"),
+        Image.asset("assets/uc.png"),
         Padding(
           padding: const EdgeInsets.all(24.0),
           child: Text("${title}   Under Constructions", textScaleFactor: 2, style: TextStyle(color: Colors.grey)),

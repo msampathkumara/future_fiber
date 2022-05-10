@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/AppUser.dart';
+import 'package:smartwind/Web/V/MaterialManagement/Batten/webBatten.dart';
 import 'package:smartwind/Web/V/MaterialManagement/CPR/webCpr.dart';
 import 'package:smartwind/Web/V/MaterialManagement/KIT/webKit.dart';
 
@@ -117,13 +118,7 @@ class _MaterialManagementHomePageState extends State<MaterialManagementHomePage>
             ),
             // VerticalDivider(thickness: 1, width: 1),
             // This is the main content.
-            Expanded(
-                child: Center(
-                    child: [
-              const WebCpr(),
-              const WebKit(),
-              const WebCpr(),
-            ].elementAt(_selectedIndex)))
+            Expanded(child: Center(child: [const WebCpr(), const WebKit(), const WebBatten()].elementAt(_selectedIndex)))
           ],
         ),
       ),

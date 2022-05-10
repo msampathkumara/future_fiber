@@ -11,7 +11,9 @@ import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/StandardTicket.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/TicketFlag.dart';
+import 'package:smartwind/M/User/Email.dart';
 import 'package:smartwind/M/user_config.dart';
+import 'package:smartwind/main.dart';
 
 import '../V/Home/UserManager/UserPermissions.dart';
 import 'AppUser.dart';
@@ -54,6 +56,7 @@ class HiveBox {
     Hive.registerAdapter(StandardTicketAdapter());
     Hive.registerAdapter(LocalFileVersionAdapter());
     Hive.registerAdapter(TicketFlagAdapter());
+    Hive.registerAdapter(EmailAdapter());
 
     usersBox = await Hive.openBox<NsUser>('userBox');
     ticketBox = await Hive.openBox<Ticket>('ticketBox');
@@ -63,7 +66,6 @@ class HiveBox {
     standardTicketsBox = await Hive.openBox<StandardTicket>('standardTicketsBox');
     localFileVersionsBox = await Hive.openBox<LocalFileVersion>('localFileVersionsBox');
     // ticketFlagBox = await Hive.openBox<TicketFlag>('ticketFlagBox');
-
 
     if (kIsWeb) {
       FirebaseAuth.instance.authStateChanges().listen((User? user) async {
@@ -77,12 +79,24 @@ class HiveBox {
       });
     }
 
+    if (isMaterialManagement) {
+      FirebaseAuth.instance.authStateChanges().listen((User? user) async {
+        if (user != null) {
+          FirebaseDatabase.instance.ref('cprUpdate').onValue.listen((DatabaseEvent event) {
+            DB.callChangesCallBack(DataTables.cpr);
+          });
+          FirebaseDatabase.instance.ref('kitUpdate').onValue.listen((DatabaseEvent event) {
+            DB.callChangesCallBack(DataTables.kit);
+          });
+        }
+      });
+    }
   }
 
-  static Future getDataFromServer({clean = false}) {
+  static Future getDataFromServer({clean = false}) async {
     print('__________________________________________________________________________________________________________getDataFromServer');
     if (clean) {
-      setUptimes(Upons());
+      await userConfigBox.clear();
     }
     Upons uptimes = getUptimes();
     Map<String, dynamic> d = uptimes.toJson();
@@ -109,11 +123,6 @@ class HiveBox {
 
       List<Ticket> deletedTicketsIdsList = Ticket.fromJsonArray(res["deletedTicketsIds"] ?? []);
       List<Ticket> completedTicketsIdsList = Ticket.fromJsonArray(res["completedTicketsIds"] ?? []);
-
-      // usersList.forEach((element) {
-      //   print('------------------------------------------------------------------------------------------------');
-      //   print(element.toJson());
-      // });
 
       usersBox.putMany(usersList);
 
@@ -166,7 +175,7 @@ class HiveBox {
       // callOnUpdates();
       print("data loaded from server ");
       print(res["uptimes"]);
-      setUptimes(Upons.fromJson(res["uptimes"]));
+      setUptimes(res["uptimes"]);
     }).onError((error, stackTrace) {
       print('__________________________________________________________________________________________________________');
       print(error.toString());
@@ -181,28 +190,14 @@ class HiveBox {
     listeners.add(function);
   }
 
-  // static void removeOnUpdate(onupdate) {
-  //   listeners.remove(onupdate);
-  // }
-
-  // static void callOnUpdates() {
-  //   listeners.forEach((element) {
-  //     try {
-  //       element();
-  //     } catch (e) {}
-  //   });
-  // }
-
   static Upons getUptimes() {
     return userConfigBox.get("upons", defaultValue: Upons());
   }
 
-  static void setUptimes(Upons upons) {
-    print(upons.toJson());
-    var x = {...getUptimes().toJson(), ...upons.toJson()};
-    var upons2 = Upons.fromJson(x);
-    print("+++++++++++++++++++++++++++++++++++++++++ upons ");
-    print(upons2.toJson());
+  static void setUptimes(upons) {
+    var x = {...getUptimes().toJson(), ...upons};
+    Map<String, dynamic> xx = Map<String, dynamic>.from(x);
+    var upons2 = Upons.fromJson(xx);
     userConfigBox.put("upons", upons2);
   }
 }

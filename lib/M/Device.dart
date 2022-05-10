@@ -11,7 +11,7 @@ class Device {
 
   @HiveField(1, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)
-  int? id = null;
+  int? id;
 
   @HiveField(2, defaultValue: '')
   @JsonKey(defaultValue: '', includeIfNull: true)
@@ -23,15 +23,15 @@ class Device {
 
   @HiveField(4, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)
-  String? model = null;
+  String? model;
 
   @HiveField(5, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)
-  String? modelNumber = null;
+  String? modelNumber;
 
   @HiveField(6, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)
-  String? serialNumber = null;
+  String? serialNumber;
 
   @HiveField(7, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
@@ -43,23 +43,23 @@ class Device {
 
   @HiveField(9, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)
-  int? logOn = null;
+  int? logOn;
 
   @HiveField(10, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)
-  int? outOn = null;
+  int? outOn;
 
   @HiveField(11, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)
-  int? userId = null;
+  int? userId;
 
   @HiveField(12, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)
-  int? longitude = null;
+  int? longitude;
 
   @HiveField(13, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)
-  int? latitude = null;
+  int? latitude;
 
   @HiveField(14, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
@@ -67,11 +67,11 @@ class Device {
 
   @HiveField(15, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)
-  int? battery = null;
+  int? battery;
 
   @HiveField(16, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)
-  String? ip = null;
+  String? ip;
 
   factory Device.fromJson(Map<String, dynamic> json) => _$DeviceFromJson(json);
 

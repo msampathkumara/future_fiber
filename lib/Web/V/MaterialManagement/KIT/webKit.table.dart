@@ -63,15 +63,15 @@ class _WebKITTableState extends State<WebKITTable> {
     return [
       DataColumn2(size: ColumnSize.M, label: const Text('Ticket'), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(size: ColumnSize.M, label: const Text('Client'), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: const Text('Supplier'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(size: ColumnSize.M, label: const Text('Shortage Type'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(size: ColumnSize.M, label: const Text('Date & Time'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: const Text('KIT Type'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: const Text('Delivery Date'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('Shipping Date'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(size: ColumnSize.M, label: const Text('Status'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(size: ColumnSize.S, label: const Text('Options'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
     ];
   }
+
+  final ScrollController _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +80,7 @@ class _WebKITTableState extends State<WebKITTable> {
 
     return Stack(alignment: Alignment.bottomCenter, children: [
       AsyncPaginatedDataTable2(
+          scrollController: _scrollController,
           showFirstLastButtons: true,
           smRatio: 0.5,
           lmRatio: 3,
@@ -237,14 +238,13 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
             selected: false,
             onTap: () async {
               bool c = false;
-              // await KitView(kit, (p0) {
-              //   c = true;
-              //   print('7777777777');
-              // }).show(context);
+              await KitView(kit, (p0) {
+                c = true;
+                print('7777777777');
+              }).show(context);
               if (c == true) {
                 refreshDatasource();
               }
-              // ScaffoldMessenger.of(context).showSnackBar(SnackBar(duration: const Duration(seconds: 1), content: Text('Tapped on ${kit.ticket?.mo}')));
             },
             onSecondaryTap: () => ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(duration: const Duration(seconds: 1), backgroundColor: Theme.of(context).errorColor, content: Text('Right clicked on ${kit.ticket?.oe}'))),
@@ -254,26 +254,51 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                   title: Text('${kit.ticket?.mo}'),
                   subtitle: Text('${kit.ticket?.oe}', style: const TextStyle(color: Colors.deepOrange, fontSize: 12)))),
               DataCell(Text((kit.client) ?? "")),
-              DataCell(Text((kit.supplier))),
               DataCell(Text((kit.shortageType) ?? "")),
               DataCell(Wrap(
                   crossAxisAlignment: WrapCrossAlignment.end,
                   direction: Axis.vertical,
                   children: [Text((kit.date) ?? ""), Text((kit.time) ?? "", style: const TextStyle(color: Colors.grey, fontSize: 12))])),
-              DataCell(Text((kit.cprType) ?? "")),
               DataCell(Text((kit.date) ?? "")),
-              DataCell(Text((kit.status))),
-              DataCell(IconButton(
-                icon: const Icon(Icons.more_vert_rounded),
-                onPressed: () {
-                  // showKitOptions(kit, context, context);
-                },
+              DataCell(Text(
+                (kit.status),
+                style: TextStyle(color: kit.status.getColor()),
+              )),
+              DataCell(Wrap(
+                children: [
+                  if (kit.status.equalIgnoreCase('ready'))
+                    Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextButton(
+                            onPressed: () {
+                              order(kit);
+                            },
+                            child: const Text("Order"))),
+                  IconButton(
+                    icon: const Icon(Icons.more_vert_rounded),
+                    onPressed: () {
+                      // showKitOptions(kit, context, context);
+                    },
+                  ),
+                ],
               ))
             ],
           );
         }).toList());
 
     return r;
+  }
+
+  void order(KIT kit) {
+    Api.post("materialManagement/kit/order", {'kitId': kit.id})
+        .then((res) {
+          Map data = res.data;
+          refreshDatasource();
+        })
+        .whenComplete(() {})
+        .catchError((err) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.toString())));
+        });
   }
 }
 

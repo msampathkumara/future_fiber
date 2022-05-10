@@ -320,7 +320,7 @@ class _CprViewState extends State<CprView> {
   }
 
   Future getComments() {
-    return Api.get("materialManagement/cpr/getCprComments", {'id': _cpr.id}).then((res) {
+    return Api.get("materialManagement/getCprComments", {'id': _cpr.id}).then((res) {
       Map data = res.data;
 
       cprComments = Message.fromJsonArray(data["messages"]);
@@ -371,7 +371,7 @@ class _CprViewState extends State<CprView> {
   saveComment() {
     String text = commentController.text;
     commentController.clear();
-    return Api.post("materialManagement/cpr/saveCprComment", {'text': text, 'cprId': _cpr.id}).then((res) {
+    return Api.post("materialManagement/saveCprComment", {'text': text, 'cprId': _cpr.id}).then((res) {
       Map data = res.data;
       getComments();
     }).whenComplete(() {

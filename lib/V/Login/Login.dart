@@ -29,7 +29,6 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  static var appUser;
   final NsUser _user = NsUser();
   late bool nfcIsAvailable = false;
 
@@ -48,7 +47,6 @@ class _LoginState extends State<Login> {
 
   @override
   initState() {
-    appUser = AppUser(context);
     super.initState();
     print('-----------------------------------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx__login');
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
@@ -231,11 +229,11 @@ class _LoginState extends State<Login> {
                                       const SizedBox(height: 64),
 
                                       Text(errorMessage, style: const TextStyle(color: Colors.red, fontSize: 20)),
-                                      Align(
-                                          alignment: Alignment.centerRight,
-                                          child: Padding(
-                                              padding: const EdgeInsets.all(4.0),
-                                              child: TextButton(onPressed: _recoverPassword, child: const Text("Forgot Password ?", style: TextStyle(color: Colors.white))))),
+                                      // Align(
+                                      //     alignment: Alignment.centerRight,
+                                      //     child: Padding(
+                                      //         padding: const EdgeInsets.all(4.0),
+                                      //         child: TextButton(onPressed: _recoverPassword, child: const Text("Forgot Password ?", style: TextStyle(color: Colors.white))))),
 
                                       SizedBox(
                                           width: double.infinity,
@@ -249,18 +247,13 @@ class _LoginState extends State<Login> {
                                           child: TextButton(
                                             onPressed: () async {
                                               await Navigator.push(context, MaterialPageRoute(builder: (context) => const PasswordRecovery()));
+                                              // await Navigator.push(context, MaterialPageRoute(builder: (context) => NewPassword(1, onEnd: () {})));
                                             },
                                             child: const Text('forgot my password'),
                                             // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0), side: const BorderSide(color: Colors.orange)),
                                           )),
                                       if (nfcIsAvailable) const SizedBox(height: 84),
-                                      if (nfcIsAvailable)
-                                        const Center(
-                                            child: Text(
-                                          "  Or ",
-                                          style: TextStyle(color: Colors.grey, fontSize: 20),
-                                          textAlign: TextAlign.center,
-                                        )),
+                                      if (nfcIsAvailable) const Center(child: Text("  Or ", style: TextStyle(color: Colors.grey, fontSize: 20), textAlign: TextAlign.center)),
                                       if (nfcIsAvailable) const SizedBox(height: 32),
                                       if (nfcIsAvailable) const Center(child: Text("Use NFC card to login ", style: TextStyle(color: Colors.black, fontSize: 25)))
                                     ])),
@@ -334,15 +327,6 @@ class _LoginState extends State<Login> {
       ErrorMessageView(errorMessage: error.toString()).show(context);
       setLoading(false);
     });
-  }
-
-  _recoverPassword() {
-    // Todo recoverPassword
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const PasswordRecovery()),
-    );
   }
 
   void setLoading(bool show) {

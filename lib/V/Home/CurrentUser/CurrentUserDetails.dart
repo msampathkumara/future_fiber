@@ -1,25 +1,32 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
 
+import '../../../M/AppUser.dart';
+import '../../../Web/Widgets/DialogView.dart';
+import '../../../Web/Widgets/IfWeb.dart';
+
 class CurrentUserDetails extends StatefulWidget {
   final NsUser nsUser;
 
-  CurrentUserDetails(this.nsUser, {Key? key}) : super(key: key);
+  const CurrentUserDetails(this.nsUser, {Key? key}) : super(key: key);
 
   @override
   _CurrentUserDetailsState createState() {
     return _CurrentUserDetailsState();
+  }
+
+  Future show(context) {
+    return kIsWeb ? showDialog(context: context, builder: (_) => this) : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
   }
 }
 
 class _CurrentUserDetailsState extends State<CurrentUserDetails> {
   late NsUser nsUser;
 
-  TextStyle stStyle = TextStyle(color: Colors.black, fontSize: 18);
-
-  var idToken;
+  TextStyle stStyle = const TextStyle(color: Colors.black, fontSize: 18);
 
   @override
   void initState() {
@@ -27,7 +34,6 @@ class _CurrentUserDetailsState extends State<CurrentUserDetails> {
     nsUser = widget.nsUser;
     final user = FirebaseAuth.instance.currentUser;
     user!.getIdToken().then((t) {
-      idToken = t;
       setState(() {});
     });
   }
@@ -39,84 +45,103 @@ class _CurrentUserDetailsState extends State<CurrentUserDetails> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 1,
-          toolbarHeight: 350,
-          flexibleSpace: Center(
-            child: Wrap(
-              direction: Axis.vertical,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                UserImage(nsUser: nsUser, radius: 100),
-                Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: Text(
-                    nsUser.name,
-                    textScaleFactor: 1.5,
-                  ),
+    return IfWeb(elseIf: getUi(), child: DialogView(child: getWebUi()));
+  }
+
+  getUi() {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 1,
+        toolbarHeight: 350,
+        flexibleSpace: Center(
+          child: Wrap(
+            direction: Axis.vertical,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              UserImage(nsUser: nsUser, radius: 100),
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: Text(
+                  nsUser.name,
+                  textScaleFactor: 1.5,
                 ),
-                Text('#' + nsUser.uname, style: TextStyle(color: Colors.blue)),
-                // Wrap(
-                //   direction: Axis.horizontal,
-                //   crossAxisAlignment: WrapCrossAlignment.center,
-                //   children: [
-                //     // Chip(avatar: CircleAvatar(backgroundColor: Colors.grey.shade800, child: const Text('AB')), label: const Text('Aaron Burr')),
-                //     Chip(avatar: Icon(Icons.maps_home_work_outlined), label: Text(nsUser.sectionName)),
-                //     Chip(avatar: Icon(Icons.person_outlined), label: Text(nsUser.utype)),
-                //   ],
-                // )
-              ],
-            ),
+              ),
+              Text('#' + nsUser.uname, style: const TextStyle(color: Colors.blue)),
+            ],
           ),
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                Card(
-                  child: Column(
-                    children: [
-                      ListTile(title: Text("Contact Details"), leading: Icon(Icons.contact_phone_outlined)),
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          children: [
-                            ListTile(leading: Icon(Icons.phone_android_outlined), title: Text("Phone"), subtitle: Text(nsUser.phone.split(",").join("\n"), style: stStyle)),
-                            ListTile(
-                                leading: Icon(Icons.alternate_email_outlined), title: Text("Email"), subtitle: Text(nsUser.emailAddress.split(",").join("\n"), style: stStyle)),
-                            ListTile(leading: Icon(Icons.location_on_outlined), title: Text("Address"), subtitle: Text(nsUser.emailAddress.split(",").join("\n"), style: stStyle)),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Card(
+                  child: Column(children: [
+                const ListTile(title: Text("Contact Details"), leading: Icon(Icons.contact_phone_outlined)),
+                Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(children: [
+                      ListTile(
+                          leading: const Icon(Icons.phone_android_outlined),
+                          title: const Text("Phone"),
+                          subtitle: Wrap(children: nsUser.phoneList.map((e) => Padding(padding: const EdgeInsets.only(right: 4.0), child: Chip(label: Text(e)))).toList())),
+                      ListTile(
+                        leading: const Icon(Icons.alternate_email_outlined),
+                        title: const Text("Email"),
+                        subtitle: Wrap(
+                            // direction: Axis.vertical,
+                            children: nsUser.emails
+                                .map((e) => Padding(
+                                    padding: const EdgeInsets.only(right: 4.0),
+                                    child: Chip(
+                                        // avatar: e.isNotVerified ? null : const Icon(Icons.done, color: Colors.green),
+                                        label: Text("${e.email}"),
+                                        onDeleted: e.isNotVerified
+                                            ? null
+                                            : () {
+                                                // VerifyEmail(e).show(context);
+                                              },
+                                        deleteIcon: e.isNotVerified ? null : const Icon(Icons.error, color: Colors.red))))
+                                .toList()),
+                        // trailing: IconButton(
+                        //     onPressed: () {
+                        //       AddUserEmail(() {}).show(context);
+                        //     },
+                        //     icon: const Icon(Icons.add))
+                      ),
+                      ListTile(leading: const Icon(Icons.location_on_outlined), title: const Text("Address"), subtitle: Text(nsUser.address.split(",").join("\n"), style: stStyle))
+                    ]))
+              ])),
+              Card(
+                child: Column(
+                  children: [
+                    const ListTile(title: Text("Job Details"), leading: Icon(Icons.work_outline_outlined)),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16.0),
+                      child: Column(
+                        children: [
+                          ListTile(leading: const Icon(Icons.badge_outlined), title: const Text("EPF"), subtitle: Text(nsUser.epf, style: stStyle)),
+                          ListTile(leading: const Icon(Icons.apartment_rounded), title: const Text("Loft"), subtitle: Text(nsUser.loft.toString(), style: stStyle)),
+                          ListTile(
+                              leading: const Icon(Icons.location_on_outlined),
+                              title: const Text("Section"),
+                              subtitle: Text(AppUser.getSelectedSection()?.sectionTitle ?? '', style: stStyle))
+                        ],
+                      ),
+                    )
+                  ],
                 ),
-                Card(
-                  child: Column(
-                    children: [
-                      ListTile(title: Text("Job Details"), leading: Icon(Icons.work_outline_outlined)),
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          children: [
-                            ListTile(leading: Icon(Icons.badge_outlined), title: Text("EPF"), subtitle: Text(nsUser.epf, style: stStyle)),
-                            ListTile(leading: Icon(Icons.apartment_rounded), title: Text("Loft"), subtitle: Text(nsUser.loft.toString(), style: stStyle)),
-                            ListTile(leading: Icon(Icons.location_on_outlined), title: Text("Section"), subtitle: Text(nsUser.sectionName, style: stStyle)),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
+              )
+            ],
           ),
         ),
       ),
     );
+  }
+
+  getWebUi() {
+    return getUi();
   }
 }

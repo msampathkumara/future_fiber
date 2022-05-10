@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
 
@@ -84,9 +85,7 @@ extension f on Box {
     return values.toList();
   }
 }
-
 enum Permissions {
-  STANDARD_FILES,
   TAB,
   ALERT_MANAGER,
   SHORT_MANAGER_RESPOND,
@@ -136,7 +135,13 @@ enum Permissions {
   REMOVE_ID_CARD,
   PENDING_TO_FINISH,
   SHEET_DATA,
-  ADMIN
+  ADMIN,
+  STANDARD_FILES,
+  CHECK_CPR_ITEMS,
+  SCAN_READY_KITS,
+  ORDER_KITS,
+  SEND_KITS,
+  RESET_PASSWORD
 }
 
 extension PermissionsExtension on Permissions {
@@ -167,5 +172,32 @@ extension StringContainsInArrayExtension on String {
 
   bool equalIgnoreCase(String text) {
     return toLowerCase() == text.toLowerCase();
+  }
+
+  bool containsIgnoreCase(String text) {
+    return toLowerCase().contains(text.toLowerCase());
+  }
+
+  MaterialColor getColor() {
+    String t = trim().toLowerCase();
+    switch (t) {
+      case 'ready':
+        return Colors.amber;
+        break;
+      case 'pending':
+        return Colors.red;
+        break;
+      case 'sent':
+        return Colors.green;
+        break;
+      case 'received':
+        return Colors.blue;
+        break;
+      case 'order':
+        return Colors.purple;
+        break;
+    }
+
+    return Colors.red;
   }
 }

@@ -5,26 +5,21 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 
 class Loading extends StatefulWidget {
-  late _LoadingState state;
+  final loadingText;
 
-  var loadingText;
+  final showProgress;
 
-  var showProgress;
+  final Future? future;
 
-  Loading({Key? key, this.loadingText = "Loading", this.showProgress = true}) : super(key: key);
+  const Loading({Key? key, this.loadingText = "Loading", this.showProgress = true, this.future}) : super(key: key);
 
   @override
-  _LoadingState createState() {
-    state = _LoadingState();
-    return state;
+  LoadingState createState() {
+    return LoadingState();
   }
 
-  void setProgress(progress) {
-    state.onProgressChange(progress);
-  }
-
-  void show(context) {
-    kIsWeb ? showDialog(context: context, builder: (_) => this) : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
+  show(context) {
+    return kIsWeb ? showDialog(context: context, builder: (_) => this) : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
   }
 
   void close(context) {
@@ -32,7 +27,7 @@ class Loading extends StatefulWidget {
   }
 }
 
-class _LoadingState extends State<Loading> with TickerProviderStateMixin {
+class LoadingState extends State<Loading> with TickerProviderStateMixin {
   late AnimationController controller;
   int _progress = 0;
 
@@ -43,7 +38,7 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return  kIsWeb ? DialogView(child: _getUi(),width: 200,height: 200):_getUi();
+    return kIsWeb ? DialogView(child: _getUi(), width: 200, height: 200) : _getUi();
   }
 
   onProgressChange(progress) {
@@ -64,7 +59,7 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
                         padding: const EdgeInsets.all(8.0),
                         child: CircularPercentIndicator(
                             radius: 50.0, lineWidth: 4.0, percent: (_progress / 100).toDouble(), center: Text("$_progress%", textScaleFactor: 1.5), progressColor: Colors.blue)))
-                : Center(child: Padding(padding: const EdgeInsets.all(8.0), child: CircularProgressIndicator())),
+                : const Center(child: Padding(padding: EdgeInsets.all(8.0), child: CircularProgressIndicator())),
           Text(widget.loadingText, textScaleFactor: 1)
         ])));
   }

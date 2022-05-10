@@ -2,8 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:smartwind/C/Server.dart';
 
-import '../M/AppUser.dart';
-
 class OnlineDB {
   static var idToken;
 
@@ -27,11 +25,14 @@ class OnlineDB {
     final user = FirebaseAuth.instance.currentUser;
     final idToken = await user!.getIdToken(reFreshToken);
     // final idToken = await AppUser.getIdToken();
-    Dio dio = new Dio();
+    Dio dio = Dio();
     dio.options.headers['content-Type'] = 'application/json';
     dio.options.headers["authorization"] = "$idToken";
 
-    return dio.get(Server.getServerApiPath('$url', onlineServer: onlineServer), queryParameters: data,);
+    return dio.get(
+      Server.getServerApiPath('$url', onlineServer: onlineServer),
+      queryParameters: data,
+    );
   }
 
 

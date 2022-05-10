@@ -80,6 +80,8 @@ class _WebQcTableState extends State<WebQcTable> {
     ];
   }
 
+  final ScrollController _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     // Last ppage example uses extra API call to get the number of items in datasource
@@ -87,6 +89,7 @@ class _WebQcTableState extends State<WebQcTable> {
 
     return Stack(alignment: Alignment.bottomCenter, children: [
       AsyncPaginatedDataTable2(
+          scrollController: _scrollController,
           showFirstLastButtons: true,
           smRatio: 0.5,
           lmRatio: 3,
@@ -266,8 +269,10 @@ class QcDataSourceAsync extends AsyncDataTableSource {
           return DataRow2(
             selected: false,
             onTap: () {
+              webQView(qc).show(context);
+
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                duration: Duration(seconds: 1),
+                duration: const Duration(seconds: 1),
                 content: Text('Tapped on ${qc.ticket?.id}'),
               ));
             },

@@ -8,6 +8,7 @@ import 'package:smartwind/V/Widgets/UserImage.dart';
 import 'AppUser.dart';
 import 'HiveClass.dart';
 import 'Section.dart';
+import 'User/Email.dart';
 
 part 'NsUser.g.dart';
 
@@ -71,9 +72,9 @@ class NsUser extends HiveClass {
 
   var nic;
 
-  // @HiveField(14, defaultValue: null)
-  // @JsonKey(defaultValue: null, includeIfNull: true)
-  // Section? section;
+  @HiveField(14, defaultValue: "")
+  @JsonKey(defaultValue: "", includeIfNull: true)
+  String address = '';
 
   Section? get section {
     return AppUser.getSelectedSection();
@@ -95,11 +96,11 @@ class NsUser extends HiveClass {
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int upon = 0;
 
+  @HiveField(19, defaultValue: [])
+  @JsonKey(defaultValue: [], includeIfNull: true)
+  List<Email> emails = [];
+
   String? password = "";
-
-  var emailVerified;
-
-  var email;
 
   NsUser() {
     loadSections();
@@ -110,6 +111,10 @@ class NsUser extends HiveClass {
   bool get isDisabled => deactivate == 1;
 
   get haveImage => img.trim().isNotEmpty;
+
+  List<String> get emailAddressList => emailAddress.split(',');
+
+  List<String> get phoneList => phone.split(',');
 
   Map<String, dynamic> toJson() => _$NsUserToJson(this);
 
@@ -181,7 +186,7 @@ class NsUser extends HiveClass {
   }
 
   static getDefaultImage() {
-    return AssetImage('assets/images/user.png');
+    return const AssetImage('assets/images/user.png');
   }
 
   getUserImage() async {
@@ -201,25 +206,14 @@ class NsUser extends HiveClass {
     }
 
     return HiveBox.usersBox.get(id, defaultValue: null);
-
-    // return DB.getDB().then((value) => value!.rawQuery(" select * from users  where id=$id  ").then((s) {
-    //       if (s.length > 0) {
-    //         return NsUser.fromJson(s[0]);
-    //       } else {
-    //         return null;
-    //       }
-    //     }));
   }
 
   Future<List> loadSections() async {
-    // var db = await DB.getDB();
-    // var s = await db!.rawQuery(" select * from userSections us left join factorySections fs on fs.id=us.sectionId where userid='$id'  ");
-    // sections = List<Section>.from(s.map((model) => Section.fromJson(model)));
     return sections;
   }
 
-  String getImage({size = 300}) {
-    return Server.getServerPath("images/profilePictures/$size/$img");
+  String getImage({double size = 300}) {
+    return Server.getServerPath("images/profilePictures/${size.toInt()}/$img");
   }
 
   static List<NsUser> fromJsonArray(nsUsers) {

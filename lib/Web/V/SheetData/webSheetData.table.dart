@@ -73,10 +73,12 @@ class _WebPrintTableState extends State<WebSheetDataTable> {
       DataColumn2(size: ColumnSize.M, label: Text('Next'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(size: ColumnSize.M, label: Text('Operation'), numeric: false, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(size: ColumnSize.M, label: Text('pool'), numeric: false, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: Text('Delivery Date'), numeric: false, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: Text('Shipping Date'), numeric: false, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(size: ColumnSize.M, label: Text('Ship Date'), numeric: false, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
     ];
   }
+
+  final ScrollController _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +87,7 @@ class _WebPrintTableState extends State<WebSheetDataTable> {
 
     return Stack(alignment: Alignment.bottomCenter, children: [
       AsyncPaginatedDataTable2(
+          scrollController: _scrollController,
           showFirstLastButtons: true,
           smRatio: 0.5,
           lmRatio: 3,

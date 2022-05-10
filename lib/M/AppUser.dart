@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:smartwind/C/Api.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/NsUser.dart';
@@ -29,7 +31,8 @@ class AppUser extends NsUser {
 
   static getIdToken([reFreshToken = false]) async {
     final user = FirebaseAuth.instance.currentUser;
-    final _idToken = await user!.getIdToken(reFreshToken);
+
+    final _idToken = user?.getIdToken(reFreshToken);
     return _idToken;
   }
 
@@ -43,10 +46,12 @@ class AppUser extends NsUser {
     return getUserConfig().selectedSection;
   }
 
-  static setSelectedSection(Section section) {
-    UserConfig userConfig = getUserConfig();
-    userConfig.selectedSection = section;
-    userConfig.save();
+  static Future setSelectedSection(Section section) {
+    return Api.post("user/setUserSection", {'sectionId': section.id}).then((value) {
+      UserConfig userConfig = getUserConfig();
+      userConfig.selectedSection = section;
+      userConfig.save();
+    });
   }
 
   static Future refreshUserData() {
@@ -106,6 +111,8 @@ class AppUser extends NsUser {
     _userIsAdmin = null;
     FirebaseAuth.instance.signOut();
     HiveBox.userConfigBox.clear();
-    Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+    if (kIsWeb) {
+      Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+    }
   }
 }

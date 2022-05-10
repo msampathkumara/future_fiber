@@ -13,7 +13,7 @@ import '../../../V/Home/Tickets/ProductionPool/TicketListOptions.dart';
 import '../../../V/Home/Tickets/TicketInfo/TicketInfo.dart';
 import '../../../V/Widgets/FlagDialog.dart';
 import '../../../ns_icons_icons.dart';
-import '../QC/webQView.dart';
+import '../QC/webTicketQView.dart';
 
 class PaginatedDataTable2Demo extends StatefulWidget {
   final Null Function(DessertDataSource dataSource) onInit;
@@ -235,14 +235,14 @@ class DessertDataSource extends DataTableSource {
               IconButton(
                 icon: const CircleAvatar(backgroundColor: Colors.red, radius: 8, child: Text('QC', style: TextStyle(fontSize: 8, color: Colors.white))),
                 onPressed: () {
-                  webQView(ticket, true).show(context);
+                  WebTicketQView(ticket, true).show(context);
                 },
               ),
             if (ticket.isQa == 1)
               IconButton(
                   icon: const CircleAvatar(backgroundColor: Colors.deepOrangeAccent, radius: 8, child: Text('QA', style: TextStyle(fontSize: 8, color: Colors.white))),
                   onPressed: () {
-                    webQView(ticket, false).show(context);
+                    WebTicketQView(ticket, false).show(context);
                   }),
             if (ticket.inPrint == 1)
               IconButton(

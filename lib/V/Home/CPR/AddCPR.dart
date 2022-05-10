@@ -205,7 +205,9 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                                   showClearButton: true,
                                   isFilteredOnline: true,
                                   items: _cprTypes,
-                                  hint: "Select CPR Type",
+                                  dropdownSearchDecoration: const InputDecoration(
+                                    hintText: "Select CPR Type",
+                                  ),
                                   onChanged: (c) {
                                     _cpr.cprType = c;
                                   })),
@@ -223,7 +225,9 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                                     mode: Mode.BOTTOM_SHEET,
                                     // showSelectedItem: true,
                                     items: ["Upwind", "OD", "Nylon", "OEM"],
-                                    hint: "Select Client",
+                                    dropdownSearchDecoration: const InputDecoration(
+                                      hintText: "Select Client",
+                                    ),
                                     onChanged: (c) {
                                       _cpr.client = c;
                                     })),
@@ -280,8 +284,10 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                                       showClearButton: true,
                                       isFilteredOnline: true,
                                       // onFind: (String filter) => getData(filter),
-                                      label: "Menu mode",
-                                      hint: "country in menu mode",
+                                      dropdownSearchDecoration: const InputDecoration(
+                                        labelText: "Materials",
+                                        hintText: "select Materials",
+                                      ),
                                       onChanged: (mat) {
                                         currentMaterial.item = mat!;
                                       })),

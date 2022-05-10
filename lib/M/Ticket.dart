@@ -159,6 +159,9 @@ class Ticket extends DataObject {
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int isQa = 0;
 
+  @JsonKey(defaultValue: false, includeIfNull: true)
+  bool loading = false;
+
   Ticket();
 
   static stringToList(string) => (string == null || string.toString().isEmpty) ? [] : json.decode(string);
@@ -179,7 +182,10 @@ class Ticket extends DataObject {
   }
 
   Future<File?> _getFile(context, {onReceiveProgress}) async {
+    final key = GlobalKey<LoadingState>();
+
     var loadingWidget = Loading(
+      key: key,
       loadingText: "Downloading Ticket",
     );
     loadingWidget.show(context);
@@ -199,14 +205,14 @@ class Ticket extends DataObject {
     dio.options.headers["authorization"] = '$idToken';
     String queryString = Uri(queryParameters: {"id": id.toString()}).query;
 
-    var response;
+    Response response;
     try {
       var path = isStandard ? "tickets/standard/getPdf?" : 'tickets/getTicketFile?';
 
       await dio.download(Server.getServerApiPath(path + queryString), filePath, deleteOnError: true, onReceiveProgress: (received, total) {
         // print("${received}/${total}");
         int percentage = ((received / total) * 100).floor();
-        loadingWidget.setProgress(percentage);
+        key.currentState?.onProgressChange(percentage);
         if (onReceiveProgress != null) {
           onReceiveProgress(percentage);
         }
@@ -214,7 +220,7 @@ class Ticket extends DataObject {
         response = value;
         print('+++++++++++++++++++++++++++++++++++++++++++++');
         print(response.headers["fileVersion"]);
-        String fileVersion = response.headers["fileVersion"][0];
+        String fileVersion = response.headers["fileVersion"]![0];
         await setLocalFileVersion(int.parse(fileVersion), getTicketType());
       });
     } on DioError catch (e) {

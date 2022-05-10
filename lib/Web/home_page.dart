@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/Web/V/Admin/webAdmin.dart';
@@ -8,6 +9,7 @@ import 'package:smartwind/Web/V/QC/web_qc.dart';
 import 'package:smartwind/Web/V/SheetData/webSheetData.dart';
 import 'package:smartwind/Web/V/UserManager/webUserManager.dart';
 
+import '../V/Home/AppInfo.dart';
 import '../V/Widgets/UserImage.dart';
 import 'V/DashBoard/dashBoard.dart';
 import 'V/ProductionPool/webProductionPool.dart';
@@ -25,20 +27,16 @@ class WebHomePage extends StatefulWidget {
 class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStateMixin {
   bool _menuExpanded = false;
 
+  String appVersion = '';
+
   @override
   void initState() {
-    // var t = HiveBox.ticketBox.get(38886);
-    //
-    // if (t != null) {
-    //   WidgetsBinding.instance?.addPostFrameCallback((_) => TicketSortMaterials(t).show(context));
-    // }
-
-    // Future(() {
-    //   if (!AppUser.isLogged) {
-    //     Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
-    //   }
-    // });
-
+    PackageInfo.fromPlatform().then((appInfo) {
+      print(appInfo);
+      setState(() {
+        appVersion = appInfo.version;
+      });
+    });
     super.initState();
   }
 
@@ -53,7 +51,7 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     return LoginChangeWidget(
-      loginChild: Text(""),
+      loginChild: const Text(""),
       child: Scaffold(
         backgroundColor: Colors.grey.shade200,
         body: Row(
@@ -73,25 +71,20 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                             _menuExpanded = !_menuExpanded;
                           });
                         },
-                        icon: Icon(Icons.menu, color: Colors.deepOrange)),
+                        icon: const Icon(Icons.menu, color: Colors.deepOrange)),
                     Expanded(
                         child: TweenAnimationBuilder<double>(
-                            duration: Duration(milliseconds: 300),
+                            duration: const Duration(milliseconds: 300),
                             curve: Curves.ease,
                             tween: Tween<double>(begin: _menuExpanded ? 0.1 : _size, end: _menuExpanded ? _size : 0.1),
                             builder: (_, size, __) {
                               return SingleChildScrollView(
                                   child: ConstrainedBox(
-                                      constraints: BoxConstraints(minHeight: 100),
+                                      constraints: const BoxConstraints(minHeight: 100),
                                       child: IntrinsicHeight(
                                           child: NavigationRail(
                                         useIndicator: true,
                                         extended: false,
-                                        // trailing: IconButton(
-                                        //     onPressed: () {
-                                        //       HiveBox.getDataFromServer(clean: true);
-                                        //     },
-                                        //     icon: Icon(Icons.refresh)),
                                         selectedIndex: _selectedIndex,
                                         onDestinationSelected: (int index) {
                                           setState(() {
@@ -99,12 +92,12 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                                           });
                                         },
                                         labelType: NavigationRailLabelType.all,
-                                        selectedIconTheme: IconThemeData(color: Colors.deepOrange),
-                                        selectedLabelTextStyle: TextStyle(color: Colors.deepOrange),
+                                        selectedIconTheme: const IconThemeData(color: Colors.deepOrange),
+                                        selectedLabelTextStyle: const TextStyle(color: Colors.deepOrange),
                                         destinations: [
                                           NavigationRailDestination(
                                               icon: const Icon(Icons.favorite_border),
-                                              selectedIcon: Icon(Icons.favorite),
+                                              selectedIcon: const Icon(Icons.favorite),
                                               label: Text('Dash Board', style: TextStyle(fontSize: size))),
                                           if (AppUser.havePermissionFor(Permissions.PRODUCTION_POOL))
                                             NavigationRailDestination(
@@ -159,12 +152,14 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                                                 icon: const Icon(Icons.admin_panel_settings_outlined),
                                                 selectedIcon: const Icon(Icons.admin_panel_settings_rounded),
                                                 label: Text('Admin', style: TextStyle(fontSize: size))),
+                                          NavigationRailDestination(
+                                              icon: const Icon(Icons.info_outline), selectedIcon: const Icon(Icons.info), label: Text('Info', style: TextStyle(fontSize: size))),
                                         ],
                                       ))));
                             })),
                     PopupMenuButton<int>(
                       padding: const EdgeInsets.all(16.0),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
                       offset: const Offset(70, 200),
                       child: Padding(padding: const EdgeInsets.only(bottom: 8.0), child: UserImage(nsUser: AppUser.getUser(), radius: 24)),
                       onSelected: (result) {
@@ -177,7 +172,11 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                           value: 0,
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
-                            child: UserImage(nsUser: AppUser.getUser(), radius: 68),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [UserImage(nsUser: AppUser.getUser(), radius: 68), Text("${AppUser.getUser()?.name}")],
+                            ),
                           ),
                           enabled: false,
                         ),
@@ -186,7 +185,8 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                           child: Text('Logout'),
                         )
                       ],
-                    )
+                    ),
+                    Text('${appVersion}v', style: TextStyle(fontSize: 8, color: Theme.of(context).primaryColor))
                   ],
                 ),
               ),
@@ -205,7 +205,8 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
               if (AppUser.havePermissionFor(Permissions.PRINTING)) const WebPrint(),
               if (AppUser.havePermissionFor(Permissions.SHEET_DATA)) const WebSheetData(),
               if (AppUser.havePermissionFor(Permissions.TAB)) const WebTabs(),
-              if (AppUser.havePermissionFor(Permissions.ADMIN)) const WebAdmin()
+              if (AppUser.havePermissionFor(Permissions.ADMIN)) const WebAdmin(),
+              const AppInfo()
             ].elementAt(_selectedIndex)))
           ],
         ),

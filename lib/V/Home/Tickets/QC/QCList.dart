@@ -6,8 +6,7 @@ import 'package:smartwind/M/QC.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
-
-import 'QCView.dart';
+import 'package:smartwind/Web/V/QC/webTicketQView.dart';
 
 class QCList extends StatefulWidget {
   const QCList();
@@ -233,7 +232,8 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
                         // setState(() {});
                       },
                       onTap: () async {
-                        await Navigator.push(context, MaterialPageRoute(builder: (context) => QCView(_ticketQc)));
+                        // await Navigator.push(context, MaterialPageRoute(builder: (context) => QCView(_ticketQc)));
+                        WebTicketQView(_ticketQc.ticket ?? Ticket(), true).show(context);
                       },
                       onDoubleTap: () async {
                         // print(await ticket.getLocalFileVersion());

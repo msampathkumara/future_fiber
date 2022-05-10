@@ -13,6 +13,7 @@ import 'package:smartwind/ns_icons_icons.dart';
 
 import '../../../../C/DB/DB.dart';
 import '../../../../M/AppUser.dart';
+import '../../../../Web/V/QC/webTicketQView.dart';
 import '../TicketInfo/TicketInfo.dart';
 import 'TicketListOptions.dart';
 
@@ -159,7 +160,9 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                 flagIcon(Filters.isHold, NsIcons.stop),
                 flagIcon(Filters.isSk, NsIcons.sk),
                 flagIcon(Filters.isGr, NsIcons.gr),
-                flagIcon(Filters.isSort, NsIcons.short)
+                flagIcon(Filters.isSort, NsIcons.short),
+                flagIcon(Filters.isQc, NsIcons.short, text: "QC"),
+                flagIcon(Filters.isQa, NsIcons.short, text: "QA"),
               ]),
               Expanded(child: getBody()),
             ],
@@ -289,6 +292,8 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     print('ticket count == ${HiveBox.ticketBox.length}');
     var _production = nsUser?.section?.factory;
     print('====== == ${_production}');
+    print('====== == ${HiveBox.ticketBox.length}');
+
     List<Ticket> l = HiveBox.ticketBox.values.where((t) {
       if (bySection && t.nowAt != nsUser?.section?.id) {
         return false;
@@ -365,9 +370,14 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
 
   Filters dataFilter = Filters.none;
 
-  flagIcon(Filters filter, IconData icon) {
+  flagIcon(Filters filter, IconData icon, {String? text}) {
     return IconButton(
-      icon: CircleAvatar(child: Icon(icon, color: dataFilter == filter ? Colors.red : Colors.black), backgroundColor: Colors.white),
+      icon: CircleAvatar(
+          child: (text != null)
+              ? Text(text, style: TextStyle(color: dataFilter == filter ? Colors.red : Colors.black, fontWeight: FontWeight.bold))
+              : Icon(icon, color: dataFilter == filter ? Colors.red : Colors.black, size: 20),
+          backgroundColor: Colors.white,
+          radius: 16),
       tooltip: 'Increase volume by 10',
       onPressed: () async {
         if (dataFilter == filter) {
@@ -466,10 +476,7 @@ class TicketTile extends StatelessWidget {
             children: [
               if ((ticket.mo ?? "").trim().isNotEmpty) Text((ticket.oe ?? "")),
               if (ticket.crossPro == 1)
-                Chip(
-                    padding: const EdgeInsets.all(4.0),
-                    avatar: const CircleAvatar(child: const Icon(Icons.merge_type_outlined, size: 12), radius: 8),
-                    label: Text(ticket.crossProList)),
+                Chip(padding: const EdgeInsets.all(4.0), avatar: const CircleAvatar(child: Icon(Icons.merge_type_outlined, size: 12), radius: 8), label: Text(ticket.crossProList)),
               // Text(" t${ticket.nowAt}"),
               // Text("  ${ticket.production}"),
               if (ticket.shipDate.isNotEmpty)
@@ -502,7 +509,7 @@ class TicketTile extends StatelessWidget {
                 ),
               if (ticket.isGr == 1)
                 IconButton(
-                  icon: const CircleAvatar(child: const Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white),
+                  icon: const CircleAvatar(child: Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white),
                   onPressed: () {
                     FlagDialog().showFlagView(context, ticket, TicketFlagTypes.GR);
                   },
@@ -518,7 +525,7 @@ class TicketTile extends StatelessWidget {
                 IconButton(icon: const CircleAvatar(child: Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white), onPressed: () {}),
               if (ticket.isRush == 1)
                 IconButton(
-                    icon: const CircleAvatar(child: const Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white),
+                    icon: const CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white),
                     onPressed: () {
                       FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RUSH);
                     }),
@@ -529,6 +536,18 @@ class TicketTile extends StatelessWidget {
                     FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RED);
                   },
                 ),
+              if (ticket.isQa == 1)
+                IconButton(
+                    icon: const CircleAvatar(backgroundColor: Colors.deepOrangeAccent, child: Text('QA', style: TextStyle(color: Colors.white))),
+                    onPressed: () {
+                      WebTicketQView(ticket, false).show(context);
+                    }),
+              if (ticket.isQc == 1)
+                IconButton(
+                    icon: const CircleAvatar(backgroundColor: Colors.red, child: Text('QC', style: TextStyle(color: Colors.white))),
+                    onPressed: () {
+                      WebTicketQView(ticket, true).show(context);
+                    }),
               Padding(
                 padding: const EdgeInsets.all(4),
                 child: CircularPercentIndicator(

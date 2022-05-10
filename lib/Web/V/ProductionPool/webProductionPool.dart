@@ -109,7 +109,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                   Material(
                     elevation: 4,
                     borderRadius: BorderRadius.circular(8),
-                    child: Container(
+                    child: SizedBox(
                         height: 40,
                         width: 200,
                         child: TextFormField(

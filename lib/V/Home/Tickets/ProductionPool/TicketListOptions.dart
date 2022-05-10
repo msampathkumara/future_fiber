@@ -262,7 +262,7 @@ sortByBottomSheetMenu(context, loadData) {
                       children: [
                         getListItem("Shipping Date", Icons.date_range_rounded, "shipDate"),
                         getListItem("Modification Date", Icons.date_range_rounded, "uptime"),
-                        getListItem("Delivery Date", Icons.date_range_rounded, "deliveryDate"),
+                        getListItem("Shipping Date", Icons.date_range_rounded, "deliveryDate"),
                         getListItem("Name", Icons.sort_by_alpha_rounded, "mo")
                       ],
                     )),
@@ -291,7 +291,7 @@ Future<void> chooseFactories(Ticket ticket, BuildContext context1) async {
       return Container(
         decoration: const BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
         height: 650,
-        child: FactorySelector(ticket.production ?? "", (factory) async {
+        child: FactorySelector(ticket.production ?? "", onSelect: (factory) async {
           OnlineDB.apiPost("tickets/crossProduction/setCrossProduction", {'ticketId': ticket.id.toString(), "factory": factory}).then((response) async {
             print(response.data);
             Navigator.of(context).pop();

@@ -164,7 +164,7 @@ class _TicketInfoState extends State<TicketInfo> {
                       Text(_ticket.production ?? "_", style: ts.merge(smallText)),
                       Text("update on : " + (_ticket.getUpdateDateTime()), style: ts.merge(smallText)),
                       Text("Ship Date : ${_ticket.shipDate}", style: ts.merge(smallText)),
-                      Text("Delivery Date : ${_ticket.deliveryDate}", style: ts.merge(smallText)),
+                      Text("Shipping Date : ${_ticket.deliveryDate}", style: ts.merge(smallText)),
                       Padding(
                         padding: const EdgeInsets.only(top: 8),
                         child: Container(
@@ -318,7 +318,7 @@ class _TicketInfoState extends State<TicketInfo> {
                           if (_ticket.deliveryDate.isNotEmpty)
                             ListTile(
                                 visualDensity: visualDensity,
-                                title: Text("Delivery Date : ", style: ts.merge(xsmallText)),
+                                title: Text("Shipping Date : ", style: ts.merge(xsmallText)),
                                 subtitle: Text(_ticket.deliveryDate, style: ts.merge(smallText))),
                           Padding(
                             padding: const EdgeInsets.only(top: 8),

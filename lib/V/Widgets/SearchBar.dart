@@ -28,7 +28,7 @@ class SearchBar extends StatefulWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(50);
+  Size get preferredSize => const Size.fromHeight(50);
 }
 
 class _SearchBarState extends State<SearchBar> {
@@ -41,7 +41,7 @@ class _SearchBarState extends State<SearchBar> {
       if (subscription != null) {
         subscription!.cancel();
       }
-      var future = new Future.delayed(Duration(milliseconds: widget.delay));
+      var future = Future.delayed(Duration(milliseconds: widget.delay));
       subscription = future.asStream().listen((val) {
         print(val);
         widget.onSearchTextChanged(widget.searchController.text);
@@ -68,15 +68,15 @@ class _SearchBarState extends State<SearchBar> {
               controller: widget.searchController,
               onChanged: (text) {},
               cursorColor: Colors.black,
-              decoration: new InputDecoration(
-                  prefixIcon: Icon(Icons.search_rounded),
-                  suffixIcon: IconButton(icon: Icon(Icons.clear), onPressed: widget.searchController.clear),
+              decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.search_rounded),
+                  suffixIcon: IconButton(icon: const Icon(Icons.clear), onPressed: widget.searchController.clear),
                   border: InputBorder.none,
                   focusedBorder: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   errorBorder: InputBorder.none,
                   disabledBorder: InputBorder.none,
-                  contentPadding: EdgeInsets.only(left: 15, bottom: 11, top: 10, right: 15),
+                  contentPadding: const EdgeInsets.only(left: 15, bottom: 11, top: 10, right: 15),
                   hintText: "Search Text"),
             )),
       );
@@ -91,15 +91,15 @@ class _SearchBarState extends State<SearchBar> {
               Flexible(
                 child: Card(
                   child: ListTile(
-                    leading: Icon(Icons.search),
+                    leading: const Icon(Icons.search),
                     title: TextField(
                       controller: widget.searchController,
-                      decoration: InputDecoration(hintText: 'Search', border: InputBorder.none),
+                      decoration: const InputDecoration(hintText: 'Search', border: InputBorder.none),
                       onSubmitted: widget.onSubmitted,
                       onChanged: (val) {},
                     ),
                     trailing: IconButton(
-                      icon: Icon(Icons.cancel),
+                      icon: const Icon(Icons.cancel),
                       onPressed: () {
                         widget.searchController.clear();
                         widget.onSearchTextChanged('');
@@ -115,7 +115,7 @@ class _SearchBarState extends State<SearchBar> {
                   child: Ink(
                     child: Card(
                       child: IconButton(
-                        icon: Icon(Icons.qr_code_scanner_outlined),
+                        icon: const Icon(Icons.qr_code_scanner_outlined),
                         onPressed: () async {
                           var permissionStatus = await Permission.camera.request();
                           if (permissionStatus.isGranted) {

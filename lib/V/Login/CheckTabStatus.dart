@@ -1,16 +1,17 @@
 import 'package:device_info/device_info.dart';
 import 'package:device_information/device_information.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/NsUser.dart';
+import 'package:smartwind/M/Section.dart';
 import 'package:smartwind/V/Home/Home.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
 
+import '../../M/AppUser.dart';
 import 'SectionSelector.dart';
 
 class CheckTabStatus extends StatefulWidget {
@@ -39,7 +40,7 @@ class _CheckTabStatusState extends State<CheckTabStatus> {
         appBar: AppBar(backgroundColor: Colors.white, elevation: 0, systemOverlayStyle: SystemUiOverlayStyle.dark),
         backgroundColor: Colors.white,
         body: _loading
-            ? Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator())
             : SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.all(32.0),
@@ -49,8 +50,8 @@ class _CheckTabStatusState extends State<CheckTabStatus> {
                         child: Center(
                           child: Wrap(direction: Axis.vertical, crossAxisAlignment: WrapCrossAlignment.center, children: [
                             UserImage(nsUser: widget.nsUser, radius: 100),
-                            SizedBox(height: 48),
-                            Text("Hi", textScaleFactor: 3),
+                            const SizedBox(height: 48),
+                            const Text("Hi", textScaleFactor: 3),
                             Text(widget.nsUser.name, textScaleFactor: 3)
                           ]),
                         ),
@@ -69,8 +70,8 @@ class _CheckTabStatusState extends State<CheckTabStatus> {
                                       isTabWorking = value!;
                                       setState(() {});
                                     },
-                                    title: Text("Is Tab working without any problem ? \n( ටැබ් යන්ත්‍රය ගැටලුවකින් තොරව ක්‍රියා කරයිද ? )"),
-                                    subtitle: Text("")),
+                                    title: const Text("Is Tab working without any problem ? \n( ටැබ් යන්ත්‍රය ගැටලුවකින් තොරව ක්‍රියා කරයිද ? )"),
+                                    subtitle: const Text("")),
                                 CheckboxListTile(
                                     controlAffinity: ListTileControlAffinity.leading,
                                     value: haveStylus,
@@ -78,19 +79,19 @@ class _CheckTabStatusState extends State<CheckTabStatus> {
                                       haveStylus = value!;
                                       setState(() {});
                                     },
-                                    title: Text("Is Stylus pen available ?\n( ස්ටයිලස් පෑන තිබේද ? )"),
-                                    subtitle: Text("")),
-                                Text(
+                                    title: const Text("Is Stylus pen available ?\n( ස්ටයිලස් පෑන තිබේද ? )"),
+                                    subtitle: const Text("")),
+                                const Text(
                                   "If you are unable to agree with all of above conditions. please contact a production leader. \n( ඉහත සඳහන් කොන්දේසි සමග එකඟ විය නොහැකි නම්. ප්‍රොඩක්ශන් ලීඩර් අමතන්න ) ",
                                   style: TextStyle(color: Colors.red),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 16,
                                 ),
-                                if (!(isTabWorking && haveStylus)) SizedBox(height: 50),
+                                if (!(isTabWorking && haveStylus)) const SizedBox(height: 50),
                                 if (isTabWorking && haveStylus)
                                   ElevatedButton(
-                                    child: SizedBox(width: double.infinity, height: 50, child: Center(child: Text("Continue"))),
+                                    child: const SizedBox(width: double.infinity, height: 50, child: Center(child: Text("Continue"))),
                                     onPressed: () {
                                       check();
                                       // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => SectionSelector(widget.nsUser)), (Route<dynamic> route) => false);
@@ -162,9 +163,16 @@ class _CheckTabStatusState extends State<CheckTabStatus> {
         print("----------------------------------------");
 
         if (widget.nsUser.sections.length > 1) {
-          await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => SectionSelector(widget.nsUser)), (Route<dynamic> route) => false);
+          await Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => UserSectionSelector(widget.nsUser, (Section section) {
+                        AppUser.setSelectedSection(section);
+                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const Home()), (Route<dynamic> route) => false);
+                      })),
+              (Route<dynamic> route) => false);
         }
-        await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (Route<dynamic> route) => false);
+        await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const Home()), (Route<dynamic> route) => false);
       } else {
         ErrorMessageView(errorMessage: response.data).show(context);
       }

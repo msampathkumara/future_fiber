@@ -449,7 +449,7 @@ Future<void> showFactories(StandardTicket ticket, BuildContext context1) async {
       return Container(
         decoration: const BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
         height: 650,
-        child: FactorySelector(ticket.production ?? "", (factory) async {
+        child: FactorySelector(ticket.production ?? "", onSelect: (factory) async {
           await OnlineDB.apiPost("tickets/standard/changeFactory", {'production': factory, 'ticketId': ticket.id});
           // await HiveBox.getDataFromServer();
 

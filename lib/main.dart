@@ -16,7 +16,7 @@ import 'mainFuncs.dart';
 main() async {
   bool x = Uri.base.host.contains('mm.');
   if (kDebugMode) {
-    x = true;
+    x = false;
   }
   await mainThings(viewIssMaterialManagement: x);
 }
@@ -26,7 +26,9 @@ bool isMaterialManagement = false;
 Future<void> mainThings({viewIssMaterialManagement = false}) async {
   isMaterialManagement = viewIssMaterialManagement;
   WidgetsFlutterBinding.ensureInitialized();
+  Firebase.initializeApp();
   await HiveBox.create();
+
   if (Firebase.apps.isEmpty) {
     if (kIsWeb) {
       await Firebase.initializeApp(
@@ -50,12 +52,14 @@ Future<void> mainThings({viewIssMaterialManagement = false}) async {
     statusBarColor: Colors.transparent, // transparent status bar
   ));
 
-  runApp(kIsWeb ? webApp() : MyApp());
+  runApp(kIsWeb ? webApp() : const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   static FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(analytics: analytics);
+
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -76,15 +80,18 @@ class MyApp extends StatelessWidget {
                   borderSide: BorderSide(color: Colors.blueGrey.shade50, width: 1.0),
                   borderRadius: BorderRadius.circular(4.0),
                 ))),
-        home: MyHomePage(),
+        home: const MyHomePage(),
         navigatorObservers: [
           FirebaseAnalyticsObserver(analytics: analytics),
         ]);
   }
 }
 
+late Color primaryColor;
+late ThemeData AppTheme;
+
 class MyHomePage extends StatefulWidget {
-  MyHomePage();
+  const MyHomePage();
 
   final String title = "NS Smart Wind";
 
@@ -93,14 +100,18 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  mainFuncs _mainFuncs = new mainFuncs();
+  final mainFuncs _mainFuncs = mainFuncs();
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      primaryColor = Theme.of(context).primaryColor;
+      AppTheme = Theme.of(context);
+    });
 
     if (kDebugMode) {
-      SharedPreferences.setMockInitialValues(new Map());
+      SharedPreferences.setMockInitialValues(Map());
     }
   }
 

@@ -67,19 +67,22 @@ class _WebCPRTableState extends State<WebCPRTable> {
       DataColumn2(size: ColumnSize.M, label: const Text('Shortage Type'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(size: ColumnSize.M, label: const Text('Date & Time'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(size: ColumnSize.M, label: const Text('CPR Type'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: const Text('Delivery Date'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('Shipping Date'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(size: ColumnSize.M, label: const Text('Status'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(size: ColumnSize.S, label: const Text('Options'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
     ];
   }
 
+  final ScrollController _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     // Last ppage example uses extra API call to get the number of items in datasource
-    if (_dataSourceLoading) return SizedBox();
+    if (_dataSourceLoading) return const SizedBox();
 
     return Stack(alignment: Alignment.bottomCenter, children: [
       AsyncPaginatedDataTable2(
+          scrollController: _scrollController,
           showFirstLastButtons: true,
           smRatio: 0.5,
           lmRatio: 3,
@@ -265,7 +268,7 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                   children: [Text((cpr.date) ?? ""), Text((cpr.time) ?? "", style: const TextStyle(color: Colors.grey, fontSize: 12))])),
               DataCell(Text((cpr.cprType) ?? "")),
               DataCell(Text((cpr.date) ?? "")),
-              DataCell(Text((cpr.status))),
+              DataCell(Text((cpr.status), style: TextStyle(color: cpr.status.getColor()))),
               DataCell(IconButton(
                 icon: const Icon(Icons.more_vert_rounded),
                 onPressed: () {

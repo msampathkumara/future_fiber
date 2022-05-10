@@ -3,7 +3,6 @@ import 'package:sqflite/sqflite.dart';
 class DB {
   static Database? db;
 
-
   // static Future<Database?> getDB() async {
   //   db = (db != null ? db : await loadDB());
   //   return db;
@@ -307,7 +306,7 @@ class DB {
 // }
 }
 
-enum DataTables { None, Users, Tickets, standardTickets, Sections, Any }
+enum DataTables { None, Users, Tickets, standardTickets, Sections, Any, cpr, kit }
 
 class DbChangeCallBack {
   DataTables collection;

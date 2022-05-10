@@ -26,7 +26,7 @@ class UserDetails extends StatefulWidget {
 class _UserDetailsState extends State<UserDetails> {
   late NsUser nsUser;
 
-  TextStyle stStyle = TextStyle(color: Colors.black, fontSize: 18);
+  TextStyle stStyle = const TextStyle(color: Colors.black, fontSize: 18);
 
   late String idToken;
 
@@ -49,15 +49,15 @@ class _UserDetailsState extends State<UserDetails> {
 
   @override
   Widget build(BuildContext context) {
-    return new FutureBuilder<String>(
+    return FutureBuilder<String>(
         future: getJwt(), // a Future<String> or null
         builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: Text('Please wait its loading...'));
+            return const Center(child: Text('Please wait its loading...'));
           } else {
-            if (snapshot.hasError)
-              return new Text('Error: ${snapshot.error}');
-            else
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
               return SafeArea(
                 child: Scaffold(
                   appBar: AppBar(
@@ -77,16 +77,7 @@ class _UserDetailsState extends State<UserDetails> {
                               textScaleFactor: 1.5,
                             ),
                           ),
-                          Text('#' + nsUser.uname, style: TextStyle(color: Colors.blue)),
-                          // Wrap(
-                          //   direction: Axis.horizontal,
-                          //   crossAxisAlignment: WrapCrossAlignment.center,
-                          //   children: [
-                          //     // Chip(avatar: CircleAvatar(backgroundColor: Colors.grey.shade800, child: const Text('AB')), label: const Text('Aaron Burr')),
-                          //     Chip(avatar: Icon(Icons.maps_home_work_outlined), label: Text(nsUser.sectionName)),
-                          //     Chip(avatar: Icon(Icons.person_outlined), label: Text(nsUser.utype)),
-                          //   ],
-                          // )
+                          Text('#' + nsUser.uname, style: const TextStyle(color: Colors.blue)),
                         ],
                       ),
                     ),
@@ -99,17 +90,20 @@ class _UserDetailsState extends State<UserDetails> {
                           Card(
                             child: Column(
                               children: [
-                                ListTile(title: Text("Contact Details"), leading: Icon(Icons.contact_phone_outlined)),
+                                const ListTile(title: Text("Contact Details"), leading: Icon(Icons.contact_phone_outlined)),
                                 Padding(
                                   padding: const EdgeInsets.all(16.0),
                                   child: Column(
                                     children: [
                                       ListTile(
-                                          leading: Icon(Icons.phone_android_outlined), title: Text("Phone"), subtitle: Text(nsUser.phone.split(",").join("\n"), style: stStyle)),
+                                          leading: const Icon(Icons.phone_android_outlined),
+                                          title: const Text("Phone"),
+                                          subtitle: Text(nsUser.phone.split(",").join("\n"), style: stStyle)),
                                       ListTile(
-                                          leading: Icon(Icons.alternate_email_outlined),
-                                          title: Text("Email"),
-                                          subtitle: Text(nsUser.emailAddress.split(",").join("\n"), style: stStyle)),
+                                        leading: const Icon(Icons.alternate_email_outlined),
+                                        title: const Text("Email"),
+                                        subtitle: Wrap(direction: Axis.vertical, children: nsUser.emails.map((e) => Chip(label: Text(e.email ?? ''))).toList()),
+                                      ),
                                     ],
                                   ),
                                 )
@@ -119,15 +113,15 @@ class _UserDetailsState extends State<UserDetails> {
                           Card(
                             child: Column(
                               children: [
-                                ListTile(title: Text("Job Details"), leading: Icon(Icons.work_outline_outlined)),
+                                const ListTile(title: Text("Job Details"), leading: Icon(Icons.work_outline_outlined)),
                                 Padding(
                                   padding: const EdgeInsets.all(16.0),
                                   child: Column(
                                     children: [
-                                      ListTile(leading: Icon(Icons.badge_outlined), title: Text("EPF"), subtitle: Text(nsUser.epf, style: stStyle)),
+                                      ListTile(leading: const Icon(Icons.badge_outlined), title: const Text("EPF"), subtitle: Text(nsUser.epf, style: stStyle)),
                                       ListTile(
-                                          leading: Icon(Icons.domain_outlined),
-                                          title: Text("Section"),
+                                          leading: const Icon(Icons.domain_outlined),
+                                          title: const Text("Section"),
                                           subtitle: Wrap(
                                               direction: Axis.horizontal,
                                               crossAxisAlignment: WrapCrossAlignment.start,
@@ -152,9 +146,10 @@ class _UserDetailsState extends State<UserDetails> {
                           onPressed: () {
                             UpdateUserDetails(nsUser).show(context);
                           },
-                          child: Icon(Icons.edit_outlined)),
+                          child: const Icon(Icons.edit_outlined)),
                 ),
               );
+            }
           }
         });
   }

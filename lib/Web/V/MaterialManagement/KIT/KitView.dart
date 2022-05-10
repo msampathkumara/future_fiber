@@ -1,50 +1,57 @@
+import 'package:data_table_2/data_table_2.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/Api.dart';
-import 'package:smartwind/M/CPR/CPR.dart';
-import 'package:smartwind/M/CPR/CprItem.dart';
+import 'package:smartwind/M/CPR/KIT.dart';
+import 'package:smartwind/M/CPR/KitItem.dart';
 import 'package:smartwind/M/Chat/message.dart';
+import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
+import 'package:smartwind/Web/V/MaterialManagement/KIT/AddMaterials.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/Web/Widgets/IfWeb.dart';
 import 'package:smartwind/Web/Widgets/chatBubble.dart';
 
 import '../../../../M/NsUser.dart';
+import '../../../../V/Home/Tickets/StandardFiles/factory_selector.dart';
 
-class CprView extends StatefulWidget {
-  final CPR cpr;
+class KitView extends StatefulWidget {
+  final KIT kit;
 
-  final Function(bool) isCprChange;
+  final Function(bool) isKitChange;
 
-  const CprView(this.cpr, this.isCprChange, {Key? key}) : super(key: key);
+  const KitView(this.kit, this.isKitChange, {Key? key}) : super(key: key);
 
   @override
-  State<CprView> createState() => _CprViewState();
+  State<KitView> createState() => _KitViewState();
 
   Future show(context) {
     return kIsWeb ? showDialog(context: context, builder: (_) => this) : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
   }
 }
 
-class _CprViewState extends State<CprView> {
+class _KitViewState extends State<KitView> {
   var titleTheme = const TextStyle(fontSize: 12, color: Colors.grey);
   var valTheme = const TextStyle(fontSize: 15, color: Colors.black);
   var vd = const VisualDensity(horizontal: 0, vertical: -4);
   var st = const TextStyle(fontSize: 12, color: Colors.black);
 
-  late CPR _cpr;
+  late KIT _kit;
 
   int? _canSend;
 
-  late List<CPR> cprs;
+  late List<KIT> kits;
+
+  List<Message> kitComments = [];
 
   @override
   void initState() {
-    _cpr = widget.cpr;
-    cprs = [_cpr, _cpr, _cpr];
+    _kit = widget.kit;
+    kits = [_kit, _kit, _kit];
     apiGetData();
+    getComments();
 
-    // _canSend=AppUser.getUser()?.sections.indexWhere((element) => element.id==_cpr.supplier.id);
     super.initState();
   }
 
@@ -57,7 +64,7 @@ class _CprViewState extends State<CprView> {
 
   getWebUi() {
     return Scaffold(
-      appBar: AppBar(title: const Text("View CPR")),
+      appBar: AppBar(title: const Text("View KIT")),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : Row(children: [
@@ -69,128 +76,156 @@ class _CprViewState extends State<CprView> {
                     child: Column(
                       children: [
                         Table(
-                          children: [
-                            TableRow(children: [
+                    children: [
+                      TableRow(children: [
                               ListTile(
                                   visualDensity: vd,
                                   title: Text('Ticket', style: titleTheme),
                                   subtitle: Wrap(direction: Axis.vertical, children: [
-                                    Text('${_cpr.ticket?.mo}', style: valTheme),
-                                    Text('${_cpr.ticket?.oe}', style: const TextStyle(fontSize: 12, color: Colors.deepOrange))
+                                    Text('${_kit.ticket?.mo}', style: valTheme),
+                                    Text('${_kit.ticket?.oe}', style: const TextStyle(fontSize: 12, color: Colors.deepOrange))
                                   ])),
-                              ListTile(visualDensity: vd, title: Text('Client', style: titleTheme), subtitle: Text('${_cpr.client}', style: valTheme)),
-                              ListTile(visualDensity: vd, title: Text('Supplier(s)', style: titleTheme), subtitle: Text(cprs.map((e) => e.supplier).join(','), style: valTheme)),
+                              ListTile(
+                                  onTap: () {
+                                    FactorySelector(_kit.client, title: "Select Client", onSelect: (prod) {
+                                      print(prod);
+                                      updateProduction(prod);
+                                    }).show(context);
+                                  },
+                                  visualDensity: vd,
+                                  title: Text('Client', style: titleTheme),
+                                  subtitle: Text('${_kit.client}', style: valTheme)),
+                              ListTile(visualDensity: vd, title: Text('Shortage Type', style: titleTheme), subtitle: Text('${_kit.shortageType}', style: valTheme)),
+                              ListTile(visualDensity: vd, title: Text('Status', style: titleTheme), subtitle: Text('${_kit.status} ', style: valTheme)),
                             ]),
-                            TableRow(
-                              children: [
-                                ListTile(visualDensity: vd, title: Text('Shortage Type', style: titleTheme), subtitle: Text('${_cpr.shortageType}', style: valTheme)),
-                                ListTile(visualDensity: vd, title: Text('CPR Type', style: titleTheme), subtitle: Text('${_cpr.cprType}', style: valTheme)),
-                                Container()
-                              ],
-                            ),
-                          ],
-                        ),
-                        Expanded(
-                          child: ListView.separated(
-                            itemCount: cprs.length,
-                            separatorBuilder: (BuildContext context, int index) {
-                              return const Divider();
-                            },
-                            itemBuilder: (BuildContext context, int index) {
-                              var __cpr = cprs[index];
-
-                              return Card(
-                                elevation: 4,
-                                child: Column(children: [
-                                  ListTile(title: Text(__cpr.supplier, textScaleFactor: 1.2)),
-                                  for (var material in __cpr.items)
-                                    ListTile(
-                                        title: Text(material.item, style: valTheme),
-                                        leading: checkingMaterials.contains(material.id)
-                                            ? const Padding(
-                                                padding: EdgeInsets.all(8.0), child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 1.5)))
-                                            : Checkbox(
-                                                value: material.isChecked(),
-                                                onChanged: (checked) {
-                                                  if (checked != null) {
-                                                    checkMaterial(material, checked);
-                                                  }
-                                                  setState(() {
-                                                    material.setChecked(checked!);
-                                                  });
-                                                }),
-                                        subtitle: (material.isChecked() && (!checkingMaterials.contains(material.id)))
-                                            ? Row(
-                                                children: [
-                                                  UserImage(nsUser: NsUser.fromId(material.user!.id), radius: 8),
-                                                  Padding(padding: const EdgeInsets.only(left: 8, right: 8), child: Text(material.user!.uname, style: st)),
-                                                  const Icon(Icons.query_builder_rounded, color: Colors.grey, size: 16),
-                                                  Text(" ${material.dnt}", style: st)
-                                                ],
-                                              )
-                                            : null,
-                                        trailing: Wrap(alignment: WrapAlignment.center, direction: Axis.vertical, children: [
-                                          Text("${material.qty}"),
-                                        ])),
-                                  const Divider(color: Colors.red),
-                                  Table(
-                                    children: [
-                                      TableRow(
-                                        children: [
-                                          __cpr.user != null
-                                              ? ListTile(
-                                                  visualDensity: vd,
-                                                  title: Text("Added By ", style: titleTheme),
-                                                  subtitle: ListTile(
-                                                      leading: UserImage(nsUser: NsUser.fromId(__cpr.user!.id), radius: 16),
-                                                      title: Text(__cpr.user!.uname, style: valTheme),
-                                                      subtitle: Text(__cpr.addedOn, style: const TextStyle(fontSize: 12, color: Colors.black))))
-                                              : Container(),
-                                          (__cpr.sentUser != null)
-                                              ? ListTile(
-                                                  visualDensity: vd,
-                                                  title: Text("Sent By ", style: titleTheme),
-                                                  subtitle: ListTile(
-                                                      leading: UserImage(nsUser: NsUser.fromId(__cpr.sentUser!.id), radius: 16),
-                                                      title: Text(__cpr.sentUser!.uname, style: valTheme),
-                                                      subtitle: Text("${__cpr.sentOn ?? ""}", style: const TextStyle(fontSize: 12, color: Colors.black))))
-                                              : Container(),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ]),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
+                    ],
                   ),
-                ),
-              ),
-              SizedBox(
-                  width: 400,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Card(
-                      elevation: 4,
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ListView.builder(
-                                  itemCount: 10,
-                                  itemBuilder: (context, index) {
-                                    return ChatBubble(Message(), isSelf: (index % 2 == 0));
-                                  }),
-                            ),
+                  Expanded(
+                          child: Card(
+                            elevation: 4,
+                            child: Column(children: [
+                              if (_kit.items.isEmpty)
+                                Expanded(
+                                    child: Center(
+                                        child: Wrap(
+                                  direction: Axis.vertical,
+                                  alignment: WrapAlignment.center,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  children: [
+                                    const Text(
+                                      "No Materials",
+                                      textScaleFactor: 1.5,
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                    TextButton(
+                                        onPressed: () async {
+                                          await AddMaterials(_kit.id).show(context);
+                                        },
+                                        child: const Text("Add Materials"))
+                                  ],
+                                ))),
+                              if (_kit.items.isNotEmpty)
+                                Expanded(
+                                  child: SizedBox(
+                                    width: double.infinity,
+                                    child: DataTable2(smRatio: 0.3, columns: const [
+                                      DataColumn2(label: Text(''), size: ColumnSize.S),
+                                      DataColumn2(label: Text('Item'), size: ColumnSize.L),
+                                      DataColumn2(label: Text('Qty'), size: ColumnSize.M),
+                                      DataColumn2(label: Text('Date'), size: ColumnSize.M),
+                                      DataColumn2(label: Text('User'), size: ColumnSize.L)
+                                    ], rows: [
+                                      for (var material in _kit.items) getMatRow(material),
+                                      DataRow2(cells: [
+                                        DataCell.empty,
+                                        DataCell.empty,
+                                        DataCell.empty,
+                                        DataCell.empty,
+                                        DataCell(TextButton(
+                                            onPressed: () async {
+                                              await AddMaterials(_kit.id).show(context) == true ? apiGetData() : null;
+                                            },
+                                            child: const Text("Add Materials")))
+                                      ])
+                                    ]),
+                                  ),
+                                ),
+                              const Divider(color: Colors.red),
+                              Table(
+                                children: [
+                                  TableRow(
+                                    children: [
+                                      _kit.user != null
+                                          ? ListTile(
+                                              visualDensity: vd,
+                                              title: Text("Added By ", style: titleTheme),
+                                              subtitle: ListTile(
+                                                  leading: UserImage(nsUser: NsUser.fromId(_kit.user!.id), radius: 16),
+                                                  title: Text(_kit.user!.uname, style: valTheme),
+                                                  subtitle: Text(_kit.addedOn, style: const TextStyle(fontSize: 12, color: Colors.black))))
+                                          : Container(),
+                                      (_kit.sentUser != null)
+                                          ? ListTile(
+                                              visualDensity: vd,
+                                              title: Text("Sent By ", style: titleTheme),
+                                              subtitle: ListTile(
+                                                  leading: UserImage(nsUser: NsUser.fromId(_kit.sentUser!.id), radius: 16),
+                                                  title: Text(_kit.sentUser!.uname, style: valTheme),
+                                                  subtitle: Text("${_kit.sentOn ?? ""}", style: const TextStyle(fontSize: 12, color: Colors.black))))
+                                          : Container(),
+                                      if (_kit.status.isReady(caseInsensitive: true, trim: true))
+                                        Row(
+                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            const Spacer(),
+                                            Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: SizedBox(width: 100, child: ElevatedButton(onPressed: () {}, child: const Text("Send"))),
+                                            ),
+                                          ],
+                                        )
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ]),
                           ),
-                          ListTile(
-                            title: TextFormField(),
+                        ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        SizedBox(
+            width: 400,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Card(
+                elevation: 4,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListView.builder(
+                            itemCount: kitComments.length,
+                                  itemBuilder: (context, index) {
+                                    Message msg = kitComments[index];
+                                    return ChatBubble(msg, isSelf: msg.isSelf);
+                                  }),
+                      ),
+                    ),
+                    ListTile(
+                            title: TextFormField(
+                                controller: commentController,
+                                onFieldSubmitted: (r) {
+                                  saveComment();
+                                }),
                             trailing: IconButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  saveComment();
+                                },
                                 icon: const Icon(
                                   Icons.send,
                                   color: Colors.green,
@@ -198,10 +233,10 @@ class _CprViewState extends State<CprView> {
                                 )),
                           )
                         ],
-                      ),
-                    ),
-                  ))
-            ]),
+                ),
+              ),
+            ))
+      ]),
       // floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
       // floatingActionButton: getButton()
     );
@@ -210,15 +245,15 @@ class _CprViewState extends State<CprView> {
   getUi() {}
 
   Future apiGetData() {
-    return Api.get("materialManagement/cpr/getCpr", {'id': _cpr.id}).then((res) {
+    return Api.get("materialManagement/kit/getKit", {'id': _kit.id}).then((res) {
       Map data = res.data;
 
-      _cpr = CPR.fromJson(res.data);
-      var _cpr1 = CPR.fromJson(res.data);
+      _kit = KIT.fromJson(res.data);
+      var _kit1 = KIT.fromJson(res.data);
 
-      var _cpr2 = CPR.fromJson(res.data);
+      var _kit2 = KIT.fromJson(res.data);
 
-      cprs = [_cpr, _cpr1, _cpr2];
+      kits = [_kit, _kit1, _kit2];
 
       print(data);
       setState(() {
@@ -242,12 +277,12 @@ class _CprViewState extends State<CprView> {
 
   List<int> checkingMaterials = [];
 
-  checkMaterial(CprItem material, bool checked) {
+  checkMaterial(KitItem material, bool checked) {
     checkingMaterials.add(material.id);
-    return Api.post("materialManagement/cpr/checkItem", {'checked': checked, 'itemId': material.id, 'id': _cpr.id}).then((res) {
+    return Api.post("materialManagement/kit/checkItem", {'checked': checked, 'itemId': material.id, 'id': _kit.id}).then((res) {
       checkingMaterials.remove(material.id);
       apiGetData();
-      widget.isCprChange(true);
+      widget.isKitChange(true);
     }).whenComplete(() {
       setState(() {});
     }).catchError((err) {
@@ -269,12 +304,12 @@ class _CprViewState extends State<CprView> {
       return null;
     }
 
-    switch (_cpr.status.toLowerCase()) {
+    switch (_kit.status.toLowerCase()) {
       case 'ready':
         {
           return FloatingActionButton.extended(
               onPressed: () {
-                sendCpr();
+                sendKit();
               },
               label: const Text('Send'),
               icon: const Icon(Icons.send),
@@ -288,8 +323,8 @@ class _CprViewState extends State<CprView> {
     return null;
   }
 
-  Future sendCpr() {
-    return Api.post("materialManagement/cpr/sendCpr", {'cpr': _cpr.id}).then((res) {
+  Future sendKit() {
+    return Api.post("materialManagement/kit/sendKit", {'kit': _kit.id}).then((res) {
       Map data = res.data;
       apiGetData();
     }).whenComplete(() {
@@ -301,6 +336,88 @@ class _CprViewState extends State<CprView> {
               label: 'Retry',
               onPressed: () {
                 apiGetData();
+              })));
+      setState(() {
+        // _dataLoadingError = true;
+      });
+    });
+  }
+
+  getMatRow(KitItem material) {
+    NsUser? user = (material.user);
+    return DataRow2(cells: [
+      DataCell(checkingMaterials.contains(material.id)
+          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 1.5))
+          : Checkbox(
+              value: material.isChecked(),
+              onChanged: (checked) {
+                if (checked != null) {
+                  checkMaterial(material, checked);
+                }
+                setState(() {
+                  material.setChecked(checked!);
+                });
+              })),
+      DataCell(Text(material.item)),
+      DataCell(Text(material.qty)),
+      DataCell(Text(material.dnt.replaceAll(" ", "\n"))),
+      DataCell(user != null
+          ? ListTile(
+              leading: UserImage(nsUser: user, radius: 12),
+              title: Text(user.uname, style: const TextStyle(fontSize: 12)),
+            )
+          : const Text('-')),
+    ]);
+  }
+
+  Future getComments() {
+    return Api.get("materialManagement/getCprComments", {'id': _kit.id}).then((res) {
+      Map data = res.data;
+
+      kitComments = Message.fromJsonArray(data["messages"]);
+      setState(() {});
+    }).whenComplete(() {
+      setState(() {});
+    }).catchError((err) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(err.toString()),
+          action: SnackBarAction(
+              label: 'Retry',
+              onPressed: () {
+                apiGetData();
+              })));
+      setState(() {
+        // _dataLoadingError = true;
+      });
+    });
+  }
+
+  TextEditingController commentController = TextEditingController();
+
+  saveComment() {
+    String text = commentController.text;
+    commentController.clear();
+    return Api.post("materialManagement/saveCprComment", {'text': text, 'cprId': _kit.id}).then((res) {
+      Map data = res.data;
+      getComments();
+    }).whenComplete(() {
+      setState(() {});
+    }).catchError((err) {});
+  }
+
+  void updateProduction(String prod) {
+    Api.post("materialManagement/kit/updateClient", {'client': prod, 'kitId': _kit.id}).then((res) {
+      Map data = res.data;
+      apiGetData();
+    }).whenComplete(() {
+      setState(() {});
+    }).catchError((err) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(err.toString()),
+          action: SnackBarAction(
+              label: 'Retry',
+              onPressed: () {
+                updateProduction(prod);
               })));
       setState(() {
         // _dataLoadingError = true;

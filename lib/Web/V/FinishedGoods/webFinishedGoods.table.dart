@@ -100,6 +100,8 @@ class _AsyncPaginatedDataTable2DemoState extends State<AsyncPaginatedDataTable2D
     ];
   }
 
+  final ScrollController _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     // Last ppage example uses extra API call to get the number of items in datasource
@@ -107,6 +109,7 @@ class _AsyncPaginatedDataTable2DemoState extends State<AsyncPaginatedDataTable2D
 
     return Stack(alignment: Alignment.bottomCenter, children: [
       AsyncPaginatedDataTable2(
+          scrollController: _scrollController,
           showFirstLastButtons: true,
           smRatio: 0.5,
           lmRatio: 3,

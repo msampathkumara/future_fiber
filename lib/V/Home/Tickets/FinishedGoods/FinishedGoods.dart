@@ -9,8 +9,11 @@ import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 import 'package:smartwind/ns_icons_icons.dart';
 
+import '../../../../M/AppUser.dart';
+import '../../../../Web/V/QC/webTicketQView.dart';
+
 class FinishedGoods extends StatefulWidget {
-  FinishedGoods({Key? key}) : super(key: key);
+  const FinishedGoods({Key? key}) : super(key: key);
 
   @override
   _FinishedGoodsState createState() {
@@ -27,7 +30,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
   @override
   initState() {
     super.initState();
-    factoryChipsList = Production.values.map<Widget>((e) => e == Production.None ? Container() : _productionChip(e)).toList();
+
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _refreshIndicatorKey.currentState?.show();
     });
@@ -40,11 +43,12 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
     super.dispose();
   }
 
-  TextEditingController searchController = new TextEditingController();
+  TextEditingController searchController = TextEditingController();
   bool _isBarcodeScan = false;
 
   @override
   Widget build(BuildContext context) {
+    factoryChipsList = Production.values.map<Widget>((e) => e == Production.None ? Container() : _productionChip(e)).toList();
     return Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
         floatingActionButton: FloatingActionButton(
@@ -60,19 +64,20 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
             child: const Icon(Icons.qr_code_rounded),
             backgroundColor: themeColor),
         appBar: AppBar(
-          actions: <Widget>[],
+          actions: const <Widget>[],
           elevation: 0.0,
           toolbarHeight: 82,
           backgroundColor: themeColor,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.pop(context),
           ),
-          title: Text(
+          title: const Text(
             "Finished Goods",
             textScaleFactor: 1.2,
           ),
           bottom: SearchBar(
+              delay: 300,
               searchController: searchController,
               onSearchTextChanged: (text) {
                 if (subscription != null) {
@@ -80,18 +85,10 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                 }
                 searchText = text;
                 _ticketList = [];
-                var future = new Future.delayed(const Duration(milliseconds: 300));
-                subscription = future.asStream().listen((v) {
-                  print("SEARCHING FOR $searchText");
-                  var t = DateTime.now().millisecondsSinceEpoch;
 
-                  loadData(0).then((value) {
-                    print("SEARCHING time ${(DateTime.now().millisecondsSinceEpoch - t)}");
-                    t = DateTime.now().millisecondsSinceEpoch;
-                    setState(() {});
-                    print("load time ${(DateTime.now().millisecondsSinceEpoch - t)}");
-                  });
-                });
+                print("SEARCHING FOR $searchText");
+
+                loadData(0);
               }),
           centerTitle: true,
         ),
@@ -108,17 +105,19 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                 flagIcon(Filters.isHold, NsIcons.stop),
                 flagIcon(Filters.isSk, NsIcons.sk),
                 flagIcon(Filters.isGr, NsIcons.gr),
-                flagIcon(Filters.isSort, NsIcons.short)
+                flagIcon(Filters.isSort, NsIcons.short),
+                flagIcon(Filters.isQc, NsIcons.short, text: "QC"),
+                flagIcon(Filters.isQa, NsIcons.short, text: "QA"),
               ]),
               Expanded(child: getBody()),
             ],
           ),
         ),
         bottomNavigationBar: BottomAppBar(
-            shape: CircularNotchedRectangle(),
+            shape: const CircularNotchedRectangle(),
             color: themeColor,
             child: IconTheme(
-              data: IconThemeData(color: Colors.white),
+              data: const IconThemeData(color: Colors.white),
               child: Row(
                 children: [
                   InkWell(
@@ -126,7 +125,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                     splashColor: Colors.red,
                     child: Ink(
                       child: IconButton(
-                        icon: Icon(Icons.sort_by_alpha_rounded),
+                        icon: const Icon(Icons.sort_by_alpha_rounded),
                         onPressed: () {
                           _sortByBottomSheetMenu();
                         },
@@ -134,10 +133,10 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                     ),
                   ),
                   const Spacer(),
-                  Padding(padding: const EdgeInsets.all(8.0), child: Text("$dataCount", textScaleFactor: 1.1, style: TextStyle(color: Colors.white))),
+                  Padding(padding: const EdgeInsets.all(8.0), child: Text("$dataCount", textScaleFactor: 1.1, style: const TextStyle(color: Colors.white))),
                   const Spacer(),
                   // Text("Sorted by $sortedBy", style: TextStyle(color: Colors.white)),
-                  SizedBox(width: 36)
+                  const SizedBox(width: 36)
                 ],
               ),
             )));
@@ -145,9 +144,14 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
 
   Filters dataFilter = Filters.none;
 
-  flagIcon(Filters filter, IconData icon) {
+  flagIcon(Filters filter, IconData icon, {String? text}) {
     return IconButton(
-      icon: CircleAvatar(child: Icon(icon, color: dataFilter == filter ? Colors.red : Colors.black), backgroundColor: Colors.white),
+      icon: CircleAvatar(
+          child: (text != null)
+              ? Text(text, style: TextStyle(color: dataFilter == filter ? Colors.red : Colors.black, fontWeight: FontWeight.bold))
+              : Icon(icon, color: dataFilter == filter ? Colors.red : Colors.black, size: 20),
+          backgroundColor: Colors.white,
+          radius: 16),
       tooltip: 'Increase volume by 10',
       onPressed: () async {
         if (dataFilter == filter) {
@@ -198,9 +202,9 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
             color: Colors.transparent,
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: const Text(
                     "Sort By",
                     textScaleFactor: 1.2,
                   ),
@@ -213,7 +217,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                           getListItem("Shipping Date", Icons.date_range_rounded, "shipDate"),
                           getListItem("Modification Date", Icons.date_range_rounded, "uptime"),
                           getListItem("Name", Icons.sort_by_alpha_rounded, "mo"),
-                          getListItem("Delivery Date", Icons.date_range_rounded, "deliveryDate"),
+                          getListItem("Shipping Date", Icons.date_range_rounded, "deliveryDate"),
                         ],
                       )),
                 ),
@@ -232,7 +236,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
           backgroundColor: themeColor,
           // elevation: (!_showFilters && _showFiltersEnd) ? 4 : 0,
           elevation: 4,
-          actions: [],
+          actions: const [],
           title: Wrap(
             spacing: 5,
             children: factoryChipsList,
@@ -250,9 +254,9 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
           child: RefreshIndicator(
             key: _refreshIndicatorKey,
             onRefresh: () {
-              return loadData(0);
+              return _loadData(0);
             },
-            child: (_ticketList.length == 0 && (!requested))
+            child: (_ticketList.isEmpty && (!requested))
                 ? Center(child: Text(searchText.isEmpty ? "No Tickets Found" : "⛔ Work Ticket not found.\n Please contact  Ticket Checking department", textScaleFactor: 1.5))
                 : Padding(
                     padding: const EdgeInsets.only(top: 16),
@@ -264,9 +268,9 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                           if (!requested && (!_dataLoadingError)) {
                             var x = ((_ticketList.length) / 20);
 
-                            loadData(x.toInt());
+                            _loadData(x.toInt());
                           }
-                          return Container(
+                    return SizedBox(
                               height: 100,
                               child: Center(
                                   child: Padding(
@@ -281,7 +285,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                                                   _dataLoadingError = false;
                                                 });
                                                 var x = ((_ticketList.length) / 20);
-                                                loadData(x.toInt());
+                                                _loadData(x.toInt());
                                               }
                                             },
                                             child: Card(
@@ -291,8 +295,8 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                                                 child: Padding(
                                                     padding: const EdgeInsets.all(12.0),
                                                     child: !_dataLoadingError
-                                                        ? CircularProgressIndicator(color: Colors.red, strokeWidth: 2)
-                                                        : Icon(
+                                                        ? const CircularProgressIndicator(color: Colors.red, strokeWidth: 2)
+                                                        : const Icon(
                                                             Icons.refresh_rounded,
                                                             size: 18,
                                                           ))),
@@ -320,12 +324,12 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                                 border: Border.all(
                                   color: Colors.white,
                                 ),
-                                borderRadius: BorderRadius.all(Radius.circular(20))),
+                                borderRadius: const BorderRadius.all(Radius.circular(20))),
                             child: ListTile(
                               leading: Text("${index + 1}"),
                               title: Text(
                                 (ticket.mo ?? "").trim().isEmpty ? (ticket.oe ?? "") : ticket.mo ?? "",
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -335,7 +339,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                                   if ((ticket.mo ?? "").trim().isNotEmpty) Text((ticket.oe ?? "")),
                                   if (ticket.crossPro == 1)
                                     Chip(
-                                        avatar: CircleAvatar(
+                                        avatar: const CircleAvatar(
                                           child: Icon(
                                             Icons.merge_type_outlined,
                                           ),
@@ -349,27 +353,27 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                                 children: [
                                   if (ticket.inPrint == 1)
                                     IconButton(
-                                      icon: CircleAvatar(child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white),
+                                      icon: const CircleAvatar(child: const Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white),
                                       onPressed: () {},
                                     ),
                                   if (ticket.isHold == 1)
                                     IconButton(
-                                      icon: CircleAvatar(child: Icon(Icons.pan_tool_rounded, color: Colors.black), backgroundColor: Colors.white),
+                                      icon: const CircleAvatar(child: const Icon(Icons.pan_tool_rounded, color: Colors.black), backgroundColor: Colors.white),
                                       onPressed: () {},
                                     ),
                                   if (ticket.isGr == 1)
                                     IconButton(
-                                      icon: CircleAvatar(child: Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white),
+                                      icon: const CircleAvatar(child: const Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white),
                                       onPressed: () {},
                                     ),
                                   if (ticket.isSk == 1)
                                     IconButton(
-                                      icon: CircleAvatar(child: Icon(NsIcons.sk, color: Colors.pink), backgroundColor: Colors.white),
+                                      icon: const CircleAvatar(child: const Icon(NsIcons.sk, color: Colors.pink), backgroundColor: Colors.white),
                                       onPressed: () {},
                                     ),
                                   if (ticket.isError == 1)
                                     IconButton(
-                                      icon: CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white),
+                                      icon: const CircleAvatar(child: const Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white),
                                       onPressed: () {},
                                     ),
                                   if (ticket.isSort == 1)
@@ -379,23 +383,35 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                                     ),
                                   if (ticket.isRush == 1)
                                     IconButton(
-                                      icon: CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white),
+                                      icon: const CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white),
                                       onPressed: () {},
                                     ),
                                   if (ticket.isRed == 1)
                                     IconButton(
-                                      icon: CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white),
+                                      icon: const CircleAvatar(child: const Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white),
                                       onPressed: () {},
                                     ),
+                                  if (ticket.isQa == 1)
+                                    IconButton(
+                                        icon: const CircleAvatar(backgroundColor: Colors.deepOrangeAccent, child: Text('QA', style: TextStyle(color: Colors.white))),
+                                        onPressed: () {
+                                          WebTicketQView(ticket, false).show(context);
+                                        }),
+                                  if (ticket.isQc == 1)
+                                    IconButton(
+                                        icon: const CircleAvatar(backgroundColor: Colors.red, child: Text('QC', style: TextStyle(color: Colors.white))),
+                                        onPressed: () {
+                                          WebTicketQView(ticket, true).show(context);
+                                        }),
                                   Padding(
                                     padding: const EdgeInsets.only(top: 4),
                                     child: CircularPercentIndicator(
                                       radius: 18.0,
                                       lineWidth: 5.0,
                                       percent: ticket.progress / 100,
-                                      center: new Text(
+                                      center: Text(
                                         ticket.progress.toString() + "%",
-                                        style: TextStyle(fontSize: 12),
+                                        style: const TextStyle(fontSize: 12),
                                       ),
                                       progressColor: themeColor,
                                     ),
@@ -407,7 +423,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                         );
                       },
                       separatorBuilder: (BuildContext context, int index) {
-                        return Divider(
+                        return const Divider(
                           height: 1,
                           endIndent: 0.5,
                           color: Colors.black12,
@@ -427,7 +443,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
       context: context,
       builder: (BuildContext context) {
         return Container(
-          decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
+          decoration: const BoxDecoration(borderRadius: const BorderRadius.only(topLeft: const Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
           height: 350,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -437,33 +453,39 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                 title: Text(ticket.mo ?? ticket.oe!),
                 subtitle: Text(ticket.oe!),
               ),
-              Divider(),
+              const Divider(),
               Expanded(
-                  child: Container(
-                child: SingleChildScrollView(
-                    child: Column(children: [
+                  child: SingleChildScrollView(
+                      child: Column(children: [
+                ListTile(
+                    title: const Text("Send Ticket"),
+                    leading: const Icon(Icons.send_rounded, color: Colors.lightBlue),
+                    onTap: () async {
+                      await ticket.sharePdf(context);
+                      Navigator.of(context).pop();
+                    }),
+                if (AppUser.havePermissionFor(Permissions.DELETE_COMPLETED_TICKETS))
                   ListTile(
-                      title: Text("Send Ticket"),
-                      leading: Icon(Icons.send_rounded, color: Colors.lightBlue),
+                      title: const Text("Delete"),
+                      leading: const Icon(Icons.delete_forever, color: Colors.red),
                       onTap: () async {
-                        await ticket.sharePdf(context);
                         Navigator.of(context).pop();
+
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Do you really want to delete ${ticket.mo}/${ticket.oe}'),
+                            action: SnackBarAction(
+                                onPressed: () {
+                                  OnlineDB.apiPost("tickets/delete", {"id": ticket.id.toString()}).then((response) async {
+                                    print('TICKET DELETED');
+                                    print(response.data);
+                                    print(response.statusCode);
+                                  }).catchError((error) {
+                                    ErrorMessageView(errorMessage: error.toString()).show(context);
+                                  });
+                                },
+                                label: 'Yes')));
                       }),
-                  ListTile(
-                      title: Text("Delete"),
-                      leading: Icon(Icons.delete_forever, color: Colors.red),
-                      onTap: () async {
-                        OnlineDB.apiPost("tickets/delete", {"id": ticket.id.toString()}).then((response) async {
-                          print('TICKET DELETED');
-                          print(response.data);
-                          print(response.statusCode);
-                        }).catchError((error) {
-                          ErrorMessageView(errorMessage: error.toString()).show(context);
-                        });
-                        Navigator.of(context).pop();
-                      }),
-                ])),
-              ))
+              ])))
             ],
           ),
         );
@@ -494,10 +516,10 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
   List<Ticket> _ticketList = [];
   bool _dataLoadingError = false;
 
-  Future loadData(int page) {
-    setState(() {
-      requested = true;
-    });
+  Future _loadData(int page) {
+    // setState(() {
+    requested = true;
+    // });
     return OnlineDB.apiGet("tickets/completed/getList", {
       'production': _selectedProduction.getValue(),
       "flag": dataFilter.getValue(),
@@ -511,9 +533,12 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
       List tickets = res.data["tickets"];
       dataCount = res.data["count"];
 
-      tickets.forEach((element) {
-        _ticketList.add(Ticket.fromJson(element));
-      });
+      if (page == 0) {
+        _ticketList = [];
+      }
+
+      _ticketList.addAll(Ticket.fromJsonArray(tickets));
+
       final ids = _ticketList.map((e) => e.id).toSet();
       _ticketList.retainWhere((x) => ids.remove(x.id));
       _dataLoadingError = false;
@@ -521,9 +546,9 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
       if (_isBarcodeScan && _ticketList.isNotEmpty) {
         var ticketInfo = TicketInfo(_ticketList.first);
         ticketInfo.show(context);
+        searchController.value = TextEditingValue(text: '', selection: TextSelection.fromPosition(const TextPosition(offset: 0)));
       }
       _isBarcodeScan = false;
-      searchController.value = TextEditingValue(text: '', selection: TextSelection.fromPosition(TextPosition(offset: 0)));
 
       setState(() {});
     }).whenComplete(() {
@@ -561,5 +586,9 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
           loadData(0);
           setState(() {});
         });
+  }
+
+  loadData(int i) {
+    _refreshIndicatorKey.currentState?.show();
   }
 }

@@ -3,8 +3,6 @@ import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/C/form_input_decoration.dart';
 import 'package:smartwind/M/NsUser.dart';
 
-import '../../C/OnlineDB.dart';
-
 class NewPassword extends StatefulWidget {
   Null Function() onEnd;
   var userId;
@@ -38,6 +36,7 @@ class _NewPasswordState extends State<NewPassword> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
+                            initialValue: 'sam123456',
                             onChanged: (text) {
                               _user.password = text;
                             },
@@ -90,6 +89,7 @@ class _NewPasswordState extends State<NewPassword> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
+                            initialValue: 'sam123456',
                             onChanged: (text) {
                               passwordReenter = text;
                               setState(() {});
@@ -105,9 +105,9 @@ class _NewPasswordState extends State<NewPassword> {
                               suffixIconConstraints: const BoxConstraints(minWidth: 5, minHeight: 5),
                               suffixIcon: passwordReenter == _user.password
                                   ? const Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Icon(Icons.done_rounded, size: 16, color: Colors.green),
-                                    )
+                                padding: EdgeInsets.all(8.0),
+                                child: Icon(Icons.done_rounded, size: 16, color: Colors.green),
+                              )
                                   : null,
                               border: InputBorder.none,
                               hintText: 'password',
@@ -142,10 +142,7 @@ class _NewPasswordState extends State<NewPassword> {
                                       save();
                                     }
                                   },
-                                  child: const Text(
-                                    'Continue',
-                                    style: TextStyle(color: Colors.white),
-                                  ))))
+                                  child: const Text('Continue', style: TextStyle(color: Colors.white)))))
                     ],
                   ),
                 ),
@@ -160,7 +157,7 @@ class _NewPasswordState extends State<NewPassword> {
     setState(() {
       saving = true;
     });
-    OnlineDB.apiPost("user/recoverPassword/savePassword", {"userId": widget.userId, 'password': _user.password}).then((value) {
+    Server.serverPost("user/recoverPassword/savePassword", {"userId": widget.userId, 'password': _user.password}).then((value) {
       Map data = value.data;
 
       if (data["error"] != null) {

@@ -28,7 +28,7 @@ class _QCViewState extends State<QCView> {
 
   @override
   Widget build(BuildContext context) {
-    var uRL = Server.getServerApiPath("tickets/qc/qcImageView?qcId=${widget.qc.id}");
+    var uRL = Server.getServerApiPath("tickets/qc/qcImageView?id=${widget.qc.id}");
 
     return Scaffold(
         appBar: AppBar(

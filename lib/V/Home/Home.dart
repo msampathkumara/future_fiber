@@ -15,6 +15,7 @@ import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/NsUser.dart';
+import 'package:smartwind/M/Section.dart';
 import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/V/Home/CPR/CPRList.dart';
 import 'package:smartwind/V/Home/CurrentUser/CurrentUserDetails.dart';
@@ -36,7 +37,7 @@ import 'Tickets/StandardFiles/StandardFiles.dart';
 import 'UserManager/UserManager.dart';
 
 class Home extends StatefulWidget {
-  Home();
+  const Home();
 
   @override
   _HomeState createState() {
@@ -92,10 +93,9 @@ class _HomeState extends State<Home> {
   }
 
   void _showMarkedAsDoneSnackBar(bool? isMarkedAsDone) {
-    if (isMarkedAsDone ?? false)
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Marked as done!'),
-      ));
+    if (isMarkedAsDone ?? false) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Marked as done!')));
+    }
   }
 
   double iconSize = 100.0;
@@ -104,34 +104,29 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return nsUser == null
         ? Center(
-            child: Container(
-                child: Column(
+            child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: [CircularProgressIndicator(), Padding(padding: const EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
-          )))
+            children: const [CircularProgressIndicator(), Padding(padding: EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
+          ))
         : Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.white,
-              elevation: 0,
-              toolbarHeight: 100,
-              title: Padding(
-                padding: const EdgeInsets.only(top: 24.0),
-                child: ListTile(
-                  // leading: CircleAvatar(radius: 24.0, backgroundImage: nsUser.getUserImage(), backgroundColor: Colors.transparent),
-                  leading: UserImage(
-                    nsUser: nsUser,
-                    radius: 24,
+        appBar: AppBar(
+                backgroundColor: Colors.white,
+                elevation: 0,
+                toolbarHeight: 100,
+                title: Padding(
+                  padding: const EdgeInsets.only(top: 24.0),
+                  child: ListTile(
+                    leading: UserImage(nsUser: nsUser, radius: 24),
+                    title: Text(nsUser!.name, textScaleFactor: 1.2),
+                    subtitle:
+                        AppUser.getSelectedSection() != null ? Text("${AppUser.getSelectedSection()?.sectionTitle} @ ${AppUser.getSelectedSection()?.factory}") : const Text(""),
+                    trailing: _currentUserOperionMenu(),
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => CurrentUserDetails(nsUser!)));
+                    },
                   ),
-                  title: Text(nsUser!.name, textScaleFactor: 1.2),
-                  subtitle: AppUser.getSelectedSection() != null ? Text("${AppUser.getSelectedSection()?.sectionTitle} @ ${AppUser.getSelectedSection()?.factory}") : Text(""),
-                  trailing: _currentUserOperionMenu(),
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => CurrentUserDetails(nsUser!)));
-                  },
-                ),
-              ),
-            ),
-            body: Container(
+                )),
+            body: SizedBox(
                 height: double.maxFinite,
                 width: double.maxFinite,
                 child: Stack(children: [
@@ -140,10 +135,7 @@ class _HomeState extends State<Home> {
                     right: 0,
                     child: ColorFiltered(
                       colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.1), BlendMode.dstATop),
-                      child: Image.asset(
-                        "assets/north_sails-logo.png",
-                        width: 350,
-                      ),
+                      child: Image.asset("assets/north_sails-logo.png", width: 350),
                     ),
                   ),
                   SingleChildScrollView(
@@ -193,14 +185,14 @@ class _HomeState extends State<Home> {
                                   closedBuilder: (BuildContext _, VoidCallback openContainer) {
                                     return _menuButton(openContainer, Icon(Icons.print_rounded, size: iconSize, color: Colors.blue), "Print");
                                   },
-                                  openWidget: PrintManager(),
+                                  openWidget: const PrintManager(),
                                   onClosed: _showMarkedAsDoneSnackBar),
                             if (AppUser.havePermissionFor(Permissions.QC))
                               _OpenContainerWrapper(
                                   closedBuilder: (BuildContext _, VoidCallback openContainer) {
                                     return _menuButton(openContainer, Icon(Icons.verified_rounded, size: iconSize, color: Colors.green), "QA & QC");
                                   },
-                                  openWidget: QCList(),
+                                  openWidget: const QCList(),
                                   onClosed: _showMarkedAsDoneSnackBar),
                             if (AppUser.havePermissionFor(Permissions.J109))
                               _OpenContainerWrapper(
@@ -223,18 +215,18 @@ class _HomeState extends State<Home> {
                                   },
                                   openWidget: HESystem(),
                                   onClosed: _showMarkedAsDoneSnackBar),
-                            ElevatedButton(
-                                onPressed: () {
-                                  HiveBox.getDataFromServer();
-                                  AppUser.refreshUserData();
-                                },
-                                child: Text("ssssssssssss")),
-                            ElevatedButton(
-                                onPressed: () {
-                                  HiveBox.getDataFromServer(clean: true);
-                                  AppUser.refreshUserData();
-                                },
-                                child: Text("ssssssssssss")),
+                            // ElevatedButton(
+                            //     onPressed: () {
+                            //       HiveBox.getDataFromServer();
+                            //       AppUser.refreshUserData();
+                            //     },
+                            //     child: const Text("ssssssssssss")),
+                            // ElevatedButton(
+                            //     onPressed: () {
+                            //       HiveBox.getDataFromServer(clean: true);
+                            //       AppUser.refreshUserData();
+                            //     },
+                            //     child: const Text("ssssssssssss")),
                             // ElevatedButton(
                             //     onPressed: () {
                             //       App.tryOtaUpdate((OtaEvent event) {
@@ -247,17 +239,17 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                   ),
-                  new Positioned(
+              Positioned(
                       bottom: 10,
                       left: 0,
                       right: 0,
-                      child: new Align(
+                      child: Align(
                           alignment: FractionalOffset.bottomCenter,
                           child: Center(
                               child: OpenContainer(
                                   closedElevation: 0,
                                   closedColor: Colors.transparent,
-                                  transitionDuration: Duration(milliseconds: 500),
+                                  transitionDuration: const Duration(milliseconds: 500),
                                   openBuilder: (BuildContext context, void Function({Object? returnValue}) action) {
                                     return About();
                                   },
@@ -306,9 +298,15 @@ class _HomeState extends State<Home> {
           // DB.updateDatabase(context, showLoadingDialog: true, reset: true);
           HiveBox.getDataFromServer(clean: true);
         } else if (result == MenuItems.changeSection) {
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => SectionSelector(nsUser!)), (Route<dynamic> route) => false);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => UserSectionSelector(nsUser!, (Section section) {
+                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const Home()), (Route<dynamic> route) => false);
+                      })),
+              (Route<dynamic> route) => false);
         } else if (result == MenuItems.cpanel) {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => AdminCpanel()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminCpanel()));
         } else if (result == MenuItems.DeleteDownloadedFiles) {
           var ed = await getExternalStorageDirectory();
           if (ed != null) {
@@ -366,7 +364,7 @@ class _HomeState extends State<Home> {
             onTap: openContainer,
             child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
               Expanded(
-                  child: Container(
+                  child: SizedBox(
                       height: 170,
                       child: Center(
                           child: DecoratedIcon(

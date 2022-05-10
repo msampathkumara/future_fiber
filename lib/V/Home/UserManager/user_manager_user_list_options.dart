@@ -83,6 +83,19 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
                     });
                   },
                 ),
+              if (AppUser.havePermissionFor(Permissions.RESET_PASSWORD))
+                ListTile(
+                  title: const Text("Reset Password"),
+                  subtitle: const Text("Generate OTP to reset Password"),
+                  leading: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Icon(Icons.password_rounded),
+                  ),
+                  onTap: () async {
+                    Navigator.of(context).pop();
+                    GenerateOTP(nsUser).show(context);
+                  },
+                ),
               const Spacer(),
             ],
           ),

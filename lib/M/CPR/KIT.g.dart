@@ -10,11 +10,11 @@ KIT _$KITFromJson(Map<String, dynamic> json) => KIT()
   ..ticket = json['ticket'] == null ? null : Ticket.fromJson(json['ticket'] as Map<String, dynamic>)
   ..sailType = json['sailType'] as String? ?? ''
   ..shortageType = json['shortageType'] as String? ?? ''
-  ..cprType = json['cprType'] as String? ?? ''
+  ..kitType = json['kitType'] as String? ?? ''
   ..client = json['client'] as String? ?? ''
   ..comment = json['comment'] as String? ?? ''
   ..image = json['image'] as String? ?? ''
-  ..items = (json['items'] as List<dynamic>?)?.map((e) => CprItem.fromJson(e as Map<String, dynamic>)).toList() ?? []
+  ..items = (json['items'] as List<dynamic>?)?.map((e) => KitItem.fromJson(e as Map<String, dynamic>)).toList() ?? []
   ..suppliers = (json['suppliers'] as List<dynamic>?)?.map((e) => e as String).toList() ?? []
   ..status = json['status'] as String? ?? ''
   ..id = json['id'] as int? ?? 0
@@ -23,14 +23,14 @@ KIT _$KITFromJson(Map<String, dynamic> json) => KIT()
   ..sentOn = json['sentOn'] as String?
   ..addedUserId = json['addedUserId'] as int? ?? 0
   ..addedOn = json['addedOn'] as String? ?? ''
-  ..isExpanded = json['isExpanded'] as bool? ?? false
-  ..cprs = (json['cprs'] as List<dynamic>?)?.map((e) => CprActivity.fromJson(e as Map<String, dynamic>)).toList() ?? [];
+  ..isExpanded = json['isExpanded'] as bool? ?? false;
 
-Map<String, dynamic> _$KITToJson(KIT instance) => <String, dynamic>{
+Map<String, dynamic> _$KITToJson(KIT instance) =>
+    <String, dynamic>{
       'ticket': instance.ticket?.toJson(),
       'sailType': instance.sailType,
       'shortageType': instance.shortageType,
-      'cprType': instance.cprType,
+      'kitType': instance.kitType,
       'client': instance.client,
       'comment': instance.comment,
       'image': instance.image,
@@ -44,5 +44,4 @@ Map<String, dynamic> _$KITToJson(KIT instance) => <String, dynamic>{
       'addedUserId': instance.addedUserId,
       'addedOn': instance.addedOn,
       'isExpanded': instance.isExpanded,
-      'cprs': instance.cprs.map((e) => e.toJson()).toList(),
     };

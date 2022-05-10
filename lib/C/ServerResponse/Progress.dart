@@ -6,32 +6,34 @@ part 'Progress.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class Progress {
-  @JsonKey()
+  @JsonKey(defaultValue: null, includeIfNull: true)
   int? doAt;
-  @JsonKey()
+  @JsonKey(defaultValue: null, includeIfNull: true)
   Object? finishedAt;
-  @JsonKey()
+  @JsonKey(defaultValue: null, includeIfNull: true)
   int? finishedBy;
-  @JsonKey()
+  @JsonKey(defaultValue: null, includeIfNull: true)
   String? finishedOn;
-  @JsonKey()
+  @JsonKey(defaultValue: null, includeIfNull: true)
   int? id;
-  @JsonKey()
+  @JsonKey(defaultValue: null, includeIfNull: true)
   int? nextOperationNo;
-  @JsonKey()
+  @JsonKey(defaultValue: null, includeIfNull: true)
   String? operation;
-  @JsonKey()
+  @JsonKey(defaultValue: null, includeIfNull: true)
   int? operationNo;
-  @JsonKey()
+  @JsonKey(defaultValue: null, includeIfNull: true)
   int? status;
-  @JsonKey()
+  @JsonKey(defaultValue: null, includeIfNull: true)
   int? ticketId;
-  @JsonKey()
+  @JsonKey(defaultValue: null, includeIfNull: true)
   String? upon;
-  @JsonKey()
+  @JsonKey(defaultValue: null, includeIfNull: true)
   Section? section;
 
+  @JsonKey(defaultValue: null, includeIfNull: true)
   NsUser? user;
+  @JsonKey(defaultValue: null, includeIfNull: true)
   String? timeToFinish = "";
 
   Progress();

@@ -71,7 +71,7 @@ class _UserImageState extends State<UserImage> {
                 height: widget.radius * 2,
                 fit: BoxFit.cover,
                 errorWidget: (context, url, error) {
-                  return Image.asset('images/userPlaceholder.jpg', fit: BoxFit.cover, width: widget.radius * 2, height: widget.radius * 2);
+                  return Image.asset('assets/images/userPlaceholder.jpg', fit: BoxFit.cover, width: widget.radius * 2, height: widget.radius * 2);
                 },
                 progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress))));
   }

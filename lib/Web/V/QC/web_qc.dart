@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:smartwind/M/QC.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
+import 'package:smartwind/Web/V/QC/webQView.dart';
 
 import '../../../C/Api.dart';
 import '../../../M/Enums.dart';

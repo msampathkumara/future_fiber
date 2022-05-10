@@ -132,6 +132,12 @@
 @import path_provider_ios;
 #endif
 
+#if __has_include(<pdf_render/PdfRenderPlugin.h>)
+#import <pdf_render/PdfRenderPlugin.h>
+#else
+@import pdf_render;
+#endif
+
 #if __has_include(<pdfx/PdfxPlugin.h>)
 #import <pdfx/PdfxPlugin.h>
 #else
@@ -192,6 +198,7 @@
   [NfcManagerPlugin registerWithRegistrar:[registry registrarForPlugin:@"NfcManagerPlugin"]];
   [FLTPackageInfoPlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTPackageInfoPlusPlugin"]];
   [FLTPathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTPathProviderPlugin"]];
+  [PdfRenderPlugin registerWithRegistrar:[registry registrarForPlugin:@"PdfRenderPlugin"]];
   [PdfxPlugin registerWithRegistrar:[registry registrarForPlugin:@"PdfxPlugin"]];
   [PermissionHandlerPlugin registerWithRegistrar:[registry registrarForPlugin:@"PermissionHandlerPlugin"]];
   [FLTSharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTSharedPreferencesPlugin"]];

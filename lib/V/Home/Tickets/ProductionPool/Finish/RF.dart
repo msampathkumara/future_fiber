@@ -7,7 +7,6 @@ import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/UserRFCredentials.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-
 import '../../../../../C/ServerResponse/OperationMinMax.dart';
 import '../../../../../C/ServerResponse/Progress.dart';
 import 'PDFViewWidget.dart';
@@ -55,7 +54,7 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
 
     _tabBarcontroller = TabController(length: tabs.length, vsync: this);
 
-    DefaultAssetBundle.of(context).loadString('assets/js.txt').then((value) {
+    DefaultAssetBundle.of(context).loadString('assets/js1.txt').then((value) {
       jsString = setupData("$value");
       _webView = WebView(
         // initialUrl:

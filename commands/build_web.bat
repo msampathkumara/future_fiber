@@ -1,1 +1,1 @@
-flutter pub get & flutter build web --web-renderer html    & xcopy /s ..\build\web ..\..\smartwind-server\UI /Y
+flutter pub get & flutter build web  --release    & xcopy /s ..\build\web ..\..\smartwind-server\UI /Y

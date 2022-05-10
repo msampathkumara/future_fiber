@@ -46,10 +46,10 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
           toolbarHeight: 80,
           backgroundColor: themeColor,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.pop(context),
           ),
-          title: Text("Print", textScaleFactor: 1.2),
+          title: const Text("Print", textScaleFactor: 1.2),
           bottom: SearchBar(
               searchController: searchController,
               delay: 300,
@@ -65,13 +65,14 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
         ),
         body: getBody(),
         bottomNavigationBar: BottomAppBar(
-            shape: CircularNotchedRectangle(),
+            shape: const CircularNotchedRectangle(),
             color: themeColor,
             child: IconTheme(
-              data: IconThemeData(color: Colors.white),
+              data: const IconThemeData(color: Colors.white),
               child: Row(
                 children: [
-                  Padding(padding: const EdgeInsets.all(8.0), child: Text("${_ticketPrintList.length}/$dataCount", textScaleFactor: 1.1, style: TextStyle(color: Colors.white))),
+                  Padding(
+                      padding: const EdgeInsets.all(8.0), child: Text("${_ticketPrintList.length}/$dataCount", textScaleFactor: 1.1, style: const TextStyle(color: Colors.white))),
                   const Spacer(),
                   // Text("Sorted by $sortedBy", style: TextStyle(color: Colors.white)),
                   // InkWell(
@@ -123,8 +124,8 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
             color: Colors.transparent,
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
                   child: Text(
                     "Sort By",
                     textScaleFactor: 1.2,
@@ -177,7 +178,7 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
         body: _getTicketsList());
   }
 
-  var _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+  final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   _productionChip(Production p) {
     return Padding(
@@ -247,8 +248,8 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
                                           child: Padding(
                                               padding: const EdgeInsets.all(12.0),
                                               child: !_dataLoadingError
-                                                  ? CircularProgressIndicator(color: Colors.red, strokeWidth: 2)
-                                                  : Icon(
+                                                  ? const CircularProgressIndicator(color: Colors.red, strokeWidth: 2)
+                                                  : const Icon(
                                                       Icons.refresh_rounded,
                                                       size: 18,
                                                     ))),
@@ -275,12 +276,12 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
                               border: Border.all(
                                 color: Colors.white,
                               ),
-                              borderRadius: BorderRadius.all(Radius.circular(20))),
+                              borderRadius: const BorderRadius.all(const Radius.circular(20))),
                           child: ListTile(
                               leading: Text("${index + 1}"),
                               title: Text(
                                 (ticketPrint.ticket!.mo ?? "").trim().isEmpty ? (ticketPrint.ticket!.oe ?? "") : ticketPrint.ticket!.mo ?? "",
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -295,7 +296,7 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
                               trailing: Wrap(children: [Text("${ticketPrint.action}", textScaleFactor: 1)]))));
                 },
                 separatorBuilder: (BuildContext context, int index) {
-                  return Divider(
+                  return const Divider(
                     height: 1,
                     endIndent: 0.5,
                     color: Colors.black12,
@@ -315,7 +316,7 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
       context: context,
       builder: (BuildContext context) {
         return Container(
-          decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
+          decoration: const BoxDecoration(borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
           height: 350,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -325,21 +326,21 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
                 title: Text(ticket.mo ?? ticket.oe!),
                 subtitle: Text(ticket.oe!),
               ),
-              Divider(),
+              const Divider(),
               Expanded(
                   child: Container(
                 child: SingleChildScrollView(
                     child: Column(children: [
                   ListTile(
-                      title: Text("Send Ticket"),
-                      leading: Icon(Icons.send_rounded, color: Colors.lightBlue),
+                      title: const Text("Send Ticket"),
+                      leading: const Icon(Icons.send_rounded, color: Colors.lightBlue),
                       onTap: () async {
                         await ticket.sharePdf(context);
                         Navigator.of(context).pop();
                       }),
                   ListTile(
-                      title: Text("Delete"),
-                      leading: Icon(Icons.delete_forever, color: Colors.red),
+                      title: const Text("Delete"),
+                      leading: const Icon(Icons.delete_forever, color: Colors.red),
                       onTap: () async {
                         Navigator.of(context).pop();
                       }),

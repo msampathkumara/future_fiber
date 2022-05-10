@@ -166,8 +166,9 @@ StandardTicket _$StandardTicketFromJson(Map<String, dynamic> json) =>
       ..atSection = json['atSection'] as String? ?? ''
       ..isQc = json['isQc'] as int? ?? 0
       ..isQa = json['isQa'] as int? ?? 0
-      ..production = json['production'] as String?
-      ..usedCount = json['usedCount'] as int? ?? 0
+  ..loading = json['loading'] as bool? ?? false
+  ..production = json['production'] as String?
+  ..usedCount = json['usedCount'] as int? ?? 0
       ..uptime = json['uptime'] as int? ?? 0;
 
 Map<String, dynamic> _$StandardTicketToJson(StandardTicket instance) =>
@@ -200,6 +201,7 @@ Map<String, dynamic> _$StandardTicketToJson(StandardTicket instance) =>
       'atSection': instance.atSection,
       'isQc': instance.isQc,
       'isQa': instance.isQa,
+      'loading': instance.loading,
       'production': instance.production,
       'usedCount': instance.usedCount,
       'uptime': instance.uptime,
