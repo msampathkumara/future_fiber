@@ -25,8 +25,8 @@ class DeviceAdapter extends TypeAdapter<Device> {
       ..serialNumber = fields[6] as String?
       ..tab = fields[7] == null ? 0 : fields[7] as int?
       ..stylus = fields[8] == null ? 0 : fields[8] as int
-      ..logOn = fields[9] as int?
-      ..outOn = fields[10] as int?
+      ..logOn = fields[9] as String?
+      ..outOn = fields[10] as String?
       ..userId = fields[11] as int?
       ..longitude = fields[12] as int?
       ..latitude = fields[13] as int?
@@ -84,7 +84,8 @@ class DeviceAdapter extends TypeAdapter<Device> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-Device _$DeviceFromJson(Map<String, dynamic> json) => Device()
+Device _$DeviceFromJson(Map<String, dynamic> json) =>
+    Device()
   ..id = json['id'] as int?
   ..name = json['name'] as String? ?? ''
   ..imei = json['imei'] as String?
@@ -93,8 +94,8 @@ Device _$DeviceFromJson(Map<String, dynamic> json) => Device()
   ..serialNumber = json['serialNumber'] as String?
   ..tab = json['tab'] as int? ?? 0
   ..stylus = json['stylus'] as int? ?? 0
-  ..logOn = json['logOn'] as int?
-  ..outOn = json['outOn'] as int?
+  ..logOn = json['logOn'] as String?
+  ..outOn = json['outOn'] as String?
   ..userId = json['userId'] as int?
   ..longitude = json['longitude'] as int?
   ..latitude = json['latitude'] as int?

@@ -45,14 +45,14 @@ class _FinishCheckListState extends State<FinishCheckList> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
-              return Text('Loading....');
+              return const Text('Loading....');
             default:
-              if (snapshot.hasError)
+              if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
-              else
+              } else {
                 return AlertDialog(
-                  title: Text("Check List"),
-                  content: Container(
+                  title: const Text("Check List"),
+                  content: SizedBox(
                     height: height / 2,
                     width: width - 200,
                     child: Scaffold(
@@ -66,7 +66,7 @@ class _FinishCheckListState extends State<FinishCheckList> {
                                 return ListTile(
                                   title: Text(
                                     t,
-                                    style: TextStyle(fontSize: 20),
+                                    style: const TextStyle(fontSize: 20),
                                   ),
                                 );
                               }),
@@ -76,9 +76,9 @@ class _FinishCheckListState extends State<FinishCheckList> {
                   ),
                   actions: [
                     ElevatedButton(
-                        style: ElevatedButton.styleFrom(primary: Colors.green, textStyle: TextStyle(fontWeight: FontWeight.bold)),
+                        style: ElevatedButton.styleFrom(primary: Colors.green, textStyle: const TextStyle(fontWeight: FontWeight.bold)),
                         onPressed: () {
-                          var loadingWidget = Loading(
+                          var loadingWidget = const Loading(
                             loadingText: "Loading",
                             showProgress: false,
                           );
@@ -109,9 +109,9 @@ class _FinishCheckListState extends State<FinishCheckList> {
                             // }
                           });
                         },
-                        child: Text("Agree")),
+                        child: const Text("Agree")),
                     ElevatedButton(
-                        style: ElevatedButton.styleFrom(primary: Colors.redAccent, textStyle: TextStyle(fontWeight: FontWeight.bold)),
+                        style: ElevatedButton.styleFrom(primary: Colors.redAccent, textStyle: const TextStyle(fontWeight: FontWeight.bold)),
                         onPressed: () async {
                           if (Navigator.canPop(context)) {
                             Navigator.pop(context);
@@ -128,6 +128,7 @@ class _FinishCheckListState extends State<FinishCheckList> {
 
                           var xx = await platform.invokeMethod('qcEdit', {
                             "qc": isQc,
+                            "sectionId": "${AppUser.getSelectedSection()?.id}",
                             "serverUrl": Server.getServerApiPath("tickets/qc/uploadEdits"),
                             'ticket': {'id': ticket.id, "qc": isQc}.toString()
                           });
@@ -143,14 +144,15 @@ class _FinishCheckListState extends State<FinishCheckList> {
                           //   });
                           // });
                         },
-                        child: Text("Disagree"))
+                        child: const Text("Disagree"))
                   ],
                 );
+              }
           }
         });
   }
 
-  static const platform = const MethodChannel('editPdf');
+  static const platform = MethodChannel('editPdf');
 
   _loadData() async {
     var x = DefaultAssetBundle.of(context);

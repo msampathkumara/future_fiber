@@ -34,7 +34,7 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
     super.initState();
     _cpr = widget.cpr;
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _tabBarController = TabController(length: 2, vsync: this);
       _tabBarController!.addListener(() {
         print("Selected Index: " + _tabBarController!.index.toString());

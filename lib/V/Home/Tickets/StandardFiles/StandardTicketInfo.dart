@@ -49,7 +49,7 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
     standardTicketUsageCount = HiveBox.standardTicketsBox.values.fold(0, (previousValue, element) => previousValue + element.usedCount);
     _progress = standardTicketUsageCount == 0 ? 0 : (standardTicket.usedCount / standardTicketUsageCount) * 100;
 
-    SchedulerBinding.instance!.addPostFrameCallback((_) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
       _refreshIndicatorKey.currentState?.show();
     });
     _dbChangeCallBack = DB.setOnDBChangeListener(() {

@@ -30,7 +30,7 @@ class _myDropDownState<T> extends State<myDropDown<T>> {
 
   @override
   void initState() {
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _selectinString = widget.selectedText.call(widget.value);
     });
 

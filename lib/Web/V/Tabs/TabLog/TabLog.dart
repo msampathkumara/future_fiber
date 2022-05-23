@@ -39,6 +39,7 @@ class _TabLogState extends State<TabLog> {
   @override
   Widget build(BuildContext context) {
     return DialogView(
+        width: 1000,
         child: Scaffold(
             appBar: AppBar(title: Text("Tab Log")),
             body: Row(
@@ -61,13 +62,12 @@ class _TabLogState extends State<TabLog> {
                                 ]))))),
                 Expanded(
                     child: Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 16.0, 16, 16),
-                  child: Material(
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      padding: const EdgeInsets.fromLTRB(0, 16.0, 16, 16),
+                      child: Material(
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
                       elevation: 4,
                       borderRadius: BorderRadius.circular(8),
-                      child: Container(
-                          child: TabLogDataTable(
+                      child: TabLogDataTable(
                         onInit: (TabLogDataSourceAsync dataSource) {
                           _dataSource = dataSource;
                         },
@@ -75,15 +75,14 @@ class _TabLogState extends State<TabLog> {
                           return getData(page, startingAt, count, sortedBy, sortedAsc);
                         },
                         onTap: (_sheetData) {},
-                      ))),
+                      )),
                 ))
               ],
-            )),
-        width: 1000);
+            )));
   }
 
   getData(int page, int startingAt, int count, String sortedBy, bool sortedAsc) {
-    return Api.get("tabs/logList", {'tab': device.id, 'type': 'All', 'sortDirection': sortedAsc ? "asc" : "desc", 'sortBy': sortedBy, 'pageIndex': page, 'pageSize': count})
+    return Api.get("tabs/logList", {'tab': device.id, 'type': 'All', 'sortedAsc': sortedAsc, 'sortBy': sortedBy, 'pageIndex': page, 'pageSize': count})
         .then((res) {
           print(res.data);
           List log = res.data["tabLog"];

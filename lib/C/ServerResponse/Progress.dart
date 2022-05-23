@@ -30,6 +30,10 @@ class Progress {
   String? upon;
   @JsonKey(defaultValue: null, includeIfNull: true)
   Section? section;
+  @JsonKey(defaultValue: false, includeIfNull: true, fromJson: _intToBool)
+  bool isQa = false;
+  @JsonKey(defaultValue: false, includeIfNull: true, fromJson: _intToBool)
+  bool isQc = false;
 
   @JsonKey(defaultValue: null, includeIfNull: true)
   NsUser? user;
@@ -39,6 +43,8 @@ class Progress {
   Progress();
 
   factory Progress.fromJson(Map<String, dynamic> json) => _$ProgressFromJson(json);
+
+  static _intToBool(int i) => i == 1;
 
   Map<String, dynamic> toJson() => _$ProgressToJson(this);
 }

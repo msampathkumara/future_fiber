@@ -244,7 +244,7 @@ class _AddCprState extends State<AddCpr> {
                                         padding: const EdgeInsets.all(16.0),
                                         child: DropdownSearch<String>(
                                             selectedItem: cpr.client,
-                                            mode: Mode.BOTTOM_SHEET,
+                                            // mode: Mode.BOTTOM_SHEET,
                                             // showSelectedItem: true,
                                             items: const ["Upwind", "OD", "Nylon", "OEM"],
                                             dropdownSearchDecoration: const InputDecoration(

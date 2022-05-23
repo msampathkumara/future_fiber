@@ -12,6 +12,7 @@ import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
+import 'package:smartwind/res.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../C/FCM.dart';
@@ -118,7 +119,7 @@ class _LoginState extends State<Login> {
                       if (kIsWeb)
                         Container(
                           decoration: const BoxDecoration(
-                            image: DecorationImage(image: AssetImage("assets/images/background.jpg"), fit: BoxFit.cover),
+                            image: DecorationImage(image: AssetImage(Res.background), fit: BoxFit.cover),
                           ),
                           child: null /* add child content here */,
                         ),
@@ -359,8 +360,8 @@ class _LoginState extends State<Login> {
       if (kIsWeb)
         SizedBox.expand(
             child: FittedBox(
-          fit: BoxFit.cover,
-          child: Image.asset("assets/images/background.jpg"),
+              fit: BoxFit.cover,
+          child: Image.asset(Res.background),
         )),
       if (!loading) Center(child: _body()),
       if (loading)

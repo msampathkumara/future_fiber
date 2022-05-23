@@ -53,7 +53,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
   initState() {
     super.initState();
     idToken = widget.idToken;
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _tabBarController = TabController(length: tabs.length, vsync: this);
       _tabBarController!.addListener(() {
         print("Selected Index: " + _tabBarController!.index.toString());

@@ -22,7 +22,7 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
   @override
   initState() {
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _refreshIndicatorKey.currentState?.show();
       // loadData(0);
     });

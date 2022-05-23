@@ -224,7 +224,7 @@ class DessertDataSource extends DataTableSource {
           direction: Axis.vertical,
           children: [
             Text('${ticket.production}'),
-            Text('${ticket.atSection}', style: const TextStyle(color: Colors.red, fontSize: 12)),
+            Text(ticket.atSection, style: const TextStyle(color: Colors.red, fontSize: 12)),
           ],
         )),
         DataCell(Text("${ticket.progress}%")),
@@ -246,53 +246,53 @@ class DessertDataSource extends DataTableSource {
                   }),
             if (ticket.inPrint == 1)
               IconButton(
-                icon: const CircleAvatar(child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white),
+                icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)),
                 onPressed: () {
                   TicketPrintList(ticket).show(context);
                 },
               ),
             if (ticket.crossPro == 1)
               IconButton(
-                  icon: const CircleAvatar(child: Icon(Icons.merge_type_rounded, color: Colors.green), backgroundColor: Colors.white),
+                  icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.merge_type_rounded, color: Colors.green)),
                   onPressed: () {
                     CrossProductionChangeList(ticket).show(context);
                   }),
             if (ticket.isHold == 1)
               IconButton(
-                icon: const CircleAvatar(child: Icon(NsIcons.stop, color: Colors.black), backgroundColor: Colors.white),
+                icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.stop, color: Colors.black)),
                 onPressed: () {
                   FlagDialog().showFlagView(context, ticket, TicketFlagTypes.HOLD);
                 },
               ),
             if (ticket.isGr == 1)
               IconButton(
-                icon: const CircleAvatar(child: Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white),
+                icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)),
                 onPressed: () {
                   FlagDialog().showFlagView(context, ticket, TicketFlagTypes.GR);
                 },
               ),
             if (ticket.isSk == 1)
               IconButton(
-                icon: const CircleAvatar(child: Icon(NsIcons.sk, color: Colors.pink), backgroundColor: Colors.white),
+                icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)),
                 onPressed: () {},
               ),
             if (ticket.isError == 1)
-              IconButton(icon: const CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white), onPressed: () {}),
+              IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.report_problem_rounded, color: Colors.red)), onPressed: () {}),
             if (ticket.isSort == 1)
               IconButton(
-                  icon: const CircleAvatar(child: Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white),
+                  icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.local_mall_rounded, color: Colors.green)),
                   onPressed: () {
                     TicketSortMaterials(ticket).show(context);
                   }),
             if (ticket.isRush == 1)
               IconButton(
-                  icon: const CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white),
+                  icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent)),
                   onPressed: () {
                     FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RUSH);
                   }),
             if (ticket.isRed == 1)
               IconButton(
-                icon: const CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white),
+                icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)),
                 onPressed: () {
                   FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RED);
                 },

@@ -96,7 +96,9 @@ class HiveBox {
   static Future getDataFromServer({clean = false}) async {
     print('__________________________________________________________________________________________________________getDataFromServer');
     if (clean) {
-      await userConfigBox.clear();
+      // await userConfigBox.clear();
+      await userConfigBox.delete('upons');
+      // await setUptimes(Upons());
     }
     Upons uptimes = getUptimes();
     Map<String, dynamic> d = uptimes.toJson();
@@ -194,7 +196,7 @@ class HiveBox {
     return userConfigBox.get("upons", defaultValue: Upons());
   }
 
-  static void setUptimes(upons) {
+  static setUptimes(upons) {
     var x = {...getUptimes().toJson(), ...upons};
     Map<String, dynamic> xx = Map<String, dynamic>.from(x);
     var upons2 = Upons.fromJson(xx);

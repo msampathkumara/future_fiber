@@ -508,7 +508,7 @@ public class MainEditorActivity extends AppCompatActivity {
                                     try {
                                         page.getBitmap().compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(imageFile));
                                         System.out.println("image saved " + (System.currentTimeMillis() - x));
-                                        PDImageXObject pdImage = PDImageXObject.createFromFile(imageFile, finalDoc);
+                                        PDImageXObject pdImage = PDImageXObject.createFromFile(String.valueOf(imageFile), finalDoc);
                                         System.out.println("image PDImageXObject " + (System.currentTimeMillis() - x));
                                         PDPageContentStream contentStream = new PDPageContentStream(finalDoc, p, true, true, true);
                                         contentStream.drawImage(pdImage, 0, 0, p.getMediaBox().getWidth(), p.getMediaBox().getHeight());

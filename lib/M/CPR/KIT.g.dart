@@ -25,8 +25,7 @@ KIT _$KITFromJson(Map<String, dynamic> json) => KIT()
   ..addedOn = json['addedOn'] as String? ?? ''
   ..isExpanded = json['isExpanded'] as bool? ?? false;
 
-Map<String, dynamic> _$KITToJson(KIT instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$KITToJson(KIT instance) => <String, dynamic>{
       'ticket': instance.ticket?.toJson(),
       'sailType': instance.sailType,
       'shortageType': instance.shortageType,

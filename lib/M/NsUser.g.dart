@@ -34,8 +34,7 @@ class NsUserAdapter extends TypeAdapter<NsUser> {
       ..address = fields[14] == null ? '' : fields[14] as String
       ..hasNfc = fields[15] == null ? 0 : fields[15] as int
       ..deactivate = fields[16] == null ? 0 : fields[16] as int
-      ..permissions =
-          fields[17] == null ? [] : (fields[17] as List).cast<String>()
+      ..permissions = fields[17] == null ? [] : (fields[17] as List).cast<String>()
       ..upon = fields[18] == null ? 0 : fields[18] as int
       ..emails = fields[19] == null ? [] : (fields[19] as List).cast<Email>()
       ..uptime = fields[101] == null ? 0 : fields[101] as int;
@@ -119,9 +118,7 @@ NsUser _$NsUserFromJson(Map<String, dynamic> json) => NsUser()
   ..img = json['img'] as String? ?? ''
   ..sectionName = json['sectionName'] as String? ?? '-'
   ..emailAddress = json['emailAddress'] as String? ?? '-'
-  ..sections = (json['sections'] as List<dynamic>?)
-          ?.map((e) => Section.fromJson(e as Map<String, dynamic>))
-          .toList() ?? []
+  ..sections = (json['sections'] as List<dynamic>?)?.map((e) => Section.fromJson(e as Map<String, dynamic>)).toList() ?? []
   ..nic = json['nic']
   ..address = json['address'] as String? ?? ''
   ..hasNfc = json['hasNfc'] as int? ?? 0

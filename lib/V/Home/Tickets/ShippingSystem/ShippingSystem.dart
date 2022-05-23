@@ -25,7 +25,7 @@ class _ShippingSystemState extends State<ShippingSystem> with TickerProviderStat
   initState() {
     ticket = widget.ticket;
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _tabBarController = TabController(length: tabs.length, vsync: this);
       _tabBarController!.addListener(() {
         print("Selected Index: " + _tabBarController!.index.toString());

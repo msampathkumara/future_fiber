@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
@@ -44,12 +43,13 @@ public class QCEditor extends AppCompatActivity {
     int RequestedOrientation;
     boolean isQc = false;
     private String serverUrl;
+    private String sectionId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        StrictMode.ThreadPolicy policy = null;
+        StrictMode.ThreadPolicy policy;
         policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
@@ -78,6 +78,7 @@ public class QCEditor extends AppCompatActivity {
             SELECTED_FILE = Ticket.formJsonString(getIntent().getExtras().getString("ticket"));
             isQc = (getIntent().getExtras().getBoolean("qc"));
             serverUrl = (getIntent().getExtras().getString("serverUrl"));
+            sectionId = (getIntent().getExtras().getString("sectionId"));
             System.out.println("---------------------------------------------------------");
             System.out.println(SELECTED_FILE.id);
         } else {
@@ -96,14 +97,12 @@ public class QCEditor extends AppCompatActivity {
         PDDocument doc = new PDDocument();
         PDPage page = new PDPage();
         doc.addPage(page);
-        PDPageContentStream contentStream = null;
+        PDPageContentStream contentStream;
         String path = "";
         try {
             contentStream = new PDPageContentStream(doc, page);
             contentStream.close();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-                path = this.getExternalFilesDir("Files").getPath() + "/QAtemplate.pdf";
-            }
+            path = this.getExternalFilesDir("Files").getPath() + "/QAtemplate.pdf";
             doc.save(path);
         } catch (IOException e) {
             e.printStackTrace();
@@ -155,9 +154,7 @@ public class QCEditor extends AppCompatActivity {
             if (resultCode == Activity.RESULT_OK) {
                 onBackPressed();
             }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                //Write your code if there's no result
-            }
+
         }
 
 
@@ -249,6 +246,7 @@ public class QCEditor extends AppCompatActivity {
                 HashMap<String, String> vals = new HashMap<>();
 
                 vals.put("file", SELECTED_FILE.id + "");
+                vals.put("sectionId", sectionId);
                 vals.put("ticketId", SELECTED_FILE.id + "");
                 vals.put("svgs", value.toString());
                 vals.put("type", isQc ? "qc" : "qa");

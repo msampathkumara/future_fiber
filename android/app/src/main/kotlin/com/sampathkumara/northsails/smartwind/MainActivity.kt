@@ -88,8 +88,10 @@ class MainActivity : FlutterActivity() {
                     val ticket = call.argument<String>("ticket")
                     val qc = call.argument<Boolean>("qc")
                     val serverUrl = call.argument<String>("serverUrl")
+                    val sectionId = call.argument<String>("sectionId")
 
                     println(" $qc---------------------------------- _$ticket")
+                    println("----sectionId------------------------------ _$sectionId")
 
 
                     val i = Intent(this, QCEditor::class.java)
@@ -97,6 +99,7 @@ class MainActivity : FlutterActivity() {
                     i.putExtra("ticket", ticket)
                     i.putExtra("qc", qc)
                     i.putExtra("serverUrl", serverUrl)
+                    i.putExtra("sectionId", sectionId)
                     startActivityForResult(i, qaEdit)
 
 

@@ -44,7 +44,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
   initState() {
     nsUser = AppUser.getUser();
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _tabBarController = TabController(length: tabs.length, vsync: this);
       updateTabControler();
       loadData();
@@ -79,8 +79,8 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
 
               openTicketByBarcode(barcode);
             },
-            child: const Icon(Icons.qr_code_rounded),
-            backgroundColor: Colors.green),
+            backgroundColor: Colors.green,
+            child: const Icon(Icons.qr_code_rounded)),
         appBar: AppBar(
             actions: <Widget>[
               PopupMenuButton<String>(
@@ -103,8 +103,8 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                   return {"Show All Tickets"}.map((String choice) {
                     return CheckedPopupMenuItem<String>(
                       value: choice,
-                      child: Text(choice),
                       checked: _showAllTickets,
+                      child: Text(choice),
                     );
                   }).toList();
                 },
@@ -242,7 +242,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
           child: RefreshIndicator(
             key: _refreshIndicatorKey,
             onRefresh: () {
-              return HiveBox.getDataFromServer(clean: true).then((value) {
+              return HiveBox.getDataFromServer().then((value) {
                 loadData();
               });
             },
@@ -373,11 +373,11 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
   flagIcon(Filters filter, IconData icon, {String? text}) {
     return IconButton(
       icon: CircleAvatar(
+          backgroundColor: Colors.white,
+          radius: 16,
           child: (text != null)
               ? Text(text, style: TextStyle(color: dataFilter == filter ? Colors.red : Colors.black, fontWeight: FontWeight.bold))
-              : Icon(icon, color: dataFilter == filter ? Colors.red : Colors.black, size: 20),
-          backgroundColor: Colors.white,
-          radius: 16),
+              : Icon(icon, color: dataFilter == filter ? Colors.red : Colors.black, size: 20)),
       tooltip: 'Increase volume by 10',
       onPressed: () async {
         if (dataFilter == filter) {
@@ -476,7 +476,7 @@ class TicketTile extends StatelessWidget {
             children: [
               if ((ticket.mo ?? "").trim().isNotEmpty) Text((ticket.oe ?? "")),
               if (ticket.crossPro == 1)
-                Chip(padding: const EdgeInsets.all(4.0), avatar: const CircleAvatar(child: Icon(Icons.merge_type_outlined, size: 12), radius: 8), label: Text(ticket.crossProList)),
+                Chip(padding: const EdgeInsets.all(4.0), avatar: const CircleAvatar(radius: 8, child: Icon(Icons.merge_type_outlined, size: 12)), label: Text(ticket.crossProList)),
               // Text(" t${ticket.nowAt}"),
               // Text("  ${ticket.production}"),
               if (ticket.shipDate.isNotEmpty)
@@ -497,41 +497,41 @@ class TicketTile extends StatelessWidget {
             children: [
               if (ticket.inPrint == 1)
                 IconButton(
-                  icon: const CircleAvatar(child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white),
+                  icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)),
                   onPressed: () {},
                 ),
               if (ticket.isHold == 1)
                 IconButton(
-                  icon: const CircleAvatar(child: Icon(NsIcons.stop, color: Colors.black), backgroundColor: Colors.white),
+                  icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.stop, color: Colors.black)),
                   onPressed: () {
                     FlagDialog().showFlagView(context, ticket, TicketFlagTypes.HOLD);
                   },
                 ),
               if (ticket.isGr == 1)
                 IconButton(
-                  icon: const CircleAvatar(child: Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white),
+                  icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)),
                   onPressed: () {
                     FlagDialog().showFlagView(context, ticket, TicketFlagTypes.GR);
                   },
                 ),
               if (ticket.isSk == 1)
                 IconButton(
-                  icon: const CircleAvatar(child: Icon(NsIcons.sk, color: Colors.pink), backgroundColor: Colors.white),
+                  icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)),
                   onPressed: () {},
                 ),
               if (ticket.isError == 1)
-                IconButton(icon: const CircleAvatar(child: Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white), onPressed: () {}),
+                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.report_problem_rounded, color: Colors.red)), onPressed: () {}),
               if (ticket.isSort == 1)
-                IconButton(icon: const CircleAvatar(child: Icon(Icons.local_mall_rounded, color: Colors.green), backgroundColor: Colors.white), onPressed: () {}),
+                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.local_mall_rounded, color: Colors.green)), onPressed: () {}),
               if (ticket.isRush == 1)
                 IconButton(
-                    icon: const CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white),
+                    icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent)),
                     onPressed: () {
                       FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RUSH);
                     }),
               if (ticket.isRed == 1)
                 IconButton(
-                  icon: const CircleAvatar(child: Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white),
+                  icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)),
                   onPressed: () {
                     FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RED);
                   },

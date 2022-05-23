@@ -43,11 +43,11 @@ class Device {
 
   @HiveField(9, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)
-  int? logOn;
+  String? logOn;
 
   @HiveField(10, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)
-  int? outOn;
+  String? outOn;
 
   @HiveField(11, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)
@@ -75,9 +75,7 @@ class Device {
 
   factory Device.fromJson(Map<String, dynamic> json) => _$DeviceFromJson(json);
 
-  get logOnDateTime => getDateTime(logOn);
 
-  get outOnDateTime => getDateTime(outOn);
 
   Map<String, dynamic> toJson() => _$DeviceToJson(this);
 

@@ -105,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       primaryColor = Theme.of(context).primaryColor;
       AppTheme = Theme.of(context);
     });
@@ -133,20 +133,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _getUi(hasData) {
     if (hasData) {
-      print('-----------------------------------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx ' + (FirebaseAuth.instance.currentUser != null ? "have" : ""));
       if (FirebaseAuth.instance.currentUser != null && App.currentUser != null) {
-        print('-----------------------------------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx__2222222222222222222222');
-
-        return Home();
+        return const Home();
       }
       return Login();
     } else {
       return Center(
-          child: Container(
-              child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: const [CircularProgressIndicator(), Padding(padding: EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
-      )));
+          child: Column(
+              mainAxisSize: MainAxisSize.min, children: const [CircularProgressIndicator(), Padding(padding: EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))]));
     }
   }
 }

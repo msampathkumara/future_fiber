@@ -31,7 +31,7 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
     super.initState();
     _cpr.ticket = widget.ticket;
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _tabBarController = TabController(length: 2, vsync: this);
       _tabBarController!.addListener(() {
         print("Selected Index: " + _tabBarController!.index.toString());
@@ -199,11 +199,11 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                               padding: const EdgeInsets.all(16.0),
                               child: DropdownSearch<String>(
                                   selectedItem: _cpr.cprType,
-                                  showSearchBox: true,
-                                  mode: Mode.DIALOG,
+                                  // showSearchBox: true,
+                                  // mode: Mode.DIALOG,
                                   // showSelectedItem: true,
                                   showClearButton: true,
-                                  isFilteredOnline: true,
+                                  // isFilteredOnline: true,
                                   items: _cprTypes,
                                   dropdownSearchDecoration: const InputDecoration(
                                     hintText: "Select CPR Type",
@@ -222,7 +222,7 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                                 padding: const EdgeInsets.all(16.0),
                                 child: DropdownSearch<String>(
                                     selectedItem: _cpr.client,
-                                    mode: Mode.BOTTOM_SHEET,
+                                    // mode: Mode.BOTTOM_SHEET,
                                     // showSelectedItem: true,
                                     items: ["Upwind", "OD", "Nylon", "OEM"],
                                     dropdownSearchDecoration: const InputDecoration(
@@ -277,12 +277,12 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                                       selectedItem: "",
                                       items: [],
                                       // searchBoxController: _nameController,
-                                      showSearchBox: true,
+                                      // showSearchBox: true,
                                       // autoFocusSearchBox: true,
-                                      mode: Mode.BOTTOM_SHEET,
+                                      // mode: Mode.BOTTOM_SHEET,
                                       // showSelectedItem: _showSelectedItem,
                                       showClearButton: true,
-                                      isFilteredOnline: true,
+                                      // isFilteredOnline: true,
                                       // onFind: (String filter) => getData(filter),
                                       dropdownSearchDecoration: const InputDecoration(
                                         labelText: "Materials",
@@ -296,7 +296,7 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                                   width: 100,
                                   child: TextField(
                                       controller: _qtyController,
-                                      decoration: new InputDecoration(border: new OutlineInputBorder(borderSide: new BorderSide(color: Colors.teal)), labelText: 'QTY'),
+                                      decoration: const InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.teal)), labelText: 'QTY'),
                                       onChanged: (text) {
                                         currentMaterial.qty = (text);
                                       })),

@@ -33,7 +33,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
     super.initState();
     _productions = Production.values.where((element) => element != Production.None).toList();
     tabs = _productions.map<String>((e) => e.getValue()).toList();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _tabBarController = TabController(length: tabs.length, vsync: this);
       _tabBarController!.addListener(() {
         print("Selected Index: " + _tabBarController!.index.toString());

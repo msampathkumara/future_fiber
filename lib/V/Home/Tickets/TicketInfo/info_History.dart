@@ -22,7 +22,7 @@ class _InfoHistoryState extends State<InfoHistory> {
 
   @override
   void initState() {
-    WidgetsBinding.instance?.addPostFrameCallback((_) => _controller.jumpTo(_controller.position.maxScrollExtent));
+    WidgetsBinding.instance.addPostFrameCallback((_) => _controller.jumpTo(_controller.position.maxScrollExtent));
 
     super.initState();
   }

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:smartwind/M/Device.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 
+import '../../../C/Api.dart';
+
 class DeviceRenameDialog extends StatefulWidget {
   final Device device;
 
@@ -12,36 +14,71 @@ class DeviceRenameDialog extends StatefulWidget {
   @override
   State<DeviceRenameDialog> createState() => _DeviceRenameDialogState();
 
-  void show(context) {
-    kIsWeb ? showDialog(context: context, builder: (_) => this) : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
+  show(context) {
+    return kIsWeb ? showDialog(context: context, builder: (_) => this) : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
   }
 }
 
 class _DeviceRenameDialogState extends State<DeviceRenameDialog> {
+  bool saving = false;
+
   @override
   Widget build(BuildContext context) {
     return DialogView(
-      child: Stack(
-        children: [
-          Align(
-              alignment: Alignment.topRight,
-              child: IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(Icons.close))),
-          Padding(
-              padding: const EdgeInsets.fromLTRB(8.0, 64, 8, 8),
-              child: TextFormField(
-                initialValue: widget.device.name,
-                onFieldSubmitted: (text) {
-                  print('xxxxxxxxxx == ${text}');
-                },
-              )),
-        ],
-      ),
       width: 400,
       height: 150,
+      child: Scaffold(
+        appBar: AppBar(actions: []),
+        body: Padding(
+            padding: const EdgeInsets.fromLTRB(8.0, 8, 8, 8),
+            child: TextFormField(
+              autovalidateMode: AutovalidateMode.always,
+              enabled: !saving,
+              validator: (d) {
+                return _duplicate ? 'duplicate name' : null;
+              },
+              initialValue: widget.device.name,
+              onFieldSubmitted: (text) {
+                print('xxxxxxxxxx == ${text}');
+
+                if (text.trim().isNotEmpty && text.trim() != widget.device.name) {
+                  saving = true;
+                  setState(() {});
+                  saveName(text);
+                }
+              },
+            )),
+      ),
     );
+  }
+
+  bool _duplicate = false;
+
+  void saveName(String text) {
+    Api.post("tabs/rename", {'name': text, 'id': widget.device.id}).then((res) {
+      Map data = res.data;
+      if (data['saved'] == true) {
+        Navigator.pop(context);
+      } else {
+        if (data['duplicate'] == true) {
+          _duplicate = true;
+        }
+      }
+      saving = false;
+      setState(() {});
+    }).whenComplete(() {
+      setState(() {});
+    }).catchError((err) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(err.toString()),
+          action: SnackBarAction(
+              label: 'Retry',
+              onPressed: () {
+                saveName(text);
+              })));
+      setState(() {
+        // _dataLoadingError = true;
+      });
+    });
   }
 }

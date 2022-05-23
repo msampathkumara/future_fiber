@@ -31,7 +31,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
   initState() {
     super.initState();
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _refreshIndicatorKey.currentState?.show();
     });
   }

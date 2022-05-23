@@ -36,7 +36,6 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -75,7 +74,6 @@ import com.pdfviewer.listener.OnLongPressListener;
 import com.pdfviewer.listener.OnPageChangeListener;
 import com.pdfviewer.util.FitPolicy;
 import com.pdfviewer.util.SizeF;
-import com.sampathkumara.northsails.smartwind.BuildConfig;
 import com.sampathkumara.northsails.smartwind.R;
 import com.sampathkumara.northsails.smartwind.R.id;
 import com.tom_roush.pdfbox.multipdf.PDFMergerUtility;
@@ -652,7 +650,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 //                    file = FileManager.createFile(CurrentFile.getName(), getContext(), Environment.DIRECTORY_DOCUMENTS);
                     file = SELECTED_Ticket.ticketFile;
                     mergePdf.setDestinationFileName(file.getAbsolutePath());
-                    mergePdf.mergeDocuments(false);
+//                    mergePdf.mergeDocuments(new MemoryUsageSetting(false,false,-1,-1));
                     pDialog.dismiss();
                     Editor.this.file = file;
                     Editor.this.reloadFile();
@@ -1051,7 +1049,6 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     }
 
 
-
     public HashMap<Long, File> getImagesList() {
         if (images == null) {
             images = new HashMap<>();
@@ -1103,7 +1100,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
             }
             if (photoFile != null) {
                 System.out.println("-------------------3-----------------");
-                Uri photoURI = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID + ".provider", photoFile);
+                Uri photoURI = FileProvider.getUriForFile(getContext(), context.getApplicationContext().getPackageName() + ".provider", photoFile);
                 pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
 
 
@@ -1207,9 +1204,6 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         return files;
 
     }
-
-
-
 
 
     private void DrawBitmap(Canvas canvas) {

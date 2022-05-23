@@ -22,7 +22,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
   @override
   initState() {
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       loadData(0);
     });
   }

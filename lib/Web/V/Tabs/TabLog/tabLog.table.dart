@@ -34,19 +34,13 @@ class _WebPrintTableState extends State<TabLogDataTable> {
   }
 
   void sort(int columnIndex, bool ascending) {
-    var columnName = "mo";
+    var columnName = "dnt";
     switch (columnIndex) {
       case 1:
-        columnName = "production";
+        columnName = "userId";
         break;
       case 2:
-        columnName = "doneOn";
-        break;
-      case 3:
-        columnName = "action";
-        break;
-      case 4:
-        columnName = "doneBy";
+        columnName = "dnt";
         break;
     }
     _dessertsDataSource!.sort(columnName, ascending);
@@ -201,7 +195,7 @@ class TabLogDataSourceAsync extends AsyncDataTableSource {
     refreshDatasource();
   }
 
-  String _sortColumn = "mo";
+  String _sortColumn = "dnt";
   bool _sortAscending = true;
 
   void sort(String columnName, bool ascending) {

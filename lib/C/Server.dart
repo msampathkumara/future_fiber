@@ -9,19 +9,19 @@ class Server {
   static String getServerAddress({onlineServer = false}) {
     local = true;
     if (kDebugMode && local && (!onlineServer)) {
-      return "http://192.168.0.101:3000";
+      return "http://192.168.0.100:3000";
     } else {
       return "https://smartwind.nsslsupportservices.com";
     }
   }
 
   static String getServerPath(String path, {onlineServer = false}) {
-    return getServerAddress(onlineServer: onlineServer) + "/" + path;
+    return "${getServerAddress(onlineServer: onlineServer)}/$path";
   }
 
   static String getServerApiPath(String url, {onlineServer = false}) {
-    print(getServerAddress(onlineServer: onlineServer) + "/api/" + url);
-    return getServerAddress(onlineServer: onlineServer) + "/api/" + url;
+    print("${getServerAddress(onlineServer: onlineServer)}/api/$url");
+    return "${getServerAddress(onlineServer: onlineServer)}/api/$url";
   }
 
   ///   [url] must be after api part without /
@@ -31,7 +31,7 @@ class Server {
     Dio dio = Dio();
     dio.options.headers['content-Type'] = 'application/json';
     dio.options.headers["authorization"] = "$idToken";
-    print('apiPost - ' + Server.getServerApiPath(url));
+    print('apiPost - ${Server.getServerApiPath(url)}');
     return dio.post(Server.getServerApiPath(url), data: formData ?? (data));
   }
 

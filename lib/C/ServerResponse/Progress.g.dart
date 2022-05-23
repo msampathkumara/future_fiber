@@ -18,12 +18,10 @@ Progress _$ProgressFromJson(Map<String, dynamic> json) => Progress()
   ..status = json['status'] as int?
   ..ticketId = json['ticketId'] as int?
   ..upon = json['upon'] as String?
-  ..section = json['section'] == null
-      ? null
-      : Section.fromJson(json['section'] as Map<String, dynamic>)
-  ..user = json['user'] == null
-      ? null
-      : NsUser.fromJson(json['user'] as Map<String, dynamic>)
+  ..section = json['section'] == null ? null : Section.fromJson(json['section'] as Map<String, dynamic>)
+  ..isQa = json['isQa'] == null ? false : Progress._intToBool(json['isQa'] as int)
+  ..isQc = json['isQc'] == null ? false : Progress._intToBool(json['isQc'] as int)
+  ..user = json['user'] == null ? null : NsUser.fromJson(json['user'] as Map<String, dynamic>)
   ..timeToFinish = json['timeToFinish'] as String?;
 
 Map<String, dynamic> _$ProgressToJson(Progress instance) => <String, dynamic>{
@@ -39,6 +37,8 @@ Map<String, dynamic> _$ProgressToJson(Progress instance) => <String, dynamic>{
       'ticketId': instance.ticketId,
       'upon': instance.upon,
       'section': instance.section?.toJson(),
+      'isQa': instance.isQa,
+      'isQc': instance.isQc,
       'user': instance.user?.toJson(),
       'timeToFinish': instance.timeToFinish,
     };

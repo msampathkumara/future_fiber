@@ -156,20 +156,18 @@ StandardTicket _$StandardTicketFromJson(Map<String, dynamic> json) =>
       ..progress = json['progress'] as int? ?? 0
       ..completed = json['completed'] as int? ?? 0
       ..nowAt = json['nowAt'] as int? ?? 0
-      ..crossPro = json['crossPro'] as int? ?? 0
-      ..crossProList = json['crossProList'] as String? ?? ''
-      ..openSections = json['openSections'] == null
-          ? []
-          : Ticket.stringToList(json['openSections'])
-      ..shipDate = json['shipDate'] as String? ?? ''
-      ..deliveryDate = json['deliveryDate'] as String? ?? ''
-      ..atSection = json['atSection'] as String? ?? ''
-      ..isQc = json['isQc'] as int? ?? 0
-      ..isQa = json['isQa'] as int? ?? 0
+  ..crossPro = json['crossPro'] as int? ?? 0
+  ..crossProList = json['crossProList'] as String? ?? ''
+  ..openSections = json['openSections'] == null ? [] : Ticket.stringToList(json['openSections'])
+  ..shipDate = json['shipDate'] as String? ?? ''
+  ..deliveryDate = json['deliveryDate'] as String? ?? ''
+  ..atSection = json['atSection'] as String? ?? ''
+  ..isQc = json['isQc'] as int? ?? 0
+  ..isQa = json['isQa'] as int? ?? 0
   ..loading = json['loading'] as bool? ?? false
   ..production = json['production'] as String?
   ..usedCount = json['usedCount'] as int? ?? 0
-      ..uptime = json['uptime'] as int? ?? 0;
+  ..uptime = json['uptime'] as int? ?? 0;
 
 Map<String, dynamic> _$StandardTicketToJson(StandardTicket instance) =>
     <String, dynamic>{

@@ -24,11 +24,9 @@ class _WebPrintTableState extends State<DeviceDataTable> {
   @override
   void didChangeDependencies() {
     // initState is to early to access route options, context is invalid at that stage
-    if (_dessertsDataSource == null) {
-      _dessertsDataSource = DeviceSourceAsync(context, onRequestData: widget.onRequestData, onTap: (Device device) {
-        widget.onTap(device);
-      });
-    }
+    _dessertsDataSource ??= DeviceSourceAsync(context, onRequestData: widget.onRequestData, onTap: (Device device) {
+      widget.onTap(device);
+    });
 
     widget.onInit(_dessertsDataSource!);
 
@@ -36,19 +34,25 @@ class _WebPrintTableState extends State<DeviceDataTable> {
   }
 
   void sort(int columnIndex, bool ascending) {
-    var columnName = "mo";
+    var columnName = "id";
     switch (columnIndex) {
       case 1:
-        columnName = "production";
+        columnName = "name";
         break;
       case 2:
-        columnName = "doneOn";
+        columnName = "imei";
         break;
       case 3:
-        columnName = "action";
+        columnName = "model";
         break;
       case 4:
-        columnName = "doneBy";
+        columnName = "logOn";
+        break;
+      case 5:
+        columnName = "OutOn";
+        break;
+      case 6:
+        columnName = "user.name";
         break;
     }
     _dessertsDataSource!.sort(columnName, ascending);
@@ -66,13 +70,13 @@ class _WebPrintTableState extends State<DeviceDataTable> {
 
   List<DataColumn> get _columns {
     return [
-      DataColumn2(size: ColumnSize.S, label: Text('#')),
-      DataColumn2(size: ColumnSize.L, label: Text('Tab'), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: Text('Imei'), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: Text('Model'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: Text('Login'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: Text('Logout'), numeric: false, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: Text('User'), numeric: false, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      const DataColumn2(size: ColumnSize.S, label: Text('#')),
+      DataColumn2(size: ColumnSize.L, label: const Text('Tab'), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('Imei'), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('Model'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('Login'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('Logout'), numeric: false, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.L, label: const Text('User'), numeric: false, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
     ];
   }
 
@@ -81,13 +85,13 @@ class _WebPrintTableState extends State<DeviceDataTable> {
   @override
   Widget build(BuildContext context) {
     // Last ppage example uses extra API call to get the number of items in datasource
-    if (_dataSourceLoading) return SizedBox();
+    if (_dataSourceLoading) return const SizedBox();
 
     return Stack(alignment: Alignment.bottomCenter, children: [
       AsyncPaginatedDataTable2(
           scrollController: _scrollController,
           showFirstLastButtons: true,
-          smRatio: 0.5,
+          smRatio: 0.2,
           lmRatio: 3,
           horizontalMargin: 20,
           checkboxHorizontalMargin: 12,
@@ -100,7 +104,7 @@ class _WebPrintTableState extends State<DeviceDataTable> {
           minWidth: 800,
           fit: FlexFit.tight,
           border: TableBorder(
-              top: BorderSide(color: Colors.transparent),
+              top: const BorderSide(color: Colors.transparent),
               bottom: BorderSide(color: Colors.grey[300]!),
               left: BorderSide(color: Colors.grey[300]!),
               right: BorderSide(color: Colors.grey[300]!),
@@ -123,7 +127,7 @@ class _WebPrintTableState extends State<DeviceDataTable> {
           controller: _controller,
           hidePaginator: false,
           columns: _columns,
-          empty: Center(child: Container(padding: EdgeInsets.all(20), color: Colors.grey[200], child: Text('No data'))),
+          empty: Center(child: Container(padding: const EdgeInsets.all(20), color: Colors.grey[200], child: const Text('No data'))),
           loading: _Loading(),
           errorBuilder: (e) => _ErrorAndRetry(e.toString(), () => _dessertsDataSource!.refreshDatasource()),
           source: _dessertsDataSource!),
@@ -140,14 +144,14 @@ class _ErrorAndRetry extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Center(
         child: Container(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             height: 170,
             color: Colors.red,
             child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text('Oops! $errorMessage', style: TextStyle(color: Colors.white)),
+              Text('Oops! $errorMessage', style: const TextStyle(color: Colors.white)),
               TextButton(
                   onPressed: retry,
-                  child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  child: Row(mainAxisSize: MainAxisSize.min, children: const [
                     Icon(
                       Icons.refresh,
                       color: Colors.white,
@@ -170,23 +174,23 @@ class __LoadingState extends State<_Loading> {
         color: Colors.white.withAlpha(128),
         // at first show shade, if loading takes longer than 0,5s show spinner
         child: FutureBuilder(
-            future: Future.delayed(Duration(milliseconds: 500), () => true),
+            future: Future.delayed(const Duration(milliseconds: 500), () => true),
             builder: (context, snapshot) {
               return !snapshot.hasData
-                  ? SizedBox()
+                  ? const SizedBox()
                   : Center(
                       child: Container(
                       color: Colors.yellow,
-                      padding: EdgeInsets.all(7),
-                      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+                      padding: const EdgeInsets.all(7),
+                      width: 150,
+                      height: 50,
+                      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: const [
                         CircularProgressIndicator(
                           strokeWidth: 2,
                           color: Colors.black,
                         ),
                         Text('Loading..')
                       ]),
-                      width: 150,
-                      height: 50,
                     ));
             }));
   }
@@ -213,7 +217,7 @@ class DeviceSourceAsync extends AsyncDataTableSource {
     refreshDatasource();
   }
 
-  String _sortColumn = "mo";
+  String _sortColumn = "id";
   bool _sortAscending = true;
 
   void sort(String columnName, bool ascending) {
@@ -229,7 +233,7 @@ class DeviceSourceAsync extends AsyncDataTableSource {
       _errorCounter = _errorCounter! + 1;
 
       if (_errorCounter! % 2 == 1) {
-        await Future.delayed(Duration(milliseconds: 1000));
+        await Future.delayed(const Duration(milliseconds: 1000));
         throw 'Error #${((_errorCounter! - 1) / 2).round() + 1} has occured';
       }
     }
@@ -240,7 +244,7 @@ class DeviceSourceAsync extends AsyncDataTableSource {
 
     // List returned will be empty is there're fewer items than startingAt
     var x = _empty
-        ? await Future.delayed(Duration(milliseconds: 2000), () => DataResponse(0, []))
+        ? await Future.delayed(const Duration(milliseconds: 2000), () => DataResponse(0, []))
         : await onRequestData(int.parse("${startIndex / count}"), startIndex, count, _sortColumn, _sortAscending);
     int _i = 0;
     var r = AsyncRowsResponse(
@@ -255,37 +259,38 @@ class DeviceSourceAsync extends AsyncDataTableSource {
               onTap: () {
                 onTap(device);
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  duration: Duration(seconds: 1),
+                  duration: const Duration(seconds: 1),
                   content: Text('Tapped on ${device}'),
                 ));
               },
               onSecondaryTap: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    duration: Duration(seconds: 1),
+                duration: const Duration(seconds: 1),
                     backgroundColor: Theme.of(context).errorColor,
                     content: Text('Right clicked on ${device.name}'),
                   )),
               // specificRowHeight: this.hasRowHeightOverrides && device.fat >= 25 ? 100 : null,
               cells: [
                 DataCell(Text("$_i")),
-                DataCell(Text((device.name)), onDoubleTap: () {
-                  DeviceRenameDialog(device).show(context);
-                },onTap: (){
+                DataCell(Text((device.name)), onDoubleTap: () async {
+                  await DeviceRenameDialog(device).show(context);
+                  refreshDatasource();
+                }, onTap: () {
                   onTap(device);
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    duration: Duration(seconds: 1),
-                    content: Text('Tapped on ${device}'),
+                    duration: const Duration(seconds: 1),
+                    content: Text('Tapped on $device'),
                   ));
                 }),
                 DataCell(Text((device.imei) ?? "")),
                 DataCell(Wrap(
                   direction: Axis.vertical,
-                  children: [Text(("${device.model}")), Text(("${device.modelNumber}"), style: TextStyle(color: Colors.red, fontSize: 12))],
+                  children: [Text(("${device.model}")), Text(("${device.modelNumber}"), style: const TextStyle(color: Colors.red, fontSize: 12))],
                 )),
-                DataCell(Text(("${device.logOnDateTime ?? ""}"))),
-                DataCell(Text(("${device.outOnDateTime ?? ""}"))),
+                DataCell(Text((device.logOn ?? ""))),
+                DataCell(Text((device.outOn ?? ""))),
                 DataCell(Row(children: [
                   UserImage(nsUser: nsUser, radius: 16, padding: 2),
-                  SizedBox(width: 4),
+                  const SizedBox(width: 4),
                   Wrap(direction: Axis.vertical, children: [Text("${nsUser?.name}"), Text("${nsUser?.uname}")])
                 ]))
               ]);

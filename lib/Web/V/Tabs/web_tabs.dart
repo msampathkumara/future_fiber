@@ -21,7 +21,7 @@ class WebTabs extends StatefulWidget {
 }
 
 class _WebTabsState extends State<WebTabs> {
-  var _controller = TextEditingController();
+  final _controller = TextEditingController();
   bool loading = false;
 
   String searchText = "";
@@ -46,9 +46,9 @@ class _WebTabsState extends State<WebTabs> {
             title: Row(
               children: [
                 Text("Devices", style: mainWidgetsTitleTextStyle),
-                Spacer(),
+                const Spacer(),
                 Wrap(children: [
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   SearchBar(
                       delay: 300,
                       onSearchTextChanged: (text) {
@@ -75,10 +75,10 @@ class _WebTabsState extends State<WebTabs> {
               })),
         ),
         bottomNavigationBar: BottomAppBar(
-            shape: CircularNotchedRectangle(),
+            shape: const CircularNotchedRectangle(),
             color: Colors.green,
             child: IconTheme(
-              data: IconThemeData(color: Colors.white),
+              data: const IconThemeData(color: Colors.white),
               child: Row(
                 children: [
                   InkWell(
@@ -86,7 +86,7 @@ class _WebTabsState extends State<WebTabs> {
                     splashColor: Colors.red,
                     child: Ink(
                       child: IconButton(
-                        icon: Icon(Icons.refresh),
+                        icon: const Icon(Icons.refresh),
                         onPressed: () {
                           _dataSource.refreshDatasource();
                         },
@@ -94,8 +94,8 @@ class _WebTabsState extends State<WebTabs> {
                     ),
                   ),
                   const Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
                     child: Text(
                       "${0}",
                       textScaleFactor: 1.1,
@@ -103,7 +103,7 @@ class _WebTabsState extends State<WebTabs> {
                     ),
                   ),
                   const Spacer(),
-                  SizedBox(width: 36)
+                  const SizedBox(width: 36)
                 ],
               ),
             )));
@@ -115,8 +115,8 @@ class _WebTabsState extends State<WebTabs> {
     _dataSource.refreshDatasource();
   }
 
-  Status _selectedStatus = Status.All;
-  Production _selectedProduction = Production.All;
+  final Status _selectedStatus = Status.All;
+  final Production _selectedProduction = Production.All;
 
   Future<DataResponse> getData(page, startingAt, count, sortedBy, sortedAsc) {
     setState(() {
