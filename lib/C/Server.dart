@@ -5,11 +5,13 @@ import '../M/AppUser.dart';
 
 class Server {
   static bool local = false;
+  static String devServerIp = '';
 
   static String getServerAddress({onlineServer = false}) {
     local = true;
     if (kDebugMode && local && (!onlineServer)) {
-      return "http://192.168.0.100:3000";
+      return "http://$devServerIp:3000";
+      // return "http://192.168.0.100:3000";
     } else {
       return "https://smartwind.nsslsupportservices.com";
     }

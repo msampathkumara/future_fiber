@@ -83,6 +83,7 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                                       constraints: const BoxConstraints(minHeight: 100),
                                       child: IntrinsicHeight(
                                           child: NavigationRail(
+                                            indicatorColor: Colors.white,
                                         useIndicator: true,
                                         extended: false,
                                         selectedIndex: _selectedIndex,

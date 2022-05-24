@@ -1,10 +1,12 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/Web/webMain.dart';
 
@@ -27,6 +29,13 @@ Future<void> mainThings({viewIssMaterialManagement = false}) async {
   isMaterialManagement = viewIssMaterialManagement;
   WidgetsFlutterBinding.ensureInitialized();
   Firebase.initializeApp();
+
+  DatabaseReference ref = FirebaseDatabase.instance.ref('devServerIp');
+
+  ref.onValue.listen((event) {
+    Server.devServerIp = event.snapshot.value.toString();
+    print('ip == ' + Server.devServerIp);
+  });
   await HiveBox.create();
 
   if (Firebase.apps.isEmpty) {

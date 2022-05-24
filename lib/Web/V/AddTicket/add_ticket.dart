@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
@@ -14,15 +13,7 @@ class AddTicket extends StatefulWidget {
   State<AddTicket> createState() => _AddTicketState();
 
   void show(context) {
-    kIsWeb
-        ? showDialog(
-            context: context,
-            builder: (_) => this,
-          )
-        : Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => this),
-          );
+    kIsWeb ? showDialog(context: context, builder: (_) => this) : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
   }
 }
 
@@ -41,17 +32,17 @@ class _AddTicketState extends State<AddTicket> {
     return Material(
       color: Colors.transparent,
       child: Padding(
-        padding: (width - 1000) > 10 ? EdgeInsets.fromLTRB((width - 1000) / 2, 16, (width - 1000) / 2, 16) : EdgeInsets.all(16),
+        padding: (width - 1000) > 10 ? EdgeInsets.fromLTRB((width - 1000) / 2, 16, (width - 1000) / 2, 16) : const EdgeInsets.all(16),
         child: ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
             child: Scaffold(
-              appBar: AppBar(title: Text("Upload Ticket")),
+              appBar: AppBar(title: const Text("Upload Ticket")),
               backgroundColor: Colors.white,
               body: Row(
                 children: [
                   Expanded(
                     child: Container(
-                      constraints: BoxConstraints(minWidth: 500, maxWidth: 500),
+                      constraints: const BoxConstraints(minWidth: 500, maxWidth: 500),
                       width: 500,
                       color: highlighted1 ? Colors.lightBlue : Colors.transparent,
                       child: Stack(
@@ -62,59 +53,85 @@ class _AddTicketState extends State<AddTicket> {
                               child: Wrap(
                             direction: Axis.vertical,
                             alignment: WrapAlignment.center,
+                            crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
-                              Text(message1),
-                              ElevatedButton(
-                                onPressed: () async {
-                                  print(await controller1.pickFiles(mime: ['application/pdf']));
-                                },
-                                child: const Text('Pick file'),
-                              )
+                              const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text("Drop ticket PDF here", textScaleFactor: 2),
+                              ),
+                              const Padding(padding: EdgeInsets.all(8.0), child: Text("Or")),
+                              OutlinedButton(
+                                  onPressed: () async {
+                                    var z = await controller1.pickFiles(mime: ['application/pdf']);
+
+                                    for (var file in z) {
+                                      UploadFile uploadFile = UploadFile(file);
+                                      fileList.add(uploadFile);
+                                      print('Zone 1 drop: ${uploadFile.name}');
+                                      setState(() {
+                                        highlighted1 = false;
+                                      });
+                                      final bytes = await controller1.getFileData(file);
+
+                                      uploadFile.bytes = (bytes);
+
+                                      uploadFile.upload(() {
+                                        setState(() {});
+                                      });
+                                    }
+                                  },
+                                  style: ButtonStyle(
+                                    shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
+                                  ),
+                                  child: const Text('Pick file'))
                             ],
                           )),
                         ],
                       ),
                     ),
                   ),
-                  if (fileList.length > 0)
+                  if (fileList.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: VerticalDivider(color: Theme.of(context).primaryColor),
+                    ),
+                  if (fileList.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.all(16.0),
-                      child: Container(
+                      child: SizedBox(
                         width: 500,
                         child: Column(
                           children: [
                             Expanded(
-                              child: Container(
-                                child: ListView.separated(
-                                  itemCount: fileList.length,
-                                  itemBuilder: (context, index) {
-                                    var f = fileList[index];
-                                    return ListTile(
-                                        title: Text("${f.name}"),
-                                        trailing: SizedBox(
-                                            child: f.haveError
-                                                ? Icon(Icons.error_rounded, color: Colors.red)
-                                                : (f.uploaded ? Icon(Icons.done, color: Colors.green) : CircularProgressIndicator(strokeWidth: 2)),
-                                            height: 20,
-                                            width: 20),
-                                        subtitle: f.haveError
-                                            ? Row(children: [
-                                                Text("failed to upload "),
-                                                TextButton(
-                                                    onPressed: () {
-                                                      f.upload(() {
-                                                        setState(() {});
-                                                      });
+                              child: ListView.separated(
+                                itemCount: fileList.length,
+                                itemBuilder: (context, index) {
+                                  var f = fileList[index];
+                                  return ListTile(
+                                      title: Text("${f.name}"),
+                                      trailing: SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child: f.haveError
+                                              ? const Icon(Icons.error_rounded, color: Colors.red)
+                                              : (f.uploaded ? const Icon(Icons.done, color: Colors.green) : const CircularProgressIndicator(strokeWidth: 2))),
+                                      subtitle: f.haveError
+                                          ? Row(children: [
+                                              const Text("failed to upload "),
+                                              TextButton(
+                                                  onPressed: () {
+                                                    f.upload(() {
                                                       setState(() {});
-                                                    },
-                                                    child: Text("retry ?"))
-                                              ])
-                                            : Text(f.uploaded ? ("Uploaded") : "uploading"));
-                                  },
-                                  separatorBuilder: (BuildContext context, int index) {
-                                    return Divider();
-                                  },
-                                ),
+                                                    });
+                                                    setState(() {});
+                                                  },
+                                                  child: const Text("retry ?"))
+                                            ])
+                                          : Text(f.uploaded ? ("Uploaded") : "uploading"));
+                                },
+                                separatorBuilder: (BuildContext context, int index) {
+                                  return const Divider();
+                                },
                               ),
                             ),
                             Container(
@@ -137,7 +154,7 @@ class _AddTicketState extends State<AddTicket> {
                                                   });
                                                   setState(() {});
                                                 },
-                                                child: Text("retry ?"),
+                                                child: const Text("retry ?"),
                                               ),
                                             ],
                                           )
@@ -157,7 +174,7 @@ class _AddTicketState extends State<AddTicket> {
 
   Widget buildZone1(BuildContext context) => Builder(
         builder: (context) => DropzoneView(
-          mime: ['application/pdf'],
+          mime: const ['application/pdf'],
           operation: DragOperation.copy,
           cursor: CursorType.grab,
           onCreated: (ctrl) => controller1 = ctrl,

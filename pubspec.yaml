@@ -5,7 +5,7 @@ description: NorthSails Smart Wind
 publish_to: 'none'
 
 
-version: 1.1.21+62
+version: 1.1.22+63
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -52,7 +52,7 @@ dependencies:
   cached_network_image: ^3.2.1
   video_player: ^2.4.2
   group_list_view: ^1.1.1
-  data_table_2: ^2.2.2
+  data_table_2: ^2.2.3
 
 
   custom_webview:
@@ -73,13 +73,13 @@ dependencies:
   socket_io_client: ^1.0.2
   file_picker: ^4.5.1
   universal_html: ^2.0.8
-  dropdown_button2: ^1.5.1
+  dropdown_button2: ^1.5.2
   pdfx: ^2.0.1+2
   textfield_search: ^0.10.0
   searchfield: ^0.6.5
   csv: ^5.0.1
   pdf_render: ^1.1.0
-  syncfusion_flutter_charts: ^20.1.56
+  syncfusion_flutter_charts: ^20.1.57
 
 
 dev_dependencies:

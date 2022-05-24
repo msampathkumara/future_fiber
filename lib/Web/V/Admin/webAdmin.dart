@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:smartwind/M/Admin/Settings.dart';
 
+import '../../../C/Api.dart';
 import '../../../C/OnlineDB.dart';
 
 class WebAdmin extends StatefulWidget {
@@ -13,73 +15,145 @@ class WebAdmin extends StatefulWidget {
 class _WebAdminState extends State<WebAdmin> {
   var searchController = TextEditingController();
 
+  late Settings _settings;
+  bool _loading = true;
+
+  @override
+  initState() {
+    loadSettings();
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
 
     return Scaffold(
         appBar: AppBar(title: Text("Admin Settings"), backgroundColor: Colors.red),
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-              width: 700,
-              child: Column(
-                children: [
-                  // Padding(padding: const EdgeInsets.all(8.0), child: SizedBox(width: 500, child: SearchBar(onSearchTextChanged: (t) {}, searchController: searchController))),
-                  Expanded(
-                    child: ListView(
+        body: _loading
+            ? const Center(child: CircularProgressIndicator())
+            : Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    width: 700,
+                    child: Column(
                       children: [
-                        const Text("Files", textScaleFactor: 2),
-                        Card(
-                            child: Column(
-                          children: [
-                            ListTile(
-                                title: const Text("Update Files"),
-                                subtitle: const Text("Update Files on server with production pool tickets "),
-                                trailing: ElevatedButton.icon(
-                                    onPressed: () {
-                                      OnlineDB.apiGet("tickets/updateFiles", {}).then((response) async {
-                                        print(response.data);
-                                      });
-                                    },
-                                    label: const Text("Update"),
-                                    icon: const Icon(Icons.system_update))),
-                            ListTile(
-                                title: const Text("Delete Temp PDFs"),
-                                subtitle: const Text("Delete temp pdfs create for production pool"),
-                                trailing: ElevatedButton.icon(onPressed: () {}, label: const Text("Delete"), icon: const Icon(Icons.delete_rounded))),
-                          ],
-                        )),
-                        const SizedBox(height: 20),
-                        const Text("Database", textScaleFactor: 2),
-                        Card(
-                            child: Column(
-                          children: [
-                            ListTile(
-                                title: const Text("Reload In memory Database"),
-                                subtitle: const Text("in case of missing data or not update properly "),
-                                trailing: ElevatedButton.icon(onPressed: () {}, label: const Text("Reload"), icon: const Icon(Icons.memory_rounded)))
-                          ],
-                        )),
-                        const SizedBox(height: 20),
-                        const Text("Devices", textScaleFactor: 2),
-                        Card(
-                            child: Column(
-                          children: [
-                            ListTile(
-                                title: const Text("Clean  Reload Device "),
-                                subtitle: const Text("in case of missing data or not update properly this will clean and update all device database when online"),
-                                trailing: ElevatedButton.icon(onPressed: () {}, label: const Text("Reload"), icon: const Icon(Icons.cleaning_services))),
-                          ],
-                        )),
+                        // Padding(padding: const EdgeInsets.all(8.0), child: SizedBox(width: 500, child: SearchBar(onSearchTextChanged: (t) {}, searchController: searchController))),
+                        Expanded(
+                          child: ListView(
+                            children: [
+                              const Text("Files", textScaleFactor: 2),
+                              Card(
+                                  child: Column(
+                                children: [
+                                  ListTile(
+                                      title: const Text("Update Files"),
+                                      subtitle: const Text("Update Files on server with production pool tickets "),
+                                      trailing: ElevatedButton.icon(
+                                          onPressed: () {
+                                            OnlineDB.apiGet("tickets/updateFiles", {}).then((response) async {
+                                              print(response.data);
+                                            });
+                                          },
+                                          label: const Text("Update"),
+                                          icon: const Icon(Icons.system_update))),
+                                  ListTile(
+                                      title: const Text("Delete Temp PDFs"),
+                                      subtitle: const Text("Delete temp pdfs create for production pool"),
+                                      trailing: ElevatedButton.icon(onPressed: () {}, label: const Text("Delete"), icon: const Icon(Icons.delete_rounded))),
+                                ],
+                              )),
+                              const SizedBox(height: 20),
+                              const Text("Database", textScaleFactor: 2),
+                              Card(
+                                  child: Column(
+                                children: [
+                                  ListTile(
+                                      title: const Text("Reload In memory Database"),
+                                      subtitle: const Text("in case of missing data or not update properly "),
+                                      trailing: ElevatedButton.icon(onPressed: () {}, label: const Text("Reload"), icon: const Icon(Icons.memory_rounded)))
+                                ],
+                              )),
+                              const SizedBox(height: 20),
+                              const Text("Devices", textScaleFactor: 2),
+                              Card(
+                                  child: Column(
+                                children: [
+                                  ListTile(
+                                      title: const Text("Clean  Reload Device "),
+                                      subtitle: const Text("in case of missing data or not update properly this will clean and update all device database when online"),
+                                      trailing: ElevatedButton.icon(onPressed: () {}, label: const Text("Reload"), icon: const Icon(Icons.cleaning_services))),
+                                ],
+                              )),
+                              const SizedBox(height: 20),
+                              const Text("ERP Server", textScaleFactor: 2),
+                              Card(
+                                  child: Column(
+                                children: [
+                                  ListTile(
+                                      title: const Text("ERP Server is not working"),
+                                      subtitle: const Text("check if erp server is not working"),
+                                      trailing: Checkbox(
+                                          value: _settings.isErpNotWorking,
+                                          onChanged: (x) {
+                                            if (x != null) {
+                                              saveSettings('erpNotWorking', x ? 1 : 0);
+                                            }
+                                          })),
+                                ],
+                              )),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
-        ));
+                ),
+              ));
+  }
+
+  void saveSettings(String settingName, value) {
+    Api.post("admin/settings/setSetting", {settingName: value}).then((res) {
+      Map data = res.data;
+      loadSettings();
+    }).whenComplete(() {
+      setState(() {});
+    }).catchError((err) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(err.toString()),
+          action: SnackBarAction(
+              label: 'Retry',
+              onPressed: () {
+                saveSettings(settingName, value);
+              })));
+      setState(() {
+        // _dataLoadingError = true;
+      });
+    });
+  }
+
+  void loadSettings() {
+    Api.get("admin/settings/getSettings", {}).then((res) {
+      Map data = res.data;
+      print(data);
+      _settings = Settings.fromJson(data['settings']);
+      _loading = false;
+      setState(() {});
+    }).whenComplete(() {
+      setState(() {});
+    }).catchError((err) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(err.toString()),
+          action: SnackBarAction(
+              label: 'Retry',
+              onPressed: () {
+                loadSettings();
+              })));
+      setState(() {
+        // _dataLoadingError = true;
+      });
+    });
   }
 }
