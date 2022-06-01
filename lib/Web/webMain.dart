@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/V/Home/Admin/AdminCpanel.dart';
 import 'package:smartwind/Web/materialManagementHomePage.dart';
 import 'package:smartwind/main.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -21,6 +20,7 @@ class webApp extends StatelessWidget {
     return MaterialApp(
       title: 'Smart Wind',
       theme: ThemeData(
+          scrollbarTheme: const ScrollbarThemeData().copyWith(thumbColor: MaterialStateProperty.all(Theme.of(context).primaryColor), isAlwaysShown: true),
           iconTheme: const IconThemeData(size: 16.0),
           primarySwatch: Colors.blue,
           bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.black.withOpacity(0)),
@@ -44,7 +44,6 @@ class webApp extends StatelessWidget {
       },
       routes: <String, WidgetBuilder>{
         '/login': (BuildContext context) => Login(),
-        '/admin': (BuildContext context) => const AdminCpanel(),
         '/': (BuildContext context) => (isMaterialManagement ? const MaterialManagementHomePage() : const WebHomePage())
       },
     );

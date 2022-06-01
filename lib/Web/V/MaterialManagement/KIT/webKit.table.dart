@@ -61,13 +61,33 @@ class _WebKITTableState extends State<WebKITTable> {
 
   List<DataColumn> get _columns {
     return [
-      DataColumn2(size: ColumnSize.M, label: const Text('Ticket'), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: const Text('Client'), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: const Text('Shortage Type'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: const Text('Date & Time'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: const Text('Shipping Date'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: const Text('Status'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.S, label: const Text('Options'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('Ticket', style: TextStyle(fontWeight: FontWeight.bold)), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('Client', style: TextStyle(fontWeight: FontWeight.bold)), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(
+          size: ColumnSize.M,
+          label: const Text('Shortage Type', style: TextStyle(fontWeight: FontWeight.bold)),
+          numeric: true,
+          onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(
+          size: ColumnSize.M,
+          label: const Text('Date & Time', style: TextStyle(fontWeight: FontWeight.bold)),
+          numeric: true,
+          onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(
+          size: ColumnSize.M,
+          label: const Text('Shipping Date', style: TextStyle(fontWeight: FontWeight.bold)),
+          numeric: true,
+          onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(
+          size: ColumnSize.M,
+          label: const Text('Status', style: TextStyle(fontWeight: FontWeight.bold)),
+          numeric: true,
+          onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(
+          size: ColumnSize.S,
+          label: const Text('Options', style: TextStyle(fontWeight: FontWeight.bold)),
+          numeric: true,
+          onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
     ];
   }
 
@@ -82,7 +102,7 @@ class _WebKITTableState extends State<WebKITTable> {
       AsyncPaginatedDataTable2(
           scrollController: _scrollController,
           showFirstLastButtons: true,
-          smRatio: 0.5,
+          smRatio: 0.4,
           lmRatio: 3,
           horizontalMargin: 20,
           checkboxHorizontalMargin: 12,

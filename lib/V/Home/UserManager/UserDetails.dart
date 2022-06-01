@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Section.dart';
-import 'package:smartwind/V/Home/UserManager/UpdateUserDetails.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
 
 class UserDetails extends StatefulWidget {
@@ -77,7 +76,7 @@ class _UserDetailsState extends State<UserDetails> {
                               textScaleFactor: 1.5,
                             ),
                           ),
-                          Text('#' + nsUser.uname, style: const TextStyle(color: Colors.blue)),
+                          Text('#${nsUser.uname}', style: const TextStyle(color: Colors.blue)),
                         ],
                       ),
                     ),
@@ -128,7 +127,7 @@ class _UserDetailsState extends State<UserDetails> {
                                               children: List.generate(nsUser.sections.length, (index) {
                                                 Section section = nsUser.sections[index];
                                                 return Padding(
-                                                    padding: const EdgeInsets.only(right: 8.0), child: Chip(label: Text(section.sectionTitle + " @ " + section.factory)));
+                                                    padding: const EdgeInsets.only(right: 8.0), child: Chip(label: Text("${section.sectionTitle} @ ${section.factory}")));
                                               }))),
                                     ],
                                   ),
@@ -140,13 +139,13 @@ class _UserDetailsState extends State<UserDetails> {
                       ),
                     ),
                   ),
-                  floatingActionButton: nsUser.isDisabled
-                      ? null
-                      : FloatingActionButton(
-                          onPressed: () {
-                            UpdateUserDetails(nsUser).show(context);
-                          },
-                          child: const Icon(Icons.edit_outlined)),
+                  // floatingActionButton: nsUser.isDisabled
+                  //     ? null
+                  //     : FloatingActionButton(
+                  //         onPressed: () {
+                  //           UpdateUserDetails(nsUser).show(context);
+                  //         },
+                  //         child: const Icon(Icons.edit_outlined)),
                 ),
               );
             }

@@ -79,15 +79,18 @@ class _webUserManagerTableState extends State<webUserManagerTable> {
         label: const Text('EPF'),
         onSort: (columnIndex, ascending) => sort<String>((d) => d.epf, columnIndex, ascending),
       ),
-      const DataColumn2(numeric: true, size: ColumnSize.S, tooltip: "Options", label: const Text('Options'))
+      const DataColumn2(numeric: true, size: ColumnSize.S, tooltip: "Options", label: Text('Options'))
     ];
   }
+
+  final ScrollController _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
     return Stack(alignment: Alignment.bottomCenter, children: [
       PaginatedDataTable2(
-        smRatio: 0.3,
+        scrollController: _scrollController,
+        smRatio: 0.4,
         lmRatio: 3,
         horizontalMargin: 20,
         checkboxHorizontalMargin: 12,

@@ -38,14 +38,12 @@ class TicketAdapter extends TypeAdapter<Ticket> {
       ..progress = fields[18] == null ? 0 : fields[18] as int
       ..completed = fields[19] == null ? 0 : fields[19] as int
       ..nowAt = fields[20] == null ? 0 : fields[20] as int
-      ..crossPro = fields[21] == null ? 0 : fields[21] as int
-      ..crossProList = fields[22] == null ? '' : fields[22] as String
-      ..openSections =
-          fields[23] == null ? [] : (fields[23] as List).cast<dynamic>()
+      ..isCrossPro = fields[21] == null ? false : fields[21] as bool
+      ..crossPro = fields[22] as CrossProduction?
+      ..openSections = fields[23] == null ? [] : (fields[23] as List).cast<dynamic>()
       ..shipDate = fields[24] == null ? '' : fields[24] as String
       ..deliveryDate = fields[25] == null ? '' : fields[25] as String
       ..production = fields[26] as String?
-      ..atSection = fields[27] == null ? '' : fields[27] as String
       ..isQc = fields[28] == null ? 0 : fields[28] as int
       ..isQa = fields[29] == null ? 0 : fields[29] as int;
   }
@@ -53,7 +51,7 @@ class TicketAdapter extends TypeAdapter<Ticket> {
   @override
   void write(BinaryWriter writer, Ticket obj) {
     writer
-      ..writeByte(30)
+      ..writeByte(29)
       ..writeByte(0)
       ..write(obj.mo)
       ..writeByte(1)
@@ -97,9 +95,9 @@ class TicketAdapter extends TypeAdapter<Ticket> {
       ..writeByte(20)
       ..write(obj.nowAt)
       ..writeByte(21)
-      ..write(obj.crossPro)
+      ..write(obj.isCrossPro)
       ..writeByte(22)
-      ..write(obj.crossProList)
+      ..write(obj.crossPro)
       ..writeByte(23)
       ..write(obj.openSections)
       ..writeByte(24)
@@ -108,8 +106,6 @@ class TicketAdapter extends TypeAdapter<Ticket> {
       ..write(obj.deliveryDate)
       ..writeByte(26)
       ..write(obj.production)
-      ..writeByte(27)
-      ..write(obj.atSection)
       ..writeByte(28)
       ..write(obj.isQc)
       ..writeByte(29)
@@ -153,13 +149,12 @@ Ticket _$TicketFromJson(Map<String, dynamic> json) => Ticket()
   ..progress = json['progress'] as int? ?? 0
   ..completed = json['completed'] as int? ?? 0
   ..nowAt = json['nowAt'] as int? ?? 0
-  ..crossPro = json['crossPro'] as int? ?? 0
-  ..crossProList = json['crossProList'] as String? ?? ''
+  ..isCrossPro = json['isCrossPro'] == null ? false : Ticket.boolFromInt(json['isCrossPro'] as int)
+  ..crossPro = json['crossPro'] == null ? null : CrossProduction.fromJson(json['crossPro'] as Map<String, dynamic>)
   ..openSections = json['openSections'] == null ? [] : Ticket.stringToList(json['openSections'])
   ..shipDate = json['shipDate'] as String? ?? ''
   ..deliveryDate = json['deliveryDate'] as String? ?? ''
   ..production = json['production'] as String?
-  ..atSection = json['atSection'] as String? ?? ''
   ..isQc = json['isQc'] as int? ?? 0
   ..isQa = json['isQa'] as int? ?? 0
   ..loading = json['loading'] as bool? ?? false;
@@ -186,13 +181,12 @@ Map<String, dynamic> _$TicketToJson(Ticket instance) => <String, dynamic>{
       'progress': instance.progress,
       'completed': instance.completed,
       'nowAt': instance.nowAt,
-      'crossPro': instance.crossPro,
-      'crossProList': instance.crossProList,
+      'isCrossPro': Ticket.boolToInt(instance.isCrossPro),
+      'crossPro': instance.crossPro?.toJson(),
       'openSections': instance.openSections,
       'shipDate': instance.shipDate,
       'deliveryDate': instance.deliveryDate,
       'production': instance.production,
-      'atSection': instance.atSection,
       'isQc': instance.isQc,
       'isQa': instance.isQa,
       'loading': instance.loading,

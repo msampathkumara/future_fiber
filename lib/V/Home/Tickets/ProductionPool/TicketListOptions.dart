@@ -107,7 +107,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                           });
                       // await Navigator.push(context1, MaterialPageRoute(builder: (context) => FinishCheckList(ticket)));
                     }),
-              if (ticket.crossPro == 0 && AppUser.havePermissionFor(Permissions.SET_CROSS_PRODUCTION))
+              if ((!ticket.isCrossPro) && AppUser.havePermissionFor(Permissions.SET_CROSS_PRODUCTION))
                 ListTile(
                     title: const Text("Set Cross Production"),
                     leading: const Icon(NsIcons.crossProduction, color: Colors.green),
@@ -118,7 +118,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                       // await Navigator.push(context1, MaterialPageRoute(builder: (context) => CrossProduction(ticket)));
                       //
                     }),
-              if (ticket.crossPro == 1 && AppUser.havePermissionFor(Permissions.SET_CROSS_PRODUCTION))
+                      if (ticket.isCrossPro && AppUser.havePermissionFor(Permissions.SET_CROSS_PRODUCTION))
                 ListTile(
                     title: const Text("Remove Cross Production"),
                     leading: const Icon(NsIcons.crossProduction, color: Colors.green),
@@ -276,6 +276,13 @@ sortByBottomSheetMenu(context, loadData) {
 bool searchByFilters(Ticket t, Filters dataFilter) {
   if (dataFilter != Filters.none) {
     Map _t = t.toJson();
+
+    if (_t[dataFilter.getValue()].runtimeType == bool) {
+      if (_t[dataFilter.getValue()]) {
+        return false;
+      }
+    }
+
     if (_t[dataFilter.getValue()] != 1) {
       return false;
     }

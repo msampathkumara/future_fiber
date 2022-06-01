@@ -26,6 +26,7 @@ import 'package:smartwind/V/Widgets/TicketPdfViwer.dart';
 import 'package:universal_html/html.dart' as html;
 
 import 'AppUser.dart';
+import 'CrossProduction.dart';
 import 'DataObject.dart';
 import 'LocalFileVersion.dart';
 import 'hive.dart';
@@ -48,6 +49,7 @@ class Ticket extends DataObject {
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int finished = 0;
 
+  @override
   @HiveField(3, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int uptime = 0;
@@ -64,6 +66,7 @@ class Ticket extends DataObject {
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int dir = 0;
 
+  @override
   @HiveField(7, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int id = 0;
@@ -120,13 +123,13 @@ class Ticket extends DataObject {
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int nowAt = 0;
 
-  @HiveField(21, defaultValue: 0)
-  @JsonKey(defaultValue: 0, includeIfNull: true)
-  int crossPro = 0;
+  @HiveField(21, defaultValue: false)
+  @JsonKey(defaultValue: false, includeIfNull: true, fromJson: boolFromInt, toJson: boolToInt)
+  bool isCrossPro = false;
 
-  @HiveField(22, defaultValue: '')
-  @JsonKey(defaultValue: "", includeIfNull: true)
-  String crossProList = "";
+  @HiveField(22, defaultValue: null)
+  @JsonKey(defaultValue: null, includeIfNull: true)
+  CrossProduction? crossPro;
 
   @HiveField(23, defaultValue: [])
   @JsonKey(defaultValue: [], includeIfNull: true, fromJson: stringToList)
@@ -144,13 +147,6 @@ class Ticket extends DataObject {
   @JsonKey(defaultValue: null, includeIfNull: true)
   String? production;
 
-  @JsonKey(ignore: true)
-  File? ticketFile;
-
-  @HiveField(27, defaultValue: "")
-  @JsonKey(defaultValue: "", includeIfNull: true)
-  String atSection = "";
-
   @HiveField(28, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int isQc = 0;
@@ -158,6 +154,14 @@ class Ticket extends DataObject {
   @HiveField(29, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int isQa = 0;
+
+  @JsonKey(ignore: true)
+  File? ticketFile;
+
+  String get atSection {
+    var x = HiveBox.sectionsBox.get(nowAt)?.sectionTitle;
+    return x ?? '';
+  }
 
   @JsonKey(defaultValue: false, includeIfNull: true)
   bool loading = false;
@@ -246,7 +250,7 @@ class Ticket extends DataObject {
     }
 
     loadingWidget.close(context);
-    File file = new File(filePath);
+    File file = File(filePath);
     ticketFile = file;
     return file;
   }
@@ -312,7 +316,7 @@ class Ticket extends DataObject {
 
     if (isNew && file.existsSync()) {
       print("File exists ");
-      var data = await Navigator.push(
+      await Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => TicketPdfViwer(this, onClickEdit: () async {
@@ -326,7 +330,7 @@ class Ticket extends DataObject {
       print("File not exists or old ");
       _getFile(context).then((file) async {
         if (file != null) {
-          var data = await Navigator.push(
+          await Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => TicketPdfViwer(this, onClickEdit: () async {
@@ -347,8 +351,8 @@ class Ticket extends DataObject {
 
   Future<File> getLocalFile() async {
     var ed = await getExternalStorageDirectory();
-    var filePath = ed!.path + '/$id.pdf';
-    File file = new File(filePath);
+    var filePath = '${ed!.path}/$id.pdf';
+    File file = File(filePath);
     ticketFile = file;
     return file;
   }
@@ -364,7 +368,7 @@ class Ticket extends DataObject {
     return await platform.invokeMethod('editPdf', {'path': ticketFile!.path, 'fileID': id, 'ticket': t.toString(), "serverUrl": serverUrl});
   }
 
-  static const platform = const MethodChannel('editPdf');
+  static const platform = MethodChannel('editPdf');
 
   isFileNew() async {
     var ticket = isStandard ? HiveBox.standardTicketsBox.get(id) : HiveBox.ticketBox.get(id);
@@ -477,5 +481,13 @@ class Ticket extends DataObject {
     return isStandard ? TicketTypes.Standard : TicketTypes.Ticket;
   }
 
-  List<String> getCrossProList() => crossProList.split('>');
+  // List<String> getCrossProList() => crossProList.map((e) {
+  //       print('$e');
+  //       var x = HiveBox.sectionsBox.get(e)?.factory;
+  //       return '$x';
+  //     }).toList();
+
+  static bool boolFromInt(int done) => done == 1;
+
+  static int boolToInt(bool done) => done ? 1 : 0;
 }

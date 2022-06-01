@@ -70,13 +70,29 @@ class _WebPrintTableState extends State<DeviceDataTable> {
 
   List<DataColumn> get _columns {
     return [
-      const DataColumn2(size: ColumnSize.S, label: Text('#')),
-      DataColumn2(size: ColumnSize.L, label: const Text('Tab'), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: const Text('Imei'), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: const Text('Model'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: const Text('Login'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: const Text('Logout'), numeric: false, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.L, label: const Text('User'), numeric: false, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      const DataColumn2(size: ColumnSize.S, label: Text('#', style: TextStyle(fontWeight: FontWeight.bold))),
+      DataColumn2(size: ColumnSize.L, label: const Text('Tab', style: TextStyle(fontWeight: FontWeight.bold)), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('Imei', style: TextStyle(fontWeight: FontWeight.bold)), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(
+          size: ColumnSize.M,
+          label: const Text('Model', style: TextStyle(fontWeight: FontWeight.bold)),
+          numeric: true,
+          onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(
+          size: ColumnSize.M,
+          label: const Text('Login', style: TextStyle(fontWeight: FontWeight.bold)),
+          numeric: true,
+          onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(
+          size: ColumnSize.M,
+          label: const Text('Logout', style: TextStyle(fontWeight: FontWeight.bold)),
+          numeric: false,
+          onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(
+          size: ColumnSize.L,
+          label: const Text('User', style: TextStyle(fontWeight: FontWeight.bold)),
+          numeric: false,
+          onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
     ];
   }
 

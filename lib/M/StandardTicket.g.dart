@@ -40,13 +40,11 @@ class StandardTicketAdapter extends TypeAdapter<StandardTicket> {
       ..progress = fields[18] == null ? 0 : fields[18] as int
       ..completed = fields[19] == null ? 0 : fields[19] as int
       ..nowAt = fields[20] == null ? 0 : fields[20] as int
-      ..crossPro = fields[21] == null ? 0 : fields[21] as int
-      ..crossProList = fields[22] == null ? '' : fields[22] as String
-      ..openSections =
-          fields[23] == null ? [] : (fields[23] as List).cast<dynamic>()
+      ..isCrossPro = fields[21] == null ? false : fields[21] as bool
+      ..crossPro = fields[22] as CrossProduction?
+      ..openSections = fields[23] == null ? [] : (fields[23] as List).cast<dynamic>()
       ..shipDate = fields[24] == null ? '' : fields[24] as String
       ..deliveryDate = fields[25] == null ? '' : fields[25] as String
-      ..atSection = fields[27] == null ? '' : fields[27] as String
       ..isQc = fields[28] == null ? 0 : fields[28] as int
       ..isQa = fields[29] == null ? 0 : fields[29] as int;
   }
@@ -54,7 +52,7 @@ class StandardTicketAdapter extends TypeAdapter<StandardTicket> {
   @override
   void write(BinaryWriter writer, StandardTicket obj) {
     writer
-      ..writeByte(31)
+      ..writeByte(30)
       ..writeByte(50)
       ..write(obj.production)
       ..writeByte(51)
@@ -102,17 +100,15 @@ class StandardTicketAdapter extends TypeAdapter<StandardTicket> {
       ..writeByte(20)
       ..write(obj.nowAt)
       ..writeByte(21)
-      ..write(obj.crossPro)
+      ..write(obj.isCrossPro)
       ..writeByte(22)
-      ..write(obj.crossProList)
+      ..write(obj.crossPro)
       ..writeByte(23)
       ..write(obj.openSections)
       ..writeByte(24)
       ..write(obj.shipDate)
       ..writeByte(25)
       ..write(obj.deliveryDate)
-      ..writeByte(27)
-      ..write(obj.atSection)
       ..writeByte(28)
       ..write(obj.isQc)
       ..writeByte(29)
@@ -146,22 +142,21 @@ StandardTicket _$StandardTicketFromJson(Map<String, dynamic> json) =>
       ..isRed = json['isRed'] as int? ?? 0
       ..isRush = json['isRush'] as int? ?? 0
       ..isSk = json['isSk'] as int? ?? 0
-      ..inPrint = json['inPrint'] as int? ?? 0
-      ..isGr = json['isGr'] as int? ?? 0
-      ..isError = json['isError'] as int? ?? 0
-      ..canOpen = json['canOpen'] as int? ?? 0
-      ..isSort = json['isSort'] as int? ?? 0
-      ..isHold = json['isHold'] as int? ?? 0
-      ..fileVersion = json['fileVersion'] as int? ?? 0
-      ..progress = json['progress'] as int? ?? 0
-      ..completed = json['completed'] as int? ?? 0
-      ..nowAt = json['nowAt'] as int? ?? 0
-  ..crossPro = json['crossPro'] as int? ?? 0
-  ..crossProList = json['crossProList'] as String? ?? ''
+  ..inPrint = json['inPrint'] as int? ?? 0
+  ..isGr = json['isGr'] as int? ?? 0
+  ..isError = json['isError'] as int? ?? 0
+  ..canOpen = json['canOpen'] as int? ?? 0
+  ..isSort = json['isSort'] as int? ?? 0
+  ..isHold = json['isHold'] as int? ?? 0
+  ..fileVersion = json['fileVersion'] as int? ?? 0
+  ..progress = json['progress'] as int? ?? 0
+  ..completed = json['completed'] as int? ?? 0
+  ..nowAt = json['nowAt'] as int? ?? 0
+  ..isCrossPro = json['isCrossPro'] == null ? false : Ticket.boolFromInt(json['isCrossPro'] as int)
+  ..crossPro = json['crossPro'] == null ? null : CrossProduction.fromJson(json['crossPro'] as Map<String, dynamic>)
   ..openSections = json['openSections'] == null ? [] : Ticket.stringToList(json['openSections'])
   ..shipDate = json['shipDate'] as String? ?? ''
   ..deliveryDate = json['deliveryDate'] as String? ?? ''
-  ..atSection = json['atSection'] as String? ?? ''
   ..isQc = json['isQc'] as int? ?? 0
   ..isQa = json['isQa'] as int? ?? 0
   ..loading = json['loading'] as bool? ?? false
@@ -191,12 +186,11 @@ Map<String, dynamic> _$StandardTicketToJson(StandardTicket instance) =>
       'progress': instance.progress,
       'completed': instance.completed,
       'nowAt': instance.nowAt,
-      'crossPro': instance.crossPro,
-      'crossProList': instance.crossProList,
+      'isCrossPro': Ticket.boolToInt(instance.isCrossPro),
+      'crossPro': instance.crossPro?.toJson(),
       'openSections': instance.openSections,
       'shipDate': instance.shipDate,
       'deliveryDate': instance.deliveryDate,
-      'atSection': instance.atSection,
       'isQc': instance.isQc,
       'isQa': instance.isQa,
       'loading': instance.loading,

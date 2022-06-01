@@ -62,9 +62,9 @@ class _TabLogState extends State<TabLog> {
                                 ]))))),
                 Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 16.0, 16, 16),
-                      child: Material(
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                  padding: const EdgeInsets.fromLTRB(0, 16.0, 16, 16),
+                  child: Material(
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
                       elevation: 4,
                       borderRadius: BorderRadius.circular(8),
                       child: TabLogDataTable(

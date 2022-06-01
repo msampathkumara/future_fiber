@@ -84,8 +84,7 @@ class DeviceAdapter extends TypeAdapter<Device> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-Device _$DeviceFromJson(Map<String, dynamic> json) =>
-    Device()
+Device _$DeviceFromJson(Map<String, dynamic> json) => Device()
   ..id = json['id'] as int?
   ..name = json['name'] as String? ?? ''
   ..imei = json['imei'] as String?

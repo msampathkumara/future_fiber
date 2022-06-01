@@ -115,7 +115,7 @@ class _WebAdminState extends State<WebAdmin> {
   }
 
   void saveSettings(String settingName, value) {
-    Api.post("admin/settings/setSetting", {settingName: value}).then((res) {
+    Api.post("admin/settings/setSetting", {'setting': settingName, 'value': value}).then((res) {
       Map data = res.data;
       loadSettings();
     }).whenComplete(() {

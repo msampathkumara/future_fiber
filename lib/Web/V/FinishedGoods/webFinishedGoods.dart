@@ -50,7 +50,7 @@ class _WebFinishedGoodsState extends State<WebFinishedGoods> {
                 Text("Finished Goods", style: mainWidgetsTitleTextStyle),
                 Spacer(),
                 Wrap(children: [
-                  flagIcon(Filters.crossPro, Icons.merge_type_rounded, "Filter by cross production"),
+                  flagIcon(Filters.isCrossPro, Icons.merge_type_rounded, "Filter by cross production"),
                   flagIcon(Filters.isError, Icons.warning_rounded, "Filter by Error Route"),
                   flagIcon(Filters.inPrint, Icons.print_rounded, "Filter by in print"),
                   flagIcon(Filters.isRush, Icons.offline_bolt_rounded, "Filter by rush"),

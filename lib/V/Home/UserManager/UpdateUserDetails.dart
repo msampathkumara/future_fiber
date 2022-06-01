@@ -126,8 +126,8 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
         screenSize.height - offset.dy,
       ),
       items: [
-        const PopupMenuItem(value: 1, child: const Text("Edit")),
-        const PopupMenuItem(value: 2, child: const Text("Remove")),
+        const PopupMenuItem(value: 1, child: Text("Edit")),
+        const PopupMenuItem(value: 2, child: Text("Remove")),
       ],
       elevation: 8.0,
     ).then((value) {
@@ -153,18 +153,18 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                           foregroundImage: img ?? (nsUser.haveImage ? NetworkImage(nsUser.getImage()) : (img ?? placeholder)),
                           backgroundImage: const AssetImage("assets/images/userPlaceholder.jpg")),
                       Row(children: [
-                        SizedBox(child: TextButton(onPressed: getImage, child: Text(isNew ? "Add Profile Picture" : "Change Profile Picture")), width: 170),
-                        if (_image != null) const SizedBox(child: const VerticalDivider(color: Colors.grey, thickness: 1), height: 20),
+                        SizedBox(width: 170, child: TextButton(onPressed: getImage, child: Text(isNew ? "Add Profile Picture" : "Change Profile Picture"))),
+                        if (_image != null) const SizedBox(height: 20, child: VerticalDivider(color: Colors.grey, thickness: 1)),
                         if (_image != null)
                           SizedBox(
+                              width: 170,
                               child: TextButton(
                                   onPressed: () {
                                     setState(() {
                                       _image = null;
                                     });
                                   },
-                                  child: const Text("Reset", textAlign: TextAlign.left)),
-                              width: 170)
+                                  child: const Text("Reset", textAlign: TextAlign.left)))
                       ]),
                       Padding(
                         padding: const EdgeInsets.only(top: 16.0),
@@ -173,7 +173,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                           textScaleFactor: 1.5,
                         ),
                       ),
-                Text('#' + nsUser.uname, style: const TextStyle(color: Colors.blue))
+                      Text('#${nsUser.uname}', style: const TextStyle(color: Colors.blue))
                     ]),
                   ),
                   Expanded(
@@ -185,7 +185,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                             Card(
                               child: Column(
                                 children: [
-                                  const ListTile(title: const Text("Basic Info"), leading: const Icon(Icons.account_box_outlined)),
+                                  const ListTile(title: Text("Basic Info"), leading: Icon(Icons.account_box_outlined)),
                                   Padding(
                                     padding: const EdgeInsets.all(16.0),
                                     child: Column(children: [
@@ -213,7 +213,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                             Card(
                               child: Column(
                                 children: [
-                                  const ListTile(title: const Text("Contacts Details"), leading: const Icon(Icons.contact_phone_outlined)),
+                                  const ListTile(title: Text("Contacts Details"), leading: Icon(Icons.contact_phone_outlined)),
                                   Padding(
                                     padding: const EdgeInsets.all(16.0),
                                     child: Column(children: [
@@ -357,7 +357,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                                                         Section section = nsUser.sections[index];
                                                         return Padding(
                                                             padding: const EdgeInsets.only(right: 8.0, bottom: 8),
-                                                            child: Chip(label: Text(section.sectionTitle + " @ " + section.factory)));
+                                                            child: Chip(label: Text("${section.sectionTitle} @ ${section.factory}")));
                                                       })))
                                             ]))
                                       ]))
@@ -475,7 +475,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
         x = null;
         break;
       case 1:
-        x = const Padding(padding: EdgeInsets.all(16.0), child: const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2)));
+        x = const Padding(padding: EdgeInsets.all(16.0), child: SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2)));
         break;
       case 2:
         x = const Icon(Icons.error_rounded, color: Colors.red);
@@ -488,5 +488,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
     return x;
   }
 
-  getUi() {}
+  getUi() {
+    return getDialogUi();
+  }
 }

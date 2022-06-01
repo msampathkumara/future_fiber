@@ -61,8 +61,8 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                 _isBarcodeScan = true;
               }
             },
-            child: const Icon(Icons.qr_code_rounded),
-            backgroundColor: themeColor),
+            backgroundColor: themeColor,
+            child: const Icon(Icons.qr_code_rounded)),
         appBar: AppBar(
           actions: const <Widget>[],
           elevation: 0.0,
@@ -97,7 +97,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
           child: Column(
             children: [
               Wrap(children: [
-                flagIcon(Filters.crossPro, Icons.merge_type_rounded),
+                flagIcon(Filters.isCrossPro, Icons.merge_type_rounded),
                 flagIcon(Filters.isError, Icons.warning_rounded),
                 flagIcon(Filters.inPrint, Icons.print_rounded),
                 flagIcon(Filters.isRush, Icons.offline_bolt_rounded),
@@ -147,11 +147,11 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
   flagIcon(Filters filter, IconData icon, {String? text}) {
     return IconButton(
       icon: CircleAvatar(
+          backgroundColor: Colors.white,
+          radius: 16,
           child: (text != null)
               ? Text(text, style: TextStyle(color: dataFilter == filter ? Colors.red : Colors.black, fontWeight: FontWeight.bold))
-              : Icon(icon, color: dataFilter == filter ? Colors.red : Colors.black, size: 20),
-          backgroundColor: Colors.white,
-          radius: 16),
+              : Icon(icon, color: dataFilter == filter ? Colors.red : Colors.black, size: 20)),
       tooltip: 'Increase volume by 10',
       onPressed: () async {
         if (dataFilter == filter) {
@@ -204,7 +204,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
               children: [
                 const Padding(
                   padding: EdgeInsets.all(16.0),
-                  child: const Text(
+                  child: Text(
                     "Sort By",
                     textScaleFactor: 1.2,
                   ),
@@ -270,7 +270,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
 
                             _loadData(x.toInt());
                           }
-                    return SizedBox(
+                          return SizedBox(
                               height: 100,
                               child: Center(
                                   child: Padding(
@@ -337,14 +337,22 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                                 direction: Axis.vertical,
                                 children: [
                                   if ((ticket.mo ?? "").trim().isNotEmpty) Text((ticket.oe ?? "")),
-                                  if (ticket.crossPro == 1)
-                                    Chip(
-                                        avatar: const CircleAvatar(
-                                          child: Icon(
-                                            Icons.merge_type_outlined,
-                                          ),
-                                        ),
-                                        label: Text(ticket.crossProList)),
+                                  if (ticket.isCrossPro)
+                                    Material(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Colors.deepOrange,
+                                        child: Padding(
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Text(('${ticket.crossPro?.fromSection?.factory} > ${ticket.crossPro?.toSection?.factory}'),
+                                                style: const TextStyle(fontSize: 12, color: Colors.white)))),
+
+                                  // Chip(
+                                  //     avatar: const CircleAvatar(
+                                  //       child: Icon(
+                                  //         Icons.merge_type_outlined,
+                                  //       ),
+                                  //     ),
+                                  //     label: Text(('${ticket.crossPro?.fromSection?.factory} > ${ticket.crossPro?.toSection?.factory}'))),
                                   Text(ticket.getUpdateDateTime()),
                                 ],
                               ),
@@ -353,42 +361,42 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                                 children: [
                                   if (ticket.inPrint == 1)
                                     IconButton(
-                                      icon: const CircleAvatar(child: const Icon(Icons.print_rounded, color: Colors.deepOrangeAccent), backgroundColor: Colors.white),
+                                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)),
                                       onPressed: () {},
                                     ),
                                   if (ticket.isHold == 1)
                                     IconButton(
-                                      icon: const CircleAvatar(child: const Icon(Icons.pan_tool_rounded, color: Colors.black), backgroundColor: Colors.white),
+                                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.pan_tool_rounded, color: Colors.black)),
                                       onPressed: () {},
                                     ),
                                   if (ticket.isGr == 1)
                                     IconButton(
-                                      icon: const CircleAvatar(child: const Icon(NsIcons.gr, color: Colors.blue), backgroundColor: Colors.white),
+                                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)),
                                       onPressed: () {},
                                     ),
                                   if (ticket.isSk == 1)
                                     IconButton(
-                                      icon: const CircleAvatar(child: const Icon(NsIcons.sk, color: Colors.pink), backgroundColor: Colors.white),
+                                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)),
                                       onPressed: () {},
                                     ),
                                   if (ticket.isError == 1)
                                     IconButton(
-                                      icon: const CircleAvatar(child: const Icon(Icons.report_problem_rounded, color: Colors.red), backgroundColor: Colors.white),
+                                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.report_problem_rounded, color: Colors.red)),
                                       onPressed: () {},
                                     ),
                                   if (ticket.isSort == 1)
                                     IconButton(
-                                      icon: CircleAvatar(child: Icon(Icons.local_mall_rounded, color: themeColor), backgroundColor: Colors.white),
+                                      icon: CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.local_mall_rounded, color: themeColor)),
                                       onPressed: () {},
                                     ),
                                   if (ticket.isRush == 1)
                                     IconButton(
-                                      icon: const CircleAvatar(child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent), backgroundColor: Colors.white),
+                                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent)),
                                       onPressed: () {},
                                     ),
                                   if (ticket.isRed == 1)
                                     IconButton(
-                                      icon: const CircleAvatar(child: const Icon(Icons.tour_rounded, color: Colors.red), backgroundColor: Colors.white),
+                                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)),
                                       onPressed: () {},
                                     ),
                                   if (ticket.isQa == 1)
@@ -443,7 +451,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
       context: context,
       builder: (BuildContext context) {
         return Container(
-          decoration: const BoxDecoration(borderRadius: const BorderRadius.only(topLeft: const Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
+          decoration: const BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
           height: 350,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,

@@ -17,6 +17,7 @@ import 'package:smartwind/main.dart';
 
 import '../V/Home/UserManager/UserPermissions.dart';
 import 'AppUser.dart';
+import 'CrossProduction.dart';
 import 'HiveClass.dart';
 import 'LocalFileVersion.dart';
 import 'NsUser.dart';
@@ -44,7 +45,7 @@ class HiveBox {
     } else {
       var directory = await getApplicationDocumentsDirectory();
       print("dddddddddddddddddddddddd = ${directory.path}");
-      Hive.init(directory.path + '/smartwind_${packageInfo.buildNumber}');
+      Hive.init('${directory.path}/smartwind_${packageInfo.buildNumber}');
       print('build number == ${packageInfo.buildNumber}');
     }
 
@@ -57,6 +58,7 @@ class HiveBox {
     Hive.registerAdapter(LocalFileVersionAdapter());
     Hive.registerAdapter(TicketFlagAdapter());
     Hive.registerAdapter(EmailAdapter());
+    Hive.registerAdapter(CrossProductionAdapter());
 
     usersBox = await Hive.openBox<NsUser>('userBox');
     ticketBox = await Hive.openBox<Ticket>('ticketBox');

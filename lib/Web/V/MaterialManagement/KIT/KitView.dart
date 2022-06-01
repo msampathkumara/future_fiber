@@ -76,8 +76,8 @@ class _KitViewState extends State<KitView> {
                     child: Column(
                       children: [
                         Table(
-                    children: [
-                      TableRow(children: [
+                          children: [
+                            TableRow(children: [
                               ListTile(
                                   visualDensity: vd,
                                   title: Text('Ticket', style: titleTheme),
@@ -98,9 +98,9 @@ class _KitViewState extends State<KitView> {
                               ListTile(visualDensity: vd, title: Text('Shortage Type', style: titleTheme), subtitle: Text('${_kit.shortageType}', style: valTheme)),
                               ListTile(visualDensity: vd, title: Text('Status', style: titleTheme), subtitle: Text('${_kit.status} ', style: valTheme)),
                             ]),
-                    ],
-                  ),
-                  Expanded(
+                          ],
+                        ),
+                        Expanded(
                           child: Card(
                             elevation: 4,
                             child: Column(children: [
@@ -192,31 +192,31 @@ class _KitViewState extends State<KitView> {
                             ]),
                           ),
                         ),
-                ],
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
-        SizedBox(
-            width: 400,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Card(
-                elevation: 4,
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ListView.builder(
-                            itemCount: kitComments.length,
+              SizedBox(
+                  width: 400,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Card(
+                      elevation: 4,
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ListView.builder(
+                                  itemCount: kitComments.length,
                                   itemBuilder: (context, index) {
                                     Message msg = kitComments[index];
                                     return ChatBubble(msg, isSelf: msg.isSelf);
                                   }),
-                      ),
-                    ),
-                    ListTile(
+                            ),
+                          ),
+                          ListTile(
                             title: TextFormField(
                                 controller: commentController,
                                 onFieldSubmitted: (r) {
@@ -233,10 +233,10 @@ class _KitViewState extends State<KitView> {
                                 )),
                           )
                         ],
-                ),
-              ),
-            ))
-      ]),
+                      ),
+                    ),
+                  ))
+            ]),
       // floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
       // floatingActionButton: getButton()
     );

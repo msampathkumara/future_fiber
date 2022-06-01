@@ -347,7 +347,7 @@ class _TicketInfoState extends State<TicketInfo> {
                                         icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent)), onPressed: () {}),
                                   if (_ticket.isRed == 1)
                                     IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)), onPressed: () {}),
-                                  if (_ticket.crossPro == 1)
+                                  if (_ticket.isCrossPro)
                                     IconButton(
                                         icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.merge_type_rounded, color: Colors.green)), onPressed: () {})
                                 ],

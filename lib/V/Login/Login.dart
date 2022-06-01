@@ -241,8 +241,8 @@ class _LoginState extends State<Login> {
                                           height: 50,
                                           child: ElevatedButton(
                                               onPressed: _login,
-                                              child: const Text("Login", style: TextStyle(color: Colors.white, fontSize: 20)),
-                                              style: FormInputDecoration.buttonStyle())),
+                                              style: FormInputDecoration.buttonStyle(),
+                                              child: const Text("Login", style: TextStyle(color: Colors.white, fontSize: 20)))),
                                       SizedBox(
                                           width: double.infinity,
                                           child: TextButton(
@@ -288,7 +288,11 @@ class _LoginState extends State<Login> {
 
       Map res = response.data;
 
-      if (res["deactivate"] != null) {
+      if (res["login"] == false) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Login failed, Check user name and password"), backgroundColor: Colors.red));
+        setLoading(false);
+        return;
+      } else if (res["deactivate"] != null) {
         setLoading(false);
         return showAlertDialog(context);
       } else if (res["user"] == null) {
@@ -360,23 +364,20 @@ class _LoginState extends State<Login> {
       if (kIsWeb)
         SizedBox.expand(
             child: FittedBox(
-              fit: BoxFit.cover,
+          fit: BoxFit.cover,
           child: Image.asset(Res.background),
         )),
       if (!loading) Center(child: _body()),
-      if (loading)
-        ConstrainedBox(
-            constraints: const BoxConstraints.expand(),
-            child: Container(
-              color: Colors.black54,
-              child: const Center(child: CircularProgressIndicator()),
-            )),
+      if (loading) ConstrainedBox(constraints: const BoxConstraints.expand(), child: Container(color: Colors.black54, child: const Center(child: CircularProgressIndicator()))),
       Align(
+          alignment: Alignment.bottomCenter,
           child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text("NS Smart Wind $appVersion v",
-                  style: const TextStyle(color: Colors.white, shadows: <Shadow>[Shadow(offset: Offset(0.0, 0.0), blurRadius: 10.0, color: Colors.black)]))),
-          alignment: Alignment.bottomCenter)
+              child: Chip(
+                  backgroundColor: Colors.black.withOpacity(0.5),
+                  padding: const EdgeInsets.all(8.0),
+                  label: Text("NS Smart Wind $appVersion v",
+                      style: const TextStyle(color: Colors.white, shadows: <Shadow>[Shadow(offset: Offset(0.0, 0.0), blurRadius: 10.0, color: Colors.black)])))))
     ]);
   }
 
@@ -399,10 +400,11 @@ class _LoginState extends State<Login> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    SizedBox(child: Image.asset("assets/north_sails-logo.png"), width: 128, height: 128),
+                    SizedBox(width: 128, height: 128, child: Image.asset(Res.north_sails_logo)),
                     Padding(
                       padding: const EdgeInsets.all(10),
                       child: TextFormField(
+                          initialValue: _user.uname,
                           onChanged: (text) {
                             _user.uname = text;
                           },
@@ -436,6 +438,7 @@ class _LoginState extends State<Login> {
                         alignment: const Alignment(0, 0),
                         children: <Widget>[
                           TextFormField(
+                              initialValue: _user.password,
                               onChanged: (text) {
                                 _user.pword = text;
                               },

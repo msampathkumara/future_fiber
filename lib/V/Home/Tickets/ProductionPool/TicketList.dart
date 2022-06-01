@@ -152,7 +152,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
           child: Column(
             children: [
               Wrap(children: [
-                flagIcon(Filters.crossPro, Icons.merge_type_rounded),
+                flagIcon(Filters.isCrossPro, Icons.merge_type_rounded),
                 flagIcon(Filters.isError, Icons.warning_rounded),
                 flagIcon(Filters.inPrint, Icons.print_rounded),
                 flagIcon(Filters.isRush, Icons.offline_bolt_rounded),
@@ -288,11 +288,11 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     });
   }
 
-  List<Ticket> _load(selectedProduction, section, _showAllTickets, searchText, {crossProduction = false, bySection = false}) {
+  List<Ticket> _load(selectedProduction, section, showAllTickets, searchText, {crossProduction = false, bySection = false}) {
     print('ticket count == ${HiveBox.ticketBox.length}');
-    var _production = nsUser?.section?.factory;
-    print('====== == ${_production}');
-    print('====== == ${HiveBox.ticketBox.length}');
+    var production = nsUser?.section?.factory;
+    print('====== == $production');
+    print('crossProduction == $crossProduction');
 
     List<Ticket> l = HiveBox.ticketBox.values.where((t) {
       if (bySection && t.nowAt != nsUser?.section?.id) {
@@ -303,16 +303,22 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
         return false;
       }
       if (crossProduction) {
-        if (t.crossPro == 1) {
-          if (t.crossProList.contains("${_production}") == false) {
+        if (t.isCrossPro) {
+          print([t.id, t.crossPro?.fromSection?.factory, t.crossPro?.toSection?.factory, "$production"]);
+          if (showAllTickets) {
+            return true;
+          }
+
+          if ([t.crossPro?.fromSection?.factory, t.crossPro?.toSection?.factory].contains("$production") == false) {
             return false;
           }
         } else {
           return false;
         }
-        print('${t.crossProList}');
+        // print('${t.crossProList}');
+        print([t.crossPro?.fromSection?.factory, t.crossPro?.toSection?.factory, "$production"]);
       }
-      if (_showAllTickets ? (!searchByProduction(t, selectedProduction)) : (!searchBySection(t, section))) {
+      if (showAllTickets ? (!searchByProduction(t, selectedProduction)) : (!searchBySection(t, section))) {
         return false;
       }
 
@@ -471,27 +477,30 @@ class TicketTile extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          subtitle: Wrap(
-            direction: Axis.vertical,
-            children: [
-              if ((ticket.mo ?? "").trim().isNotEmpty) Text((ticket.oe ?? "")),
-              if (ticket.crossPro == 1)
-                Chip(padding: const EdgeInsets.all(4.0), avatar: const CircleAvatar(radius: 8, child: Icon(Icons.merge_type_outlined, size: 12)), label: Text(ticket.crossProList)),
-              // Text(" t${ticket.nowAt}"),
-              // Text("  ${ticket.production}"),
-              if (ticket.shipDate.isNotEmpty)
-                Wrap(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(right: 4),
-                      child: Icon(Icons.directions_boat_outlined, size: 12, color: Colors.grey),
-                    ),
-                    Text(ticket.shipDate)
-                    // Icon(Icons.delivery_dining_rounded),    Text(ticket.deliveryDate),
-                  ],
+          subtitle: Wrap(direction: Axis.vertical, children: [
+            if ((ticket.mo ?? "").trim().isNotEmpty) Text((ticket.oe ?? "")),
+            if (ticket.isCrossPro)
+              // Chip(
+              // padding: const EdgeInsets.all(0.0),
+              // avatar: const CircleAvatar(radius: 8, child: Icon(Icons.merge_type_outlined, size: 8)),
+              // label:
+              Material(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.deepOrange,
+                  child: Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child:
+                          Text(('${ticket.crossPro?.fromSection?.factory} > ${ticket.crossPro?.toSection?.factory}'), style: const TextStyle(fontSize: 12, color: Colors.white)))),
+            // ),
+            if (ticket.shipDate.isNotEmpty)
+              Wrap(children: [
+                const Padding(
+                  padding: EdgeInsets.only(right: 4),
+                  child: Icon(Icons.directions_boat_outlined, size: 12, color: Colors.grey),
                 ),
-            ],
-          ),
+                Text(ticket.shipDate)
+              ])
+          ]),
           // subtitle: Text(ticket.fileVersion.toString()),
           trailing: Wrap(
             children: [
@@ -555,7 +564,7 @@ class TicketTile extends StatelessWidget {
                   lineWidth: 5.0,
                   percent: ticket.progress / 100,
                   center: Text(
-                    ticket.progress.toString() + "%",
+                    "${ticket.progress}%",
                     style: const TextStyle(fontSize: 12),
                   ),
                   progressColor: Colors.green,

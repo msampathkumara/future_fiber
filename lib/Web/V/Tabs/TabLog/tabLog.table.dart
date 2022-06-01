@@ -75,7 +75,7 @@ class _WebPrintTableState extends State<TabLogDataTable> {
       AsyncPaginatedDataTable2(
           scrollController: _scrollController,
           showFirstLastButtons: true,
-          smRatio: 0.5,
+          smRatio: 0.4,
           lmRatio: 3,
           horizontalMargin: 20,
           checkboxHorizontalMargin: 12,

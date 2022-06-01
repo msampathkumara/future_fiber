@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/Enums.dart';
-import 'package:smartwind/Web/V/Admin/webAdmin.dart';
-import 'package:smartwind/Web/V/FinishedGoods/webFinishedGoods.dart';
-import 'package:smartwind/Web/V/Print/web_print.dart';
-import 'package:smartwind/Web/V/QC/web_qc.dart';
-import 'package:smartwind/Web/V/SheetData/webSheetData.dart';
-import 'package:smartwind/Web/V/UserManager/webUserManager.dart';
 
 import '../V/Home/AppInfo.dart';
 import '../V/Widgets/UserImage.dart';
+import 'V/Admin/webAdmin.dart';
 import 'V/DashBoard/dashBoard.dart';
+import 'V/FinishedGoods/webFinishedGoods.dart';
+import 'V/Print/web_print.dart';
 import 'V/ProductionPool/webProductionPool.dart';
+import 'V/QC/web_qc.dart';
+import 'V/SheetData/webSheetData.dart';
 import 'V/StandardLibrary/webStandardLibrary.dart';
 import 'V/Tabs/web_tabs.dart';
+import 'V/UserManager/webUserManager.dart';
 import 'Widgets/login_change.dart';
 
 class WebHomePage extends StatefulWidget {
@@ -71,7 +71,7 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                             _menuExpanded = !_menuExpanded;
                           });
                         },
-                        icon: const Icon(Icons.menu, color: Colors.deepOrange)),
+                        icon: const Icon(Icons.menu)),
                     Expanded(
                         child: TweenAnimationBuilder<double>(
                             duration: const Duration(milliseconds: 300),
@@ -93,8 +93,8 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                                           });
                                         },
                                         labelType: NavigationRailLabelType.all,
-                                        selectedIconTheme: const IconThemeData(color: Colors.deepOrange),
-                                        selectedLabelTextStyle: const TextStyle(color: Colors.deepOrange),
+                                        // selectedIconTheme: const IconThemeData(color: Colors.deepOrange),
+                                        // selectedLabelTextStyle: const TextStyle(color: Colors.deepOrange),
                                         destinations: [
                                           NavigationRailDestination(
                                               icon: const Icon(Icons.favorite_border),
@@ -171,6 +171,7 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                       itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
                         PopupMenuItem(
                           value: 0,
+                          enabled: false,
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Column(
@@ -179,7 +180,6 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                               children: [UserImage(nsUser: AppUser.getUser(), radius: 68), Text("${AppUser.getUser()?.name}")],
                             ),
                           ),
-                          enabled: false,
                         ),
                         const PopupMenuItem(
                           value: 1,
@@ -192,6 +192,17 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                 ),
               ),
             ),
+
+            // Expanded(
+            //   child: Builder(builder: (context) {
+            //     xxxx = context;
+            //     return MaterialApp(
+            //       initialRoute: '/dashBoard',
+            //       routes: <String, WidgetBuilder>{'/dashBoard': (BuildContext context) => DashBoard(), '/productionPool': (BuildContext context) => WebProductionPool()},
+            //     );
+            //   }),
+            // )
+
             // VerticalDivider(thickness: 1, width: 1),
             // This is the main content.
             Expanded(
@@ -214,4 +225,6 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
       ),
     );
   }
+
+  late BuildContext xxxx;
 }

@@ -32,6 +32,8 @@ class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
   bool _initialized = false;
   PaginatorController? _controller;
 
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -78,28 +80,28 @@ class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
     return [
       DataColumn2(
         size: ColumnSize.M,
-        label: const Text('Ticket'),
+        label: const Text('Ticket', style: TextStyle(fontWeight: FontWeight.bold)),
         onSort: (columnIndex, ascending) => sort<String>((d) => (d.mo ?? ""), columnIndex, ascending),
       ),
       DataColumn2(
         size: ColumnSize.M,
-        label: const Text('Production'),
+        label: const Text('Production', style: TextStyle(fontWeight: FontWeight.bold)),
         onSort: (columnIndex, ascending) => sort<String>((d) => d.production ?? "", columnIndex, ascending),
       ),
       DataColumn2(
-        size: ColumnSize.M,
-        label: const Text('Progress'),
+        size: ColumnSize.S,
+        label: const Text('Progress', style: TextStyle(fontWeight: FontWeight.bold)),
         numeric: true,
         onSort: (columnIndex, ascending) => sort<num>((d) => d.progress, columnIndex, ascending),
       ),
       DataColumn2(
         size: ColumnSize.M,
-        label: const Text('Shipping Date'),
+        label: const Text('Shipping Date', style: TextStyle(fontWeight: FontWeight.bold)),
         numeric: true,
         onSort: (columnIndex, ascending) => sort<String>((d) => d.shipDate, columnIndex, ascending),
       ),
-      const DataColumn2(size: ColumnSize.L, label: Text('Flags'), numeric: true),
-      const DataColumn2(numeric: true, size: ColumnSize.S, tooltip: "Options", label: Text('Options'))
+      const DataColumn2(size: ColumnSize.L, label: Text('Status', style: TextStyle(fontWeight: FontWeight.bold)), numeric: true),
+      const DataColumn2(numeric: true, size: ColumnSize.S, tooltip: "Options", label: Text('Options', style: TextStyle(fontWeight: FontWeight.bold)))
     ];
   }
 
@@ -107,42 +109,42 @@ class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
   Widget build(BuildContext context) {
     return Stack(alignment: Alignment.bottomCenter, children: [
       PaginatedDataTable2(
-        smRatio: 0.5,
-        lmRatio: 3,
-        horizontalMargin: 20,
-        checkboxHorizontalMargin: 12,
-        columnSpacing: 16,
-        wrapInCard: false,
-        showFirstLastButtons: true,
-        rowsPerPage: _rowsPerPage,
-        autoRowsToHeight: false,
-        minWidth: 800,
-        fit: FlexFit.tight,
-        showCheckboxColumn: false,
-        border: TableBorder(
-            top: const BorderSide(color: Colors.transparent),
-            bottom: BorderSide(color: Colors.grey[300]!),
-            left: BorderSide(color: Colors.grey[300]!),
-            right: BorderSide(color: Colors.grey[300]!),
-            verticalInside: BorderSide(color: Colors.grey[200]!),
-            horizontalInside: BorderSide(color: Colors.grey[300]!, width: 1)),
-        onRowsPerPageChanged: (value) {
-          _rowsPerPage = value!;
-          print(_rowsPerPage);
-        },
-        initialFirstRowIndex: 0,
-        onPageChanged: (rowIndex) {
-          print(rowIndex / _rowsPerPage);
-        },
-        sortColumnIndex: _sortColumnIndex,
-        sortAscending: _sortAscending,
-        controller: _controller,
-        hidePaginator: false,
-        columns: _columns,
-        availableRowsPerPage: const [20, 50, 100],
-        empty: Center(child: Container(padding: const EdgeInsets.all(20), color: Colors.grey[200], child: const Text('No data'))),
-        source: _dessertsDataSource,
-      ),
+          scrollController: _scrollController,
+          smRatio: 0.4,
+          lmRatio: 3,
+          horizontalMargin: 20,
+          checkboxHorizontalMargin: 12,
+          columnSpacing: 16,
+          wrapInCard: false,
+          showFirstLastButtons: true,
+          rowsPerPage: _rowsPerPage,
+          autoRowsToHeight: false,
+          minWidth: 800,
+          fit: FlexFit.tight,
+          showCheckboxColumn: false,
+          border: TableBorder(
+              top: const BorderSide(color: Colors.transparent),
+              bottom: BorderSide(color: Colors.grey[300]!),
+              left: BorderSide(color: Colors.grey[300]!),
+              right: BorderSide(color: Colors.grey[300]!),
+              verticalInside: BorderSide(color: Colors.grey[200]!),
+              horizontalInside: BorderSide(color: Colors.grey[300]!, width: 1)),
+          onRowsPerPageChanged: (value) {
+            _rowsPerPage = value!;
+            print(_rowsPerPage);
+          },
+          initialFirstRowIndex: 0,
+          onPageChanged: (rowIndex) {
+            print(rowIndex / _rowsPerPage);
+          },
+          sortColumnIndex: _sortColumnIndex,
+          sortAscending: _sortAscending,
+          controller: _controller,
+          hidePaginator: false,
+          columns: _columns,
+          availableRowsPerPage: const [20, 50, 100],
+          empty: Center(child: Container(padding: const EdgeInsets.all(20), color: Colors.grey[200], child: const Text('No data'))),
+          source: _dessertsDataSource)
       // Positioned(bottom: 16, child: CustomPager(_controller!))
     ]);
   }
@@ -251,7 +253,7 @@ class DessertDataSource extends DataTableSource {
                   TicketPrintList(ticket).show(context);
                 },
               ),
-            if (ticket.crossPro == 1)
+            if (ticket.isCrossPro)
               IconButton(
                   icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.merge_type_rounded, color: Colors.green)),
                   onPressed: () {

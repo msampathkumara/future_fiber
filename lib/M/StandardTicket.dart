@@ -5,6 +5,8 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:smartwind/M/Ticket.dart';
 
+import 'CrossProduction.dart';
+
 part 'StandardTicket.g.dart';
 
 @JsonSerializable(explicitToJson: true)
@@ -26,8 +28,8 @@ class StandardTicket extends Ticket {
 
   Future<File> getLocalFile() async {
     var ed = await getExternalStorageDirectory();
-    var filePath = ed!.path + '/st$id.pdf';
-    File file = new File(filePath);
+    var filePath = '${ed!.path}/st$id.pdf';
+    File file = File(filePath);
     ticketFile = file;
     return file;
   }
@@ -39,4 +41,8 @@ class StandardTicket extends Ticket {
   static List<StandardTicket> fromJsonArray(StandardTickets) {
     return List<StandardTicket>.from(StandardTickets.map((model) => StandardTicket.fromJson(model)));
   }
+
+  static bool _boolFromInt(int done) => done == 1;
+
+  static int _boolToInt(bool done) => done ? 1 : 0;
 }

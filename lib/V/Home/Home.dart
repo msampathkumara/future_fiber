@@ -26,6 +26,7 @@ import 'package:smartwind/V/Login/Login.dart';
 import 'package:smartwind/V/Login/SectionSelector.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
+import 'package:smartwind/res.dart';
 
 import 'About.dart';
 import 'Admin/AdminCpanel.dart';
@@ -135,7 +136,7 @@ class _HomeState extends State<Home> {
                     right: 0,
                     child: ColorFiltered(
                       colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.1), BlendMode.dstATop),
-                      child: Image.asset("assets/north_sails-logo.png", width: 350),
+                      child: Image.asset(Res.north_sails_logo, width: 350),
                     ),
                   ),
                   SingleChildScrollView(

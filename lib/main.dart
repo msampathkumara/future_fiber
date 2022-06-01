@@ -28,13 +28,13 @@ bool isMaterialManagement = false;
 Future<void> mainThings({viewIssMaterialManagement = false}) async {
   isMaterialManagement = viewIssMaterialManagement;
   WidgetsFlutterBinding.ensureInitialized();
-  Firebase.initializeApp();
+  await Firebase.initializeApp();
 
   DatabaseReference ref = FirebaseDatabase.instance.ref('devServerIp');
 
   ref.onValue.listen((event) {
     Server.devServerIp = event.snapshot.value.toString();
-    print('ip == ' + Server.devServerIp);
+    print('ip == ${Server.devServerIp}');
   });
   await HiveBox.create();
 
