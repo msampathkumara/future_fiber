@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:smartwind/res.dart';
 
 class AppInfo extends StatefulWidget {
   const AppInfo({Key? key}) : super(key: key);
@@ -40,7 +41,7 @@ class _AppInfoState extends State<AppInfo> {
           padding: const EdgeInsets.all(32.0),
           child: Card(
             child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center, children: [
-              SizedBox(width: 150, child: Image.asset("assets/splash.png")),
+              SizedBox(width: 150, child: Image.asset(Res.splash)),
               ListTile(title: const Text('App Name'), subtitle: Text('$appName')),
               ListTile(title: const Text('App Version'), subtitle: Text('$appVersion')),
               ListTile(title: const Text('App Build Number'), subtitle: Text('$buildNumber')),

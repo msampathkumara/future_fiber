@@ -48,9 +48,9 @@ class _webPendingToFinishState extends State<webPendingToFinish> {
             title: Row(
               children: [
                 Text("Pending To Finish", style: mainWidgetsTitleTextStyle),
-                Spacer(),
+                const Spacer(),
                 Wrap(children: [
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   Material(
                     elevation: 4,
                     borderRadius: BorderRadius.circular(8),
@@ -83,7 +83,7 @@ class _webPendingToFinishState extends State<webPendingToFinish> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   SearchBar(
                       onSearchTextChanged: (text) {
                         searchText = text;
@@ -109,10 +109,10 @@ class _webPendingToFinishState extends State<webPendingToFinish> {
               })),
         ),
         bottomNavigationBar: BottomAppBar(
-            shape: CircularNotchedRectangle(),
+            shape: const CircularNotchedRectangle(),
             color: Colors.green,
             child: IconTheme(
-              data: IconThemeData(color: Colors.white),
+              data: const IconThemeData(color: Colors.white),
               child: Row(
                 children: [
                   InkWell(
@@ -120,7 +120,7 @@ class _webPendingToFinishState extends State<webPendingToFinish> {
                     splashColor: Colors.red,
                     child: Ink(
                       child: IconButton(
-                        icon: Icon(Icons.refresh),
+                        icon: const Icon(Icons.refresh),
                         onPressed: () {
                           _dataSource.refreshDatasource();
                         },

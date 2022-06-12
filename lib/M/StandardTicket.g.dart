@@ -132,16 +132,16 @@ class StandardTicketAdapter extends TypeAdapter<StandardTicket> {
 
 StandardTicket _$StandardTicketFromJson(Map<String, dynamic> json) =>
     StandardTicket()
-      ..mo = json['mo'] as String?
-      ..oe = json['oe'] as String?
-      ..finished = json['finished'] as int? ?? 0
-      ..file = json['file'] as int? ?? 0
-      ..sheet = json['sheet'] as int? ?? 0
-      ..dir = json['dir'] as int? ?? 0
-      ..id = json['id'] as int? ?? 0
-      ..isRed = json['isRed'] as int? ?? 0
-      ..isRush = json['isRush'] as int? ?? 0
-      ..isSk = json['isSk'] as int? ?? 0
+  ..mo = json['mo'] as String?
+  ..oe = json['oe'] as String?
+  ..finished = json['finished'] as int? ?? 0
+  ..file = json['file'] as int? ?? 0
+  ..sheet = json['sheet'] as int? ?? 0
+  ..dir = json['dir'] as int? ?? 0
+  ..id = json['id'] as int? ?? 0
+  ..isRed = json['isRed'] as int? ?? 0
+  ..isRush = json['isRush'] as int? ?? 0
+  ..isSk = json['isSk'] as int? ?? 0
   ..inPrint = json['inPrint'] as int? ?? 0
   ..isGr = json['isGr'] as int? ?? 0
   ..isError = json['isError'] as int? ?? 0

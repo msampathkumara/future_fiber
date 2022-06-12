@@ -4,10 +4,10 @@ import 'package:smartwind/C/form_input_decoration.dart';
 import 'package:smartwind/M/NsUser.dart';
 
 class NewPassword extends StatefulWidget {
-  Null Function() onEnd;
-  var userId;
+  final Function() onEnd;
+  final userId;
 
-  NewPassword(this.userId, {Key? key, required this.onEnd}) : super(key: key);
+  const NewPassword(this.userId, {Key? key, required this.onEnd}) : super(key: key);
 
   @override
   _NewPasswordState createState() => _NewPasswordState();
@@ -17,6 +17,11 @@ class _NewPasswordState extends State<NewPassword> {
   final NsUser _user = NsUser();
   final _formKey = GlobalKey<FormState>();
   bool visiblePassword = false;
+
+  @override
+  initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +41,7 @@ class _NewPasswordState extends State<NewPassword> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
-                            initialValue: 'sam123456',
+                            initialValue: _user.password,
                             onChanged: (text) {
                               _user.password = text;
                             },
@@ -59,7 +64,7 @@ class _NewPasswordState extends State<NewPassword> {
                                     },
                                     child: Icon(visiblePassword ? Icons.visibility_rounded : Icons.visibility_off_rounded, size: 16, color: Colors.grey)),
                               ),
-                              helperText: "Password must contain atlas one letter or one number and length must more than 6 letters",
+                              helperText: "Password must contain at least one letter or one number and length must more than 6 letters",
                               border: InputBorder.none,
                               hintText: 'password',
                               filled: true,
@@ -83,13 +88,12 @@ class _NewPasswordState extends State<NewPassword> {
                               } else {
                                 return "invalid password format";
                               }
-                              return null;
                             }),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
-                            initialValue: 'sam123456',
+                            initialValue: passwordReenter,
                             onChanged: (text) {
                               passwordReenter = text;
                               setState(() {});
@@ -105,9 +109,9 @@ class _NewPasswordState extends State<NewPassword> {
                               suffixIconConstraints: const BoxConstraints(minWidth: 5, minHeight: 5),
                               suffixIcon: passwordReenter == _user.password
                                   ? const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Icon(Icons.done_rounded, size: 16, color: Colors.green),
-                              )
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Icon(Icons.done_rounded, size: 16, color: Colors.green),
+                                    )
                                   : null,
                               border: InputBorder.none,
                               hintText: 'password',

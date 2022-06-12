@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/Enums.dart';
+import 'package:universal_html/html.dart' as html;
 
 import '../V/Home/AppInfo.dart';
 import '../V/Widgets/UserImage.dart';
@@ -88,6 +89,11 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                                         extended: false,
                                         selectedIndex: _selectedIndex,
                                         onDestinationSelected: (int index) {
+                                          if (index == 2 && (AppUser.havePermissionFor(Permissions.MATERIAL_MANAGEMENT))) {
+                                            html.window.open("https://mm.smartwind.nsslsupportservices.com", 'new tab');
+                                            return;
+                                          }
+
                                           setState(() {
                                             _selectedIndex = index;
                                           });
@@ -105,6 +111,11 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                                                 icon: const Icon(Icons.bookmark_border),
                                                 selectedIcon: const Icon(Icons.book),
                                                 label: Text('Production Pool', style: TextStyle(fontSize: size))),
+                                          if (AppUser.havePermissionFor(Permissions.MATERIAL_MANAGEMENT))
+                                            NavigationRailDestination(
+                                                icon: const Icon(Icons.extension_outlined),
+                                                selectedIcon: const Icon(Icons.extension_rounded),
+                                                label: Text('Material Management', style: TextStyle(fontSize: size))),
                                           if (AppUser.havePermissionFor(Permissions.FINISH_TICKET))
                                             NavigationRailDestination(
                                                 icon: const Icon(Icons.check_box),
@@ -210,6 +221,7 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                     child: [
               const DashBoard(),
               if (AppUser.havePermissionFor(Permissions.PRODUCTION_POOL)) const WebProductionPool(),
+              if (AppUser.havePermissionFor(Permissions.MATERIAL_MANAGEMENT)) Container(),
               if (AppUser.havePermissionFor(Permissions.FINISH_TICKET)) const WebFinishedGoods(),
               if (AppUser.havePermissionFor(Permissions.STANDARD_FILES)) const WebStandardLibrary(),
               if (AppUser.havePermissionFor(Permissions.USER_MANAGER)) const WebUserManager(),

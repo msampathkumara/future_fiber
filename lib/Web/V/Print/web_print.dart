@@ -49,12 +49,12 @@ class _WebPrintState extends State<WebPrint> {
             title: Row(
               children: [
                 Text("Print", style: mainWidgetsTitleTextStyle),
-                Spacer(),
+                const Spacer(),
                 Wrap(children: [
                   Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Wrap(spacing: 8, children: [_statusChip(Status.All), _statusChip(Status.Done), _statusChip(Status.Sent), _statusChip(Status.Cancel)])),
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   Material(
                     elevation: 4,
                     borderRadius: BorderRadius.circular(8),
@@ -87,7 +87,7 @@ class _WebPrintState extends State<WebPrint> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   SearchBar(
                       onSearchTextChanged: (text) {
                         searchText = text;
@@ -115,10 +115,10 @@ class _WebPrintState extends State<WebPrint> {
               })),
         ),
         bottomNavigationBar: BottomAppBar(
-            shape: CircularNotchedRectangle(),
+            shape: const CircularNotchedRectangle(),
             color: Colors.green,
             child: IconTheme(
-              data: IconThemeData(color: Colors.white),
+              data: const IconThemeData(color: Colors.white),
               child: Row(
                 children: [
                   InkWell(
@@ -126,7 +126,7 @@ class _WebPrintState extends State<WebPrint> {
                     splashColor: Colors.red,
                     child: Ink(
                       child: IconButton(
-                        icon: Icon(Icons.refresh),
+                        icon: const Icon(Icons.refresh),
                         onPressed: () {
                           _dataSource.refreshDatasource();
                         },
@@ -134,16 +134,16 @@ class _WebPrintState extends State<WebPrint> {
                     ),
                   ),
                   const Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: const Text(
                       "${0}",
                       textScaleFactor: 1.1,
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ),
                   const Spacer(),
-                  SizedBox(width: 36)
+                  const SizedBox(width: 36)
                 ],
               ),
             )));

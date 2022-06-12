@@ -12,14 +12,13 @@ import 'package:smartwind/C/Validations.dart';
 import 'package:smartwind/C/form_input_decoration.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Section.dart';
-import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/V/Home/UserManager/section_list.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 
 class UpdateUserDetails extends StatefulWidget {
   late NsUser nsUser;
 
-  UpdateUserDetails(NsUser nsUser) {
+  UpdateUserDetails(NsUser nsUser, {Key? key}) : super(key: key) {
     this.nsUser = NsUser.fromJson(nsUser.toJson());
   }
 
@@ -28,8 +27,8 @@ class UpdateUserDetails extends StatefulWidget {
     return _UpdateUserDetailsState();
   }
 
-  show(context) {
-    kIsWeb ? showDialog(context: context, builder: (_) => this) : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
+  Future show(context) {
+    return kIsWeb ? showDialog(context: context, builder: (_) => this) : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
   }
 }
 
@@ -54,6 +53,8 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
   bool isSaving = false;
 
   int _userNameCheking = 0;
+
+  bool duplicateNic = false;
 
   get isNew => nsUser.id == 0;
 
@@ -204,6 +205,27 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                                             nsUser.uname = text;
                                             setState(() {});
                                             check('uname', text);
+                                          }),
+                                      const SizedBox(height: 16),
+                                      TextFormField(
+                                          inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly, FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))],
+                                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                                          initialValue: (nsUser.nic ?? '').replaceAll('v', '').replaceAll('V', ''),
+                                          decoration: FormInputDecoration.getDeco(labelText: "NIC", suffixText: (nsUser.nic ?? '').contains("v") ? "V  " : ""),
+                                          onChanged: (text) {
+                                            nsUser.nic = text;
+                                            if (text.length < 10) {
+                                              text = "${text}v";
+                                            }
+                                            nsUser.nic = text;
+                                            setState(() {});
+                                          },
+                                          validator: (value) {
+                                            if ("$value".length < 10) {
+                                              value = "${value}v";
+                                            }
+                                            nsUser.nic = value ?? "";
+                                            return duplicateNic ? 'Duplicate NIC' : Validations.nic("$value");
                                           })
                                     ]),
                                   )
@@ -363,7 +385,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                                       ]))
                                 ],
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -394,27 +416,31 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
 
     return Api.post("users/saveUser", {"user": nsUser, "image": imageId}).then((res) async {
       Map data = res.data;
-
+      var duplicates = [];
       if (data["error"] == true) {
-        if (data["duplicateUname"] == true) {
-          setState(() {
-            _userNameCheking = 2;
-          });
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(backgroundColor: Colors.redAccent, content: Text("Error : Duplicate User Name", style: TextStyle(color: Colors.white))));
+        if (data["duplicateNic"] == true) {
+          duplicateNic = true;
+          duplicates.add('NIC');
         }
+        if (data["duplicateUname"] == true) {
+          _userNameCheking = 2;
+          duplicates.add('User Name');
+        }
+        setState(() {});
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(backgroundColor: Colors.redAccent, content: Text("Error : Duplicate data (${duplicates.join(',')})", style: const TextStyle(color: Colors.white))));
       } else if (data["done"] == true) {
         if (imageId != "") {
           nsUser.img = "$imageId.jpg";
         }
 
-        await HiveBox.getDataFromServer();
-
+        nsUser = NsUser.fromJson(data["user"]);
+        bool isNew = data["isNew"];
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           backgroundColor: Colors.green,
           content: Text("User Saved", style: TextStyle(color: Colors.white)),
         ));
-        Navigator.pop(context, true);
+        Navigator.pop(context, isNew ? nsUser : null);
       } else if (data["error"] != null) {
         var error = "";
         if (data["nicUsed"] != null) {
@@ -488,7 +514,9 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
     return x;
   }
 
+  final _formKey = GlobalKey<FormState>();
+
   getUi() {
-    return getDialogUi();
+    return Form(child: getDialogUi(), key: _formKey);
   }
 }

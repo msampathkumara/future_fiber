@@ -10,12 +10,13 @@ import 'package:smartwind/V/Home/UserManager/GenerateOTP.dart';
 import 'package:smartwind/V/Widgets/Loading.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
+import 'package:smartwind/Web/V/UserManager/GenaratePassword.dart';
 
 import '../../../C/OnlineDB.dart';
 import '../../../M/AppUser.dart';
+import '../../../Web/V/UserManager/UpdateUserDetails.dart';
 import 'AddNfcCard.dart';
 import 'AddUser.dart';
-import 'UpdateUserDetails.dart';
 import 'UserDetails.dart';
 import 'UserPermissions.dart';
 

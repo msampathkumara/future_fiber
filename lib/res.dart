@@ -4,9 +4,9 @@ class Res {
   static const String js = "assets/js.js";
   static const String js1 = "assets/js1.txt";
   static const String loginVideo = "assets/loginVideo.mp4";
-  static const String north_sails_logo = "assets/north_sails-logo.png";
-  static const String north_sails_logo_tr = "assets/north_sails-logo_tr.png";
-  static const String north_sails_logox50 = "assets/north_sails-logox50.png";
+  static const String north_sails_logo = "assets/north_sails_logo.png";
+  static const String north_sails_logo_tr = "assets/north_sails_logo_tr.png";
+  static const String north_sails_logox50 = "assets/north_sails_logox50.png";
   static const String NsIcons = "assets/fonts/NsIcons.ttf";
   static const String QACheckList = "assets/QACheckList.json";
   static const String splash = "assets/splash.png";

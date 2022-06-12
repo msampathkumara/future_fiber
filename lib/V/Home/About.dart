@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:smartwind/res.dart';
 
 class About extends StatefulWidget {
   About({Key? key}) : super(key: key);
@@ -38,9 +39,9 @@ class _AboutState extends State<About> {
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: CircleAvatar(radius: 100, child: Image.asset("assets/north_sails-logo.png")),
+          child: CircleAvatar(radius: 100, child: Image.asset(Res.north_sails_logo)),
         ),
-        Text("NS Smart Wind", textScaleFactor: 1.5),
+        const Text("NS Smart Wind", textScaleFactor: 1.5),
         Text("$appVersion", textScaleFactor: 1)
       ],
     )));

@@ -47,7 +47,7 @@ class _ChatBubbleState extends State<ChatBubble> {
               child: Material(
                   elevation: 4,
                   borderRadius: selfBorderRadius,
-                  color: Colors.blue,
+                  color: Theme.of(context).primaryColor,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(widget.message.text, style: const TextStyle(color: Colors.white)),

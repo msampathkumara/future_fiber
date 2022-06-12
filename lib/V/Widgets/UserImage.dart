@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:smartwind/res.dart';
 
 import '../../M/AppUser.dart';
 import '../../M/NsUser.dart';
@@ -23,7 +24,7 @@ class UserImage extends StatefulWidget {
 
 class _UserImageState extends State<UserImage> {
   late NsUser nsUser;
-  var placeholder = const AssetImage('assets/images/user.png');
+  var placeholder = const AssetImage(Res.user);
 
   @override
   void initState() {

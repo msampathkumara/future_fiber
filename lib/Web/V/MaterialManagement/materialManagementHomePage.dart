@@ -4,8 +4,8 @@ import 'package:smartwind/Web/V/MaterialManagement/Batten/webBatten.dart';
 import 'package:smartwind/Web/V/MaterialManagement/CPR/webCpr.dart';
 import 'package:smartwind/Web/V/MaterialManagement/KIT/webKit.dart';
 
-import '../V/Widgets/UserImage.dart';
-import 'Widgets/login_change.dart';
+import '../../../V/Widgets/UserImage.dart';
+import '../../Widgets/login_change.dart';
 
 class MaterialManagementHomePage extends StatefulWidget {
   const MaterialManagementHomePage({Key? key}) : super(key: key);
@@ -53,10 +53,10 @@ class _MaterialManagementHomePageState extends State<MaterialManagementHomePage>
                             _menuExpanded = !_menuExpanded;
                           });
                         },
-                        icon: const Icon(Icons.menu, color: Colors.deepOrange)),
+                        icon: const Icon(Icons.menu)),
                     Expanded(
                         child: TweenAnimationBuilder<double>(
-                            duration: Duration(milliseconds: 300),
+                            duration: const Duration(milliseconds: 300),
                             curve: Curves.ease,
                             tween: Tween<double>(begin: _menuExpanded ? 0.1 : _size, end: _menuExpanded ? _size : 0.1),
                             builder: (_, size, __) {
@@ -65,6 +65,7 @@ class _MaterialManagementHomePageState extends State<MaterialManagementHomePage>
                                       constraints: const BoxConstraints(minHeight: 100),
                                       child: IntrinsicHeight(
                                           child: NavigationRail(
+                                        indicatorColor: Colors.white,
                                         useIndicator: true,
                                         extended: false,
                                         selectedIndex: _selectedIndex,
@@ -74,8 +75,8 @@ class _MaterialManagementHomePageState extends State<MaterialManagementHomePage>
                                           });
                                         },
                                         labelType: NavigationRailLabelType.all,
-                                        selectedIconTheme: const IconThemeData(color: Colors.deepOrange),
-                                        selectedLabelTextStyle: const TextStyle(color: Colors.deepOrange),
+                                        // selectedIconTheme: const IconThemeData(color: Colors.deepOrange),
+                                        // selectedLabelTextStyle: const TextStyle(color: Colors.deepOrange),
                                         destinations: [
                                           // if (AppUser.havePermissionFor(Permissions.CPR))
                                           NavigationRailDestination(
@@ -100,11 +101,11 @@ class _MaterialManagementHomePageState extends State<MaterialManagementHomePage>
                       itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
                         PopupMenuItem(
                           value: 0,
+                          enabled: false,
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: UserImage(nsUser: AppUser.getUser(), radius: 68),
                           ),
-                          enabled: false,
                         ),
                         const PopupMenuItem(
                           value: 1,

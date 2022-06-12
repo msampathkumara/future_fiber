@@ -18,7 +18,7 @@ class WebFinishedGoods extends StatefulWidget {
 }
 
 class _WebFinishedGoodsState extends State<WebFinishedGoods> {
-  var _controller = TextEditingController();
+  final _controller = TextEditingController();
   bool loading = false;
 
   // DessertDataSource? _dataSource;
@@ -48,7 +48,7 @@ class _WebFinishedGoodsState extends State<WebFinishedGoods> {
             title: Row(
               children: [
                 Text("Finished Goods", style: mainWidgetsTitleTextStyle),
-                Spacer(),
+                const Spacer(),
                 Wrap(children: [
                   flagIcon(Filters.isCrossPro, Icons.merge_type_rounded, "Filter by cross production"),
                   flagIcon(Filters.isError, Icons.warning_rounded, "Filter by Error Route"),
@@ -59,25 +59,25 @@ class _WebFinishedGoodsState extends State<WebFinishedGoods> {
                   flagIcon(Filters.isSk, NsIcons.sk, "Filter by SK"),
                   flagIcon(Filters.isGr, NsIcons.gr, "Filter by GR"),
                   flagIcon(Filters.isSort, NsIcons.short, "Filter by CPR"),
-                  SizedBox(width: 50),
+                  const SizedBox(width: 50),
                   Material(
                     elevation: 4,
                     borderRadius: BorderRadius.circular(8),
-                    child: Container(
+                    child: SizedBox(
                       height: 40,
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<Production>(
                           value: selectedProduction,
                           selectedItemBuilder: (_) {
-                            return Production.values.map<Widget>((Production item) {
+                            return Production.values.where((element) => element.getValue().toLowerCase() != 'none').toList().map<Widget>((Production item) {
                               return Center(
                                   child: Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text("${item.getValue()}"),
+                                child: Text(item.getValue()),
                               ));
                             }).toList();
                           },
-                          items: Production.values.map((Production value) {
+                          items: Production.values.where((element) => element.getValue().toLowerCase() != 'none').map((Production value) {
                             return DropdownMenuItem<Production>(
                               value: value,
                               child: Text(value.getValue()),
@@ -92,7 +92,7 @@ class _WebFinishedGoodsState extends State<WebFinishedGoods> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   Material(
                     elevation: 4,
                     borderRadius: BorderRadius.circular(8),
@@ -106,15 +106,15 @@ class _WebFinishedGoodsState extends State<WebFinishedGoods> {
                             loadData();
                           },
                           cursorColor: Colors.black,
-                          decoration: new InputDecoration(
-                              prefixIcon: Icon(Icons.search_rounded),
-                              suffixIcon: IconButton(icon: Icon(Icons.clear), onPressed: _controller.clear),
+                          decoration: InputDecoration(
+                              prefixIcon: const Icon(Icons.search_rounded),
+                              suffixIcon: IconButton(icon: const Icon(Icons.clear), onPressed: _controller.clear),
                               border: InputBorder.none,
                               focusedBorder: InputBorder.none,
                               enabledBorder: InputBorder.none,
                               errorBorder: InputBorder.none,
                               disabledBorder: InputBorder.none,
-                              contentPadding: EdgeInsets.only(left: 15, bottom: 11, top: 10, right: 15),
+                              contentPadding: const EdgeInsets.only(left: 15, bottom: 11, top: 10, right: 15),
                               hintText: "Search Text"),
                         )),
                   ),
@@ -133,47 +133,14 @@ class _WebFinishedGoodsState extends State<WebFinishedGoods> {
               }, onRequestData: (int page, int startingAt, int count, String sortedBy, bool sortedAsc) {
                 return getData(page, startingAt, count, sortedBy, sortedAsc);
               })),
-        ),
-        bottomNavigationBar: BottomAppBar(
-            shape: CircularNotchedRectangle(),
-            color: Colors.green,
-            child: IconTheme(
-              data: IconThemeData(color: Colors.white),
-              child: Row(
-                children: [
-                  InkWell(
-                    onTap: () {},
-                    splashColor: Colors.red,
-                    child: Ink(
-                      child: IconButton(
-                        icon: Icon(Icons.refresh),
-                        onPressed: () {
-                          _dataSource.refreshDatasource();
-                        },
-                      ),
-                    ),
-                  ),
-                  const Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "${0}",
-                      textScaleFactor: 1.1,
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  const Spacer(),
-                  SizedBox(width: 36)
-                ],
-              ),
-            )));
+        ));
   }
 
   Filters dataFilter = Filters.none;
 
   flagIcon(Filters filter, IconData icon, tooltip) {
     return IconButton(
-      icon: CircleAvatar(child: Icon(icon, color: dataFilter == filter ? Colors.red : Colors.black, size: 20), backgroundColor: Colors.white, radius: 16),
+      icon: CircleAvatar(backgroundColor: Colors.white, radius: 16, child: Icon(icon, color: dataFilter == filter ? Colors.red : Colors.black, size: 20)),
       tooltip: tooltip,
       onPressed: () async {
         dataFilter = dataFilter == filter ? Filters.none : filter;

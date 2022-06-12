@@ -7,9 +7,11 @@ import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/StandardTicket.dart';
 import 'package:smartwind/M/TicketHistory.dart';
+import 'package:smartwind/V/Home/Tickets/TicketInfo/info_History.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
 import '../../../../C/DB/DB.dart';
+import '../../../../M/NsUser.dart';
 import '../../../../M/hive.dart';
 import '../../../../Web/Widgets/DialogView.dart';
 import '../../../../Web/Widgets/IfWeb.dart';
@@ -72,7 +74,7 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
     super.dispose();
   }
 
-  var ts = TextStyle(color: Colors.white, fontSize: 24);
+  var ts = const TextStyle(color: Colors.white, fontSize: 24);
 
   @override
   Widget build(BuildContext context) {
@@ -86,8 +88,7 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
 
     return Scaffold(
       appBar: _appBar(),
-      body: Container(
-          child: RefreshIndicator(
+      body: RefreshIndicator(
         key: _refreshIndicatorKey,
         onRefresh: () {
           return loadData();
@@ -96,7 +97,7 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
             itemCount: historyList.length,
             itemBuilder: (context, index) {
               TicketHistory ticketHistory = historyList[index];
-
+              NsUser? user = HiveBox.usersBox.get(ticketHistory.doneBy);
               return TimelineTile(
                   beforeLineStyle: LineStyle(color: Colors.lightBlue.shade100),
                   lineXY: 0.2,
@@ -107,23 +108,24 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("1 MIN AGO", textAlign: TextAlign.start, style: TextStyle(color: Colors.grey)),
+                        // const Text("1 MIN AGO", textAlign: TextAlign.start, style: TextStyle(color: Colors.grey)),
                         RichText(
-                            text: TextSpan(style: defaultStyle, children: [TextSpan(text: AppUser.getUser()?.name ?? "", style: linkStyle), TextSpan(text: " edited ticket")])),
-                        Align(child: Text("2022/02/10 10:00 pm", textAlign: TextAlign.end, style: timeStyle), alignment: Alignment.bottomRight),
-                        Divider(
-                          thickness: 1.5,
-                        )
+                            text: TextSpan(style: defaultStyle, children: [
+                          TextSpan(text: user?.name ?? "", style: linkStyle),
+                          TextSpan(text: " ${(ticketHistory.action ?? "").toLowerCase().replaceUnderscore.capitalizeFirstofEach}")
+                        ])),
+                        Align(alignment: Alignment.bottomRight, child: Text("${ticketHistory.uptime}", textAlign: TextAlign.end, style: timeStyle)),
+                        const Divider(thickness: 1.5)
                       ],
                     ),
                   ),
                   indicatorStyle: IndicatorStyle(
                       indicatorXY: 0.1, width: 40, height: 40, drawGap: true, padding: const EdgeInsets.all(8), indicator: UserImage(nsUser: AppUser.getUser(), radius: 24)));
             }),
-      )),
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.import_contacts),
+        child: const Icon(Icons.import_contacts),
         onPressed: () {
           widget.standardTicket.open(context);
         },
@@ -133,8 +135,8 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
 
   _appBar() {
     double height = MediaQuery.of(context).size.height;
-    var ts = TextStyle(color: Colors.white, fontSize: 24);
-    var smallText = TextStyle(fontSize: 16);
+    var ts = const TextStyle(color: Colors.white, fontSize: 24);
+    var smallText = const TextStyle(fontSize: 16);
 
     return AppBar(
       backgroundColor: Colors.orange,
@@ -142,6 +144,7 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
       // toolbarHeight: (bottomNavigationBarSelectedIndex == 0) ? (height - kBottomNavigationBarHeight) : 230,
       toolbarHeight: 230,
       bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(4.0),
           child: Container(
             color: Colors.orange,
             height: 200.0,
@@ -160,7 +163,7 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
                     ],
                   ),
                 ),
-                Spacer(),
+                const Spacer(),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: CircularPercentIndicator(
@@ -176,8 +179,7 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
                 )
               ],
             ),
-          ),
-          preferredSize: Size.fromHeight(4.0)),
+          )),
     );
   }
 

@@ -189,7 +189,9 @@ class _TicketInfoState extends State<TicketInfo> {
                                 IconButton(
                                     icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent)), onPressed: () {}),
                               if (_ticket.isRed == 1)
-                                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)), onPressed: () {})
+                                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)), onPressed: () {}),
+                              if (_ticket.isCrossPro)
+                                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.crossProduction, color: Colors.green)), onPressed: () {})
                             ],
                           ),
                         ),
@@ -363,7 +365,7 @@ class _TicketInfoState extends State<TicketInfo> {
                           radius: 50.0,
                           lineWidth: 4.0,
                           percent: (_progress / 100).toDouble(),
-                          center: Text(_ticket.progress.toString() + "%", style: ts),
+                          center: Text("${_ticket.progress}%", style: ts),
                           progressColor: Colors.blue,
                           animateFromLastPercent: true,
                           animation: true,

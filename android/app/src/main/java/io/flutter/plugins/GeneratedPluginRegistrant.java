@@ -2,8 +2,8 @@ package io.flutter.plugins;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
-
 import io.flutter.Log;
+
 import io.flutter.embedding.engine.FlutterEngine;
 
 /**
@@ -97,7 +97,7 @@ public final class GeneratedPluginRegistrant {
     }
     try {
       flutterEngine.getPlugins().add(new com.example.fluttershare.FlutterSharePlugin());
-    } catch(Exception e) {
+    } catch (Exception e) {
       Log.e(TAG, "Error registering plugin flutter_share, com.example.fluttershare.FlutterSharePlugin", e);
     }
     try {
@@ -114,11 +114,6 @@ public final class GeneratedPluginRegistrant {
       flutterEngine.getPlugins().add(new io.flutter.plugins.nfcmanager.NfcManagerPlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin nfc_manager, io.flutter.plugins.nfcmanager.NfcManagerPlugin", e);
-    }
-    try {
-      flutterEngine.getPlugins().add(new sk.fourq.otaupdate.OtaUpdatePlugin());
-    } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin ota_update, sk.fourq.otaupdate.OtaUpdatePlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new dev.fluttercommunity.plus.packageinfo.PackageInfoPlugin());

@@ -21,7 +21,7 @@ import 'CheckTabStatus.dart';
 import 'PasswordRecovery.dart';
 
 class Login extends StatefulWidget {
-  Login();
+  const Login();
 
   @override
   _LoginState createState() {
@@ -146,7 +146,7 @@ class _LoginState extends State<Login> {
                                         child: Center(
                                           child: CircleAvatar(
                                             radius: 100,
-                                            child: Image.asset("assets/north_sails-logo.png"),
+                                            child: Image.asset(Res.north_sails_logo),
                                           ),
                                         ),
                                       ),
@@ -248,7 +248,6 @@ class _LoginState extends State<Login> {
                                           child: TextButton(
                                             onPressed: () async {
                                               await Navigator.push(context, MaterialPageRoute(builder: (context) => const PasswordRecovery()));
-                                              // await Navigator.push(context, MaterialPageRoute(builder: (context) => NewPassword(1, onEnd: () {})));
                                             },
                                             child: const Text('forgot my password'),
                                             // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0), side: const BorderSide(color: Colors.orange)),
@@ -506,8 +505,9 @@ class _LoginState extends State<Login> {
                     SizedBox(
                         width: double.infinity,
                         child: TextButton(
-                          onPressed: () {
-                            passwordRecovery();
+                          onPressed: () async {
+                            print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+                            await Navigator.push(context, MaterialPageRoute(builder: (context) => const PasswordRecovery()));
                           },
                           child: const Text('forgot my password'),
                           // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0), side: const BorderSide(color: Colors.orange)),
@@ -519,6 +519,4 @@ class _LoginState extends State<Login> {
           ))
     ]);
   }
-
-  void passwordRecovery() {}
 }

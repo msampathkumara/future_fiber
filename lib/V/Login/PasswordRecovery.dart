@@ -58,7 +58,7 @@ class _PasswordRecoveryState extends State<PasswordRecovery> {
                           Padding(
                             padding: const EdgeInsets.all(10),
                             child: TextFormField(
-                              initialValue: '903154802',
+                              initialValue: userNic,
                               keyboardType: TextInputType.number,
                               inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly, FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))],
                               onChanged: (text) {
@@ -217,29 +217,31 @@ class _PasswordRecoveryState extends State<PasswordRecovery> {
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: SizedBox(
-              width: 160,
-              height: 160,
-              child: UserImage(nsUser: user, radius: 160),
-            ),
+            child: SizedBox(width: 160, height: 160, child: UserImage(nsUser: user, radius: 160)),
           ),
           const Text("HI", textScaleFactor: 1.5),
           Text(user!.name, textScaleFactor: 1.5),
           const Divider(),
           if (verifiedEmails.isEmpty) const Text('You don\'t have any verified email addresses'),
+          const SizedBox(height: 16),
           if (verifiedEmails.isNotEmpty)
             Wrap(direction: Axis.vertical, alignment: WrapAlignment.center, crossAxisAlignment: WrapCrossAlignment.center, children: [
               const Text('Select email address to send otp', style: TextStyle(fontSize: 16)),
+              const SizedBox(height: 16),
               ...verifiedEmails
-                  .map((e) => FilterChip(
-                      label: Text('${e.email}'),
-                      onSelected: (v) {
-                        setState(() {
-                          selectedEmail = v ? e : null;
-                        });
-                      },
-                      selected: selectedEmail == e))
+                  .map((e) => Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilterChip(
+                            label: Text('${e.email}'),
+                            onSelected: (v) {
+                              setState(() {
+                                selectedEmail = v ? e : null;
+                              });
+                            },
+                            selected: selectedEmail == e),
+                      ))
                   .toList(),
+              const SizedBox(height: 16),
               SizedBox(
                 width: 200,
                 child: ElevatedButton(
@@ -256,7 +258,7 @@ class _PasswordRecoveryState extends State<PasswordRecovery> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: SizedBox(
-              width: 200,
+              width: 250,
               child: TextButton(
                 style: FormInputDecoration.buttonStyle(),
                 onPressed: () {
@@ -266,9 +268,9 @@ class _PasswordRecoveryState extends State<PasswordRecovery> {
               ),
             ),
           ),
-              const Divider(),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
             child: SizedBox(
               width: 200,
               child: ElevatedButton(
@@ -281,8 +283,8 @@ class _PasswordRecoveryState extends State<PasswordRecovery> {
               ),
             ),
           ),
-            ],
-          )),
+        ],
+      )),
     );
   }
 
@@ -313,8 +315,9 @@ class _PasswordRecoveryState extends State<PasswordRecovery> {
 
   void requestOTP() {
     setLoading(true);
-    Server.serverPost("user/recoverPassword/sendOTPToLibrarian", {"userId": user?.id}, onlineServer: true).then((value) async {
-      await MessageBox.show(context, "", "OTP sent to Admin. please contact Librarian.");
+    Server.serverPost("user/recoverPassword/sendOTPToAdmin", {"userId": user?.id}, onlineServer: true).then((value) async {
+      print(value);
+      await MessageBox.show(context, "", "OTP sent to Admin. please contact Admin.");
 
       setLoading(false);
     }).onError((error, stackTrace) {

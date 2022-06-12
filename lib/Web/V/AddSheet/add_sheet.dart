@@ -117,7 +117,7 @@ class _AddSheetState extends State<AddSheet> {
                                         Padding(
                                           padding: const EdgeInsets.all(64.0),
                                           child: DottedBorder(
-                                            color: highlighted1 ? Colors.lightBlue : Colors.black,
+                                            color: highlighted1 ? Theme.of(context).primaryColor : Colors.black,
                                             borderType: BorderType.RRect,
                                             radius: const Radius.circular(8),
                                             padding: const EdgeInsets.all(6),

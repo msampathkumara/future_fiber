@@ -37,13 +37,14 @@ class NsUserAdapter extends TypeAdapter<NsUser> {
       ..permissions = fields[17] == null ? [] : (fields[17] as List).cast<String>()
       ..upon = fields[18] == null ? 0 : fields[18] as int
       ..emails = fields[19] == null ? [] : (fields[19] as List).cast<Email>()
+      ..nic = fields[20] as String?
       ..uptime = fields[101] == null ? 0 : fields[101] as int;
   }
 
   @override
   void write(BinaryWriter writer, NsUser obj) {
     writer
-      ..writeByte(21)
+      ..writeByte(22)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -84,6 +85,8 @@ class NsUserAdapter extends TypeAdapter<NsUser> {
       ..write(obj.upon)
       ..writeByte(19)
       ..write(obj.emails)
+      ..writeByte(20)
+      ..write(obj.nic)
       ..writeByte(101)
       ..write(obj.uptime);
   }
@@ -119,13 +122,13 @@ NsUser _$NsUserFromJson(Map<String, dynamic> json) => NsUser()
   ..sectionName = json['sectionName'] as String? ?? '-'
   ..emailAddress = json['emailAddress'] as String? ?? '-'
   ..sections = (json['sections'] as List<dynamic>?)?.map((e) => Section.fromJson(e as Map<String, dynamic>)).toList() ?? []
-  ..nic = json['nic']
   ..address = json['address'] as String? ?? ''
   ..hasNfc = json['hasNfc'] as int? ?? 0
   ..deactivate = json['deactivate'] as int? ?? 0
   ..permissions = (json['permissions'] as List<dynamic>?)?.map((e) => e as String).toList() ?? []
   ..upon = json['upon'] as int? ?? 0
   ..emails = (json['emails'] as List<dynamic>?)?.map((e) => Email.fromJson(e as Map<String, dynamic>)).toList() ?? []
+  ..nic = json['nic'] as String?
   ..password = json['password'] as String?;
 
 Map<String, dynamic> _$NsUserToJson(NsUser instance) => <String, dynamic>{
@@ -144,12 +147,12 @@ Map<String, dynamic> _$NsUserToJson(NsUser instance) => <String, dynamic>{
       'sectionName': instance.sectionName,
       'emailAddress': instance.emailAddress,
       'sections': instance.sections.map((e) => e.toJson()).toList(),
-      'nic': instance.nic,
       'address': instance.address,
       'hasNfc': instance.hasNfc,
       'deactivate': instance.deactivate,
       'permissions': instance.permissions,
       'upon': instance.upon,
       'emails': instance.emails.map((e) => e.toJson()).toList(),
+      'nic': instance.nic,
       'password': instance.password,
     };

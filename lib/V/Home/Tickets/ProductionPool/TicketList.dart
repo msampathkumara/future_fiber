@@ -258,7 +258,9 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                           // print(ticket.toJson());
                           return TicketTile(index, ticket, () async {
                             print('Long pres');
-                            await showTicketOptions(ticket, context1, context);
+                            await showTicketOptions(ticket, context1, context, loadData: () {
+                              loadData();
+                            });
                             setState(() {});
                           }, () {
                             var ticketInfo = TicketInfo(ticket);
@@ -350,9 +352,9 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     String searchText = this.searchText.toLowerCase();
 
     if (_showAllTickets) {
-      Production.values.forEach((element) {
+      for (var element in Production.values) {
         listsMap[element] = _load(element, 0, true, searchText);
-      });
+      }
     } else {
       listsMap[Production.All] = _load(Production.All, 0, false, searchText, bySection: true);
       listsMap["crossProduct"] = _load(Production.Upwind, 0, false, searchText, crossProduction: true);
@@ -362,7 +364,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
   }
 
   tabListener() {
-    print("Selected Index: " + _tabBarController!.index.toString());
+    print("Selected Index: ${_tabBarController!.index}");
 
     currentFileList = listsMap.values.toList()[_tabBarController!.index];
     setState(() {
@@ -410,9 +412,9 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     }
   }
 
-  bool searchByText(t) {
+  bool searchByText(Ticket t) {
     if (searchText.isNotEmpty) {
-      if ((t.mo ?? "").toLowerCase().contains(searchText) || (t.mo ?? "").toLowerCase().contains(searchText)) {
+      if ((t.mo ?? "").toLowerCase().contains(searchText) || (t.oe ?? "").toLowerCase().contains(searchText)) {
         return true;
       } else {
         return false;

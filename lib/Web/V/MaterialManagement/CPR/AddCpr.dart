@@ -70,7 +70,7 @@ class _AddCprState extends State<AddCpr> {
                 contentPadding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                 labelStyle: const TextStyle(fontSize: 12, decorationColor: Colors.red),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.lightBlue),
+                  borderSide: const BorderSide(),
                   borderRadius: BorderRadius.circular(2.0),
                 ),
                 enabledBorder: OutlineInputBorder(
@@ -247,9 +247,7 @@ class _AddCprState extends State<AddCpr> {
                                             // mode: Mode.BOTTOM_SHEET,
                                             // showSelectedItem: true,
                                             items: const ["Upwind", "OD", "Nylon", "OEM"],
-                                            dropdownSearchDecoration: const InputDecoration(
-                                              hintText: "Select Client",
-                                            ),
+                                            dropdownDecoratorProps: const DropDownDecoratorProps(dropdownSearchDecoration: InputDecoration(hintText: "Select Client")),
                                             onChanged: (c) {
                                               cpr.client = c;
                                             })),

@@ -76,7 +76,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                   Material(
                     elevation: 4,
                     borderRadius: BorderRadius.circular(8),
-                    child: Container(
+                    child: SizedBox(
                       height: 40,
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<Production>(
@@ -86,7 +86,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                               return Center(
                                   child: Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text("${item.getValue()}"),
+                                child: Text(item.getValue()),
                               ));
                             }).toList();
                           },
@@ -137,54 +137,54 @@ class _WebProductionPoolState extends State<WebProductionPool> {
             backgroundColor: Colors.transparent,
             elevation: 0),
         body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Material(
-              elevation: 4,
-              borderRadius: BorderRadius.circular(8),
-              child: PaginatedDataTable2Demo(onInit: (DessertDataSource dataSource) {
-                _dataSource = dataSource;
-              })),
-        ),
-        bottomNavigationBar: BottomAppBar(
-            shape: const CircularNotchedRectangle(),
-            color: Colors.green,
-            child: IconTheme(
-              data: const IconThemeData(color: Colors.white),
-              child: Row(
-                children: [
-                  InkWell(
-                    onTap: () {},
-                    splashColor: Colors.red,
-                    child: Ink(
-                      child: IconButton(
-                        icon: const Icon(Icons.refresh),
-                        onPressed: () {
-                          HiveBox.getDataFromServer(clean: true).then((value) => loadData());
-                        },
-                      ),
-                    ),
-                  ),
-                  const Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "${ticketCount}",
-                      textScaleFactor: 1.1,
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  const Spacer(),
-                  const SizedBox(width: 36)
-                ],
-              ),
-            )),
-        floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
+            padding: const EdgeInsets.only(bottom: 16.0, right: 16),
+            child: Material(
+                elevation: 4,
+                borderRadius: BorderRadius.circular(8),
+                child: PaginatedDataTable2Demo(onInit: (DessertDataSource dataSource) {
+                  _dataSource = dataSource;
+                }))),
+        // bottomNavigationBar: BottomAppBar(
+        //     shape: const CircularNotchedRectangle(),
+        //     clipBehavior: Clip.antiAlias,
+        //     color: Colors.green,
+        //     child: IconTheme(
+        //       data: const IconThemeData(color: Colors.white),
+        //       child: Row(
+        //         children: [
+        //           InkWell(
+        //             onTap: () {},
+        //             splashColor: Colors.red,
+        //             child: Ink(
+        //               child: IconButton(
+        //                 icon: const Icon(Icons.refresh),
+        //                 onPressed: () {
+        //                   HiveBox.getDataFromServer(clean: true).then((value) => loadData());
+        //                 },
+        //               ),
+        //             ),
+        //           ),
+        //           // const Spacer(),
+        //           // Padding(
+        //           //   padding: const EdgeInsets.all(8.0),
+        //           //   child: Text(
+        //           //     "$ticketCount",
+        //           //     textScaleFactor: 1.1,
+        //           //     style: const TextStyle(color: Colors.white),
+        //           //   ),
+        //           // ),
+        //           const Spacer(),
+        //           const SizedBox(width: 36)
+        //         ],
+        //       ),
+        //     )),
+        floatingActionButtonLocation: FloatingActionButtonLocation.miniStartDocked,
         floatingActionButton: FloatingActionButton.small(
             onPressed: () async {
               addItemsBottomSheetMenu(context);
             },
-            child: const Icon(Icons.add),
-            backgroundColor: Colors.green));
+            // backgroundColor: Colors.green,
+            child: const Icon(Icons.add)));
   }
 
   Filters dataFilter = Filters.none;
@@ -192,11 +192,11 @@ class _WebProductionPoolState extends State<WebProductionPool> {
   flagIcon(Filters filter, IconData? icon, tooltip, {String? text}) {
     return IconButton(
       icon: CircleAvatar(
+          backgroundColor: Colors.white,
+          radius: 16,
           child: (text != null)
               ? Text(text, style: TextStyle(color: dataFilter == filter ? Colors.red : Colors.black, fontWeight: FontWeight.bold))
-              : Icon(icon, color: dataFilter == filter ? Colors.red : Colors.black, size: 20),
-          backgroundColor: Colors.white,
-          radius: 16),
+              : Icon(icon, color: dataFilter == filter ? Colors.red : Colors.black, size: 20)),
       tooltip: tooltip,
       onPressed: () async {
         dataFilter = dataFilter == filter ? Filters.none : filter;

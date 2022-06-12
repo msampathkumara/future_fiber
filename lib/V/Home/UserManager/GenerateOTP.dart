@@ -43,10 +43,10 @@ class _GenerateOTPState extends State<GenerateOTP> {
       body: Stack(
         children: [
           Center(
-            child: Column(children: [
-              Text('${widget.nsUser.name}', style: TextStyle(fontSize: 24)),
-              Text('${widget.nsUser.uname}', style: TextStyle(fontSize: 16)),
-              SizedBox(height: 50),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center, children: [
+              Text(widget.nsUser.name, style: const TextStyle(fontSize: 24)),
+              Text(widget.nsUser.uname, style: const TextStyle(fontSize: 16)),
+              const SizedBox(height: 50),
               if (_otp == null)
                 SizedBox(
                   width: 200,
@@ -84,7 +84,7 @@ class _GenerateOTPState extends State<GenerateOTP> {
                         },
                         label: const Text("Copy"),
                         icon: const Icon(Icons.copy_rounded))),
-            ], crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center),
+            ]),
           ),
           if (loading) const Center(child: CircularProgressIndicator())
         ],

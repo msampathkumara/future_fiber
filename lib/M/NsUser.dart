@@ -4,6 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
+import 'package:smartwind/res.dart';
 
 import 'AppUser.dart';
 import 'HiveClass.dart';
@@ -70,8 +71,6 @@ class NsUser extends HiveClass {
   @JsonKey(defaultValue: [], includeIfNull: true)
   List<Section> sections = [];
 
-  var nic;
-
   @HiveField(14, defaultValue: "")
   @JsonKey(defaultValue: "", includeIfNull: true)
   String address = '';
@@ -99,6 +98,10 @@ class NsUser extends HiveClass {
   @HiveField(19, defaultValue: [])
   @JsonKey(defaultValue: [], includeIfNull: true)
   List<Email> emails = [];
+
+  @HiveField(20, defaultValue: null)
+  @JsonKey(defaultValue: null, includeIfNull: true)
+  String? nic;
 
   String? password = "";
 
@@ -186,12 +189,12 @@ class NsUser extends HiveClass {
   }
 
   static getDefaultImage() {
-    return const AssetImage('assets/images/user.png');
+    return const AssetImage(Res.user);
   }
 
   getUserImage() async {
     var token = await AppUser.getIdToken();
-    var img = NetworkImage(Server.getServerApiPath("users/getImage?img=" + this.img + "&size=500"), headers: {"authorization": '${token}'});
+    var img = NetworkImage(Server.getServerApiPath("users/getImage?img=${this.img}&size=500"), headers: {"authorization": '$token'});
 
     return (this.img).isEmpty ? getDefaultImage() : img;
   }

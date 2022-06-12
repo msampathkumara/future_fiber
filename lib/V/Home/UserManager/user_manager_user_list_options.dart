@@ -16,7 +16,7 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
               ListTile(
                 leading: UserImage(nsUser: nsUser, radius: 24),
                 title: Text(nsUser.name),
-                subtitle: Text("#" + nsUser.uname),
+                subtitle: Text("#${nsUser.uname}"),
               ),
               const Divider(),
               if (nfcIsAvailable)
@@ -94,6 +94,19 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
                   onTap: () async {
                     Navigator.of(context).pop();
                     GenerateOTP(nsUser).show(context);
+                  },
+                ),
+              if (AppUser.havePermissionFor(Permissions.RESET_PASSWORD))
+                ListTile(
+                  title: const Text("Generate Password"),
+                  subtitle: const Text("Generate   Password"),
+                  leading: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Icon(Icons.password_rounded),
+                  ),
+                  onTap: () async {
+                    Navigator.of(context).pop();
+                    GeneratePassword(nsUser).show(context);
                   },
                 ),
               const Spacer(),

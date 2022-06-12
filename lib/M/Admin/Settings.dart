@@ -7,6 +7,9 @@ class Settings {
   @JsonKey(defaultValue: null, includeIfNull: true)
   int erpNotWorking = 1;
 
+  @JsonKey(defaultValue: [], includeIfNull: true)
+  List<String> otpAdminEmails = [];
+
   factory Settings.fromJson(Map<String, dynamic> json) => _$SettingsFromJson(json);
 
   get isErpNotWorking => erpNotWorking == 1;

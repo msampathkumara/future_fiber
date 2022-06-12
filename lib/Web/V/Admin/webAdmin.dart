@@ -18,6 +18,8 @@ class _WebAdminState extends State<WebAdmin> {
   late Settings _settings;
   bool _loading = true;
 
+  final _otpAdminEmailController = TextEditingController();
+
   @override
   initState() {
     loadSettings();
@@ -30,7 +32,7 @@ class _WebAdminState extends State<WebAdmin> {
     var height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-        appBar: AppBar(title: Text("Admin Settings"), backgroundColor: Colors.red),
+        appBar: AppBar(title: const Text("Admin Settings"), backgroundColor: Colors.red),
         body: _loading
             ? const Center(child: CircularProgressIndicator())
             : Center(
@@ -104,6 +106,28 @@ class _WebAdminState extends State<WebAdmin> {
                                           })),
                                 ],
                               )),
+                              const SizedBox(height: 20),
+                              const ListTile(title: Text("OTP emails", textScaleFactor: 2)),
+                              Card(
+                                  child: _settings.otpAdminEmails.isNotEmpty
+                                      ? ListView.separated(
+                                          shrinkWrap: true,
+                                          itemCount: _settings.otpAdminEmails.length + 1,
+                                          itemBuilder: (BuildContext context, int index) {
+                                            if (index == _settings.otpAdminEmails.length) {
+                                              return ListTile(
+                                                  title: SizedBox(height: 24, child: TextFormField(controller: _otpAdminEmailController, onChanged: (email) {})),
+                                                  trailing: IconButton(onPressed: () {}, icon: const Icon(Icons.add)));
+                                            }
+
+                                            String e = _settings.otpAdminEmails[index];
+                                            return ListTile(title: Text(e), trailing: IconButton(onPressed: () {}, icon: const Icon(Icons.delete)));
+                                          },
+                                          separatorBuilder: (BuildContext context, int index) {
+                                            return const Divider();
+                                          },
+                                        )
+                                      : const Padding(padding: EdgeInsets.all(24.0), child: Center(child: Text("No Emails")))),
                             ],
                           ),
                         ),

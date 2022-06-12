@@ -61,43 +61,41 @@ class _WebCPRTableState extends State<WebCPRTable> {
 
   List<DataColumn> get _columns {
     return [
-      DataColumn2(
-          size: ColumnSize.M, label: const Text('Ticket', style: const TextStyle(fontWeight: FontWeight.bold)), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(
-          size: ColumnSize.M, label: const Text('Client', style: const TextStyle(fontWeight: FontWeight.bold)), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('Ticket', style: TextStyle(fontWeight: FontWeight.bold)), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.S, label: const Text('Client', style: TextStyle(fontWeight: FontWeight.bold)), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(
           size: ColumnSize.M,
-          label: const Text('Supplier', style: const TextStyle(fontWeight: FontWeight.bold)),
+          label: const Text('Supplier', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
           onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(
           size: ColumnSize.M,
-          label: const Text('Shortage Type', style: const TextStyle(fontWeight: FontWeight.bold)),
+          label: const Text('Shortage Type', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
           onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(
           size: ColumnSize.M,
-          label: const Text('Date & Time', style: const TextStyle(fontWeight: FontWeight.bold)),
+          label: const Text('Date & Time', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
           onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(
           size: ColumnSize.M,
-          label: const Text('CPR Type', style: const TextStyle(fontWeight: FontWeight.bold)),
+          label: const Text('CPR Type', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
           onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(
           size: ColumnSize.M,
-          label: const Text('Shipping Date', style: const TextStyle(fontWeight: FontWeight.bold)),
-          numeric: true,
-          onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(
-          size: ColumnSize.M,
-          label: const Text('Status', style: const TextStyle(fontWeight: FontWeight.bold)),
+          label: const Text('Shipping Date', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
           onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(
           size: ColumnSize.S,
-          label: const Text('Options', style: const TextStyle(fontWeight: FontWeight.bold)),
+          label: const Text('Status', style: TextStyle(fontWeight: FontWeight.bold)),
+          numeric: true,
+          onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(
+          size: ColumnSize.S,
+          label: const Text('Options', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
           onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
     ];
@@ -200,12 +198,12 @@ class __LoadingState extends State<_Loading> {
                   ? const SizedBox()
                   : Center(
                       child: Container(
-                      color: Colors.yellow,
+                        color: Colors.yellow,
                       padding: const EdgeInsets.all(7),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround, children: const [CircularProgressIndicator(strokeWidth: 2, color: Colors.black), Text('Loading..')]),
                       width: 150,
                       height: 50,
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround, children: const [CircularProgressIndicator(strokeWidth: 2, color: Colors.black), Text('Loading..')]),
                     ));
             }));
   }

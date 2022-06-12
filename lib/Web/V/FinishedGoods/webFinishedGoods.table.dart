@@ -355,7 +355,9 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
               DataCell(IconButton(
                 icon: const Icon(Icons.more_vert_rounded),
                 onPressed: () {
-                  showTicketOptions(ticket, context, context);
+                  showTicketOptions(ticket, context, context, loadData: () {
+                    notifyListeners();
+                  });
                 },
               ))
             ],

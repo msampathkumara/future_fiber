@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/Web/materialManagementHomePage.dart';
+import 'package:smartwind/Web/V/MaterialManagement/materialManagementHomePage.dart';
 import 'package:smartwind/main.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
@@ -20,30 +20,37 @@ class webApp extends StatelessWidget {
     return MaterialApp(
       title: 'Smart Wind',
       theme: ThemeData(
-          scrollbarTheme: const ScrollbarThemeData().copyWith(thumbColor: MaterialStateProperty.all(Theme.of(context).primaryColor), isAlwaysShown: true),
-          iconTheme: const IconThemeData(size: 16.0),
-          primarySwatch: Colors.blue,
-          bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.black.withOpacity(0)),
-          inputDecorationTheme: InputDecorationTheme(
-              border: const OutlineInputBorder(),
-              contentPadding: const EdgeInsets.symmetric(vertical: 22, horizontal: 26),
-              labelStyle: const TextStyle(fontSize: 18, decorationColor: Colors.red),
-              focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.lightBlue),
-                borderRadius: BorderRadius.circular(4.0),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.blueGrey.shade50, width: 1.0),
-                borderRadius: BorderRadius.circular(4.0),
-              ))),
+        iconTheme: const IconThemeData(size: 16.0),
+        primarySwatch: Colors.green,
+        primaryColor: Colors.lightGreen,
+        primaryColorDark: Colors.green,
+        bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.black.withOpacity(0)),
+        inputDecorationTheme: InputDecorationTheme(
+            border: const OutlineInputBorder(),
+            contentPadding: const EdgeInsets.symmetric(vertical: 22, horizontal: 26),
+            labelStyle: const TextStyle(fontSize: 18, decorationColor: Colors.red),
+            focusedBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.orange),
+              borderRadius: BorderRadius.circular(4.0),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.blueGrey.shade50, width: 1.0),
+              borderRadius: BorderRadius.circular(4.0),
+            )),
+        scrollbarTheme: const ScrollbarThemeData().copyWith(
+            thumbColor: MaterialStateProperty.all(Colors.lightGreen),
+            isAlwaysShown: true,
+            trackBorderColor: MaterialStateProperty.all(Colors.lightGreen),
+            trackColor: MaterialStateProperty.all(Colors.lightGreen)),
+      ),
       // home: MainPage(),
-      navigatorObservers: [],
+      navigatorObservers: const [],
       initialRoute: "/",
       onUnknownRoute: (RouteSettings settings) {
         return MaterialPageRoute<void>(settings: settings, builder: (BuildContext context) => const Scaffold(body: Center(child: Text('Not Found'))));
       },
       routes: <String, WidgetBuilder>{
-        '/login': (BuildContext context) => Login(),
+        '/login': (BuildContext context) => const Login(),
         '/': (BuildContext context) => (isMaterialManagement ? const MaterialManagementHomePage() : const WebHomePage())
       },
     );

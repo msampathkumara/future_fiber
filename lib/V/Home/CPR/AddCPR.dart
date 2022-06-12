@@ -17,13 +17,13 @@ class AddCPR extends StatefulWidget {
 }
 
 class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
-  var _sailTypes = ["Standard", "Custom"];
-  var _shortageTypes = ["Short", "Damage", "Unreceived"];
-  var _cprTypes = ["Pocket", "Rope Luff", "Purchase Cover", "Overhead Tape", "Tape Cover", "Take Down", "Soft Hanks", "Windows", "Stow pouch", "VPC**", "Other"];
+  final _sailTypes = ["Standard", "Custom"];
+  final _shortageTypes = ["Short", "Damage", "Unreceived"];
+  final _cprTypes = ["Pocket", "Rope Luff", "Purchase Cover", "Overhead Tape", "Tape Cover", "Take Down", "Soft Hanks", "Windows", "Stow pouch", "VPC**", "Other"];
   var _sailType;
   var _shortageType;
 
-  CPR _cpr = new CPR();
+  final CPR _cpr = new CPR();
   bool saving = false;
 
   @override
@@ -202,12 +202,13 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                                   // showSearchBox: true,
                                   // mode: Mode.DIALOG,
                                   // showSelectedItem: true,
-                                  showClearButton: true,
+                                  clearButtonProps: const ClearButtonProps(),
                                   // isFilteredOnline: true,
                                   items: _cprTypes,
-                                  dropdownSearchDecoration: const InputDecoration(
+                                  dropdownDecoratorProps: const DropDownDecoratorProps(
+                                      dropdownSearchDecoration: InputDecoration(
                                     hintText: "Select CPR Type",
-                                  ),
+                                  )),
                                   onChanged: (c) {
                                     _cpr.cprType = c;
                                   })),
@@ -225,9 +226,10 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                                     // mode: Mode.BOTTOM_SHEET,
                                     // showSelectedItem: true,
                                     items: ["Upwind", "OD", "Nylon", "OEM"],
-                                    dropdownSearchDecoration: const InputDecoration(
+                                    dropdownDecoratorProps: const DropDownDecoratorProps(
+                                        dropdownSearchDecoration: InputDecoration(
                                       hintText: "Select Client",
-                                    ),
+                                    )),
                                     onChanged: (c) {
                                       _cpr.client = c;
                                     })),
@@ -281,13 +283,14 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                                       // autoFocusSearchBox: true,
                                       // mode: Mode.BOTTOM_SHEET,
                                       // showSelectedItem: _showSelectedItem,
-                                      showClearButton: true,
+                                      clearButtonProps: const ClearButtonProps(),
                                       // isFilteredOnline: true,
                                       // onFind: (String filter) => getData(filter),
-                                      dropdownSearchDecoration: const InputDecoration(
+                                      dropdownDecoratorProps: const DropDownDecoratorProps(
+                                          dropdownSearchDecoration: InputDecoration(
                                         labelText: "Materials",
                                         hintText: "select Materials",
-                                      ),
+                                      )),
                                       onChanged: (mat) {
                                         currentMaterial.item = mat!;
                                       })),
@@ -346,8 +349,8 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
     }
   }
 
-  List<String> _matList = [];
-  var _qtyController = TextEditingController();
+  final List<String> _matList = [];
+  final _qtyController = TextEditingController();
   CprItem currentMaterial = new CprItem();
   final _dropdownSearchKey = GlobalKey<DropdownSearchState<String>>();
 
@@ -366,7 +369,7 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
     }
   }
 
-  var _suppliers = ["Cutting", "SA", "Printing"];
+  final _suppliers = ["Cutting", "SA", "Printing"];
   var _supplier1;
   var _supplier2;
   var _supplier3;

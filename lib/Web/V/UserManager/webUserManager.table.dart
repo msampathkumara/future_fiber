@@ -76,6 +76,11 @@ class _webUserManagerTableState extends State<webUserManagerTable> {
       ),
       DataColumn2(
         size: ColumnSize.M,
+        label: const Text('NIC'),
+        onSort: (columnIndex, ascending) => sort<String>((d) => d.nic ?? '', columnIndex, ascending),
+      ),
+      DataColumn2(
+        size: ColumnSize.M,
         label: const Text('EPF'),
         onSort: (columnIndex, ascending) => sort<String>((d) => d.epf, columnIndex, ascending),
       ),
@@ -205,6 +210,7 @@ class DessertDataSource extends DataTableSource {
             Text((nsUser.uname), style: const TextStyle(color: Colors.red, fontSize: 12)),
           ],
         )),
+        DataCell(Text('${nsUser.nic ?? '-'} ')),
         DataCell(Wrap(
           direction: Axis.vertical,
           children: [

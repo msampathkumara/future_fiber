@@ -5,9 +5,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
 import 'package:smartwind/C/Api.dart';
+import 'package:smartwind/M/Enums.dart';
 
 class AddTicket extends StatefulWidget {
-  const AddTicket({Key? key}) : super(key: key);
+  final bool standard;
+  final Production? production;
+
+  const AddTicket({Key? key, this.standard = false, this.production}) : super(key: key);
 
   @override
   State<AddTicket> createState() => _AddTicketState();
@@ -25,6 +29,17 @@ class _AddTicketState extends State<AddTicket> {
   bool highlighted1 = false;
   List<UploadFile> fileList = [];
 
+  late bool standard;
+  Production? production;
+
+  @override
+  initState() {
+    standard = widget.standard;
+    production = widget.production;
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     int errorCount = fileList.where((element) => element.haveError).length;
@@ -36,7 +51,7 @@ class _AddTicketState extends State<AddTicket> {
         child: ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
             child: Scaffold(
-              appBar: AppBar(title: const Text("Upload Ticket")),
+              appBar: AppBar(title: Text(standard ? "Upload Standard Ticket (${production?.getValue()})" : "Upload Ticket")),
               backgroundColor: Colors.white,
               body: Row(
                 children: [
@@ -44,7 +59,7 @@ class _AddTicketState extends State<AddTicket> {
                     child: Container(
                       constraints: const BoxConstraints(minWidth: 500, maxWidth: 500),
                       width: 500,
-                      color: highlighted1 ? Colors.lightBlue : Colors.transparent,
+                      color: highlighted1 ? Theme.of(context).primaryColor : Colors.transparent,
                       child: Stack(
                         fit: StackFit.expand,
                         children: [
@@ -65,7 +80,7 @@ class _AddTicketState extends State<AddTicket> {
                                     var z = await controller1.pickFiles(mime: ['application/pdf']);
 
                                     for (var file in z) {
-                                      UploadFile uploadFile = UploadFile(file);
+                                      UploadFile uploadFile = UploadFile(file, standard, production);
                                       fileList.add(uploadFile);
                                       print('Zone 1 drop: ${uploadFile.name}');
                                       setState(() {
@@ -144,7 +159,7 @@ class _AddTicketState extends State<AddTicket> {
                                     subtitle: errorCount > 0
                                         ? Row(
                                             children: [
-                                              Text("${errorCount} of ${fileList.length} failed to upload "),
+                                              Text("$errorCount of ${fileList.length} failed to upload "),
                                               TextButton(
                                                 onPressed: () {
                                                   fileList.where((element) => element.haveError).forEach((element) {
@@ -189,7 +204,7 @@ class _AddTicketState extends State<AddTicket> {
             print('Zone 1 left');
           },
           onDrop: (ev) async {
-            UploadFile uploadFile = UploadFile(ev);
+            UploadFile uploadFile = UploadFile(ev, standard, production);
 
             fileList.add(uploadFile);
             print('Zone 1 drop: ${uploadFile.name}');
@@ -215,8 +230,10 @@ class _AddTicketState extends State<AddTicket> {
 
 class UploadFile {
   var error;
+  late bool standard;
+  Production? production;
 
-  UploadFile(this.file);
+  UploadFile(this.file, this.standard, this.production);
 
   final file;
   int sent = 0;
@@ -241,11 +258,9 @@ class UploadFile {
       print('------------------------------- null');
       return;
     }
-    FormData formData = FormData.fromMap({
-      "ticket": MultipartFile.fromBytes(_bytes!, filename: name),
-    });
-
-    Api.post(("tickets/upload"), {}, formData: formData, onSendProgress: (int sent, int total) {
+    FormData formData = FormData.fromMap({"ticket": MultipartFile.fromBytes(_bytes!, filename: name), "production": standard ? production?.getValue() : ''});
+    print(standard ? ("tickets/standard/upload") : ("tickets/upload"));
+    Api.post(standard ? ("tickets/standard/upload") : ("tickets/upload"), {}, formData: formData, onSendProgress: (int sent, int total) {
       sent = sent;
       total = total;
       print('progress: ${getProgress()}% ($sent/$total)');

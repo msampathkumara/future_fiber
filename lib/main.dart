@@ -75,14 +75,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'Smart Wind',
         theme: ThemeData(
-            primarySwatch: Colors.blue,
+            primarySwatch: Colors.green,
             bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.black.withOpacity(0)),
             inputDecorationTheme: InputDecorationTheme(
                 border: const OutlineInputBorder(),
                 contentPadding: const EdgeInsets.symmetric(vertical: 22, horizontal: 26),
                 labelStyle: const TextStyle(fontSize: 18, decorationColor: Colors.red),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.lightBlue),
+                  borderSide: const BorderSide(color: Colors.orange),
                   borderRadius: BorderRadius.circular(4.0),
                 ),
                 enabledBorder: OutlineInputBorder(

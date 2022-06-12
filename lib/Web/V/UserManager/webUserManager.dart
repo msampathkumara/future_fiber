@@ -5,9 +5,10 @@ import 'package:intl/intl.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/hive.dart';
-import 'package:smartwind/V/Home/UserManager/UpdateUserDetails.dart';
 import 'package:smartwind/V/Home/UserManager/user_manager_user_list.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
+import 'package:smartwind/Web/V/UserManager/GenaratePassword.dart';
+import 'package:smartwind/Web/V/UserManager/UpdateUserDetails.dart';
 
 import '../../../M/Enums.dart';
 import '../../../M/hive.dart';
@@ -34,6 +35,8 @@ class _WebUserManagerState extends State<WebUserManager> {
   NsUser? _selectedUser;
 
   late DbChangeCallBack _dbChangeCallBack;
+
+  var _ScrollController = ScrollController();
 
   get nsUserCount => _dataSource == null ? 0 : _dataSource?.rowCount;
 
@@ -66,13 +69,13 @@ class _WebUserManagerState extends State<WebUserManager> {
                 const Spacer(),
                 Wrap(children: [
                   SizedBox(
+                    width: 300,
                     child: SearchBar(
                         onSearchTextChanged: (text) {
                           searchText = text;
                           loadData();
                         },
                         searchController: _controller),
-                    width: 300,
                   ),
                 ])
               ],
@@ -138,11 +141,16 @@ class _WebUserManagerState extends State<WebUserManager> {
         floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
         floatingActionButton: FloatingActionButton(
             onPressed: () async {
-              await UpdateUserDetails(NsUser()).show(context);
+              NsUser? nsUser = await UpdateUserDetails(NsUser()).show(context);
+              print("nsUser------------------------------------------------------------------");
+              print(nsUser);
+              if (nsUser != null) {
+                await GeneratePassword(nsUser).show(context);
+              }
               HiveBox.getDataFromServer();
             },
-            child: const Icon(Icons.add),
-            backgroundColor: Colors.green));
+            backgroundColor: Colors.green,
+            child: const Icon(Icons.add)));
   }
 
   void loadData() {
@@ -225,28 +233,32 @@ class _WebUserManagerState extends State<WebUserManager> {
                   ],
                 ),
               )),
-          body: ListView(
-            children: [
-              ListTile(title: Text('Type', style: lt), subtitle: Text(selectedUser.utype, style: lst)),
-              ListTile(title: Text('EPF', style: lt), subtitle: Text(selectedUser.epf, style: lst)),
-              ListTile(
-                  title: Text('Phone', style: lt),
-                  subtitle: Wrap(
-                      children: (selectedUser.phone.split(','))
-                          .map((e) => Padding(padding: const EdgeInsets.all(4.0), child: Chip(avatar: const Icon(Icons.phone), label: Text(e))))
-                          .toList())),
-              ListTile(
-                  title: Text('Email(s)', style: lt),
-                  subtitle: Wrap(
-                      children: (selectedUser.emailAddress.split(','))
-                          .map((e) => Padding(padding: const EdgeInsets.all(4.0), child: Chip(avatar: const Icon(Icons.alternate_email_rounded), label: Text(e))))
-                          .toList())),
-              ListTile(
-                  title: Text('Sections', style: lt),
-                  subtitle: Wrap(
-                      children:
-                          selectedUser.sections.map((e) => Padding(padding: const EdgeInsets.all(4.0), child: Chip(label: Text("${e.sectionTitle} @ ${e.factory}")))).toList()))
-            ],
+          body: Scrollbar(
+            controller: _ScrollController,
+            child: ListView(
+              controller: _ScrollController,
+              children: [
+                ListTile(title: Text('Type', style: lt), subtitle: Text(selectedUser.utype, style: lst)),
+                ListTile(title: Text('EPF', style: lt), subtitle: Text(selectedUser.epf, style: lst)),
+                ListTile(
+                    title: Text('Phone', style: lt),
+                    subtitle: Wrap(
+                        children: (selectedUser.phone.split(','))
+                            .map((e) => Padding(padding: const EdgeInsets.all(4.0), child: Chip(avatar: const Icon(Icons.phone), label: Text(e))))
+                            .toList())),
+                ListTile(
+                    title: Text('Email(s)', style: lt),
+                    subtitle: Wrap(
+                        children: (selectedUser.emailAddress.split(','))
+                            .map((e) => Padding(padding: const EdgeInsets.all(4.0), child: Chip(avatar: const Icon(Icons.alternate_email_rounded), label: Text(e))))
+                            .toList())),
+                ListTile(
+                    title: Text('Sections', style: lt),
+                    subtitle: Wrap(
+                        children:
+                            selectedUser.sections.map((e) => Padding(padding: const EdgeInsets.all(4.0), child: Chip(label: Text("${e.sectionTitle} @ ${e.factory}")))).toList()))
+              ],
+            ),
           ),
           bottomNavigationBar: BottomAppBar(
               shape: const CircularNotchedRectangle(),
@@ -258,8 +270,8 @@ class _WebUserManagerState extends State<WebUserManager> {
                     IconButton(
                         tooltip: "Edit",
                         icon: const Icon(Icons.edit_rounded),
-                        onPressed: () {
-                          UpdateUserDetails(_selectedUser!).show(context);
+                        onPressed: () async {
+                          await UpdateUserDetails(_selectedUser!).show(context);
                         }),
                     const Spacer()
                     // IconButton(tooltip: "Delete", icon: const Icon(Icons.delete_rounded, color: Colors.red), onPressed: () {}),

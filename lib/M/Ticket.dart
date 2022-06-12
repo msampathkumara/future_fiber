@@ -272,7 +272,7 @@ class Ticket extends DataObject {
       return;
     }
     if (kIsWeb) {
-      var loadingWidget = Loading(loadingText: "Downloading Ticket");
+      var loadingWidget = const Loading(loadingText: "Downloading Ticket");
       loadingWidget.show(context);
 
       var path = isStandard ? "tickets/standard/getPdf?" : 'tickets/getTicketFile?';
@@ -361,6 +361,9 @@ class Ticket extends DataObject {
     Map t = toJson();
     t["openSections"] = "";
     t["crossProList"] = "";
+    t["crossPro"] = "";
+    t["loading"] = "";
+    t["production"] = "";
     t.keys.where((k) => (t[k] ?? "").toString().isEmpty).toList().forEach(t.remove);
     print("____________________________________________________________________________________________________________________________*****");
     print(t);
@@ -408,7 +411,7 @@ class Ticket extends DataObject {
     if (fv.isInBox) {
       fv.save();
     } else {
-      HiveBox.localFileVersionsBox.put(ticketType.getValue() + '$id', fv);
+      HiveBox.localFileVersionsBox.put('${ticketType.getValue()}$id', fv);
     }
   }
 

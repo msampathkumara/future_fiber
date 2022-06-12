@@ -1,6 +1,5 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/Web/V/MaterialManagement/CPR/TicketSortMaterials.dart';
@@ -51,18 +50,14 @@ class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
 
       _controller = PaginatorController();
 
-      _sortColumnIndex = 1;
+      _sortColumnIndex = 2;
 
       _initialized = true;
       widget.onInit(_dessertsDataSource);
     }
   }
 
-  void sort<T>(
-    Comparable<T> Function(Ticket d) getField,
-    int columnIndex,
-    bool ascending,
-  ) {
+  void sort<T>(Comparable<T> Function(Ticket d) getField, int columnIndex, bool ascending) {
     _dessertsDataSource.sort<T>(getField, ascending);
     setState(() {
       _sortColumnIndex = columnIndex;
@@ -79,27 +74,23 @@ class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
   List<DataColumn> get _columns {
     return [
       DataColumn2(
-        size: ColumnSize.M,
-        label: const Text('Ticket', style: TextStyle(fontWeight: FontWeight.bold)),
-        onSort: (columnIndex, ascending) => sort<String>((d) => (d.mo ?? ""), columnIndex, ascending),
-      ),
+          size: ColumnSize.M,
+          label: const Text('Ticket', style: TextStyle(fontWeight: FontWeight.bold)),
+          onSort: (columnIndex, ascending) => sort<String>((d) => (d.mo ?? ""), columnIndex, ascending)),
       DataColumn2(
-        size: ColumnSize.M,
-        label: const Text('Production', style: TextStyle(fontWeight: FontWeight.bold)),
-        onSort: (columnIndex, ascending) => sort<String>((d) => d.production ?? "", columnIndex, ascending),
-      ),
+          size: ColumnSize.M,
+          label: const Text('Production', style: TextStyle(fontWeight: FontWeight.bold)),
+          onSort: (columnIndex, ascending) => sort<String>((d) => d.production ?? "", columnIndex, ascending)),
       DataColumn2(
-        size: ColumnSize.S,
-        label: const Text('Progress', style: TextStyle(fontWeight: FontWeight.bold)),
-        numeric: true,
-        onSort: (columnIndex, ascending) => sort<num>((d) => d.progress, columnIndex, ascending),
-      ),
+          size: ColumnSize.S,
+          label: const Text('Progress', style: TextStyle(fontWeight: FontWeight.bold)),
+          numeric: true,
+          onSort: (columnIndex, ascending) => sort<num>((d) => d.progress, columnIndex, ascending)),
       DataColumn2(
-        size: ColumnSize.M,
-        label: const Text('Shipping Date', style: TextStyle(fontWeight: FontWeight.bold)),
-        numeric: true,
-        onSort: (columnIndex, ascending) => sort<String>((d) => d.shipDate, columnIndex, ascending),
-      ),
+          size: ColumnSize.M,
+          label: const Text('Shipping Date', style: TextStyle(fontWeight: FontWeight.bold)),
+          numeric: true,
+          onSort: (columnIndex, ascending) => sort<String>((d) => d.shipDate, columnIndex, ascending)),
       const DataColumn2(size: ColumnSize.L, label: Text('Status', style: TextStyle(fontWeight: FontWeight.bold)), numeric: true),
       const DataColumn2(numeric: true, size: ColumnSize.S, tooltip: "Options", label: Text('Options', style: TextStyle(fontWeight: FontWeight.bold)))
     ];
@@ -158,9 +149,7 @@ class DessertDataSource extends DataTableSource {
   DessertDataSource(this.context, this.filter) {
     tickets = _tickets;
     print("ddddddddd ${tickets.length}");
-    // if (sortedByCalories) {
-    //   sort((d) => d.mo, true);
-    // }
+    sort((d) => d.progress, false);
   }
 
   final BuildContext context;
@@ -168,7 +157,12 @@ class DessertDataSource extends DataTableSource {
   late bool hasRowTaps = true;
   late bool hasRowHeightOverrides;
 
+  Comparable Function(Ticket d) sortField = ((d) => (d.progress));
+  var _ascending = true;
+
   void sort<T>(Comparable<T> Function(Ticket d) getField, bool ascending) {
+    sortField = getField;
+    _ascending = ascending;
     tickets.sort((a, b) {
       final aValue = getField(a);
       final bValue = getField(b);
@@ -177,14 +171,10 @@ class DessertDataSource extends DataTableSource {
     notifyListeners();
   }
 
-  int _selectedCount = 0;
+  final int _selectedCount = 0;
 
   @override
   DataRow getRow(int index) {
-    final format = NumberFormat.decimalPercentPattern(
-      locale: 'en',
-      decimalDigits: 0,
-    );
     assert(index >= 0);
     if (index >= tickets.length) throw 'index > _tickets.length';
     final ticket = tickets[index];
@@ -217,17 +207,11 @@ class DessertDataSource extends DataTableSource {
       cells: [
         DataCell(Wrap(
           direction: Axis.vertical,
-          children: [
-            Text((ticket.mo ?? ticket.oe) ?? ""),
-            Text((ticket.oe) ?? "", style: const TextStyle(color: Colors.red, fontSize: 12)),
-          ],
+          children: [Text((ticket.mo ?? ticket.oe) ?? ""), Text((ticket.oe) ?? "", style: const TextStyle(color: Colors.red, fontSize: 12))],
         )),
         DataCell(Wrap(
           direction: Axis.vertical,
-          children: [
-            Text('${ticket.production}'),
-            Text(ticket.atSection, style: const TextStyle(color: Colors.red, fontSize: 12)),
-          ],
+          children: [Text(ticket.production ?? '-'), Text(ticket.atSection, style: const TextStyle(color: Colors.red, fontSize: 12))],
         )),
         DataCell(Text("${ticket.progress}%")),
         DataCell(Text(ticket.shipDate.toString())),
@@ -304,7 +288,9 @@ class DessertDataSource extends DataTableSource {
         DataCell(IconButton(
           icon: const Icon(Icons.more_vert_rounded),
           onPressed: () {
-            showTicketOptions(ticket, context, context);
+            showTicketOptions(ticket, context, context, loadData: () {
+              notifyListeners();
+            });
           },
         ))
       ],
@@ -321,14 +307,14 @@ class DessertDataSource extends DataTableSource {
   int get selectedRowCount => _selectedCount;
 
   search(String text) {
-    tickets = HiveBox.ticketBox.values.where((element) => (element.mo ?? "").toLowerCase().contains(text.toLowerCase())).toList();
+    setData(HiveBox.ticketBox.values.where((element) => (element.mo ?? "").toLowerCase().contains(text.toLowerCase())).toList());
     print(tickets.length);
-    notifyListeners();
   }
 
   void setData(List<Ticket> _tickets) {
     tickets = _tickets;
-    notifyListeners();
+    sort(sortField, _ascending);
+    print("DATA SETED");
   }
 }
 

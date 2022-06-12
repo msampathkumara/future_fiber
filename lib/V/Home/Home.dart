@@ -20,6 +20,7 @@ import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/V/Home/CPR/CPRList.dart';
 import 'package:smartwind/V/Home/CurrentUser/CurrentUserDetails.dart';
 import 'package:smartwind/V/Home/HR/HRSystem.dart';
+import 'package:smartwind/V/Home/MaterialManagement/MaterialManagement.dart';
 import 'package:smartwind/V/Home/Tickets/Print/PrintManager.dart';
 import 'package:smartwind/V/Home/Tickets/ProductionPool/ProductionPool.dart';
 import 'package:smartwind/V/Login/Login.dart';
@@ -216,6 +217,12 @@ class _HomeState extends State<Home> {
                                   },
                                   openWidget: HESystem(),
                                   onClosed: _showMarkedAsDoneSnackBar),
+                            _OpenContainerWrapper(
+                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                  return _menuButton(openContainer, Icon(Icons.widgets, size: iconSize, color: Colors.purple), "Material Management");
+                                },
+                                openWidget: MaterialManagement(),
+                                onClosed: _showMarkedAsDoneSnackBar),
                             // ElevatedButton(
                             //     onPressed: () {
                             //       HiveBox.getDataFromServer();
@@ -240,7 +247,7 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                   ),
-              Positioned(
+                  Positioned(
                       bottom: 10,
                       left: 0,
                       right: 0,
@@ -258,7 +265,7 @@ class _HomeState extends State<Home> {
                                     return Chip(
                                         avatar: CircleAvatar(
                                           backgroundColor: Colors.grey.shade800,
-                                          child: Image.asset("assets/north_sails-logox50.png", width: 50),
+                                          child: Image.asset(Res.north_sails_logox50, width: 50),
                                         ),
                                         label: Text('NS Smart Wind $appVersion ${Server.local ? " | Local Server" : " |  Online"}'));
                                   }))))

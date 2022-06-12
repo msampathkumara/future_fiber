@@ -43,24 +43,24 @@ class _FlagDialogState extends State<FlagDialog> {
     switch (flagType) {
       case TicketFlagTypes.HOLD:
         titleText = "Hold";
-        titleIcon = Icon(Icons.pan_tool_rounded);
+        titleIcon = const Icon(Icons.pan_tool_rounded);
         break;
       case TicketFlagTypes.RED:
         titleText = "Red Flag";
-        titleIcon = Icon(Icons.tour_rounded);
+        titleIcon = const Icon(Icons.tour_rounded);
         break;
       case TicketFlagTypes.GR:
         titleText = "Graphics";
-        titleIcon = Icon(NsIcons.gr);
+        titleIcon = const Icon(NsIcons.gr);
         break;
 
       case TicketFlagTypes.RUSH:
         titleText = "Rush";
-        titleIcon = Icon(Icons.flash_on_rounded);
+        titleIcon = const Icon(Icons.flash_on_rounded);
         break;
       case TicketFlagTypes.SK:
         titleText = "SK";
-        titleIcon = Icon(NsIcons.sk);
+        titleIcon = const Icon(NsIcons.sk);
         break;
     }
 
@@ -69,11 +69,8 @@ class _FlagDialogState extends State<FlagDialog> {
     double w = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: AppBar(title: Wrap(children: [Icon(NsIcons.sk, size: 24),SizedBox(width: 16), Text(titleText)])),
-      body:
-
-
-      Container(
+      appBar: AppBar(title: Wrap(children: [const Icon(NsIcons.sk, size: 24), const SizedBox(width: 16), Text(titleText)])),
+      body: Container(
         width: w,
         child: ListTile(
           title: Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -81,9 +78,9 @@ class _FlagDialogState extends State<FlagDialog> {
                 alignment: Alignment.topLeft,
                 child: Padding(
                     padding: const EdgeInsets.only(bottom: 8.0, top: 8),
-                    child: Text(ticketFlag.flaged == 1 ? "Flag Added" : "Flag Removed", style: TextStyle(fontWeight: FontWeight.bold)))),
+                    child: Text(ticketFlag.flaged == 1 ? "Flag Added" : "Flag Removed", style: const TextStyle(fontWeight: FontWeight.bold)))),
             Text(ticketFlag.comment),
-            Divider(),
+            const Divider(),
           ]),
           subtitle: SizedBox(
             width: double.infinity,
@@ -93,8 +90,8 @@ class _FlagDialogState extends State<FlagDialog> {
                   padding: const EdgeInsets.only(bottom: 4.0),
                   child: UserButton(nsUserId: ticketFlag.user, imageRadius: 16),
                 ),
-                Spacer(),
-                Text(ticketFlag.getDateTime(), style: TextStyle(color: Colors.blue)),
+                const Spacer(),
+                Text(ticketFlag.getDateTime(), style: const TextStyle(color: Colors.blue)),
               ],
             ),
           ),
@@ -112,7 +109,7 @@ class FlagDialog1 {
     flagType = TicketFlagTypes.RED;
     addTitle = "Set Red Flag";
     removeTitle = "Remove Red Flag";
-    icon = Icon(Icons.flag_rounded, color: Colors.red);
+    icon = const Icon(Icons.flag_rounded, color: Colors.red);
     _commentPlaceHolder = "Red Flag Comment";
 
     _showDialog(context, ticket);
@@ -158,7 +155,7 @@ class FlagDialog1 {
     flagType = TicketFlagTypes.GR;
     addTitle = "Set GR";
     removeTitle = "Remove GR";
-    icon = Icon(NsIcons.gr, color: Colors.blue);
+    icon = const Icon(NsIcons.gr, color: Colors.blue);
     // icon = CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white))));
     _commentPlaceHolder = "GR Comment";
 
@@ -171,7 +168,7 @@ class FlagDialog1 {
     flagType = TicketFlagTypes.RUSH;
     addTitle = "Set Rush";
     removeTitle = "Remove Rush";
-    icon = Icon(Icons.offline_bolt_rounded, color: Colors.orangeAccent);
+    icon = const Icon(Icons.offline_bolt_rounded, color: Colors.orangeAccent);
     _commentPlaceHolder = "Rush Comment";
 
     _showDialog(context, ticket);
@@ -230,9 +227,9 @@ class FlagDialog1 {
                                       alignment: Alignment.topLeft,
                                       child: Padding(
                                           padding: const EdgeInsets.only(bottom: 8.0, top: 8),
-                                          child: Text(ticketFlag.flaged == 1 ? "Flag Added" : "Flag Removed", style: TextStyle(fontWeight: FontWeight.bold)))),
+                                          child: Text(ticketFlag.flaged == 1 ? "Flag Added" : "Flag Removed", style: const TextStyle(fontWeight: FontWeight.bold)))),
                                   Text(ticketFlag.comment),
-                                  Divider(),
+                                  const Divider(),
                                 ]),
                                 subtitle: SizedBox(
                                   width: double.infinity,
@@ -242,8 +239,8 @@ class FlagDialog1 {
                                         padding: const EdgeInsets.only(bottom: 4.0),
                                         child: UserButton(nsUserId: ticketFlag.user, imageRadius: 16),
                                       ),
-                                      Spacer(),
-                                      Text(ticketFlag.getDateTime(), style: TextStyle(color: Colors.blue)),
+                                      const Spacer(),
+                                      Text(ticketFlag.getDateTime(), style: const TextStyle(color: Colors.blue)),
                                     ],
                                   ),
                                 ),
@@ -264,7 +261,7 @@ class FlagDialog1 {
                       ),
                     if (isFlaged)
                       Container(
-                        child: Text(""),
+                        child: const Text(""),
                       ),
                   ],
                 ),
@@ -310,26 +307,26 @@ class FlagDialog1 {
     switch (flagType) {
       case TicketFlagTypes.HOLD:
         titleText = "Hold";
-        titleIcon = Icon(Icons.pan_tool_rounded);
+        titleIcon = const Icon(Icons.pan_tool_rounded);
         break;
       case TicketFlagTypes.RED:
         titleText = "Red Flag";
-        titleIcon = Icon(Icons.tour_rounded);
+        titleIcon = const Icon(Icons.tour_rounded);
         break;
       case TicketFlagTypes.GR:
         titleText = "Graphics";
         // titleIcon = CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white))));
-        titleIcon = Icon(NsIcons.gr);
+        titleIcon = const Icon(NsIcons.gr);
         break;
 
       case TicketFlagTypes.RUSH:
         titleText = "Rush";
-        titleIcon = Icon(Icons.flash_on_rounded);
+        titleIcon = const Icon(Icons.flash_on_rounded);
         break;
       case TicketFlagTypes.SK:
         titleText = "SK";
         // titleIcon = CircleAvatar(backgroundColor: Colors.pink, child: Center(child: Text("SK", style: TextStyle(color: Colors.white))));
-        titleIcon = Icon(NsIcons.sk);
+        titleIcon = const Icon(NsIcons.sk);
         break;
       case TicketFlagTypes.CROSS:
         // TODO: Handle this case.
@@ -358,9 +355,9 @@ class FlagDialog1 {
                         alignment: Alignment.topLeft,
                         child: Padding(
                             padding: const EdgeInsets.only(bottom: 8.0, top: 8),
-                            child: Text(ticketFlag.flaged == 1 ? "Flag Added" : "Flag Removed", style: TextStyle(fontWeight: FontWeight.bold)))),
+                            child: Text(ticketFlag.flaged == 1 ? "Flag Added" : "Flag Removed", style: const TextStyle(fontWeight: FontWeight.bold)))),
                     Text(ticketFlag.comment),
-                    Divider(),
+                    const Divider(),
                   ]),
                   subtitle: SizedBox(
                     width: double.infinity,
@@ -370,8 +367,8 @@ class FlagDialog1 {
                           padding: const EdgeInsets.only(bottom: 4.0),
                           child: UserButton(nsUserId: ticketFlag.user, imageRadius: 16),
                         ),
-                        Spacer(),
-                        Text(ticketFlag.getDateTime(), style: TextStyle(color: Colors.blue)),
+                        const Spacer(),
+                        Text(ticketFlag.getDateTime(), style: const TextStyle(color: Colors.blue)),
                       ],
                     ),
                   ),
@@ -399,7 +396,7 @@ class FlagDialog1 {
     flagType = TicketFlagTypes.HOLD;
     addTitle = "Stop Production";
     removeTitle = "Restart Production";
-    icon = Icon(Icons.pan_tool_rounded, color: Colors.red);
+    icon = const Icon(Icons.pan_tool_rounded, color: Colors.red);
     _commentPlaceHolder = "Comment";
 
     _showDialog(context, ticket);

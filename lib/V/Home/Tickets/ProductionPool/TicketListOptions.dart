@@ -23,7 +23,7 @@ class TicketOption {
   final List<Permission> permissions;
 }
 
-Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContext context) async {
+Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContext context, {required Function? loadData}) async {
   print(ticket.toJson());
   await showModalBottomSheet<void>(
     constraints: kIsWeb ? const BoxConstraints(maxWidth: 600) : null,
@@ -42,128 +42,152 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
               subtitle: Text(ticket.oe!),
             ),
             const Divider(),
-            Expanded(
-                child: SingleChildScrollView(
-                    child: Column(children: [
-              if (AppUser.havePermissionFor(Permissions.SET_RED_FLAG))
-                ListTile(
-                  title: Text(ticket.isRed == 1 ? "Remove Red Flag" : "Set Red Flag"),
-                  leading: const Icon(Icons.flag),
+            if (ticket.completed == 1 && AppUser.havePermissionFor(Permissions.DELETE_TICKETS))
+              ListTile(
+                  title: const Text("Delete"),
+                  leading: const Icon(NsIcons.delete, color: Colors.red),
                   onTap: () async {
+                    //TODO set delete url
+                    OnlineDB.apiPost("tickets/delete", {"id": ticket.id.toString()}).then((response) async {
+                      print('TICKET DELETED');
+                      print(response.data);
+                      print(response.statusCode);
+                    });
                     Navigator.of(context).pop();
-                    bool resul = await FlagDialog1.showRedFlagDialog(context1, ticket);
-                    ticket.isRed = resul ? 1 : 0;
-                  },
-                ),
-              if (AppUser.havePermissionFor(Permissions.STOP_PRODUCTION))
-                ListTile(
-                  title: Text(ticket.isHold == 1 ? "Restart Production" : "Stop Production"),
-                  leading: const Icon(Icons.pan_tool_rounded, color: Colors.red),
-                  onTap: () async {
-                    Navigator.of(context).pop();
-                    bool resul = await FlagDialog1.showStopProductionFlagDialog(context1, ticket);
-                    ticket.isHold = resul ? 1 : 0;
-                  },
-                ),
-              if (AppUser.havePermissionFor(Permissions.SET_GR))
-                ListTile(
-                  onTap: () async {
-                    Navigator.of(context).pop();
-                    await FlagDialog1.showGRDialog(context1, ticket);
-                  },
-                  title: Text(ticket.isGr == 1 ? "Remove GR" : "Set GR"),
-                  // leading: SizedBox(
-                  //     width: 24, height: 24, child: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))))
-                  leading: const Icon(NsIcons.gr, color: Colors.blue),
-                ),
-              if (AppUser.havePermissionFor(Permissions.SET_RUSH))
-                ListTile(
-                    title: Text(ticket.isRush == 1 ? "Remove Rush" : "Set Rush"),
-                    leading: const Icon(Icons.offline_bolt_outlined, color: Colors.orangeAccent),
+                  })
+            else
+              Expanded(
+                  child: SingleChildScrollView(
+                      child: Column(children: [
+                if (AppUser.havePermissionFor(Permissions.SET_RED_FLAG))
+                  ListTile(
+                    title: Text(ticket.isRed == 1 ? "Remove Red Flag" : "Set Red Flag"),
+                    leading: const Icon(Icons.flag),
                     onTap: () async {
                       Navigator.of(context).pop();
-                      // await FlagDialog.showRushDialog(context1, ticket);
-                      var u = ticket.isRush == 1 ? "removeFlag" : "setFlag";
-                      OnlineDB.apiPost("tickets/flags/" + u, {"ticket": ticket.id.toString(), "comment": "", "type": "rush"}).then((response) async {});
-                    }),
-              if (AppUser.havePermissionFor(Permissions.SEND_TO_PRINTING))
-                ListTile(
-                    title: Text(ticket.inPrint == 1 ? "Cancel Printing" : "Send To Print"),
-                    leading: Icon(ticket.inPrint == 1 ? Icons.print_disabled_outlined : Icons.print_outlined, color: Colors.deepOrangeAccent),
+                      await FlagDialog1.showRedFlagDialog(context1, ticket);
+                      // ticket.isRed = resul ? 1 : 0;
+                    },
+                  ),
+                if (AppUser.havePermissionFor(Permissions.STOP_PRODUCTION))
+                  ListTile(
+                    title: Text(ticket.isHold == 1 ? "Restart Production" : "Stop Production"),
+                    leading: const Icon(Icons.pan_tool_rounded, color: Colors.red),
                     onTap: () async {
                       Navigator.of(context).pop();
-                      await sendToPrint(ticket);
-                    }),
-              if (AppUser.havePermissionFor(Permissions.FINISH_TICKET) && (!kIsWeb))
-                ListTile(
-                    title: const Text("Finish"),
-                    leading: const Icon(Icons.check_circle_outline_outlined, color: Colors.green),
+                      bool resul = await FlagDialog1.showStopProductionFlagDialog(context1, ticket);
+                      ticket.isHold = resul ? 1 : 0;
+                    },
+                  ),
+                if (AppUser.havePermissionFor(Permissions.SET_GR))
+                  ListTile(
                     onTap: () async {
                       Navigator.of(context).pop();
-                      await showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return FinishCheckList(ticket);
-                          });
-                      // await Navigator.push(context1, MaterialPageRoute(builder: (context) => FinishCheckList(ticket)));
-                    }),
-              if ((!ticket.isCrossPro) && AppUser.havePermissionFor(Permissions.SET_CROSS_PRODUCTION))
-                ListTile(
-                    title: const Text("Set Cross Production"),
-                    leading: const Icon(NsIcons.crossProduction, color: Colors.green),
-                    onTap: () async {
-                      Navigator.of(context).pop();
-                      chooseFactories(ticket, context1);
-                      // CrossProduction(ticket).show(context1);
-                      // await Navigator.push(context1, MaterialPageRoute(builder: (context) => CrossProduction(ticket)));
-                      //
-                    }),
-                      if (ticket.isCrossPro && AppUser.havePermissionFor(Permissions.SET_CROSS_PRODUCTION))
-                ListTile(
-                    title: const Text("Remove Cross Production"),
-                    leading: const Icon(NsIcons.crossProduction, color: Colors.green),
-                    onTap: () async {
-                      Navigator.of(context).pop();
-                      showAlertDialog(context, ticket);
-                    }),
-              if (AppUser.havePermissionFor(Permissions.SHARE_TICKETS) && (!kIsWeb))
-                ListTile(
-                    title: const Text("Share Work Ticket"),
-                    leading: const Icon(NsIcons.share, color: Colors.lightBlue),
-                    onTap: () async {
-                      await ticket.sharePdf(context);
-                      Navigator.of(context).pop();
-                    }),
-              if (AppUser.havePermissionFor(Permissions.SHIPPING_SYSTEM) && (!kIsWeb))
-                ListTile(
-                    title: const Text("Shipping"),
-                    leading: const Icon(NsIcons.shipping, color: Colors.brown),
-                    onTap: () async {
-                      await ticket.openInShippingSystem(context);
-                      Navigator.of(context).pop();
-                    }),
-              if (AppUser.havePermissionFor(Permissions.CS) && (!kIsWeb))
-                ListTile(
-                    title: const Text("CS"),
-                    leading: const Icon(Icons.pivot_table_chart_rounded, color: Colors.green),
-                    onTap: () async {
-                      await ticket.openInCS(context);
-                      Navigator.of(context).pop();
-                    }),
-              if (AppUser.havePermissionFor(Permissions.DELETE_TICKETS))
-                ListTile(
-                    title: const Text("Delete"),
-                    leading: const Icon(NsIcons.delete, color: Colors.red),
-                    onTap: () async {
-                      //TODO set delete url
-                      OnlineDB.apiPost("tickets/delete", {"id": ticket.id.toString()}).then((response) async {
-                        print('TICKET DELETED');
-                        print(response.data);
-                        print(response.statusCode);
-                      });
-                      Navigator.of(context).pop();
-                    }),
-            ])))
+                      await FlagDialog1.showGRDialog(context1, ticket);
+                    },
+                    title: Text(ticket.isGr == 1 ? "Remove GR" : "Set GR"),
+                    // leading: SizedBox(
+                    //     width: 24, height: 24, child: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))))
+                    leading: const Icon(NsIcons.gr, color: Colors.blue),
+                  ),
+                if (AppUser.havePermissionFor(Permissions.SET_RUSH))
+                  ListTile(
+                      title: Text(ticket.isRush == 1 ? "Remove Rush" : "Set Rush"),
+                      leading: const Icon(Icons.offline_bolt_outlined, color: Colors.orangeAccent),
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                        // await FlagDialog.showRushDialog(context1, ticket);
+                        var u = ticket.isRush == 1 ? "removeFlag" : "setFlag";
+                        OnlineDB.apiPost("tickets/flags/" + u, {"ticket": ticket.id.toString(), "comment": "", "type": "rush"}).then((response) async {});
+                      }),
+                if (AppUser.havePermissionFor(Permissions.SEND_TO_PRINTING))
+                  ListTile(
+                      title: Text(ticket.inPrint == 1 ? "Cancel Printing" : "Send To Print"),
+                      leading: Icon(ticket.inPrint == 1 ? Icons.print_disabled_outlined : Icons.print_outlined, color: Colors.deepOrangeAccent),
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                        await sendToPrint(ticket);
+                      }),
+                if (AppUser.havePermissionFor(Permissions.FINISH_TICKET) && (!kIsWeb))
+                  ListTile(
+                      title: const Text("Finish"),
+                      leading: const Icon(Icons.check_circle_outline_outlined, color: Colors.green),
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                        await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return FinishCheckList(ticket);
+                            });
+                        // await Navigator.push(context1, MaterialPageRoute(builder: (context) => FinishCheckList(ticket)));
+                      }),
+                if ((!ticket.isCrossPro) && AppUser.havePermissionFor(Permissions.SET_CROSS_PRODUCTION))
+                  ListTile(
+                      title: const Text("Set Cross Production"),
+                      leading: const Icon(NsIcons.crossProduction, color: Colors.green),
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                        chooseFactories(ticket, context1);
+                        // CrossProduction(ticket).show(context1);
+                        // await Navigator.push(context1, MaterialPageRoute(builder: (context) => CrossProduction(ticket)));
+                        //
+                      }),
+                if (ticket.isCrossPro && AppUser.havePermissionFor(Permissions.SET_CROSS_PRODUCTION))
+                  ListTile(
+                      title: const Text("Remove Cross Production"),
+                      leading: const Icon(NsIcons.crossProduction, color: Colors.green),
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                        showAlertDialog(context, ticket);
+                      }),
+                if (AppUser.havePermissionFor(Permissions.SHARE_TICKETS) && (!kIsWeb))
+                  ListTile(
+                      title: const Text("Share Work Ticket"),
+                      leading: const Icon(NsIcons.share, color: Colors.lightBlue),
+                      onTap: () async {
+                        await ticket.sharePdf(context);
+                        Navigator.of(context).pop();
+                      }),
+                if (AppUser.havePermissionFor(Permissions.SHIPPING_SYSTEM) && (!kIsWeb))
+                  ListTile(
+                      title: const Text("Shipping"),
+                      leading: const Icon(NsIcons.shipping, color: Colors.brown),
+                      onTap: () async {
+                        await ticket.openInShippingSystem(context);
+                        Navigator.of(context).pop();
+                      }),
+                if (AppUser.havePermissionFor(Permissions.CS) && (!kIsWeb))
+                  ListTile(
+                      title: const Text("CS"),
+                      leading: const Icon(Icons.pivot_table_chart_rounded, color: Colors.green),
+                      onTap: () async {
+                        await ticket.openInCS(context);
+                        Navigator.of(context).pop();
+                      }),
+                if (AppUser.havePermissionFor(Permissions.DELETE_TICKETS))
+                  ListTile(
+                      title: const Text("Delete"),
+                      leading: const Icon(NsIcons.delete, color: Colors.red),
+                      onTap: () async {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            backgroundColor: Colors.deepOrange,
+                            content: const Text("🗑️ Are you sure want to delete this ticket", style: TextStyle(color: Colors.white)),
+                            action: SnackBarAction(
+                                label: "Delete ?",
+                                textColor: Colors.white,
+                                onPressed: () {
+                                  OnlineDB.apiPost("tickets/delete", {"id": ticket.id.toString()}).then((response) async {
+                                    ticket.delete();
+                                    loadData!();
+                                    print('TICKET DELETED');
+                                    print(response.data);
+                                    print(response.statusCode);
+                                  });
+                                })));
+
+                        Navigator.of(context).pop();
+                      }),
+              ])))
           ],
         ),
       );

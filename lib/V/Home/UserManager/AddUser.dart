@@ -37,11 +37,11 @@ class AddUser extends StatefulWidget {
 class _AddUserState extends State<AddUser> {
   NsUser nsUser = new NsUser();
 
-  TextStyle stStyle = TextStyle(color: Colors.black, fontSize: 18);
+  TextStyle stStyle = const TextStyle(color: Colors.black, fontSize: 18);
 
-  TextEditingController _phoneNumberControll = new TextEditingController();
-  TextEditingController _emaiAddressControll = new TextEditingController();
-  TextEditingController _epfNumberControll = new TextEditingController();
+  final TextEditingController _phoneNumberControll = new TextEditingController();
+  final TextEditingController _emaiAddressControll = new TextEditingController();
+  final TextEditingController _epfNumberControll = new TextEditingController();
 
   Section? selectedSection = new Section();
 
@@ -123,8 +123,8 @@ class _AddUserState extends State<AddUser> {
         screenSize.height - offset.dy,
       ),
       items: [
-        PopupMenuItem(value: 1, child: Text("Edit")),
-        PopupMenuItem(value: 2, child: Text("Remove")),
+        const PopupMenuItem(value: 1, child: Text("Edit")),
+        const PopupMenuItem(value: 2, child: Text("Remove")),
       ],
       elevation: 8.0,
     ).then((value) {
@@ -134,9 +134,9 @@ class _AddUserState extends State<AddUser> {
 
   getDialogUi() {
     return Scaffold(
-      appBar: AppBar(title: Text("Edit User")),
+      appBar: AppBar(title: const Text("Edit User")),
       body: isSaving
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.only(bottom: 16.0),
               child: Row(
@@ -151,18 +151,18 @@ class _AddUserState extends State<AddUser> {
                             foregroundImage: img ?? (nsUser.haveImage ? NetworkImage(nsUser.getImage()) : (img ?? placeholder)),
                             backgroundImage: const AssetImage("assets/images/userPlaceholder.jpg")),
                         Row(children: [
-                          SizedBox(child: TextButton(onPressed: getImage, child: Text("Change Profile Picture")), width: 170),
-                          if (_image != null) SizedBox(child: VerticalDivider(color: Colors.grey, thickness: 1), height: 20),
+                          SizedBox(width: 170, child: TextButton(onPressed: getImage, child: const Text("Change Profile Picture"))),
+                          if (_image != null) const SizedBox(height: 20, child: VerticalDivider(color: Colors.grey, thickness: 1)),
                           if (_image != null)
                             SizedBox(
+                                width: 170,
                                 child: TextButton(
                                     onPressed: () {
                                       setState(() {
                                         _image = null;
                                       });
                                     },
-                                    child: Text("Reset", textAlign: TextAlign.left)),
-                                width: 170)
+                                    child: const Text("Reset", textAlign: TextAlign.left)))
                         ]),
                         Padding(
                           padding: const EdgeInsets.only(top: 16.0),
@@ -171,7 +171,7 @@ class _AddUserState extends State<AddUser> {
                             textScaleFactor: 1.5,
                           ),
                         ),
-                        Text('#' + nsUser.uname, style: TextStyle(color: Colors.blue))
+                  Text('#${nsUser.uname}', style: const TextStyle(color: Colors.blue))
                       ]),
                     ),
                   if (showFormUi)
@@ -184,7 +184,7 @@ class _AddUserState extends State<AddUser> {
                               Card(
                                 child: Column(
                                   children: [
-                                    ListTile(title: Text("Basic Info"), leading: Icon(Icons.account_box_outlined)),
+                                    const ListTile(title: Text("Basic Info"), leading: Icon(Icons.account_box_outlined)),
                                     Padding(
                                       padding: const EdgeInsets.all(16.0),
                                       child: Column(children: [
@@ -195,7 +195,7 @@ class _AddUserState extends State<AddUser> {
                                             nsUser.name = text;
                                           },
                                         ),
-                                        SizedBox(height: 16),
+                                        const SizedBox(height: 16),
                                         TextFormField(
                                           initialValue: nsUser.uname,
                                           decoration: FormInputDecoration.getDeco(labelText: "User Name"),
@@ -212,14 +212,14 @@ class _AddUserState extends State<AddUser> {
                               Card(
                                 child: Column(
                                   children: [
-                                    ListTile(title: Text("Contacts Details"), leading: Icon(Icons.contact_phone_outlined)),
+                                    const ListTile(title: Text("Contacts Details"), leading: Icon(Icons.contact_phone_outlined)),
                                     Padding(
                                       padding: const EdgeInsets.all(16.0),
                                       child: Column(children: [
                                         Column(
                                           children: [
                                             TextFormField(
-                                                decoration: FormInputDecoration.getDeco(labelText: "Phone Number", hintText: "Enter phone number", icon: Icon(Icons.phone)),
+                                                decoration: FormInputDecoration.getDeco(labelText: "Phone Number", hintText: "Enter phone number", icon: const Icon(Icons.phone)),
                                                 keyboardType: TextInputType.number,
                                                 inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                                                 controller: _phoneNumberControll,
@@ -250,7 +250,7 @@ class _AddUserState extends State<AddUser> {
                                                                 setState(() {});
                                                               });
                                                             },
-                                                            child: Chip(avatar: Icon(Icons.call_outlined), label: Text(number))),
+                                                            child: Chip(avatar: const Icon(Icons.call_outlined), label: Text(number))),
                                                       );
                                                     })),
                                               ),
@@ -260,7 +260,8 @@ class _AddUserState extends State<AddUser> {
                                         Column(
                                           children: [
                                             TextFormField(
-                                                decoration: FormInputDecoration.getDeco(labelText: "Email Address", icon: Icon(Icons.email_rounded), hintText: "Enter your Email"),
+                                                decoration:
+                                                    FormInputDecoration.getDeco(labelText: "Email Address", icon: const Icon(Icons.email_rounded), hintText: "Enter your Email"),
                                                 keyboardType: TextInputType.emailAddress,
                                                 inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                                                 validator: (input) => Validations.isValidEmail(input) ? null : "Check your email",
@@ -292,7 +293,7 @@ class _AddUserState extends State<AddUser> {
                                                                 setState(() {});
                                                               });
                                                             },
-                                                            child: Chip(avatar: Icon(Icons.call_outlined), label: Text(number))),
+                                                            child: Chip(avatar: const Icon(Icons.call_outlined), label: Text(number))),
                                                       );
                                                     })),
                                               ),
@@ -307,19 +308,19 @@ class _AddUserState extends State<AddUser> {
                               Card(
                                 child: Column(
                                   children: [
-                                    ListTile(title: Text("Job Details"), leading: Icon(Icons.work_outline_outlined)),
+                                    const ListTile(title: Text("Job Details"), leading: Icon(Icons.work_outline_outlined)),
                                     Padding(
                                       padding: const EdgeInsets.all(16.0),
                                       child: Column(
                                         children: [
                                           TextFormField(
-                                              decoration: FormInputDecoration.getDeco(labelText: "EPF", icon: Icon(Icons.numbers_rounded)),
+                                              decoration: FormInputDecoration.getDeco(labelText: "EPF", icon: const Icon(Icons.numbers_rounded)),
                                               keyboardType: TextInputType.number,
                                               inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                                               controller: _epfNumberControll),
                                           ListTile(
-                                              leading: Icon(Icons.location_on_outlined),
-                                              title: Text("Section"),
+                                              leading: const Icon(Icons.location_on_outlined),
+                                              title: const Text("Section"),
                                               subtitle: Column(
                                                 children: [
                                                   Row(children: [
@@ -327,7 +328,7 @@ class _AddUserState extends State<AddUser> {
                                                       padding: const EdgeInsets.only(right: 8.0),
                                                       child: DropdownButton<String>(
                                                         isDense: true,
-                                                        hint: Text("Factory"),
+                                                        hint: const Text("Factory"),
                                                         value: selectedSection!.factory == "" ? null : selectedSection!.factory,
                                                         iconSize: 24,
                                                         elevation: 16,
@@ -350,8 +351,8 @@ class _AddUserState extends State<AddUser> {
                                                     Padding(
                                                       padding: const EdgeInsets.all(8.0),
                                                       child: DropdownButton<String>(
-                                                          iconEnabledColor: Color(0xFF595959),
-                                                          hint: Text(
+                                                          iconEnabledColor: const Color(0xFF595959),
+                                                          hint: const Text(
                                                             "Section",
                                                             style: TextStyle(color: Color(0xFF8B8B8B), fontSize: 15),
                                                           ),
@@ -396,7 +397,7 @@ class _AddUserState extends State<AddUser> {
                                                                 selectedSection = new Section();
                                                                 setState(() {});
                                                               },
-                                                              child: Text("Add")))
+                                                              child: const Text("Add")))
                                                   ]),
                                                   Align(
                                                       alignment: Alignment.topLeft,
@@ -407,7 +408,7 @@ class _AddUserState extends State<AddUser> {
                                                             Section section = nsUser.sections[index];
                                                             return Padding(
                                                                 padding: const EdgeInsets.only(right: 8.0, bottom: 8),
-                                                                child: Chip(label: Text(section.sectionTitle + " @ " + section.factory)));
+                                                                child: Chip(label: Text("${section.sectionTitle} @ ${section.factory}")));
                                                           })))
                                                 ],
                                               )),
@@ -429,7 +430,7 @@ class _AddUserState extends State<AddUser> {
           onPressed: () {
             saveUser();
           },
-          child: Icon(Icons.save_outlined)),
+          child: const Icon(Icons.save_outlined)),
     );
   }
 

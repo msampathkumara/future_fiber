@@ -12,13 +12,13 @@ class Server {
     if (kDebugMode && local && (!onlineServer)) {
       print(devServerIp);
       return "http://$devServerIp:3000";
-      // return "http://192.168.0.100:3000";
     } else {
       return "https://smartwind.nsslsupportservices.com";
     }
   }
 
   static String getServerPath(String path, {onlineServer = false}) {
+    print("${getServerAddress(onlineServer: onlineServer)}/$path");
     return "${getServerAddress(onlineServer: onlineServer)}/$path";
   }
 

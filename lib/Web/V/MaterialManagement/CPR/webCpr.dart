@@ -79,7 +79,7 @@ class _WebCprState extends State<WebCpr> {
                       lable: 'Production',
                       value: Production.None,
                       selectedText: (selectedItem) {
-                        return (selectedItem as Production).getValue();
+                        return (selectedItem).getValue();
                       },
                       onSelect: (x) {
                         selectedProduction = x;
@@ -88,7 +88,7 @@ class _WebCprState extends State<WebCpr> {
                         return selectedProduction.getValue();
                       },
                       onChildBuild: (Production item) {
-                        return Text('${item.getValue()}');
+                        return Text(item.getValue());
                       }),
                   const SizedBox(width: 20),
                   myDropDown<String>(
@@ -106,7 +106,7 @@ class _WebCprState extends State<WebCpr> {
                         return selectedStatus;
                       },
                       onChildBuild: (item) {
-                        return Text('${item}');
+                        return Text('$item');
                       }),
                   // const SizedBox(
                   //   width: 200,

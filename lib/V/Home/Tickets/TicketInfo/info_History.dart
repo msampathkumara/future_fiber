@@ -61,7 +61,7 @@ class _InfoHistoryState extends State<InfoHistory> {
                     TextSpan(text: user?.name ?? "", style: linkStyle),
                     TextSpan(text: " ${(ticketHistory.action ?? "").toLowerCase().replaceUnderscore.capitalizeFirstofEach}")
                   ])),
-                  Align(child: Text("${ticketHistory.uptime}", textAlign: TextAlign.end, style: timeStyle), alignment: Alignment.bottomRight),
+                  Align(alignment: Alignment.bottomRight, child: Text("${ticketHistory.uptime}", textAlign: TextAlign.end, style: timeStyle)),
                   const Divider(thickness: 1.5)
                 ],
               ),
