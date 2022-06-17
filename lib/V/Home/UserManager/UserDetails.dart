@@ -1,24 +1,23 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Section.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
+import 'package:smartwind/Web/Widgets/DialogView.dart';
 
 class UserDetails extends StatefulWidget {
-  NsUser nsUser;
+  final NsUser nsUser;
 
-  UserDetails(this.nsUser, {Key? key}) : super(key: key);
+  const UserDetails(this.nsUser, {Key? key}) : super(key: key);
 
   @override
   _UserDetailsState createState() {
     return _UserDetailsState();
   }
 
-  static show(context, nsUser) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => UserDetails(nsUser)),
-    );
+  Future show(context) {
+    return kIsWeb ? showDialog(context: context, builder: (_) => this) : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
   }
 }
 
@@ -48,6 +47,10 @@ class _UserDetailsState extends State<UserDetails> {
 
   @override
   Widget build(BuildContext context) {
+    return kIsWeb ? DialogView(width: 1000, child: getUi()) : getUi();
+  }
+
+  getUi() {
     return FutureBuilder<String>(
         future: getJwt(), // a Future<String> or null
         builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
@@ -60,7 +63,7 @@ class _UserDetailsState extends State<UserDetails> {
               return SafeArea(
                 child: Scaffold(
                   appBar: AppBar(
-                    backgroundColor: Colors.white,
+                    backgroundColor: Theme.of(context).primaryColor,
                     elevation: 1,
                     toolbarHeight: 350,
                     flexibleSpace: Center(
@@ -101,7 +104,7 @@ class _UserDetailsState extends State<UserDetails> {
                                       ListTile(
                                         leading: const Icon(Icons.alternate_email_outlined),
                                         title: const Text("Email"),
-                                        subtitle: Wrap(direction: Axis.vertical, children: nsUser.emails.map((e) => Chip(label: Text(e.email ?? ''))).toList()),
+                                        subtitle: Wrap(direction: Axis.horizontal, spacing: 2, children: nsUser.emails.map((e) => Chip(label: Text(e.email ?? ''))).toList()),
                                       ),
                                     ],
                                   ),
@@ -122,6 +125,8 @@ class _UserDetailsState extends State<UserDetails> {
                                           leading: const Icon(Icons.domain_outlined),
                                           title: const Text("Section"),
                                           subtitle: Wrap(
+                                              spacing: 2,
+                                              runSpacing: 2,
                                               direction: Axis.horizontal,
                                               crossAxisAlignment: WrapCrossAlignment.start,
                                               children: List.generate(nsUser.sections.length, (index) {

@@ -65,13 +65,20 @@ class _WebQcTableState extends State<WebQcTable> {
       ),
       DataColumn2(
         size: ColumnSize.M,
+        numeric: true,
         label: const Text('Date & Time', style: TextStyle(fontWeight: FontWeight.bold)),
         onSort: (columnIndex, ascending) => sort(columnIndex, ascending),
       ),
       DataColumn2(
-        size: ColumnSize.M,
+        size: ColumnSize.S,
         label: const Text('Type', style: TextStyle(fontWeight: FontWeight.bold)),
-        numeric: true,
+        numeric: false,
+        onSort: (columnIndex, ascending) => sort(columnIndex, ascending),
+      ),
+      DataColumn2(
+        size: ColumnSize.M,
+        label: const Text('Section', style: TextStyle(fontWeight: FontWeight.bold)),
+        numeric: false,
         onSort: (columnIndex, ascending) => sort(columnIndex, ascending),
       ),
       DataColumn2(
@@ -122,7 +129,7 @@ class _WebQcTableState extends State<WebQcTable> {
           },
           initialFirstRowIndex: _initialRow,
           onPageChanged: (rowIndex) {
-            print("${rowIndex}${_rowsPerPage}xxxxxxxx =${rowIndex / _rowsPerPage}");
+            print("$rowIndex${_rowsPerPage}xxxxxxxx =${rowIndex / _rowsPerPage}");
           },
           sortColumnIndex: _sortColumnIndex,
           sortAscending: _sortAscending,
@@ -138,7 +145,7 @@ class _WebQcTableState extends State<WebQcTable> {
 }
 
 class _ErrorAndRetry extends StatelessWidget {
-  _ErrorAndRetry(this.errorMessage, this.retry);
+  const _ErrorAndRetry(this.errorMessage, this.retry);
 
   final String errorMessage;
   final void Function() retry;
@@ -153,13 +160,7 @@ class _ErrorAndRetry extends StatelessWidget {
               Text('Oops! $errorMessage', style: const TextStyle(color: Colors.white)),
               TextButton(
                   onPressed: retry,
-                  child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    const Icon(
-                      Icons.refresh,
-                      color: Colors.white,
-                    ),
-                    const Text('Retry', style: const TextStyle(color: Colors.white))
-                  ]))
+                  child: Row(mainAxisSize: MainAxisSize.min, children: const [Icon(Icons.refresh, color: Colors.white), Text('Retry', style: TextStyle(color: Colors.white))]))
             ])),
       );
 }
@@ -182,17 +183,17 @@ class __LoadingState extends State<_Loading> {
                   ? const SizedBox()
                   : Center(
                       child: Container(
-                      color: Colors.yellow,
+                        color: Colors.yellow,
                       padding: const EdgeInsets.all(7),
-                      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                        const CircularProgressIndicator(
+                      width: 150,
+                      height: 50,
+                      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: const [
+                        CircularProgressIndicator(
                           strokeWidth: 2,
                           color: Colors.black,
                         ),
-                        const Text('Loading..')
+                        Text('Loading..')
                       ]),
-                      width: 150,
-                      height: 50,
                     ));
             }));
   }
@@ -201,7 +202,6 @@ class __LoadingState extends State<_Loading> {
 class QcDataSourceAsync extends AsyncDataTableSource {
   Future<DataResponse> Function(int page, int startingAt, int count, String sortedBy, bool sortedAsc) onRequestData;
 
-  var _selectedType;
 
   QcDataSourceAsync(this.context, {required this.onRequestData}) {
     print('DessertDataSourceAsync created');
@@ -217,7 +217,7 @@ class QcDataSourceAsync extends AsyncDataTableSource {
   //   print('DessertDataSourceAsync.error created');
   // }
   final BuildContext context;
-  bool _empty = false;
+  final bool _empty = false;
   int? _errorCounter;
 
   RangeValues? _caloriesFilter;
@@ -268,6 +268,8 @@ class QcDataSourceAsync extends AsyncDataTableSource {
     var r = AsyncRowsResponse(
         x.totalRecords,
         x.data.map((qc) {
+          Section? section = qc.getSection();
+
           return DataRow2(
             selected: false,
             onTap: () {
@@ -290,6 +292,9 @@ class QcDataSourceAsync extends AsyncDataTableSource {
                   Wrap(direction: Axis.vertical, children: [Text((qc.ticket?.mo) ?? ""), Text((qc.ticket?.oe) ?? "", style: const TextStyle(color: Colors.red, fontSize: 12))])),
               DataCell(Text('${qc.getDateTime()}')),
               DataCell(Text(qc.qc == 1 ? 'QC' : 'QA')),
+              DataCell(Wrap(
+                  direction: Axis.vertical,
+                  children: [Text((section?.factory) ?? ""), Text((section?.sectionTitle) ?? "", style: const TextStyle(color: Colors.red, fontSize: 12))])),
               DataCell(Row(
                 children: [
                   UserImage(nsUser: qc.user, radius: 16, padding: 2),

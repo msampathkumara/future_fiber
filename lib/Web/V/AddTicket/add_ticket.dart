@@ -129,7 +129,11 @@ class _AddTicketState extends State<AddTicket> {
                                           width: 20,
                                           child: f.haveError
                                               ? const Icon(Icons.error_rounded, color: Colors.red)
-                                              : (f.uploaded ? const Icon(Icons.done, color: Colors.green) : const CircularProgressIndicator(strokeWidth: 2))),
+                                              : (f.errorMessage != null
+                                                  ? const Icon(Icons.error, color: Colors.red)
+                                                  : f.uploaded
+                                                      ? const Icon(Icons.done, color: Colors.green)
+                                                      : const CircularProgressIndicator(strokeWidth: 2))),
                                       subtitle: f.haveError
                                           ? Row(children: [
                                               const Text("failed to upload "),
@@ -142,7 +146,9 @@ class _AddTicketState extends State<AddTicket> {
                                                   },
                                                   child: const Text("retry ?"))
                                             ])
-                                          : Text(f.uploaded ? ("Uploaded") : "uploading"));
+                                          : f.errorMessage != null
+                                              ? Text(f.errorMessage ?? '', style: const TextStyle(color: Colors.red))
+                                              : Text(f.uploaded ? ("Uploaded") : "uploading"));
                                 },
                                 separatorBuilder: (BuildContext context, int index) {
                                   return const Divider();
@@ -233,6 +239,8 @@ class UploadFile {
   late bool standard;
   Production? production;
 
+  String? errorMessage;
+
   UploadFile(this.file, this.standard, this.production);
 
   final file;
@@ -265,6 +273,12 @@ class UploadFile {
       total = total;
       print('progress: ${getProgress()}% ($sent/$total)');
     }).then((value) {
+      Map m = value.data;
+
+      if (m['error'] == true) {
+        errorMessage = m['invalidFileName'] == true ? 'Invalid File Name' : null;
+      }
+
       uploaded = true;
     }).onError((error, stackTrace) {
       this.error = error;

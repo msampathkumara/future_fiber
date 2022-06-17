@@ -57,7 +57,7 @@ class Server {
     return dio.get(Server.getServerPath(url, onlineServer: onlineServer), queryParameters: data);
   }
 
-  static Future<Response> serverPost(String url, Map<String, dynamic> data, {onlineServer = false}) async {
+  static Future<Response> serverPost(String url, Map<String, dynamic> data, {bool onlineServer = false}) async {
     final idToken = await AppUser.getIdToken();
     Dio dio = Dio();
     dio.options.headers['content-Type'] = 'application/json';

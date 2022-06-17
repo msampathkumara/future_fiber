@@ -8,6 +8,7 @@ import 'package:smartwind/M/hive.dart';
 import '../C/Server.dart';
 import '../V/Widgets/ErrorMessageView.dart';
 import 'AppUser.dart';
+import 'Section.dart';
 import 'Ticket.dart';
 
 part 'QC.g.dart';
@@ -26,6 +27,9 @@ class QC {
   String? userName = "";
 
   NsUser? user;
+
+  @JsonKey(defaultValue: 0, includeIfNull: true)
+  int? sectionId;
 
   NsUser? getUser() {
     user = user ?? HiveBox.usersBox.get(userId);
@@ -63,29 +67,32 @@ class QC {
     // if (kIsWeb) {
     // var loadingWidget = Loading(loadingText: "Downloading Ticket");
     // loadingWidget.show(context);
-      String queryString = Uri(queryParameters: {"id": id.toString()}).query;
-      final idToken = await AppUser.getIdToken(false);
+    String queryString = Uri(queryParameters: {"id": id.toString()}).query;
+    final idToken = await AppUser.getIdToken(false);
 
-      Dio dio = Dio();
-      dio.options.headers["authorization"] = "$idToken";
-      Response<List<int>>? rs;
-      try {
-        rs = await dio.get<List<int>>(Server.getServerApiPath(path + queryString), options: Options(responseType: ResponseType.bytes));
-      } catch (e) {
-        if (e is DioError) {
-          print("------------------------------------------------------------------------${e.response?.statusCode}");
-          // print(e);
-          if (e.response?.statusCode == 404) {
-            print('404');
-            ErrorMessageView(errorMessage: 'Ticket Not Found', icon: Icons.broken_image_rounded).show(context);
-          } else {
-            print(e.message);
-          }
-        } else {}
-        // loadingWidget.close(context);
-      }
+    Dio dio = Dio();
+    dio.options.headers["authorization"] = "$idToken";
+    Response<List<int>>? rs;
+    try {
+      rs = await dio.get<List<int>>(Server.getServerApiPath(path + queryString), options: Options(responseType: ResponseType.bytes));
+    } catch (e) {
+      if (e is DioError) {
+        print("------------------------------------------------------------------------${e.response?.statusCode}");
+        // print(e);
+        if (e.response?.statusCode == 404) {
+          print('404');
+          ErrorMessageView(errorMessage: 'Ticket Not Found', icon: Icons.broken_image_rounded).show(context);
+        } else {
+          print(e.message);
+        }
+      } else {}
+      // loadingWidget.close(context);
+    }
 
     return rs?.data;
-    }
-// }
+  }
+
+  Section? getSection() {
+    return HiveBox.sectionsBox.get(sectionId);
+  }
 }

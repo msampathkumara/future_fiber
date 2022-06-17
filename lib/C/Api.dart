@@ -12,7 +12,7 @@ class Api {
       Dio dio = Dio();
       dio.options.headers['content-Type'] = 'application/json';
       dio.options.headers["authorization"] = "$idToken";
-      print('apiPost - ' + Server.getServerApiPath(url));
+      print('apiPost - ${Server.getServerApiPath(url)}');
       return dio.post(Server.getServerApiPath(url), data: formData ?? (data), onSendProgress: onSendProgress);
     } on DioError catch (e) {
       if (e.response?.statusCode == 401) {

@@ -224,7 +224,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                       setState(() {});
                     },
                     onTap: () {
-                      UserDetails.show(context, nsUser);
+                      UserDetails(nsUser).show(context);
                     },
                     leading: UserImage(nsUser: nsUser, radius: 24, key: Key("${nsUser.uptime}")),
                     title: Text(nsUser.name),

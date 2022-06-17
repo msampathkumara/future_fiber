@@ -2,7 +2,6 @@ import 'package:device_info/device_info.dart';
 import 'package:device_information/device_information.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/NsUser.dart';
@@ -147,6 +146,8 @@ class _CheckTabStatusState extends State<CheckTabStatus> {
       'isPhysicalDevice': build.isPhysicalDevice,
       'androidId': build.androidId,
       'systemFeatures': build.systemFeatures,
+      'deviceName': await DeviceInformation.deviceName,
+      'productName': await DeviceInformation.productName,
     };
 
     // print(imei);
@@ -156,6 +157,8 @@ class _CheckTabStatusState extends State<CheckTabStatus> {
     // print(build.model);
     // print(  build.systemFeatures);
 
+    print(await DeviceInformation.deviceIMEINumber);
+    print(await DeviceInformation.deviceName);
     print(deviceInfo);
 
     return OnlineDB.apiPost("tabs/check", {"deviceInfo": deviceInfo}).then((response) async {

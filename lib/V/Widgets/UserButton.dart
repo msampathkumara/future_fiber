@@ -36,23 +36,23 @@ class _UserButtonState extends State<UserButton> {
   @override
   Widget build(BuildContext context) {
     return _loading
-        ? Center(child: CircularProgressIndicator())
+        ? const Center(child: CircularProgressIndicator())
         : nsUser == null
-            ? Text("user not found")
+            ? const Text("user not found")
             : GestureDetector(
                 onTap: () {
-                  UserDetails.show(context, nsUser);
+                  UserDetails(nsUser).show(context);
                 },
-                child: Wrap(children: [
+                child: Wrap(direction: widget.direction ?? Axis.horizontal, children: [
                   UserImage(nsUser: nsUser, radius: widget.imageRadius ?? 16),
                   if (!widget.hideName)
                     Padding(
                         padding: const EdgeInsets.only(left: 8.0, top: 4),
                         child: Wrap(
                           direction: Axis.vertical,
-                          children: [Text(nsUser!.name), Text("#${nsUser!.uname}", style: TextStyle(color: Colors.blue))],
+                          children: [Text(nsUser!.name), Text("#${nsUser!.uname}", style: const TextStyle(color: Colors.blue))],
                         ))
-                ], direction: widget.direction ?? Axis.horizontal),
+                ]),
               );
   }
 

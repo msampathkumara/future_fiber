@@ -38,6 +38,8 @@ class _CrossProductionChangeListState extends State<CrossProductionChangeList> {
   @override
   Widget build(BuildContext context) {
     return DialogView(
+        width: 700,
+        height: 400,
         child: Scaffold(
             appBar: AppBar(
               title: const Text("Cross Production"),
@@ -49,12 +51,12 @@ class _CrossProductionChangeListState extends State<CrossProductionChangeList> {
                     margin: const EdgeInsets.all(10),
                     child: Table(border: TableBorder.all(color: Colors.white), children: [
                       const TableRow(children: [Text("From"), Text("To"), Text("Date Time"), Text("By")]),
-                      const TableRow(children: [Padding(padding: EdgeInsets.all(8.0), child: Text("")), Text(""), Text(""), Text("")]),
-                      ...crossProList.map((crossPro) {
-                        Map fromFactory = crossPro['fromFactory'];
-                        Map toFactory = crossPro['toFactory'];
-                        int upBy = crossPro['upBy'];
-                        var upOn = crossPro['upOn'];
+                          const TableRow(children: [Padding(padding: EdgeInsets.all(8.0), child: Text("")), Text(""), Text(""), Text("")]),
+                          ...crossProList.map((crossPro) {
+                            Map fromFactory = crossPro['fromFactory'];
+                            Map toFactory = crossPro['toFactory'];
+                            int upBy = crossPro['upBy'];
+                            var upOn = crossPro['upOn'];
                         NsUser? nsUser = NsUser.fromId(upBy);
                         return TableRow(children: [
                           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text("${fromFactory["factory"]}"), Text("${fromFactory["sectionTitle"]}")]),
@@ -65,43 +67,7 @@ class _CrossProductionChangeListState extends State<CrossProductionChangeList> {
                       }).toList()
                     ]))
               ])),
-            )),
-        // body: ListView.separated(
-        //     padding: const EdgeInsets.all(8),
-        //     itemCount: crossProList.length,
-        //     itemBuilder: (BuildContext context1, int index) {
-        //       var crossPro = crossProList[index];
-        //       Map fromFactory = crossPro['fromFactory'];
-        //       Map toFactory = crossPro['toFactory'];
-        //       int upBy = crossPro['upBy'];
-        //       NsUser? nsUser = NsUser.fromId(upBy);
-        //
-        //       return ListTile(isThreeLine: true,subtitle: Text(""),
-        //           leading: Column(
-        //             children: [
-        //               Text("${fromFactory["factory"]}"),
-        //               Text("${fromFactory["sectionTitle"]}"),
-        //               Wrap(
-        //                 children: [
-        //                   UserImage(nsUser: nsUser, radius: 12, padding: 2),
-        //                   Text("${nsUser?.name}"),
-        //                 ],
-        //               ),
-        //             ],
-        //           ),
-        //           trailing: Column(
-        //             children: [
-        //               Text("${toFactory["factory"]}"),
-        //               Text("${toFactory["sectionTitle"]}"),
-        //               Text("${toFactory["sectionTitle"]}"),
-        //             ],
-        //           ));
-        //     },
-        //     separatorBuilder: (BuildContext context, int index) {
-        //       return const Divider();
-        //     })),
-        width: 700,
-        height: 400);
+            )));
   }
 
   Future apiGetData() {

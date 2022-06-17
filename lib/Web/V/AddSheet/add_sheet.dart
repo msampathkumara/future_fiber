@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../C/Api.dart';
 
@@ -29,6 +31,8 @@ class _AddSheetState extends State<AddSheet> {
   bool sheetUploadingDone = false;
   bool sheetUploadingError = false;
   String errorMessage = "";
+
+  String? progressMsg;
 
   @override
   void initState() {
@@ -74,10 +78,10 @@ class _AddSheetState extends State<AddSheet> {
                                   padding: EdgeInsets.all(8.0),
                                   child: Icon(Icons.error_rounded, color: Colors.red, size: 48),
                                 ),
-                                Text("${errorMessage}"),
+                                Text(errorMessage),
                                 Padding(
                                   padding: const EdgeInsets.all(24.0),
-                                  child: ElevatedButton(child: const Text("Upload Another"), onPressed: reset),
+                                  child: ElevatedButton(onPressed: reset, child: const Text("Upload Another")),
                                 )
                               ],
                             ))
@@ -94,21 +98,21 @@ class _AddSheetState extends State<AddSheet> {
                                     const Text("Done"),
                                     Padding(
                                       padding: const EdgeInsets.all(24.0),
-                                      child: ElevatedButton(child: const Text("Upload Another"), onPressed: reset),
+                                      child: ElevatedButton(onPressed: reset, child: const Text("Upload Another")),
                                     )
                                   ],
                                 ))
                               : sheetUploading
                                   ? Center(
                                       child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                       crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: const [
-                                        Padding(
+                                      children: [
+                                        const Padding(
                                           padding: EdgeInsets.all(8.0),
                                           child: CircularProgressIndicator(),
                                         ),
-                                        Text("Uploading data")
+                                        Text(progressMsg ?? "Uploading data")
                                       ],
                                     ))
                                   : Stack(
@@ -159,7 +163,7 @@ class _AddSheetState extends State<AddSheet> {
 
   Widget buildZone1(BuildContext context) => Builder(
         builder: (context) => DropzoneView(
-          mime: const ['text/csv'],
+          mime: const ['text/csv', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
           operation: DragOperation.copy,
           cursor: CursorType.grab,
           onCreated: (ctrl) => controller1 = ctrl,
@@ -195,11 +199,20 @@ class _AddSheetState extends State<AddSheet> {
     setState(() {});
   }
 
+  var uuid = const Uuid();
+
   Future<void> upload(ev) async {
-    final bytes = await controller1.getFileData(ev);
-    FormData formData = FormData.fromMap({
-      "sheet": MultipartFile.fromBytes(bytes, filename: ev.name),
+    var id = uuid.v4();
+    DatabaseReference ref = FirebaseDatabase.instance.ref('sheetUploadProgress/$id');
+    ref.onValue.listen((DatabaseEvent event) {
+      Map<dynamic, dynamic>? data = event.snapshot.value as Map?;
+      setState(() {
+        progressMsg = data!["progress"];
+      });
     });
+
+    final bytes = await controller1.getFileData(ev);
+    FormData formData = FormData.fromMap({"sheet": MultipartFile.fromBytes(bytes, filename: ev.name), 'id': id});
 
     Api.post(("sheet/upload"), {}, formData: formData, onSendProgress: (int sent, int total) {}).then((value) {
       print('done');

@@ -130,8 +130,7 @@ class StandardTicketAdapter extends TypeAdapter<StandardTicket> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-StandardTicket _$StandardTicketFromJson(Map<String, dynamic> json) =>
-    StandardTicket()
+StandardTicket _$StandardTicketFromJson(Map<String, dynamic> json) => StandardTicket()
   ..mo = json['mo'] as String?
   ..oe = json['oe'] as String?
   ..finished = json['finished'] as int? ?? 0

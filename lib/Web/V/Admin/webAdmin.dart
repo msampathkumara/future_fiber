@@ -4,6 +4,7 @@ import 'package:smartwind/M/Admin/Settings.dart';
 
 import '../../../C/Api.dart';
 import '../../../C/OnlineDB.dart';
+import '../../../C/Validations.dart';
 
 class WebAdmin extends StatefulWidget {
   const WebAdmin({Key? key}) : super(key: key);
@@ -116,15 +117,47 @@ class _WebAdminState extends State<WebAdmin> {
                                           itemBuilder: (BuildContext context, int index) {
                                             if (index == _settings.otpAdminEmails.length) {
                                               return ListTile(
-                                                  title: SizedBox(height: 24, child: TextFormField(controller: _otpAdminEmailController, onChanged: (email) {})),
-                                                  trailing: IconButton(onPressed: () {}, icon: const Icon(Icons.add)));
+                                                  title: TextFormField(
+                                                autovalidateMode: AutovalidateMode.onUserInteraction,
+                                                controller: _otpAdminEmailController,
+                                                onChanged: (email) {},
+                                                onFieldSubmitted: (email) {
+                                                  if (Validations.isValidEmail(email)) {
+                                                    _settings.otpAdminEmails.add(email);
+                                                    saveSettings('otpAdminEmails', _settings.otpAdminEmails.join(','));
+                                                    _otpAdminEmailController.clear();
+                                                    setState(() {});
+                                                  }
+                                                },
+                                                validator: (input) => Validations.isValidEmail(input) ? null : "Check your email",
+                                              ));
                                             }
 
                                             String e = _settings.otpAdminEmails[index];
-                                            return ListTile(title: Text(e), trailing: IconButton(onPressed: () {}, icon: const Icon(Icons.delete)));
+                                            return ListTile(
+                                                title: Text(e),
+                                                trailing: _settings.otpAdminEmails.length == 1
+                                                    ? null
+                                                    : IconButton(
+                                                        onPressed: () {
+                                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                                              backgroundColor: Colors.red,
+                                                              content: const Text("Remove this Email Address"),
+                                                              action: SnackBarAction(
+                                                                  textColor: Colors.white,
+                                                                  label: 'Delete',
+                                                                  onPressed: () {
+                                                                    _settings.otpAdminEmails.remove(e);
+                                                                    saveSettings('otpAdminEmails', _settings.otpAdminEmails.join(','));
+                                                                    setState(() {});
+                                                                  })));
+                                                        },
+                                                        icon: const Icon(Icons.delete)));
                                           },
                                           separatorBuilder: (BuildContext context, int index) {
-                                            return const Divider();
+                                            return Divider(
+                                              color: Colors.grey.shade200,
+                                            );
                                           },
                                         )
                                       : const Padding(padding: EdgeInsets.all(24.0), child: Center(child: Text("No Emails")))),

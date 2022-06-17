@@ -20,7 +20,7 @@ class WebPrint extends StatefulWidget {
 }
 
 class _WebPrintState extends State<WebPrint> {
-  var _controller = TextEditingController();
+  final _controller = TextEditingController();
   bool loading = false;
 
   String searchText = "";
@@ -29,7 +29,7 @@ class _WebPrintState extends State<WebPrint> {
 
   int dataCount = 0;
 
-  List<TicketPrint> _ticketList = [];
+  final List<TicketPrint> _ticketList = [];
 
   bool _dataLoadingError = false;
 
@@ -58,18 +58,18 @@ class _WebPrintState extends State<WebPrint> {
                   Material(
                     elevation: 4,
                     borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      height: 40,
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<Production>(
-                          value: _selectedProduction,
-                          selectedItemBuilder: (_) {
-                            return Production.values.map<Widget>((Production item) {
-                              return Center(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text("${item.getValue()}"),
-                              ));
+                    child: SizedBox(
+                    height: 40,
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<Production>(
+                        value: _selectedProduction,
+                        selectedItemBuilder: (_) {
+                          return Production.values.map<Widget>((Production item) {
+                            return Center(
+                                child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(item.getValue()),
+                            ));
                             }).toList();
                           },
                           items: Production.values.map((Production value) {
@@ -104,49 +104,50 @@ class _WebPrintState extends State<WebPrint> {
           child: Material(
               elevation: 4,
               borderRadius: BorderRadius.circular(8),
-              child: WebPrintTable(onInit: (PrintDataSourceAsync dataSource) {
-                _dataSource = dataSource;
-              }, onRequestData: (int page, int startingAt, int count, String sortedBy, bool sortedAsc) {
-                return getData(page, startingAt, count, sortedBy, sortedAsc);
-              }, onTap: (TicketPrint ticketPrint) {
-                if (ticketPrint.ticket != null) {
-                  TicketPrintList(ticketPrint.ticket!).show(context);
-                }
-              })),
-        ),
-        bottomNavigationBar: BottomAppBar(
-            shape: const CircularNotchedRectangle(),
-            color: Colors.green,
-            child: IconTheme(
-              data: const IconThemeData(color: Colors.white),
-              child: Row(
-                children: [
-                  InkWell(
-                    onTap: () {},
-                    splashColor: Colors.red,
-                    child: Ink(
-                      child: IconButton(
-                        icon: const Icon(Icons.refresh),
-                        onPressed: () {
-                          _dataSource.refreshDatasource();
-                        },
-                      ),
-                    ),
-                  ),
-                  const Spacer(),
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: const Text(
-                      "${0}",
-                      textScaleFactor: 1.1,
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  const Spacer(),
-                  const SizedBox(width: 36)
-                ],
-              ),
-            )));
+            child: WebPrintTable(onInit: (PrintDataSourceAsync dataSource) {
+              _dataSource = dataSource;
+            }, onRequestData: (int page, int startingAt, int count, String sortedBy, bool sortedAsc) {
+              return getData(page, startingAt, count, sortedBy, sortedAsc);
+            }, onTap: (TicketPrint ticketPrint) {
+              if (ticketPrint.ticket != null) {
+                TicketPrintList(ticketPrint.ticket!).show(context);
+              }
+            })),
+      ),
+      // bottomNavigationBar: BottomAppBar(
+      //     shape: const CircularNotchedRectangle(),
+      //     color: Colors.green,
+      //     child: IconTheme(
+      //       data: const IconThemeData(color: Colors.white),
+      //       child: Row(
+      //         children: [
+      //           InkWell(
+      //             onTap: () {},
+      //             splashColor: Colors.red,
+      //             child: Ink(
+      //               child: IconButton(
+      //                 icon: const Icon(Icons.refresh),
+      //                 onPressed: () {
+      //                   _dataSource.refreshDatasource();
+      //                 },
+      //               ),
+      //             ),
+      //           ),
+      //           const Spacer(),
+      //           const Padding(
+      //             padding: EdgeInsets.all(8.0),
+      //             child: const Text(
+      //               "${0}",
+      //               textScaleFactor: 1.1,
+      //               style: const TextStyle(color: Colors.white),
+      //             ),
+      //           ),
+      //           const Spacer(),
+      //           const SizedBox(width: 36)
+      //         ],
+      //       ),
+      //     ))
+    );
   }
 
   Filters dataFilter = Filters.none;

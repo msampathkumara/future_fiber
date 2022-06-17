@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/Enums.dart';
+import 'package:smartwind/V/Home/UserManager/UserDetails.dart';
 import 'package:universal_html/html.dart' as html;
 
 import '../V/Home/AppInfo.dart';
@@ -103,11 +104,13 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                                         // selectedLabelTextStyle: const TextStyle(color: Colors.deepOrange),
                                         destinations: [
                                           NavigationRailDestination(
+                                              padding: const EdgeInsets.all(0),
                                               icon: const Icon(Icons.favorite_border),
                                               selectedIcon: const Icon(Icons.favorite),
                                               label: Text('Dash Board', style: TextStyle(fontSize: size))),
                                           if (AppUser.havePermissionFor(Permissions.PRODUCTION_POOL))
                                             NavigationRailDestination(
+                                                padding: const EdgeInsets.all(0),
                                                 icon: const Icon(Icons.bookmark_border),
                                                 selectedIcon: const Icon(Icons.book),
                                                 label: Text('Production Pool', style: TextStyle(fontSize: size))),
@@ -169,34 +172,47 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                                         ],
                                       ))));
                             })),
-                    PopupMenuButton<int>(
-                      padding: const EdgeInsets.all(16.0),
-                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                      offset: const Offset(70, 200),
-                      child: Padding(padding: const EdgeInsets.only(bottom: 8.0), child: UserImage(nsUser: AppUser.getUser(), radius: 24)),
-                      onSelected: (result) {
-                        if (result == 1) {
-                          AppUser.logout(context);
-                        }
-                      },
-                      itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-                        PopupMenuItem(
-                          value: 0,
-                          enabled: false,
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [UserImage(nsUser: AppUser.getUser(), radius: 68), Text("${AppUser.getUser()?.name}")],
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: PopupMenuButton<int>(
+                        padding: const EdgeInsets.all(16.0),
+                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                        offset: const Offset(70, 200),
+                        child: Padding(padding: const EdgeInsets.only(bottom: 8.0), child: UserImage(nsUser: AppUser.getUser(), radius: 24)),
+                        onSelected: (result) {
+                          if (result == 1) {
+                            AppUser.logout(context);
+                          }
+                        },
+                        itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+                          PopupMenuItem(
+                            value: 0,
+                            enabled: false,
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  UserImage(nsUser: AppUser.getUser(), radius: 68),
+                                  const SizedBox(height: 16),
+                                  Text("${AppUser.getUser()?.name}"),
+                                  Text("#${AppUser.getUser()?.uname}", style: TextStyle(color: Theme.of(context).primaryColor)),
+                                  TextButton(
+                                      onPressed: () {
+                                        UserDetails(AppUser.getUser()!).show(context);
+                                      },
+                                      child: const Text("Details"))
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        const PopupMenuItem(
-                          value: 1,
-                          child: Text('Logout'),
-                        )
-                      ],
+                          const PopupMenuItem(
+                            value: 1,
+                            child: Text('Logout'),
+                          )
+                        ],
+                      ),
                     ),
                     Text('${appVersion}v', style: TextStyle(fontSize: 8, color: Theme.of(context).primaryColor))
                   ],

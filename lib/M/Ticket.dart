@@ -168,6 +168,10 @@ class Ticket extends DataObject {
 
   Ticket();
 
+  bool get hasFile => file == 1;
+
+  bool get hasNoFile => file != 1;
+
   static stringToList(string) => (string == null || string.toString().isEmpty) ? [] : json.decode(string);
 
   String getUpdateDateTime() {

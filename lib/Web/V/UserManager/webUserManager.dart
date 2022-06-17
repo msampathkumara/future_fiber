@@ -36,7 +36,7 @@ class _WebUserManagerState extends State<WebUserManager> {
 
   late DbChangeCallBack _dbChangeCallBack;
 
-  var _ScrollController = ScrollController();
+  final _ScrollController = ScrollController();
 
   get nsUserCount => _dataSource == null ? 0 : _dataSource?.rowCount;
 
@@ -127,11 +127,7 @@ class _WebUserManagerState extends State<WebUserManager> {
                   const Spacer(),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "${nsUserCount}",
-                      textScaleFactor: 1.1,
-                      style: const TextStyle(color: Colors.white),
-                    ),
+                    child: Text("$nsUserCount", textScaleFactor: 1.1, style: const TextStyle(color: Colors.white)),
                   ),
                   const Spacer(),
                   const SizedBox(width: 36)
@@ -238,6 +234,7 @@ class _WebUserManagerState extends State<WebUserManager> {
             child: ListView(
               controller: _ScrollController,
               children: [
+                ListTile(title: Text('NIC', style: lt), subtitle: Text(selectedUser.nic ?? '-', style: lst)),
                 ListTile(title: Text('Type', style: lt), subtitle: Text(selectedUser.utype, style: lst)),
                 ListTile(title: Text('EPF', style: lt), subtitle: Text(selectedUser.epf, style: lst)),
                 ListTile(
@@ -260,24 +257,24 @@ class _WebUserManagerState extends State<WebUserManager> {
               ],
             ),
           ),
-          bottomNavigationBar: BottomAppBar(
-              shape: const CircularNotchedRectangle(),
-              color: Colors.white,
-              child: IconTheme(
-                data: const IconThemeData(color: Colors.black),
-                child: Row(
-                  children: [
-                    IconButton(
-                        tooltip: "Edit",
-                        icon: const Icon(Icons.edit_rounded),
-                        onPressed: () async {
-                          await UpdateUserDetails(_selectedUser!).show(context);
-                        }),
-                    const Spacer()
-                    // IconButton(tooltip: "Delete", icon: const Icon(Icons.delete_rounded, color: Colors.red), onPressed: () {}),
-                  ],
-                ),
-              )),
+          // bottomNavigationBar: BottomAppBar(
+          //     shape: const CircularNotchedRectangle(),
+          //     color: Colors.white,
+          //     child: IconTheme(
+          //       data: const IconThemeData(color: Colors.black),
+          //       child: Row(
+          //         children: [
+          //           IconButton(
+          //               tooltip: "Edit",
+          //               icon: const Icon(Icons.edit_rounded),
+          //               onPressed: () async {
+          //                 await UpdateUserDetails(_selectedUser!).show(context);
+          //               }),
+          //           const Spacer()
+          //           // IconButton(tooltip: "Delete", icon: const Icon(Icons.delete_rounded, color: Colors.red), onPressed: () {}),
+          //         ],
+          //       ),
+          //     )),
         ),
       ),
     );

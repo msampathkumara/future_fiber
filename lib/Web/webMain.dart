@@ -39,7 +39,7 @@ class webApp extends StatelessWidget {
             )),
         scrollbarTheme: const ScrollbarThemeData().copyWith(
             thumbColor: MaterialStateProperty.all(Colors.lightGreen),
-            isAlwaysShown: true,
+            thumbVisibility: MaterialStateProperty.all(true),
             trackBorderColor: MaterialStateProperty.all(Colors.lightGreen),
             trackColor: MaterialStateProperty.all(Colors.lightGreen)),
       ),

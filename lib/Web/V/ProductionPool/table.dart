@@ -184,15 +184,19 @@ class DessertDataSource extends DataTableSource {
       onTap: () {
         var ticketInfo = TicketInfo(ticket);
         ticketInfo.show(context);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          duration: const Duration(seconds: 1),
-          content: Text('Tapped on ${ticket.mo}'),
-        ));
+        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        //   duration: const Duration(seconds: 1),
+        //   content: Text('Tapped on ${ticket.mo}'),
+        // ));
       },
       onDoubleTap: hasRowTaps
           ? () {
-              if (ticket.isHold == 0) {
-                ticket.open(context);
+              if (ticket.hasFile) {
+                if (ticket.isHold == 0) {
+                  ticket.open(context);
+                }
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Theme.of(context).errorColor, content: const Text('No file')));
               }
             }
           : null,
@@ -215,8 +219,10 @@ class DessertDataSource extends DataTableSource {
         )),
         DataCell(Text("${ticket.progress}%")),
         DataCell(Text(ticket.shipDate.toString())),
-        DataCell(Wrap(
+        DataCell(Row(
           children: [
+            if (ticket.file == 1) IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.picture_as_pdf, color: Colors.red)), onPressed: () {}),
+            const Spacer(),
             if (ticket.isQc == 1)
               IconButton(
                 icon: const CircleAvatar(backgroundColor: Colors.red, radius: 8, child: Text('QC', style: TextStyle(fontSize: 8, color: Colors.white))),

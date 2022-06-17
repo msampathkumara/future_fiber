@@ -31,16 +31,8 @@ class TicketInfo extends StatefulWidget {
     return _TicketInfoState();
   }
 
-  void show(context) {
-    kIsWeb
-        ? showDialog(
-            context: context,
-            builder: (_) => this,
-          )
-        : Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => this),
-          );
+  Future? show(context) async {
+    return kIsWeb ? await showDialog(context: context, builder: (_) => this) : await Navigator.push(context, MaterialPageRoute(builder: (context) => this));
   }
 }
 
@@ -126,14 +118,16 @@ class _TicketInfoState extends State<TicketInfo> {
                   ),
                 )),
             floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-            floatingActionButton: _ticket.isHold == 1
+            floatingActionButton: (!_ticket.hasFile)
                 ? null
-                : FloatingActionButton(
-                    child: const Icon(Icons.import_contacts),
-                    onPressed: () {
-                      _ticket.open(context);
-                    },
-                  ),
+                : (_ticket.isHold == 1)
+                    ? null
+                    : FloatingActionButton(
+                        child: const Icon(Icons.import_contacts),
+                        onPressed: () {
+                          _ticket.open(context);
+                        },
+                      ),
           );
   }
 
@@ -169,31 +163,29 @@ class _TicketInfoState extends State<TicketInfo> {
                       if (kDebugMode) Text("id : ${_ticket.id}", style: ts.merge(smallText)),
                       Padding(
                         padding: const EdgeInsets.only(top: 8),
-                        child: Container(
-                          child: Wrap(
-                            children: [
-                              if (_ticket.inPrint == 1)
-                                IconButton(
-                                    icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)), onPressed: () {}),
-                              if (_ticket.isHold == 1)
-                                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.pan_tool_rounded, color: Colors.black)), onPressed: () {}),
-                              if (_ticket.isGr == 1)
-                                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)), onPressed: () {}),
-                              if (_ticket.isSk == 1)
-                                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)), onPressed: () {}),
-                              if (_ticket.isError == 1)
-                                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.report_problem_rounded, color: Colors.red)), onPressed: () {}),
-                              if (_ticket.isSort == 1)
-                                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.local_mall_rounded, color: Colors.green)), onPressed: () {}),
-                              if (_ticket.isRush == 1)
-                                IconButton(
-                                    icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent)), onPressed: () {}),
-                              if (_ticket.isRed == 1)
-                                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)), onPressed: () {}),
-                              if (_ticket.isCrossPro)
-                                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.crossProduction, color: Colors.green)), onPressed: () {})
-                            ],
-                          ),
+                        child: Wrap(
+                          children: [
+                            if (_ticket.inPrint == 1)
+                              IconButton(
+                                  icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)), onPressed: () {}),
+                            if (_ticket.isHold == 1)
+                              IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.pan_tool_rounded, color: Colors.black)), onPressed: () {}),
+                            if (_ticket.isGr == 1)
+                              IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)), onPressed: () {}),
+                            if (_ticket.isSk == 1)
+                              IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)), onPressed: () {}),
+                            if (_ticket.isError == 1)
+                              IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.report_problem_rounded, color: Colors.red)), onPressed: () {}),
+                            if (_ticket.isSort == 1)
+                              IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.local_mall_rounded, color: Colors.green)), onPressed: () {}),
+                            if (_ticket.isRush == 1)
+                              IconButton(
+                                  icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent)), onPressed: () {}),
+                            if (_ticket.isRed == 1)
+                              IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)), onPressed: () {}),
+                            if (_ticket.isCrossPro)
+                              IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.crossProduction, color: Colors.green)), onPressed: () {})
+                          ],
                         ),
                       )
                     ],
@@ -325,35 +317,30 @@ class _TicketInfoState extends State<TicketInfo> {
                                 subtitle: Text(_ticket.deliveryDate, style: ts.merge(smallText))),
                           Padding(
                             padding: const EdgeInsets.only(top: 8),
-                            child: Container(
-                              child: Wrap(
-                                children: [
-                                  if (_ticket.inPrint == 1)
-                                    IconButton(
-                                        icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)),
-                                        onPressed: () {}),
-                                  if (_ticket.isHold == 1)
-                                    IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.pan_tool_rounded, color: Colors.black)), onPressed: () {}),
-                                  if (_ticket.isGr == 1)
-                                    IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)), onPressed: () {}),
-                                  if (_ticket.isSk == 1)
-                                    IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)), onPressed: () {}),
-                                  if (_ticket.isError == 1)
-                                    IconButton(
-                                        icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.report_problem_rounded, color: Colors.red)), onPressed: () {}),
-                                  if (_ticket.isSort == 1)
-                                    IconButton(
-                                        icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.local_mall_rounded, color: Colors.green)), onPressed: () {}),
-                                  if (_ticket.isRush == 1)
-                                    IconButton(
-                                        icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent)), onPressed: () {}),
-                                  if (_ticket.isRed == 1)
-                                    IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)), onPressed: () {}),
-                                  if (_ticket.isCrossPro)
-                                    IconButton(
-                                        icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.merge_type_rounded, color: Colors.green)), onPressed: () {})
-                                ],
-                              ),
+                            child: Wrap(
+                              children: [
+                                if (_ticket.inPrint == 1)
+                                  IconButton(
+                                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)), onPressed: () {}),
+                                if (_ticket.isHold == 1)
+                                  IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.pan_tool_rounded, color: Colors.black)), onPressed: () {}),
+                                if (_ticket.isGr == 1)
+                                  IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)), onPressed: () {}),
+                                if (_ticket.isSk == 1)
+                                  IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)), onPressed: () {}),
+                                if (_ticket.isError == 1)
+                                  IconButton(
+                                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.report_problem_rounded, color: Colors.red)), onPressed: () {}),
+                                if (_ticket.isSort == 1)
+                                  IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.local_mall_rounded, color: Colors.green)), onPressed: () {}),
+                                if (_ticket.isRush == 1)
+                                  IconButton(
+                                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent)), onPressed: () {}),
+                                if (_ticket.isRed == 1)
+                                  IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)), onPressed: () {}),
+                                if (_ticket.isCrossPro)
+                                  IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.merge_type_rounded, color: Colors.green)), onPressed: () {})
+                              ],
                             ),
                           ),
                         ],
@@ -408,14 +395,16 @@ class _TicketInfoState extends State<TicketInfo> {
                     ),
                   )),
               floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-              floatingActionButton: _ticket.isHold == 1
+              floatingActionButton: (!_ticket.hasFile)
                   ? null
-                  : FloatingActionButton(
-                child: const Icon(Icons.import_contacts),
-                      onPressed: () {
-                        _ticket.open(context);
-                      },
-                    ),
+                  : _ticket.isHold == 1
+                      ? null
+                      : FloatingActionButton(
+                          child: const Icon(Icons.import_contacts),
+                          onPressed: () {
+                            _ticket.open(context);
+                          },
+                        ),
             ),
           ),
         ],

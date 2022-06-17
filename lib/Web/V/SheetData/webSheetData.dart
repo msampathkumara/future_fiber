@@ -18,7 +18,7 @@ class WebSheetData extends StatefulWidget {
 }
 
 class _WebSheetDataState extends State<WebSheetData> {
-  var _controller = TextEditingController();
+  final _controller = TextEditingController();
   bool loading = false;
 
   String searchText = "";
@@ -42,68 +42,69 @@ class _WebSheetDataState extends State<WebSheetData> {
         appBar: AppBar(
             title: Row(
               children: [
-                Text("Sheet Data", style: mainWidgetsTitleTextStyle),
-                Spacer(),
-                Wrap(children: [
-                  SizedBox(width: 20),
-                  SearchBar(
-                      delay: 300,
-                      onSearchTextChanged: (text) {
-                        searchText = text;
-                        loadData();
-                      },
-                      searchController: _controller)
-                ])
-              ],
+              Text("Sheet Data", style: mainWidgetsTitleTextStyle),
+              const Spacer(),
+              Wrap(children: [
+                const SizedBox(width: 20),
+                SearchBar(
+                    delay: 300,
+                    onSearchTextChanged: (text) {
+                      searchText = text;
+                      loadData();
+                    },
+                    searchController: _controller)
+              ])
+            ],
             ),
             backgroundColor: Colors.transparent,
             elevation: 0),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Material(
-              elevation: 4,
-              borderRadius: BorderRadius.circular(8),
-              child: WebSheetDataTable(onInit: (SheetDataSourceAsync dataSource) {
-                _dataSource = dataSource;
-              }, onRequestData: (int page, int startingAt, int count, String sortedBy, bool sortedAsc) {
-                return getData(page, startingAt, count, sortedBy, sortedAsc);
-              }, onTap: (SheetData sheetData) {
-                // SheetDataList(sheetData).show(context);
-              })),
-        ),
-        bottomNavigationBar: BottomAppBar(
-            shape: CircularNotchedRectangle(),
-            color: Colors.green,
-            child: IconTheme(
-              data: IconThemeData(color: Colors.white),
-              child: Row(
-                children: [
-                  InkWell(
-                    onTap: () {},
-                    splashColor: Colors.red,
-                    child: Ink(
-                      child: IconButton(
-                        icon: Icon(Icons.refresh),
-                        onPressed: () {
-                          _dataSource.refreshDatasource();
-                        },
-                      ),
-                    ),
-                  ),
-                  const Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "${0}",
-                      textScaleFactor: 1.1,
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  const Spacer(),
-                  SizedBox(width: 36)
-                ],
-              ),
-            )));
+            elevation: 4,
+            borderRadius: BorderRadius.circular(8),
+            child: WebSheetDataTable(onInit: (SheetDataSourceAsync dataSource) {
+              _dataSource = dataSource;
+            }, onRequestData: (int page, int startingAt, int count, String sortedBy, bool sortedAsc) {
+              return getData(page, startingAt, count, sortedBy, sortedAsc);
+            }, onTap: (SheetData sheetData) {
+              // SheetDataList(sheetData).show(context);
+            })),
+      ),
+      // bottomNavigationBar: BottomAppBar(
+      //     shape: const CircularNotchedRectangle(),
+      //     color: Colors.green,
+      //     child: IconTheme(
+      //       data: const IconThemeData(color: Colors.white),
+      //       child: Row(
+      //         children: [
+      //           InkWell(
+      //             onTap: () {},
+      //             splashColor: Colors.red,
+      //             child: Ink(
+      //               child: IconButton(
+      //                 icon: const Icon(Icons.refresh),
+      //                 onPressed: () {
+      //                   _dataSource.refreshDatasource();
+      //                 },
+      //               ),
+      //             ),
+      //           ),
+      //           const Spacer(),
+      //           const Padding(
+      //             padding: EdgeInsets.all(8.0),
+      //             child: const Text(
+      //               "${0}",
+      //               textScaleFactor: 1.1,
+      //               style: TextStyle(color: Colors.white),
+      //             ),
+      //           ),
+      //           const Spacer(),
+      //           const SizedBox(width: 36)
+      //         ],
+      //       ),
+      //     ))
+    );
   }
 
   Filters dataFilter = Filters.none;
@@ -112,8 +113,8 @@ class _WebSheetDataState extends State<WebSheetData> {
     _dataSource.refreshDatasource();
   }
 
-  Status _selectedStatus = Status.All;
-  Production _selectedProduction = Production.All;
+  final Status _selectedStatus = Status.All;
+  final Production _selectedProduction = Production.All;
 
   Future<DataResponse> getData(page, startingAt, count, sortedBy, sortedAsc) {
     setState(() {

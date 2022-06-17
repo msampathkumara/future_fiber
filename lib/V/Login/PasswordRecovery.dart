@@ -256,18 +256,15 @@ class _PasswordRecoveryState extends State<PasswordRecovery> {
           const SizedBox(height: 8),
           const Divider(),
           Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SizedBox(
-              width: 250,
-              child: TextButton(
-                style: FormInputDecoration.buttonStyle(),
-                onPressed: () {
-                  requestOTP();
-                },
-                child: const Text("Send OTP Request to System Admin"),
-              ),
-            ),
-          ),
+              padding: const EdgeInsets.all(16.0),
+              child: SizedBox(
+                  width: 250,
+                  child: TextButton(
+                      style: FormInputDecoration.buttonStyle(),
+                      onPressed: () {
+                        requestOTP();
+                      },
+                      child: const Text("Send OTP Request to System Admin")))),
           const Divider(),
           Padding(
             padding: const EdgeInsets.all(16.0),
