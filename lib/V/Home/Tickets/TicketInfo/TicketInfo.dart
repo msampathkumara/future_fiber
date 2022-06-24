@@ -159,7 +159,7 @@ class _TicketInfoState extends State<TicketInfo> {
                       Text(_ticket.production ?? "_", style: ts.merge(smallText)),
                       Text("update on : ${_ticket.getUpdateDateTime()}", style: ts.merge(smallText)),
                       Text("Ship Date : ${_ticket.shipDate}", style: ts.merge(smallText)),
-                      Text("Shipping Date : ${_ticket.deliveryDate}", style: ts.merge(smallText)),
+                      Text("Delivery Date : ${_ticket.deliveryDate}", style: ts.merge(smallText)),
                       if (kDebugMode) Text("id : ${_ticket.id}", style: ts.merge(smallText)),
                       Padding(
                         padding: const EdgeInsets.only(top: 8),
@@ -313,35 +313,32 @@ class _TicketInfoState extends State<TicketInfo> {
                           if (_ticket.deliveryDate.isNotEmpty)
                             ListTile(
                                 visualDensity: visualDensity,
-                                title: Text("Shipping Date : ", style: ts.merge(xsmallText)),
+                                title: Text("Delivery Date : ", style: ts.merge(xsmallText)),
                                 subtitle: Text(_ticket.deliveryDate, style: ts.merge(smallText))),
                           Padding(
                             padding: const EdgeInsets.only(top: 8),
-                            child: Wrap(
-                              children: [
-                                if (_ticket.inPrint == 1)
-                                  IconButton(
-                                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)), onPressed: () {}),
-                                if (_ticket.isHold == 1)
-                                  IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.pan_tool_rounded, color: Colors.black)), onPressed: () {}),
-                                if (_ticket.isGr == 1)
-                                  IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)), onPressed: () {}),
-                                if (_ticket.isSk == 1)
-                                  IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)), onPressed: () {}),
-                                if (_ticket.isError == 1)
-                                  IconButton(
-                                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.report_problem_rounded, color: Colors.red)), onPressed: () {}),
-                                if (_ticket.isSort == 1)
-                                  IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.local_mall_rounded, color: Colors.green)), onPressed: () {}),
-                                if (_ticket.isRush == 1)
-                                  IconButton(
-                                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent)), onPressed: () {}),
-                                if (_ticket.isRed == 1)
-                                  IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)), onPressed: () {}),
-                                if (_ticket.isCrossPro)
-                                  IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.merge_type_rounded, color: Colors.green)), onPressed: () {})
-                              ],
-                            ),
+                            child: Wrap(children: [
+                              if (_ticket.inPrint == 1)
+                                IconButton(
+                                    icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)), onPressed: () {}),
+                              if (_ticket.isHold == 1)
+                                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.pan_tool_rounded, color: Colors.black)), onPressed: () {}),
+                              if (_ticket.isGr == 1)
+                                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)), onPressed: () {}),
+                              if (_ticket.isSk == 1)
+                                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)), onPressed: () {}),
+                              if (_ticket.isError == 1)
+                                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.report_problem_rounded, color: Colors.red)), onPressed: () {}),
+                              if (_ticket.isSort == 1)
+                                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.local_mall_rounded, color: Colors.green)), onPressed: () {}),
+                              if (_ticket.isRush == 1)
+                                IconButton(
+                                    icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent)), onPressed: () {}),
+                              if (_ticket.isRed == 1)
+                                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)), onPressed: () {}),
+                              if (_ticket.isCrossPro)
+                                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.merge_type_rounded, color: Colors.green)), onPressed: () {})
+                            ]),
                           ),
                         ],
                       ),

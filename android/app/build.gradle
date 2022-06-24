@@ -44,7 +44,7 @@ android {
         viewBinding true
     }
 
-    compileSdkVersion 32
+    compileSdkVersion 33
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -54,7 +54,7 @@ android {
 
         applicationId "com.sampathkumara.northsails.smartwind"
         minSdkVersion 26
-        targetSdkVersion 32
+        targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }

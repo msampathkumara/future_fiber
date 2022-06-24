@@ -6,6 +6,7 @@ import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/Ticket.dart';
 
 import '../../../V/Home/Tickets/ProductionPool/TicketListOptions.dart';
+import '../../../V/Home/Tickets/TicketInfo/TicketChatView.dart';
 import '../../../V/Home/Tickets/TicketInfo/TicketInfo.dart';
 import '../../../V/Widgets/FlagDialog.dart';
 import '../../../ns_icons_icons.dart';
@@ -307,8 +308,14 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
               )),
               DataCell(Text("${ticket.progress}%")),
               DataCell(Text(ticket.shipDate.toString())),
-              DataCell(Wrap(
+              DataCell(Row(
                 children: [
+                  IconButton(
+                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.chat, color: Colors.blue)),
+                      onPressed: () {
+                        TicketChatView(ticket).show(context);
+                      }),
+                  const Spacer(),
                   if (ticket.inPrint == 1)
                     IconButton(
                       icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)),

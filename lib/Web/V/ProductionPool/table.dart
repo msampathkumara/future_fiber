@@ -9,6 +9,7 @@ import 'package:smartwind/Web/V/ProductionPool/CrossProductionChangeList.dart';
 import '../../../M/Enums.dart';
 import '../../../M/hive.dart';
 import '../../../V/Home/Tickets/ProductionPool/TicketListOptions.dart';
+import '../../../V/Home/Tickets/TicketInfo/TicketChatView.dart';
 import '../../../V/Home/Tickets/TicketInfo/TicketInfo.dart';
 import '../../../V/Widgets/FlagDialog.dart';
 import '../../../ns_icons_icons.dart';
@@ -200,13 +201,7 @@ class DessertDataSource extends DataTableSource {
               }
             }
           : null,
-      onSecondaryTap: hasRowTaps
-          ? () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        duration: const Duration(seconds: 1),
-                backgroundColor: Theme.of(context).errorColor,
-                content: Text('Right clicked on ${ticket.mo}'),
-              ))
-          : null,
+      onSecondaryTap: null,
       // specificRowHeight: this.hasRowHeightOverrides && ticket.fat >= 25 ? 100 : null,
       cells: [
         DataCell(Wrap(
@@ -221,6 +216,11 @@ class DessertDataSource extends DataTableSource {
         DataCell(Text(ticket.shipDate.toString())),
         DataCell(Row(
           children: [
+            IconButton(
+                icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.chat, color: Colors.blue)),
+                onPressed: () {
+                  TicketChatView(ticket).show(context);
+                }),
             if (ticket.file == 1) IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.picture_as_pdf, color: Colors.red)), onPressed: () {}),
             const Spacer(),
             if (ticket.isQc == 1)

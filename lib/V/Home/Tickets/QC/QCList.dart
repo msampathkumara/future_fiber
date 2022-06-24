@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Enums.dart';
-import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/QC.dart';
+import 'package:smartwind/M/Section.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
-import 'package:smartwind/V/Widgets/UserImage.dart';
 import 'package:smartwind/Web/V/QC/webTicketQView.dart';
 
 class QCList extends StatefulWidget {
@@ -34,21 +33,21 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  TextEditingController searchController = new TextEditingController();
+  TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          actions: <Widget>[],
+          actions: const <Widget>[],
           elevation: 0.0,
           toolbarHeight: 80,
           backgroundColor: themeColor,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.pop(context),
           ),
-          title: Text("QA & QC", textScaleFactor: 1.2),
+          title: const Text("QA & QC", textScaleFactor: 1.2),
           bottom: SearchBar(
               searchController: searchController,
               delay: 300,
@@ -65,21 +64,21 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
         ),
         body: getBody(),
         bottomNavigationBar: BottomAppBar(
-            shape: CircularNotchedRectangle(),
+            shape: const CircularNotchedRectangle(),
             color: themeColor,
             child: IconTheme(
-              data: IconThemeData(color: Colors.white),
+              data: const IconThemeData(color: Colors.white),
               child: Row(
                 children: [
-                  Padding(padding: const EdgeInsets.all(8.0), child: Text("${_ticketQcList.length}/$dataCount", textScaleFactor: 1.1, style: TextStyle(color: Colors.white))),
+                  Padding(padding: const EdgeInsets.all(8.0), child: Text("${_ticketQcList.length}/$dataCount", textScaleFactor: 1.1, style: const TextStyle(color: Colors.white))),
                   const Spacer(),
-                  Text("Sorted by $sortedBy", style: TextStyle(color: Colors.white)),
+                  Text("Sorted by $sortedBy", style: const TextStyle(color: Colors.white)),
                   InkWell(
                     onTap: () {},
                     splashColor: Colors.red,
                     child: Ink(
                       child: IconButton(
-                        icon: Icon(Icons.sort_by_alpha_rounded),
+                        icon: const Icon(Icons.sort_by_alpha_rounded),
                         onPressed: () {
                           _sortByBottomSheetMenu();
                         },
@@ -126,8 +125,8 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
             color: Colors.transparent,
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
                   child: Text(
                     "Sort By",
                     textScaleFactor: 1.2,
@@ -154,16 +153,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
           automaticallyImplyLeading: false,
           backgroundColor: themeColor,
           elevation: 5,
-          actions: [
-            // IconButton(
-            //     icon: Icon(Icons.filter_alt_rounded),
-            //     onPressed: () {
-            //       setState(() {
-            //         _showFilters = !_showFilters;
-            //         _showFiltersEnd = false;
-            //       });
-            //     })
-          ],
+          actions: const [],
           title: Wrap(
             spacing: 5,
             children: [_typeChip(Type.All), _typeChip(Type.QC), _typeChip(Type.QA)],
@@ -194,7 +184,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
 
                       loadData(x.toInt());
                     }
-                    return Container(
+                    return SizedBox(
                         height: 100,
                         child: Center(
                             child: Padding(
@@ -219,12 +209,13 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
                                             child: Padding(
                                                 padding: const EdgeInsets.all(12.0),
                                                 child: !_dataLoadingError
-                                                    ? CircularProgressIndicator(color: Colors.red, strokeWidth: 2)
-                                                    : Icon(Icons.refresh_rounded, size: 18))))))));
+                                                    ? const CircularProgressIndicator(color: Colors.red, strokeWidth: 2)
+                                                    : const Icon(Icons.refresh_rounded, size: 18))))))));
                   }
 
                   QC _ticketQc = (_ticketQcList[index]);
                   var tc = _ticketQc.isQc() ? Colors.redAccent : Colors.black;
+                  Section? section = _ticketQc.getSection();
                   return GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onLongPress: () async {
@@ -254,16 +245,15 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
                                 Text("${_ticketQc.getDateTime()}"),
                               ]),
                               // subtitle: Text(ticket.fileVersion.toString()),
-                              trailing: Wrap(
-                                  alignment: WrapAlignment.center,
-                                  children: [
-                                    UserImage(nsUser: NsUser.fromId(_ticketQc.userId), radius: 20),
-                                    Text("${_ticketQc.user != null ? _ticketQc.user!.uname : ""}", textScaleFactor: 1)
-                                  ],
-                                  direction: Axis.vertical))));
+                              trailing: Wrap(alignment: WrapAlignment.center, direction: Axis.vertical, children: [
+                                Text(section?.factory ?? ''),
+                                Text(section?.sectionTitle ?? '')
+                                // UserImage(nsUser: NsUser.fromId(_ticketQc.userId), radius: 20),
+                                // Text(_ticketQc.user != null ? _ticketQc.user!.uname : "", textScaleFactor: 1)
+                              ]))));
                 },
                 separatorBuilder: (BuildContext context, int index) {
-                  return Divider(
+                  return const Divider(
                     height: 5,
                     endIndent: 0.5,
                     color: Colors.black12,
@@ -283,7 +273,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
       context: context,
       builder: (BuildContext context) {
         return Container(
-          decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
+          decoration: const BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
           height: 350,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -293,26 +283,24 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
                 title: Text(ticket.mo ?? ticket.oe!),
                 subtitle: Text(ticket.oe!),
               ),
-              Divider(),
+              const Divider(),
               Expanded(
-                  child: Container(
-                child: SingleChildScrollView(
-                    child: Column(children: [
-                  ListTile(
-                      title: Text("Send Ticket"),
-                      leading: Icon(Icons.send_rounded, color: Colors.lightBlue),
-                      onTap: () async {
-                        await ticket.sharePdf(context);
-                        Navigator.of(context).pop();
-                      }),
-                  ListTile(
-                      title: Text("Delete"),
-                      leading: Icon(Icons.delete_forever, color: Colors.red),
-                      onTap: () async {
-                        Navigator.of(context).pop();
-                      }),
-                ])),
-              ))
+                  child: SingleChildScrollView(
+                      child: Column(children: [
+                ListTile(
+                    title: const Text("Send Ticket"),
+                    leading: const Icon(Icons.send_rounded, color: Colors.lightBlue),
+                    onTap: () async {
+                      await ticket.sharePdf(context);
+                      Navigator.of(context).pop();
+                    }),
+                ListTile(
+                    title: const Text("Delete"),
+                    leading: const Icon(Icons.delete_forever, color: Colors.red),
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                    }),
+              ])))
             ],
           ),
         );
@@ -334,9 +322,9 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
       List qcs = res.data["qcs"];
       dataCount = res.data["count"];
 
-      qcs.forEach((element) {
+      for (var element in qcs) {
         _ticketQcList.add(QC.fromJson(element));
-      });
+      }
       final ids = _ticketQcList.map((e) => e.id).toSet();
       _ticketQcList.retainWhere((x) => ids.remove(x.id));
       _dataLoadingError = false;

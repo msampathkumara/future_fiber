@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
 
+import '../ns_icons_icons.dart';
 import 'HiveClass.dart';
 
 enum Production { All, Upwind, OD, Nylon, OEM, _38_Upwind, _38_Nylon, _38_OEM, _38_OD, None }
@@ -55,6 +56,28 @@ extension TypeToString on Type {
 extension TicketFlagTypesToString on TicketFlagTypes {
   String getValue() {
     return (this).toString().split('.').last.toLowerCase();
+  }
+
+  getIcon() {
+    return {
+      TicketFlagTypes.RED: Icons.tour_rounded,
+      TicketFlagTypes.GR: NsIcons.gr,
+      TicketFlagTypes.RUSH: Icons.flash_on_rounded,
+      TicketFlagTypes.SK: NsIcons.sk,
+      TicketFlagTypes.HOLD: NsIcons.stop,
+      TicketFlagTypes.CROSS: NsIcons.crossProduction
+    }[this];
+
+    getColor() {
+      return {
+        TicketFlagTypes.RED: Colors.red,
+        TicketFlagTypes.GR: Colors.red,
+        TicketFlagTypes.RUSH: Colors.red,
+        TicketFlagTypes.SK: Colors.red,
+        TicketFlagTypes.HOLD: Colors.red,
+        TicketFlagTypes.CROSS: Colors.red,
+      }[this];
+    }
   }
 }
 

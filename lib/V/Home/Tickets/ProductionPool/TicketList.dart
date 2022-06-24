@@ -301,7 +301,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
         return false;
       }
 
-      if (t.file != 1 || t.completed != 0) {
+      if (t.completed != 0) {
         return false;
       }
       if (crossProduction) {
@@ -470,22 +470,23 @@ class TicketTile extends StatelessWidget {
             border: Border.all(
               color: Colors.white,
             ),
-            borderRadius: const BorderRadius.all(Radius.circular(20))),
+            borderRadius: const BorderRadius.all(Radius.circular(4))),
         child: ListTile(
-          leading: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[Text("${index + 1}", style: const TextStyle(fontWeight: FontWeight.bold))]),
+          contentPadding: const EdgeInsets.all(0),
+          minLeadingWidth: 1,
+          minVerticalPadding: 0,
+          leading: Container(
+              decoration: BoxDecoration(border: Border(left: BorderSide(width: 4, color: ticket.hasFile ? Colors.green : Colors.redAccent))),
+              width: 36,
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[Text("${index + 1}", style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold))])),
           title: Text(
             (ticket.mo ?? "").trim().isEmpty ? (ticket.oe ?? "") : ticket.mo ?? "",
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontWeight: FontWeight.bold, color: ticket.hasFile ? Colors.green : Colors.grey),
           ),
           subtitle: Wrap(direction: Axis.vertical, children: [
             if ((ticket.mo ?? "").trim().isNotEmpty) Text((ticket.oe ?? "")),
             if (ticket.isCrossPro)
-              // Chip(
-              // padding: const EdgeInsets.all(0.0),
-              // avatar: const CircleAvatar(radius: 8, child: Icon(Icons.merge_type_outlined, size: 8)),
-              // label:
               Material(
                   borderRadius: BorderRadius.circular(10),
                   color: Colors.deepOrange,

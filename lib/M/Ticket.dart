@@ -497,4 +497,8 @@ class Ticket extends DataObject {
   static bool boolFromInt(int done) => done == 1;
 
   static int boolToInt(bool done) => done ? 1 : 0;
+
+  static Ticket? fromId(id) {
+    return HiveBox.ticketBox.get(id, defaultValue: null);
+  }
 }

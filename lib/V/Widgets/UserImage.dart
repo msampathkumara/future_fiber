@@ -36,27 +36,35 @@ class _UserImageState extends State<UserImage> {
   @override
   Widget build(BuildContext context) {
     if (widget.disable || nsUser.isDisabled) {
-      return Padding(
-        padding: EdgeInsets.all(widget.padding),
-        child: Stack(
-          children: [
-            ClipOval(
-              child: ColorFiltered(
-                  colorFilter: const ColorFilter.mode(
-                    Colors.white,
-                    BlendMode.saturation,
-                  ),
-                  child: getImage()),
-            ),
-            Icon(Icons.no_accounts_rounded, color: Colors.red, size: widget.radius * 0.6)
-          ],
+      return SizedBox(
+        width: widget.radius * 2,
+        height: widget.radius * 2,
+        child: Padding(
+          padding: EdgeInsets.all(widget.padding),
+          child: Stack(
+            children: [
+              ClipOval(
+                child: ColorFiltered(
+                    colorFilter: const ColorFilter.mode(
+                      Colors.white,
+                      BlendMode.saturation,
+                    ),
+                    child: getImage()),
+              ),
+              Icon(Icons.no_accounts_rounded, color: Colors.red, size: widget.radius * 0.6)
+            ],
+          ),
         ),
       );
     }
 
-    return Padding(
-      padding: EdgeInsets.all(widget.padding),
-      child: getImage(),
+    return SizedBox(
+      width: widget.radius * 2,
+      height: widget.radius * 2,
+      child: Padding(
+        padding: EdgeInsets.all(widget.padding),
+        child: getImage(),
+      ),
     );
   }
 

@@ -111,7 +111,7 @@ class _HomeState extends State<Home> {
             children: const [CircularProgressIndicator(), Padding(padding: EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
           ))
         : Scaffold(
-        appBar: AppBar(
+            appBar: AppBar(
                 backgroundColor: Colors.white,
                 elevation: 0,
                 toolbarHeight: 100,
@@ -221,14 +221,9 @@ class _HomeState extends State<Home> {
                                 closedBuilder: (BuildContext _, VoidCallback openContainer) {
                                   return _menuButton(openContainer, Icon(Icons.widgets, size: iconSize, color: Colors.purple), "Material Management");
                                 },
-                                openWidget: MaterialManagement(),
+                                openWidget: const MaterialManagement(),
                                 onClosed: _showMarkedAsDoneSnackBar),
-                            // ElevatedButton(
-                            //     onPressed: () {
-                            //       HiveBox.getDataFromServer();
-                            //       AppUser.refreshUserData();
-                            //     },
-                            //     child: const Text("ssssssssssss")),
+                            // ElevatedButton(onPressed: () {}, child: const Text("ssssssssssss")),
                             // ElevatedButton(
                             //     onPressed: () {
                             //       HiveBox.getDataFromServer(clean: true);
