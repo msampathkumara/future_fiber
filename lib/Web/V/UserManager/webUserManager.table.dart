@@ -1,16 +1,16 @@
 part of 'webUserManager.dart';
 
-class webUserManagerTable extends StatefulWidget {
+class WebUserManagerTable extends StatefulWidget {
   final Null Function(DessertDataSource dataSource) onInit;
   final Null Function(NsUser nsUser) onTap;
 
-  const webUserManagerTable({required this.onInit, required this.onTap});
+  const WebUserManagerTable({required this.onInit, required this.onTap});
 
   @override
-  _webUserManagerTableState createState() => _webUserManagerTableState();
+  _WebUserManagerTableState createState() => _WebUserManagerTableState();
 }
 
-class _webUserManagerTableState extends State<webUserManagerTable> {
+class _WebUserManagerTableState extends State<WebUserManagerTable> {
   int _rowsPerPage = 20;
   bool _sortAscending = true;
   int? _sortColumnIndex;

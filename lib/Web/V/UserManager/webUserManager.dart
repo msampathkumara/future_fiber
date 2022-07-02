@@ -90,7 +90,7 @@ class _WebUserManagerState extends State<WebUserManager> {
                 child: Material(
                     elevation: 4,
                     borderRadius: BorderRadius.circular(8),
-                    child: webUserManagerTable(
+                    child: WebUserManagerTable(
                       onInit: (DessertDataSource dataSource) {
                         _dataSource = dataSource;
                       },
@@ -105,35 +105,6 @@ class _WebUserManagerState extends State<WebUserManager> {
             ],
           ),
         ),
-        bottomNavigationBar: BottomAppBar(
-            shape: const CircularNotchedRectangle(),
-            color: Colors.green,
-            child: IconTheme(
-              data: const IconThemeData(color: Colors.white),
-              child: Row(
-                children: [
-                  InkWell(
-                    onTap: () {},
-                    splashColor: Colors.red,
-                    child: Ink(
-                      child: IconButton(
-                        icon: const Icon(Icons.refresh),
-                        onPressed: () {
-                          HiveBox.getDataFromServer().then((value) => loadData());
-                        },
-                      ),
-                    ),
-                  ),
-                  const Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text("$nsUserCount", textScaleFactor: 1.1, style: const TextStyle(color: Colors.white)),
-                  ),
-                  const Spacer(),
-                  const SizedBox(width: 36)
-                ],
-              ),
-            )),
         floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
         floatingActionButton: FloatingActionButton(
             onPressed: () async {
@@ -151,7 +122,7 @@ class _WebUserManagerState extends State<WebUserManager> {
 
   void loadData() {
     var nsUser = HiveBox.usersBox.values.where((nsUser) {
-      return ((nsUser.name).toLowerCase().contains(searchText.toLowerCase()));
+      return (searchText.containsInArrayIgnoreCase([nsUser.name, nsUser.uname, nsUser.nic, nsUser.epf]));
     }).toList();
     _dataSource?.setData(nsUser);
     if (_selectedUser != null) {

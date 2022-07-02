@@ -155,6 +155,10 @@ class Ticket extends DataObject {
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int isQa = 0;
 
+  @HiveField(30, defaultValue: null)
+  @JsonKey(defaultValue: null, includeIfNull: true)
+  String? completedOn;
+
   @JsonKey(ignore: true)
   File? ticketFile;
 

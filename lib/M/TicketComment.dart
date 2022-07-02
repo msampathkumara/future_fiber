@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'TicketComment.g.dart';
@@ -24,5 +25,13 @@ class TicketComment {
 
   static List<TicketComment> fromJsonArray(_ticketComment) {
     return List<TicketComment>.from(_ticketComment.map((model) => TicketComment.fromJson(model)));
+  }
+
+  get dateTime {
+    try {
+      return DateFormat("yyyy-MM-dd hh:mm").format(DateFormat("yyyy-MM-dd'T'HH:mm").parse(dnt));
+    } catch (e) {
+      return dnt;
+    }
   }
 }

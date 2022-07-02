@@ -92,7 +92,7 @@ class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
           label: const Text('Shipping Date', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
           onSort: (columnIndex, ascending) => sort<String>((d) => d.shipDate, columnIndex, ascending)),
-      const DataColumn2(size: ColumnSize.L, label: Text('Status', style: TextStyle(fontWeight: FontWeight.bold)), numeric: true),
+      const DataColumn2(size: ColumnSize.L, label: Text('Product Notifications', style: TextStyle(fontWeight: FontWeight.bold)), numeric: true),
       const DataColumn2(numeric: true, size: ColumnSize.S, tooltip: "Options", label: Text('Options', style: TextStyle(fontWeight: FontWeight.bold)))
     ];
   }
@@ -185,10 +185,6 @@ class DessertDataSource extends DataTableSource {
       onTap: () {
         var ticketInfo = TicketInfo(ticket);
         ticketInfo.show(context);
-        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        //   duration: const Duration(seconds: 1),
-        //   content: Text('Tapped on ${ticket.mo}'),
-        // ));
       },
       onDoubleTap: hasRowTaps
           ? () {

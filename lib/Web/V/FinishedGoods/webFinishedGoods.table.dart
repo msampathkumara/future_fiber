@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/Ticket.dart';
 
-import '../../../V/Home/Tickets/ProductionPool/TicketListOptions.dart';
 import '../../../V/Home/Tickets/TicketInfo/TicketChatView.dart';
 import '../../../V/Home/Tickets/TicketInfo/TicketInfo.dart';
 import '../../../V/Widgets/FlagDialog.dart';
@@ -85,8 +84,8 @@ class _AsyncPaginatedDataTable2DemoState extends State<AsyncPaginatedDataTable2D
           label: const Text('Shipping Date', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
           onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      const DataColumn2(size: ColumnSize.L, label: Text('Status', style: TextStyle(fontWeight: FontWeight.bold)), numeric: true),
-      const DataColumn2(numeric: true, size: ColumnSize.S, tooltip: "Options", label: Text('Options', style: TextStyle(fontWeight: FontWeight.bold)))
+      const DataColumn2(size: ColumnSize.L, label: Text('Product Notifications', style: TextStyle(fontWeight: FontWeight.bold)), numeric: true),
+      const DataColumn2(numeric: true, size: ColumnSize.M, tooltip: "Finished on", label: Text('Finished On', style: TextStyle(fontWeight: FontWeight.bold)))
     ];
   }
 
@@ -302,7 +301,7 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
               DataCell(Wrap(
                 direction: Axis.vertical,
                 children: [
-                  Text('${ticket.production}'),
+                  Text(ticket.production ?? '-'),
                   Text(ticket.atSection, style: const TextStyle(color: Colors.red, fontSize: 12)),
                 ],
               )),
@@ -359,14 +358,7 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                     )
                 ],
               )),
-              DataCell(IconButton(
-                icon: const Icon(Icons.more_vert_rounded),
-                onPressed: () {
-                  showTicketOptions(ticket, context, context, loadData: () {
-                    notifyListeners();
-                  });
-                },
-              ))
+              DataCell(Text(ticket.completedOn ?? '-'))
             ],
           );
         }).toList());

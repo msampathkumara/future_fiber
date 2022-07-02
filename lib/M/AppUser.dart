@@ -107,9 +107,9 @@ class AppUser extends NsUser {
     return (getUser()?.permissions.indexOf(permission.getValue()) ?? -1) > -1;
   }
 
-  static void logout(context) {
+  static logout(context) async {
     _userIsAdmin = null;
-    FirebaseAuth.instance.signOut();
+    await FirebaseAuth.instance.signOut();
     HiveBox.userConfigBox.clear();
     if (kIsWeb) {
       Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);

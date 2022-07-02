@@ -45,13 +45,14 @@ class TicketAdapter extends TypeAdapter<Ticket> {
       ..deliveryDate = fields[25] == null ? '' : fields[25] as String
       ..production = fields[26] as String?
       ..isQc = fields[28] == null ? 0 : fields[28] as int
-      ..isQa = fields[29] == null ? 0 : fields[29] as int;
+      ..isQa = fields[29] == null ? 0 : fields[29] as int
+      ..completedOn = fields[30] as String?;
   }
 
   @override
   void write(BinaryWriter writer, Ticket obj) {
     writer
-      ..writeByte(29)
+      ..writeByte(30)
       ..writeByte(0)
       ..write(obj.mo)
       ..writeByte(1)
@@ -109,7 +110,9 @@ class TicketAdapter extends TypeAdapter<Ticket> {
       ..writeByte(28)
       ..write(obj.isQc)
       ..writeByte(29)
-      ..write(obj.isQa);
+      ..write(obj.isQa)
+      ..writeByte(30)
+      ..write(obj.completedOn);
   }
 
   @override
@@ -157,6 +160,7 @@ Ticket _$TicketFromJson(Map<String, dynamic> json) => Ticket()
   ..production = json['production'] as String?
   ..isQc = json['isQc'] as int? ?? 0
   ..isQa = json['isQa'] as int? ?? 0
+  ..completedOn = json['completedOn'] as String?
   ..loading = json['loading'] as bool? ?? false;
 
 Map<String, dynamic> _$TicketToJson(Ticket instance) => <String, dynamic>{
@@ -189,5 +193,6 @@ Map<String, dynamic> _$TicketToJson(Ticket instance) => <String, dynamic>{
       'production': instance.production,
       'isQc': instance.isQc,
       'isQa': instance.isQa,
+      'completedOn': instance.completedOn,
       'loading': instance.loading,
     };

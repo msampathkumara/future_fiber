@@ -90,13 +90,14 @@ class _TicketChatViewState extends State<TicketChatView> {
               ),
               body: ListView.separated(
                 controller: _scrollController,
-                padding: const EdgeInsets.only(bottom: 100.0),
+                padding: const EdgeInsets.only(bottom: 54.0),
                 reverse: true,
                 itemBuilder: (BuildContext context, int index) {
                   return const Divider(height: 0, color: Colors.transparent);
                 },
-                itemCount: ticketChat.commentList?.length ?? 0 + 1,
+                itemCount: (ticketChat.commentList?.length ?? 0) + 1,
                 separatorBuilder: (BuildContext context, int index) {
+                  print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz ${index}');
                   return getChatElement(ticketChat.commentList![index]);
                 },
               )),
@@ -192,7 +193,7 @@ class _TicketChatViewState extends State<TicketChatView> {
                 children: [
                   Wrap(
                     children: [
-                      Text(ticketComment.dnt),
+                      Text(ticketComment.dateTime),
                     ],
                   ),
                   const SizedBox(height: 16),

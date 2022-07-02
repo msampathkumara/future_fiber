@@ -14,6 +14,7 @@ import 'package:smartwind/ns_icons_icons.dart';
 import '../../../../C/DB/DB.dart';
 import '../../../../M/AppUser.dart';
 import '../../../../Web/V/QC/webTicketQView.dart';
+import '../TicketInfo/TicketChatView.dart';
 import '../TicketInfo/TicketInfo.dart';
 import 'TicketListOptions.dart';
 
@@ -450,133 +451,137 @@ class TicketTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onLongPress: () async {
-        // await showTicketOptions(ticket, context);
-        // setState(() {});
-        onLongPress();
-      },
-      onTap: () {
-        var ticketInfo = TicketInfo(ticket);
-        ticketInfo.show(context);
-      },
-      onDoubleTap: () async {
-        print(await ticket.getLocalFileVersion());
-        ticket.open(context);
-      },
-      child: Ink(
-        decoration: BoxDecoration(
-            color: ticket.isHold == 1 ? Colors.black12 : Colors.white,
-            border: Border.all(
-              color: Colors.white,
-            ),
-            borderRadius: const BorderRadius.all(Radius.circular(4))),
-        child: ListTile(
-          contentPadding: const EdgeInsets.all(0),
-          minLeadingWidth: 1,
-          minVerticalPadding: 0,
-          leading: Container(
-              decoration: BoxDecoration(border: Border(left: BorderSide(width: 4, color: ticket.hasFile ? Colors.green : Colors.redAccent))),
-              width: 36,
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[Text("${index + 1}", style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold))])),
-          title: Text(
-            (ticket.mo ?? "").trim().isEmpty ? (ticket.oe ?? "") : ticket.mo ?? "",
-            style: TextStyle(fontWeight: FontWeight.bold, color: ticket.hasFile ? Colors.green : Colors.grey),
-          ),
-          subtitle: Wrap(direction: Axis.vertical, children: [
-            if ((ticket.mo ?? "").trim().isNotEmpty) Text((ticket.oe ?? "")),
-            if (ticket.isCrossPro)
-              Material(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.deepOrange,
-                  child: Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child:
-                          Text(('${ticket.crossPro?.fromSection?.factory} > ${ticket.crossPro?.toSection?.factory}'), style: const TextStyle(fontSize: 12, color: Colors.white)))),
-            // ),
-            if (ticket.shipDate.isNotEmpty)
-              Wrap(children: [
-                const Padding(
-                  padding: EdgeInsets.only(right: 4),
-                  child: Icon(Icons.directions_boat_outlined, size: 12, color: Colors.grey),
+        behavior: HitTestBehavior.opaque,
+        onLongPress: () async {
+          // await showTicketOptions(ticket, context);
+          // setState(() {});
+          onLongPress();
+        },
+        onTap: () {
+          var ticketInfo = TicketInfo(ticket);
+          ticketInfo.show(context);
+        },
+        onDoubleTap: () async {
+          print(await ticket.getLocalFileVersion());
+          ticket.open(context);
+        },
+        child: Ink(
+            decoration: BoxDecoration(
+                color: ticket.isHold == 1 ? Colors.black12 : Colors.white,
+                border: Border.all(
+                  color: Colors.white,
                 ),
-                Text(ticket.shipDate)
-              ])
-          ]),
-          // subtitle: Text(ticket.fileVersion.toString()),
-          trailing: Wrap(
-            children: [
-              if (ticket.inPrint == 1)
-                IconButton(
-                  icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)),
-                  onPressed: () {},
-                ),
-              if (ticket.isHold == 1)
-                IconButton(
-                  icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.stop, color: Colors.black)),
-                  onPressed: () {
-                    FlagDialog().showFlagView(context, ticket, TicketFlagTypes.HOLD);
-                  },
-                ),
-              if (ticket.isGr == 1)
-                IconButton(
-                  icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)),
-                  onPressed: () {
-                    FlagDialog().showFlagView(context, ticket, TicketFlagTypes.GR);
-                  },
-                ),
-              if (ticket.isSk == 1)
-                IconButton(
-                  icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)),
-                  onPressed: () {},
-                ),
-              if (ticket.isError == 1)
-                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.report_problem_rounded, color: Colors.red)), onPressed: () {}),
-              if (ticket.isSort == 1)
-                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.local_mall_rounded, color: Colors.green)), onPressed: () {}),
-              if (ticket.isRush == 1)
-                IconButton(
-                    icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent)),
-                    onPressed: () {
-                      FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RUSH);
-                    }),
-              if (ticket.isRed == 1)
-                IconButton(
-                  icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)),
-                  onPressed: () {
-                    FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RED);
-                  },
-                ),
-              if (ticket.isQa == 1)
-                IconButton(
-                    icon: const CircleAvatar(backgroundColor: Colors.deepOrangeAccent, child: Text('QA', style: TextStyle(color: Colors.white))),
-                    onPressed: () {
-                      WebTicketQView(ticket, false).show(context);
-                    }),
-              if (ticket.isQc == 1)
-                IconButton(
-                    icon: const CircleAvatar(backgroundColor: Colors.red, child: Text('QC', style: TextStyle(color: Colors.white))),
-                    onPressed: () {
-                      WebTicketQView(ticket, true).show(context);
-                    }),
-              Padding(
-                padding: const EdgeInsets.all(4),
-                child: CircularPercentIndicator(
-                  radius: 20.0,
-                  lineWidth: 5.0,
-                  percent: ticket.progress / 100,
-                  center: Text(
-                    "${ticket.progress}%",
-                    style: const TextStyle(fontSize: 12),
-                  ),
-                  progressColor: Colors.green,
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
+                borderRadius: const BorderRadius.all(Radius.circular(4))),
+            child: ListTile(
+              contentPadding: const EdgeInsets.all(0),
+              minLeadingWidth: 1,
+              minVerticalPadding: 0,
+              leading: Container(
+                  decoration: BoxDecoration(border: Border(left: BorderSide(width: 4, color: ticket.hasFile ? Colors.green : Colors.redAccent))),
+                  width: 36,
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[Text("${index + 1}", style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold))])),
+              title: Text(
+                (ticket.mo ?? "").trim().isEmpty ? (ticket.oe ?? "") : ticket.mo ?? "",
+                style: TextStyle(fontWeight: FontWeight.bold, color: ticket.hasFile ? Colors.green : Colors.grey),
+              ),
+              subtitle: Wrap(direction: Axis.vertical, children: [
+                if ((ticket.mo ?? "").trim().isNotEmpty) Text((ticket.oe ?? "")),
+                if (ticket.isCrossPro)
+                  Material(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.deepOrange,
+                      child: Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: Text(('${ticket.crossPro?.fromSection?.factory} > ${ticket.crossPro?.toSection?.factory}'),
+                              style: const TextStyle(fontSize: 12, color: Colors.white)))),
+                // ),
+                if (ticket.shipDate.isNotEmpty)
+                  Wrap(children: [
+                    const Padding(
+                      padding: EdgeInsets.only(right: 4),
+                      child: Icon(Icons.directions_boat_outlined, size: 12, color: Colors.grey),
+                    ),
+                    Text(ticket.shipDate)
+                  ])
+              ]),
+              // subtitle: Text(ticket.fileVersion.toString()),
+              trailing: Wrap(
+                children: [
+                  if (ticket.inPrint == 1)
+                    IconButton(
+                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)),
+                      onPressed: () {},
+                    ),
+                  if (ticket.isHold == 1)
+                    IconButton(
+                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.stop, color: Colors.black)),
+                      onPressed: () {
+                        FlagDialog().showFlagView(context, ticket, TicketFlagTypes.HOLD);
+                      },
+                    ),
+                  if (ticket.isGr == 1)
+                    IconButton(
+                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)),
+                      onPressed: () {
+                        FlagDialog().showFlagView(context, ticket, TicketFlagTypes.GR);
+                      },
+                    ),
+                  if (ticket.isSk == 1)
+                    IconButton(
+                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)),
+                      onPressed: () {},
+                    ),
+                  if (ticket.isError == 1)
+                    IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.report_problem_rounded, color: Colors.red)), onPressed: () {}),
+                  if (ticket.isSort == 1)
+                    IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.local_mall_rounded, color: Colors.green)), onPressed: () {}),
+                  if (ticket.isRush == 1)
+                    IconButton(
+                        icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent)),
+                        onPressed: () {
+                          FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RUSH);
+                        }),
+                  if (ticket.isRed == 1)
+                    IconButton(
+                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)),
+                      onPressed: () {
+                        FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RED);
+                      },
+                    ),
+                  if (ticket.isQa == 1)
+                    IconButton(
+                        icon: const CircleAvatar(backgroundColor: Colors.deepOrangeAccent, child: Text('QA', style: TextStyle(color: Colors.white))),
+                        onPressed: () {
+                          WebTicketQView(ticket, false).show(context);
+                        }),
+                  if (ticket.isQc == 1)
+                    IconButton(
+                        icon: const CircleAvatar(backgroundColor: Colors.red, child: Text('QC', style: TextStyle(color: Colors.white))),
+                        onPressed: () {
+                          WebTicketQView(ticket, true).show(context);
+                        }),
+                  IconButton(
+                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.chat, color: Colors.blue)),
+                      onPressed: () {
+                        TicketChatView(ticket).show(context);
+                      }),
+                  Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: CircularPercentIndicator(
+                      radius: 20.0,
+                      lineWidth: 5.0,
+                      percent: ticket.progress / 100,
+                      center: Text(
+                        "${ticket.progress}%",
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                      progressColor: Colors.green,
+                    ),
+                  )
+                ],
+              ),
+            )));
   }
 }

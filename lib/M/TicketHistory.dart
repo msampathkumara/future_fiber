@@ -8,7 +8,7 @@ class TicketHistory {
 
   String? action;
   String? uptime;
-
+  Map? data;
   int? doneBy;
 
   TicketHistory();

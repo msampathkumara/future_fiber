@@ -81,7 +81,9 @@ class _WebStandardLibraryState extends State<WebStandardLibrary> {
                       child: DropdownButton<Production>(
                         value: selectedProduction,
                         selectedItemBuilder: (_) {
-                          return Production.values.map<Widget>((Production item) {
+                          return Production.values
+                              .where((element) => (!['None', '38 Upwind', '38 Nylon', '38 OEM', '38 OD'].contains(element.getValue())))
+                              .map<Widget>((Production item) {
                             return Center(
                                 child: Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -89,7 +91,7 @@ class _WebStandardLibraryState extends State<WebStandardLibrary> {
                             ));
                           }).toList();
                         },
-                        items: Production.values.map((Production value) {
+                        items: Production.values.where((element) => (!['None', '38 Upwind', '38 Nylon', '38 OEM', '38 OD'].contains(element.getValue()))).map((Production value) {
                           return DropdownMenuItem<Production>(
                             value: value,
                             child: Text(value.getValue()),
@@ -246,7 +248,7 @@ class _WebStandardLibraryState extends State<WebStandardLibrary> {
                         padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
                         child: ListView(
                             children: Production.values
-                                .where((element) => !['All', 'None', '38 Upwind', '38 Nylon', '38 OEM', '38 OD'].contains(element.getValue()))
+                                .where((element) => (!['All', 'None', '38 Upwind', '38 Nylon', '38 OEM', '38 OD'].contains(element.getValue())))
                                 .map((e) => ListTile(
                                     title: Text(e.getValue()),
                                     selectedTileColor: Colors.black12,

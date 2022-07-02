@@ -203,35 +203,41 @@ class _AddTicketState extends State<AddTicket> {
           onError: (ev) => print('Zone 1 error: $ev'),
           onHover: () {
             setState(() => highlighted1 = true);
-            print('Zone 1 hovered');
+            // print('Zone 1 hovered');
           },
           onLeave: () {
             setState(() => highlighted1 = false);
-            print('Zone 1 left');
+            // print('Zone 1 left');
           },
           onDrop: (ev) async {
-            UploadFile uploadFile = UploadFile(ev, standard, production);
-
-            fileList.add(uploadFile);
-            print('Zone 1 drop: ${uploadFile.name}');
-            setState(() {
-              highlighted1 = false;
-            });
-            final bytes = await controller1.getFileData(ev);
-
-            uploadFile.bytes = (bytes);
-
-            uploadFile.upload(() {
-              setState(() {});
-            });
-
-            print(bytes.sublist(0, 20));
+            onDrop(ev);
           },
           onDropMultiple: (ev) async {
             print('Zone 1 drop multiple: $ev');
+
+            for (var file in ev ?? []) {
+              onDrop(file);
+            }
           },
         ),
       );
+
+  Future<void> onDrop(ev) async {
+    UploadFile uploadFile = UploadFile(ev, standard, production);
+
+    fileList.add(uploadFile);
+    print('Zone 1 drop: ${uploadFile.name}');
+    setState(() {
+      highlighted1 = false;
+    });
+    final bytes = await controller1.getFileData(ev);
+
+    uploadFile.bytes = (bytes);
+
+    uploadFile.upload(() {
+      setState(() {});
+    });
+  }
 }
 
 class UploadFile {

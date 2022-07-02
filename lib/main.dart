@@ -57,9 +57,7 @@ Future<void> mainThings({viewIssMaterialManagement = false}) async {
     Firebase.app();
   }
 
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent, // transparent status bar
-  ));
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
 
   runApp(kIsWeb ? webApp() : const MyApp());
 }
@@ -120,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     if (kDebugMode) {
-      SharedPreferences.setMockInitialValues(Map());
+      SharedPreferences.setMockInitialValues({});
     }
   }
 

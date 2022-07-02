@@ -224,7 +224,31 @@ class _PasswordRecoveryState extends State<PasswordRecovery> {
           const Divider(),
           if (verifiedEmails.isEmpty) const Text('You don\'t have any verified email addresses'),
           const SizedBox(height: 16),
-          if (verifiedEmails.isNotEmpty)
+          if (verifiedEmails.isNotEmpty && verifiedEmails.length == 1)
+            Builder(
+              builder: (BuildContext context) {
+                selectedEmail = verifiedEmails[0];
+                return Wrap(
+                  direction: Axis.vertical,
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Padding(padding: const EdgeInsets.all(8.0), child: FilterChip(label: Text('${selectedEmail?.email}'), onSelected: (v) {}, selected: true)),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                        width: 200,
+                        child: ElevatedButton(
+                            onPressed: selectedEmail == null
+                                ? null
+                                : () {
+                                    sendOtp();
+                                  },
+                            child: const Text('Send OTP')))
+                  ],
+                );
+              },
+            ),
+          if (verifiedEmails.isNotEmpty && verifiedEmails.length > 1)
             Wrap(direction: Axis.vertical, alignment: WrapAlignment.center, crossAxisAlignment: WrapCrossAlignment.center, children: [
               const Text('Select email address to send otp', style: TextStyle(fontSize: 16)),
               const SizedBox(height: 16),

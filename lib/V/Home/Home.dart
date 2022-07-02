@@ -17,13 +17,11 @@ import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Section.dart';
 import 'package:smartwind/M/hive.dart';
-import 'package:smartwind/V/Home/CPR/CPRList.dart';
 import 'package:smartwind/V/Home/CurrentUser/CurrentUserDetails.dart';
 import 'package:smartwind/V/Home/HR/HRSystem.dart';
 import 'package:smartwind/V/Home/MaterialManagement/MaterialManagement.dart';
 import 'package:smartwind/V/Home/Tickets/Print/PrintManager.dart';
 import 'package:smartwind/V/Home/Tickets/ProductionPool/ProductionPool.dart';
-import 'package:smartwind/V/Login/Login.dart';
 import 'package:smartwind/V/Login/SectionSelector.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
@@ -155,18 +153,18 @@ class _HomeState extends State<Home> {
                                 },
                                 openWidget: ProductionPool(),
                                 onClosed: _showMarkedAsDoneSnackBar),
-                            if (AppUser.havePermissionFor(Permissions.CPR))
-                              _OpenContainerWrapper(
-                                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                    return _menuButton(openContainer, Icon(Icons.local_mall_rounded, color: Colors.amber, size: iconSize), "CPR");
-                                  },
-                                  openWidget: CPRList(),
-                                  onClosed: _showMarkedAsDoneSnackBar),
+                            // if (AppUser.havePermissionFor(Permissions.CPR))
+                            //   _OpenContainerWrapper(
+                            //       closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                            //         return _menuButton(openContainer, Icon(Icons.local_mall_rounded, color: Colors.amber, size: iconSize), "CPR");
+                            //       },
+                            //       openWidget: CPRList(),
+                            //       onClosed: _showMarkedAsDoneSnackBar),
                             _OpenContainerWrapper(
                                 closedBuilder: (BuildContext _, VoidCallback openContainer) {
                                   return _menuButton(openContainer, Icon(Icons.inventory_2_rounded, color: Colors.deepOrange, size: iconSize), "Finished Goods");
                                 },
-                                openWidget: FinishedGoods(),
+                                openWidget: const FinishedGoods(),
                                 onClosed: _showMarkedAsDoneSnackBar),
                             _OpenContainerWrapper(
                               closedBuilder: (BuildContext _, VoidCallback openContainer) {
@@ -286,8 +284,8 @@ class _HomeState extends State<Home> {
       print(onError);
     });
     FirebaseAuth.instance.signOut();
-    AppUser.logout(context);
-    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Login()), (Route<dynamic> route) => false);
+    await AppUser.logout(context);
+    // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Login()), (Route<dynamic> route) => false);
   }
 
   _currentUserOperionMenu() {

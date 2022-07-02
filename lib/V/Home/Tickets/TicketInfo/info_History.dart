@@ -61,6 +61,10 @@ class _InfoHistoryState extends State<InfoHistory> {
                     TextSpan(text: user?.name ?? "", style: linkStyle),
                     TextSpan(text: " ${(ticketHistory.action ?? "").toLowerCase().replaceUnderscore.capitalizeFirstofEach}")
                   ])),
+
+                  if (ticketHistory.action == 'ADD_FLAG' || ticketHistory.action == 'REMOVE_FLAG')
+                    Text("${((ticketHistory.data!["type"] ?? "").toString().capitalizeFirstofEach)} Flag"),
+
                   Align(alignment: Alignment.bottomRight, child: Text("${ticketHistory.uptime}", textAlign: TextAlign.end, style: timeStyle)),
                   const Divider(thickness: 1.5)
                 ],
@@ -68,21 +72,6 @@ class _InfoHistoryState extends State<InfoHistory> {
             ),
             indicatorStyle:
                 IndicatorStyle(indicatorXY: 0.0, width: 40, height: 40, drawGap: true, padding: const EdgeInsets.all(8), indicator: UserImage(nsUser: user, radius: 24)));
-
-        // return ListTile(
-        //   title: Container(
-        //     decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.grey[100]),
-        //     child: ListTile(
-        //         title: Row(
-        //           children: [
-        //             Expanded(flex: 3, child: Text((ticketHistory.action ?? "").toLowerCase().replaceUnderscore.capitalizeFirstofEach)),
-        //             Expanded(flex: 3, child: Text(ticketHistory.uptime ?? "", style: TextStyle())),
-        //           ],
-        //         ),
-        //         // trailing: UserImage(nsUserId: ticketHistory.doneBy, radius: 24),
-        //         trailing: SizedBox(width: 30, child: UserButton(nsUserId: ticketHistory.doneBy, imageRadius: 16, hideName: true))),
-        //   ),
-        // );
       },
       separatorBuilder: (BuildContext context, int index) {
         return const Padding(
@@ -99,11 +88,11 @@ class _InfoHistoryState extends State<InfoHistory> {
 }
 
 extension CapExtension on String {
-  String get inCaps => '${this[0].toUpperCase()}${this.substring(1)}';
+  String get inCaps => '${this[0].toUpperCase()}${substring(1)}';
 
-  String get allInCaps => this.toUpperCase();
+  String get allInCaps => toUpperCase();
 
-  String get replaceUnderscore => this.replaceAll(RegExp('_'), ' ');
+  String get replaceUnderscore => replaceAll(RegExp('_'), ' ');
 
-  String get capitalizeFirstofEach => this.split(" ").map((str) => str.inCaps).join(" ");
+  String get capitalizeFirstofEach => split(" ").map((str) => str.inCaps).join(" ");
 }

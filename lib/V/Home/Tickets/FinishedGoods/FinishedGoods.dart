@@ -11,6 +11,7 @@ import 'package:smartwind/ns_icons_icons.dart';
 
 import '../../../../M/AppUser.dart';
 import '../../../../Web/V/QC/webTicketQView.dart';
+import '../TicketInfo/TicketChatView.dart';
 
 class FinishedGoods extends StatefulWidget {
   const FinishedGoods({Key? key}) : super(key: key);
@@ -72,10 +73,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.pop(context),
           ),
-          title: const Text(
-            "Finished Goods",
-            textScaleFactor: 1.2,
-          ),
+          title: const Text("Finished Goods", textScaleFactor: 1.2),
           bottom: SearchBar(
               delay: 300,
               searchController: searchController,
@@ -107,7 +105,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                 flagIcon(Filters.isGr, NsIcons.gr),
                 flagIcon(Filters.isSort, NsIcons.short),
                 flagIcon(Filters.isQc, NsIcons.short, text: "QC"),
-                flagIcon(Filters.isQa, NsIcons.short, text: "QA"),
+                flagIcon(Filters.isQa, NsIcons.short, text: "QA")
               ]),
               Expanded(child: getBody()),
             ],
@@ -217,7 +215,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                           getListItem("Shipping Date", Icons.date_range_rounded, "shipDate"),
                           getListItem("Modification Date", Icons.date_range_rounded, "uptime"),
                           getListItem("Name", Icons.sort_by_alpha_rounded, "mo"),
-                          getListItem("Shipping Date", Icons.date_range_rounded, "deliveryDate"),
+                          getListItem("Shipping Date", Icons.date_range_rounded, "deliveryDate")
                         ],
                       )),
                 ),
@@ -237,15 +235,12 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
           // elevation: (!_showFilters && _showFiltersEnd) ? 4 : 0,
           elevation: 4,
           actions: const [],
-          title: Wrap(
-            spacing: 5,
-            children: factoryChipsList,
-          ),
+          title: Wrap(spacing: 5, children: factoryChipsList),
         ),
         body: _getTicketsList());
   }
 
-  var _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+  final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   _getTicketsList() {
     return Column(
@@ -315,7 +310,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                             ticketInfo.show(context);
                           },
                           onDoubleTap: () async {
-                            print(await ticket.getLocalFileVersion());
+                            print(ticket.getLocalFileVersion());
                             ticket.open(context);
                           },
                           child: Ink(
@@ -327,12 +322,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                                 borderRadius: const BorderRadius.all(Radius.circular(20))),
                             child: ListTile(
                               leading: Text("${index + 1}"),
-                              title: Text(
-                                (ticket.mo ?? "").trim().isEmpty ? (ticket.oe ?? "") : ticket.mo ?? "",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                              title: Text((ticket.mo ?? "").trim().isEmpty ? (ticket.oe ?? "") : ticket.mo ?? "", style: const TextStyle(fontWeight: FontWeight.bold)),
                               subtitle: Wrap(
                                 direction: Axis.vertical,
                                 children: [
@@ -411,19 +401,19 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                                         onPressed: () {
                                           WebTicketQView(ticket, true).show(context);
                                         }),
+                                  IconButton(
+                                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.chat, color: Colors.blue)),
+                                      onPressed: () {
+                                        TicketChatView(ticket).show(context);
+                                      }),
                                   Padding(
-                                    padding: const EdgeInsets.only(top: 4),
-                                    child: CircularPercentIndicator(
-                                      radius: 18.0,
-                                      lineWidth: 5.0,
-                                      percent: ticket.progress / 100,
-                                      center: Text(
-                                        ticket.progress.toString() + "%",
-                                        style: const TextStyle(fontSize: 12),
-                                      ),
-                                      progressColor: themeColor,
-                                    ),
-                                  )
+                                      padding: const EdgeInsets.only(top: 4),
+                                      child: CircularPercentIndicator(
+                                          radius: 18.0,
+                                          lineWidth: 5.0,
+                                          percent: ticket.progress / 100,
+                                          center: Text("${ticket.progress}%", style: const TextStyle(fontSize: 12)),
+                                          progressColor: themeColor))
                                 ],
                               ),
                             ),
@@ -431,11 +421,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                         );
                       },
                       separatorBuilder: (BuildContext context, int index) {
-                        return const Divider(
-                          height: 1,
-                          endIndent: 0.5,
-                          color: Colors.black12,
-                        );
+                        return const Divider(height: 1, endIndent: 0.5, color: Colors.black12);
                       },
                     ),
                   ),

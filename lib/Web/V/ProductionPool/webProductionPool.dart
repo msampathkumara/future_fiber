@@ -83,18 +83,11 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                           value: selectedProduction,
                           selectedItemBuilder: (_) {
                             return Production.values.map<Widget>((Production item) {
-                              return Center(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(item.getValue()),
-                              ));
+                              return Center(child: Padding(padding: const EdgeInsets.all(8.0), child: Text(item.getValue())));
                             }).toList();
                           },
                           items: Production.values.map((Production value) {
-                            return DropdownMenuItem<Production>(
-                              value: value,
-                              child: Text(value.getValue()),
-                            );
+                            return DropdownMenuItem<Production>(value: value, child: Text(value.getValue()));
                           }).toList(),
                           onChanged: (_) {
                             selectedProduction = _ ?? Production.All;
@@ -144,40 +137,6 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                 child: PaginatedDataTable2Demo(onInit: (DessertDataSource dataSource) {
                   _dataSource = dataSource;
                 }))),
-        // bottomNavigationBar: BottomAppBar(
-        //     shape: const CircularNotchedRectangle(),
-        //     clipBehavior: Clip.antiAlias,
-        //     color: Colors.green,
-        //     child: IconTheme(
-        //       data: const IconThemeData(color: Colors.white),
-        //       child: Row(
-        //         children: [
-        //           InkWell(
-        //             onTap: () {},
-        //             splashColor: Colors.red,
-        //             child: Ink(
-        //               child: IconButton(
-        //                 icon: const Icon(Icons.refresh),
-        //                 onPressed: () {
-        //                   HiveBox.getDataFromServer(clean: true).then((value) => loadData());
-        //                 },
-        //               ),
-        //             ),
-        //           ),
-        //           // const Spacer(),
-        //           // Padding(
-        //           //   padding: const EdgeInsets.all(8.0),
-        //           //   child: Text(
-        //           //     "$ticketCount",
-        //           //     textScaleFactor: 1.1,
-        //           //     style: const TextStyle(color: Colors.white),
-        //           //   ),
-        //           // ),
-        //           const Spacer(),
-        //           const SizedBox(width: 36)
-        //         ],
-        //       ),
-        //     )),
         floatingActionButtonLocation: FloatingActionButtonLocation.miniStartDocked,
         floatingActionButton: FloatingActionButton.small(
             onPressed: () async {
@@ -261,7 +220,6 @@ class _WebProductionPoolState extends State<WebProductionPool> {
   }
 
   bool searchByProduction(Ticket ticket, Production selectedProduction) {
-    // print('${ticket.production} === ${selectedProduction.getValue()}');
     if (selectedProduction == Production.None && (ticket.production == null || ticket.production == '')) {
       return true;
     }

@@ -40,7 +40,7 @@ class _WebQcState extends State<WebQc> {
 
   Type _selectedType = Type.All;
 
-  // get ticketCount => _dataSource == null ? 0 : _dataSource?.rowCount;
+  Production selectedProduction = Production.All;
 
   @override
   void initState() {
@@ -51,32 +51,59 @@ class _WebQcState extends State<WebQc> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-            title: Row(
-              children: [
-                Text("QA & QC", style: mainWidgetsTitleTextStyle),
-                const Spacer(),
-                Wrap(children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Wrap(
-                      spacing: 8,
-                      children: [_typeChip(Type.All), _typeChip(Type.QC), _typeChip(Type.QA)],
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+          title: Row(
+            children: [
+              Text("QA & QC", style: mainWidgetsTitleTextStyle),
+              const Spacer(),
+              Wrap(children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Wrap(
+                    spacing: 8,
+                    children: [_typeChip(Type.All), _typeChip(Type.QC), _typeChip(Type.QA)],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Material(
+                  elevation: 4,
+                  borderRadius: BorderRadius.circular(8),
+                  child: SizedBox(
+                    height: 40,
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<Production>(
+                        value: selectedProduction,
+                        selectedItemBuilder: (_) {
+                          return Production.values.where((element) => element.getValue().toLowerCase() != 'none').map<Widget>((Production item) {
+                            return Center(child: Padding(padding: const EdgeInsets.all(8.0), child: Text(item.getValue())));
+                          }).toList();
+                        },
+                        items: Production.values.where((element) => element.getValue().toLowerCase() != 'none').map((Production value) {
+                          return DropdownMenuItem<Production>(value: value, child: Text(value.getValue()));
+                        }).toList(),
+                        onChanged: (_) {
+                          selectedProduction = _ ?? Production.All;
+                          setState(() {});
+                          loadData();
+                        },
+                      ),
                     ),
                   ),
-                  SearchBar(
-                      onSearchTextChanged: (text) {
-                        searchText = text;
-                        loadData();
-                      },
-                      searchController: _controller)
-                ])
-              ],
-            ),
-            backgroundColor: Colors.transparent,
-            elevation: 0),
-        body: Padding(
+                ),
+                const SizedBox(width: 16),
+                SearchBar(
+                    onSearchTextChanged: (text) {
+                      searchText = text;
+                      loadData();
+                    },
+                    searchController: _controller)
+              ]),
+            ],
+          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0),
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Material(
             elevation: 4,
@@ -137,6 +164,7 @@ class _WebQcState extends State<WebQc> {
     // type=All&pageSize=100&sortBy=mo&pageIndex=0&searchText=&sortDirection=asc&production=all
 
     return Api.get("tickets/qc/getList", {
+      'production': selectedProduction.getValue(),
       "type": _selectedType.getValue(),
       'sortDirection': sortedAsc ? "asc" : "desc",
       'sortBy': sortedBy,
