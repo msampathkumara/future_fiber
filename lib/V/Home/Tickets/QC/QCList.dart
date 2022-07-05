@@ -18,6 +18,8 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
   var database;
   var themeColor = Colors.green;
 
+  Production _selectedProduction = Production.All;
+
   @override
   initState() {
     super.initState();
@@ -149,14 +151,40 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          toolbarHeight: 50,
+          toolbarHeight: 100,
           automaticallyImplyLeading: false,
           backgroundColor: themeColor,
           elevation: 5,
           actions: const [],
-          title: Wrap(
-            spacing: 5,
-            children: [_typeChip(Type.All), _typeChip(Type.QC), _typeChip(Type.QA)],
+          title: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Wrap(
+                spacing: 5,
+                children: [_typeChip(Type.All), _typeChip(Type.QC), _typeChip(Type.QA)],
+              ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Wrap(
+                  direction: Axis.horizontal,
+                  spacing: 5,
+                  children: Production.values.where((element) => element.getValue().toLowerCase() != 'none').map((Production p) {
+                    return FilterChip(
+                        selectedColor: Colors.white,
+                        checkmarkColor: themeColor,
+                        label: Text(p.getValue(), style: TextStyle(color: _selectedProduction == p ? themeColor : Colors.black)),
+                        selected: _selectedProduction == p,
+                        onSelected: (bool value) {
+                          _selectedProduction = p;
+                          _ticketQcList = [];
+                          loadData(0);
+                          setState(() {});
+                        });
+                  }).toList(),
+                ),
+              ),
+            ],
           ),
         ),
         body: _getTicketsList());
@@ -315,9 +343,15 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
 
   Future loadData(int page) {
     requested = true;
-    return OnlineDB.apiGet(
-            "tickets/qc/getList", {'type': _selectedType.getValue(), 'sortDirection': "desc", 'sortBy': listSortBy, 'pageIndex': page, 'pageSize': 20, 'searchText': searchText})
-        .then((res) {
+    return OnlineDB.apiGet("tickets/qc/getList", {
+      'type': _selectedType.getValue(),
+      'production': _selectedProduction.getValue(),
+      'sortDirection': "desc",
+      'sortBy': listSortBy,
+      'pageIndex': page,
+      'pageSize': 20,
+      'searchText': searchText
+    }).then((res) {
       print(res.data);
       List qcs = res.data["qcs"];
       dataCount = res.data["count"];

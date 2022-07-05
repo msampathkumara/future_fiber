@@ -21,12 +21,14 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:background="@color/transperant"
+            android:minWidth="48dp"
             android:padding="8dp"
             android:src="@drawable/ic_baseline_close_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="#E91E63" />
+            app:tint="#E91E63"
+            tools:ignore="SpeakableTextPresentCheck" />
 
         <ImageButton
             android:id="@+id/doneButton"
@@ -34,12 +36,14 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:background="@color/transperant"
+            android:minWidth="48dp"
             android:padding="8dp"
             android:src="@drawable/ic_baseline_done_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="#4CAF50" />
+            app:tint="#4CAF50"
+            tools:ignore="SpeakableTextPresentCheck" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <include

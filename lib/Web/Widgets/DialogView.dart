@@ -18,8 +18,8 @@ class DialogView extends StatelessWidget {
         child: Container(
             width: width,
             margin: const EdgeInsets.only(top: 64.0, bottom: 64.0),
-            child: Material(clipBehavior: Clip.antiAliasWithSaveLayer, borderRadius: BorderRadius.circular(8), child: child),
-            constraints: kIsWeb ? BoxConstraints(maxWidth: width, maxHeight: _height) : null),
+            constraints: kIsWeb ? BoxConstraints(maxWidth: width, maxHeight: _height) : null,
+            child: Material(clipBehavior: Clip.antiAliasWithSaveLayer, borderRadius: BorderRadius.circular(8), child: child)),
       ),
     );
   }

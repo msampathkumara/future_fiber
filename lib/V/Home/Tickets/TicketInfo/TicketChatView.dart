@@ -97,7 +97,7 @@ class _TicketChatViewState extends State<TicketChatView> {
                 },
                 itemCount: (ticketChat.commentList?.length ?? 0) + 1,
                 separatorBuilder: (BuildContext context, int index) {
-                  print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz ${index}');
+                  print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz $index');
                   return getChatElement(ticketChat.commentList![index]);
                 },
               )),

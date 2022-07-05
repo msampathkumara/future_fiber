@@ -1,9 +1,6 @@
 import 'package:custom_webview/webview_flutter.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pdfx/pdfx.dart';
-// import 'package:native_pdf_view/native_pdf_view.dart';
-// import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:smartwind/M/Ticket.dart';
 
 import 'SelectPdfPage.dart';
@@ -26,6 +23,8 @@ class _CSState extends State<CS> with TickerProviderStateMixin {
 
   late CustomWebView _webView;
   CustomWebViewController? _webViewController;
+
+  bool _loading = true;
 
   @override
   initState() {
@@ -54,7 +53,7 @@ class _CSState extends State<CS> with TickerProviderStateMixin {
       onProgress: (int progress) {
         print("WebView is loading (progress : $progress%)");
       },
-      javascriptChannels: <JavascriptChannel>{},
+      javascriptChannels: const <JavascriptChannel>{},
       navigationDelegate: (NavigationRequest request) {
         return NavigationDecision.navigate;
       },
@@ -64,17 +63,21 @@ class _CSState extends State<CS> with TickerProviderStateMixin {
       onPageFinished: (String url) {
         print('Page finished loading: $url');
         // _controller!.evaluateJavascript(jsString);
+        setState(() {
+          _loading = false;
+        });
       },
       gestureNavigationEnabled: true,
     );
-    _pdfController = PdfController(
-      document: PdfDocument.openFile(ticket.ticketFile!.path),
-      initialPage: _initialPage,
-    );
-    _pdfController1 = PdfController(
-      document: PdfDocument.openFile(selectedPage),
-      initialPage: _initialPage,
-    );
+    _pdfController = PdfController(document: PdfDocument.openFile(ticket.ticketFile!.path), initialPage: 0);
+    _pdfController1 = PdfController(document: PdfDocument.openFile(selectedPage), initialPage: 0);
+  }
+
+  @override
+  dispose() {
+    _pdfController.dispose();
+    _pdfController1.dispose();
+    super.dispose();
   }
 
   @override
@@ -84,6 +87,7 @@ class _CSState extends State<CS> with TickerProviderStateMixin {
         ? SelectPdfPage(ticket, (selectedPage) {
             setState(() {
               this.selectedPage = selectedPage;
+              _pdfController1 = PdfController(document: PdfDocument.openFile(selectedPage), initialPage: 0);
             });
           })
         : Scaffold(
@@ -112,10 +116,16 @@ class _CSState extends State<CS> with TickerProviderStateMixin {
                             body: Column(
                               children: [
                                 Expanded(
-                                  child: TabBarView(physics: NeverScrollableScrollPhysics(), controller: _tabBarController, children: [getPdf(1), getPdf(2)]),
+                                  child: TabBarView(physics: const NeverScrollableScrollPhysics(), controller: _tabBarController, children: [getPdf(1), getPdf(2)]),
                                 ),
                                 Container(height: 30, color: Colors.blue),
-                                Expanded(child: _webView)
+                                Expanded(
+                                    child: Stack(
+                                  children: [
+                                    _webView,
+                                    if (_loading) const Center(child: CircularProgressIndicator()),
+                                  ],
+                                ))
                               ],
                             )),
                       )
@@ -123,8 +133,6 @@ class _CSState extends State<CS> with TickerProviderStateMixin {
   }
 
   var errorMessage;
-  static final int _initialPage = 2;
-  int _actualPageNumber = _initialPage, _allPagesCount = 0;
   bool isSampleDoc = true;
   late PdfController _pdfController;
   late PdfController _pdfController1;
@@ -142,12 +150,10 @@ class _CSState extends State<CS> with TickerProviderStateMixin {
       controller: id == 1 ? _pdfController : _pdfController1,
       onDocumentLoaded: (document) {
         setState(() {
-          _allPagesCount = document.pagesCount;
         });
       },
       onPageChanged: (page) {
         setState(() {
-          _actualPageNumber = page;
         });
       },
       scrollDirection: Axis.vertical,

@@ -23,9 +23,7 @@ import 'UserPermissions.dart';
 part 'user_manager_user_list_options.dart';
 
 class UserManagerUserList extends StatefulWidget {
-  final idToken;
-
-  const UserManagerUserList(this.idToken, {Key? key}) : super(key: key);
+  const UserManagerUserList({Key? key}) : super(key: key);
 
   @override
   _UserManagerUserListState createState() => _UserManagerUserListState();
@@ -40,8 +38,6 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
 
   late bool nfcIsAvailable;
 
-  var idToken;
-
   List<NsUser> filteredAllUsersList = [];
 
   final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
@@ -53,11 +49,11 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
   @override
   initState() {
     super.initState();
-    idToken = widget.idToken;
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _tabBarController = TabController(length: tabs.length, vsync: this);
       _tabBarController!.addListener(() {
-        print("Selected Index: " + _tabBarController!.index.toString());
+        print("Selected Index: ${_tabBarController!.index}");
       });
 
       NfcManager.instance.isAvailable().then((value) {
@@ -84,7 +80,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
     _dbChangeCallBack.dispose();
   }
 
-  TextEditingController searchController = new TextEditingController();
+  TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -105,10 +101,9 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                   print(s);
                   setState(() {});
                 },
-                itemBuilder: (BuildContext context) =>
-                <PopupMenuEntry<String>>[
-                      CheckedPopupMenuItem<String>(value: "deactivatedUsers", child: const Text("Deactivated Users"), checked: _showDeactivatedUsers),
-                      if (!_showDeactivatedUsers) CheckedPopupMenuItem<String>(value: "id", child: const Text("Set ID Cards"), checked: _setIdCards),
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                      CheckedPopupMenuItem<String>(value: "deactivatedUsers", checked: _showDeactivatedUsers, child: const Text("Deactivated Users")),
+                      if (!_showDeactivatedUsers) CheckedPopupMenuItem<String>(value: "id", checked: _setIdCards, child: const Text("Set ID Cards")),
                     ])
           ],
           elevation: 0.0,
@@ -228,7 +223,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                     },
                     leading: UserImage(nsUser: nsUser, radius: 24, key: Key("${nsUser.uptime}")),
                     title: Text(nsUser.name),
-                    subtitle: Text("#" + nsUser.uname),
+                    subtitle: Text("#${nsUser.uname}"),
                     trailing: Wrap(children: [
                       if (nsUser.isDisabled)
                         const Icon(
@@ -267,22 +262,15 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
   // }
 
   Future<void> filterUsers() async {
-    // if (_showDeactivatedUsers) {
-    //
-    // }
-
     AllUsersList = HiveBox.usersBox.values.toList();
-    print('Searching users ${searchText} __ ${AllUsersList.length} __ ${_showDeactivatedUsers}');
+    print('Searching users $searchText __ ${AllUsersList.length} __ $_showDeactivatedUsers');
 
     if (searchText.trim().isEmpty) {
       filteredAllUsersList = AllUsersList.where((element) => element.isDisabled == (_showDeactivatedUsers)).toList();
     } else {
-      filteredAllUsersList = AllUsersList.where((element) {
-        return (_showDeactivatedUsers == element.isDisabled) &&
-            (element.name.toLowerCase().contains(searchText) |
-                element.uname.toLowerCase().contains(searchText) |
-                element.emailAddress.toLowerCase().contains(searchText) |
-                element.phone.toLowerCase().contains(searchText));
+      filteredAllUsersList = AllUsersList.where((nsUser) {
+        return (_showDeactivatedUsers == nsUser.isDisabled) &&
+            searchText.containsInArrayIgnoreCase([nsUser.uname, nsUser.nic, nsUser.name, nsUser.emailAddress, nsUser.phone, nsUser.epf]);
       }).toList();
     }
     setState(() {});

@@ -182,8 +182,7 @@ public class MainEditorActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-
-//        if (pdfEditor.getToolVisibility() == View.VISIBLE) {
+        pdfEditor.saveEdits();
         if (pdfEditor.isEdited()) {
 
             RequestedOrientation = getResources().getConfiguration().orientation;
@@ -193,7 +192,7 @@ public class MainEditorActivity extends AppCompatActivity {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
             }
 
-            pdfEditor.saveEdits();
+//            pdfEditor.saveEdits();
             uploadPdfEdits(
                     new RunAfterUpload() {
 
@@ -221,7 +220,6 @@ public class MainEditorActivity extends AppCompatActivity {
 
 
     }
-
 
 
     private void showDialog() {

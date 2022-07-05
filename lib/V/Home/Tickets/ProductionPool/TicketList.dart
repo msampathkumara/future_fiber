@@ -19,7 +19,7 @@ import '../TicketInfo/TicketInfo.dart';
 import 'TicketListOptions.dart';
 
 class TicketList extends StatefulWidget {
-  TicketList();
+  const TicketList({Key? key}) : super(key: key);
 
   @override
   _TicketListState createState() {
@@ -257,16 +257,17 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                           // print(FilesList[index]);
                           Ticket ticket = (filesList[index]);
                           // print(ticket.toJson());
-                          return TicketTile(index, ticket, () async {
+                          return TicketTile(index, ticket, onLongPress: () async {
                             print('Long pres');
                             await showTicketOptions(ticket, context1, context, loadData: () {
                               loadData();
                             });
+
                             setState(() {});
-                          }, () {
-                            var ticketInfo = TicketInfo(ticket);
-                            ticketInfo.show(context1);
-                          }, () {});
+                          }, onReload: () {
+                            print('************************************************************************************************************');
+                            loadData();
+                          });
                         },
                         separatorBuilder: (BuildContext context, int index) {
                           return const Divider(
@@ -320,6 +321,9 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
         }
         // print('${t.crossProList}');
         print([t.crossPro?.fromSection?.factory, t.crossPro?.toSection?.factory, "$production"]);
+      }
+      if (selectedProduction == Production.None && (t.production != null || (t.production ?? '').isNotEmpty)) {
+        return false;
       }
       if (showAllTickets ? (!searchByProduction(t, selectedProduction)) : (!searchBySection(t, section))) {
         return false;
@@ -443,10 +447,10 @@ class TicketTile extends StatelessWidget {
   final Ticket ticket;
   final int index;
   final onLongPress;
-  final onTap;
-  final onDoubleTap;
 
-  const TicketTile(this.index, this.ticket, this.onLongPress, this.onTap, this.onDoubleTap);
+  final onReload;
+
+  const TicketTile(this.index, this.ticket, {required this.onLongPress, required this.onReload});
 
   @override
   Widget build(BuildContext context) {
@@ -457,12 +461,22 @@ class TicketTile extends StatelessWidget {
           // setState(() {});
           onLongPress();
         },
-        onTap: () {
-          var ticketInfo = TicketInfo(ticket);
-          ticketInfo.show(context);
+        onTap: () async {
+          // var ticketInfo = TicketInfo(ticket);
+          // ticketInfo.show(context);
+
+          print('is started === ${ticket.isStarted}');
+          if (ticket.isStarted) {
+            var ticketInfo = TicketInfo(ticket);
+            ticketInfo.show(context);
+          } else {
+            await showOpenActions(ticket, context, () {
+              onReload();
+            });
+          }
         },
         onDoubleTap: () async {
-          print(await ticket.getLocalFileVersion());
+          print(ticket.getLocalFileVersion());
           ticket.open(context);
         },
         child: Ink(
@@ -567,19 +581,20 @@ class TicketTile extends StatelessWidget {
                       onPressed: () {
                         TicketChatView(ticket).show(context);
                       }),
-                  Padding(
-                    padding: const EdgeInsets.all(4),
-                    child: CircularPercentIndicator(
-                      radius: 20.0,
-                      lineWidth: 5.0,
-                      percent: ticket.progress / 100,
-                      center: Text(
-                        "${ticket.progress}%",
-                        style: const TextStyle(fontSize: 12),
+                  if (ticket.isStarted)
+                    Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: CircularPercentIndicator(
+                        radius: 20.0,
+                        lineWidth: 5.0,
+                        percent: ticket.progress / 100,
+                        center: Text(
+                          "${ticket.progress}%",
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                        progressColor: Colors.green,
                       ),
-                      progressColor: Colors.green,
-                    ),
-                  )
+                    )
                 ],
               ),
             )));

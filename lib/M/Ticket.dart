@@ -159,6 +159,10 @@ class Ticket extends DataObject {
   @JsonKey(defaultValue: null, includeIfNull: true)
   String? completedOn;
 
+  @HiveField(31, defaultValue: false)
+  @JsonKey(defaultValue: false, includeIfNull: true)
+  bool isStarted = false;
+
   @JsonKey(ignore: true)
   File? ticketFile;
 
@@ -492,17 +496,22 @@ class Ticket extends DataObject {
     return isStandard ? TicketTypes.Standard : TicketTypes.Ticket;
   }
 
-  // List<String> getCrossProList() => crossProList.map((e) {
-  //       print('$e');
-  //       var x = HiveBox.sectionsBox.get(e)?.factory;
-  //       return '$x';
-  //     }).toList();
-
   static bool boolFromInt(int done) => done == 1;
 
   static int boolToInt(bool done) => done ? 1 : 0;
 
   static Ticket? fromId(id) {
     return HiveBox.ticketBox.get(id, defaultValue: null);
+  }
+
+  Future start(context) {
+    return OnlineDB.apiPost("tickets/start", {"ticket": id.toString()}).then((response) {
+      print(response.data);
+      print("-----------------vvvvvvvvxxxxxxxxxxvvv-----------------------");
+
+      return true;
+    }).catchError((onError) {
+      print(onError);
+    });
   }
 }

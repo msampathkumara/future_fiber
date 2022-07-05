@@ -163,8 +163,8 @@ public class QCEditor extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
+        pdfEditor.saveEdits();
 
-//        if (pdfEditor.getToolVisibility() == View.VISIBLE) {
         if (pdfEditor.isEdited()) {
 
             RequestedOrientation = getResources().getConfiguration().orientation;
@@ -174,7 +174,7 @@ public class QCEditor extends AppCompatActivity {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
             }
 
-            pdfEditor.saveEdits();
+
             uploadPdfEdits(
                     new RunAfterUpload() {
 

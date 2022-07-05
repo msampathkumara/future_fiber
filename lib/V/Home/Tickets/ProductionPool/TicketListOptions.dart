@@ -8,7 +8,9 @@ import '../../../../M/Enums.dart';
 import '../../../../M/Ticket.dart';
 import '../../../../ns_icons_icons.dart';
 import '../../../Widgets/FlagDialog.dart';
+import '../../BlueBook/BlueBook.dart';
 import '../StandardFiles/factory_selector.dart';
+import '../TicketInfo/TicketInfo.dart';
 import 'Finish/FinishCheckList.dart';
 
 class TicketOption {
@@ -146,6 +148,14 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                       leading: const Icon(NsIcons.share, color: Colors.lightBlue),
                       onTap: () async {
                         await ticket.sharePdf(context);
+                        Navigator.of(context).pop();
+                      }),
+                if (AppUser.havePermissionFor(Permissions.BLUE_BOOK) && (!kIsWeb))
+                  ListTile(
+                      title: const Text("Blue Book"),
+                      leading: const Icon(Icons.menu_book_rounded, color: Colors.lightBlue),
+                      onTap: () async {
+                        await Navigator.push(context, MaterialPageRoute(builder: (context) => BlueBook(ticket: ticket)));
                         Navigator.of(context).pop();
                       }),
                 if (AppUser.havePermissionFor(Permissions.SHIPPING_SYSTEM) && (!kIsWeb))
@@ -328,6 +338,43 @@ Future<void> chooseFactories(Ticket ticket, BuildContext context1) async {
             Navigator.of(context).pop();
           });
         }),
+      );
+    },
+  );
+}
+
+Future<void> showOpenActions(Ticket ticket, BuildContext context1, reLoad) async {
+  await showModalBottomSheet<void>(
+    constraints: kIsWeb ? const BoxConstraints(maxWidth: 600, maxHeight: 200) : null,
+    context: context1,
+    builder: (BuildContext context) {
+      return Container(
+        decoration: const BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
+        height: 250,
+        child: ListView(
+          children: [
+            ListTile(title: Text(ticket.mo ?? ticket.oe!), subtitle: Text(ticket.oe!)),
+            const Divider(),
+            ListTile(
+                leading: const Icon(Icons.not_started_outlined),
+                title: const Text('Start Ticket'),
+                onTap: () async {
+                  Navigator.of(context).pop();
+                  await ticket.start(context);
+                  ticket.isStarted = true;
+                  ticket.save();
+                  reLoad();
+                }),
+            ListTile(
+                leading: const Icon(Icons.open_in_new_outlined),
+                title: const Text('View Ticket'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  var ticketInfo = TicketInfo(ticket);
+                  ticketInfo.show(context);
+                })
+          ],
+        ),
       );
     },
   );

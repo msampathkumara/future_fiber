@@ -111,8 +111,11 @@ class AppUser extends NsUser {
     _userIsAdmin = null;
     await FirebaseAuth.instance.signOut();
     HiveBox.userConfigBox.clear();
+
     if (kIsWeb) {
       Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+    } else {
+      Navigator.pushNamedAndRemoveUntil(context, '/', (_) => false);
     }
   }
 }

@@ -4,7 +4,7 @@ description: NorthSails Smart Wind
 
 publish_to: 'none'
 
-version: 1.1.46+86
+version: 1.1.48+88
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -72,8 +72,8 @@ dependencies:
   socket_io_client: ^1.0.2
   file_picker: ^4.6.1
   universal_html: ^2.0.8
-  dropdown_button2: ^1.6.2
-  pdfx: ^2.1.1
+  dropdown_button2: ^1.6.3
+  pdfx: 2.0.1+2
   textfield_search: ^0.10.0
   searchfield: ^0.6.6
   csv: ^5.0.1

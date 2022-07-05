@@ -138,8 +138,8 @@
 
                 <com.pdfEditor.EditorTools.ColorSelector
                     android:id="@+id/colorSelector"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_width="250dp"
+                    android:layout_height="45dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

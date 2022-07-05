@@ -51,102 +51,119 @@ class _FinishCheckListState extends State<FinishCheckList> {
                 return Text('Error: ${snapshot.error}');
               } else {
                 return AlertDialog(
-                  title: const Text("Check List"),
-                  content: SizedBox(
-                    height: height / 2,
-                    width: width - 200,
-                    child: Scaffold(
-                        body: Column(
-                      children: [
-                        Expanded(
-                          child: ListView.builder(
-                              itemCount: checkListMap!["layout"].length,
-                              itemBuilder: (BuildContext context, int index) {
-                                var t = checkListMap!["layout"][index];
-                                return ListTile(
-                                  title: Text(
-                                    t,
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                );
-                              }),
-                        )
-                      ],
-                    )),
-                  ),
-                  actions: [
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(primary: Colors.green, textStyle: const TextStyle(fontWeight: FontWeight.bold)),
-                        onPressed: () {
-                          var loadingWidget = const Loading(
-                            loadingText: "Loading",
-                            showProgress: false,
-                          );
+                    actions: [
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(primary: Colors.green, textStyle: const TextStyle(fontWeight: FontWeight.bold)),
+                          onPressed: () {
+                            var loadingWidget = const Loading(
+                              loadingText: "Loading",
+                              showProgress: false,
+                            );
 
-                          loadingWidget.show(context);
-                          OnlineDB.apiGet("users/getRfCredentials", {}).then((response) async {
-                            // print(response.data);
-                            // // ServerResponseMap res = ServerResponseMap.fromJson((response.data));
-                            // var r = await OnlineDB.apiGet("tickets/finish/getProgress", {'ticket': ticket.id.toString()});
-                            // ServerResponseMap res1 = ServerResponseMap.fromJson((r.data));
+                            loadingWidget.show(context);
+                            OnlineDB.apiGet("users/getRfCredentials", {}).then((response) async {});
+                          },
+                          child: const Text("Excellent")),
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(primary: Colors.lightGreen, textStyle: const TextStyle(fontWeight: FontWeight.bold)),
+                          onPressed: () {
+                            var loadingWidget = const Loading(
+                              loadingText: "Loading",
+                              showProgress: false,
+                            );
+
+                            loadingWidget.show(context);
+                            OnlineDB.apiGet("users/getRfCredentials", {}).then((response) async {
+                              // print(response.data);
+                              // // ServerResponseMap res = ServerResponseMap.fromJson((response.data));
+                              // var r = await OnlineDB.apiGet("tickets/finish/getProgress", {'ticket': ticket.id.toString()});
+                              // ServerResponseMap res1 = ServerResponseMap.fromJson((r.data));
+                              //
+                              // loadingWidget.close(context);
+                              // if (res.userRFCredentials != null) {
+                              //   print("-------------------------------------");
+                              //   print(res1.toJson());
+                              //   await ticket.getFile(context);
+                              //   if (res1.done != null) {
+                              //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.red, content: Text('Already Completed')));
+                              //   } else if (ticket.ticketFile != null) {
+                              //     await Navigator.push(
+                              //         context, MaterialPageRoute(builder: (context) => RF(ticket, res.userRFCredentials!, res1.operationMinMax!, res1.progressList)));
+                              //   }
+                              //   if (Navigator.canPop(context)) {
+                              //     Navigator.pop(context);
+                              //   } else {
+                              //     SystemNavigator.pop();
+                              //   }
+                              // }
+                            });
+                          },
+                          child: const Text("Good")),
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(primary: Colors.redAccent, textStyle: const TextStyle(fontWeight: FontWeight.bold)),
+                          onPressed: () async {
+                            if (Navigator.canPop(context)) {
+                              Navigator.pop(context);
+                            } else {
+                              SystemNavigator.pop();
+                            }
+
+                            NsUser? nsuser = AppUser.getUser();
+
+                            var isQc = false;
+                            if (AppUser.getSelectedSection()?.sectionTitle.toLowerCase() == "qc") {
+                              isQc = true;
+                            }
+
+                            var xx = await platform.invokeMethod('qcEdit', {
+                              "qc": isQc,
+                              "sectionId": "${AppUser.getSelectedSection()?.id}",
+                              "serverUrl": Server.getServerApiPath("tickets/qc/uploadEdits"),
+                              'ticket': {'id': ticket.id, "qc": isQc}.toString()
+                            });
+
+                            // App.getCurrentUser().then((user) async {
+                            //   var isQc = false;
+                            //   if (user!.section!.sectionTitle.toLowerCase() == "qc") {
+                            //     isQc = true;
+                            //   }
                             //
-                            // loadingWidget.close(context);
-                            // if (res.userRFCredentials != null) {
-                            //   print("-------------------------------------");
-                            //   print(res1.toJson());
-                            //   await ticket.getFile(context);
-                            //   if (res1.done != null) {
-                            //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.red, content: Text('Already Completed')));
-                            //   } else if (ticket.ticketFile != null) {
-                            //     await Navigator.push(
-                            //         context, MaterialPageRoute(builder: (context) => RF(ticket, res.userRFCredentials!, res1.operationMinMax!, res1.progressList)));
-                            //   }
-                            //   if (Navigator.canPop(context)) {
-                            //     Navigator.pop(context);
-                            //   } else {
-                            //     SystemNavigator.pop();
-                            //   }
-                            // }
-                          });
-                        },
-                        child: const Text("Agree")),
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(primary: Colors.redAccent, textStyle: const TextStyle(fontWeight: FontWeight.bold)),
-                        onPressed: () async {
-                          if (Navigator.canPop(context)) {
-                            Navigator.pop(context);
-                          } else {
-                            SystemNavigator.pop();
-                          }
-
-                          NsUser? nsuser = AppUser.getUser();
-
-                          var isQc = false;
-                          if (AppUser.getSelectedSection()?.sectionTitle.toLowerCase() == "qc") {
-                            isQc = true;
-                          }
-
-                          var xx = await platform.invokeMethod('qcEdit', {
-                            "qc": isQc,
-                            "sectionId": "${AppUser.getSelectedSection()?.id}",
-                            "serverUrl": Server.getServerApiPath("tickets/qc/uploadEdits"),
-                            'ticket': {'id': ticket.id, "qc": isQc}.toString()
-                          });
-
-                          // App.getCurrentUser().then((user) async {
-                          //   var isQc = false;
-                          //   if (user!.section!.sectionTitle.toLowerCase() == "qc") {
-                          //     isQc = true;
-                          //   }
-                          //
-                          //   var xx = await platform.invokeMethod('qcEdit', {
-                          //     'ticket': {'id': ticket.id, "qc": isQc}.toString()
-                          //   });
-                          // });
-                        },
-                        child: const Text("Disagree"))
-                  ],
-                );
+                            //   var xx = await platform.invokeMethod('qcEdit', {
+                            //     'ticket': {'id': ticket.id, "qc": isQc}.toString()
+                            //   });
+                            // });
+                          },
+                          child: const Text("Quality Reject"))
+                    ],
+                    content: SizedBox(
+                        height: 200,
+                        child: Scaffold(
+                          //     body: Column(
+                          //   children: [
+                          //     Expanded(
+                          //       child: ListView.builder(
+                          //           itemCount: checkListMap!["layout"].length,
+                          //           itemBuilder: (BuildContext context, int index) {
+                          //             var t = checkListMap!["layout"][index];
+                          //             return ListTile(
+                          //               title: Text(
+                          //                 t,
+                          //                 style: const TextStyle(fontSize: 20),
+                          //               ),
+                          //             );
+                          //           }),
+                          //     )
+                          //   ],
+                          // )),
+                          body: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Text("Please Rate the quality of your work", textScaleFactor: 1.5, textAlign: TextAlign.center),
+                              Text("කරුණාකර ඔබගේ කාර්යය ගුණාත්මකභාවය ඇගයීමට ලක්කරන්න", textScaleFactor: 1.2, textAlign: TextAlign.center)
+                            ],
+                          ),
+                        )));
               }
           }
         });

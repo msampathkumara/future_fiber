@@ -202,9 +202,13 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         currentPage = pages.get(page);
 
 
+        assert drawingView != null;
         drawingView.setPage(pages.get(page));
+        assert textEditorView != null;
         textEditorView.setPage(pages.get(page));
+        assert highlighterView != null;
         highlighterView.setPage(pages.get(page));
+        assert erasingView != null;
         erasingView.setPage(pages.get(page));
         imageView.setPage(pages.get(page));
 
@@ -222,10 +226,12 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
             if (kk.page == pdfView.getCurrentPage()) {
 
                 if (kk instanceof xPath) {
+                    assert drawingView != null;
                     drawingView.drawingView.reDraw((xPath) kk);
                 } else if (kk instanceof xImage) {
                     imageView.reDraw((xImage) kk);
                 } else if (kk instanceof xText) {
+                    assert textEditorView != null;
                     textEditorView.textEditor.reDraw((xText) kk);
                 }
 
@@ -237,12 +243,6 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
     }
 
-    public void loadFile(File file, Bitmap NBitmap) {
-        Bitmap workingBitmap = Bitmap.createBitmap(NBitmap);
-        Bitmap mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true);
-        loadFile(file);
-
-    }
 
     public void loadFile(@NonNull final File file) {
         System.out.println("LOAD FILE 1");
@@ -276,8 +276,6 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++_set_pdfview_options");
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        final int Dheight = displayMetrics.heightPixels;
-        final int Dwidth = displayMetrics.widthPixels;
 
 
         if (!RELOAD) {
@@ -293,11 +291,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
                         System.out.println("Loading. Please wait...");
                         dialog.setIndeterminate(true);
                         dialog.setCanceledOnTouchOutside(false);
-                        if (!getActivity().isFinishing()) {
-
-//                            dialog.show();
-
-                        }
+                        getActivity().isFinishing();//                            dialog.show();
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -311,7 +305,6 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
 
         pv.onError(new OnErrorListener() {
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onError(@NonNull Throwable t) {
                 System.out.println("ERR");
@@ -367,7 +360,6 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         pv.onLoad(new OnLoadCompleteListener() {
 
 
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void loadComplete(int nbPages) {
                 System.out.println("ON______LOAD");
@@ -409,7 +401,9 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
                 Objects.requireNonNull(textEditorView).setVisibility(View.GONE);
 
 
+                assert highlighterView != null;
                 highlighterView.setVisibility(View.GONE);
+                assert erasingView != null;
                 erasingView.setVisibility(View.GONE);
 
                 imageView.setVisibility(View.GONE);
@@ -1253,14 +1247,18 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     }
 
     public void saveEdits() {
-        if (is_text_editor_clicked) {
-            textEditorView.saveText();
-        }
+//        if (is_text_editor_clicked) {
+        assert textEditorView != null;
+        textEditorView.saveText();
+//        }
 
 
-        if (image_editor) {
-            imageView.save();
-        }
+//        if (image_editor) {
+        imageView.save();
+//        }
+
+        System.out.println("saveEdits saveEdits saveEdits saveEditssaveEditssaveEditssaveEditssaveEdits");
+
     }
 
 

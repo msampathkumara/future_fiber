@@ -1,0 +1,1 @@
+flutter build web  --release    & xcopy /s ..\build\web ..\..\smartwind-server\UI /Y

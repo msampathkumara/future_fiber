@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pdfx/pdfx.dart';
-
 // import 'package:native_pdf_view/native_pdf_view.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/Ticket.dart';
@@ -71,7 +70,7 @@ class _TicketPdfViwerState extends State<TicketPdfViwer> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text((widget.ticket.mo ?? widget.ticket.oe ?? "") + " ${widget.ticket.mo != null ? "(${widget.ticket.oe})" : ""}  ", style: TextStyle(color: Colors.white)),
+        title: Text("${widget.ticket.mo ?? widget.ticket.oe ?? ""} ${widget.ticket.mo != null ? "(${widget.ticket.oe})" : ""}  ", style: const TextStyle(color: Colors.white)),
         actions: <Widget>[
           if (!widget.ticket.isStandard)
             PopupMenuButton<ActionMenuItems>(
