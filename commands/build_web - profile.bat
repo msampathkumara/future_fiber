@@ -1,0 +1,1 @@
+ flutter build web --profile --dart-define=Dart2jsOptimization=O0    & xcopy /s ..\build\web ..\..\smartwind-server\UI /Y
