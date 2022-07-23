@@ -22,7 +22,7 @@ class NsUserAdapter extends TypeAdapter<NsUser> {
       ..pword = fields[2] == null ? '' : fields[2] as String
       ..name = fields[3] == null ? '' : fields[3] as String
       ..utype = fields[4] == null ? '' : fields[4] as String
-      ..epf = fields[5] == null ? '' : fields[5] as String
+      ..epf = fields[5] as int?
       ..etype = fields[6] == null ? 0 : fields[6] as int
       ..sectionId = fields[7] == null ? 0 : fields[7] as int
       ..loft = fields[8] == null ? 0 : fields[8] as int
@@ -113,7 +113,7 @@ NsUser _$NsUserFromJson(Map<String, dynamic> json) => NsUser()
   ..pword = json['pword'] as String? ?? ''
   ..name = json['name'] as String
   ..utype = json['utype'] as String? ?? ''
-  ..epf = json['epf'] as String? ?? ''
+  ..epf = NsUser.intFromString(json['epf'])
   ..etype = json['etype'] as int? ?? 0
   ..sectionId = json['sectionId'] as int? ?? 0
   ..loft = json['loft'] as int? ?? 0

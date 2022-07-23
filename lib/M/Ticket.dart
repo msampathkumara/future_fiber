@@ -22,11 +22,10 @@ import 'package:smartwind/V/Home/Tickets/CS/CS.dart';
 import 'package:smartwind/V/Home/Tickets/ShippingSystem/ShippingSystem.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/Loading.dart';
-import 'package:smartwind/V/Widgets/TicketPdfViwer.dart';
 import 'package:universal_html/html.dart' as html;
 
+import '../V/Widgets/TicketPdfViwer.dart';
 import 'AppUser.dart';
-import 'CrossProduction.dart';
 import 'DataObject.dart';
 import 'LocalFileVersion.dart';
 import 'hive.dart';
@@ -127,10 +126,6 @@ class Ticket extends DataObject {
   @JsonKey(defaultValue: false, includeIfNull: true, fromJson: boolFromInt, toJson: boolToInt)
   bool isCrossPro = false;
 
-  @HiveField(22, defaultValue: null)
-  @JsonKey(defaultValue: null, includeIfNull: true)
-  CrossProduction? crossPro;
-
   @HiveField(23, defaultValue: [])
   @JsonKey(defaultValue: [], includeIfNull: true, fromJson: stringToList)
   List openSections = [];
@@ -160,7 +155,7 @@ class Ticket extends DataObject {
   String? completedOn;
 
   @HiveField(31, defaultValue: false)
-  @JsonKey(defaultValue: false, includeIfNull: true)
+  @JsonKey(defaultValue: false, includeIfNull: true, fromJson: boolFromO, toJson: boolToInt)
   bool isStarted = false;
 
   @JsonKey(ignore: true)
@@ -168,6 +163,7 @@ class Ticket extends DataObject {
 
   String get atSection {
     var x = HiveBox.sectionsBox.get(nowAt)?.sectionTitle;
+
     return x ?? '';
   }
 
@@ -200,25 +196,22 @@ class Ticket extends DataObject {
   Future<File?> _getFile(context, {onReceiveProgress}) async {
     final key = GlobalKey<LoadingState>();
 
-    var loadingWidget = Loading(
-      key: key,
-      loadingText: "Downloading Ticket",
-    );
+    var loadingWidget = Loading(key: key, loadingText: "Downloading Ticket");
     loadingWidget.show(context);
 
     var dio = Dio();
-    var filePath;
+    String filePath;
     if (kIsWeb) {
       filePath = isStandard ? '/st$id.pdf' : '/$id.pdf';
     } else {
       var ed = await getExternalStorageDirectory();
-      filePath = isStandard ? ed!.path + '/st$id.pdf' : ed!.path + '/$id.pdf';
+      filePath = isStandard ? '${ed!.path}/st$id.pdf' : '${ed!.path}/$id.pdf';
     }
 
     final user = FirebaseAuth.instance.currentUser;
     final idToken = await user!.getIdToken();
     dio.options.headers['content-Type'] = 'application/json';
-    dio.options.headers["authorization"] = '$idToken';
+    dio.options.headers["authorization"] = idToken;
     String queryString = Uri(queryParameters: {"id": id.toString()}).query;
 
     Response response;
@@ -226,7 +219,7 @@ class Ticket extends DataObject {
       var path = isStandard ? "tickets/standard/getPdf?" : 'tickets/getTicketFile?';
 
       await dio.download(Server.getServerApiPath(path + queryString), filePath, deleteOnError: true, onReceiveProgress: (received, total) {
-        // print("${received}/${total}");
+        // debugPrint("${received}/${total}");
         int percentage = ((received / total) * 100).floor();
         key.currentState?.onProgressChange(percentage);
         if (onReceiveProgress != null) {
@@ -234,15 +227,15 @@ class Ticket extends DataObject {
         }
       }).then((value) async {
         response = value;
-        print('+++++++++++++++++++++++++++++++++++++++++++++');
-        print(response.headers["fileVersion"]);
+        debugPrint('+++++++++++++++++++++++++++++++++++++++++++++');
+        debugPrint(response.headers["fileVersion"].toString());
         String fileVersion = response.headers["fileVersion"]![0];
         await setLocalFileVersion(int.parse(fileVersion), getTicketType());
       });
     } on DioError catch (e) {
       if (e.response != null) {
-        print('"******************************************** response');
-        print(e.response);
+        debugPrint('"******************************************** response');
+        debugPrint(e.response.toString());
         if (e.response!.statusCode == 404) {
           loadingWidget.close(context);
           var errorView = ErrorMessageView(
@@ -253,11 +246,11 @@ class Ticket extends DataObject {
           return Future.value(null);
         }
 
-        print(e.response!.statusCode);
-        print(e.response!.data);
-        print(e.response!.headers);
+        debugPrint(e.response!.statusCode.toString());
+        debugPrint(e.response!.data);
+        debugPrint(e.response!.headers.toString());
       } else {
-        print(e.message);
+        debugPrint(e.message);
       }
     }
 
@@ -297,17 +290,17 @@ class Ticket extends DataObject {
       try {
         rs = await dio.get<List<int>>(Server.getServerApiPath(path + queryString), options: Options(responseType: ResponseType.bytes));
       } catch (e) {
+        loadingWidget.close(context);
         if (e is DioError) {
-          print("------------------------------------------------------------------------${e.response?.statusCode}");
-          // print(e);
+          debugPrint("------------------------------------------------------------------------${e.response?.statusCode}");
+          // debugPrint(e);
           if (e.response?.statusCode == 404) {
-            print('404');
+            debugPrint('404');
             ErrorMessageView(errorMessage: 'Ticket Not Found', icon: Icons.broken_image_rounded).show(context);
           } else {
-            print(e.message);
+            debugPrint(e.message);
           }
         } else {}
-        loadingWidget.close(context);
       }
 
       if (rs != null) {
@@ -324,34 +317,16 @@ class Ticket extends DataObject {
     File file = await getLocalFile();
     var isNew = await isFileNew();
 
-    print('file ${file.existsSync()}');
+    debugPrint('file ${file.existsSync()}');
 
     if (isNew && file.existsSync()) {
-      print("File exists ");
-      await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => TicketPdfViwer(this, onClickEdit: () async {
-                    Navigator.of(context).pop();
-                    var x = await openEditor();
-                    if (x == true) {
-                      await HiveBox.getDataFromServer();
-                    }
-                  })));
+      debugPrint("File exists ");
+      view(context);
     } else {
-      print("File not exists or old ");
+      debugPrint("File not exists or old ");
       _getFile(context).then((file) async {
         if (file != null) {
-          await Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => TicketPdfViwer(this, onClickEdit: () async {
-                        Navigator.of(context).pop();
-                        var x = await openEditor();
-                        if (x == true) {
-                          await HiveBox.getDataFromServer();
-                        }
-                      })));
+          view(context);
         }
       });
     }
@@ -377,8 +352,8 @@ class Ticket extends DataObject {
     t["loading"] = "";
     t["production"] = "";
     t.keys.where((k) => (t[k] ?? "").toString().isEmpty).toList().forEach(t.remove);
-    print("____________________________________________________________________________________________________________________________*****");
-    print(t);
+    debugPrint("____________________________________________________________________________________________________________________________*****");
+    debugPrint(t.toString());
     var serverUrl = Server.getServerApiPath(isStandard ? "tickets/standard/uploadEdits" : "tickets/uploadEdits");
     return await platform.invokeMethod('editPdf', {'path': ticketFile!.path, 'fileID': id, 'ticket': t.toString(), "serverUrl": serverUrl});
   }
@@ -390,9 +365,9 @@ class Ticket extends DataObject {
     var f = HiveBox.localFileVersionsBox.values.where((element) => element.type == getTicketType().getValue() && element.ticketId == id);
     if (f.isNotEmpty) {
       LocalFileVersion fileVersion = f.first;
-      print("---------------------------fileVersion.toJson()");
-      print(fileVersion.toJson());
-      print(ticket?.fileVersion);
+      debugPrint("---------------------------fileVersion.toJson()");
+      debugPrint(fileVersion.toJson().toString());
+      debugPrint(ticket?.fileVersion.toString());
 
       if (ticket != null) {
         if (ticket.fileVersion > fileVersion.version) {
@@ -414,8 +389,8 @@ class Ticket extends DataObject {
     var fv = HiveBox.localFileVersionsBox.values
         .singleWhere((value) => (value.type == ticketType.getValue() && value.ticketId == id), orElse: () => LocalFileVersion(id, newFileVersion, ticketType.getValue()));
 
-    print("-------------------------------------------------00000");
-    print(fv.toJson());
+    debugPrint("-------------------------------------------------00000");
+    debugPrint(fv.toJson().toString());
 
     fv.version = newFileVersion;
     fileVersion = newFileVersion;
@@ -427,21 +402,21 @@ class Ticket extends DataObject {
     }
   }
 
-  Future<List> getFlagList(String flagType) async {
-    print("tickets/flags/getList");
+  Future<List<TicketFlag>> getFlagList(String flagType) async {
+    debugPrint("tickets/flags/getList");
     return OnlineDB.apiGet("tickets/flags/getList", {"ticket": id.toString(), "type": flagType}).then((response) {
-      print(response.data);
-      print("-----------------vvvvvvvvvvv-----------------------");
+      debugPrint(response.data);
+      debugPrint("-----------------vvvvvvvvvvv-----------------------");
       Map<String, dynamic> res = response.data;
       List l = ((res["flags"] ?? []));
 
       List<TicketFlag> list = List<TicketFlag>.from(l.map((model) {
         return TicketFlag.fromJson(model);
       }));
-      print(list.length);
+      debugPrint(list.length.toString());
       return list;
     }).catchError((onError) {
-      print(onError);
+      debugPrint(onError);
     });
   }
 
@@ -452,10 +427,10 @@ class Ticket extends DataObject {
     }
     File? file = await getFile(context);
     if (file != null && file.existsSync()) {
-      print('--------------------- ${file.path}');
+      debugPrint('--------------------- ${file.path}');
 
       File? file1 = await file.copy("${file.parent.path}/${(mo ?? oe ?? id)}.pdf");
-      print('copied');
+      debugPrint('copied');
       await FlutterShare.shareFile(
         chooserTitle: "Share Ticket",
         title: mo ?? oe ?? "$id.pdf",
@@ -478,7 +453,10 @@ class Ticket extends DataObject {
   }
 
   Future openInCS(BuildContext context) async {
-    await getFile(context);
+    var file = await getFile(context);
+    if (file == null) {
+      return false;
+    }
     return Navigator.push(context, MaterialPageRoute(builder: (context) => CS(this)));
   }
 
@@ -500,18 +478,51 @@ class Ticket extends DataObject {
 
   static int boolToInt(bool done) => done ? 1 : 0;
 
+  static bool boolFromO(done) => (done == 1 || done == true);
+
   static Ticket? fromId(id) {
     return HiveBox.ticketBox.get(id, defaultValue: null);
   }
 
   Future start(context) {
     return OnlineDB.apiPost("tickets/start", {"ticket": id.toString()}).then((response) {
-      print(response.data);
-      print("-----------------vvvvvvvvxxxxxxxxxxvvv-----------------------");
+      if (kDebugMode) {
+        debugPrint(response.data);
+        debugPrint("-----------------vvvvvvvvxxxxxxxxxxvvv-----------------------");
+      }
 
       return true;
     }).catchError((onError) {
-      print(onError);
+      debugPrint(onError);
     });
+  }
+
+  Future view(context) async {
+    TicketPdfViewer ticketPdfViwer;
+    GlobalKey<TicketPdfViewerState> myKey = GlobalKey();
+    ticketPdfViwer = TicketPdfViewer(this, onClickEdit: () async {
+      var x = await openEditor();
+      if (x == true) {
+        await showDialog(
+            context: context,
+            builder: (_) {
+              HiveBox.getDataFromServer(afterLoad: () {
+                Navigator.of(context).pop();
+              });
+              return AlertDialog(
+                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                  content: Builder(builder: (context) {
+                    return const SizedBox(height: 50, width: 50, child: Center(child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator())));
+                  }));
+            });
+
+        File file = await getLocalFile();
+        await file.delete(recursive: true);
+        await getFile(context);
+        myKey.currentState?.close();
+        view(context);
+      }
+    }, key: myKey);
+    return await ticketPdfViwer.show(context);
   }
 }

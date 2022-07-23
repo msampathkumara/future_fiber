@@ -16,10 +16,10 @@ class _WebPrintTableState extends State<DeviceDataTable> {
   bool _sortAscending = true;
   int? _sortColumnIndex;
   DeviceSourceAsync? _dessertsDataSource;
-  PaginatorController _controller = PaginatorController();
+  final PaginatorController _controller = PaginatorController();
 
-  bool _dataSourceLoading = false;
-  int _initialRow = 0;
+  final bool _dataSourceLoading = false;
+  final int _initialRow = 0;
 
   @override
   void didChangeDependencies() {
@@ -107,8 +107,8 @@ class _WebPrintTableState extends State<DeviceDataTable> {
       AsyncPaginatedDataTable2(
           scrollController: _scrollController,
           showFirstLastButtons: true,
-          smRatio: 0.2,
-          lmRatio: 3,
+          smRatio: 0.5,
+          lmRatio: 2,
           horizontalMargin: 20,
           checkboxHorizontalMargin: 12,
           columnSpacing: 16,
@@ -117,7 +117,7 @@ class _WebPrintTableState extends State<DeviceDataTable> {
           availableRowsPerPage: const [20, 50, 100, 200],
           wrapInCard: false,
           pageSyncApproach: PageSyncApproach.goToFirst,
-          minWidth: 800,
+          minWidth: 700,
           fit: FlexFit.tight,
           border: TableBorder(
               top: const BorderSide(color: Colors.transparent),
@@ -136,14 +136,14 @@ class _WebPrintTableState extends State<DeviceDataTable> {
           },
           initialFirstRowIndex: _initialRow,
           onPageChanged: (rowIndex) {
-            print("${rowIndex}${_rowsPerPage}xxxxxxxx =${rowIndex / _rowsPerPage}");
+            print("$rowIndex${_rowsPerPage}xxxxxxxx =${rowIndex / _rowsPerPage}");
           },
           sortColumnIndex: _sortColumnIndex,
           sortAscending: _sortAscending,
           controller: _controller,
           hidePaginator: false,
           columns: _columns,
-          empty: Center(child: Container(padding: const EdgeInsets.all(20), color: Colors.grey[200], child: const Text('No data'))),
+          empty: Center(child: Container(padding: const EdgeInsets.all(20), child: const NoResultFoundMsg())),
           loading: _Loading(),
           errorBuilder: (e) => _ErrorAndRetry(e.toString(), () => _dessertsDataSource!.refreshDatasource()),
           source: _dessertsDataSource!),
@@ -221,7 +221,7 @@ class DeviceSourceAsync extends AsyncDataTableSource {
   }
 
   final BuildContext context;
-  bool _empty = false;
+  final bool _empty = false;
   int? _errorCounter;
 
   RangeValues? _caloriesFilter;

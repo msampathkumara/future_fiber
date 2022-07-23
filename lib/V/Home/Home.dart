@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:smartwind/C/FCM.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/C/Server.dart';
@@ -30,14 +31,13 @@ import 'package:smartwind/res.dart';
 import 'About.dart';
 import 'Admin/AdminCpanel.dart';
 import 'BlueBook/BlueBook.dart';
-import 'J109.dart';
 import 'Tickets/FinishedGoods/FinishedGoods.dart';
 import 'Tickets/QC/QCList.dart';
 import 'Tickets/StandardFiles/StandardFiles.dart';
 import 'UserManager/UserManager.dart';
 
 class Home extends StatefulWidget {
-  const Home();
+  const Home({Key? key}) : super(key: key);
 
   @override
   _HomeState createState() {
@@ -45,14 +45,14 @@ class Home extends StatefulWidget {
   }
 }
 
-enum MenuItems { logout, dbReload, changeSection, cpanel, DeleteDownloadedFiles }
+enum MenuItems { logout, dbReload, changeSection, cpanel, deleteDownloadedFiles }
 
 class _HomeState extends State<Home> {
   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   NsUser? nsUser;
 
-  var appVersion;
+  String? appVersion;
 
   late Function onUserUpdate;
 
@@ -83,7 +83,7 @@ class _HomeState extends State<Home> {
     AppUser.onUpdate(onUserUpdate);
   }
 
-  var idToken;
+  String? idToken;
 
   @override
   void dispose() {
@@ -151,15 +151,8 @@ class _HomeState extends State<Home> {
                                 closedBuilder: (BuildContext _, VoidCallback openContainer) {
                                   return _menuButton(openContainer, Icon(Icons.precision_manufacturing_outlined, size: iconSize), "Production Pool");
                                 },
-                                openWidget: ProductionPool(),
+                                openWidget: const ProductionPool(),
                                 onClosed: _showMarkedAsDoneSnackBar),
-                            // if (AppUser.havePermissionFor(Permissions.CPR))
-                            //   _OpenContainerWrapper(
-                            //       closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                            //         return _menuButton(openContainer, Icon(Icons.local_mall_rounded, color: Colors.amber, size: iconSize), "CPR");
-                            //       },
-                            //       openWidget: CPRList(),
-                            //       onClosed: _showMarkedAsDoneSnackBar),
                             _OpenContainerWrapper(
                                 closedBuilder: (BuildContext _, VoidCallback openContainer) {
                                   return _menuButton(openContainer, Icon(Icons.inventory_2_rounded, color: Colors.deepOrange, size: iconSize), "Finished Goods");
@@ -170,7 +163,7 @@ class _HomeState extends State<Home> {
                               closedBuilder: (BuildContext _, VoidCallback openContainer) {
                                 return _menuButton(openContainer, Icon(Icons.collections_bookmark_outlined, size: iconSize), "Standard Library");
                               },
-                              openWidget: StandardFiles(),
+                              openWidget: const StandardFiles(),
                               onClosed: _showMarkedAsDoneSnackBar,
                             ),
                             if (AppUser.havePermissionFor(Permissions.USER_MANAGER))
@@ -178,7 +171,7 @@ class _HomeState extends State<Home> {
                                   closedBuilder: (BuildContext _, VoidCallback openContainer) {
                                     return _menuButton(openContainer, Icon(Icons.people_outline_outlined, color: Colors.lightGreen, size: iconSize), "User Manager");
                                   },
-                                  openWidget: UserManager(),
+                                  openWidget: const UserManager(),
                                   onClosed: _showMarkedAsDoneSnackBar),
                             if (AppUser.havePermissionFor(Permissions.PRINTING))
                               _OpenContainerWrapper(
@@ -194,47 +187,24 @@ class _HomeState extends State<Home> {
                                   },
                                   openWidget: const QCList(),
                                   onClosed: _showMarkedAsDoneSnackBar),
-                            if (AppUser.havePermissionFor(Permissions.J109))
-                              _OpenContainerWrapper(
-                                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                    return _menuButton(openContainer, Icon(Icons.subject_rounded, size: iconSize, color: Colors.pinkAccent), "J109");
-                                  },
-                                  openWidget: J109(),
-                                  onClosed: _showMarkedAsDoneSnackBar),
-                            if (AppUser.havePermissionFor(Permissions.BLUE_BOOK))
-                              _OpenContainerWrapper(
-                                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                    return _menuButton(openContainer, Icon(Icons.menu_book_rounded, size: iconSize, color: Colors.blueAccent), "Blue Book");
-                                  },
-                                  openWidget: BlueBook(),
-                                  onClosed: _showMarkedAsDoneSnackBar),
-                            if (AppUser.havePermissionFor(Permissions.HR))
-                              _OpenContainerWrapper(
-                                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                    return _menuButton(openContainer, Icon(Icons.groups_rounded, size: iconSize, color: Colors.orange), "HR System");
-                                  },
-                                  openWidget: HESystem(),
-                                  onClosed: _showMarkedAsDoneSnackBar),
+                            _OpenContainerWrapper(
+                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                  return _menuButton(openContainer, Icon(Icons.menu_book_rounded, size: iconSize, color: Colors.blueAccent), "Blue Book");
+                                },
+                                openWidget: BlueBook(),
+                                onClosed: _showMarkedAsDoneSnackBar),
+                            _OpenContainerWrapper(
+                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                  return _menuButton(openContainer, Icon(Icons.groups_rounded, size: iconSize, color: Colors.orange), "HR System");
+                                },
+                                openWidget: HESystem(),
+                                onClosed: _showMarkedAsDoneSnackBar),
                             _OpenContainerWrapper(
                                 closedBuilder: (BuildContext _, VoidCallback openContainer) {
                                   return _menuButton(openContainer, Icon(Icons.widgets, size: iconSize, color: Colors.purple), "Material Management");
                                 },
                                 openWidget: const MaterialManagement(),
                                 onClosed: _showMarkedAsDoneSnackBar),
-                            // ElevatedButton(onPressed: () {}, child: const Text("ssssssssssss")),
-                            // ElevatedButton(
-                            //     onPressed: () {
-                            //       HiveBox.getDataFromServer(clean: true);
-                            //       AppUser.refreshUserData();
-                            //     },
-                            //     child: const Text("ssssssssssss")),
-                            // ElevatedButton(
-                            //     onPressed: () {
-                            //       App.tryOtaUpdate((OtaEvent event) {
-                            //         print('OTA status: ${event.status} : ${event.value} \n');
-                            //       });
-                            //     },
-                            //     child: Text("Update Apk"))
                           ],
                         ),
                       ),
@@ -256,10 +226,7 @@ class _HomeState extends State<Home> {
                                   },
                                   closedBuilder: (BuildContext context, void Function() action) {
                                     return Chip(
-                                        avatar: CircleAvatar(
-                                          backgroundColor: Colors.grey.shade800,
-                                          child: Image.asset(Res.north_sails_logox50, width: 50),
-                                        ),
+                                        avatar: CircleAvatar(backgroundColor: Colors.grey.shade800, child: Image.asset(Res.north_sails_logox50, width: 50)),
                                         label: Text('NS Smart Wind $appVersion ${Server.local ? " | Local Server" : " |  Online"}'));
                                   }))))
                 ])));
@@ -270,20 +237,24 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _logout() async {
-    String imeiNo = await DeviceInformation.deviceIMEINumber;
-    await OnlineDB.apiPost("tabs/logout", {"imei": imeiNo}).then((response) async {
-      if (response.data["saved"] == true) {
-        print("----------------------------------------55555555555555555555");
-      } else {
-        ErrorMessageView(errorMessage: response.data).show(context);
-      }
-      print(response.data);
+    PermissionStatus ps = await Permission.phone.request();
+    if (ps.isGranted) {
+      String imeiNo = await DeviceInformation.deviceIMEINumber;
+      await OnlineDB.apiPost("tabs/logout", {"imei": imeiNo}).then((response) async {
+        if (response.data["saved"] == true) {
+          print("----------------------------------------55555555555555555555");
+        } else {
+          ErrorMessageView(errorMessage: response.data).show(context);
+        }
+        print(response.data);
 
-      return 1;
-    }).catchError((onError) {
-      print(onError);
-    });
+        return 1;
+      }).catchError((onError) {
+        print(onError);
+      });
+    }
     FirebaseAuth.instance.signOut();
+    if (!mounted) return;
     await AppUser.logout(context);
     // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Login()), (Route<dynamic> route) => false);
   }
@@ -308,7 +279,7 @@ class _HomeState extends State<Home> {
               (Route<dynamic> route) => false);
         } else if (result == MenuItems.cpanel) {
           Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminCpanel()));
-        } else if (result == MenuItems.DeleteDownloadedFiles) {
+        } else if (result == MenuItems.deleteDownloadedFiles) {
           var ed = await getExternalStorageDirectory();
           if (ed != null) {
             List<FileSystemEntity> files = ed.listSync();
@@ -337,7 +308,7 @@ class _HomeState extends State<Home> {
           child: Text('Reload Database'),
         ),
         const PopupMenuItem<MenuItems>(
-          value: MenuItems.DeleteDownloadedFiles,
+          value: MenuItems.deleteDownloadedFiles,
           child: Text('Delete Downloaded Files'),
         ),
         const PopupMenuItem<MenuItems>(

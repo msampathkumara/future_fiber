@@ -52,7 +52,7 @@ class _QFileViewState extends State<QFileView> {
         body: _pdfLoading
             ? const Center(child: CircularProgressIndicator())
             : _data == null
-                ? Text("No Data")
+                ? const Text("No Data")
                 : PdfViewer.openData(_data, params: const PdfViewerParams()));
   }
 }

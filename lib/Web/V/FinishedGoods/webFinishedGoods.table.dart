@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/Ticket.dart';
 
+import '../../../V/Home/Tickets/ProductionPool/FlagDialog.dart';
 import '../../../V/Home/Tickets/TicketInfo/TicketChatView.dart';
 import '../../../V/Home/Tickets/TicketInfo/TicketInfo.dart';
-import '../../../V/Widgets/FlagDialog.dart';
+import '../../../V/Widgets/NoResultFoundMsg.dart';
 import '../../../ns_icons_icons.dart';
 
 class AsyncPaginatedDataTable2Demo extends StatefulWidget {
@@ -40,22 +41,9 @@ class _AsyncPaginatedDataTable2DemoState extends State<AsyncPaginatedDataTable2D
     super.didChangeDependencies();
   }
 
-  void sort(
-    int columnIndex,
-    bool ascending,
-  ) {
-    var columnName = "mo";
-    switch (columnIndex) {
-      case 1:
-        columnName = "production";
-        break;
-      case 2:
-        columnName = "progress";
-        break;
-      case 3:
-        columnName = "shipDate";
-        break;
-    }
+  void sort(int columnIndex, bool ascending) {
+    String columnName = ["mo", "production", "progress", "shipDate", '', 'completedOn'].elementAt(columnIndex);
+
     _dessertsDataSource!.sort(columnName, ascending);
     setState(() {
       _sortColumnIndex = columnIndex;
@@ -85,7 +73,12 @@ class _AsyncPaginatedDataTable2DemoState extends State<AsyncPaginatedDataTable2D
           numeric: true,
           onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       const DataColumn2(size: ColumnSize.L, label: Text('Product Notifications', style: TextStyle(fontWeight: FontWeight.bold)), numeric: true),
-      const DataColumn2(numeric: true, size: ColumnSize.M, tooltip: "Finished on", label: Text('Finished On', style: TextStyle(fontWeight: FontWeight.bold)))
+      DataColumn2(
+          numeric: true,
+          size: ColumnSize.M,
+          tooltip: "Finished on",
+          onSort: (columnIndex, ascending) => sort(columnIndex, ascending),
+          label: const Text('Finished On', style: TextStyle(fontWeight: FontWeight.bold)))
     ];
   }
 
@@ -136,7 +129,7 @@ class _AsyncPaginatedDataTable2DemoState extends State<AsyncPaginatedDataTable2D
           controller: _controller,
           hidePaginator: false,
           columns: _columns,
-          empty: Center(child: Container(padding: const EdgeInsets.all(20), color: Colors.grey[200], child: const Text('No data'))),
+          empty: Center(child: Container(padding: const EdgeInsets.all(20), child: const NoResultFoundMsg())),
           loading: _Loading(),
           errorBuilder: (e) => _ErrorAndRetry(e.toString(), () => _dessertsDataSource!.refreshDatasource()),
           source: _dessertsDataSource!),
@@ -324,14 +317,16 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                     IconButton(
                       icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.stop, color: Colors.black)),
                       onPressed: () {
-                        FlagDialog().showFlagView(context, ticket, TicketFlagTypes.HOLD);
+                        // FlagDialog().showFlagView(context, ticket, TicketFlagTypes.HOLD);
+                        FlagDialogNew(ticket, TicketFlagTypes.HOLD, editable: false).show(context);
                       },
                     ),
                   if (ticket.isGr == 1)
                     IconButton(
                       icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)),
                       onPressed: () {
-                        FlagDialog().showFlagView(context, ticket, TicketFlagTypes.GR);
+                        // FlagDialog().showFlagView(context, ticket, TicketFlagTypes.GR);
+                        FlagDialogNew(ticket, TicketFlagTypes.GR, editable: false).show(context);
                       },
                     ),
                   if (ticket.isSk == 1)
@@ -347,13 +342,15 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                     IconButton(
                         icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent)),
                         onPressed: () {
-                          FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RUSH);
+                          // FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RUSH);
+                          FlagDialogNew(ticket, TicketFlagTypes.RUSH, editable: false).show(context);
                         }),
                   if (ticket.isRed == 1)
                     IconButton(
                       icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)),
                       onPressed: () {
-                        FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RED);
+                        // FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RED);
+                        FlagDialogNew(ticket, TicketFlagTypes.RED, editable: false).show(context);
                       },
                     )
                 ],

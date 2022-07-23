@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/Web/V/MaterialManagement/materialManagementHomePage.dart';
 import 'package:smartwind/main.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import '../C/App.dart';
 import '../M/AppUser.dart';
@@ -55,68 +54,6 @@ class webApp extends StatelessWidget {
       },
     );
   }
-
-  static late IO.Socket socket;
-
-// static void connectSocket() {
-//   socket = IO.io(
-//       Server.getServerAddress(),
-//       OptionBuilder()
-//           .setExtraHeaders({'foo': 'bar'})
-//           .enableAutoConnect() // optional
-//           .build());
-//
-//   socket.onConnect((data) {
-//     print('connect');
-//     var userid = socket.id!;
-//     print("id: " + userid);
-//
-//     if (FirebaseAuth.instance.currentUser != null) {
-//       HiveBox.getDataFromServer();
-//     }
-//   });
-//
-//   socket.onDisconnect((data) {
-//     print('disconnect');
-//   });
-//
-//   socket.on('connect_error', (data) {
-//     print("connect_error " + data.toString());
-//   });
-//
-//   socket.connect();
-//
-//   FirebaseAuth.instance.authStateChanges().listen((User? user) async {
-//     if (user == null) {
-//       print('User is currently signed out!');
-//       socket.off("db_update");
-//     } else {
-//       print('User is signed in!');
-//
-//       socket.off("db_update");
-//       socket.off("db_clean_update");
-//       socket.off("userUpdates");
-//       socket.off("db_clean_update");
-//
-//       socket.on('db_update', (data) {
-//         print("db_update:message: " + data.toString());
-//         HiveBox.getDataFromServer();
-//       });
-//       socket.on('file_update', (data) {
-//         print("message: " + data.toString());
-//         HiveBox.getDataFromServer();
-//       });
-//       socket.on('userUpdates', (data) {
-//         print("socket : userUpdates: " + data.toString());
-//         HiveBox.getDataFromServer();
-//       });
-//       socket.on('db_clean_update', (data) {
-//         print("message: " + data.toString());
-//         HiveBox.getDataFromServer(clean: true);
-//       });
-//     }
-//   });
-// }
 }
 
 class MainPage extends StatefulWidget {
@@ -131,19 +68,18 @@ class _MainPageState extends State<MainPage> {
 
   @override
   void initState() {
-    // FirebaseAuth.instance.authStateChanges().listen((User? user) {
-    //   loading = false;
-    //   if (user == null) {
-    //     print('User is currently signed out!__');
-    //     Navigator.pushNamed(context, '/login');
-    //   } else {
-    //     print('User is signed in!');
-    //     // Navigator.pushNamed(context, '/');
-    //   }
-    //   setState(() {});
-    // });
-
     super.initState();
+
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      loading = false;
+      if (user == null) {
+        print('User is currently signed out!__${FirebaseAuth.instance.currentUser}');
+        Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+      } else {
+        print('User is signed in!');
+        Navigator.pushNamed(context, '/');
+      }
+    });
   }
 
   @override
@@ -151,11 +87,5 @@ class _MainPageState extends State<MainPage> {
     return ((FirebaseAuth.instance.currentUser != null && App.currentUser != null))
         ? const Center(child: CircularProgressIndicator())
         : (isMaterialManagement ? const MaterialManagementHomePage() : const WebHomePage());
-
-    // return loading
-    //     ? Center(child: CircularProgressIndicator())
-    //     : (FirebaseAuth.instance.currentUser != null && App.currentUser != null)
-    //         ? WebHomePage()
-    //         : Login();
   }
 }

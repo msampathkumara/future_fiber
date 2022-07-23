@@ -11,6 +11,7 @@ import 'package:smartwind/ns_icons_icons.dart';
 
 import '../../../../M/AppUser.dart';
 import '../../../../Web/V/QC/webTicketQView.dart';
+import '../../../Widgets/NoResultFoundMsg.dart';
 import '../TicketInfo/TicketChatView.dart';
 
 class FinishedGoods extends StatefulWidget {
@@ -94,19 +95,22 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
           color: themeColor,
           child: Column(
             children: [
-              Wrap(children: [
-                flagIcon(Filters.isCrossPro, Icons.merge_type_rounded),
-                flagIcon(Filters.isError, Icons.warning_rounded),
-                flagIcon(Filters.inPrint, Icons.print_rounded),
-                flagIcon(Filters.isRush, Icons.offline_bolt_rounded),
-                flagIcon(Filters.isRed, Icons.flag_rounded),
-                flagIcon(Filters.isHold, NsIcons.stop),
-                flagIcon(Filters.isSk, NsIcons.sk),
-                flagIcon(Filters.isGr, NsIcons.gr),
-                flagIcon(Filters.isSort, NsIcons.short),
-                flagIcon(Filters.isQc, NsIcons.short, text: "QC"),
-                flagIcon(Filters.isQa, NsIcons.short, text: "QA")
-              ]),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Wrap(direction: Axis.horizontal, children: [
+                  // flagIcon(Filters.isCrossPro, Icons.merge_type_rounded),
+                  flagIcon(Filters.isError, Icons.warning_rounded),
+                  flagIcon(Filters.inPrint, Icons.print_rounded),
+                  flagIcon(Filters.isRush, Icons.offline_bolt_rounded),
+                  flagIcon(Filters.isRed, Icons.flag_rounded),
+                  flagIcon(Filters.isHold, NsIcons.stop),
+                  flagIcon(Filters.isSk, NsIcons.sk),
+                  flagIcon(Filters.isGr, NsIcons.gr),
+                  flagIcon(Filters.isSort, NsIcons.short),
+                  flagIcon(Filters.isQc, NsIcons.short, text: "QC"),
+                  flagIcon(Filters.isQa, NsIcons.short, text: "QA")
+                ]),
+              ),
               Expanded(child: getBody()),
             ],
           ),
@@ -235,7 +239,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
           // elevation: (!_showFilters && _showFiltersEnd) ? 4 : 0,
           elevation: 4,
           actions: const [],
-          title: Wrap(spacing: 5, children: factoryChipsList),
+          title: SingleChildScrollView(scrollDirection: Axis.horizontal, child: Wrap(spacing: 5, children: factoryChipsList)),
         ),
         body: _getTicketsList());
   }
@@ -252,7 +256,8 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
               return _loadData(0);
             },
             child: (_ticketList.isEmpty && (!requested))
-                ? Center(child: Text(searchText.isEmpty ? "No Tickets Found" : "⛔ Work Ticket not found.\n Please contact  Ticket Checking department", textScaleFactor: 1.5))
+                // ? Center(child: Text(searchText.isEmpty ? "No Tickets Found" : "⛔ Work Ticket not found.\n Please contact  Ticket Checking department", textScaleFactor: 1.5))
+                ? Center(child: Container(padding: const EdgeInsets.all(20), child: const NoResultFoundMsg()))
                 : Padding(
                     padding: const EdgeInsets.only(top: 16),
                     child: ListView.separated(
@@ -310,7 +315,6 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                             ticketInfo.show(context);
                           },
                           onDoubleTap: () async {
-                            print(ticket.getLocalFileVersion());
                             ticket.open(context);
                           },
                           child: Ink(
@@ -325,26 +329,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                               title: Text((ticket.mo ?? "").trim().isEmpty ? (ticket.oe ?? "") : ticket.mo ?? "", style: const TextStyle(fontWeight: FontWeight.bold)),
                               subtitle: Wrap(
                                 direction: Axis.vertical,
-                                children: [
-                                  if ((ticket.mo ?? "").trim().isNotEmpty) Text((ticket.oe ?? "")),
-                                  if (ticket.isCrossPro)
-                                    Material(
-                                        borderRadius: BorderRadius.circular(10),
-                                        color: Colors.deepOrange,
-                                        child: Padding(
-                                            padding: const EdgeInsets.all(2.0),
-                                            child: Text(('${ticket.crossPro?.fromSection?.factory} > ${ticket.crossPro?.toSection?.factory}'),
-                                                style: const TextStyle(fontSize: 12, color: Colors.white)))),
-
-                                  // Chip(
-                                  //     avatar: const CircleAvatar(
-                                  //       child: Icon(
-                                  //         Icons.merge_type_outlined,
-                                  //       ),
-                                  //     ),
-                                  //     label: Text(('${ticket.crossPro?.fromSection?.factory} > ${ticket.crossPro?.toSection?.factory}'))),
-                                  Text(ticket.getUpdateDateTime()),
-                                ],
+                                children: [if ((ticket.mo ?? "").trim().isNotEmpty) Text((ticket.oe ?? "")), Text(ticket.getUpdateDateTime())],
                               ),
                               // subtitle: Text(ticket.fileVersion.toString()),
                               trailing: Wrap(
@@ -531,7 +516,11 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
         _ticketList = [];
       }
 
-      _ticketList.addAll(Ticket.fromJsonArray(tickets));
+      try {
+        _ticketList.addAll(Ticket.fromJsonArray(tickets));
+      } catch (e) {
+        print(e);
+      }
 
       final ids = _ticketList.map((e) => e.id).toSet();
       _ticketList.retainWhere((x) => ids.remove(x.id));
@@ -550,6 +539,8 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
         requested = false;
       });
     }).catchError((err) {
+      print("--------------------------------------------err");
+      print(err);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(err.toString()),
           action: SnackBarAction(

@@ -4,14 +4,14 @@ import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/Web/V/MaterialManagement/CPR/TicketSortMaterials.dart';
 import 'package:smartwind/Web/V/Print/ticket_print_list.dart';
-import 'package:smartwind/Web/V/ProductionPool/CrossProductionChangeList.dart';
 
 import '../../../M/Enums.dart';
 import '../../../M/hive.dart';
+import '../../../V/Home/Tickets/ProductionPool/FlagDialog.dart';
 import '../../../V/Home/Tickets/ProductionPool/TicketListOptions.dart';
 import '../../../V/Home/Tickets/TicketInfo/TicketChatView.dart';
 import '../../../V/Home/Tickets/TicketInfo/TicketInfo.dart';
-import '../../../V/Widgets/FlagDialog.dart';
+import '../../../V/Widgets/NoResultFoundMsg.dart';
 import '../../../ns_icons_icons.dart';
 import '../QC/webTicketQView.dart';
 
@@ -27,7 +27,7 @@ class PaginatedDataTable2Demo extends StatefulWidget {
 class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
   int _rowsPerPage = 20;
   bool _sortAscending = true;
-  int? _sortColumnIndex;
+  int _sortColumnIndex = 3;
   late DessertDataSource _dessertsDataSource;
   bool _initialized = false;
   PaginatorController? _controller;
@@ -83,7 +83,7 @@ class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
           label: const Text('Production', style: TextStyle(fontWeight: FontWeight.bold)),
           onSort: (columnIndex, ascending) => sort<String>((d) => d.production ?? "", columnIndex, ascending)),
       DataColumn2(
-          size: ColumnSize.S,
+          size: ColumnSize.M,
           label: const Text('Progress', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
           onSort: (columnIndex, ascending) => sort<num>((d) => d.progress, columnIndex, ascending)),
@@ -99,10 +99,11 @@ class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(alignment: Alignment.bottomCenter, children: [
+    GlobalKey menuKey = GlobalKey();
+    return Stack(key: menuKey, alignment: Alignment.bottomCenter, children: [
       PaginatedDataTable2(
           scrollController: _scrollController,
-          smRatio: 0.4,
+          smRatio: 0.8,
           lmRatio: 3,
           horizontalMargin: 20,
           checkboxHorizontalMargin: 12,
@@ -135,7 +136,7 @@ class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
           hidePaginator: false,
           columns: _columns,
           availableRowsPerPage: const [20, 50, 100],
-          empty: Center(child: Container(padding: const EdgeInsets.all(20), color: Colors.grey[200], child: const Text('No data'))),
+          empty: Center(child: Container(padding: const EdgeInsets.all(20), child: const NoResultFoundMsg())),
           source: _dessertsDataSource)
       // Positioned(bottom: 16, child: CustomPager(_controller!))
     ]);
@@ -147,10 +148,12 @@ class DessertDataSource extends DataTableSource {
 
   var searchString;
 
+  var sts = const TextStyle(color: Colors.redAccent, fontSize: 12);
+
   DessertDataSource(this.context, this.filter) {
     tickets = _tickets;
     print("ddddddddd ${tickets.length}");
-    sort((d) => d.progress, false);
+    sort((d) => d.shipDate, false);
   }
 
   final BuildContext context;
@@ -158,7 +161,7 @@ class DessertDataSource extends DataTableSource {
   late bool hasRowTaps = true;
   late bool hasRowHeightOverrides;
 
-  Comparable Function(Ticket d) sortField = ((d) => (d.progress));
+  Comparable Function(Ticket d) sortField = ((d) => (d.shipDate));
   var _ascending = true;
 
   void sort<T>(Comparable<T> Function(Ticket d) getField, bool ascending) {
@@ -209,7 +212,15 @@ class DessertDataSource extends DataTableSource {
           children: [Text(ticket.production ?? '-'), Text(ticket.atSection, style: const TextStyle(color: Colors.red, fontSize: 12))],
         )),
         DataCell(Text("${ticket.progress}%")),
-        DataCell(Text(ticket.shipDate.toString())),
+        DataCell(Wrap(
+          direction: Axis.vertical,
+          children: [
+            if (ticket.deliveryDate.toString().isNotEmpty)
+              Wrap(children: [const Icon(Icons.local_shipping_rounded, size: 12, color: Colors.grey), const SizedBox(width: 16), Text(ticket.deliveryDate.toString())]),
+            if (ticket.shipDate.toString().isNotEmpty)
+              Wrap(children: [const Icon(Icons.directions_boat_rounded, size: 12, color: Colors.grey), const SizedBox(width: 16), Text(ticket.shipDate.toString(), style: sts)]),
+          ],
+        )),
         DataCell(Row(
           children: [
             IconButton(
@@ -239,24 +250,26 @@ class DessertDataSource extends DataTableSource {
                   TicketPrintList(ticket).show(context);
                 },
               ),
-            if (ticket.isCrossPro)
-              IconButton(
-                  icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.merge_type_rounded, color: Colors.green)),
-                  onPressed: () {
-                    CrossProductionChangeList(ticket).show(context);
-                  }),
+            // if (ticket.isCrossPro)
+            //   IconButton(
+            //       icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.merge_type_rounded, color: Colors.green)),
+            //       onPressed: () {
+            //         CrossProductionChangeList(ticket).show(context);
+            //       }),
             if (ticket.isHold == 1)
               IconButton(
                 icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.stop, color: Colors.black)),
                 onPressed: () {
-                  FlagDialog().showFlagView(context, ticket, TicketFlagTypes.HOLD);
+                  // FlagDialog().showFlagView(context, ticket, TicketFlagTypes.HOLD);
+                  FlagDialogNew(ticket, TicketFlagTypes.HOLD, editable: false).show(context);
                 },
               ),
             if (ticket.isGr == 1)
               IconButton(
                 icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)),
                 onPressed: () {
-                  FlagDialog().showFlagView(context, ticket, TicketFlagTypes.GR);
+                  // FlagDialog().showFlagView(context, ticket, TicketFlagTypes.GR);
+                  FlagDialogNew(ticket, TicketFlagTypes.GR, editable: false).show(context);
                 },
               ),
             if (ticket.isSk == 1)
@@ -276,15 +289,17 @@ class DessertDataSource extends DataTableSource {
               IconButton(
                   icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent)),
                   onPressed: () {
-                    FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RUSH);
+                    // FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RUSH);
+                    FlagDialogNew(ticket, TicketFlagTypes.RUSH, editable: false).show(context);
                   }),
             if (ticket.isRed == 1)
               IconButton(
-                icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)),
-                onPressed: () {
-                  FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RED);
-                },
-              )
+                  icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)),
+                  onPressed: () {
+                    // FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RED);
+
+                    FlagDialogNew(ticket, TicketFlagTypes.RED, editable: false).show(context);
+                  })
           ],
         )),
         DataCell(IconButton(

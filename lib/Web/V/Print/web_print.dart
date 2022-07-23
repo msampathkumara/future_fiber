@@ -6,6 +6,7 @@ import 'package:smartwind/Web/V/Print/ticket_print_list.dart';
 
 import '../../../C/Api.dart';
 import '../../../M/TicketPrint.dart';
+import '../../../V/Widgets/NoResultFoundMsg.dart';
 import '../../../V/Widgets/SearchBar.dart';
 import '../../../V/Widgets/UserImage.dart';
 import '../../Styles/styles.dart';

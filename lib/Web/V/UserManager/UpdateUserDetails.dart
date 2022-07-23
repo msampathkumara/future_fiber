@@ -63,7 +63,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
     super.initState();
     nsUser = widget.nsUser;
     orginalNsUser = widget.nsUser;
-    _epfNumberControll.text = nsUser.epf;
+    _epfNumberControll.text = nsUser.getEpf().toString();
   }
 
   @override
@@ -340,7 +340,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                                             keyboardType: TextInputType.number,
                                             inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                                             onChanged: (t) {
-                                              nsUser.epf = t;
+                                              nsUser.epf = int.parse(t);
                                             },
                                             controller: _epfNumberControll,
                                             enabled: isNew),

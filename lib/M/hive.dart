@@ -17,7 +17,6 @@ import 'package:smartwind/main.dart';
 
 import '../V/Home/UserManager/UserPermissions.dart';
 import 'AppUser.dart';
-import 'CrossProduction.dart';
 import 'HiveClass.dart';
 import 'LocalFileVersion.dart';
 import 'NsUser.dart';
@@ -44,9 +43,8 @@ class HiveBox {
       Hive.init('smartwind_${packageInfo.buildNumber}');
     } else {
       var directory = await getApplicationDocumentsDirectory();
-      print("dddddddddddddddddddddddd = ${directory.path}");
+
       Hive.init('${directory.path}/smartwind_${packageInfo.buildNumber}');
-      print('build number == ${packageInfo.buildNumber}');
     }
 
     Hive.registerAdapter(NsUserAdapter());
@@ -58,7 +56,6 @@ class HiveBox {
     Hive.registerAdapter(LocalFileVersionAdapter());
     Hive.registerAdapter(TicketFlagAdapter());
     Hive.registerAdapter(EmailAdapter());
-    Hive.registerAdapter(CrossProductionAdapter());
 
     usersBox = await Hive.openBox<NsUser>('userBox');
     ticketBox = await Hive.openBox<Ticket>('ticketBox');
@@ -73,8 +70,6 @@ class HiveBox {
       FirebaseAuth.instance.authStateChanges().listen((User? user) async {
         if (user != null) {
           FirebaseDatabase.instance.ref('db_upon').onValue.listen((DatabaseEvent event) {
-            final data = event.snapshot.value;
-            print('db_upon___db_upon');
             HiveBox.getDataFromServer();
           });
         }
@@ -95,7 +90,7 @@ class HiveBox {
     }
   }
 
-  static Future getDataFromServer({clean = false}) async {
+  static Future getDataFromServer({clean = false, afterLoad}) async {
     print('__________________________________________________________________________________________________________getDataFromServer');
     if (clean) {
       // await userConfigBox.clear();
@@ -121,7 +116,9 @@ class HiveBox {
       Map res = response.data;
       print(res["users"]);
       List<NsUser> usersList = NsUser.fromJsonArray(res["users"] ?? []);
+
       List<Ticket> ticketsList = Ticket.fromJsonArray(res["tickets"] ?? []);
+
       List<Section> factorySectionsList = Section.fromJsonArray(res["factorySections"] ?? []);
       List<StandardTicket> standardTicketsList = StandardTicket.fromJsonArray(res["standardTickets"] ?? []);
 
@@ -135,12 +132,12 @@ class HiveBox {
       sectionsBox.putMany(factorySectionsList);
       standardTicketsBox.putMany(standardTicketsList);
 
-      deletedTicketsIdsList.forEach((element) {
+      for (var element in deletedTicketsIdsList) {
         ticketBox.delete(element.id);
-      });
-      completedTicketsIdsList.forEach((element) {
+      }
+      for (var element in completedTicketsIdsList) {
         ticketBox.delete(element.id);
-      });
+      }
 
       if (usersList.where((element) => element.id == AppUser.getUser()?.id).isNotEmpty) {
         AppUser.refreshUserData();
@@ -152,7 +149,7 @@ class HiveBox {
         DB.callChangesCallBack(DataTables.Users);
         updated = true;
       }
-      if (HiveBox.ticketBox.length > 0 || deletedTicketsIdsList.length > 0 || completedTicketsIdsList.length > 0) {
+      if (HiveBox.ticketBox.length > 0 || deletedTicketsIdsList.isNotEmpty || completedTicketsIdsList.isNotEmpty) {
         DB.callChangesCallBack(DataTables.Tickets);
         updated = true;
       }
@@ -180,10 +177,16 @@ class HiveBox {
       print("data loaded from server ");
       print(res["uptimes"]);
       setUptimes(res["uptimes"]);
+      if (afterLoad != null) {
+        afterLoad();
+      }
     }).onError((error, stackTrace) {
       print('__________________________________________________________________________________________________________');
       print(error.toString());
       print(stackTrace.toString());
+      if (afterLoad != null) {
+        afterLoad();
+      }
       // ErrorMessageView(errorMessage: error.toString()).show(context);
     });
   }

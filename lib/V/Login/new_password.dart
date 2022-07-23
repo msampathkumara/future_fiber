@@ -42,6 +42,7 @@ class _NewPasswordState extends State<NewPassword> {
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
                             initialValue: _user.password,
+                            autovalidateMode: AutovalidateMode.always,
                             onChanged: (text) {
                               _user.password = text;
                             },
@@ -64,7 +65,7 @@ class _NewPasswordState extends State<NewPassword> {
                                     },
                                     child: Icon(visiblePassword ? Icons.visibility_rounded : Icons.visibility_off_rounded, size: 16, color: Colors.grey)),
                               ),
-                              helperText: "Password must contain at least one letter or one number and length must more than 6 letters",
+                              helperText: "Password must contain at least one letter , number, special Char and \nlength must more than 6 letters",
                               border: InputBorder.none,
                               hintText: 'password',
                               filled: true,
@@ -83,10 +84,14 @@ class _NewPasswordState extends State<NewPassword> {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter password';
                               }
-                              if (value.length > 6 && RegExp(r'[a-zA-Z]').hasMatch(value) && RegExp(r'[0-9]').hasMatch(value)) {
+                              if (value.length > 6 &&
+                                  RegExp(r'[a-zA-Z]').hasMatch(value) &&
+                                  RegExp(r'[0-9]').hasMatch(value) &&
+                                  (!RegExp(r'[ ]').hasMatch(value)) &&
+                                  value.replaceAll(RegExp(r'[A-Za-z0-9]'), '').isNotEmpty) {
                                 return null;
                               } else {
-                                return "invalid password format";
+                                return "Password must contain at least one letter , number, special Char and length must more than 6 letters";
                               }
                             }),
                       ),

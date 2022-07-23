@@ -107,7 +107,21 @@ class _UserPermissionsState extends State<UserPermissions> {
                 ],
               ),
             ),
-            floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+            // bottomNavigationBar: BottomAppBar(
+            //     shape: const CircularNotchedRectangle(),
+            //     child: Padding(
+            //       padding: const EdgeInsets.all(8.0),
+            //       child: Wrap(
+            //         children: [
+            //           TextButton(
+            //               onPressed: () {
+            //                 const PermissionsProfiles().show(context);
+            //               },
+            //               child: const Text("Select from profiles"))
+            //         ],
+            //       ),
+            //     )),
+            floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
             floatingActionButton: FloatingActionButton(
               onPressed: () {
                 save();
@@ -141,5 +155,17 @@ class _UserPermissionsState extends State<UserPermissions> {
     setState(() {
       isLoading = bool;
     });
+  }
+
+  profileList() {
+    return DropdownButton<String>(
+      items: <String>['A', 'B', 'C', 'D'].map((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      onChanged: (_) {},
+    );
   }
 }

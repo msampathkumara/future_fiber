@@ -2,17 +2,19 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:smartwind/C/Api.dart';
 import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/AppUser.dart';
-import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Ticket.dart';
-import 'package:smartwind/V/Widgets/Loading.dart';
+
+import '../../../../../C/ServerResponse/ServerResponceMap.dart';
+import 'RF.dart';
 
 class FinishCheckList extends StatefulWidget {
   final Ticket ticket;
 
-  FinishCheckList(this.ticket, {Key? key}) : super(key: key);
+  const FinishCheckList(this.ticket, {Key? key}) : super(key: key);
 
   @override
   _FinishCheckListState createState() {
@@ -55,48 +57,13 @@ class _FinishCheckListState extends State<FinishCheckList> {
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(primary: Colors.green, textStyle: const TextStyle(fontWeight: FontWeight.bold)),
                           onPressed: () {
-                            var loadingWidget = const Loading(
-                              loadingText: "Loading",
-                              showProgress: false,
-                            );
-
-                            loadingWidget.show(context);
-                            OnlineDB.apiGet("users/getRfCredentials", {}).then((response) async {});
+                            finish("Excellent");
                           },
                           child: const Text("Excellent")),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(primary: Colors.lightGreen, textStyle: const TextStyle(fontWeight: FontWeight.bold)),
                           onPressed: () {
-                            var loadingWidget = const Loading(
-                              loadingText: "Loading",
-                              showProgress: false,
-                            );
-
-                            loadingWidget.show(context);
-                            OnlineDB.apiGet("users/getRfCredentials", {}).then((response) async {
-                              // print(response.data);
-                              // // ServerResponseMap res = ServerResponseMap.fromJson((response.data));
-                              // var r = await OnlineDB.apiGet("tickets/finish/getProgress", {'ticket': ticket.id.toString()});
-                              // ServerResponseMap res1 = ServerResponseMap.fromJson((r.data));
-                              //
-                              // loadingWidget.close(context);
-                              // if (res.userRFCredentials != null) {
-                              //   print("-------------------------------------");
-                              //   print(res1.toJson());
-                              //   await ticket.getFile(context);
-                              //   if (res1.done != null) {
-                              //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.red, content: Text('Already Completed')));
-                              //   } else if (ticket.ticketFile != null) {
-                              //     await Navigator.push(
-                              //         context, MaterialPageRoute(builder: (context) => RF(ticket, res.userRFCredentials!, res1.operationMinMax!, res1.progressList)));
-                              //   }
-                              //   if (Navigator.canPop(context)) {
-                              //     Navigator.pop(context);
-                              //   } else {
-                              //     SystemNavigator.pop();
-                              //   }
-                              // }
-                            });
+                            finish("Good");
                           },
                           child: const Text("Good")),
                       ElevatedButton(
@@ -107,8 +74,6 @@ class _FinishCheckListState extends State<FinishCheckList> {
                             } else {
                               SystemNavigator.pop();
                             }
-
-                            NsUser? nsuser = AppUser.getUser();
 
                             var isQc = false;
                             if (AppUser.getSelectedSection()?.sectionTitle.toLowerCase() == "qc") {
@@ -121,49 +86,16 @@ class _FinishCheckListState extends State<FinishCheckList> {
                               "serverUrl": Server.getServerApiPath("tickets/qc/uploadEdits"),
                               'ticket': {'id': ticket.id, "qc": isQc}.toString()
                             });
-
-                            // App.getCurrentUser().then((user) async {
-                            //   var isQc = false;
-                            //   if (user!.section!.sectionTitle.toLowerCase() == "qc") {
-                            //     isQc = true;
-                            //   }
-                            //
-                            //   var xx = await platform.invokeMethod('qcEdit', {
-                            //     'ticket': {'id': ticket.id, "qc": isQc}.toString()
-                            //   });
-                            // });
                           },
                           child: const Text("Quality Reject"))
                     ],
                     content: SizedBox(
                         height: 200,
                         child: Scaffold(
-                          //     body: Column(
-                          //   children: [
-                          //     Expanded(
-                          //       child: ListView.builder(
-                          //           itemCount: checkListMap!["layout"].length,
-                          //           itemBuilder: (BuildContext context, int index) {
-                          //             var t = checkListMap!["layout"][index];
-                          //             return ListTile(
-                          //               title: Text(
-                          //                 t,
-                          //                 style: const TextStyle(fontSize: 20),
-                          //               ),
-                          //             );
-                          //           }),
-                          //     )
-                          //   ],
-                          // )),
-                          body: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Text("Please Rate the quality of your work", textScaleFactor: 1.5, textAlign: TextAlign.center),
-                              Text("කරුණාකර ඔබගේ කාර්යය ගුණාත්මකභාවය ඇගයීමට ලක්කරන්න", textScaleFactor: 1.2, textAlign: TextAlign.center)
-                            ],
-                          ),
-                        )));
+                            body: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center, children: const [
+                          Text("Please Rate the quality of your work", textScaleFactor: 1.5, textAlign: TextAlign.center),
+                          Text("කරුණාකර ඔබගේ කාර්යය ගුණාත්මකභාවය ඇගයීමට ලක්කරන්න", textScaleFactor: 1.2, textAlign: TextAlign.center)
+                        ]))));
               }
           }
         });
@@ -176,5 +108,63 @@ class _FinishCheckListState extends State<FinishCheckList> {
     var data = await x.loadString("assets/QACheckList.json");
     checkListMap = json.decode(data);
     return checkListMap;
+  }
+
+  Future<void> finish(String quality) async {
+    var isQc = false;
+    if (AppUser.getSelectedSection()?.sectionTitle.toLowerCase() == "qc") {
+      isQc = true;
+    }
+
+    await showDialog(
+        context: context,
+        builder: (BuildContext context1) {
+          Api.get("users/getRfCredentials", {}).then((response) async {
+            ServerResponseMap res = ServerResponseMap.fromJson((response.data));
+            var r = await OnlineDB.apiGet("tickets/finish/getProgress", {'ticket': ticket.id.toString()});
+            ServerResponseMap res1 = ServerResponseMap.fromJson((r.data));
+
+            if (mounted) Navigator.of(context1).pop();
+
+            if (res.userRFCredentials != null) {
+              if (mounted) await ticket.getFile(context);
+              if (res1.done != null) {
+                if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(backgroundColor: Colors.red, content: Text('Already Completed')));
+              } else if (ticket.ticketFile != null) {
+                if (mounted) {
+                  await Navigator.push(context, MaterialPageRoute(builder: (context) => RF(ticket, res.userRFCredentials!, res1.operationMinMax!, res1.progressList)));
+                  await LoadingDialog(
+                      Api.post("tickets/qc/uploadEdits", {'quality': quality, 'ticketId': ticket.id, 'type': isQc, "sectionId": "${AppUser.getSelectedSection()?.id}"}).then((res) {
+                    Map data = res.data;
+                  }));
+                }
+              }
+
+              if (mounted) Navigator.pop(context);
+            }
+          });
+
+          return AlertDialog(
+              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
+              content: Builder(builder: (context) {
+                return const SizedBox(height: 150, width: 50, child: Center(child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator())));
+              }));
+        });
+  }
+
+  Future LoadingDialog(Future future) async {
+    return await showDialog(
+        context: context,
+        builder: (BuildContext context1) {
+          future.then((value) {
+            Navigator.of(context1).pop();
+          });
+
+          return AlertDialog(
+              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
+              content: Builder(builder: (context) {
+                return const SizedBox(height: 150, width: 50, child: Center(child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator())));
+              }));
+        });
   }
 }

@@ -58,6 +58,7 @@ class AppUser extends NsUser {
     _userIsAdmin = null;
     return OnlineDB.apiGet("user/getUserData", {}).then((value) {
       Map res = value.data;
+      print(res);
       NsUser nsUser = NsUser.fromJson(res["user"]);
       AppUser.setUser(nsUser);
       updateUserChangers();

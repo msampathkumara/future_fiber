@@ -59,7 +59,10 @@ class QC {
   }
 
   static List<QC> fromJsonArray(qcList) {
-    return List<QC>.from(qcList.map((model) => QC.fromJson(model)));
+    return List<QC>.from(qcList.map((model) {
+      print(model);
+      return QC.fromJson(model);
+    }));
   }
 
   getFile(context, {onReceiveProgress}) async {

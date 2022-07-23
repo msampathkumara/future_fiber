@@ -61,4 +61,8 @@ class TicketFlag {
     var formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(date);
     return formattedDate;
   }
+
+  static List<TicketFlag>? fromJsonArray(list) {
+    return List<TicketFlag>.from(list.map((model) => TicketFlag.fromJson(model)));
+  }
 }

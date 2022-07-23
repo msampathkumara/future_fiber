@@ -12,7 +12,7 @@ import 'package:smartwind/V/Widgets/UserImage.dart';
 class AddNfcCard extends StatefulWidget {
   final NsUser nsUser;
 
-  AddNfcCard(this.nsUser, {Key? key}) : super(key: key);
+  const AddNfcCard(this.nsUser, {Key? key}) : super(key: key);
 
   @override
   _AddNfcCardState createState() {
@@ -62,57 +62,57 @@ class _AddNfcCardState extends State<AddNfcCard> {
     double height = MediaQuery.of(context).size.height;
     return Center(
         child: Container(
-      height: (height / 3) * 2,
+          height: (height / 3) * 2,
       width: (width / 4) * 3,
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20))),
+      decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20))),
       child: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Scaffold(
           body: Center(
-            child: Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  UserImage(
-                    nsUser: widget.nsUser,
-                    radius: 50,
-                  ),
-                  Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                          children: [Text(widget.nsUser.name, textScaleFactor: 1.2), Text("#" + widget.nsUser.uname, textScaleFactor: 1, style: TextStyle(color: Colors.blue))])),
-                  SizedBox(height: 64),
-                  if (!loading && !_dupicate) Icon(Icons.nfc_outlined, size: 150, color: Colors.blue),
-                  if (!loading && !_dupicate) Padding(padding: const EdgeInsets.all(16.0), child: Text("Scan NFC Card", textScaleFactor: 1.5, textAlign: TextAlign.center)),
-                  if (loading) new CircularProgressIndicator(color: Colors.blue),
-                  if (!loading && _dupicate)
-                    Column(children: [
-                      Text(" This card is assign to another user. do you want to remove this card from that user and assign this card to #${widget.nsUser.uname}",
-                          textScaleFactor: 1.5, style: TextStyle(color: Colors.redAccent), textAlign: TextAlign.center),
-                      SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                              onPressed: () async {
-                                await save(true);
-                                setState(() {});
-                              },
-                              child: Text("Yes", textScaleFactor: 1.3)),
-                          SizedBox(width: 24),
-                          ElevatedButton(
-                              onPressed: () async {
-                                nfcCode = null;
-                                startNfcSession();
-                                setState(() {});
-                              },
-                              child: Text("No", textScaleFactor: 1.3))
-                        ],
-                      )
-                    ])
-                ],
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                UserImage(
+                  nsUser: widget.nsUser,
+                  radius: 50,
+                ),
+                Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(children: [
+                      Text(widget.nsUser.name, textScaleFactor: 1.2),
+                      Text("#${widget.nsUser.uname}", textScaleFactor: 1, style: const TextStyle(color: Colors.blue))
+                    ])),
+                const SizedBox(height: 64),
+                if (!loading && !_dupicate) const Icon(Icons.nfc_outlined, size: 150, color: Colors.blue),
+                if (!loading && !_dupicate) const Padding(padding: EdgeInsets.all(16.0), child: Text("Scan NFC Card", textScaleFactor: 1.5, textAlign: TextAlign.center)),
+                if (loading) const CircularProgressIndicator(color: Colors.blue),
+                if (!loading && _dupicate)
+                  Column(children: [
+                    Text(" This card is assign to another user. do you want to remove this card from that user and assign this card to #${widget.nsUser.uname}",
+                        textScaleFactor: 1, style: const TextStyle(color: Colors.redAccent), textAlign: TextAlign.center),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                            onPressed: () async {
+                              await save(true);
+                              setState(() {});
+                            },
+                            child: const Text("Yes", textScaleFactor: 1.3)),
+                        const SizedBox(width: 24),
+                        ElevatedButton(
+                            onPressed: () async {
+                              nfcCode = null;
+                              startNfcSession();
+                              setState(() {});
+                            },
+                            child: const Text("No", textScaleFactor: 1.3))
+                      ],
+                    )
+                  ])
+              ],
             ),
           ),
         ),
@@ -127,9 +127,9 @@ class _AddNfcCardState extends State<AddNfcCard> {
         loading = true;
         List<int> l = NfcA.from(tag)!.identifier;
         nfcCode = HEX.encode(l);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(nfcCode.toString()),
-        ));
+        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        //   content: Text(nfcCode.toString()),
+        // ));
         NfcManager.instance.stopSession();
         setState(() {});
         await save(false);

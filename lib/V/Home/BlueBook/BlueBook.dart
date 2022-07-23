@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:path_provider/path_provider.dart';
@@ -24,7 +23,7 @@ import 'BlueBookLogin.dart';
 class BlueBook extends StatefulWidget {
   Ticket? ticket;
 
-  BlueBook({this.ticket});
+  BlueBook({Key? key, this.ticket}) : super(key: key);
 
   @override
   _BlueBookState createState() => _BlueBookState();
@@ -43,13 +42,15 @@ class _BlueBookState extends State<BlueBook> {
   late PdfControllerPinch pdfPinchController;
 
   Widget pdfView() => PdfViewPinch(controller: pdfPinchController, padding: 10, scrollDirection: Axis.vertical);
-  var path;
+  String path = "";
+
   int loginAttemps = 0;
 
   @override
   initState() {
     super.initState();
     ticket = widget.ticket;
+
     path = ticket == null ? "" : widget.ticket!.ticketFile!.path;
 
     wv = InAppWebView(
@@ -63,7 +64,7 @@ class _BlueBookState extends State<BlueBook> {
             BlueBookCredentials? blueBookCredentials = await showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  return BlurBookLogin();
+                  return const BlurBookLogin();
                 });
             if (blueBookCredentials != null) {
               return HttpAuthResponse(username: blueBookCredentials.userName, password: blueBookCredentials.password, action: HttpAuthResponseAction.PROCEED);
@@ -104,43 +105,17 @@ class _BlueBookState extends State<BlueBook> {
   String errorMessage = '';
   int x = 0;
 
-  var tabs = ["All", "Cross Production"];
-
   @override
   Widget build(BuildContext context) {
     var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
     var height = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: AppBar(title: Text("Blue Book")),
+      appBar: AppBar(title: const Text("Blue Book")),
       body: Column(
         children: [
-          SizedBox(
-            height: (ticket != null && (isPortrait)) ? height / 2 : 0,
-            child: pdfView(),
-            // child: PdfView(
-            //     renderer: (PdfPage page) => page.render(
-            //           width: page.width * 3,
-            //           height: page.height * 3,
-            //           format: PdfPageImageFormat.webp,
-            //           backgroundColor: '#ffffff',
-            //         ),
-            //     documentLoader: Center(child: CircularProgressIndicator()),
-            //     pageLoader: Center(child: CircularProgressIndicator()),
-            //     controller: _pdfController,
-            //     onDocumentLoaded: (document) {
-            //       setState(() {
-            //         _allPagesCount = document.pagesCount;
-            //       });
-            //     },
-            //     onPageChanged: (page) {
-            //       setState(() {
-            //         _actualPageNumber = page;
-            //       });
-            //     },
-            //     scrollDirection: Axis.vertical)
-          ),
+          SizedBox(height: (ticket != null && (isPortrait)) ? height / 2 : 0, child: pdfView()),
           if (ticket != null && (isPortrait)) Container(height: 20, color: Colors.blue),
-          Expanded(child: Container(color: Colors.red, child: wv))
+          Expanded(child: Container(color: Colors.white, child: wv))
         ],
       ),
     );
@@ -148,9 +123,9 @@ class _BlueBookState extends State<BlueBook> {
 
   Future<File> _getFile(context, url, BlueBookCredentials? credentials, {onReceiveProgress}) async {
     if (credentials == null) {
-      return Future.value(new File(""));
+      return Future.value(File(""));
     }
-    var loadingWidget = Loading(
+    var loadingWidget = const Loading(
       loadingText: "Downloading File",
       showProgress: false,
     );
@@ -160,13 +135,13 @@ class _BlueBookState extends State<BlueBook> {
     var ed = await getExternalStorageDirectory();
     final user = FirebaseAuth.instance.currentUser;
     final idToken = await user!.getIdToken();
-    String basicAuth = 'Basic ' + base64Encode(utf8.encode('${credentials.userName}:${credentials.password}'));
+    String basicAuth = 'Basic ${base64Encode(utf8.encode('${credentials.userName}:${credentials.password}'))}';
     dio.options.headers['content-Type'] = 'application/json';
     dio.options.headers[HttpHeaders.authorizationHeader] = basicAuth;
     // dio.options.headers["authorization"] = '$idToken';
     // String queryString = Uri(queryParameters: {"id": id.toString()}).query;
     var id = UniqueKey();
-    var filePath = ed!.path + '/blueBook/$id.pdf';
+    var filePath = '${ed!.path}/blueBook/$id.pdf';
 
     var response;
     try {
@@ -206,7 +181,7 @@ class _BlueBookState extends State<BlueBook> {
     }
 
     loadingWidget.close(context);
-    File file = new File(filePath);
+    File file = File(filePath);
     return file;
   }
 }

@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:smartwind/C/App.dart';
 
 class mainFuncs {
@@ -46,5 +47,18 @@ class mainFuncs {
       final List<int> list = <int>[];
       print(list[100]);
     });
+  }
+
+  init() async {
+    await initializeFlutterFireFuture;
+
+    PermissionStatus ps = await Permission.phone.request();
+    PermissionStatus storage = await Permission.storage.request();
+    PermissionStatus camera = await Permission.camera.request();
+    return {
+      'permission': ps.isGranted && storage.isGranted && camera.isGranted,
+      'isPermanentlyDenied': ps.isPermanentlyDenied || storage.isPermanentlyDenied || camera.isPermanentlyDenied,
+      'permissions': {'phone': ps, 'camera': camera, 'storage': storage}
+    };
   }
 }

@@ -1,18 +1,23 @@
+import 'package:app_settings/app_settings.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/hive.dart';
-import 'package:smartwind/Web/webMain.dart';
 
 import 'C/App.dart';
+import 'M/AppUser.dart';
 import 'V/Home/Home.dart';
 import 'V/Login/Login.dart';
+import 'Web/webMain.dart';
+import 'firebase_options.dart';
 import 'mainFuncs.dart';
 
 main() async {
@@ -28,7 +33,60 @@ bool isMaterialManagement = false;
 Future<void> mainThings({viewIssMaterialManagement = false}) async {
   isMaterialManagement = viewIssMaterialManagement;
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform).catchError((e) {
+    print(" Error : ${e.toString()}");
+  });
+
+  if (kIsWeb) {
+    await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
+  }
+  if (kIsWeb) {
+    var xx = await FirebaseAuth.instance.authStateChanges().first;
+    print(xx);
+    print('User----------------------------------------------------------s');
+  }
+
+  FirebaseAuth.instance.userChanges().listen((User? user) {
+    print('User----------------------------------------------------------');
+    if (user == null) {
+      print('User is currently signed out!***');
+    } else {
+      print('User is signed in!');
+    }
+  });
+
+  FirebaseAuth.instance.authStateChanges().listen((event) {
+    print('----------------------------------------------------------');
+
+    print(FirebaseAuth.instance.currentUser);
+    print(event);
+    print('----------------------------------------------------------');
+  });
+
+  try {
+    print("***xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx${Firebase.apps.length}___${FirebaseAuth.instance.currentUser}");
+  } catch (e) {
+    // if (Firebase.apps.isEmpty) {
+    // } else {
+    //   Firebase.app();
+    // }
+
+    //   if (kIsWeb) {
+    //     await Firebase.initializeApp(
+    //         options: const FirebaseOptions(
+    //             apiKey: "AIzaSyCgW6bXgp0PmoKNcAUsAzTqOS8YYFPd0dM",
+    //             authDomain: "smart-wind.firebaseapp.com",
+    //             databaseURL: "https://smart-wind-default-rtdb.firebaseio.com",
+    //             projectId: "smart-wind",
+    //             storageBucket: "smart-wind.appspot.com",
+    //             messagingSenderId: "27155477934",
+    //             appId: "1:27155477934:web:1ff8578ac037a6e330043f",
+    //             measurementId: "G-SEBNEV8XVM"));
+    //   } else {
+    //     await Firebase.initializeApp();
+    //   }
+  }
 
   DatabaseReference ref = FirebaseDatabase.instance.ref('devServerIp');
 
@@ -37,25 +95,6 @@ Future<void> mainThings({viewIssMaterialManagement = false}) async {
     print('ip == ${Server.devServerIp}');
   });
   await HiveBox.create();
-
-  if (Firebase.apps.isEmpty) {
-    if (kIsWeb) {
-      await Firebase.initializeApp(
-          options: const FirebaseOptions(
-              apiKey: "AIzaSyCgW6bXgp0PmoKNcAUsAzTqOS8YYFPd0dM",
-              authDomain: "smart-wind.firebaseapp.com",
-              databaseURL: "https://smart-wind-default-rtdb.firebaseio.com",
-              projectId: "smart-wind",
-              storageBucket: "smart-wind.appspot.com",
-              messagingSenderId: "27155477934",
-              appId: "1:27155477934:web:1ff8578ac037a6e330043f",
-              measurementId: "G-SEBNEV8XVM"));
-    } else {
-      await Firebase.initializeApp();
-    }
-  } else {
-    Firebase.app();
-  }
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
 
@@ -88,6 +127,7 @@ class MyApp extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4.0),
                 ))),
         home: const MyHomePage(),
+        // home: const MainApp1(),
         navigatorObservers: [
           FirebaseAnalyticsObserver(analytics: analytics),
         ]);
@@ -131,19 +171,53 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder(
-          future: _mainFuncs.initializeFlutterFireFuture,
+          future: _mainFuncs.init(),
           builder: (context, snapshot) {
-            return _getUi(snapshot.hasData);
+            return _getUi(snapshot);
           }),
     );
   }
 
-  Widget _getUi(hasData) {
-    if (hasData) {
+  Widget _getUi(AsyncSnapshot snapshot) {
+    if (snapshot.hasData) {
+      if (snapshot.data['permission'] == false) {
+        return Scaffold(
+            body: Center(
+          child: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            direction: Axis.vertical,
+            children: [
+              const Text("Enable Permissions", textScaleFactor: 1.5),
+              const SizedBox(height: 16),
+              if (snapshot.data['isPermanentlyDenied'] == true)
+                ElevatedButton(
+                    onPressed: () async {
+                      await AppSettings.openAppSettings();
+                      if (!mounted) return;
+                      await AppUser.logout(context);
+                    },
+                    child: const Text("Open Settings")),
+              if (snapshot.data['isPermanentlyDenied'] == false)
+                ElevatedButton(
+                    onPressed: () async {
+                      PermissionStatus p = await Permission.phone.request();
+                      await Permission.storage.request();
+                      await Permission.camera.request();
+                      print("******************************************************************************");
+                      print(p);
+                      if (!mounted) return;
+                      await AppUser.logout(context);
+                    },
+                    child: const Text("Request permissions"))
+            ],
+          ),
+        ));
+      }
+
       if (FirebaseAuth.instance.currentUser != null && App.currentUser != null) {
         return const Home();
       }
-      return Login();
+      return const Login();
     } else {
       return Center(
           child: Column(

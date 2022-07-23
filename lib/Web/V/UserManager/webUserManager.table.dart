@@ -44,11 +44,7 @@ class _WebUserManagerTableState extends State<WebUserManagerTable> {
     }
   }
 
-  void sort<T>(
-    Comparable<T> Function(NsUser d) getField,
-    int columnIndex,
-    bool ascending,
-  ) {
+  void sort<T>(Comparable<T> Function(NsUser d) getField, int columnIndex, bool ascending) {
     _dessertsDataSource.sort<T>(getField, ascending);
     setState(() {
       _sortColumnIndex = columnIndex;
@@ -65,10 +61,9 @@ class _WebUserManagerTableState extends State<WebUserManagerTable> {
   List<DataColumn> get _columns {
     return [
       DataColumn2(
-        size: ColumnSize.S,
-        label: const Text('Photo'),
-        onSort: (columnIndex, ascending) => sort<String>((d) => (d.name), columnIndex, ascending),
-      ),
+          size: ColumnSize.S,
+          label: const Tooltip(message: "Operation NO", child: Text('Photo', overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.bold))),
+          onSort: (columnIndex, ascending) => sort<String>((d) => (d.name), columnIndex, ascending)),
       DataColumn2(
         size: ColumnSize.L,
         label: const Text('Name'),
@@ -79,11 +74,7 @@ class _WebUserManagerTableState extends State<WebUserManagerTable> {
         label: const Text('NIC'),
         onSort: (columnIndex, ascending) => sort<String>((d) => d.nic ?? '', columnIndex, ascending),
       ),
-      DataColumn2(
-        size: ColumnSize.M,
-        label: const Text('EPF'),
-        onSort: (columnIndex, ascending) => sort<String>((d) => d.epf, columnIndex, ascending),
-      ),
+      DataColumn2(size: ColumnSize.M, label: const Text('EPF'), onSort: (columnIndex, ascending) => sort((d) => d.getEpf() ?? 0, columnIndex, ascending)),
       const DataColumn2(numeric: true, size: ColumnSize.S, tooltip: "Options", label: Text('Options'))
     ];
   }
@@ -96,7 +87,7 @@ class _WebUserManagerTableState extends State<WebUserManagerTable> {
       PaginatedDataTable2(
         scrollController: _scrollController,
         smRatio: 0.4,
-        lmRatio: 3,
+        lmRatio: 2,
         horizontalMargin: 20,
         checkboxHorizontalMargin: 12,
         columnSpacing: 16,
@@ -128,7 +119,7 @@ class _WebUserManagerTableState extends State<WebUserManagerTable> {
         hidePaginator: false,
         columns: _columns,
         availableRowsPerPage: const [20, 50, 100, 200],
-        empty: Center(child: Container(padding: const EdgeInsets.all(20), color: Colors.grey[200], child: const Text('No data'))),
+        empty: Center(child: Container(padding: const EdgeInsets.all(20), child: const NoResultFoundMsg())),
         source: _dessertsDataSource,
       ),
       // Positioned(bottom: 16, child: CustomPager(_controller!))
@@ -157,12 +148,15 @@ class DessertDataSource extends DataTableSource {
 
   void sort<T>(Comparable<T> Function(NsUser d) getField, bool ascending) {
     nsUsers.sort((a, b) {
-      final aValue = getField(a);
-      final bValue = getField(b);
+      var aValue = getField(a);
+      var bValue = getField(b);
+
       return ascending ? Comparable.compare(aValue, bValue) : Comparable.compare(bValue, aValue);
     });
     notifyListeners();
   }
+
+  isNumeric(string) => num.tryParse(string) != null;
 
   int _selectedCount = 0;
 
@@ -213,16 +207,18 @@ class DessertDataSource extends DataTableSource {
         DataCell(Text('${nsUser.nic ?? '-'} ')),
         DataCell(Wrap(
           direction: Axis.vertical,
-          children: [
-            Text('${nsUser.epf} '),
-          ],
+          children: [Text('${nsUser.epf ?? ''} ')],
         )),
         DataCell(nsUser.id == 0
             ? const Text("")
             : IconButton(
                 icon: const Icon(Icons.more_vert_rounded),
                 onPressed: () {
-                  showUserOptions(nsUser, context, context, false);
+                  showUserOptions(nsUser, context, context, false, onRemoveNfcCard: () {
+                    nsUser.removeNfcCard(context, onDone: () {
+                      notifyListeners();
+                    });
+                  });
                 },
               ))
       ],

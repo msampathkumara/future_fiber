@@ -82,7 +82,7 @@ class _WebPrintTableState extends State<WebSheetDataTable> {
       DataColumn2(size: ColumnSize.M, label: const Text('OE', style: TextStyle(fontWeight: FontWeight.bold)), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(
           size: ColumnSize.M,
-          label: const Text('Operation NO', style: TextStyle(fontWeight: FontWeight.bold)),
+          label: const Tooltip(message: "Operation NO", child: Text('Operation NO', overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.bold))),
           numeric: true,
           onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(
@@ -102,12 +102,12 @@ class _WebPrintTableState extends State<WebSheetDataTable> {
           onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(
           size: ColumnSize.M,
-          label: const Text('Shipping Date', style: TextStyle(fontWeight: FontWeight.bold)),
+          label: const Tooltip(message: "Shipping  Date", child: Text('Shipping  Date', overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.bold))),
           numeric: false,
           onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(
           size: ColumnSize.M,
-          label: const Text('Ship Date', style: TextStyle(fontWeight: FontWeight.bold)),
+          label: const Tooltip(message: "Ship  Date", child: Text('Ship Date', overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.bold))),
           numeric: false,
           onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
     ];
@@ -160,7 +160,7 @@ class _WebPrintTableState extends State<WebSheetDataTable> {
           controller: _controller,
           hidePaginator: false,
           columns: _columns,
-          empty: Center(child: Container(padding: const EdgeInsets.all(20), color: Colors.grey[200], child: const Text('No data'))),
+          empty: Center(child: Container(padding: const EdgeInsets.all(20), child: const NoResultFoundMsg())),
           loading: _Loading(),
           errorBuilder: (e) => _ErrorAndRetry(e.toString(), () => _dessertsDataSource!.refreshDatasource()),
           source: _dessertsDataSource!),

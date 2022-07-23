@@ -82,11 +82,11 @@ class _LoginState extends State<Login> {
           setState(() {});
         });
     } else {
-      Future(() {
-        if (AppUser.isLogged) {
-          Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
-        }
-      });
+      // Future(() {
+      if (AppUser.isLogged) {
+        Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+      }
+      // });
     }
   }
 
@@ -104,6 +104,8 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    // return Text("${Firebase.apps.length}555555555555555555555555555555555${FirebaseAuth.instance.currentUser}");
+
     return Scaffold(
         backgroundColor: Colors.white,
         body: loading
@@ -310,8 +312,10 @@ class _LoginState extends State<Login> {
           NfcManager.instance.stopSession();
         }
         AppUser.refreshUserData().then((nsUser) async {
-          Section section = nsUser.sections.length > 0 ? nsUser.sections[0] : null;
-          AppUser.setSelectedSection(section);
+          Section? section = nsUser.sections.length > 0 ? nsUser.sections[0] : null;
+          if (section != null) {
+            AppUser.setSelectedSection(section);
+          }
           AppUser.setUser(nsUser);
           HiveBox.getDataFromServer();
 

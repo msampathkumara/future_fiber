@@ -5,6 +5,7 @@ import '../../../C/Api.dart';
 import '../../../M/CPR/CPR.dart';
 import '../../../M/Enums.dart';
 import '../../../Web/V/MaterialManagement/CPR/webCpr.dart';
+import '../../Widgets/NoResultFoundMsg.dart';
 import '../../Widgets/SearchBar.dart';
 
 class CprList extends StatefulWidget {
@@ -82,7 +83,8 @@ class _CprListState extends State<CprList> {
                     crossAxisAlignment: WrapCrossAlignment.center,
                     direction: Axis.vertical,
                     children: [
-                      Text(searchText.isEmpty ? "No CPRs Found" : "⛔ Work Ticket not found.\n Please contact  Ticket Checking department", textScaleFactor: 1.5),
+                      Center(child: Container(padding: const EdgeInsets.all(20), child: const NoResultFoundMsg())),
+                      // Text(searchText.isEmpty ? "No CPRs Found" : "⛔ Work Ticket not found.\n Please contact  Ticket Checking department", textScaleFactor: 1.5),
                       ElevatedButton(
                           onPressed: () {
                             loadData(0);

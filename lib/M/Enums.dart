@@ -15,7 +15,7 @@ enum Type { All, QA, QC }
 
 enum TicketFlagTypes { RED, GR, RUSH, SK, HOLD, CROSS }
 
-enum Filters { isRed, isRush, inPrint, isError, isGr, isSk, isHold, none, isSort, isCrossPro, isQc, isQa }
+enum Filters { isRed, isRush, inPrint, isError, isGr, isSk, isHold, none, isSort, isQc, isQa }
 
 enum Collection { User, Ticket, Any }
 

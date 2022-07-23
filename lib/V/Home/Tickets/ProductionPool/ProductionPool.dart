@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smartwind/V/Home/Tickets/ProductionPool/TicketList.dart';
 
 class ProductionPool extends StatefulWidget {
-  ProductionPool({Key? key}) : super(key: key);
+  const ProductionPool({Key? key}) : super(key: key);
 
   @override
   _ProductionPoolState createState() {
@@ -23,6 +23,6 @@ class _ProductionPoolState extends State<ProductionPool> {
 
   @override
   Widget build(BuildContext context) {
-    return TicketList();
+    return const TicketList();
   }
 }

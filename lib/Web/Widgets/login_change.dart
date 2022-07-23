@@ -21,14 +21,17 @@ class _LoginChangeWidgetState extends State<LoginChangeWidget> {
   void initState() {
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       loading = false;
+      print('User is currently signed out!__${FirebaseAuth.instance.currentUser}');
       if (user == null) {
-        print('User is currently signed out!__');
+        print('User is currently signed out!__${FirebaseAuth.instance.currentUser}');
         Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
       } else {
         print('User is signed in!');
         // Navigator.pushNamed(context, '/');
       }
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     });
 
     super.initState();
@@ -37,7 +40,7 @@ class _LoginChangeWidgetState extends State<LoginChangeWidget> {
   @override
   Widget build(BuildContext context) {
     return loading
-        ? Center(child: CircularProgressIndicator(color: Colors.redAccent))
+        ? const Center(child: CircularProgressIndicator(color: Colors.redAccent))
         : ((FirebaseAuth.instance.currentUser != null && App.currentUser != null))
             ? widget.child
             : widget.loginChild;

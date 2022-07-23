@@ -1,9 +1,8 @@
-import 'dart:ui';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/M/Ticket.dart';
+import 'package:smartwind/V/Widgets/SearchBar.dart';
 import 'package:smartwind/Web/V/AddSheet/add_sheet.dart';
 import 'package:smartwind/Web/V/AddTicket/add_ticket.dart';
 import 'package:smartwind/Web/V/ProductionPool/table.dart';
@@ -61,7 +60,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                 Text("Production Pool", style: mainWidgetsTitleTextStyle),
                 const Spacer(),
                 Wrap(children: [
-                  flagIcon(Filters.isCrossPro, Icons.merge_type_rounded, "Filter by cross production"),
+                  // flagIcon(Filters.isCrossPro, Icons.merge_type_rounded, "Filter by cross production"),
                   flagIcon(Filters.isError, Icons.warning_rounded, "Filter by Error Route"),
                   flagIcon(Filters.inPrint, Icons.print_rounded, "Filter by in print"),
                   flagIcon(Filters.isRush, Icons.offline_bolt_rounded, "Filter by rush"),
@@ -103,26 +102,34 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                     elevation: 4,
                     borderRadius: BorderRadius.circular(8),
                     child: SizedBox(
-                        height: 40,
-                        width: 200,
-                        child: TextFormField(
-                          controller: _controller,
-                          onChanged: (text) {
+                      height: 40,
+                      width: 200,
+                      child: SearchBar(
+                          onSearchTextChanged: (String text) {
                             searchText = text;
                             loadData();
                           },
-                          cursorColor: Colors.black,
-                          decoration: InputDecoration(
-                              prefixIcon: const Icon(Icons.search_rounded),
-                              suffixIcon: IconButton(icon: const Icon(Icons.clear), onPressed: _controller.clear),
-                              border: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              errorBorder: InputBorder.none,
-                              disabledBorder: InputBorder.none,
-                              contentPadding: const EdgeInsets.only(left: 15, bottom: 11, top: 10, right: 15),
-                              hintText: "Search Text"),
-                        )),
+                          delay: 300,
+                          searchController: _controller),
+                      // child: TextFormField(
+                      //   controller: _controller,
+                      //   onChanged: (text) {
+                      //     searchText = text;
+                      //     loadData();
+                      //   },
+                      //   cursorColor: Colors.black,
+                      //   decoration: InputDecoration(
+                      //       prefixIcon: const Icon(Icons.search_rounded),
+                      //       suffixIcon: IconButton(icon: const Icon(Icons.clear), onPressed: _controller.clear),
+                      //       border: InputBorder.none,
+                      //       focusedBorder: InputBorder.none,
+                      //       enabledBorder: InputBorder.none,
+                      //       errorBorder: InputBorder.none,
+                      //       disabledBorder: InputBorder.none,
+                      //       contentPadding: const EdgeInsets.only(left: 15, bottom: 11, top: 10, right: 15),
+                      //       hintText: "Search Text"),
+                      // )
+                    ),
                   ),
                 ])
               ],
@@ -137,7 +144,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                 child: PaginatedDataTable2Demo(onInit: (DessertDataSource dataSource) {
                   _dataSource = dataSource;
                 }))),
-        floatingActionButtonLocation: FloatingActionButtonLocation.miniStartDocked,
+        floatingActionButtonLocation: FloatingActionButtonLocation.miniStartFloat,
         floatingActionButton: FloatingActionButton.small(
             onPressed: () async {
               addItemsBottomSheetMenu(context);

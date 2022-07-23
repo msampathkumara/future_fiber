@@ -2,10 +2,10 @@
     <source srcset="splash/img/light-1x.png 1x, splash/img/light-2x.png 2x, splash/img/light-3x.png 3x"
             media="(prefers-color-scheme: light) or (prefers-color-scheme: no-preference)">
     <source srcset="splash/img/dark-1x.png 1x, splash/img/dark-2x.png 2x, splash/img/dark-3x.png 3x" media="(prefers-color-scheme: dark)">
-    <img class="center" src="splash/img/light-1x.png"/>
+    <img class="center" src="splash/img/light-1x.png" alt=""/>
 </picture>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 
     <script
@@ -13,18 +13,18 @@
             type="text/javascript"
     ></script>
     <script type="text/javascript">
-  pdfjsLib.GlobalWorkerOptions.workerSrc =
-    "https://cdn.jsdelivr.net/npm/pdfjs-dist@2.12.313/build/pdf.worker.min.js";
-  pdfRenderOptions = {
-    // where cmaps are downloaded from
-    cMapUrl: "https://cdn.jsdelivr.net/npm/pdfjs-dist@2.12.313/cmaps/",
-    // The cmaps are compressed in the case
-    cMapPacked: true,
-    // any other options for pdfjsLib.getDocument.
-    // params: {}
-  };
-  // To workaround the recent breaking change on Flutter Web, you can set workaround_for_flutter_93615 to true:
-  window.workaround_for_flutter_93615 = true;
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+            "https://cdn.jsdelivr.net/npm/pdfjs-dist@2.12.313/build/pdf.worker.min.js";
+        pdfRenderOptions = {
+            // where cmaps are downloaded from
+            cMapUrl: "https://cdn.jsdelivr.net/npm/pdfjs-dist@2.12.313/cmaps/",
+            // The cmaps are compressed in the case
+            cMapPacked: true,
+            // any other options for pdfjsLib.getDocument.
+            // params: {}
+        };
+        // To workaround the recent breaking change on Flutter Web, you can set workaround_for_flutter_93615 to true:
+        window.workaround_for_flutter_93615 = true;
 
 
     </script>
@@ -32,12 +32,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@2.12.313/build/pdf.js" type="text/javascript"></script>
     <script type="text/javascript">
-   pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@2.12.313/build/pdf.worker.min.js";
-   pdfRenderOptions = {
-     cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.12.313/cmaps/',
-     cMapPacked: true,
-   }
-
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@2.12.313/build/pdf.worker.min.js";
+        pdfRenderOptions = {
+            cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.12.313/cmaps/',
+            cMapPacked: true,
+        }
 
 
     </script>
@@ -49,45 +48,55 @@
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
 
 
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-analytics.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <!--    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>-->
+    <!--    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>-->
+    <!--    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>-->
+    <!--    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>-->
+    <!--    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>-->
+    <!--    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-analytics.js"></script>-->
+    <!--    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>-->
 
     <!-- Link to pdf.js library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.7.570/pdf.min.js" async></script>
 
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyCgW6bXgp0PmoKNcAUsAzTqOS8YYFPd0dM",
-            authDomain: "smart-wind.firebaseapp.com",
-            databaseURL: "https://smart-wind-default-rtdb.firebaseio.com",
-            projectId: "smart-wind",
-            storageBucket: "smart-wind.appspot.com",
-            messagingSenderId: "27155477934",
-            appId: "1:27155477934:web:1ff8578ac037a6e330043f",
-            measurementId: "G-SEBNEV8XVM"
-        };
-        firebase.initializeApp(firebaseConfig);
-
-        const messaging = firebase.messaging();
-        messaging.onBackgroundMessage(function (payload) {
-            console.log('Received background message ', payload);
-
-            const notificationTitle = payload.notification.title;
-            const notificationOptions = {
-                body: payload.notification.body,
-            };
-
-            self.registration.showNotification(notificationTitle,
-                notificationOptions);
-        });
-
-
-
+        // Import the functions you need from the SDKs you need
+        // import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.0/firebase-app.js";
+        // import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.9.0/firebase-analytics.js";
+        // // TODO: Add SDKs for Firebase products that you want to use
+        // // https://firebase.google.com/docs/web/setup#available-libraries
+        //
+        // // Your web app's Firebase configuration
+        // // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        // const firebaseConfig = {
+        //   apiKey: "AIzaSyCgW6bXgp0PmoKNcAUsAzTqOS8YYFPd0dM",
+        //   authDomain: "smart-wind.firebaseapp.com",
+        //   databaseURL: "https://smart-wind-default-rtdb.firebaseio.com",
+        //   projectId: "smart-wind",
+        //   storageBucket: "smart-wind.appspot.com",
+        //   messagingSenderId: "27155477934",
+        //   appId: "1:27155477934:web:1ff8578ac037a6e330043f",
+        //   measurementId: "G-SEBNEV8XVM"
+        // };
+        //
+        // // Initialize Firebase
+        // const app = initializeApp(firebaseConfig);
+        // const analytics = getAnalytics(app);
+        //
+        //       const messaging = firebase.messaging();
+        //       messaging.onBackgroundMessage(function (payload) {
+        //           console.log('Received background message ', payload);
+        //
+        //           const notificationTitle = payload.notification.title;
+        //           const notificationOptions = {
+        //               body: payload.notification.body,
+        //           };
+        //
+        //           self.registration.showNotification(notificationTitle,
+        //               notificationOptions);
+        //       });
+        //
+        //
 
 
     </script>
@@ -142,7 +151,7 @@
                 .then((reg) => {
                     function waitForActivation(serviceWorker) {
                         serviceWorker.addEventListener('statechange', () => {
-                            if (serviceWorker.state == 'activated') {
+                            if (serviceWorker.state === 'activated') {
                                 console.log('Installed new service worker.');
                                 loadMainDartJs();
                             }
@@ -181,8 +190,6 @@
         // Service workers not supported. Just drop the <script> tag.
         loadMainDartJs();
     }
-
-
 
 
 </script>

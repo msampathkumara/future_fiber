@@ -61,37 +61,26 @@ class _GeneratePasswordState extends State<GeneratePassword> {
                   ),
                 ),
               SizedBox(
-                width: 200,
-                child: ElevatedButton(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          backgroundColor: Colors.red,
-                          content: const Text(
-                            "generate new password and save",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          action: SnackBarAction(
-                              textColor: Colors.white,
-                              label: 'continue',
-                              onPressed: () {
-                                setState(() {
-                                  _newPassword = randomPasswordGenerator.randomPassword(letters: true, numbers: true, passwordLength: 7);
-                                  savePassword();
-                                });
-                              })));
-                    },
-                    child: const Text("Generate Password")),
-              ),
-              // const SizedBox(height: 16),
-              // if (_newPassword != null)
-              //   SizedBox(
-              //     width: 200,
-              //     child: ElevatedButton(
-              //         onPressed: () {
-              //           savePassword();
-              //         },
-              //         child: const Text("Use this Password")),
-              //   ),
+                  width: 200,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            backgroundColor: Colors.red,
+                            content: const Text(
+                              "generate new password and save",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            action: SnackBarAction(
+                                textColor: Colors.white,
+                                label: 'continue',
+                                onPressed: () {
+                                  setState(() {
+                                    _newPassword = randomPasswordGenerator.randomPassword(letters: true, numbers: true, specialChar: true, passwordLength: 7);
+                                    savePassword();
+                                  });
+                                })));
+                      },
+                      child: const Text("Generate Password"))),
               const SizedBox(height: 36),
               if (_newPassword != null && (!kIsWeb))
                 SizedBox(

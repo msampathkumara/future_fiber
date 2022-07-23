@@ -1,12 +1,10 @@
-import 'dart:convert';
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/UserRFCredentials.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import '../../../../../C/Api.dart';
 import '../../../../../C/ServerResponse/OperationMinMax.dart';
 import '../../../../../C/ServerResponse/Progress.dart';
 import 'PDFViewWidget.dart';
@@ -17,7 +15,7 @@ class RF extends StatefulWidget {
   OperationMinMax operationMinMax;
   List<Progress> progressList;
 
-  RF(this.ticket, this.userRFCredentials, this.operationMinMax, this.progressList);
+  RF(this.ticket, this.userRFCredentials, this.operationMinMax, this.progressList, {Key? key}) : super(key: key);
 
   @override
   _RFState createState() {
@@ -28,7 +26,7 @@ class RF extends StatefulWidget {
 class _RFState extends State<RF> with SingleTickerProviderStateMixin {
   final DatabaseReference db = FirebaseDatabase.instance.ref();
   final tabs = ["Ticket", "Progress"];
-  TabController? _tabBarcontroller;
+  TabController? _tabBarController;
   Map? checkListMap;
 
   late Ticket ticket;
@@ -52,10 +50,10 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
     operationMinMax = widget.operationMinMax;
     progressList = widget.progressList;
 
-    _tabBarcontroller = TabController(length: tabs.length, vsync: this);
+    _tabBarController = TabController(length: tabs.length, vsync: this);
 
     DefaultAssetBundle.of(context).loadString('assets/js1.txt').then((value) {
-      jsString = setupData("$value");
+      jsString = setupData(value);
       _webView = WebView(
         // initialUrl:
         //     'https://www.w3schools.com/howto/howto_css_register_form.asp',
@@ -80,7 +78,7 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
         },
         onPageFinished: (String url) {
           print('Page finished loading: $url');
-          _controller!.evaluateJavascript(jsString);
+          _controller!.runJavascript(jsString);
           loading = false;
           setState(() {});
         },
@@ -105,7 +103,7 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
       db.child("settings").once().then((DatabaseEvent databaseEvent) {
         DataSnapshot result = databaseEvent.snapshot;
         erpNotWorking = result.child("erpNotWorking").value == 0;
-        print('------------ ${erpNotWorking}');
+        print('------------ $erpNotWorking');
         setState(() {});
       });
     });
@@ -134,119 +132,102 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
     print(progressList.length);
     if (jsString.isNotEmpty) {
       return Scaffold(
-          appBar: AppBar(
-            elevation: 0,
-            title: Text(ticket.mo ?? ""),
-          ),
+          appBar: AppBar(elevation: 0, title: Text(ticket.mo ?? "")),
           floatingActionButton: Visibility(
+            visible: showFinishButton,
             child: FloatingActionButton.extended(
               backgroundColor: Colors.red,
-              icon: Icon(Icons.check_circle_outline_outlined),
-              label: Text("Finish"),
+              icon: const Icon(Icons.check_circle_outline_outlined),
+              label: const Text("Finish"),
               onPressed: () async {
-                var r = await OnlineDB.apiGet("tickets/finish", {'erpDone': erpNotWorking ? 0 : 1, 'ticket': ticket.id.toString(), 'doAt': operationMinMax.doAt.toString()});
-                print(json.decode(r.data));
-                // ServerResponceMap res1 = ServerResponceMap.fromJson(json.decode(r.body));
-                Navigator.pop(context, true);
+                var r = await Api.post("tickets/finish", {'erpDone': erpNotWorking ? 0 : 1, 'ticket': ticket.id.toString(), 'doAt': operationMinMax.doAt.toString()});
+
+                if (mounted) Navigator.pop(context, true);
               },
-            ),
-            visible: showFinishButton, // set it to false
+            ), // set it to false
           ),
           body: Column(
             children: [
               // Expanded(child: PDFViewWidget(ticket.ticketFile!.path)),
               Expanded(
-                child: DefaultTabController(
-                    length: tabs.length,
-                    child: Scaffold(
-                        appBar: AppBar(
-                            toolbarHeight: 0,
-                            automaticallyImplyLeading: false,
-                            elevation: 4.0,
-                            bottom: TabBar(
-                                controller: _tabBarcontroller,
-                                indicatorWeight: 4.0,
-                                indicatorColor: Colors.white,
-                                isScrollable: true,
-                                tabs: [for (final tab in tabs) Tab(text: tab)])),
-                        body: TabBarView(controller: _tabBarcontroller, physics: NeverScrollableScrollPhysics(), children: [
-                          Scaffold(body: PDFViewWidget(ticket.ticketFile!.path)),
-                          Scaffold(
-                            body: ListView.builder(
-                              itemCount: progressList.length,
-                              itemBuilder: (context, i) {
-                                print(progressList[i].toJson());
-                                Progress progress = progressList[i];
-                                print(progress);
-                                bool now = false;
-                                bool done = false;
-                                if (progress.operationNo! >= operationMinMax.min! && progress.operationNo! <= operationMinMax.max!) {
-                                  now = true;
-                                }
-                                if (progress.operationNo! < operationMinMax.min!) {
-                                  done = true;
-                                }
-                                return Padding(
-                                  padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-                                  child: ListTile(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(Radius.circular(5)),
-                                    ),
-                                    tileColor: (now)
-                                        ? Colors.deepOrange[200]
-                                        : (done)
-                                            ? Colors.green[200]
-                                            : Colors.white,
-                                    leading: progress.status == 1
-                                        ? Icon(
-                                            Icons.check_circle_outline_outlined,
-                                            color: Colors.green,
-                                          )
-                                        : Icon(Icons.pending_outlined),
-                                    title: now ? Text(progress.operation!) : Text(progress.operation!),
-                                    subtitle: Text(""),
-                                    trailing: Wrap(
-                                      children: [Text(progress.operationNo.toString())],
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          )
-                        ]))),
-              ),
-              Divider(),
+                  child: DefaultTabController(
+                      length: tabs.length,
+                      child: Scaffold(
+                          appBar: AppBar(
+                              toolbarHeight: 0,
+                              automaticallyImplyLeading: false,
+                              elevation: 4.0,
+                              bottom: TabBar(
+                                  controller: _tabBarController,
+                                  indicatorWeight: 4.0,
+                                  indicatorColor: Colors.white,
+                                  isScrollable: true,
+                                  tabs: [for (final tab in tabs) Tab(text: tab)])),
+                          body: TabBarView(controller: _tabBarController, physics: const NeverScrollableScrollPhysics(), children: [
+                            Scaffold(body: PDFViewWidget(ticket.ticketFile!.path)),
+                            Scaffold(
+                                body: ListView.builder(
+                                    itemCount: progressList.length,
+                                    itemBuilder: (context, i) {
+                                      print(progressList[i].toJson());
+                                      Progress progress = progressList[i];
+                                      print(progress);
+                                      bool now = false;
+                                      bool done = false;
+                                      if (progress.operationNo! >= operationMinMax.min! && progress.operationNo! <= operationMinMax.max!) {
+                                        now = true;
+                                      }
+                                      if (progress.operationNo! < operationMinMax.min!) {
+                                        done = true;
+                                      }
+                                      return Padding(
+                                          padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                                          child: ListTile(
+                                              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
+                                              tileColor: (now)
+                                                  ? Colors.deepOrange[200]
+                                                  : (done)
+                                                      ? Colors.green[200]
+                                                      : Colors.white,
+                                              leading:
+                                                  progress.status == 1 ? const Icon(Icons.check_circle_outline_outlined, color: Colors.green) : const Icon(Icons.pending_outlined),
+                                              title: now ? Text(progress.operation!) : Text(progress.operation!),
+                                              subtitle: const Text(""),
+                                              trailing: Wrap(
+                                                children: [Text(progress.operationNo.toString())],
+                                              )));
+                                    }))
+                          ])))),
+              const Divider(),
               if (_webView != null && (erpNotWorking))
                 Expanded(
-                  child: (loading)
-                      ? Center(child: Text("Loading", textScaleFactor: 1.5))
-                      : webPageConnectionError
-                          ? Center(
-                              child: Wrap(
-                              direction: Axis.vertical,
-                              alignment: WrapAlignment.center,
-                              children: [
-                                Text("No Network Or Not In Factory Network", textScaleFactor: 1.2),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: ElevatedButton(
-                                      onPressed: () {
-                                        webPageConnectionError = false;
-                                        loading = true;
-                                        setupTimeout();
-                                        setState(() {});
-                                        _controller!.reload();
-                                      },
-                                      child: Text("Retry")),
-                                )
-                              ],
-                            ))
-                          : _webView!,
-                ),
+                    child: (loading)
+                        ? const Center(child: Text("Loading", textScaleFactor: 1.5))
+                        : webPageConnectionError
+                            ? Center(
+                                child: Wrap(
+                                direction: Axis.vertical,
+                                alignment: WrapAlignment.center,
+                                children: [
+                                  const Text("No Network Or Not In Factory Network", textScaleFactor: 1.2),
+                                  Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: ElevatedButton(
+                                          onPressed: () {
+                                            webPageConnectionError = false;
+                                            loading = true;
+                                            setupTimeout();
+                                            setState(() {});
+                                            _controller!.reload();
+                                          },
+                                          child: const Text("Retry")))
+                                ],
+                              ))
+                            : _webView!),
             ],
           ));
     } else {
-      return Scaffold(
+      return const Scaffold(
         body: Center(
           child: Text("Loading"),
         ),

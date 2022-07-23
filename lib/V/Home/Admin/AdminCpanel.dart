@@ -48,6 +48,17 @@ class _AdminCpanelState extends State<AdminCpanel> {
                         print(response.data);
                       });
                     }),
+                ListTile(
+                    title: const Text("Update Standard Library Usage"),
+                    subtitle: const Text(""),
+                    trailing: ElevatedButton.icon(
+                        onPressed: () {
+                          OnlineDB.apiGet("admin/updateStandardLibUsage", {}).then((response) async {
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Update Standard Library Usage success")));
+                          });
+                        },
+                        label: const Text("Update"),
+                        icon: const Icon(Icons.update))),
               ],
             ),
           ));

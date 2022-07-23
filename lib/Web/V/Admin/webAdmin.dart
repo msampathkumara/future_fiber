@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/Admin/Settings.dart';
 
@@ -28,10 +27,10 @@ class _WebAdminState extends State<WebAdmin> {
     super.initState();
   }
 
+  final Map _loadings = {};
+
   @override
   Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.height;
-
     return Scaffold(
         appBar: AppBar(title: const Text("Admin Settings"), backgroundColor: Colors.red),
         body: _loading
@@ -66,6 +65,17 @@ class _WebAdminState extends State<WebAdmin> {
                                       title: const Text("Delete Temp PDFs"),
                                       subtitle: const Text("Delete temp pdfs create for production pool"),
                                       trailing: ElevatedButton.icon(onPressed: () {}, label: const Text("Delete"), icon: const Icon(Icons.delete_rounded))),
+                                  ListTile(
+                                      title: const Text("Update Standard Library Usage"),
+                                      subtitle: const Text(""),
+                                      trailing: ElevatedButton.icon(
+                                          onPressed: () {
+                                            OnlineDB.apiGet("admin/updateStandardLibUsage", {}).then((response) async {
+                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Update Standard Library Usage success")));
+                                            });
+                                          },
+                                          label: const Text("Update"),
+                                          icon: const Icon(Icons.update))),
                                 ],
                               )),
                               const SizedBox(height: 20),
@@ -76,7 +86,25 @@ class _WebAdminState extends State<WebAdmin> {
                                   ListTile(
                                       title: const Text("Reload In memory Database"),
                                       subtitle: const Text("in case of missing data or not update properly "),
-                                      trailing: ElevatedButton.icon(onPressed: () {}, label: const Text("Reload"), icon: const Icon(Icons.memory_rounded)))
+                                      trailing: isLoading("reloadInMemoryDB")
+                                          ? const CircularProgressIndicator()
+                                          : ElevatedButton.icon(
+                                              onPressed: () {
+                                                setLoading("reloadInMemoryDB");
+
+                                                Api.get("admin/reloadInMemoryDB", {}).then((res) {
+                                                  Map data = res.data;
+                                                  removeLoading("reloadInMemoryDB");
+                                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Reload In memory Database done")));
+                                                  setState(() {
+                                                    // _dataLoadingError = true;
+                                                  });
+                                                }).whenComplete(() {
+                                                  setState(() {});
+                                                }).catchError((err) {});
+                                              },
+                                              label: const Text("Reload"),
+                                              icon: const Icon(Icons.memory_rounded)))
                                 ],
                               )),
                               const SizedBox(height: 20),
@@ -85,9 +113,26 @@ class _WebAdminState extends State<WebAdmin> {
                                   child: Column(
                                 children: [
                                   ListTile(
-                                      title: const Text("Clean  Reload Device "),
+                                      title: const Text("Clean  Reload Devices "),
                                       subtitle: const Text("in case of missing data or not update properly this will clean and update all device database when online"),
-                                      trailing: ElevatedButton.icon(onPressed: () {}, label: const Text("Reload"), icon: const Icon(Icons.cleaning_services))),
+                                      trailing: isLoading("cleanReloadDevices")
+                                          ? const CircularProgressIndicator()
+                                          : ElevatedButton.icon(
+                                              onPressed: () {
+                                                setLoading("cleanReloadDevices");
+                                                Api.get("admin/cleanReloadDevices", {}).then((res) {
+                                                  Map data = res.data;
+                                                  removeLoading("cleanReloadDevices");
+                                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Reload In memory Database done")));
+                                                  setState(() {
+                                                    // _dataLoadingError = true;
+                                                  });
+                                                }).whenComplete(() {
+                                                  setState(() {});
+                                                }).catchError((err) {});
+                                              },
+                                              label: const Text("Reload"),
+                                              icon: const Icon(Icons.cleaning_services))),
                                 ],
                               )),
                               const SizedBox(height: 20),
@@ -117,19 +162,39 @@ class _WebAdminState extends State<WebAdmin> {
                                           itemBuilder: (BuildContext context, int index) {
                                             if (index == _settings.otpAdminEmails.length) {
                                               return ListTile(
-                                                  title: TextFormField(
-                                                autovalidateMode: AutovalidateMode.onUserInteraction,
-                                                controller: _otpAdminEmailController,
-                                                onChanged: (email) {},
-                                                onFieldSubmitted: (email) {
-                                                  if (Validations.isValidEmail(email)) {
-                                                    _settings.otpAdminEmails.add(email);
-                                                    saveSettings('otpAdminEmails', _settings.otpAdminEmails.join(','));
-                                                    _otpAdminEmailController.clear();
-                                                    setState(() {});
-                                                  }
-                                                },
-                                                validator: (input) => Validations.isValidEmail(input) ? null : "Check your email",
+                                                  title: Container(
+                                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(24), color: Colors.grey.shade200),
+                                                child: SizedBox(
+                                                  height: 50,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(left: 0.0),
+                                                    child: TextFormField(
+                                                      decoration: InputDecoration(
+                                                          fillColor: Colors.transparent,
+                                                          focusColor: Colors.transparent,
+                                                          border: InputBorder.none,
+                                                          focusedBorder: OutlineInputBorder(
+                                                            borderRadius: BorderRadius.circular(24.0),
+                                                          ),
+                                                          enabledBorder: InputBorder.none,
+                                                          hintText: 'Email',
+                                                          hintStyle: const TextStyle(color: Colors.grey),
+                                                          prefixIcon: const Icon(Icons.email_rounded)),
+                                                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                                                      controller: _otpAdminEmailController,
+                                                      onChanged: (email) {},
+                                                      onFieldSubmitted: (email) {
+                                                        if (Validations.isValidEmail(email)) {
+                                                          _settings.otpAdminEmails.add(email);
+                                                          saveSettings('otpAdminEmails', _settings.otpAdminEmails.join(','));
+                                                          _otpAdminEmailController.clear();
+                                                          setState(() {});
+                                                        }
+                                                      },
+                                                      validator: (input) => Validations.isValidEmail(input) ? null : "Check your email",
+                                                    ),
+                                                  ),
+                                                ),
                                               ));
                                             }
 
@@ -211,6 +276,22 @@ class _WebAdminState extends State<WebAdmin> {
       setState(() {
         // _dataLoadingError = true;
       });
+    });
+  }
+
+  void setLoading(String s) {
+    setState(() {
+      _loadings[s] = true;
+    });
+  }
+
+  bool isLoading(String s) {
+    return _loadings[s] == true;
+  }
+
+  void removeLoading(String s) {
+    setState(() {
+      _loadings.removeWhere((key, value) => key == s);
     });
   }
 }

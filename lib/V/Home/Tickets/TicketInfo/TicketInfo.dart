@@ -99,9 +99,9 @@ class _TicketInfoState extends State<TicketInfo> {
         : Scaffold(
             body: _loading ? const Center(child: CircularProgressIndicator()) : _body(bottomNavigationBarSelectedIndex),
             appBar: _appBar(),
-            backgroundColor: Colors.white,
+            // backgroundColor: Colors.white,
             bottomNavigationBar: BottomAppBar(
-                color: Colors.orange,
+                color: Theme.of(context).primaryColor,
                 shape: const CircularNotchedRectangle(),
                 notchMargin: 4.0,
                 child: Padding(
@@ -133,18 +133,18 @@ class _TicketInfoState extends State<TicketInfo> {
 
   var ts = const TextStyle(color: Colors.white, fontSize: 24);
   var smallText = const TextStyle(fontSize: 16);
-  var xsmallText = const TextStyle(fontSize: 12);
+  var xSmallText = const TextStyle(fontSize: 12);
 
   _appBar() {
     return AppBar(
-      backgroundColor: Colors.orange,
+      // backgroundColor: Colors.orange,
       elevation: 10,
       // toolbarHeight: (bottomNavigationBarSelectedIndex == 0) ? (height - kBottomNavigationBarHeight) : 230,
       toolbarHeight: 230,
       bottom: PreferredSize(
           preferredSize: const Size.fromHeight(4.0),
-          child: Container(
-            color: Colors.orange,
+          child: SizedBox(
+            // color: Colors.orange,
             height: (kDebugMode) ? 220.0 : 200,
             child: Row(
               children: [
@@ -194,15 +194,25 @@ class _TicketInfoState extends State<TicketInfo> {
                 const Spacer(),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: CircularPercentIndicator(
-                      radius: 50.0,
-                      lineWidth: 4.0,
-                      percent: (_progress / 100).toDouble(),
-                      center: Text("${_ticket.progress}%", style: ts),
-                      progressColor: Colors.blue,
-                      animateFromLastPercent: true,
-                      animation: true,
-                      animationDuration: 500),
+                  child: Wrap(
+                    direction: Axis.vertical,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Text(_ticket.production ?? '', textScaleFactor: 1, style: const TextStyle(color: Colors.white)),
+                      Text(_ticket.atSection, textScaleFactor: 1, style: const TextStyle(color: Colors.white)),
+                      const SizedBox(height: 16),
+                      if (_ticket.isStarted)
+                        CircularPercentIndicator(
+                            radius: 50.0,
+                            lineWidth: 4.0,
+                            percent: (_progress / 100).toDouble(),
+                            center: Text("${_ticket.progress}%", style: ts),
+                            progressColor: Colors.blue,
+                            animateFromLastPercent: true,
+                            animation: true,
+                            animationDuration: 500),
+                    ],
+                  ),
                 )
               ],
             ),
@@ -215,7 +225,7 @@ class _TicketInfoState extends State<TicketInfo> {
       case 0:
         return info_Flags(flags, flagsHistory);
       case 1:
-        return info_Progress(progressList);
+        return info_Progress(progressList, _ticket);
       case 2:
         return info_Printing(printList);
       case 3:
@@ -282,130 +292,123 @@ class _TicketInfoState extends State<TicketInfo> {
   getWebUi() {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Row(
-        children: [
-          SizedBox(
-              width: 300,
-              child: Container(
-                color: Colors.orange,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          ListTile(visualDensity: visualDensity, title: Text(_ticket.mo ?? "_", style: ts), subtitle: Text(_ticket.oe ?? "_", style: ts)),
+      body: Row(children: [
+        SizedBox(
+            width: 300,
+            child: Container(
+              // color: Colors.orange,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        ListTile(visualDensity: visualDensity, title: Text(_ticket.mo ?? "_", style: ts), subtitle: Text(_ticket.oe ?? "_", style: ts)),
+                        ListTile(
+                            visualDensity: visualDensity,
+                            title: Text(_ticket.production ?? "_", style: ts.merge(smallText)),
+                            subtitle: Text(_ticket.atSection, style: ts.merge(smallText))),
+                        ListTile(
+                            visualDensity: visualDensity,
+                            title: Text("Update on : ", style: ts.merge(xSmallText)),
+                            subtitle: Text(_ticket.getUpdateDateTime(), style: ts.merge(smallText))),
+                        if (_ticket.shipDate.isNotEmpty)
+                          ListTile(
+                              visualDensity: visualDensity, title: Text("Ship Date : ", style: ts.merge(xSmallText)), subtitle: Text(_ticket.shipDate, style: ts.merge(smallText))),
+                        if (_ticket.deliveryDate.isNotEmpty)
                           ListTile(
                               visualDensity: visualDensity,
-                              title: Text(_ticket.production ?? "_", style: ts.merge(smallText)),
-                              subtitle: Text(_ticket.atSection, style: ts.merge(smallText))),
-                          ListTile(
-                              visualDensity: visualDensity,
-                              title: Text("Update on : ", style: ts.merge(xsmallText)),
-                              subtitle: Text(_ticket.getUpdateDateTime(), style: ts.merge(smallText))),
-                          if (_ticket.shipDate.isNotEmpty)
-                            ListTile(
-                                visualDensity: visualDensity,
-                                title: Text("Ship Date : ", style: ts.merge(xsmallText)),
-                                subtitle: Text(_ticket.shipDate, style: ts.merge(smallText))),
-                          if (_ticket.deliveryDate.isNotEmpty)
-                            ListTile(
-                                visualDensity: visualDensity,
-                                title: Text("Delivery Date : ", style: ts.merge(xsmallText)),
-                                subtitle: Text(_ticket.deliveryDate, style: ts.merge(smallText))),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8),
-                            child: Wrap(children: [
-                              if (_ticket.inPrint == 1)
-                                IconButton(
-                                    icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)), onPressed: () {}),
-                              if (_ticket.isHold == 1)
-                                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.pan_tool_rounded, color: Colors.black)), onPressed: () {}),
-                              if (_ticket.isGr == 1)
-                                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)), onPressed: () {}),
-                              if (_ticket.isSk == 1)
-                                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)), onPressed: () {}),
-                              if (_ticket.isError == 1)
-                                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.report_problem_rounded, color: Colors.red)), onPressed: () {}),
-                              if (_ticket.isSort == 1)
-                                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.local_mall_rounded, color: Colors.green)), onPressed: () {}),
-                              if (_ticket.isRush == 1)
-                                IconButton(
-                                    icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent)), onPressed: () {}),
-                              if (_ticket.isRed == 1)
-                                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)), onPressed: () {}),
-                              if (_ticket.isCrossPro)
-                                IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.merge_type_rounded, color: Colors.green)), onPressed: () {})
-                            ]),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: CircularPercentIndicator(
-                          radius: 50.0,
-                          lineWidth: 4.0,
-                          percent: (_progress / 100).toDouble(),
-                          center: Text("${_ticket.progress}%", style: ts),
-                          progressColor: Colors.blue,
-                          animateFromLastPercent: true,
-                          animation: true,
-                          animationDuration: 500),
-                    )
-                  ],
-                ),
-              )),
-          Expanded(
-            child: Scaffold(
-              appBar: AppBar(
-                  automaticallyImplyLeading: false,
-                  title: Row(children: [
-                    const Spacer(),
-                    IconButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: const Icon(Icons.close, color: Colors.black))
-                  ]),
-                  backgroundColor: Colors.white),
-              body: _loading ? const Center(child: CircularProgressIndicator()) : _body(bottomNavigationBarSelectedIndex),
-              backgroundColor: Colors.white,
-              bottomNavigationBar: BottomAppBar(
-                  elevation: 16,
-                  color: Colors.orange,
-                  shape: const CircularNotchedRectangle(),
-                  notchMargin: 4.0,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        _getBottomNavigationBarItem(Icons.tour_rounded, ("Flags"), 0),
-                        _getBottomNavigationBarItem(Icons.data_usage_rounded, ("Progress"), 1),
-                        _getBottomNavigationBarItem(Icons.print_rounded, ("Printing"), 2),
-                        _getBottomNavigationBarItem(Icons.history_rounded, ("History"), 3),
+                              title: Text("Delivery Date : ", style: ts.merge(xSmallText)),
+                              subtitle: Text(_ticket.deliveryDate, style: ts.merge(smallText))),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Wrap(children: [
+                            if (_ticket.inPrint == 1)
+                              IconButton(
+                                  icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)), onPressed: () {}),
+                            if (_ticket.isHold == 1)
+                              IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.pan_tool_rounded, color: Colors.black)), onPressed: () {}),
+                            if (_ticket.isGr == 1)
+                              IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)), onPressed: () {}),
+                            if (_ticket.isSk == 1)
+                              IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)), onPressed: () {}),
+                            if (_ticket.isError == 1)
+                              IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.report_problem_rounded, color: Colors.red)), onPressed: () {}),
+                            if (_ticket.isSort == 1)
+                              IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.local_mall_rounded, color: Colors.green)), onPressed: () {}),
+                            if (_ticket.isRush == 1)
+                              IconButton(
+                                  icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent)), onPressed: () {}),
+                            if (_ticket.isRed == 1)
+                              IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)), onPressed: () {}),
+                            if (_ticket.isCrossPro)
+                              IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.merge_type_rounded, color: Colors.green)), onPressed: () {})
+                          ]),
+                        ),
                       ],
                     ),
-                  )),
-              floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-              floatingActionButton: (!_ticket.hasFile)
-                  ? null
-                  : _ticket.isHold == 1
-                      ? null
-                      : FloatingActionButton(
-                          child: const Icon(Icons.import_contacts),
+                  ),
+                  if (_ticket.isStarted)
+                    Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: CircularPercentIndicator(
+                            radius: 50.0,
+                            lineWidth: 4.0,
+                            percent: (_progress / 100).toDouble(),
+                            center: Text("${_ticket.progress}%", style: ts),
+                            progressColor: Colors.blue,
+                            animateFromLastPercent: true,
+                            animation: true,
+                            animationDuration: 500))
+                ],
+              ),
+            )),
+        Expanded(
+            child: Scaffold(
+                appBar: AppBar(
+                    automaticallyImplyLeading: false,
+                    title: Row(children: [
+                      const Spacer(),
+                      IconButton(
                           onPressed: () {
-                            _ticket.open(context);
+                            Navigator.pop(context);
                           },
-                        ),
-            ),
-          ),
-        ],
-      ),
+                          icon: const Icon(Icons.close, color: Colors.black))
+                    ]),
+                    backgroundColor: Colors.white),
+                body: _loading ? const Center(child: CircularProgressIndicator()) : _body(bottomNavigationBarSelectedIndex),
+                backgroundColor: Colors.white,
+                bottomNavigationBar: BottomAppBar(
+                    elevation: 16,
+                    // color: Colors.orange,
+                    shape: const CircularNotchedRectangle(),
+                    notchMargin: 4.0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          _getBottomNavigationBarItem(Icons.tour_rounded, ("Flags"), 0),
+                          _getBottomNavigationBarItem(Icons.data_usage_rounded, ("Progress"), 1),
+                          _getBottomNavigationBarItem(Icons.print_rounded, ("Printing"), 2),
+                          _getBottomNavigationBarItem(Icons.history_rounded, ("History"), 3),
+                        ],
+                      ),
+                    )),
+                floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+                floatingActionButton: (!_ticket.hasFile)
+                    ? null
+                    : _ticket.isHold == 1
+                        ? null
+                        : FloatingActionButton(
+                            child: const Icon(Icons.import_contacts),
+                            onPressed: () {
+                              _ticket.open(context);
+                            })))
+      ]),
     );
   }
 }

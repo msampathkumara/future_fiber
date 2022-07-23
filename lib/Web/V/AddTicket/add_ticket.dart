@@ -194,7 +194,7 @@ class _AddTicketState extends State<AddTicket> {
   }
 
   Widget buildZone1(BuildContext context) => Builder(
-        builder: (context) => DropzoneView(
+      builder: (context) => DropzoneView(
           mime: const ['application/pdf'],
           operation: DragOperation.copy,
           cursor: CursorType.grab,
@@ -210,7 +210,7 @@ class _AddTicketState extends State<AddTicket> {
             // print('Zone 1 left');
           },
           onDrop: (ev) async {
-            onDrop(ev);
+            // onDrop(ev);
           },
           onDropMultiple: (ev) async {
             print('Zone 1 drop multiple: $ev');
@@ -218,9 +218,7 @@ class _AddTicketState extends State<AddTicket> {
             for (var file in ev ?? []) {
               onDrop(file);
             }
-          },
-        ),
-      );
+          }));
 
   Future<void> onDrop(ev) async {
     UploadFile uploadFile = UploadFile(ev, standard, production);

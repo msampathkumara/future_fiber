@@ -4,6 +4,7 @@ import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/QC.dart';
 import 'package:smartwind/M/Section.dart';
 import 'package:smartwind/M/Ticket.dart';
+import 'package:smartwind/V/Widgets/NoResultFoundMsg.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 import 'package:smartwind/Web/V/QC/webTicketQView.dart';
 
@@ -19,6 +20,8 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
   var themeColor = Colors.green;
 
   Production _selectedProduction = Production.All;
+
+  bool requestFinished = false;
 
   @override
   initState() {
@@ -93,7 +96,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
   }
 
   String listSortBy = "dnt";
-  String sortedBy = "dnt";
+  String sortedBy = "Date";
   String searchText = "";
   var subscription;
   List<Map> currentFileList = [];
@@ -191,106 +194,105 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
   }
 
   _getTicketsList() {
-    return Column(
+    return Stack(
       children: [
-        Expanded(
-          child: RefreshIndicator(
-            onRefresh: () {
-              return loadData(0).then((value) {
-                setState(() {});
-              });
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: ListView.separated(
-                padding: const EdgeInsets.all(8),
-                itemCount: _ticketQcList.length < dataCount ? _ticketQcList.length + 1 : _ticketQcList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  if (_ticketQcList.length == index) {
-                    if (!requested && (!_dataLoadingError)) {
-                      var x = ((_ticketQcList.length) / 20);
+        if (requestFinished && _ticketQcList.isEmpty) const Center(child: NoResultFoundMsg()),
+        RefreshIndicator(
+          onRefresh: () {
+            return loadData(0).then((value) {
+              setState(() {});
+            });
+          },
+          child: Padding(
+            padding: const EdgeInsets.only(top: 16),
+            child: ListView.separated(
+              padding: const EdgeInsets.all(8),
+              itemCount: _ticketQcList.length < dataCount ? _ticketQcList.length + 1 : _ticketQcList.length,
+              itemBuilder: (BuildContext context, int index) {
+                if (_ticketQcList.length == index) {
+                  if (!requested && (!_dataLoadingError)) {
+                    var x = ((_ticketQcList.length) / 20);
 
-                      loadData(x.toInt());
-                    }
-                    return SizedBox(
-                        height: 100,
-                        child: Center(
-                            child: Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: SizedBox(
-                                    height: 48,
-                                    width: 48,
-                                    child: InkWell(
-                                        onTap: () {
-                                          if (_dataLoadingError) {
-                                            setState(() {
-                                              _dataLoadingError = false;
-                                            });
-                                            var x = ((_ticketQcList.length) / 20);
-                                            loadData(x.toInt());
-                                          }
-                                        },
-                                        child: Card(
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(100.0),
-                                            ),
-                                            child: Padding(
-                                                padding: const EdgeInsets.all(12.0),
-                                                child: !_dataLoadingError
-                                                    ? const CircularProgressIndicator(color: Colors.red, strokeWidth: 2)
-                                                    : const Icon(Icons.refresh_rounded, size: 18))))))));
+                    loadData(x.toInt());
                   }
+                  return SizedBox(
+                      height: 100,
+                      child: Center(
+                          child: Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: SizedBox(
+                                  height: 48,
+                                  width: 48,
+                                  child: InkWell(
+                                      onTap: () {
+                                        if (_dataLoadingError) {
+                                          setState(() {
+                                            _dataLoadingError = false;
+                                          });
+                                          var x = ((_ticketQcList.length) / 20);
+                                          loadData(x.toInt());
+                                        }
+                                      },
+                                      child: Card(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(100.0),
+                                          ),
+                                          child: Padding(
+                                              padding: const EdgeInsets.all(12.0),
+                                              child: !_dataLoadingError
+                                                  ? const CircularProgressIndicator(color: Colors.red, strokeWidth: 2)
+                                                  : const Icon(Icons.refresh_rounded, size: 18))))))));
+                }
 
-                  QC _ticketQc = (_ticketQcList[index]);
-                  var tc = _ticketQc.isQc() ? Colors.redAccent : Colors.black;
-                  Section? section = _ticketQc.getSection();
-                  return GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onLongPress: () async {
-                        // await showTicketOptions(ticketPrint, context);
-                        // setState(() {});
-                      },
-                      onTap: () async {
-                        // await Navigator.push(context, MaterialPageRoute(builder: (context) => QCView(_ticketQc)));
-                        WebTicketQView(_ticketQc.ticket ?? Ticket(), true).show(context);
-                      },
-                      onDoubleTap: () async {
-                        // print(await ticket.getLocalFileVersion());
-                        // ticket.open(context);
-                      },
-                      child: Ink(
-                          decoration: BoxDecoration(
-                              border: Border(
-                                  left: BorderSide(
-                            color: _ticketQc.isQc() ? Colors.redAccent : Colors.white,
-                            width: 3.0,
-                          ))),
-                          child: ListTile(
-                              leading: Container(width: 50, alignment: Alignment.center, height: double.infinity, child: Text("${index + 1}", textAlign: TextAlign.center)),
-                              title: Text(_ticketQc.ticket!.getName(), style: TextStyle(fontWeight: FontWeight.bold, color: tc)),
-                              subtitle: Wrap(direction: Axis.vertical, children: [
-                                if ((_ticketQc.ticket!.mo ?? "").trim().isNotEmpty) Text((_ticketQc.ticket!.oe ?? "")),
-                                Text("${_ticketQc.getDateTime()}"),
-                              ]),
-                              // subtitle: Text(ticket.fileVersion.toString()),
-                              trailing: Wrap(alignment: WrapAlignment.center, direction: Axis.vertical, children: [
-                                Text(section?.factory ?? ''),
-                                Text(section?.sectionTitle ?? '')
-                                // UserImage(nsUser: NsUser.fromId(_ticketQc.userId), radius: 20),
-                                // Text(_ticketQc.user != null ? _ticketQc.user!.uname : "", textScaleFactor: 1)
-                              ]))));
-                },
-                separatorBuilder: (BuildContext context, int index) {
-                  return const Divider(
-                    height: 5,
-                    endIndent: 0.5,
-                    color: Colors.black12,
-                  );
-                },
-              ),
+                QC _ticketQc = (_ticketQcList[index]);
+                var tc = _ticketQc.isQc() ? Colors.redAccent : Colors.black;
+                Section? section = _ticketQc.getSection();
+                return GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onLongPress: () async {
+                      // await showTicketOptions(ticketPrint, context);
+                      // setState(() {});
+                    },
+                    onTap: () async {
+                      // await Navigator.push(context, MaterialPageRoute(builder: (context) => QCView(_ticketQc)));
+                      WebTicketQView(_ticketQc.ticket ?? Ticket(), true).show(context);
+                    },
+                    onDoubleTap: () async {
+                      // print(await ticket.getLocalFileVersion());
+                      // ticket.open(context);
+                    },
+                    child: Ink(
+                        decoration: BoxDecoration(
+                            border: Border(
+                                left: BorderSide(
+                          color: _ticketQc.isQc() ? Colors.redAccent : Colors.white,
+                          width: 3.0,
+                        ))),
+                        child: ListTile(
+                            leading: Container(width: 50, alignment: Alignment.center, height: double.infinity, child: Text("${index + 1}", textAlign: TextAlign.center)),
+                            title: Text(_ticketQc.ticket!.getName(), style: TextStyle(fontWeight: FontWeight.bold, color: tc)),
+                            subtitle: Wrap(direction: Axis.vertical, children: [
+                              if ((_ticketQc.ticket!.mo ?? "").trim().isNotEmpty) Text((_ticketQc.ticket!.oe ?? "")),
+                              Text("${_ticketQc.getDateTime()}"),
+                            ]),
+                            // subtitle: Text(ticket.fileVersion.toString()),
+                            trailing: Wrap(alignment: WrapAlignment.center, direction: Axis.vertical, children: [
+                              Text(section?.factory ?? ''),
+                              Text(section?.sectionTitle ?? '')
+                              // UserImage(nsUser: NsUser.fromId(_ticketQc.userId), radius: 20),
+                              // Text(_ticketQc.user != null ? _ticketQc.user!.uname : "", textScaleFactor: 1)
+                            ]))));
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return const Divider(
+                  height: 5,
+                  endIndent: 0.5,
+                  color: Colors.black12,
+                );
+              },
             ),
           ),
-        ),
+        )
       ],
     );
   }
@@ -343,6 +345,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
 
   Future loadData(int page) {
     requested = true;
+    requestFinished = false;
     return OnlineDB.apiGet("tickets/qc/getList", {
       'type': _selectedType.getValue(),
       'production': _selectedProduction.getValue(),
@@ -362,6 +365,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
       final ids = _ticketQcList.map((e) => e.id).toSet();
       _ticketQcList.retainWhere((x) => ids.remove(x.id));
       _dataLoadingError = false;
+      requestFinished = true;
       setState(() {});
     }).whenComplete(() {
       setState(() {

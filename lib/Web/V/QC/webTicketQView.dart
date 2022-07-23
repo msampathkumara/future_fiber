@@ -3,11 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
+import 'package:pdf_render/pdf_render_widgets.dart';
 // import 'package:pdfx/pdfx.dart';
 import 'package:smartwind/M/QC.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/Web/V/QC/QFileView.dart';
+import 'package:smartwind/res.dart';
 import 'package:universal_html/html.dart' as html;
 
 // import 'package:webview_flutter/webview_flutter.dart';
@@ -70,36 +71,67 @@ class _WebTicketQViewState extends State<WebTicketQView> {
         ]),
         body: err_msg != null
             ? Text(err_msg!)
-            : Row(children: [
-                SizedBox(
-                  width: 300,
-                  child: ListView.separated(
+            : kIsWeb
+                ? Row(children: [
+                    SizedBox(
+                      width: 300,
+                      child: ListView.separated(
+                        itemBuilder: (BuildContext context, int index) {
+                          QC qc = qcList[index];
+                          return ListTile(
+                              onTap: () async {
+                                if (!kIsWeb) {
+                                  QFileView(qc).show(context);
+                                  return;
+                                }
+                                _pdfLoading = true;
+                                selectedQc = qc;
+                                setState(() {});
+                                qc.getFile(context).then((value) async {
+                                  _pdfLoading = false;
+                                  setState(() {});
+                                  _data = value;
+                                });
+                              },
+                              leading: UserImage(nsUser: qc.user, radius: 16, padding: 2),
+                              title: Row(children: [
+                                const SizedBox(width: 4),
+                                Wrap(
+                                    direction: Axis.vertical,
+                                    children: [Text("${qc.user?.name}"), Text("${qc.user?.uname}", style: const TextStyle(color: Colors.blue, fontSize: 12))])
+                              ]),
+                              subtitle: Text(qc.getDateTime(), style: const TextStyle(fontSize: 12)));
+                        },
+                        itemCount: qcList.length,
+                        separatorBuilder: (BuildContext context, int index) {
+                          return const Divider();
+                        },
+                      ),
+                    ),
+                    const VerticalDivider(),
+                    Expanded(
+                        child: selectedQc == null
+                            ? const Center(child: Text('Select Qc'))
+                            : _pdfLoading
+                                ? const Center(child: CircularProgressIndicator())
+                                : getView())
+                  ])
+                : ListView.separated(
                     itemBuilder: (BuildContext context, int index) {
                       QC qc = qcList[index];
                       return ListTile(
                           onTap: () async {
                             if (!kIsWeb) {
                               QFileView(qc).show(context);
-
                               return;
                             }
-
                             _pdfLoading = true;
                             selectedQc = qc;
                             setState(() {});
-                            // final WebViewController controller = await _controller.future;
-
                             qc.getFile(context).then((value) async {
                               _pdfLoading = false;
                               setState(() {});
-                              // pdfPinchController = PdfControllerPinch(document: PdfDocument.openData(Future.value(Uint8List.fromList(value))));
-                              // final document = PdfDocument.openData(value);
-                              // pdfPinchController.loadDocument(document);
-
                               _data = value;
-
-                              // final blob = html.Blob([value], 'application/pdf');
-                              // final url = html.Url.createObjectUrlFromBlob(blob);
                             });
                           },
                           leading: UserImage(nsUser: qc.user, radius: 16, padding: 2),
@@ -114,36 +146,7 @@ class _WebTicketQViewState extends State<WebTicketQView> {
                     separatorBuilder: (BuildContext context, int index) {
                       return const Divider();
                     },
-                  ),
-                ),
-                if (kIsWeb) const VerticalDivider(),
-                if (kIsWeb)
-                  Expanded(
-                      child: selectedQc == null
-                          ? const Center(child: Text('Select Qc'))
-                          : _pdfLoading
-                              ? const Center(child: CircularProgressIndicator())
-                              : QFileView(selectedQc!)
-                      // : PdfViewer.openData(_data, params: const PdfViewerParams())
-
-                      // : PdfViewPinch(
-                      //     controller: pdfPinchController,
-                      //     onDocumentError: (err) {
-                      //       print(err);
-                      //     },
-                      //     onDocumentLoaded: (document) {
-                      //       setState(() {
-                      //         // _allPagesCount = document.pagesCount;
-                      //       });
-                      //     },
-                      //     onPageChanged: (page) {
-                      //       setState(() {
-                      //         // _actualPageNumber = page;
-                      //       });
-                      //     },
-                      //   )
-                      )
-              ]));
+                  ));
   }
 
   // PdfControllerPinch pdfPinchController = PdfControllerPinch(document: PdfDocument.openAsset('x.pdf'));
@@ -180,13 +183,26 @@ class _WebTicketQViewState extends State<WebTicketQView> {
     });
   }
 
-// Future<void> _onDoPostRequest(WebViewController controller, BuildContext context) async {
-//   final WebViewRequest request = WebViewRequest(
-//     uri: Uri.parse('https://httpbin.org/post'),
-//     method: WebViewRequestMethod.post,
-//     headers: <String, String>{'foo': 'bar', 'Content-Type': 'text/plain'},
-//     body: Uint8List.fromList('Test Body'.codeUnits),
-//   );
-//   await controller.loadRequest(request);
-// }
+  getView() {
+    return _pdfLoading
+        ? const Center(child: CircularProgressIndicator())
+        : _data == null
+            ? Center(
+                child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                direction: Axis.vertical,
+                children: [SizedBox(width: 200, child: Image.asset(Res.fileNotFound)), const Text("File Not Found")],
+              ))
+            : PdfViewer.openData(_data, params: const PdfViewerParams());
+  }
+
+  loadQc() {
+    _pdfLoading = true;
+    setState(() {});
+    selectedQc?.getFile(context).then((value) async {
+      _pdfLoading = false;
+      _data = value;
+      setState(() {});
+    });
+  }
 }

@@ -28,7 +28,52 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "27155477934-tq4lg8gml4vam2vm3pmgv44mbsju7qsg.apps.googleusercontent.com",
+              "client_id": "27155477934-c363brl12co3ci8qfd09658lssojbefl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:27155477934:android:ed55a56e2e8e7d0930043f",
+        "android_client_info": {
+          "package_name": "com.sampathkumara.northsails.smartwind.emt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "27155477934-et7mle9m83d1u5tciehhkrvr65kjp4e8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sampathkumara.northsails.smartwind.emt",
+            "certificate_hash": "84492c16addb5c90035bb32f0f7c7a4697998f4b"
+          }
+        },
+        {
+          "client_id": "27155477934-k6djnjs25qfnf7cg1nk6feim46lp5vnb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sampathkumara.northsails.smartwind.emt",
+            "certificate_hash": "de1c4959467a25e45ef62430754df4f6acf75901"
+          }
+        },
+        {
+          "client_id": "27155477934-tq4lg8gml4vam2vm3pmgv44mbsju7qsg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBggKndNStZQHrA00JqSbtlkUs6Cz9s3OI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "27155477934-c363brl12co3ci8qfd09658lssojbefl.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

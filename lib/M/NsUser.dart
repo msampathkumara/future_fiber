@@ -6,6 +6,7 @@ import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
 import 'package:smartwind/res.dart';
 
+import '../C/Api.dart';
 import 'AppUser.dart';
 import 'HiveClass.dart';
 import 'Section.dart';
@@ -35,9 +36,9 @@ class NsUser extends HiveClass {
   @JsonKey(defaultValue: "", includeIfNull: true)
   String utype = "";
 
-  @HiveField(5, defaultValue: "")
-  @JsonKey(defaultValue: "", includeIfNull: true)
-  String epf = "";
+  @HiveField(5, defaultValue: null)
+  @JsonKey(defaultValue: null, includeIfNull: true, fromJson: intFromString)
+  int? epf;
 
   @HiveField(6, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
@@ -107,6 +108,12 @@ class NsUser extends HiveClass {
 
   NsUser() {
     loadSections();
+  }
+
+  static int? intFromString(d) => int.tryParse("$d");
+
+  getEpf({defaultValue = ''}) {
+    return epf ?? defaultValue;
   }
 
   factory NsUser.fromJson(Map<String, dynamic> json) => _$NsUserFromJson(json);
@@ -221,5 +228,25 @@ class NsUser extends HiveClass {
 
   static List<NsUser> fromJsonArray(nsUsers) {
     return List<NsUser>.from(nsUsers.map((model) => NsUser.fromJson(model)));
+  }
+
+  Future removeNfcCard(context, {required onDone}) async {
+    return await Api.post("users/removeNfcCard", {'userId': id})
+        .then((res) {
+          Map data = res.data;
+          hasNfc = 0;
+          save();
+          onDone();
+        })
+        .whenComplete(() {})
+        .catchError((err) async {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(err.toString()),
+              action: SnackBarAction(
+                  label: 'Retry',
+                  onPressed: () async {
+                    return await removeNfcCard(context, onDone: onDone);
+                  })));
+        });
   }
 }

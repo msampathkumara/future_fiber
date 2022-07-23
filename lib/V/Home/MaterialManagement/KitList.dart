@@ -4,6 +4,7 @@ import '../../../C/Api.dart';
 import '../../../M/CPR/KIT.dart';
 import '../../../M/Enums.dart';
 import '../../../Web/V/MaterialManagement/KIT/KitView.dart';
+import '../../Widgets/NoResultFoundMsg.dart';
 import '../../Widgets/SearchBar.dart';
 
 class KitList extends StatefulWidget {
@@ -78,7 +79,8 @@ class _KitListState extends State<KitList> {
                     crossAxisAlignment: WrapCrossAlignment.center,
                     direction: Axis.vertical,
                     children: [
-                      Text(searchText.isEmpty ? "No KITs Found" : "⛔ Work Ticket not found.\n Please contact  Ticket Checking department", textScaleFactor: 1.5),
+                      // Text(searchText.isEmpty ? "No KITs Found" : "⛔ Work Ticket not found.\n Please contact  Ticket Checking department", textScaleFactor: 1.5),
+                      Center(child: Container(padding: const EdgeInsets.all(20), child: const NoResultFoundMsg())),
                       ElevatedButton(
                           onPressed: () {
                             loadData(0);

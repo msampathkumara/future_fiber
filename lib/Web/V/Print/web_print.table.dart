@@ -71,7 +71,7 @@ class _WebPrintTableState extends State<WebPrintTable> {
       ),
       DataColumn2(
         size: ColumnSize.S,
-        label: const Text('Production', style: TextStyle(fontWeight: FontWeight.bold)),
+        label: Tooltip(message: "Operation NO", child: Text('Production', overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.bold))),
         onSort: (columnIndex, ascending) => sort(columnIndex, ascending),
       ),
       DataColumn2(
@@ -140,7 +140,7 @@ class _WebPrintTableState extends State<WebPrintTable> {
           controller: _controller,
           hidePaginator: false,
           columns: _columns,
-          empty: Center(child: Container(padding: const EdgeInsets.all(20), color: Colors.grey[200], child: const Text('No data'))),
+          empty: Center(child: Container(padding: const EdgeInsets.all(20), child: const NoResultFoundMsg())),
           loading: _Loading(),
           errorBuilder: (e) => _ErrorAndRetry(e.toString(), () => _dessertsDataSource!.refreshDatasource()),
           source: _dessertsDataSource!),

@@ -15,7 +15,7 @@ class FCM {
 
     var userId = AppUser.getUser()?.id;
     if (AppUser.getUser() != null) {
-      FirebaseMessaging.instance.subscribeToTopic('userUpdate_${userId}');
+      FirebaseMessaging.instance.subscribeToTopic('userUpdate_$userId');
     }
   }
 

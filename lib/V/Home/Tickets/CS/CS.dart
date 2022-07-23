@@ -8,7 +8,7 @@ import 'SelectPdfPage.dart';
 class CS extends StatefulWidget {
   final Ticket ticket;
 
-  CS(this.ticket);
+    const CS(this.ticket, {Key? key}) : super(key: key);
 
   @override
   _CSState createState() => _CSState();
@@ -34,7 +34,7 @@ class _CSState extends State<CS> with TickerProviderStateMixin {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _tabBarController = TabController(length: tabs.length, vsync: this);
       _tabBarController!.addListener(() {
-        print("Selected Index: " + _tabBarController!.index.toString());
+        print("Selected Index: ${_tabBarController!.index}");
       });
     });
     _webView = CustomWebView(

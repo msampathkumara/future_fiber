@@ -1,17 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:smartwind/V/Home/Tickets/ProductionPool/TicketStartDialog.dart';
 
+import '../../../../C/Api.dart';
 import '../../../../C/OnlineDB.dart';
 import '../../../../M/AppUser.dart';
 import '../../../../M/Enums.dart';
 import '../../../../M/Ticket.dart';
 import '../../../../ns_icons_icons.dart';
-import '../../../Widgets/FlagDialog.dart';
 import '../../BlueBook/BlueBook.dart';
 import '../StandardFiles/factory_selector.dart';
 import '../TicketInfo/TicketInfo.dart';
 import 'Finish/FinishCheckList.dart';
+import 'FlagDialog.dart';
 
 class TicketOption {
   TicketOption(this.title, this.onTap, this.icon, this.permissions);
@@ -40,8 +42,8 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             ListTile(
-              title: Text(ticket.mo ?? ticket.oe!),
-              subtitle: Text(ticket.oe!),
+              title: Text(ticket.mo ?? ticket.oe ?? ''),
+              subtitle: Text(ticket.oe ?? ''),
             ),
             const Divider(),
             if (ticket.completed == 1 && AppUser.havePermissionFor(Permissions.DELETE_TICKETS))
@@ -67,8 +69,9 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                     leading: const Icon(Icons.flag),
                     onTap: () async {
                       Navigator.of(context).pop();
-                      await FlagDialog1.showRedFlagDialog(context1, ticket);
+                      // await FlagDialog1.showRedFlagDialog(context1, ticket);
                       // ticket.isRed = resul ? 1 : 0;
+                      FlagDialogNew(ticket, TicketFlagTypes.RED).show(context);
                     },
                   ),
                 if (AppUser.havePermissionFor(Permissions.STOP_PRODUCTION))
@@ -77,15 +80,19 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                     leading: const Icon(Icons.pan_tool_rounded, color: Colors.red),
                     onTap: () async {
                       Navigator.of(context).pop();
-                      bool resul = await FlagDialog1.showStopProductionFlagDialog(context1, ticket);
-                      ticket.isHold = resul ? 1 : 0;
+                      // bool resul = await FlagDialog1.showStopProductionFlagDialog(context1, ticket);
+                      bool? resul = await FlagDialogNew(ticket, TicketFlagTypes.HOLD).show(context);
+                      if (resul != null) {
+                        ticket.isHold = resul ? 1 : 0;
+                      }
                     },
                   ),
                 if (AppUser.havePermissionFor(Permissions.SET_GR))
                   ListTile(
                     onTap: () async {
                       Navigator.of(context).pop();
-                      await FlagDialog1.showGRDialog(context1, ticket);
+                      // await FlagDialog1.showGRDialog(context1, ticket);
+                      FlagDialogNew(ticket, TicketFlagTypes.GR).show(context);
                     },
                     title: Text(ticket.isGr == 1 ? "Remove GR" : "Set GR"),
                     // leading: SizedBox(
@@ -100,7 +107,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                         Navigator.of(context).pop();
                         // await FlagDialog.showRushDialog(context1, ticket);
                         var u = ticket.isRush == 1 ? "removeFlag" : "setFlag";
-                        OnlineDB.apiPost("tickets/flags/" + u, {"ticket": ticket.id.toString(), "comment": "", "type": "rush"}).then((response) async {});
+                        OnlineDB.apiPost("tickets/flags/$u", {"ticket": ticket.id.toString(), "comment": "", "type": "rush"}).then((response) async {});
                       }),
                 if (AppUser.havePermissionFor(Permissions.SEND_TO_PRINTING))
                   ListTile(
@@ -123,25 +130,25 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                             });
                         // await Navigator.push(context1, MaterialPageRoute(builder: (context) => FinishCheckList(ticket)));
                       }),
-                if ((!ticket.isCrossPro) && AppUser.havePermissionFor(Permissions.SET_CROSS_PRODUCTION))
-                  ListTile(
-                      title: const Text("Set Cross Production"),
-                      leading: const Icon(NsIcons.crossProduction, color: Colors.green),
-                      onTap: () async {
-                        Navigator.of(context).pop();
-                        chooseFactories(ticket, context1);
-                        // CrossProduction(ticket).show(context1);
-                        // await Navigator.push(context1, MaterialPageRoute(builder: (context) => CrossProduction(ticket)));
-                        //
-                      }),
-                if (ticket.isCrossPro && AppUser.havePermissionFor(Permissions.SET_CROSS_PRODUCTION))
-                  ListTile(
-                      title: const Text("Remove Cross Production"),
-                      leading: const Icon(NsIcons.crossProduction, color: Colors.green),
-                      onTap: () async {
-                        Navigator.of(context).pop();
-                        showAlertDialog(context, ticket);
-                      }),
+                // if ((!ticket.isCrossPro) && AppUser.havePermissionFor(Permissions.SET_CROSS_PRODUCTION))
+                //   ListTile(
+                //       title: const Text("Set Cross Production"),
+                //       leading: const Icon(NsIcons.crossProduction, color: Colors.green),
+                //       onTap: () async {
+                //         Navigator.of(context).pop();
+                //         chooseFactories(ticket, context1);
+                //         // CrossProduction(ticket).show(context1);
+                //         // await Navigator.push(context1, MaterialPageRoute(builder: (context) => CrossProduction(ticket)));
+                //         //
+                //       }),
+                // if (ticket.isCrossPro && AppUser.havePermissionFor(Permissions.SET_CROSS_PRODUCTION))
+                //   ListTile(
+                //       title: const Text("Remove Cross Production"),
+                //       leading: const Icon(NsIcons.crossProduction, color: Colors.green),
+                //       onTap: () async {
+                //         Navigator.of(context).pop();
+                //         showAlertDialog(context, ticket);
+                //       }),
                 if (AppUser.havePermissionFor(Permissions.SHARE_TICKETS) && (!kIsWeb))
                   ListTile(
                       title: const Text("Share Work Ticket"),
@@ -155,7 +162,9 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                       title: const Text("Blue Book"),
                       leading: const Icon(Icons.menu_book_rounded, color: Colors.lightBlue),
                       onTap: () async {
-                        await Navigator.push(context, MaterialPageRoute(builder: (context) => BlueBook(ticket: ticket)));
+                        if (await ticket.getFile(context) != null) {
+                          await Navigator.push(context, MaterialPageRoute(builder: (context) => BlueBook(ticket: ticket)));
+                        }
                         Navigator.of(context).pop();
                       }),
                 if (AppUser.havePermissionFor(Permissions.SHIPPING_SYSTEM) && (!kIsWeb))
@@ -174,21 +183,23 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                         await ticket.openInCS(context);
                         Navigator.of(context).pop();
                       }),
-                if (AppUser.havePermissionFor(Permissions.DELETE_TICKETS))
+                        if (ticket.hasFile && AppUser.havePermissionFor(Permissions.DELETE_TICKETS))
                   ListTile(
-                      title: const Text("Delete"),
+                      title: const Text("Delete PDF"),
                       leading: const Icon(NsIcons.delete, color: Colors.red),
                       onTap: () async {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             backgroundColor: Colors.deepOrange,
-                            content: const Text("🗑️ Are you sure want to delete this ticket", style: TextStyle(color: Colors.white)),
+                            content: const Text("🗑️ Are you sure want to delete this ticket's PDF", style: TextStyle(color: Colors.white)),
                             action: SnackBarAction(
-                                label: "Delete ?",
+                                label: "Delete PDF ?",
                                 textColor: Colors.white,
                                 onPressed: () {
-                                  OnlineDB.apiPost("tickets/delete", {"id": ticket.id.toString()}).then((response) async {
+                                  Api.post("tickets/deletePDF", {"id": ticket.id.toString()}).then((response) async {
                                     ticket.delete();
-                                    loadData!();
+                                    if (loadData != null) {
+                                      loadData();
+                                    }
                                     print('TICKET DELETED');
                                     print(response.data);
                                     print(response.statusCode);
@@ -353,17 +364,22 @@ Future<void> showOpenActions(Ticket ticket, BuildContext context1, reLoad) async
         height: 250,
         child: ListView(
           children: [
-            ListTile(title: Text(ticket.mo ?? ticket.oe!), subtitle: Text(ticket.oe!)),
+            ListTile(title: Text(ticket.mo ?? ticket.oe ?? ''), subtitle: Text(ticket.oe ?? '')),
             const Divider(),
             ListTile(
                 leading: const Icon(Icons.not_started_outlined),
                 title: const Text('Start Ticket'),
                 onTap: () async {
                   Navigator.of(context).pop();
-                  await ticket.start(context);
-                  ticket.isStarted = true;
-                  ticket.save();
-                  reLoad();
+                  TicketStartDialog(ticket).show(context);
+
+                  // Navigator.of(context).pop();
+                  // ScaffoldMessenger.of(context1).showSnackBar(const SnackBar(content: Text("Ticket is Starting")));
+                  // await ticket.start(context1);
+                  // ScaffoldMessenger.of(context1).showSnackBar(const SnackBar(content: Text("Ticket is Started"), backgroundColor: Colors.green));
+                  // ticket.isStarted = true;
+                  // ticket.save();
+                  // reLoad();
                 }),
             ListTile(
                 leading: const Icon(Icons.open_in_new_outlined),

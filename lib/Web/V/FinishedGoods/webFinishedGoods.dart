@@ -6,7 +6,7 @@ import 'package:smartwind/Web/V/FinishedGoods/webFinishedGoods.table.dart';
 
 import '../../../M/Enums.dart';
 import '../../../M/Ticket.dart';
-import '../../../V/Home/Tickets/ProductionPool/TicketListOptions.dart';
+import '../../../V/Widgets/SearchBar.dart';
 import '../../../ns_icons_icons.dart';
 import '../../Styles/styles.dart';
 
@@ -50,7 +50,7 @@ class _WebFinishedGoodsState extends State<WebFinishedGoods> {
                 Text("Finished Goods", style: mainWidgetsTitleTextStyle),
                 const Spacer(),
                 Wrap(children: [
-                  flagIcon(Filters.isCrossPro, Icons.merge_type_rounded, "Filter by cross production"),
+                  // flagIcon(Filters.isCrossPro, Icons.merge_type_rounded, "Filter by cross production"),
                   flagIcon(Filters.isError, Icons.warning_rounded, "Filter by Error Route"),
                   flagIcon(Filters.inPrint, Icons.print_rounded, "Filter by in print"),
                   flagIcon(Filters.isRush, Icons.offline_bolt_rounded, "Filter by rush"),
@@ -96,27 +96,35 @@ class _WebFinishedGoodsState extends State<WebFinishedGoods> {
                   Material(
                     elevation: 4,
                     borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                        height: 40,
-                        width: 200,
-                        child: TextFormField(
-                          controller: _controller,
-                          onChanged: (text) {
+                    child: SizedBox(
+                      height: 40,
+                      width: 200,
+                      child: SearchBar(
+                          onSearchTextChanged: (String text) {
                             searchText = text;
                             loadData();
                           },
-                          cursorColor: Colors.black,
-                          decoration: InputDecoration(
-                              prefixIcon: const Icon(Icons.search_rounded),
-                              suffixIcon: IconButton(icon: const Icon(Icons.clear), onPressed: _controller.clear),
-                              border: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              errorBorder: InputBorder.none,
-                              disabledBorder: InputBorder.none,
-                              contentPadding: const EdgeInsets.only(left: 15, bottom: 11, top: 10, right: 15),
-                              hintText: "Search Text"),
-                        )),
+                          delay: 500,
+                          searchController: _controller),
+                      // child: TextFormField(
+                      //   controller: _controller,
+                      //   onChanged: (text) {
+                      //     searchText = text;
+                      //     loadData();
+                      //   },
+                      //   cursorColor: Colors.black,
+                      //   decoration: InputDecoration(
+                      //       prefixIcon: const Icon(Icons.search_rounded),
+                      //       suffixIcon: IconButton(icon: const Icon(Icons.clear), onPressed: _controller.clear),
+                      //       border: InputBorder.none,
+                      //       focusedBorder: InputBorder.none,
+                      //       enabledBorder: InputBorder.none,
+                      //       errorBorder: InputBorder.none,
+                      //       disabledBorder: InputBorder.none,
+                      //       contentPadding: const EdgeInsets.only(left: 15, bottom: 11, top: 10, right: 15),
+                      //       hintText: "Search Text"),
+                      // )
+                    ),
                   ),
                 ])
               ],
@@ -161,8 +169,8 @@ class _WebFinishedGoodsState extends State<WebFinishedGoods> {
     return Api.get("tickets/completed/getList", {
       'production': selectedProduction.getValue(),
       "flag": dataFilter.getValue(),
-      'sortDirection': "desc",
-      'sortBy': listSortBy,
+      'sortDirection': sortedAsc ? 'asc' : "desc",
+      'sortBy': sortedBy,
       'pageIndex': page,
       'pageSize': count,
       'searchText': searchText

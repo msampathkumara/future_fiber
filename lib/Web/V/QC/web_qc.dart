@@ -11,6 +11,7 @@ import 'package:smartwind/Web/V/QC/webQView.dart';
 import '../../../C/Api.dart';
 import '../../../M/Enums.dart';
 import '../../../M/Ticket.dart';
+import '../../../V/Widgets/NoResultFoundMsg.dart';
 import '../../Styles/styles.dart';
 
 part 'web_qc.table.dart';
@@ -173,13 +174,15 @@ class _WebQcState extends State<WebQc> {
       'searchText': searchText,
     }).then((res) {
       print(res.data);
-      List tickets = res.data["qcs"];
-      dataCount = res.data["count"];
+      List qcs = res.data["qcs"];
+      dataCount = res.data["count"] ?? 0;
+      print('--------------------dddd----------- ');
+      print('--------------------dddd-----------${QC.fromJsonArray(qcs)}');
 
       _dataLoadingError = false;
 
       setState(() {});
-      return DataResponse(dataCount, QC.fromJsonArray(tickets));
+      return DataResponse(dataCount, QC.fromJsonArray(qcs));
     }).whenComplete(() {
       setState(() {
         requested = false;

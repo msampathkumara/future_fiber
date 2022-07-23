@@ -67,7 +67,7 @@ class _webQViewState extends State<webQView> {
 
   getUi() {
     return Scaffold(
-        appBar: AppBar(title: const Text('Pdf_render example app'), actions: [
+        appBar: AppBar(title: ListTile(title: Text("${widget.qc.ticket?.mo}"), subtitle: Wrap(children: [Text("${widget.qc.ticket?.oe}")]), textColor: Colors.white), actions: [
           if (!_pdfLoading)
             IconButton(
                 onPressed: () {

@@ -8,6 +8,7 @@ import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/V/Widgets/FlagDialog.dart';
+import 'package:smartwind/V/Widgets/NoResultFoundMsg.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 import 'package:smartwind/ns_icons_icons.dart';
 
@@ -28,9 +29,6 @@ class TicketList extends StatefulWidget {
 }
 
 class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
-  var database;
-  late int _selectedTabIndex = 0;
-
   String searchText = "";
   var subscription;
   bool _showAllTickets = false;
@@ -52,7 +50,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     });
 
     _dbChangeCallBack = DB.setOnDBChangeListener(() {
-      print('on update tickets');
+      debugPrint('on update tickets');
       if (mounted) {
         loadData();
       }
@@ -86,14 +84,14 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
             actions: <Widget>[
               PopupMenuButton<String>(
                 onSelected: (s) {
-                  print(s);
+                  debugPrint(s);
                   _showAllTickets = !_showAllTickets;
 
                   if (_showAllTickets) {
                     // tabs = ["All", "Upwind", "OD", "Nylon", "OEM", "No Pool"];
                     tabs = Production.values.map<String>((e) => e.getValue()).toList();
                   } else {
-                    tabs = ["All", "Cross Production"];
+                    tabs = ["All"];
                   }
 
                   _tabBarController = TabController(length: tabs.length, vsync: this);
@@ -121,15 +119,12 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
             title: SizedBox(
                 height: ((!_showAllTickets) && nsUser != null && nsUser!.section != null) ? 50 : 30,
                 child: Column(children: [
-                  const Text(
-                    "Production Pool",
-                    textScaleFactor: 1.2,
-                  ),
+                  const Text("Production Pool", textScaleFactor: 1.2),
                   if ((!_showAllTickets) && nsUser != null && nsUser!.section != null) Text("${nsUser!.section!.sectionTitle} @ ${nsUser!.section!.factory}")
                 ])),
             bottom: SearchBar(
                 searchController: searchController,
-                delay: 300,
+                delay: 500,
                 onSearchTextChanged: (text) {
                   if (subscription != null) {
                     subscription.cancel();
@@ -153,7 +148,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
           child: Column(
             children: [
               Wrap(children: [
-                flagIcon(Filters.isCrossPro, Icons.merge_type_rounded),
+                // flagIcon(Filters.isCrossPro, Icons.merge_type_rounded),
                 flagIcon(Filters.isError, Icons.warning_rounded),
                 flagIcon(Filters.inPrint, Icons.print_rounded),
                 flagIcon(Filters.isRush, Icons.offline_bolt_rounded),
@@ -204,36 +199,38 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
             )));
   }
 
-  var tabs = ["All", "Cross Production"];
+  var tabs = ["All"];
   TabController? _tabBarController;
   var themeColor = Colors.green;
 
   getBody() {
     var l = tabs.length;
-    print('tab length = $l');
+    debugPrint('tab length = $l');
     return _tabBarController == null
         ? Container()
-        : DefaultTabController(
-            length: tabs.length,
-            child: Scaffold(
-                backgroundColor: Colors.white,
-                appBar: AppBar(
-                  toolbarHeight: 10,
-                  automaticallyImplyLeading: false,
-                  backgroundColor: themeColor,
-                  elevation: 4.0,
-                  bottom: TabBar(
-                    controller: _tabBarController,
-                    indicatorWeight: 4.0,
-                    indicatorColor: Colors.white,
-                    isScrollable: true,
-                    tabs: [
-                      for (final tab in tabs) Tab(text: tab),
-                    ],
-                  ),
-                ),
-                body: TabBarView(controller: _tabBarController, children: listsMap.values.map<Widget>((e) => getTicketListByCategory(e)).toList())),
-          );
+        : _showAllTickets
+            ? DefaultTabController(
+                length: tabs.length,
+                child: Scaffold(
+                    backgroundColor: Colors.white,
+                    appBar: AppBar(
+                      toolbarHeight: 10,
+                      automaticallyImplyLeading: false,
+                      backgroundColor: themeColor,
+                      elevation: 4.0,
+                      bottom: TabBar(
+                        controller: _tabBarController,
+                        indicatorWeight: 4.0,
+                        indicatorColor: Colors.white,
+                        isScrollable: true,
+                        tabs: [
+                          for (final tab in tabs) Tab(text: tab),
+                        ],
+                      ),
+                    ),
+                    body: TabBarView(controller: _tabBarController, children: listsMap.values.map<Widget>((e) => getTicketListByCategory(e)).toList())),
+              )
+            : Scaffold(appBar: AppBar(toolbarHeight: 10, automaticallyImplyLeading: false), body: getTicketListByCategory(listsMap[Production.All]));
   }
 
   getTicketListByCategory(List<Ticket> filesList) {
@@ -254,18 +251,18 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                         padding: const EdgeInsets.all(8),
                         itemCount: filesList.length,
                         itemBuilder: (BuildContext context1, int index) {
-                          // print(FilesList[index]);
+                          // debugPrint(FilesList[index]);
                           Ticket ticket = (filesList[index]);
-                          // print(ticket.toJson());
+                          // debugPrint(ticket.toJson());
                           return TicketTile(index, ticket, onLongPress: () async {
-                            print('Long pres');
+                            debugPrint('Long pres');
                             await showTicketOptions(ticket, context1, context, loadData: () {
                               loadData();
                             });
 
                             setState(() {});
                           }, onReload: () {
-                            print('************************************************************************************************************');
+                            debugPrint('************************************************************************************************************');
                             loadData();
                           });
                         },
@@ -277,26 +274,22 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                           );
                         },
                       )
-                    : Center(child: Text(searchText.isEmpty ? "No Tickets Found" : "⛔ Work Ticket not found.\n Please contact  Ticket Checking department", textScaleFactor: 1.5))),
+                    : const Center(child: NoResultFoundMsg()
+
+                        // Text(searchText.isEmpty ? "No Tickets Found" : "⛔ Work Ticket not found.\n Please contact  Ticket Checking department", textScaleFactor: 1.5)
+
+                        )),
           ),
         ),
       ],
     );
   }
 
-  bool _loading = true;
-
-  setLoading(l) {
-    setState(() {
-      _loading = l;
-    });
-  }
-
   List<Ticket> _load(selectedProduction, section, showAllTickets, searchText, {crossProduction = false, bySection = false}) {
-    print('ticket count == ${HiveBox.ticketBox.length}');
+    debugPrint('ticket count == ${HiveBox.ticketBox.length}');
     var production = nsUser?.section?.factory;
-    print('====== == $production');
-    print('crossProduction == $crossProduction');
+    debugPrint('====== == $production');
+    debugPrint('crossProduction == $crossProduction');
 
     List<Ticket> l = HiveBox.ticketBox.values.where((t) {
       if (bySection && t.nowAt != nsUser?.section?.id) {
@@ -306,22 +299,22 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
       if (t.completed != 0) {
         return false;
       }
-      if (crossProduction) {
-        if (t.isCrossPro) {
-          print([t.id, t.crossPro?.fromSection?.factory, t.crossPro?.toSection?.factory, "$production"]);
-          if (showAllTickets) {
-            return true;
-          }
-
-          if ([t.crossPro?.fromSection?.factory, t.crossPro?.toSection?.factory].contains("$production") == false) {
-            return false;
-          }
-        } else {
-          return false;
-        }
-        // print('${t.crossProList}');
-        print([t.crossPro?.fromSection?.factory, t.crossPro?.toSection?.factory, "$production"]);
-      }
+      // if (crossProduction) {
+      //   if (t.isCrossPro) {
+      //     debugPrint([t.id, t.crossPro?.fromSection?.factory, t.crossPro?.toSection?.factory, "$production"]);
+      //     if (showAllTickets) {
+      //       return true;
+      //     }
+      //
+      //     if ([t.crossPro?.fromSection?.factory, t.crossPro?.toSection?.factory].contains("$production") == false) {
+      //       return false;
+      //     }
+      //   } else {
+      //     return false;
+      //   }
+      //   // debugPrint('${t.crossProList}');
+      //   debugPrint([t.crossPro?.fromSection?.factory, t.crossPro?.toSection?.factory, "$production"]);
+      // }
       if (selectedProduction == Production.None && (t.production != null || (t.production ?? '').isNotEmpty)) {
         return false;
       }
@@ -351,9 +344,8 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
 
   loadData() {
     listsMap = {};
-    print('---------------------------------------------- Start loading');
-    _selectedTabIndex = _tabBarController!.index;
-    setLoading(true);
+    debugPrint('---------------------------------------------- Start loading');
+
     String searchText = this.searchText.toLowerCase();
 
     if (_showAllTickets) {
@@ -362,18 +354,18 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
       }
     } else {
       listsMap[Production.All] = _load(Production.All, 0, false, searchText, bySection: true);
-      listsMap["crossProduct"] = _load(Production.Upwind, 0, false, searchText, crossProduction: true);
+      // listsMap["crossProduct"] = _load(Production.Upwind, 0, false, searchText, crossProduction: true);
     }
     tabListener();
-    print('---------------------------------------------- end loading');
+    debugPrint('---------------------------------------------- end loading');
   }
 
   tabListener() {
-    print("Selected Index: ${_tabBarController!.index}");
+    debugPrint("Selected Index: ${_tabBarController!.index}");
 
     currentFileList = listsMap.values.toList()[_tabBarController!.index];
     setState(() {
-      print('${currentFileList.length}');
+      debugPrint('${currentFileList.length}');
     });
   }
 
@@ -400,7 +392,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
         }
         await loadData();
         setState(() {
-          print('xxxxxxxxxxxxx');
+          debugPrint('xxxxxxxxxxxxx');
         });
       },
     );
@@ -412,7 +404,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
       var ticketInfo = TicketInfo(ticket);
       ticketInfo.show(context);
     } catch (e) {
-      print('Ticket not found');
+      debugPrint('Ticket not found');
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Ticket not found", style: TextStyle(color: Colors.white)), backgroundColor: Colors.red));
     }
   }
@@ -462,10 +454,7 @@ class TicketTile extends StatelessWidget {
           onLongPress();
         },
         onTap: () async {
-          // var ticketInfo = TicketInfo(ticket);
-          // ticketInfo.show(context);
-
-          print('is started === ${ticket.isStarted}');
+          debugPrint('is started === ${ticket.isStarted}');
           if (ticket.isStarted) {
             var ticketInfo = TicketInfo(ticket);
             ticketInfo.show(context);
@@ -476,7 +465,6 @@ class TicketTile extends StatelessWidget {
           }
         },
         onDoubleTap: () async {
-          print(ticket.getLocalFileVersion());
           ticket.open(context);
         },
         child: Ink(
@@ -496,29 +484,18 @@ class TicketTile extends StatelessWidget {
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[Text("${index + 1}", style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold))])),
-              title: Text(
-                (ticket.mo ?? "").trim().isEmpty ? (ticket.oe ?? "") : ticket.mo ?? "",
-                style: TextStyle(fontWeight: FontWeight.bold, color: ticket.hasFile ? Colors.green : Colors.grey),
-              ),
+              title: Text((ticket.mo ?? "").trim().isEmpty ? (ticket.oe ?? "") : ticket.mo ?? "",
+                  textScaleFactor: 1, style: TextStyle(fontWeight: FontWeight.bold, color: ticket.hasFile ? Colors.green : Colors.grey)),
               subtitle: Wrap(direction: Axis.vertical, children: [
                 if ((ticket.mo ?? "").trim().isNotEmpty) Text((ticket.oe ?? "")),
-                if (ticket.isCrossPro)
-                  Material(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.deepOrange,
-                      child: Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: Text(('${ticket.crossPro?.fromSection?.factory} > ${ticket.crossPro?.toSection?.factory}'),
-                              style: const TextStyle(fontSize: 12, color: Colors.white)))),
-                // ),
-                if (ticket.shipDate.isNotEmpty)
-                  Wrap(children: [
-                    const Padding(
-                      padding: EdgeInsets.only(right: 4),
-                      child: Icon(Icons.directions_boat_outlined, size: 12, color: Colors.grey),
-                    ),
-                    Text(ticket.shipDate)
-                  ])
+                const SizedBox(height: 4),
+                Wrap(children: [
+                  if (ticket.shipDate.isNotEmpty) const Padding(padding: EdgeInsets.only(right: 4), child: Icon(Icons.directions_boat_outlined, size: 12, color: Colors.grey)),
+                  if (ticket.shipDate.isNotEmpty) Text(ticket.shipDate),
+                  if (ticket.shipDate.isNotEmpty) const SizedBox(width: 16),
+                  if (ticket.deliveryDate.isNotEmpty) const Padding(padding: EdgeInsets.only(right: 4), child: Icon(Icons.local_shipping_rounded, size: 12, color: Colors.grey)),
+                  if (ticket.deliveryDate.isNotEmpty) Text(ticket.deliveryDate)
+                ])
               ]),
               // subtitle: Text(ticket.fileVersion.toString()),
               trailing: Wrap(

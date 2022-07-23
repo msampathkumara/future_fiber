@@ -1,4 +1,3 @@
-import 'package:animations/animations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:nfc_manager/nfc_manager.dart';
@@ -16,7 +15,6 @@ import '../../../C/OnlineDB.dart';
 import '../../../M/AppUser.dart';
 import '../../../Web/V/UserManager/UpdateUserDetails.dart';
 import 'AddNfcCard.dart';
-import 'AddUser.dart';
 import 'UserDetails.dart';
 import 'UserPermissions.dart';
 
@@ -87,92 +85,93 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
     _themeColor = _showDeactivatedUsers ? _deactivateThemeColor : _activeThemeColor;
 
     return Scaffold(
-        appBar: AppBar(
-          actions: <Widget>[
-            PopupMenuButton<String>(
-                onSelected: (s) async {
-                  if (s == "deactivatedUsers") {
-                    _showDeactivatedUsers = !_showDeactivatedUsers;
-                    _setIdCards = false;
-                    await filterUsers();
-                  } else if (s == "id") {
-                    _setIdCards = !_setIdCards;
-                  }
-                  print(s);
-                  setState(() {});
-                },
-                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                      CheckedPopupMenuItem<String>(value: "deactivatedUsers", checked: _showDeactivatedUsers, child: const Text("Deactivated Users")),
-                      if (!_showDeactivatedUsers) CheckedPopupMenuItem<String>(value: "id", checked: _setIdCards, child: const Text("Set ID Cards")),
-                    ])
-          ],
-          elevation: 0.0,
-          toolbarHeight: 100,
-          backgroundColor: _themeColor,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.pop(context),
-          ),
-          title: Column(
-            children: [
-              const Text("User Manager", textScaleFactor: 1.2),
-              if (_showDeactivatedUsers) const Text("(Deactivated Users)", textScaleFactor: 0.7),
-            ],
-          ),
-          bottom: SearchBar(
-            searchController: searchController,
-            onSearchTextChanged: (text) {
-              searchText = text;
-              print("SEARCHING FOR $searchText");
-              filterUsers();
-            },
-            onSubmitted: (text) {},
-            // onBarCode: (barcode) {
-            //   print("xxxxxxxxxxxxxxxxxx $barcode");
-            // },
-          ),
-          centerTitle: true,
+      appBar: AppBar(
+        actions: <Widget>[
+          PopupMenuButton<String>(
+              onSelected: (s) async {
+                if (s == "deactivatedUsers") {
+                  _showDeactivatedUsers = !_showDeactivatedUsers;
+                  _setIdCards = false;
+                  await filterUsers();
+                } else if (s == "id") {
+                  _setIdCards = !_setIdCards;
+                }
+                print(s);
+                setState(() {});
+              },
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                    CheckedPopupMenuItem<String>(value: "deactivatedUsers", checked: _showDeactivatedUsers, child: const Text("Deactivated Users")),
+                    if (!_showDeactivatedUsers) CheckedPopupMenuItem<String>(value: "id", checked: _setIdCards, child: const Text("Set ID Cards")),
+                  ])
+        ],
+        elevation: 0.0,
+        toolbarHeight: 100,
+        backgroundColor: _themeColor,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
         ),
-        body: getBody(),
-        bottomNavigationBar: BottomAppBar(
-            shape: const CircularNotchedRectangle(),
-            color: _themeColor,
-            child: IconTheme(
-              data: const IconThemeData(color: Colors.white),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      filteredAllUsersList == AllUsersList ? filteredAllUsersList.length.toString() : "${filteredAllUsersList.length.toString()}/${AllUsersList.length.toString()}",
-                      textScaleFactor: 1.1,
-                      style: const TextStyle(color: Colors.white),
-                    ),
+        title: Column(
+          children: [
+            const Text("User Manager", textScaleFactor: 1.2),
+            if (_showDeactivatedUsers) const Text("(Deactivated Users)", textScaleFactor: 0.7),
+          ],
+        ),
+        bottom: SearchBar(
+          searchController: searchController,
+          onSearchTextChanged: (text) {
+            searchText = text;
+            print("SEARCHING FOR $searchText");
+            filterUsers();
+          },
+          onSubmitted: (text) {},
+          // onBarCode: (barcode) {
+          //   print("xxxxxxxxxxxxxxxxxx $barcode");
+          // },
+        ),
+        centerTitle: true,
+      ),
+      body: getBody(),
+      bottomNavigationBar: BottomAppBar(
+          shape: const CircularNotchedRectangle(),
+          color: _themeColor,
+          child: IconTheme(
+            data: const IconThemeData(color: Colors.white),
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    filteredAllUsersList == AllUsersList ? filteredAllUsersList.length.toString() : "${filteredAllUsersList.length.toString()}/${AllUsersList.length.toString()}",
+                    textScaleFactor: 1.1,
+                    style: const TextStyle(color: Colors.white),
                   ),
-                  const Spacer()
-                ],
-              ),
-            )),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-        floatingActionButton: _showDeactivatedUsers
-            ? null
-            : OpenContainer(
-            closedShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50.0),
                 ),
-                closedElevation: 2,
-                closedColor: _themeColor,
-                transitionDuration: const Duration(milliseconds: 500),
-                openBuilder: (BuildContext context, void Function({Object? returnValue}) action) {
-                  return const AddUser();
-                },
-                closedBuilder: (BuildContext context, void Function() action) {
-                  return const InkWell(
-                      child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Icon(Icons.person_add_outlined, size: 24, color: Colors.white),
-                  ));
-                }));
+                const Spacer()
+              ],
+            ),
+          )),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      // floatingActionButton: _showDeactivatedUsers
+      //     ? null
+      //     : OpenContainer(
+      //     closedShape: RoundedRectangleBorder(
+      //           borderRadius: BorderRadius.circular(50.0),
+      //         ),
+      //         closedElevation: 2,
+      //         closedColor: _themeColor,
+      //         transitionDuration: const Duration(milliseconds: 500),
+      //         openBuilder: (BuildContext context, void Function({Object? returnValue}) action) {
+      //           return const AddUser();
+      //         },
+      //         closedBuilder: (BuildContext context, void Function() action) {
+      //           return const InkWell(
+      //               child: Padding(
+      //             padding: EdgeInsets.all(16.0),
+      //             child: Icon(Icons.person_add_outlined, size: 24, color: Colors.white),
+      //           ));
+      //         })
+    );
   }
 
   String listSortBy = "uptime";
@@ -215,7 +214,11 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                   // print("nsUser.hasNfc ${nsUser.hasNfc}");
                   return ListTile(
                     onLongPress: () async {
-                      await showUserOptions(nsUser, context, _context, nfcIsAvailable);
+                      await showUserOptions(nsUser, context, _context, nfcIsAvailable, onRemoveNfcCard: () {
+                        nsUser.removeNfcCard(context, onDone: () {
+                          setState(() {});
+                        });
+                      });
                       setState(() {});
                     },
                     onTap: () {
@@ -270,7 +273,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
     } else {
       filteredAllUsersList = AllUsersList.where((nsUser) {
         return (_showDeactivatedUsers == nsUser.isDisabled) &&
-            searchText.containsInArrayIgnoreCase([nsUser.uname, nsUser.nic, nsUser.name, nsUser.emailAddress, nsUser.phone, nsUser.epf]);
+            searchText.containsInArrayIgnoreCase([nsUser.uname, nsUser.nic, nsUser.name, nsUser.emailAddress, nsUser.phone, nsUser.getEpf().toString()]);
       }).toList();
     }
     setState(() {});

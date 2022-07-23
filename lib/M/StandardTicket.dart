@@ -5,8 +5,6 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:smartwind/M/Ticket.dart';
 
-import 'CrossProduction.dart';
-
 part 'StandardTicket.g.dart';
 
 @JsonSerializable(explicitToJson: true)

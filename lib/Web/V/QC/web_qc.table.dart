@@ -4,7 +4,7 @@ class WebQcTable extends StatefulWidget {
   final Null Function(QcDataSourceAsync dataSource) onInit;
   final Future<DataResponse> Function(int page, int startingAt, int count, String sortedBy, bool sortedAsc) onRequestData;
 
-  const WebQcTable({required this.onInit, required this.onRequestData});
+  const WebQcTable({Key? key, required this.onInit, required this.onRequestData}) : super(key: key);
 
   @override
   _WebQcTableState createState() => _WebQcTableState();
@@ -31,16 +31,19 @@ class _WebQcTableState extends State<WebQcTable> {
   }
 
   void sort(int columnIndex, bool ascending) {
-    var columnName = "oe";
+    var columnName = "dnt";
     switch (columnIndex) {
+      case 0:
+        columnName = "ticket.mo";
+        break;
       case 1:
-        columnName = "production";
+        columnName = "dnt";
         break;
       case 2:
-        columnName = "usedCount";
+        columnName = "qc.qc";
         break;
       case 3:
-        columnName = "dnt";
+        columnName = "qc.sectionId";
         break;
     }
     _dessertsDataSource!.sort(columnName, ascending);
@@ -81,11 +84,12 @@ class _WebQcTableState extends State<WebQcTable> {
         numeric: false,
         onSort: (columnIndex, ascending) => sort(columnIndex, ascending),
       ),
-      DataColumn2(
-          size: ColumnSize.M,
-          label: const Text('User', style: TextStyle(fontWeight: FontWeight.bold)),
-          numeric: false,
-          onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      const DataColumn2(
+        size: ColumnSize.M,
+        label: Text('User', style: TextStyle(fontWeight: FontWeight.bold)),
+        numeric: false,
+        // onSort: (columnIndex, ascending) => sort(columnIndex, ascending)
+      ),
     ];
   }
 
@@ -120,12 +124,8 @@ class _WebQcTableState extends State<WebQcTable> {
               verticalInside: BorderSide(color: Colors.grey[200]!),
               horizontalInside: BorderSide(color: Colors.grey[300]!, width: 1)),
           onRowsPerPageChanged: (value) {
-            // No need to wrap into setState, it will be called inside the widget
-            // and trigger rebuild
-            //setState(() {
             print('Row per page changed to $value');
             _rowsPerPage = value!;
-            //});
           },
           initialFirstRowIndex: _initialRow,
           onPageChanged: (rowIndex) {
@@ -136,7 +136,7 @@ class _WebQcTableState extends State<WebQcTable> {
           controller: _controller,
           hidePaginator: false,
           columns: _columns,
-          empty: Center(child: Container(padding: const EdgeInsets.all(20), color: Colors.grey[200], child: const Text('No data'))),
+          empty: Center(child: Container(padding: const EdgeInsets.all(20), child: const NoResultFoundMsg())),
           loading: _Loading(),
           errorBuilder: (e) => _ErrorAndRetry(e.toString(), () => _dessertsDataSource!.refreshDatasource()),
           source: _dessertsDataSource!),
@@ -202,20 +202,10 @@ class __LoadingState extends State<_Loading> {
 class QcDataSourceAsync extends AsyncDataTableSource {
   Future<DataResponse> Function(int page, int startingAt, int count, String sortedBy, bool sortedAsc) onRequestData;
 
-
   QcDataSourceAsync(this.context, {required this.onRequestData}) {
     print('DessertDataSourceAsync created');
   }
 
-  // DessertDataSourceAsync.empty() {
-  //   _empty = true;
-  //   print('DessertDataSourceAsync.empty created');
-  // }
-  //
-  // DessertDataSourceAsync.error() {
-  //   _errorCounter = 0;
-  //   print('DessertDataSourceAsync.error created');
-  // }
   final BuildContext context;
   final bool _empty = false;
   int? _errorCounter;
@@ -229,8 +219,6 @@ class QcDataSourceAsync extends AsyncDataTableSource {
     refreshDatasource();
   }
 
-  // final DesertsFakeWebService _repo = DesertsFakeWebService();
-
   String _sortColumn = "dnt";
   bool _sortAscending = true;
 
@@ -239,10 +227,6 @@ class QcDataSourceAsync extends AsyncDataTableSource {
     _sortAscending = ascending;
     refreshDatasource();
   }
-
-  // Future<int> getTotalRecords() {
-  //   return Future<int>.delayed(Duration(milliseconds: 0), () => _empty ? 0 : _dessertsX3.length);
-  // }
 
   @override
   Future<AsyncRowsResponse> getRows(int startIndex, int count) async {
@@ -265,20 +249,25 @@ class QcDataSourceAsync extends AsyncDataTableSource {
         ? await Future.delayed(const Duration(milliseconds: 2000), () => DataResponse(0, []))
         : await onRequestData(int.parse("${startIndex / count}"), startIndex, count, _sortColumn, _sortAscending);
 
+    print('**************************************************************** xxxx ');
+    print('**************************************************************** xxxx${x.totalRecords}');
+
     var r = AsyncRowsResponse(
         x.totalRecords,
         x.data.map((qc) {
           Section? section = qc.getSection();
+
+          print(qc);
 
           return DataRow2(
             selected: false,
             onTap: () {
               webQView(qc).show(context);
 
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                duration: const Duration(seconds: 1),
-                content: Text('Tapped on ${qc.ticket?.id}'),
-              ));
+              // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              //   duration: const Duration(seconds: 1),
+              //   content: Text('Tapped on ${qc.ticket?.id}'),
+              // ));
             },
 
             onSecondaryTap: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(

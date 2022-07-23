@@ -205,52 +205,6 @@ class _TicketChatViewState extends State<TicketChatView> {
               visualDensity: const VisualDensity(horizontal: 0, vertical: 0),
               // trailing: IconButton(padding: EdgeInsets.zero, onPressed: () {}, icon: const Icon(Icons.favorite_border_rounded, color: Colors.grey))
             )));
-    // } else if (chatEntry.chatEntryTypes == ChatEntryTypes.activity) {
-    //     return Card(
-    //         elevation: 0.1,
-    //         margin: const EdgeInsets.all(8),
-    //         child: Padding(
-    //             padding: const EdgeInsets.all(8.0),
-    //             child: ListTile(
-    //                 minLeadingWidth: 1,
-    //                 minVerticalPadding: 0,
-    //                 leading: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: [UserImage(nsUser: nsUser, radius: 24)]),
-    //                 title: Padding(
-    //                     padding: const EdgeInsets.only(top: 16.0),
-    //                     child: Row(children: [
-    //                       Text("${nsUser?.name}", textScaleFactor: 1),
-    //                       const Spacer(),
-    //                     ])),
-    //                 subtitle: Column(
-    //                   mainAxisAlignment: MainAxisAlignment.start,
-    //                   crossAxisAlignment: CrossAxisAlignment.start,
-    //                   children: [
-    //                     Wrap(
-    //                       children: const [
-    //                         Text("2022/06/21 3:17am"),
-    //                       ],
-    //                     ),
-    //                     const SizedBox(height: 16),
-    //                     const Align(
-    //                         alignment: Alignment.center,
-    //                         child: SelectableText("Added Red Flag", textScaleFactor: 1, textAlign: TextAlign.center, style: TextStyle(color: Colors.red))),
-    //                     const SizedBox(height: 24)
-    //                   ],
-    //                 ),
-    //                 contentPadding: const EdgeInsets.only(right: 0.0, left: 16),
-    //                 visualDensity: const VisualDensity(horizontal: 0, vertical: 0),
-    //                 trailing: CircleAvatar(
-    //                     radius: 24,
-    //
-    //                     child: CircleAvatar(backgroundColor: Colors.white, radius: 23, child: Icon(chatEntry.ticketFlagTypes?.getIcon()))))));
-    //   }
-    //
-    //   return Container(
-    //     color: Colors.red,
-    //     height: 50,
-    //     width: 100,
-    //     child: Text("aaaaaaaaaaaaaaaaaa"),
-    //   );
   }
 
   void loadData(int id) {

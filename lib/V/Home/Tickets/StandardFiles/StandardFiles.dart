@@ -8,10 +8,11 @@ import 'package:smartwind/V/Home/Tickets/StandardFiles/factory_selector.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 
 import '../../../../M/Enums.dart';
+import '../../../Widgets/NoResultFoundMsg.dart';
 import 'StandardTicketInfo.dart';
 
 class StandardFiles extends StatefulWidget {
-  StandardFiles({Key? key}) : super(key: key);
+  const StandardFiles({Key? key}) : super(key: key);
 
   @override
   _StandardFilesState createState() {
@@ -20,23 +21,24 @@ class StandardFiles extends StatefulWidget {
 }
 
 class _StandardFilesState extends State<StandardFiles> with TickerProviderStateMixin {
-  var database;
-  late int _selectedTabIndex;
   bool loading = true;
 
   late DbChangeCallBack _dbChangeCallBack;
 
   List<Production> _productions = [];
+  List<StandardTicket> currentFileList = [];
 
   @override
   initState() {
     super.initState();
-    _productions = Production.values.where((element) => element != Production.None).toList();
+    _productions = [Production.All, Production.Upwind, Production.OD, Production.Nylon, Production.OEM];
     tabs = _productions.map<String>((e) => e.getValue()).toList();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _tabBarController = TabController(length: tabs.length, vsync: this);
       _tabBarController!.addListener(() {
-        print("Selected Index: " + _tabBarController!.index.toString());
+        print("Selected Index: ${_tabBarController!.index}");
+        currentFileList = listsMap[_productions[_tabBarController!.index]];
+        setState(() {});
       });
 
       reloadData().then((value) {});
@@ -59,20 +61,19 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
   // late List listsArray;
 
   // bool _showAllTickets = true;
-  TextEditingController searchController = new TextEditingController();
+  TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return _loading
-        ? Container(
-            child: Center(
-                child: Column(mainAxisSize: MainAxisSize.min, children: [
+        ? Center(
+            child: Column(mainAxisSize: MainAxisSize.min, children: const [
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(8.0),
               child: CircularProgressIndicator(),
             ),
             Text("Loading")
-          ])))
+          ]))
         : Scaffold(
             appBar: AppBar(
               // actions: <Widget>[
@@ -94,17 +95,14 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
               //     },
               //   ),
               // ],
-              elevation: 0.0,
+          elevation: 0.0,
               toolbarHeight: 80,
               backgroundColor: Colors.green,
               leading: IconButton(
-                icon: Icon(Icons.arrow_back),
+                icon: const Icon(Icons.arrow_back),
                 onPressed: () => Navigator.pop(context),
               ),
-              title: Text(
-                "Standard Files",
-                textScaleFactor: 1.2,
-              ),
+              title: const Text("Standard Files", textScaleFactor: 1.2),
               bottom: SearchBar(
                 searchController: searchController,
                 delay: 300,
@@ -118,31 +116,24 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
             ),
             body: getBody(),
             bottomNavigationBar: BottomAppBar(
-                shape: CircularNotchedRectangle(),
+                shape: const CircularNotchedRectangle(),
                 color: Colors.green,
                 child: IconTheme(
-                  data: IconThemeData(color: Colors.white),
+                  data: const IconThemeData(color: Colors.white),
                   child: Row(
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          "${currentFileList.length}",
-                          textScaleFactor: 1.1,
-                          style: TextStyle(color: Colors.white),
-                        ),
+                        child: Text("${currentFileList.length}", textScaleFactor: 1.1, style: const TextStyle(color: Colors.white)),
                       ),
                       const Spacer(),
-                      Text(
-                        "Sorted by $sortedBy",
-                        style: TextStyle(color: Colors.white),
-                      ),
+                      Text("Sorted by $sortedBy", style: const TextStyle(color: Colors.white)),
                       InkWell(
                         onTap: () {},
                         splashColor: Colors.red,
                         child: Ink(
                           child: IconButton(
-                            icon: Icon(Icons.sort_outlined),
+                            icon: const Icon(Icons.sort_outlined),
                             onPressed: () {
                               _sortByBottomSheetMenu();
                             },
@@ -157,9 +148,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
   String listSortBy = "uptime DESC";
   String sortedBy = "Date";
   String searchText = "";
-  var subscription;
-
-  List<StandardTicket> currentFileList = [];
+  bool isAsc = true;
 
   void _sortByBottomSheetMenu() {
     getListItem(String title, icon, key) {
@@ -168,9 +157,16 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
         selectedTileColor: Colors.black12,
         selected: listSortBy == key,
         leading: icon is IconData ? Icon(icon) : icon,
+        trailing: listSortBy == key
+            ? isAsc
+                ? const Icon(Icons.arrow_drop_up_outlined)
+                : const Icon(Icons.arrow_drop_down_outlined)
+            : null,
         onTap: () {
           listSortBy = key;
           sortedBy = title;
+          isAsc = !isAsc;
+          print('isAsc $isAsc');
           Navigator.pop(context);
           loadData();
         },
@@ -178,9 +174,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
     }
 
     showModalBottomSheet(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         backgroundColor: Colors.white,
         context: context,
         builder: (builder) {
@@ -190,19 +184,16 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
               children: [
                 const Padding(
                   padding: EdgeInsets.all(16.0),
-                  child: Text(
-                    "Sort By",
-                    textScaleFactor: 1.2,
-                  ),
+                  child: Text("Sort By", textScaleFactor: 1.2),
                 ),
                 Expanded(
                   child: Padding(
                       padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
                       child: ListView(
                         children: [
-                          getListItem("Date", Icons.date_range_rounded, "uptime DESC"),
+                          getListItem("Date", Icons.date_range_rounded, "uptime"),
                           getListItem("Name", Icons.sort_by_alpha_rounded, "oe"),
-                          getListItem("Usage", Icons.data_usage_outlined, "usedCount DESC")
+                          getListItem("Usage", Icons.data_usage_outlined, "usedCount")
                         ],
                       )),
                 ),
@@ -263,8 +254,9 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
             onRefresh: () {
               return reloadData();
             },
-            child: _filesList.length == 0
-                ? Center(child: Text(searchText.isEmpty ? "No Tickets Found" : "⛔ Work Ticket not found.\n Please contact  Ticket Checking department", textScaleFactor: 1.5))
+            child: _filesList.isEmpty
+                // ? Center(child: Text(searchText.isEmpty ? "No Tickets Found" : "⛔ Work Ticket not found.\n Please contact  Ticket Checking department", textScaleFactor: 1.5))
+                ? Center(child: Container(padding: const EdgeInsets.all(20), child: const NoResultFoundMsg()))
                 : Padding(
                     padding: const EdgeInsets.only(top: 16),
                     child: ListView.separated(
@@ -272,37 +264,34 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
                       itemCount: _filesList.length,
                       itemBuilder: (BuildContext context, int index) {
                         StandardTicket ticket = (_filesList[index]);
-                        print("#####################################################################################################");
-                        print(ticket.toJson());
+                        // print("#####################################################################################################");
+                        // print(ticket.toJson());
                         return GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onLongPress: () async {
-                            await showStandardTicketOptions(ticket, context);
-                            setState(() {});
-                          },
-                          onTap: () {
-                            var ticketInfo = StandardTicketInfo(ticket);
-                            ticketInfo.show(context);
-                          },
-                          onDoubleTap: () async {
-                            ticket.open(context);
-                          },
-                          child: Ink(
-                            decoration: BoxDecoration(
-                                color: ticket.isHold == 1 ? Colors.black12 : Colors.white,
-                                border: Border.all(color: Colors.white),
-                                borderRadius: BorderRadius.all(Radius.circular(20))),
-                            child: ListTile(
-                              leading: Text("${index + 1}"),
-                              title: Text((ticket.oe ?? ""), style: TextStyle(fontWeight: FontWeight.bold)),
-                              subtitle: Text(ticket.getUpdateDateTime()),
-                              trailing: Wrap(children: []),
-                            ),
-                          ),
-                        );
+                            behavior: HitTestBehavior.opaque,
+                            onLongPress: () async {
+                              await showStandardTicketOptions(ticket, context);
+                              setState(() {});
+                            },
+                            onTap: () {
+                              var ticketInfo = StandardTicketInfo(ticket);
+                              ticketInfo.show(context);
+                            },
+                            onDoubleTap: () async {
+                              ticket.open(context);
+                            },
+                            child: Ink(
+                                decoration: BoxDecoration(
+                                    color: ticket.isHold == 1 ? Colors.black12 : Colors.white,
+                                    border: Border.all(color: Colors.white),
+                                    borderRadius: const BorderRadius.all(Radius.circular(20))),
+                                child: ListTile(
+                                    leading: Text("${index + 1}"),
+                                    title: Text((ticket.oe ?? ""), style: const TextStyle(fontWeight: FontWeight.bold)),
+                                    subtitle: Text(ticket.getUpdateDateTime()),
+                                    trailing: Text("${ticket.usedCount}"))));
                       },
                       separatorBuilder: (BuildContext context, int index) {
-                        return Divider(height: 1, endIndent: 0.5, color: Colors.black12);
+                        return const Divider(height: 1, endIndent: 0.5, color: Colors.black12);
                       },
                     ),
                   ),
@@ -329,10 +318,11 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
       }
       return true;
     }).toList();
-    l.sort((a, b) => (a.toJson()[listSortBy] ?? "").compareTo((b.toJson()[listSortBy] ?? "")));
-    // if (listSortDirectionIsDESC) {
-    //   l = l.reversed.toList();
-    // }
+    if (isAsc) {
+      l.sort((a, b) => (a.toJson()[listSortBy] ?? "").compareTo((b.toJson()[listSortBy] ?? "")));
+    } else {
+      l.sort((b, a) => (a.toJson()[listSortBy] ?? "").compareTo((b.toJson()[listSortBy] ?? "")));
+    }
     return l;
   }
 
@@ -347,15 +337,12 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
 
   loadData() {
     print('---------------------------------------------- Start loading');
-    _selectedTabIndex = _tabBarController!.index;
     String searchText = this.searchText.toLowerCase();
-
-    // if (_showAllTickets) {
 
     for (var element in _productions) {
       listsMap[element] = _load(element, 0, true, searchText);
     }
-
+    currentFileList = listsMap[_productions[0]];
     print('---------------------------------------------- end loading');
     setState(() {});
   }
@@ -374,13 +361,9 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
     return (t.production ?? '').toLowerCase() == selectedProduction.getValue().toLowerCase();
   }
 
-  bool searchByText(t, searchText) {
+  bool searchByText(t, String searchText) {
     if (searchText.isNotEmpty) {
-      if ((t.mo ?? "").toLowerCase().contains(searchText) || (t.mo ?? "").toLowerCase().contains(searchText)) {
-        return true;
-      } else {
-        return false;
-      }
+      return searchText.containsInArrayIgnoreCase([t.oe]);
     }
     return true;
   }

@@ -6,6 +6,7 @@ import 'package:smartwind/M/StandardTicket.dart';
 
 import '../../../V/Home/Tickets/StandardFiles/StandardFiles.dart';
 import '../../../V/Home/Tickets/StandardFiles/StandardTicketInfo.dart';
+import '../../../V/Widgets/NoResultFoundMsg.dart';
 
 class WebStandardLibraryTable extends StatefulWidget {
   final Null Function(DessertDataSourceAsync dataSource) onInit;
@@ -141,7 +142,7 @@ class _WebStandardLibraryTableState extends State<WebStandardLibraryTable> {
           controller: _controller,
           hidePaginator: false,
           columns: _columns,
-          empty: Center(child: Container(padding: const EdgeInsets.all(20), color: Colors.grey[200], child: const Text('No data'))),
+          empty: Center(child: Container(padding: const EdgeInsets.all(20), child: const NoResultFoundMsg())),
           loading: _Loading(),
           errorBuilder: (e) => _ErrorAndRetry(e.toString(), () => _dessertsDataSource!.refreshDatasource()),
           source: _dessertsDataSource!),

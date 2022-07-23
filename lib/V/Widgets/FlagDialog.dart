@@ -70,7 +70,7 @@ class _FlagDialogState extends State<FlagDialog> {
 
     return Scaffold(
       appBar: AppBar(title: Wrap(children: [const Icon(NsIcons.sk, size: 24), const SizedBox(width: 16), Text(titleText)])),
-      body: Container(
+      body: SizedBox(
         width: w,
         child: ListTile(
           title: Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -392,13 +392,13 @@ class FlagDialog1 {
             ));
   }
 
-  static showStopProductionFlagDialog(BuildContext context, Ticket ticket) {
-    flagType = TicketFlagTypes.HOLD;
-    addTitle = "Stop Production";
-    removeTitle = "Restart Production";
-    icon = const Icon(Icons.pan_tool_rounded, color: Colors.red);
-    _commentPlaceHolder = "Comment";
-
-    _showDialog(context, ticket);
-  }
+// static showStopProductionFlagDialog(BuildContext context, Ticket ticket) {
+//   flagType = TicketFlagTypes.HOLD;
+//   addTitle = "Stop Production";
+//   removeTitle = "Restart Production";
+//   icon = const Icon(Icons.pan_tool_rounded, color: Colors.red);
+//   _commentPlaceHolder = "Comment";
+//
+//   _showDialog(context, ticket);
+// }
 }

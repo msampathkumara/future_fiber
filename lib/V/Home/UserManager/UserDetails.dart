@@ -120,7 +120,7 @@ class _UserDetailsState extends State<UserDetails> {
                                   padding: const EdgeInsets.all(16.0),
                                   child: Column(
                                     children: [
-                                      ListTile(leading: const Icon(Icons.badge_outlined), title: const Text("EPF"), subtitle: Text(nsUser.epf, style: stStyle)),
+                                      ListTile(leading: const Icon(Icons.badge_outlined), title: const Text("EPF"), subtitle: Text(nsUser.getEpf().toString(), style: stStyle)),
                                       ListTile(
                                           leading: const Icon(Icons.domain_outlined),
                                           title: const Text("Section"),

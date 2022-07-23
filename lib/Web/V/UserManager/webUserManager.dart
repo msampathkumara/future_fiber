@@ -12,6 +12,7 @@ import 'package:smartwind/Web/V/UserManager/UpdateUserDetails.dart';
 
 import '../../../M/Enums.dart';
 import '../../../M/hive.dart';
+import '../../../V/Widgets/NoResultFoundMsg.dart';
 import '../../../V/Widgets/UserImage.dart';
 import '../../Styles/styles.dart';
 
@@ -122,7 +123,7 @@ class _WebUserManagerState extends State<WebUserManager> {
 
   void loadData() {
     var nsUser = HiveBox.usersBox.values.where((nsUser) {
-      return (searchText.containsInArrayIgnoreCase([nsUser.name, nsUser.uname, nsUser.nic, nsUser.epf]));
+      return (searchText.containsInArrayIgnoreCase([nsUser.name, nsUser.uname, nsUser.nic, nsUser.getEpf().toString()]));
     }).toList();
     _dataSource?.setData(nsUser);
     if (_selectedUser != null) {
@@ -207,7 +208,7 @@ class _WebUserManagerState extends State<WebUserManager> {
               children: [
                 ListTile(title: Text('NIC', style: lt), subtitle: Text(selectedUser.nic ?? '-', style: lst)),
                 ListTile(title: Text('Type', style: lt), subtitle: Text(selectedUser.utype, style: lst)),
-                ListTile(title: Text('EPF', style: lt), subtitle: Text(selectedUser.epf, style: lst)),
+                ListTile(title: Text('EPF', style: lt), subtitle: Text(selectedUser.getEpf().toString(), style: lst)),
                 ListTile(
                     title: Text('Phone', style: lt),
                     subtitle: Wrap(

@@ -4,7 +4,7 @@ description: NorthSails Smart Wind
 
 publish_to: 'none'
 
-version: 1.1.48+88
+version: 1.1.67+107
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -17,11 +17,13 @@ dependencies:
 
   #  firebase------------------------------------------
   firebase_core: ^1.19.1
-  firebase_analytics:
+  firebase_analytics: ^9.2.1
   firebase_crashlytics: ^2.8.4
   firebase_auth: ^3.4.1
   firebase_messaging: ^11.4.4
-  firebase_database: ^9.0.18
+  firebase_database: ^9.0.20
+  firebase_auth_platform_interface: 6.3.1
+  firebase_core_web: ^1.7.1
 
   #  --------------------------------------------------
 
@@ -56,7 +58,7 @@ dependencies:
 
   custom_webview:
     path: ./Pugins/custom_webview
-  json_annotation: ^4.5.0
+  json_annotation: ^4.6.0
 
   graphql_flutter: ^5.1.0
   hive: ^2.2.3
@@ -69,7 +71,7 @@ dependencies:
   timeline_tile: ^2.0.0
 
   dotted_border: ^2.0.0+2
-  socket_io_client: ^1.0.2
+  socket_io_client: ^2.0.0
   file_picker: ^4.6.1
   universal_html: ^2.0.8
   dropdown_button2: ^1.6.3
@@ -78,34 +80,42 @@ dependencies:
   searchfield: ^0.6.6
   csv: ^5.0.1
   pdf_render: ^1.1.0
-  syncfusion_flutter_charts: ^20.2.36
+  syncfusion_flutter_charts: ^20.2.39
   random_password_generator: ^0.2.1
-  flutter_slidable: ^1.3.0
+  flutter_slidable: ^2.0.0
   intl: ^0.17.0
+  app_settings: ^4.1.8
+
+
+
 
 
 dev_dependencies:
 
   hive_generator: ^1.1.3
   json_serializable:
-  build_runner: ^2.1.11
+  build_runner: ^2.2.0
   flutter_test:
     sdk: flutter
   integration_test:
     sdk: flutter
-  build_web_compilers: ^3.2.3
+  build_web_compilers: ^3.2.4
   flutter_lints: ^2.0.1
 
 flutter:
 
   assets:
+    - assets/fileNotFound.png
     - assets/fonts/NsIcons.ttf
     - assets/images/background.jpg
+    - assets/images/dark_background.jpg
     - assets/images/user.png
     - assets/images/userPlaceholder.jpg
     - assets/js.js
     - assets/js1.txt
     - assets/loginVideo.mp4
+    - assets/noResult.png
+    - assets/noResult111.jpg
     - assets/north_sails_logo.png
     - assets/north_sails_logo_tr.png
     - assets/north_sails_logox50.png
@@ -115,8 +125,6 @@ flutter:
     - assets/uc.png
     - assets/uc1.png
     - assets/x.pdf
-
-
   uses-material-design: true
   fonts:
     - family: NsIcons

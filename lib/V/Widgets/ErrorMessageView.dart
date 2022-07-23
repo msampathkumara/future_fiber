@@ -1,5 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+
+import '../../Web/Widgets/DialogView.dart';
 
 class ErrorMessageView extends StatefulWidget {
   late _ErrorMessageViewState state;
@@ -17,10 +20,7 @@ class ErrorMessageView extends StatefulWidget {
   }
 
   show(context) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => this),
-    );
+    return kIsWeb ? showDialog(context: context, builder: (_) => this) : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
   }
 
   void close(context) {
@@ -43,8 +43,12 @@ class _ErrorMessageViewState extends State<ErrorMessageView> with TickerProvider
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    return kIsWeb ? DialogView(child: _getUi(), width: 500, height: 300) : _getUi();
+  }
+
+  _getUi() {
     return Scaffold(
+      appBar: AppBar(),
       body: Center(
           child: Wrap(
         alignment: WrapAlignment.center,
@@ -56,16 +60,16 @@ class _ErrorMessageViewState extends State<ErrorMessageView> with TickerProvider
                 child: Icon(
                   widget.icon ?? Icons.error,
                   color: Colors.pink,
-                  size: 100.0,
-                  semanticLabel: 'Text to announce in accessibility modes',
-                )),
-          ),
-          Text(
-            widget.errorMessage,
-            textScaleFactor: 1.2,
-          ),
-        ],
-      )),
+                      size: 100.0,
+                      semanticLabel: 'Text to announce in accessibility modes',
+                    )),
+              ),
+              Text(
+                widget.errorMessage,
+                textScaleFactor: 1.2,
+              ),
+            ],
+          )),
     );
   }
 }

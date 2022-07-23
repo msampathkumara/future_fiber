@@ -1,13 +1,16 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Widgets/UserButton.dart';
 
 import '../../../../C/ServerResponse/Progress.dart';
+import '../../../../Web/V/QC/webTicketQView.dart';
 
 class info_Progress extends StatefulWidget {
   List<Progress> progressList;
 
-  info_Progress(this.progressList);
+  final Ticket ticket;
+
+  info_Progress(this.progressList, this.ticket, {Key? key}) : super(key: key);
 
   @override
   _info_ProgressState createState() => _info_ProgressState();
@@ -20,17 +23,14 @@ class _info_ProgressState extends State<info_Progress> {
   void initState() {
     progressList = widget.progressList;
 
-    // progressList.forEach((element) {
-    //   element.timeToFinish = progressList[0] == element ? 0 : 10;
-    // });
     for (var i = 0; i < progressList.length; i++) {
       if (i == 0) {
         progressList[i].timeToFinish = "";
       } else {
         String? prevDate = progressList[i - 1].finishedOn;
         String? nDate = progressList[i].finishedOn;
-        if (prevDate != null || prevDate!.isNotEmpty) {
-          if (nDate != null || nDate!.isNotEmpty) {
+        if (prevDate != null && prevDate.isNotEmpty) {
+          if (nDate != null && nDate.isNotEmpty) {
             try {
               DateTime d = DateTime.parse(prevDate);
               DateTime d1 = DateTime.parse(nDate);
@@ -66,11 +66,18 @@ class _info_ProgressState extends State<info_Progress> {
             child: ListTile(
                 title: Row(
                   children: [
-                    Expanded(flex: 4, child: Text((progress.operation ?? "").splitFromCaps, style: TextStyle(color: progress.status == 1 ? Colors.white : Colors.black))),
-                    Expanded(flex: 4, child: Chip(label: Text("${progress.section!.sectionTitle} @ ${progress.section!.factory}"))),
+                    Expanded(
+                        flex: 6,
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          Text((progress.operation ?? "").splitFromCaps, textScaleFactor: 1, style: TextStyle(color: progress.status == 1 ? Colors.white : Colors.black)),
+                          Container(
+                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.white),
+                              padding: const EdgeInsets.all(2.0),
+                              child: Text("${progress.section!.sectionTitle} @ ${progress.section!.factory}", style: const TextStyle(color: Colors.redAccent)))
+                        ])),
                     Expanded(
                         flex: 4,
-                        child: Text((progress.finishedOn != "0" ? (progress.finishedOn!.replaceAll(RegExp(' '), '\n')) : ""),
+                        child: Text((progress.finishedOn != null ? (progress.finishedOn!.replaceAll(RegExp(' '), '\n')) : ""),
                             style: TextStyle(color: progress.status == 1 ? Colors.white : Colors.black))),
                     Expanded(
                         flex: 4,
@@ -88,22 +95,22 @@ class _info_ProgressState extends State<info_Progress> {
                                   icon: const CircleAvatar(
                                       backgroundColor: Colors.deepOrangeAccent, radius: 8, child: Text('QA', style: TextStyle(fontSize: 8, color: Colors.white))),
                                   onPressed: () {
-                                    // WebTicketQView(ticket, false).show(context);
+                                    WebTicketQView(widget.ticket, false).show(context);
                                   })
                           ],
                         )),
                     Expanded(flex: 4, child: Text("${progress.timeToFinish}", style: const TextStyle(color: Colors.white)))
                   ],
                 ),
-                trailing: progress.finishedBy != null ? SizedBox(width: 30, child: UserButton(nsUserId: progress.finishedBy, imageRadius: 16, hideName: true)) : Text("")));
+                trailing: progress.finishedBy != null ? SizedBox(width: 30, child: UserButton(nsUserId: progress.finishedBy, imageRadius: 16, hideName: true)) : const Text("")));
       },
       separatorBuilder: (BuildContext context, int index) {
-        return Padding(padding: const EdgeInsets.all(4.0), child: Divider(height: 1, endIndent: 0.5, color: Colors.white38));
+        return const Padding(padding: EdgeInsets.all(4.0), child: Divider(height: 1, endIndent: 0.5, color: Colors.white38));
       },
     );
   }
 }
 
 extension CapExtension on String {
-  String get splitFromCaps => this.split(RegExp(r"(?=[A-Z])")).join(" ");
+  String get splitFromCaps => split(RegExp(r"(?=[A-Z])")).join(" ");
 }

@@ -2,9 +2,12 @@
 class Assets {
   Assets._();
 
+  static const String assetsFileNotFound = 'assets/fileNotFound.png';
   static const String assetsJs = 'assets/js.js';
   static const String assetsJs1 = 'assets/js1.txt';
   static const String assetsLoginVideo = 'assets/loginVideo.mp4';
+  static const String assetsNoResult = 'assets/noResult.png';
+  static const String assetsNoResult111 = 'assets/noResult111.jpg';
   static const String assetsNorthSailsLogo = 'assets/north_sails_logo.png';
   static const String assetsNorthSailsLogoTr = 'assets/north_sails_logo_tr.png';
   static const String assetsNorthSailsLogox50 = 'assets/north_sails_logox50.png';

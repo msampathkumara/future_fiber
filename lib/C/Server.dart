@@ -13,6 +13,7 @@ class Server {
       print(devServerIp);
       return "http://$devServerIp:3000";
     } else {
+      // return "http://$devServerIp:3000";
       return "https://smartwind.nsslsupportservices.com";
     }
   }

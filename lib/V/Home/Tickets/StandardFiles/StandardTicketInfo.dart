@@ -186,7 +186,7 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
   Future<Null> loadData() {
     print('xxxxxxxxxxxxxxxxxxxxxxx');
     return OnlineDB.apiGet("/tickets/standard/getInfo", {'id': standardTicket.id}).then((data) {
-      print(data);
+      print(data.data["history"]);
 
       historyList = TicketHistory.fromJsonArray(data.data["history"]);
       standardTicket = StandardTicket.fromJson(data.data["ticket"]);

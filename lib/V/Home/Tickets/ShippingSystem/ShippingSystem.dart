@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Home/Tickets/ProductionPool/Finish/PDFViewWidget.dart';
@@ -14,7 +13,7 @@ class ShippingSystem extends StatefulWidget {
 }
 
 class _ShippingSystemState extends State<ShippingSystem> with TickerProviderStateMixin {
-  var tabs = ["All", "Cross Production"];
+  var tabs = ["All"];
   TabController? _tabBarController;
   late Ticket ticket;
 
@@ -28,7 +27,7 @@ class _ShippingSystemState extends State<ShippingSystem> with TickerProviderStat
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _tabBarController = TabController(length: tabs.length, vsync: this);
       _tabBarController!.addListener(() {
-        print("Selected Index: " + _tabBarController!.index.toString());
+        print("Selected Index: ${_tabBarController!.index}");
       });
     });
 
@@ -43,7 +42,7 @@ class _ShippingSystemState extends State<ShippingSystem> with TickerProviderStat
       onProgress: (int progress) {
         print("WebView is loading (progress : $progress%)");
       },
-      javascriptChannels: <JavascriptChannel>{
+      javascriptChannels: const <JavascriptChannel>{
         // _toasterJavascriptChannel(context),
       },
       navigationDelegate: (NavigationRequest request) {
@@ -61,6 +60,7 @@ class _ShippingSystemState extends State<ShippingSystem> with TickerProviderStat
 
   @override
   Widget build(BuildContext context) {
+    var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
     return Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -69,22 +69,19 @@ class _ShippingSystemState extends State<ShippingSystem> with TickerProviderStat
         body: Column(
           children: [
             // Expanded(child: PDFViewWidget(ticket.ticketFile!.path)),
-            Expanded(
-              child: DefaultTabController(
-                  length: tabs.length,
-                  child: Scaffold(
-                      appBar: AppBar(
-                        toolbarHeight: 0,
-                        automaticallyImplyLeading: false,
-                        elevation: 4.0,
-                      ),
-                      body: Scaffold(body: PDFViewWidget(ticket.ticketFile!.path)))),
-            ),
-            Divider(),
-            if (_webView != null)
+            if (isPortrait)
               Expanded(
-                child: _webView!,
-              ),
+                  child: DefaultTabController(
+                      length: tabs.length,
+                      child: Scaffold(
+                          appBar: AppBar(
+                            toolbarHeight: 0,
+                            automaticallyImplyLeading: false,
+                            elevation: 4.0,
+                          ),
+                          body: Scaffold(body: PDFViewWidget(ticket.ticketFile!.path))))),
+            if (isPortrait) const Divider(),
+            if (_webView != null) Expanded(child: _webView!),
           ],
         ));
   }
