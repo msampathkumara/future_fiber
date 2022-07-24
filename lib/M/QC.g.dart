@@ -16,9 +16,11 @@ QC _$QCFromJson(Map<String, dynamic> json) => QC()
   ..userName = json['userName'] as String? ?? ''
   ..user = json['user'] == null ? null : NsUser.fromJson(json['user'] as Map<String, dynamic>)
   ..sectionId = json['sectionId'] as int? ?? 0
+  ..quality = json['quality'] as String?
   ..qc = json['qc'] as int;
 
-Map<String, dynamic> _$QCToJson(QC instance) => <String, dynamic>{
+Map<String, dynamic> _$QCToJson(QC instance) =>
+    <String, dynamic>{
       'id': instance.id,
       'ticketId': instance.ticketId,
       'dnt': instance.dnt,
@@ -28,5 +30,6 @@ Map<String, dynamic> _$QCToJson(QC instance) => <String, dynamic>{
       'userName': instance.userName,
       'user': instance.user?.toJson(),
       'sectionId': instance.sectionId,
+      'quality': instance.quality,
       'qc': instance.qc,
     };

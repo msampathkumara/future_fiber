@@ -37,12 +37,15 @@ class _WebQcTableState extends State<WebQcTable> {
         columnName = "ticket.mo";
         break;
       case 1:
-        columnName = "dnt";
+        columnName = "quality";
         break;
       case 2:
-        columnName = "qc.qc";
+        columnName = "dnt";
         break;
       case 3:
+        columnName = "qc.qc";
+        break;
+      case 4:
         columnName = "qc.sectionId";
         break;
     }
@@ -64,6 +67,12 @@ class _WebQcTableState extends State<WebQcTable> {
       DataColumn2(
         size: ColumnSize.L,
         label: const Text('Ticket', style: TextStyle(fontWeight: FontWeight.bold)),
+        onSort: (columnIndex, ascending) => sort(columnIndex, ascending),
+      ),
+      DataColumn2(
+        size: ColumnSize.M,
+        numeric: true,
+        label: const Text('Quality', style: TextStyle(fontWeight: FontWeight.bold)),
         onSort: (columnIndex, ascending) => sort(columnIndex, ascending),
       ),
       DataColumn2(
@@ -279,6 +288,7 @@ class QcDataSourceAsync extends AsyncDataTableSource {
             cells: [
               DataCell(
                   Wrap(direction: Axis.vertical, children: [Text((qc.ticket?.mo) ?? ""), Text((qc.ticket?.oe) ?? "", style: const TextStyle(color: Colors.red, fontSize: 12))])),
+              DataCell(Text(qc.quality ?? '')),
               DataCell(Text('${qc.getDateTime()}')),
               DataCell(Text(qc.qc == 1 ? 'QC' : 'QA')),
               DataCell(Wrap(

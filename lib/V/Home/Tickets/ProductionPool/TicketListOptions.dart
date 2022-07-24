@@ -109,14 +109,14 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                         var u = ticket.isRush == 1 ? "removeFlag" : "setFlag";
                         OnlineDB.apiPost("tickets/flags/$u", {"ticket": ticket.id.toString(), "comment": "", "type": "rush"}).then((response) async {});
                       }),
-                if (AppUser.havePermissionFor(Permissions.SEND_TO_PRINTING))
-                  ListTile(
-                      title: Text(ticket.inPrint == 1 ? "Cancel Printing" : "Send To Print"),
-                      leading: Icon(ticket.inPrint == 1 ? Icons.print_disabled_outlined : Icons.print_outlined, color: Colors.deepOrangeAccent),
-                      onTap: () async {
-                        Navigator.of(context).pop();
-                        await sendToPrint(ticket);
-                      }),
+                // if (AppUser.havePermissionFor(Permissions.SEND_TO_PRINTING))
+                //   ListTile(
+                //       title: Text(ticket.inPrint == 1 ? "Cancel Printing" : "Send To Print"),
+                //       leading: Icon(ticket.inPrint == 1 ? Icons.print_disabled_outlined : Icons.print_outlined, color: Colors.deepOrangeAccent),
+                //       onTap: () async {
+                //         Navigator.of(context).pop();
+                //         await sendToPrint(ticket);
+                //       }),
                 if (AppUser.havePermissionFor(Permissions.FINISH_TICKET) && (!kIsWeb))
                   ListTile(
                       title: const Text("Finish"),

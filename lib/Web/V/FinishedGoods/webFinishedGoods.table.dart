@@ -10,6 +10,7 @@ import '../../../V/Home/Tickets/TicketInfo/TicketChatView.dart';
 import '../../../V/Home/Tickets/TicketInfo/TicketInfo.dart';
 import '../../../V/Widgets/NoResultFoundMsg.dart';
 import '../../../ns_icons_icons.dart';
+import '../ProductionPool/copy.dart';
 
 class AsyncPaginatedDataTable2Demo extends StatefulWidget {
   final Null Function(DessertDataSourceAsync dataSource) onInit;
@@ -277,18 +278,18 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
               ));
             },
 
-            onSecondaryTap: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              duration: const Duration(seconds: 1),
-              backgroundColor: Theme.of(context).errorColor,
-              content: Text('Right clicked on ${ticket.mo}'),
-            )),
+            // onSecondaryTap: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            //   duration: const Duration(seconds: 1),
+            //   backgroundColor: Theme.of(context).errorColor,
+            //   content: Text('Right clicked on ${ticket.mo}'),
+            // )),
             // specificRowHeight: this.hasRowHeightOverrides && ticket.fat >= 25 ? 100 : null,
             cells: [
               DataCell(Wrap(
                 direction: Axis.vertical,
                 children: [
-                  Text((ticket.mo ?? ticket.oe) ?? ""),
-                  Text((ticket.oe) ?? "", style: const TextStyle(color: Colors.red, fontSize: 12)),
+                  TextMenu(child: Text((ticket.mo ?? ticket.oe) ?? "")),
+                  TextMenu(child: Text((ticket.oe) ?? "", style: const TextStyle(color: Colors.red, fontSize: 12))),
                 ],
               )),
               DataCell(Wrap(

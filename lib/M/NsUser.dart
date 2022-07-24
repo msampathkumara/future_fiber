@@ -104,11 +104,17 @@ class NsUser extends HiveClass {
   @JsonKey(defaultValue: null, includeIfNull: true)
   String? nic;
 
+  @HiveField(21, defaultValue: 0)
+  @JsonKey(defaultValue: 0, includeIfNull: true)
+  int locked = 0;
+
   String? password = "";
 
   NsUser() {
     loadSections();
   }
+
+  get isLocked => locked == 1;
 
   static int? intFromString(d) => int.tryParse("$d");
 

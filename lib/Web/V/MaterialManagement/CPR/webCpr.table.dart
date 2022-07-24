@@ -112,8 +112,8 @@ class _WebCPRTableState extends State<WebCPRTable> {
       AsyncPaginatedDataTable2(
           scrollController: _scrollController,
           showFirstLastButtons: true,
-          smRatio: 0.4,
-          lmRatio: 3,
+          smRatio: 0.5,
+          lmRatio: 2.8,
           horizontalMargin: 20,
           checkboxHorizontalMargin: 12,
           columnSpacing: 16,

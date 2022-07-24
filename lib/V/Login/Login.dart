@@ -75,7 +75,7 @@ class _LoginState extends State<Login> {
         }
         setState(() {});
       });
-      _videoPlayerController = VideoPlayerController.asset("assets/loginVideo.mp4")
+      _videoPlayerController = VideoPlayerController.asset(Res.loginVideo)
         ..initialize().then((_) {
           _videoPlayerController.play();
           _videoPlayerController.setLooping(true);
@@ -279,16 +279,42 @@ class _LoginState extends State<Login> {
 
     Dio dio = Dio();
     dio.options.headers['content-Type'] = 'application/json';
-    print('-----------------------------------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx__login__1');
-    dio.post(
-      Server.getServerPath("user/login"),
-      data: {"uname": _user.uname, "pword": _user.pword, "nfc": nfcCode},
-    ).then((response) async {
+    dio.post(Server.getServerPath("user/login"), data: {"uname": _user.uname, "pword": _user.pword, "nfc": nfcCode}).then((response) async {
       print('-----------------------------------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx__login__2');
       print(response.data);
 
       Map res = response.data;
 
+      if (res["locked"] == true) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                content: SizedBox(
+                  height: 400,
+                  child: Column(
+                    children: [
+                      SizedBox(width: 400, child: Image.asset(Res.accountBlocked)),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text("Locked", textScaleFactor: 1.2, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
+                      ),
+                      const Text("Your account has been locked please contact Admin", textScaleFactor: 1, style: TextStyle(color: Colors.grey)),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("OK")),
+                      )
+                    ],
+                  ),
+                ),
+                actions: [],
+              );
+            });
+      }
       if (res["login"] == false) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Login failed, Check user name and password"), backgroundColor: Colors.red));
         setLoading(false);

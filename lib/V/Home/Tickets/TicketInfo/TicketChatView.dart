@@ -90,7 +90,7 @@ class _TicketChatViewState extends State<TicketChatView> {
               ),
               body: ListView.separated(
                 controller: _scrollController,
-                padding: const EdgeInsets.only(bottom: 54.0),
+                padding: const EdgeInsets.only(bottom: 154.0),
                 reverse: true,
                 itemBuilder: (BuildContext context, int index) {
                   return const Divider(height: 0, color: Colors.transparent);
@@ -115,36 +115,42 @@ class _TicketChatViewState extends State<TicketChatView> {
                         children: [
                           // if (_chatBoxController.value.text.isEmpty) IconButton(onPressed: () {}, icon: const Icon(Icons.image)),
                           Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(24), color: Colors.grey.shade100),
-                              child: SizedBox(
-                                height: 50,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 0.0),
-                                  child: TextFormField(
-                                    controller: _chatBoxController,
-                                    onChanged: (c) {
-                                      setState(() {});
-                                    },
-                                    onFieldSubmitted: (x) {
-                                      if (x.isNotEmpty) {
-                                        saveComment(_chatBoxController.value.text);
-                                        _chatBoxController.clear();
-                                      }
-                                    },
-                                    decoration: InputDecoration(
-                                        fillColor: Colors.transparent,
-                                        focusColor: Colors.transparent,
-                                        border: InputBorder.none,
-                                        focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(24.0),
-                                        ),
-                                        enabledBorder: InputBorder.none,
-                                        hintText: 'Enter your Comment',
-                                        hintStyle: const TextStyle(color: Colors.grey)
-                                        // prefixIcon: Icon(Icons.search, color: Colors.white)
-                                        ),
-                                  ),
+                            child: SizedBox(
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 0.0),
+                                child: TextFormField(
+                                  keyboardType: TextInputType.multiline,
+                                  maxLines: null,
+                                  minLines: 5,
+                                  controller: _chatBoxController,
+                                  onChanged: (c) {
+                                    setState(() {});
+                                  },
+                                  onFieldSubmitted: (x) {
+                                    if (x.isNotEmpty) {
+                                      saveComment(_chatBoxController.value.text);
+                                      _chatBoxController.clear();
+                                    }
+                                  },
+                                  decoration: InputDecoration(
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(color: Colors.grey),
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide: const BorderSide(color: Colors.white),
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      filled: true,
+                                      fillColor: Colors.grey.shade100,
+                                      focusColor: Colors.grey.shade100,
+                                      border: InputBorder.none,
+                                      // focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16.0), gapPadding: 0),
+                                      // enabledBorder: InputBorder.none,
+                                      hintText: 'Enter your Comment',
+                                      hintStyle: const TextStyle(color: Colors.grey)
+                                      // prefixIcon: Icon(Icons.search, color: Colors.white)
+                                      ),
                                 ),
                               ),
                             ),

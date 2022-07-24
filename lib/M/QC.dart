@@ -31,6 +31,9 @@ class QC {
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int? sectionId;
 
+  @JsonKey(defaultValue: null, includeIfNull: true)
+  String? quality;
+
   NsUser? getUser() {
     user = user ?? HiveBox.usersBox.get(userId);
     return user;

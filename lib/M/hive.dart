@@ -72,6 +72,9 @@ class HiveBox {
           FirebaseDatabase.instance.ref('db_upon').onValue.listen((DatabaseEvent event) {
             HiveBox.getDataFromServer();
           });
+          FirebaseDatabase.instance.ref('resetDb').onValue.listen((DatabaseEvent event) {
+            HiveBox.getDataFromServer(clean: true);
+          });
         }
       });
     }
@@ -84,6 +87,9 @@ class HiveBox {
           });
           FirebaseDatabase.instance.ref('kitUpdate').onValue.listen((DatabaseEvent event) {
             DB.callChangesCallBack(DataTables.kit);
+          });
+          FirebaseDatabase.instance.ref('resetDb').onValue.listen((DatabaseEvent event) {
+            HiveBox.getDataFromServer(clean: true);
           });
         }
       });

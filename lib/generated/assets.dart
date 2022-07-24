@@ -2,6 +2,7 @@
 class Assets {
   Assets._();
 
+  static const String assetsAccountBlocked = 'assets/accountBlocked.jpg';
   static const String assetsFileNotFound = 'assets/fileNotFound.png';
   static const String assetsJs = 'assets/js.js';
   static const String assetsJs1 = 'assets/js1.txt';

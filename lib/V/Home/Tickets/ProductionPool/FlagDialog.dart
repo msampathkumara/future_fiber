@@ -79,7 +79,7 @@ class _FlagDialogNewState extends State<FlagDialogNew> {
                           ),
                       body: ListView.separated(
                         controller: _scrollController,
-                        padding: EdgeInsets.only(bottom: isFlaged ? 50 : 100.0),
+                        padding: EdgeInsets.only(bottom: isFlaged ? 50 : 162.0),
                         reverse: true,
                         itemBuilder: (BuildContext context, int index) {
                           return const Divider(height: 0, color: Colors.transparent);
@@ -105,13 +105,15 @@ class _FlagDialogNewState extends State<FlagDialogNew> {
                                 child: Column(
                                   children: [
                                     if (!isFlaged)
-                                      Container(
-                                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(24), color: Colors.grey.shade100),
+                                      Padding(
+                                        padding: const EdgeInsets.only(bottom: 8.0),
                                         child: SizedBox(
-                                          height: 50,
                                           child: Padding(
                                             padding: const EdgeInsets.only(left: 0.0),
                                             child: TextFormField(
+                                              keyboardType: TextInputType.multiline,
+                                              maxLines: null,
+                                              minLines: 4,
                                               controller: _commentController,
                                               onChanged: (c) {
                                                 setState(() {});
@@ -123,13 +125,20 @@ class _FlagDialogNewState extends State<FlagDialogNew> {
                                                 }
                                               },
                                               decoration: InputDecoration(
-                                                  fillColor: Colors.transparent,
-                                                  focusColor: Colors.transparent,
-                                                  border: InputBorder.none,
                                                   focusedBorder: OutlineInputBorder(
-                                                    borderRadius: BorderRadius.circular(24.0),
+                                                    borderSide: const BorderSide(color: Colors.grey),
+                                                    borderRadius: BorderRadius.circular(16),
                                                   ),
-                                                  enabledBorder: InputBorder.none,
+                                                  enabledBorder: UnderlineInputBorder(
+                                                    borderSide: const BorderSide(color: Colors.white),
+                                                    borderRadius: BorderRadius.circular(16),
+                                                  ),
+                                                  filled: true,
+                                                  fillColor: Colors.grey.shade100,
+                                                  focusColor: Colors.grey.shade100,
+                                                  border: InputBorder.none,
+                                                  // focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16.0), gapPadding: 0),
+                                                  // enabledBorder: InputBorder.none,
                                                   hintText: 'Enter your Comment',
                                                   hintStyle: const TextStyle(color: Colors.grey)
                                                   // prefixIcon: Icon(Icons.search, color: Colors.white)
@@ -138,9 +147,43 @@ class _FlagDialogNewState extends State<FlagDialogNew> {
                                           ),
                                         ),
                                       ),
+                                    // Container(
+                                    //   decoration: BoxDecoration(borderRadius: BorderRadius.circular(24), color: Colors.grey.shade100),
+                                    //   child: SizedBox(
+                                    //     height: 50,
+                                    //     child: Padding(
+                                    //       padding: const EdgeInsets.only(left: 0.0),
+                                    //       child: TextFormField(
+                                    //         controller: _commentController,
+                                    //         onChanged: (c) {
+                                    //           setState(() {});
+                                    //         },
+                                    //         onFieldSubmitted: (x) {
+                                    //           if (x.isNotEmpty) {
+                                    //             saveComment(_commentController.value.text);
+                                    //             _commentController.clear();
+                                    //           }
+                                    //         },
+                                    //         decoration: InputDecoration(
+                                    //             fillColor: Colors.transparent,
+                                    //             focusColor: Colors.transparent,
+                                    //             border: InputBorder.none,
+                                    //             focusedBorder: OutlineInputBorder(
+                                    //               borderRadius: BorderRadius.circular(24.0),
+                                    //             ),
+                                    //             enabledBorder: InputBorder.none,
+                                    //             hintText: 'Enter your Comment',
+                                    //             hintStyle: const TextStyle(color: Colors.grey)
+                                    //             // prefixIcon: Icon(Icons.search, color: Colors.white)
+                                    //             ),
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                    // ),
                                     (!isFlaged)
                                         ? SizedBox(
                                             width: double.infinity,
+                                            height: 36,
                                             child: ElevatedButton(
                                                 child: const Text('Add Flag'),
                                                 onPressed: () {
@@ -153,7 +196,8 @@ class _FlagDialogNewState extends State<FlagDialogNew> {
                                                 }),
                                           )
                                         : SizedBox(
-                                            width: double.infinity,
+                                      width: double.infinity,
+                                            height: 36,
                                             child: ElevatedButton(
                                                 child: const Text('Remove Flag'),
                                                 onPressed: () {

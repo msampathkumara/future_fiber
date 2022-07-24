@@ -102,8 +102,8 @@ class _WebKITTableState extends State<WebKITTable> {
       AsyncPaginatedDataTable2(
           scrollController: _scrollController,
           showFirstLastButtons: true,
-          smRatio: 0.4,
-          lmRatio: 3,
+          smRatio: 0.5,
+          lmRatio: 2.5,
           horizontalMargin: 20,
           checkboxHorizontalMargin: 12,
           columnSpacing: 16,

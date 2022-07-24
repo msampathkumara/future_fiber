@@ -158,6 +158,10 @@ class Ticket extends DataObject {
   @JsonKey(defaultValue: false, includeIfNull: true, fromJson: boolFromO, toJson: boolToInt)
   bool isStarted = false;
 
+  @HiveField(32, defaultValue: false)
+  @JsonKey(defaultValue: false, includeIfNull: true, fromJson: boolFromO, toJson: boolToInt)
+  bool haveComments = false;
+
   @JsonKey(ignore: true)
   File? ticketFile;
 
@@ -219,7 +223,7 @@ class Ticket extends DataObject {
       var path = isStandard ? "tickets/standard/getPdf?" : 'tickets/getTicketFile?';
 
       await dio.download(Server.getServerApiPath(path + queryString), filePath, deleteOnError: true, onReceiveProgress: (received, total) {
-        // debugPrint("${received}/${total}");
+        // print("${received}/${total}");
         int percentage = ((received / total) * 100).floor();
         key.currentState?.onProgressChange(percentage);
         if (onReceiveProgress != null) {
@@ -227,15 +231,15 @@ class Ticket extends DataObject {
         }
       }).then((value) async {
         response = value;
-        debugPrint('+++++++++++++++++++++++++++++++++++++++++++++');
-        debugPrint(response.headers["fileVersion"].toString());
+        print('+++++++++++++++++++++++++++++++++++++++++++++');
+        print(response.headers["fileVersion"].toString());
         String fileVersion = response.headers["fileVersion"]![0];
         await setLocalFileVersion(int.parse(fileVersion), getTicketType());
       });
     } on DioError catch (e) {
       if (e.response != null) {
-        debugPrint('"******************************************** response');
-        debugPrint(e.response.toString());
+        print('"******************************************** response');
+        print(e.response.toString());
         if (e.response!.statusCode == 404) {
           loadingWidget.close(context);
           var errorView = ErrorMessageView(
@@ -246,11 +250,11 @@ class Ticket extends DataObject {
           return Future.value(null);
         }
 
-        debugPrint(e.response!.statusCode.toString());
-        debugPrint(e.response!.data);
-        debugPrint(e.response!.headers.toString());
+        print(e.response!.statusCode.toString());
+        print(e.response!.data);
+        print(e.response!.headers.toString());
       } else {
-        debugPrint(e.message);
+        print(e.message);
       }
     }
 
@@ -292,13 +296,13 @@ class Ticket extends DataObject {
       } catch (e) {
         loadingWidget.close(context);
         if (e is DioError) {
-          debugPrint("------------------------------------------------------------------------${e.response?.statusCode}");
-          // debugPrint(e);
+          print("------------------------------------------------------------------------${e.response?.statusCode}");
+          // print(e);
           if (e.response?.statusCode == 404) {
-            debugPrint('404');
+            print('404');
             ErrorMessageView(errorMessage: 'Ticket Not Found', icon: Icons.broken_image_rounded).show(context);
           } else {
-            debugPrint(e.message);
+            print(e.message);
           }
         } else {}
       }
@@ -317,13 +321,13 @@ class Ticket extends DataObject {
     File file = await getLocalFile();
     var isNew = await isFileNew();
 
-    debugPrint('file ${file.existsSync()}');
+    print('file ${file.existsSync()}');
 
     if (isNew && file.existsSync()) {
-      debugPrint("File exists ");
+      print("File exists ");
       view(context);
     } else {
-      debugPrint("File not exists or old ");
+      print("File not exists or old ");
       _getFile(context).then((file) async {
         if (file != null) {
           view(context);
@@ -352,8 +356,8 @@ class Ticket extends DataObject {
     t["loading"] = "";
     t["production"] = "";
     t.keys.where((k) => (t[k] ?? "").toString().isEmpty).toList().forEach(t.remove);
-    debugPrint("____________________________________________________________________________________________________________________________*****");
-    debugPrint(t.toString());
+    print("____________________________________________________________________________________________________________________________*****");
+    print(t.toString());
     var serverUrl = Server.getServerApiPath(isStandard ? "tickets/standard/uploadEdits" : "tickets/uploadEdits");
     return await platform.invokeMethod('editPdf', {'path': ticketFile!.path, 'fileID': id, 'ticket': t.toString(), "serverUrl": serverUrl});
   }
@@ -365,9 +369,9 @@ class Ticket extends DataObject {
     var f = HiveBox.localFileVersionsBox.values.where((element) => element.type == getTicketType().getValue() && element.ticketId == id);
     if (f.isNotEmpty) {
       LocalFileVersion fileVersion = f.first;
-      debugPrint("---------------------------fileVersion.toJson()");
-      debugPrint(fileVersion.toJson().toString());
-      debugPrint(ticket?.fileVersion.toString());
+      print("---------------------------fileVersion.toJson()");
+      print(fileVersion.toJson().toString());
+      print(ticket?.fileVersion.toString());
 
       if (ticket != null) {
         if (ticket.fileVersion > fileVersion.version) {
@@ -389,8 +393,8 @@ class Ticket extends DataObject {
     var fv = HiveBox.localFileVersionsBox.values
         .singleWhere((value) => (value.type == ticketType.getValue() && value.ticketId == id), orElse: () => LocalFileVersion(id, newFileVersion, ticketType.getValue()));
 
-    debugPrint("-------------------------------------------------00000");
-    debugPrint(fv.toJson().toString());
+    print("-------------------------------------------------00000");
+    print(fv.toJson().toString());
 
     fv.version = newFileVersion;
     fileVersion = newFileVersion;
@@ -403,20 +407,20 @@ class Ticket extends DataObject {
   }
 
   Future<List<TicketFlag>> getFlagList(String flagType) async {
-    debugPrint("tickets/flags/getList");
+    print("tickets/flags/getList");
     return OnlineDB.apiGet("tickets/flags/getList", {"ticket": id.toString(), "type": flagType}).then((response) {
-      debugPrint(response.data);
-      debugPrint("-----------------vvvvvvvvvvv-----------------------");
+      print(response.data);
+      print("-----------------vvvvvvvvvvv-----------------------");
       Map<String, dynamic> res = response.data;
       List l = ((res["flags"] ?? []));
 
       List<TicketFlag> list = List<TicketFlag>.from(l.map((model) {
         return TicketFlag.fromJson(model);
       }));
-      debugPrint(list.length.toString());
+      print(list.length.toString());
       return list;
     }).catchError((onError) {
-      debugPrint(onError);
+      print(onError);
     });
   }
 
@@ -427,10 +431,10 @@ class Ticket extends DataObject {
     }
     File? file = await getFile(context);
     if (file != null && file.existsSync()) {
-      debugPrint('--------------------- ${file.path}');
+      print('--------------------- ${file.path}');
 
       File? file1 = await file.copy("${file.parent.path}/${(mo ?? oe ?? id)}.pdf");
-      debugPrint('copied');
+      print('copied');
       await FlutterShare.shareFile(
         chooserTitle: "Share Ticket",
         title: mo ?? oe ?? "$id.pdf",
@@ -487,13 +491,13 @@ class Ticket extends DataObject {
   Future start(context) {
     return OnlineDB.apiPost("tickets/start", {"ticket": id.toString()}).then((response) {
       if (kDebugMode) {
-        debugPrint(response.data);
-        debugPrint("-----------------vvvvvvvvxxxxxxxxxxvvv-----------------------");
+        print(response.data);
+        print("-----------------vvvvvvvvxxxxxxxxxxvvv-----------------------");
       }
 
       return true;
     }).catchError((onError) {
-      debugPrint(onError);
+      print(onError);
     });
   }
 

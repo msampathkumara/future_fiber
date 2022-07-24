@@ -51,37 +51,36 @@ class _UserImageState extends State<UserImage> {
                     ),
                     child: getImage()),
               ),
-              Icon(Icons.no_accounts_rounded, color: Colors.red, size: widget.radius * 0.6)
+              Icon(Icons.no_accounts_rounded, color: Colors.red, size: widget.radius * 0.6),
+              if (nsUser.isLocked) Positioned(right: 0, top: 0, child: Icon(Icons.lock, color: Colors.red, size: widget.radius * 0.6))
             ],
           ),
         ),
       );
     }
 
-    return SizedBox(
-      width: widget.radius * 2,
-      height: widget.radius * 2,
-      child: Padding(
-        padding: EdgeInsets.all(widget.padding),
-        child: getImage(),
-      ),
-    );
+    return SizedBox(width: widget.radius * 2, height: widget.radius * 2, child: Padding(padding: EdgeInsets.all(widget.padding), child: getImage()));
   }
 
   Widget getImage() {
     return CircleAvatar(
         backgroundColor: Colors.white,
         radius: widget.radius,
-        child: ClipOval(
-            child: CachedNetworkImage(
-                imageUrl: nsUser.getImage(size: widget.radius * 3),
-                httpHeaders: {"authorization": '${AppUser.getIdToken()}'},
-                width: widget.radius * 2,
-                height: widget.radius * 2,
-                fit: BoxFit.cover,
-                errorWidget: (context, url, error) {
-                  return Image.asset('assets/images/userPlaceholder.jpg', fit: BoxFit.cover, width: widget.radius * 2, height: widget.radius * 2);
-                },
-                progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress))));
+        child: Stack(
+          children: [
+            ClipOval(
+                child: CachedNetworkImage(
+                    imageUrl: nsUser.getImage(size: widget.radius * 3),
+                    httpHeaders: {"authorization": '${AppUser.getIdToken()}'},
+                    width: widget.radius * 2,
+                    height: widget.radius * 2,
+                    fit: BoxFit.cover,
+                    errorWidget: (context, url, error) {
+                      return Image.asset('assets/images/userPlaceholder.jpg', fit: BoxFit.cover, width: widget.radius * 2, height: widget.radius * 2);
+                    },
+                    progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress))),
+            if (nsUser.isLocked) Positioned(right: 0, top: 0, child: Icon(Icons.lock, color: Colors.red, size: widget.radius * 0.6))
+          ],
+        ));
   }
 }

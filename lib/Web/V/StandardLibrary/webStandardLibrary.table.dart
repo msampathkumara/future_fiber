@@ -7,6 +7,7 @@ import 'package:smartwind/M/StandardTicket.dart';
 import '../../../V/Home/Tickets/StandardFiles/StandardFiles.dart';
 import '../../../V/Home/Tickets/StandardFiles/StandardTicketInfo.dart';
 import '../../../V/Widgets/NoResultFoundMsg.dart';
+import '../ProductionPool/copy.dart';
 
 class WebStandardLibraryTable extends StatefulWidget {
   final Null Function(DessertDataSourceAsync dataSource) onInit;
@@ -166,13 +167,7 @@ class _ErrorAndRetry extends StatelessWidget {
               Text('Oops! $errorMessage', style: const TextStyle(color: Colors.white)),
               TextButton(
                   onPressed: retry,
-                  child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    const Icon(
-                      Icons.refresh,
-                      color: Colors.white,
-                    ),
-                    const Text('Retry', style: TextStyle(color: Colors.white))
-                  ]))
+                  child: Row(mainAxisSize: MainAxisSize.min, children: const [Icon(Icons.refresh, color: Colors.white), Text('Retry', style: TextStyle(color: Colors.white))]))
             ])),
       );
 }
@@ -195,17 +190,17 @@ class __LoadingState extends State<_Loading> {
                   ? const SizedBox()
                   : Center(
                       child: Container(
-                      color: Colors.yellow,
+                        color: Colors.yellow,
                       padding: const EdgeInsets.all(7),
-                      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                        const CircularProgressIndicator(
+                      width: 150,
+                      height: 50,
+                      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: const [
+                        CircularProgressIndicator(
                           strokeWidth: 2,
                           color: Colors.black,
                         ),
-                        const Text('Loading..')
+                        Text('Loading..')
                       ]),
-                      width: 150,
-                      height: 50,
                     ));
             }));
   }
@@ -290,11 +285,11 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
               // ));
             },
 
-            onSecondaryTap: () => ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(duration: const Duration(seconds: 1), backgroundColor: Theme.of(context).errorColor, content: Text('Right clicked on ${ticket.oe}'))),
+            // onSecondaryTap: () => ScaffoldMessenger.of(context)
+            //     .showSnackBar(SnackBar(duration: const Duration(seconds: 1), backgroundColor: Theme.of(context).errorColor, content: Text('Right clicked on ${ticket.oe}'))),
             // specificRowHeight: this.hasRowHeightOverrides && ticket.fat >= 25 ? 100 : null,
             cells: [
-              DataCell(Text((ticket.oe) ?? "")),
+              DataCell(TextMenu(child: Text((ticket.oe) ?? ""))),
               DataCell(Text('${ticket.production}')),
               DataCell(Text("${ticket.usedCount}")),
               DataCell(Text(ticket.getUpdateDateTime().toString())),

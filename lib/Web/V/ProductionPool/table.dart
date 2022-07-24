@@ -14,6 +14,7 @@ import '../../../V/Home/Tickets/TicketInfo/TicketInfo.dart';
 import '../../../V/Widgets/NoResultFoundMsg.dart';
 import '../../../ns_icons_icons.dart';
 import '../QC/webTicketQView.dart';
+import 'copy.dart';
 
 class PaginatedDataTable2Demo extends StatefulWidget {
   final Null Function(DessertDataSource dataSource) onInit;
@@ -26,7 +27,7 @@ class PaginatedDataTable2Demo extends StatefulWidget {
 
 class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
   int _rowsPerPage = 20;
-  bool _sortAscending = true;
+  bool _sortAscending = false;
   int _sortColumnIndex = 3;
   late DessertDataSource _dessertsDataSource;
   bool _initialized = false;
@@ -153,7 +154,7 @@ class DessertDataSource extends DataTableSource {
   DessertDataSource(this.context, this.filter) {
     tickets = _tickets;
     print("ddddddddd ${tickets.length}");
-    sort((d) => d.shipDate, false);
+    sort((d) => d.shipDate, true);
   }
 
   final BuildContext context;
@@ -162,7 +163,7 @@ class DessertDataSource extends DataTableSource {
   late bool hasRowHeightOverrides;
 
   Comparable Function(Ticket d) sortField = ((d) => (d.shipDate));
-  var _ascending = true;
+  var _ascending = false;
 
   void sort<T>(Comparable<T> Function(Ticket d) getField, bool ascending) {
     sortField = getField;
@@ -205,7 +206,7 @@ class DessertDataSource extends DataTableSource {
       cells: [
         DataCell(Wrap(
           direction: Axis.vertical,
-          children: [Text((ticket.mo ?? ticket.oe) ?? ""), Text((ticket.oe) ?? "", style: const TextStyle(color: Colors.red, fontSize: 12))],
+          children: [TextMenu(child: Text((ticket.mo ?? ticket.oe) ?? "")), TextMenu(child: Text((ticket.oe) ?? "", style: const TextStyle(color: Colors.red, fontSize: 12)))],
         )),
         DataCell(Wrap(
           direction: Axis.vertical,
@@ -224,7 +225,7 @@ class DessertDataSource extends DataTableSource {
         DataCell(Row(
           children: [
             IconButton(
-                icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.chat, color: Colors.blue)),
+                icon: CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.chat, color: ticket.haveComments ? Colors.blue : Colors.grey)),
                 onPressed: () {
                   TicketChatView(ticket).show(context);
                 }),

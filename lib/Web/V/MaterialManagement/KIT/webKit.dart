@@ -166,49 +166,50 @@ class _WebKitState extends State<WebKit> {
             backgroundColor: Colors.transparent,
             elevation: 0),
         body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Material(
-              elevation: 4,
-              borderRadius: BorderRadius.circular(8),
-              child: WebKITTable(onInit: (DessertDataSourceAsync dataSource) {
-                _dataSource = dataSource;
-              }, onRequestData: (int page, int startingAt, int count, String sortedBy, bool sortedAsc) {
-                return getData(page, startingAt, count, sortedBy, sortedAsc);
-              })),
-        ),
-        bottomNavigationBar: BottomAppBar(
-            shape: const CircularNotchedRectangle(),
-            color: Colors.green,
-            child: IconTheme(
-              data: const IconThemeData(color: Colors.white),
-              child: Row(
-                children: [
-                  InkWell(
-                    onTap: () {},
-                    splashColor: Colors.red,
-                    child: Ink(
-                      child: IconButton(
-                        icon: const Icon(Icons.refresh),
-                        onPressed: () {
-                          _dataSource.refreshDatasource();
-                        },
-                      ),
-                    ),
-                  ),
-                  const Spacer(),
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      "${0}",
-                      textScaleFactor: 1.1,
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  const Spacer(),
-                  const SizedBox(width: 36)
-                ],
-              ),
-            )));
+        padding: const EdgeInsets.all(16.0),
+        child: Material(
+            elevation: 4,
+            borderRadius: BorderRadius.circular(8),
+            child: WebKITTable(onInit: (DessertDataSourceAsync dataSource) {
+              _dataSource = dataSource;
+            }, onRequestData: (int page, int startingAt, int count, String sortedBy, bool sortedAsc) {
+              return getData(page, startingAt, count, sortedBy, sortedAsc);
+            })),
+      ),
+      // bottomNavigationBar: BottomAppBar(
+      //     shape: const CircularNotchedRectangle(),
+      //     color: Colors.green,
+      //     child: IconTheme(
+      //       data: const IconThemeData(color: Colors.white),
+      //       child: Row(
+      //         children: [
+      //           InkWell(
+      //             onTap: () {},
+      //             splashColor: Colors.red,
+      //             child: Ink(
+      //               child: IconButton(
+      //                 icon: const Icon(Icons.refresh),
+      //                 onPressed: () {
+      //                   _dataSource.refreshDatasource();
+      //                 },
+      //               ),
+      //             ),
+      //           ),
+      //           const Spacer(),
+      //           const Padding(
+      //             padding: EdgeInsets.all(8.0),
+      //             child: Text(
+      //               "${0}",
+      //               textScaleFactor: 1.1,
+      //               style: TextStyle(color: Colors.white),
+      //             ),
+      //           ),
+      //           const Spacer(),
+      //           const SizedBox(width: 36)
+      //         ],
+      //       ),
+      //     ))
+    );
   }
 
   Filters dataFilter = Filters.none;

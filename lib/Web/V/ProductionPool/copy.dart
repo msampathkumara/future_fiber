@@ -1,4 +1,6 @@
+import 'package:contextmenu/contextmenu.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class TextCopy extends StatefulWidget {
   final Widget child;
@@ -29,5 +31,29 @@ class _TextCopyState extends State<TextCopy> {
         )
       ],
     );
+  }
+}
+
+class TextMenu extends StatelessWidget {
+  Text child;
+
+  TextMenu({Key? key, required this.child}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ContextMenuArea(
+        builder: (context) => [
+              ListTile(
+                dense: true,
+                leading: const Icon(Icons.copy),
+                title: Wrap(children: [const Text('Copy '), Text('  ${child.data}', style: const TextStyle(color: Colors.redAccent))]),
+                onTap: () {
+                  Clipboard.setData(ClipboardData(text: child.data));
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Copied')));
+                },
+              )
+            ],
+        child: child);
   }
 }

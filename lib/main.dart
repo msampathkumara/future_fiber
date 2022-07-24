@@ -1,6 +1,7 @@
 import 'package:app_settings/app_settings.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_analytics/observer.dart';
+
+// import 'package:firebase_analytics/firebase_analytics.dart';
+// import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -102,8 +103,8 @@ Future<void> mainThings({viewIssMaterialManagement = false}) async {
 }
 
 class MyApp extends StatelessWidget {
-  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-  static FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(analytics: analytics);
+  // static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  // static FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(analytics: analytics);
 
   const MyApp({Key? key}) : super(key: key);
 
@@ -128,17 +129,17 @@ class MyApp extends StatelessWidget {
                 ))),
         home: const MyHomePage(),
         // home: const MainApp1(),
-        navigatorObservers: [
-          FirebaseAnalyticsObserver(analytics: analytics),
+        navigatorObservers: const [
+          // FirebaseAnalyticsObserver(analytics: analytics),
         ]);
   }
 }
 
 late Color primaryColor;
-late ThemeData AppTheme;
+late ThemeData appTheme;
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage();
+  const MyHomePage({Key? key}) : super(key: key);
 
   final String title = "NS Smart Wind";
 
@@ -154,7 +155,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       primaryColor = Theme.of(context).primaryColor;
-      AppTheme = Theme.of(context);
+      appTheme = Theme.of(context);
     });
 
     if (kDebugMode) {

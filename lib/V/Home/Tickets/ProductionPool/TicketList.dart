@@ -50,7 +50,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     });
 
     _dbChangeCallBack = DB.setOnDBChangeListener(() {
-      debugPrint('on update tickets');
+      print('on update tickets');
       if (mounted) {
         loadData();
       }
@@ -84,7 +84,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
             actions: <Widget>[
               PopupMenuButton<String>(
                 onSelected: (s) {
-                  debugPrint(s);
+                  print(s);
                   _showAllTickets = !_showAllTickets;
 
                   if (_showAllTickets) {
@@ -205,7 +205,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
 
   getBody() {
     var l = tabs.length;
-    debugPrint('tab length = $l');
+    print('tab length = $l');
     return _tabBarController == null
         ? Container()
         : _showAllTickets
@@ -251,18 +251,18 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                         padding: const EdgeInsets.all(8),
                         itemCount: filesList.length,
                         itemBuilder: (BuildContext context1, int index) {
-                          // debugPrint(FilesList[index]);
+                          // print(FilesList[index]);
                           Ticket ticket = (filesList[index]);
-                          // debugPrint(ticket.toJson());
+                          // print(ticket.toJson());
                           return TicketTile(index, ticket, onLongPress: () async {
-                            debugPrint('Long pres');
+                            print('Long pres');
                             await showTicketOptions(ticket, context1, context, loadData: () {
                               loadData();
                             });
 
                             setState(() {});
                           }, onReload: () {
-                            debugPrint('************************************************************************************************************');
+                            print('************************************************************************************************************');
                             loadData();
                           });
                         },
@@ -286,10 +286,10 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
   }
 
   List<Ticket> _load(selectedProduction, section, showAllTickets, searchText, {crossProduction = false, bySection = false}) {
-    debugPrint('ticket count == ${HiveBox.ticketBox.length}');
+    print('ticket count == ${HiveBox.ticketBox.length}');
     var production = nsUser?.section?.factory;
-    debugPrint('====== == $production');
-    debugPrint('crossProduction == $crossProduction');
+    print('====== == $production');
+    print('crossProduction == $crossProduction');
 
     List<Ticket> l = HiveBox.ticketBox.values.where((t) {
       if (bySection && t.nowAt != nsUser?.section?.id) {
@@ -301,7 +301,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
       }
       // if (crossProduction) {
       //   if (t.isCrossPro) {
-      //     debugPrint([t.id, t.crossPro?.fromSection?.factory, t.crossPro?.toSection?.factory, "$production"]);
+      //     print([t.id, t.crossPro?.fromSection?.factory, t.crossPro?.toSection?.factory, "$production"]);
       //     if (showAllTickets) {
       //       return true;
       //     }
@@ -312,8 +312,8 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
       //   } else {
       //     return false;
       //   }
-      //   // debugPrint('${t.crossProList}');
-      //   debugPrint([t.crossPro?.fromSection?.factory, t.crossPro?.toSection?.factory, "$production"]);
+      //   // print('${t.crossProList}');
+      //   print([t.crossPro?.fromSection?.factory, t.crossPro?.toSection?.factory, "$production"]);
       // }
       if (selectedProduction == Production.None && (t.production != null || (t.production ?? '').isNotEmpty)) {
         return false;
@@ -344,7 +344,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
 
   loadData() {
     listsMap = {};
-    debugPrint('---------------------------------------------- Start loading');
+    print('---------------------------------------------- Start loading');
 
     String searchText = this.searchText.toLowerCase();
 
@@ -357,15 +357,15 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
       // listsMap["crossProduct"] = _load(Production.Upwind, 0, false, searchText, crossProduction: true);
     }
     tabListener();
-    debugPrint('---------------------------------------------- end loading');
+    print('---------------------------------------------- end loading');
   }
 
   tabListener() {
-    debugPrint("Selected Index: ${_tabBarController!.index}");
+    print("Selected Index: ${_tabBarController!.index}");
 
     currentFileList = listsMap.values.toList()[_tabBarController!.index];
     setState(() {
-      debugPrint('${currentFileList.length}');
+      print('${currentFileList.length}');
     });
   }
 
@@ -392,7 +392,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
         }
         await loadData();
         setState(() {
-          debugPrint('xxxxxxxxxxxxx');
+          print('xxxxxxxxxxxxx');
         });
       },
     );
@@ -404,7 +404,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
       var ticketInfo = TicketInfo(ticket);
       ticketInfo.show(context);
     } catch (e) {
-      debugPrint('Ticket not found');
+      print('Ticket not found');
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Ticket not found", style: TextStyle(color: Colors.white)), backgroundColor: Colors.red));
     }
   }
@@ -454,7 +454,7 @@ class TicketTile extends StatelessWidget {
           onLongPress();
         },
         onTap: () async {
-          debugPrint('is started === ${ticket.isStarted}');
+          print('is started === ${ticket.isStarted}');
           if (ticket.isStarted) {
             var ticketInfo = TicketInfo(ticket);
             ticketInfo.show(context);

@@ -148,11 +148,11 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                                                     icon: const Icon(Icons.star_border),
                                                     selectedIcon: const Icon(Icons.star),
                                                     label: Text('QA & QC', style: TextStyle(fontSize: size))),
-                                              if (AppUser.havePermissionFor(Permissions.PRINTING))
-                                                NavigationRailDestination(
-                                                    icon: const Icon(Icons.print_outlined),
-                                                    selectedIcon: const Icon(Icons.print_rounded),
-                                                    label: Text('Printing', style: TextStyle(fontSize: size))),
+                                              // if (AppUser.havePermissionFor(Permissions.PRINTING))
+                                              //   NavigationRailDestination(
+                                              //       icon: const Icon(Icons.print_outlined),
+                                              //       selectedIcon: const Icon(Icons.print_rounded),
+                                              //       label: Text('Printing', style: TextStyle(fontSize: size))),
                                               // if (AppUser.havePermissionFor(Permissions.PENDING_TO_FINISH))
                                               //   NavigationRailDestination(
                                               //       icon: Icon(Icons.pending_actions_outlined),
@@ -251,7 +251,7 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                 if (AppUser.havePermissionFor(Permissions.STANDARD_FILES)) const WebStandardLibrary(),
                 if (AppUser.havePermissionFor(Permissions.USER_MANAGER)) const WebUserManager(),
                 if (AppUser.havePermissionFor(Permissions.QC)) const WebQc(),
-                if (AppUser.havePermissionFor(Permissions.PRINTING)) const WebPrint(),
+                        // if (AppUser.havePermissionFor(Permissions.PRINTING)) const WebPrint(),
                 if (AppUser.havePermissionFor(Permissions.SHEET_DATA)) const WebSheetData(),
                 if (AppUser.havePermissionFor(Permissions.TAB)) const WebTabs(),
                 if (AppUser.havePermissionFor(Permissions.ADMIN)) const WebAdmin(),

@@ -21,7 +21,6 @@ import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/V/Home/CurrentUser/CurrentUserDetails.dart';
 import 'package:smartwind/V/Home/HR/HRSystem.dart';
 import 'package:smartwind/V/Home/MaterialManagement/MaterialManagement.dart';
-import 'package:smartwind/V/Home/Tickets/Print/PrintManager.dart';
 import 'package:smartwind/V/Home/Tickets/ProductionPool/ProductionPool.dart';
 import 'package:smartwind/V/Login/SectionSelector.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
@@ -173,13 +172,13 @@ class _HomeState extends State<Home> {
                                   },
                                   openWidget: const UserManager(),
                                   onClosed: _showMarkedAsDoneSnackBar),
-                            if (AppUser.havePermissionFor(Permissions.PRINTING))
-                              _OpenContainerWrapper(
-                                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                    return _menuButton(openContainer, Icon(Icons.print_rounded, size: iconSize, color: Colors.blue), "Print");
-                                  },
-                                  openWidget: const PrintManager(),
-                                  onClosed: _showMarkedAsDoneSnackBar),
+                            // if (AppUser.havePermissionFor(Permissions.PRINTING))
+                            //   _OpenContainerWrapper(
+                            //       closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                            //         return _menuButton(openContainer, Icon(Icons.print_rounded, size: iconSize, color: Colors.blue), "Print");
+                            //       },
+                            //       openWidget: const PrintManager(),
+                            //       onClosed: _showMarkedAsDoneSnackBar),
                             if (AppUser.havePermissionFor(Permissions.QC))
                               _OpenContainerWrapper(
                                   closedBuilder: (BuildContext _, VoidCallback openContainer) {

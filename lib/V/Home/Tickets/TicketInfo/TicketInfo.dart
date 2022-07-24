@@ -7,7 +7,6 @@ import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/TicketFlag.dart';
 import 'package:smartwind/M/TicketHistory.dart';
-import 'package:smartwind/V/Home/Tickets/TicketInfo/info_Printing.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/ns_icons_icons.dart';
@@ -17,6 +16,7 @@ import '../../../../C/ServerResponse/Progress.dart';
 import '../../../../C/ServerResponse/ServerResponceMap.dart';
 import '../../../../M/TicketPrint.dart';
 import '../../../../M/hive.dart';
+import '../../../../Web/V/ProductionPool/copy.dart';
 import 'info_Flags.dart';
 import 'info_History.dart';
 import 'info_Progress.dart';
@@ -81,10 +81,10 @@ class _TicketInfoState extends State<TicketInfo> {
       icon: Icon(Icons.flag),
       label: "Flags",
     ),
-    const BottomNavigationBarItem(
-      icon: Icon(Icons.print),
-      label: "Printing",
-    ),
+    // const BottomNavigationBarItem(
+    //   icon: Icon(Icons.print),
+    //   label: "Printing",
+    // ),
     const BottomNavigationBarItem(
       icon: Icon(Icons.history),
       label: "History",
@@ -112,8 +112,8 @@ class _TicketInfoState extends State<TicketInfo> {
                     children: <Widget>[
                       _getBottomNavigationBarItem(Icons.tour_rounded, ("Flags"), 0),
                       _getBottomNavigationBarItem(Icons.data_usage_rounded, ("Progress"), 1),
-                      _getBottomNavigationBarItem(Icons.print_rounded, ("Printing"), 2),
-                      _getBottomNavigationBarItem(Icons.history_rounded, ("History"), 3),
+                      // _getBottomNavigationBarItem(Icons.print_rounded, ("Printing"), 2),
+                      _getBottomNavigationBarItem(Icons.history_rounded, ("History"), 2),
                     ],
                   ),
                 )),
@@ -137,14 +137,16 @@ class _TicketInfoState extends State<TicketInfo> {
 
   _appBar() {
     return AppBar(
-      // backgroundColor: Colors.orange,
+      // backgroundColor: Theme.of(context).primaryColor,
+
       elevation: 10,
       // toolbarHeight: (bottomNavigationBarSelectedIndex == 0) ? (height - kBottomNavigationBarHeight) : 230,
       toolbarHeight: 230,
       bottom: PreferredSize(
           preferredSize: const Size.fromHeight(4.0),
-          child: SizedBox(
+          child: Container(
             // color: Colors.orange,
+            color: Theme.of(context).primaryColor,
             height: (kDebugMode) ? 220.0 : 200,
             child: Row(
               children: [
@@ -154,8 +156,8 @@ class _TicketInfoState extends State<TicketInfo> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text(_ticket.mo ?? "_", style: ts),
-                      Text(_ticket.oe ?? "_", style: ts),
+                      TextMenu(child: Text(_ticket.mo ?? "_", style: ts)),
+                      TextMenu(child: Text(_ticket.oe ?? "_", style: ts)),
                       Text(_ticket.production ?? "_", style: ts.merge(smallText)),
                       Text("update on : ${_ticket.getUpdateDateTime()}", style: ts.merge(smallText)),
                       Text("Ship Date : ${_ticket.shipDate}", style: ts.merge(smallText)),
@@ -226,9 +228,9 @@ class _TicketInfoState extends State<TicketInfo> {
         return info_Flags(flags, flagsHistory);
       case 1:
         return info_Progress(progressList, _ticket);
+      // case 2:
+      //   return info_Printing(printList);
       case 2:
-        return info_Printing(printList);
-      case 3:
         return InfoHistory(ticketHistory);
     }
   }
@@ -296,7 +298,7 @@ class _TicketInfoState extends State<TicketInfo> {
         SizedBox(
             width: 300,
             child: Container(
-              // color: Colors.orange,
+              color: Theme.of(context).primaryColor,
               child: Column(
                 children: [
                   Padding(
@@ -305,7 +307,10 @@ class _TicketInfoState extends State<TicketInfo> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        ListTile(visualDensity: visualDensity, title: Text(_ticket.mo ?? "_", style: ts), subtitle: Text(_ticket.oe ?? "_", style: ts)),
+                        ListTile(
+                            visualDensity: visualDensity,
+                            title: TextMenu(child: Text(_ticket.mo ?? "_", style: ts)),
+                            subtitle: TextMenu(child: Text(_ticket.oe ?? "_", style: ts))),
                         ListTile(
                             visualDensity: visualDensity,
                             title: Text(_ticket.production ?? "_", style: ts.merge(smallText)),
@@ -383,6 +388,7 @@ class _TicketInfoState extends State<TicketInfo> {
                 bottomNavigationBar: BottomAppBar(
                     elevation: 16,
                     // color: Colors.orange,
+                    color: Theme.of(context).primaryColor,
                     shape: const CircularNotchedRectangle(),
                     notchMargin: 4.0,
                     child: Padding(
@@ -393,8 +399,8 @@ class _TicketInfoState extends State<TicketInfo> {
                         children: <Widget>[
                           _getBottomNavigationBarItem(Icons.tour_rounded, ("Flags"), 0),
                           _getBottomNavigationBarItem(Icons.data_usage_rounded, ("Progress"), 1),
-                          _getBottomNavigationBarItem(Icons.print_rounded, ("Printing"), 2),
-                          _getBottomNavigationBarItem(Icons.history_rounded, ("History"), 3),
+                          // _getBottomNavigationBarItem(Icons.print_rounded, ("Printing"), 2),
+                          _getBottomNavigationBarItem(Icons.history_rounded, ("History"), 2),
                         ],
                       ),
                     )),

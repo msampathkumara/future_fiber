@@ -4,7 +4,7 @@ class WebUserManagerTable extends StatefulWidget {
   final Null Function(DessertDataSource dataSource) onInit;
   final Null Function(NsUser nsUser) onTap;
 
-  const WebUserManagerTable({required this.onInit, required this.onTap});
+    const WebUserManagerTable({Key? key, required this.onInit, required this.onTap}) : super(key: key);
 
   @override
   _WebUserManagerTableState createState() => _WebUserManagerTableState();
@@ -62,7 +62,7 @@ class _WebUserManagerTableState extends State<WebUserManagerTable> {
     return [
       DataColumn2(
           size: ColumnSize.S,
-          label: const Tooltip(message: "Operation NO", child: Text('Photo', overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.bold))),
+          label: const Tooltip(message: "Photo", child: Text('Photo', overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.bold))),
           onSort: (columnIndex, ascending) => sort<String>((d) => (d.name), columnIndex, ascending)),
       DataColumn2(
         size: ColumnSize.L,
@@ -162,10 +162,10 @@ class DessertDataSource extends DataTableSource {
 
   @override
   DataRow getRow(int index) {
-    final format = NumberFormat.decimalPercentPattern(
-      locale: 'en',
-      decimalDigits: 0,
-    );
+    // final format = NumberFormat.decimalPercentPattern(
+    //   locale: 'en',
+    //   decimalDigits: 0,
+    // );
     assert(index >= 0);
     if (index >= nsUsers.length) throw 'index > _nsUsers.length';
     final nsUser = nsUsers[index];
@@ -181,18 +181,12 @@ class DessertDataSource extends DataTableSource {
         // ));
       },
       onDoubleTap: hasRowTaps
-          ? () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        duration: const Duration(seconds: 1),
-                backgroundColor: Theme.of(context).focusColor,
-                content: Text('Double Tapped on ${nsUser.name}'),
-              ))
+          ? () => ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(duration: const Duration(seconds: 1), backgroundColor: Theme.of(context).focusColor, content: Text('Double Tapped on ${nsUser.name}')))
           : null,
       onSecondaryTap: hasRowTaps
-          ? () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        duration: const Duration(seconds: 1),
-                backgroundColor: Theme.of(context).errorColor,
-                content: Text('Right clicked on ${nsUser.name}'),
-              ))
+          ? () => ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(duration: const Duration(seconds: 1), backgroundColor: Theme.of(context).errorColor, content: Text('Right clicked on ${nsUser.name}')))
           : null,
       // specificRowHeight: this.hasRowHeightOverrides && nsUser.fat >= 25 ? 100 : null,
       cells: [

@@ -86,6 +86,26 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
                           });
                         },
                       ),
+                    if (nsUser.isLocked && AppUser.havePermissionFor(Permissions.DEACTIVATE_USERS))
+                      ListTile(
+                        title: const Text("Unlock User"),
+                        subtitle: const Text(" "),
+                        leading: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Icon(Icons.lock_open_rounded),
+                        ),
+                        onTap: () async {
+                          Navigator.of(context).pop();
+                          Loading loading = Loading();
+                          loading.show(context1);
+
+                          OnlineDB.apiPost('users/unlock', {"userId": nsUser.id}).then((value) {
+                            print('cccccccccccccccccccccccccc');
+                            HiveBox.getDataFromServer();
+                            loading.close(context1);
+                          });
+                        },
+                      ),
                     if (AppUser.havePermissionFor(Permissions.RESET_PASSWORD))
                       ListTile(
                         title: const Text("Reset Password"),
