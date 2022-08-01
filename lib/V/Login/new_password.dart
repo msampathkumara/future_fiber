@@ -169,6 +169,16 @@ class _NewPasswordState extends State<NewPassword> {
     Server.serverPost("user/recoverPassword/savePassword", {"userId": widget.userId, 'password': _user.password}).then((value) {
       Map data = value.data;
 
+      if (data["locked"] != null) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Account has been locked", style: const TextStyle(color: Colors.white)), backgroundColor: Colors.red));
+        return;
+      }
+      if (data["deactivate"] != null) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Account has been deactivate", style: const TextStyle(color: Colors.white)), backgroundColor: Colors.red));
+        return;
+      }
+
       if (data["error"] != null) {
         if (data["unameUsed"] == true) {
           unameOk = false;

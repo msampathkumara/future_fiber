@@ -59,6 +59,7 @@ public class MainEditorActivity extends AppCompatActivity {
     int RequestedOrientation;
     public static Ticket ticket;
     private String serverUrl;
+    private String userCurrentSection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +89,7 @@ public class MainEditorActivity extends AppCompatActivity {
             SELECTED_FILE.id = getIntent().getExtras().getInt("ticketId");
             ticket = Ticket.formJsonString(getIntent().getExtras().getString("ticket"));
             serverUrl = (getIntent().getExtras().getString("serverUrl"));
+            userCurrentSection = (getIntent().getExtras().getString("userCurrentSection"));
 
             System.out.println("--------------------------------------------------------------------------------------------------------");
             System.out.println(getIntent().getExtras().getString("ticket"));
@@ -300,6 +302,7 @@ public class MainEditorActivity extends AppCompatActivity {
                 vals.put("file", SELECTED_NS_FILE.id + "");
                 vals.put("ticketId", SELECTED_NS_FILE.id + "");
                 vals.put("svgs", value.toString());
+                vals.put("userCurrentSection", userCurrentSection);
 
                 long sizeInBytes = value.toString().getBytes().length;
 

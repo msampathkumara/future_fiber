@@ -1,7 +1,6 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/hive.dart';
@@ -49,6 +48,7 @@ class _WebUserManagerState extends State<WebUserManager> {
         loadData();
       }
     }, context, collection: DataTables.Users);
+    loadData();
 
     super.initState();
   }

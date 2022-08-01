@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/TicketFlag.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/ns_icons_icons.dart';
 
+import '../../C/Api.dart';
 import 'UserButton.dart';
 
 class FlagDialog extends StatefulWidget {
@@ -138,11 +138,11 @@ class FlagDialog1 {
   }
 
   static Future setFlag(String type, String comment, Ticket ticket) {
-    return OnlineDB.apiPost("tickets/flags/setFlag", {"comment": comment, "type": type, "ticket": ticket.id.toString()});
+    return Api.post("tickets/flags/setFlag", {"comment": comment, "type": type, "ticket": ticket.id.toString()});
   }
 
   static removeFlag(String type, Ticket ticket) {
-    return OnlineDB.apiPost("tickets/flags/removeFlag", {"type": type, "ticket": ticket.id.toString()});
+    return Api.post("tickets/flags/removeFlag", {"type": type, "ticket": ticket.id.toString()});
   }
 
   static late TicketFlagTypes flagType;

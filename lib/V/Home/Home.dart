@@ -11,7 +11,6 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smartwind/C/FCM.dart';
-import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/Enums.dart';
@@ -27,6 +26,7 @@ import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
 import 'package:smartwind/res.dart';
 
+import '../../C/Api.dart';
 import 'About.dart';
 import 'Admin/AdminCpanel.dart';
 import 'BlueBook/BlueBook.dart';
@@ -239,7 +239,7 @@ class _HomeState extends State<Home> {
     PermissionStatus ps = await Permission.phone.request();
     if (ps.isGranted) {
       String imeiNo = await DeviceInformation.deviceIMEINumber;
-      await OnlineDB.apiPost("tabs/logout", {"imei": imeiNo}).then((response) async {
+      await Api.post("tabs/logout", {"imei": imeiNo}).then((response) async {
         if (response.data["saved"] == true) {
           print("----------------------------------------55555555555555555555");
         } else {

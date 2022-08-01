@@ -43,6 +43,7 @@ class MainActivity : FlutterActivity() {
                     val path = call.argument<String>("path")
                     val ticket = call.argument<String>("ticket")
                     val serverUrl = call.argument<String>("serverUrl")
+                    val userCurrentSection = call.argument<String>("userCurrentSection")
 
                     println("$fileID _$path _$ticket")
 
@@ -53,6 +54,7 @@ class MainActivity : FlutterActivity() {
                     i.putExtra("path", path)
                     i.putExtra("ticket", ticket)
                     i.putExtra("serverUrl", serverUrl)
+                    i.putExtra("userCurrentSection", userCurrentSection)
                     startActivityForResult(i, editPdf)
 
                 }
@@ -89,6 +91,7 @@ class MainActivity : FlutterActivity() {
                     val qc = call.argument<Boolean>("qc")
                     val serverUrl = call.argument<String>("serverUrl")
                     val sectionId = call.argument<String>("sectionId")
+                    val userCurrentSection = call.argument<String>("userCurrentSection")
 
                     println(" $qc---------------------------------- _$ticket")
                     println("----sectionId------------------------------ _$sectionId")
@@ -100,6 +103,7 @@ class MainActivity : FlutterActivity() {
                     i.putExtra("qc", qc)
                     i.putExtra("serverUrl", serverUrl)
                     i.putExtra("sectionId", sectionId)
+                    i.putExtra("userCurrentSection", userCurrentSection)
                     startActivityForResult(i, qaEdit)
 
 

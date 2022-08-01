@@ -1,11 +1,12 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/CPR/CPR.dart';
 import 'package:smartwind/M/CPR/CprItem.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
+
+import '../../../C/Api.dart';
 
 class AddCPR extends StatefulWidget {
   final Ticket ticket;
@@ -39,7 +40,7 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
       setState(() {});
     });
 
-    OnlineDB.apiGet("cpr/getAllMaterials", {}).then((res) {
+    Api.get("cpr/getAllMaterials", {}).then((res) {
       List mats = res.data["materials"];
       print(mats);
       mats.forEach((element) {
@@ -73,7 +74,7 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                 onPressed: () {
                   saving = true;
                   setState(() {});
-                  OnlineDB.apiPost("cpr/saveCpr", _cpr.toJson()).then((value) {
+                  Api.post("cpr/saveCpr", _cpr.toJson()).then((value) {
                     saving = false;
                     Navigator.of(context).pop();
                   }).catchError((onError) {

@@ -3,13 +3,13 @@ import 'package:device_information/device_information.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Section.dart';
 import 'package:smartwind/V/Home/Home.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
 
+import '../../C/Api.dart';
 import '../../M/AppUser.dart';
 import 'SectionSelector.dart';
 
@@ -161,7 +161,7 @@ class _CheckTabStatusState extends State<CheckTabStatus> {
     print(await DeviceInformation.deviceName);
     print(deviceInfo);
 
-    return OnlineDB.apiPost("tabs/check", {"deviceInfo": deviceInfo}).then((response) async {
+    return Api.post("tabs/check", {"deviceInfo": deviceInfo}).then((response) async {
       if (response.data["saved"] == true) {
         print("----------------------------------------");
 

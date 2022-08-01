@@ -8,7 +8,7 @@ import 'SelectPdfPage.dart';
 class CS extends StatefulWidget {
   final Ticket ticket;
 
-    const CS(this.ticket, {Key? key}) : super(key: key);
+  const CS(this.ticket, {Key? key}) : super(key: key);
 
   @override
   _CSState createState() => _CSState();
@@ -70,7 +70,6 @@ class _CSState extends State<CS> with TickerProviderStateMixin {
       gestureNavigationEnabled: true,
     );
     _pdfController = PdfController(document: PdfDocument.openFile(ticket.ticketFile!.path), initialPage: 0);
-    _pdfController1 = PdfController(document: PdfDocument.openFile(selectedPage), initialPage: 0);
   }
 
   @override
@@ -82,6 +81,10 @@ class _CSState extends State<CS> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    // if (selectedPage != null && _pdfController1==null) {
+    //   _pdfController1 = PdfController(document: PdfDocument.openFile(selectedPage), initialPage: 0);
+    // }
+
     var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
     return selectedPage == null
         ? SelectPdfPage(ticket, (selectedPage) {
@@ -149,12 +152,10 @@ class _CSState extends State<CS> with TickerProviderStateMixin {
       // pageLoader: Center(child: CircularProgressIndicator()),
       controller: id == 1 ? _pdfController : _pdfController1,
       onDocumentLoaded: (document) {
-        setState(() {
-        });
+        setState(() {});
       },
       onPageChanged: (page) {
-        setState(() {
-        });
+        setState(() {});
       },
       scrollDirection: Axis.vertical,
     );

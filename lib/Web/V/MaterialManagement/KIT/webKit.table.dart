@@ -30,22 +30,20 @@ class _WebKITTableState extends State<WebKITTable> {
     super.didChangeDependencies();
   }
 
-  void sort(
-    int columnIndex,
-    bool ascending,
-  ) {
-    var columnName = "oe";
-    switch (columnIndex) {
-      case 1:
-        columnName = "production";
-        break;
-      case 2:
-        columnName = "usedCount";
-        break;
-      case 3:
-        columnName = "uptime";
-        break;
-    }
+  void sort(int columnIndex, bool ascending) {
+    var columnName = ['ticketName', 'client', 'shortageType', 'addedOn', 'shipDate', 'shipDate', 'status'][columnIndex];
+    // var columnName = "oe";
+    // switch (columnIndex) {
+    //   case 1:
+    //     columnName = "production";
+    //     break;
+    //   case 2:
+    //     columnName = "usedCount";
+    //     break;
+    //   case 3:
+    //     columnName = "uptime";
+    //     break;
+    // }
     _dessertsDataSource!.sort(columnName, ascending);
     setState(() {
       _sortColumnIndex = columnIndex;
@@ -185,12 +183,12 @@ class __LoadingState extends State<_Loading> {
                   ? const SizedBox()
                   : Center(
                       child: Container(
-                      color: Colors.yellow,
+                        color: Colors.yellow,
                       padding: const EdgeInsets.all(7),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround, children: const [CircularProgressIndicator(strokeWidth: 2, color: Colors.black), Text('Loading..')]),
                       width: 150,
                       height: 50,
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround, children: const [CircularProgressIndicator(strokeWidth: 2, color: Colors.black), Text('Loading..')]),
                     ));
             }));
   }
@@ -234,7 +232,7 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
       _errorCounter = _errorCounter! + 1;
 
       if (_errorCounter! % 2 == 1) {
-        await Future.delayed(Duration(milliseconds: 1000));
+        await Future.delayed(const Duration(milliseconds: 1000));
         throw 'Error #${((_errorCounter! - 1) / 2).round() + 1} has occured';
       }
     }
@@ -279,7 +277,7 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                   crossAxisAlignment: WrapCrossAlignment.end,
                   direction: Axis.vertical,
                   children: [Text((kit.date) ?? ""), Text((kit.time) ?? "", style: const TextStyle(color: Colors.grey, fontSize: 12))])),
-              DataCell(Text((kit.date) ?? "")),
+              DataCell(Text((kit.shipDate))),
               DataCell(Text(
                 (kit.status),
                 style: TextStyle(color: kit.status.getColor()),

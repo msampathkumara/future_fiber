@@ -1,5 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
+import 'Section.dart';
+
 part 'TicketHistory.g.dart';
 
 @JsonSerializable(explicitToJson: true)
@@ -10,6 +12,7 @@ class TicketHistory {
   String? uptime;
   Map? data;
   int? doneBy;
+  Section? section;
 
   TicketHistory();
 

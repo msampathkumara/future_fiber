@@ -6,7 +6,6 @@ import 'package:hive/hive.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:smartwind/C/DB/DB.dart';
-import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/StandardTicket.dart';
 import 'package:smartwind/M/Ticket.dart';
@@ -15,6 +14,7 @@ import 'package:smartwind/M/User/Email.dart';
 import 'package:smartwind/M/user_config.dart';
 import 'package:smartwind/main.dart';
 
+import '../C/Api.dart';
 import '../V/Home/UserManager/UserPermissions.dart';
 import 'AppUser.dart';
 import 'HiveClass.dart';
@@ -99,16 +99,14 @@ class HiveBox {
   static Future getDataFromServer({clean = false, afterLoad}) async {
     print('__________________________________________________________________________________________________________getDataFromServer');
     if (clean) {
-      // await userConfigBox.clear();
       await userConfigBox.delete('upons');
-      // await setUptimes(Upons());
     }
     Upons uptimes = getUptimes();
     Map<String, dynamic> d = uptimes.toJson();
     d["z"] = DateTime.now().millisecondsSinceEpoch;
     print(uptimes.toJson());
 
-    return OnlineDB.apiGet(("data/getData"), d).then((Response response) async {
+    return Api.get(("data/getData"), d).then((Response response) async {
       print('__________________________________________________________________________________________________________getDataFromServer');
       if (clean) {
         await usersBox.clear();
@@ -134,6 +132,7 @@ class HiveBox {
       usersBox.putMany(usersList);
 
       print('ticketsList length == ${ticketsList.length}');
+      print('standardTicketsList length == ${standardTicketsList.length}');
       ticketBox.putMany(ticketsList);
       sectionsBox.putMany(factorySectionsList);
       standardTicketsBox.putMany(standardTicketsList);
@@ -163,7 +162,8 @@ class HiveBox {
         DB.callChangesCallBack(DataTables.Sections);
         updated = true;
       }
-      if (HiveBox.standardTicketsBox.length > 0) {
+      if (standardTicketsList.isNotEmpty) {
+        print('xxxxxxxccccccccccccccccccccccccccccccccccc');
         DB.callChangesCallBack(DataTables.standardTickets);
         updated = true;
       }
@@ -212,5 +212,12 @@ class HiveBox {
     Map<String, dynamic> xx = Map<String, dynamic>.from(x);
     var upons2 = Upons.fromJson(xx);
     userConfigBox.put("upons", upons2);
+  }
+
+  static cleanStandardLibrary() async {
+    await standardTicketsBox.clear();
+    var i = getUptimes();
+    i.standardTickets = 0;
+    setUptimes(i.toJson());
   }
 }

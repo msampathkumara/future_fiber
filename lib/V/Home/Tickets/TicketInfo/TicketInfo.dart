@@ -3,20 +3,24 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:smartwind/C/OnlineDB.dart';
+import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/Ticket.dart';
+import 'package:smartwind/M/TicketComment.dart';
 import 'package:smartwind/M/TicketFlag.dart';
 import 'package:smartwind/M/TicketHistory.dart';
+import 'package:smartwind/V/Home/Tickets/TicketInfo/info_short_items.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/ns_icons_icons.dart';
 
+import '../../../../C/Api.dart';
 import '../../../../C/DB/DB.dart';
 import '../../../../C/ServerResponse/Progress.dart';
 import '../../../../C/ServerResponse/ServerResponceMap.dart';
-import '../../../../M/TicketPrint.dart';
+import '../../../../M/CPR/CPR.dart';
 import '../../../../M/hive.dart';
 import '../../../../Web/V/ProductionPool/copy.dart';
+import '../ProductionPool/TicketListOptions.dart';
 import 'info_Flags.dart';
 import 'info_History.dart';
 import 'info_Progress.dart';
@@ -112,8 +116,8 @@ class _TicketInfoState extends State<TicketInfo> {
                     children: <Widget>[
                       _getBottomNavigationBarItem(Icons.tour_rounded, ("Flags"), 0),
                       _getBottomNavigationBarItem(Icons.data_usage_rounded, ("Progress"), 1),
-                      // _getBottomNavigationBarItem(Icons.print_rounded, ("Printing"), 2),
-                      _getBottomNavigationBarItem(Icons.history_rounded, ("History"), 2),
+                      _getBottomNavigationBarItem(Icons.category_outlined, ("Short Items"), 2),
+                      _getBottomNavigationBarItem(Icons.history_rounded, ("History"), 3)
                     ],
                   ),
                 )),
@@ -123,9 +127,9 @@ class _TicketInfoState extends State<TicketInfo> {
                 : (_ticket.isHold == 1)
                     ? null
                     : FloatingActionButton(
-                        child: const Icon(Icons.import_contacts),
-                        onPressed: () {
-                          _ticket.open(context);
+              child: const Icon(Icons.import_contacts),
+                        onPressed: () async {
+                          openFile();
                         },
                       ),
           );
@@ -225,51 +229,21 @@ class _TicketInfoState extends State<TicketInfo> {
   _body(int index) {
     switch (index) {
       case 0:
-        return info_Flags(flags, flagsHistory);
+        return info_Flags(flags, ticketComments);
       case 1:
         return info_Progress(progressList, _ticket);
-      // case 2:
-      //   return info_Printing(printList);
       case 2:
+        return info_short_items(cprs);
+      case 3:
         return InfoHistory(ticketHistory);
     }
   }
 
   List<Progress> progressList = [];
   List<TicketFlag> flags = [];
-  List<TicketFlag> flagsHistory = [];
-  List<TicketPrint> printList = [];
   List<TicketHistory> ticketHistory = [];
-
-  void getData(Ticket _ticket) {
-    setState(() {
-      _loading = true;
-    });
-    print('requesting data---------------');
-    OnlineDB.apiGet(("tickets/info/getTicketInfo"), {'ticket': _ticket.id.toString()}).then((value) {
-      print(' data recived---------------');
-      print((value.data));
-
-      setState(() {
-        ServerResponseMap res = ServerResponseMap.fromJson((value.data));
-        progressList = res.progressList;
-        flags = res.flags;
-        flagsHistory = res.flagsHistory;
-        printList = res.printList;
-        ticketHistory = res.ticketHistory;
-      });
-
-      // ErrorMessageView(errorMessage: value.body).show(context);
-    }).onError((error, stackTrace) {
-      print(stackTrace.toString());
-      ErrorMessageView(errorMessage: error.toString()).show(context);
-      ErrorMessageView(errorMessage: stackTrace.toString()).show(context);
-    }).whenComplete(() {
-      setState(() {
-        _loading = false;
-      });
-    });
-  }
+  List<TicketComment> ticketComments = [];
+  List<CPR> cprs = [];
 
   _getBottomNavigationBarItem(IconData icon, String text, int i) {
     return InkResponse(
@@ -399,8 +373,8 @@ class _TicketInfoState extends State<TicketInfo> {
                         children: <Widget>[
                           _getBottomNavigationBarItem(Icons.tour_rounded, ("Flags"), 0),
                           _getBottomNavigationBarItem(Icons.data_usage_rounded, ("Progress"), 1),
-                          // _getBottomNavigationBarItem(Icons.print_rounded, ("Printing"), 2),
-                          _getBottomNavigationBarItem(Icons.history_rounded, ("History"), 2),
+                          _getBottomNavigationBarItem(Icons.category_outlined, ("Short Items"), 2),
+                          _getBottomNavigationBarItem(Icons.history_rounded, ("History"), 3)
                         ],
                       ),
                     )),
@@ -416,5 +390,97 @@ class _TicketInfoState extends State<TicketInfo> {
                             })))
       ]),
     );
+  }
+
+  void getData(Ticket _ticket) {
+    setState(() {
+      _loading = true;
+    });
+    print('requesting data---------------');
+    Api.get(("tickets/info/getTicketInfo"), {'ticket': _ticket.id.toString()}).then((value) {
+      if (kDebugMode) {
+        print(' data recived---------------');
+      }
+      print((value.data));
+
+      setState(() {
+        ServerResponseMap res = ServerResponseMap.fromJson((value.data));
+        progressList = res.progressList;
+        flags = res.flags;
+
+        ticketHistory = res.ticketHistory;
+        ticketComments = res.ticketComments;
+        cprs = res.cprs;
+      });
+
+      // ErrorMessageView(errorMessage: value.body).show(context);
+    }).onError((error, stackTrace) {
+      print(stackTrace.toString());
+      ErrorMessageView(errorMessage: error.toString()).show(context);
+      ErrorMessageView(errorMessage: stackTrace.toString()).show(context);
+    }).whenComplete(() {
+      if (mounted) {
+        setState(() {
+          _loading = false;
+        });
+      }
+    });
+  }
+
+  Future<void> openFile() async {
+    // List<int> ids = AppUser.getUser()?.sections.map((e) => e.id).toList() ?? [];
+    int userSectionId = AppUser.getSelectedSection()?.id ?? 0;
+    var pendingList = progressList.where((p) {
+      return (p.status == 0) ? true : false;
+    });
+
+    if (progressList.where((p) {
+      return (p.status == 1 || p.section?.id == _ticket.nowAt) && (userSectionId == (p.section?.id)) ? true : false;
+    }).isEmpty) {
+      return await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                content: Builder(builder: (context) {
+                  return SizedBox(
+                      // height: 550,
+                      // width: 50,
+                      child: Center(
+                          child: Column(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Icon(Icons.report_problem_rounded, size: 54, color: Colors.amber),
+                      ),
+                      const Text(
+                          'Until previous sections marked the job as finished in the system, the respective Work Ticket will not be opened for you.\n\nපෙර අංශයන් පද්ධතිය තුළ කාර්යය අවසන් කළ ලෙස සලකුණු කරන තෙක්, අදාළ වැඩ ටිකට්පත ඔබ වෙනුවෙන් විවෘත නොවේ.',
+                          textAlign: TextAlign.center,
+                          textScaleFactor: 1),
+                      const SizedBox(height: 24),
+                      Expanded(
+                          child: SingleChildScrollView(
+                              child: Column(
+                                  children: pendingList
+                                      .map((e) => ListTile(
+                                          title: Text(e.section?.sectionTitle ?? ''),
+                                          subtitle: Text("${e.section!.sectionTitle} @ ${e.section!.factory}", style: const TextStyle(color: Colors.redAccent))))
+                                      .toList()))),
+                      ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text("OK"))
+                    ],
+                  )));
+                }));
+          });
+    }
+
+    if (_ticket.isStarted) {
+      _ticket.open(context);
+    } else {
+      await showOpenActions(_ticket, context, () {});
+    }
   }
 }

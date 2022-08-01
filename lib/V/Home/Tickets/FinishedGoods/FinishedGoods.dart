@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:smartwind/C/OnlineDB.dart';
+import 'package:smartwind/C/Api.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Home/Tickets/TicketInfo/TicketInfo.dart';
@@ -391,14 +390,18 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                                       onPressed: () {
                                         TicketChatView(ticket).show(context);
                                       }),
-                                  Padding(
-                                      padding: const EdgeInsets.only(top: 4),
-                                      child: CircularPercentIndicator(
-                                          radius: 18.0,
-                                          lineWidth: 5.0,
-                                          percent: ticket.progress / 100,
-                                          center: Text("${ticket.progress}%", style: const TextStyle(fontSize: 12)),
-                                          progressColor: themeColor))
+                                  Text(
+                                    (ticket.completedOn ?? '-').replaceAll(' ', '\n'),
+                                    textAlign: TextAlign.end,
+                                  )
+                                  // Padding(
+                                  //     padding: const EdgeInsets.only(top: 4),
+                                  //     child: CircularPercentIndicator(
+                                  //         radius: 18.0,
+                                  //         lineWidth: 5.0,
+                                  //         percent: ticket.progress / 100,
+                                  //         center: Text("${ticket.progress}%", style: const TextStyle(fontSize: 12)),
+                                  //         progressColor: themeColor))
                                 ],
                               ),
                             ),
@@ -454,7 +457,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                             content: Text('Do you really want to delete ${ticket.mo}/${ticket.oe}'),
                             action: SnackBarAction(
                                 onPressed: () {
-                                  OnlineDB.apiPost("tickets/delete", {"id": ticket.id.toString()}).then((response) async {
+                                  Api.post("tickets/delete", {"id": ticket.id.toString()}).then((response) async {
                                     print('TICKET DELETED');
                                     print(response.data);
                                     print(response.statusCode);
@@ -474,7 +477,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
 
   Future sendToPrint(Ticket ticket) async {
     if (ticket.inPrint == 0) {
-      OnlineDB.apiPost("tickets/print", {"ticket": ticket.id.toString(), "action": "sent"}).then((value) {
+      Api.post("tickets/print", {"ticket": ticket.id.toString(), "action": "sent"}).then((value) {
         print('Send to print  ${value.data}');
         ticket.inPrint = 1;
         setState(() {});
@@ -484,7 +487,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
 
       return 1;
     } else {
-      await OnlineDB.apiPost("tickets/print", {"ticket": ticket.id.toString(), "action": "cancel"});
+      await Api.post("tickets/print", {"ticket": ticket.id.toString(), "action": "cancel"});
       ticket.inPrint = 0;
       return 0;
     }
@@ -499,7 +502,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
     // setState(() {
     requested = true;
     // });
-    return OnlineDB.apiGet("tickets/completed/getList", {
+    return Api.get("tickets/completed/getList", {
       'production': _selectedProduction.getValue(),
       "flag": dataFilter.getValue(),
       'sortDirection': "desc",

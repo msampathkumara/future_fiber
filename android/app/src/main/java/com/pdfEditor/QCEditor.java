@@ -44,6 +44,7 @@ public class QCEditor extends AppCompatActivity {
     boolean isQc = false;
     private String serverUrl;
     private String sectionId;
+    private String userCurrentSection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +80,7 @@ public class QCEditor extends AppCompatActivity {
             isQc = (getIntent().getExtras().getBoolean("qc"));
             serverUrl = (getIntent().getExtras().getString("serverUrl"));
             sectionId = (getIntent().getExtras().getString("sectionId"));
+            userCurrentSection = (getIntent().getExtras().getString("userCurrentSection"));
             System.out.println("---------------------------------------------------------");
             System.out.println(SELECTED_FILE.id);
         } else {
@@ -183,7 +185,7 @@ public class QCEditor extends AppCompatActivity {
                             Intent data = new Intent();
                             data.putExtra("saved", true);
                             setResult(Activity.RESULT_OK, data);
-//                            finish();
+                            finish();
 
                         }
 
@@ -250,6 +252,7 @@ public class QCEditor extends AppCompatActivity {
                 vals.put("ticketId", SELECTED_FILE.id + "");
                 vals.put("svgs", value.toString());
                 vals.put("type", isQc ? "qc" : "qa");
+                vals.put("userCurrentSection", userCurrentSection);
 
                 System.out.println(vals);
 

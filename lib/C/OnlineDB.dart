@@ -1,6 +1,4 @@
-import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:smartwind/C/Server.dart';
 
 class OnlineDB {
   static var idToken;
@@ -10,32 +8,30 @@ class OnlineDB {
     user!.getIdToken().then((value) => idToken);
   }
 
-  ///   [url] must be after api part without /
-  static Future<Response> apiPost(String url, Map<String, dynamic> data) async {
-    final user = FirebaseAuth.instance.currentUser;
-    final idToken = await user!.getIdToken();
-    Dio dio = new Dio();
-    dio.options.headers['content-Type'] = 'application/json';
-    dio.options.headers["authorization"] = "$idToken";
+// ///   [url] must be after api part without /
+// static Future<Response> apiPost(String url, Map<String, dynamic> data) async {
+//   final user = FirebaseAuth.instance.currentUser;
+//   final idToken = await user!.getIdToken();
+//   Dio dio = new Dio();
+//   dio.options.headers['content-Type'] = 'application/json';
+//   dio.options.headers["authorization"] = "$idToken";
+//
+//   return dio.post(Server.getServerApiPath(url), data: (data));
+// }
 
-    return dio.post(Server.getServerApiPath(url), data: (data));
-  }
-
-  static Future<Response> apiGet(String url, Map<String, dynamic> data, {onlineServer = false,bool reFreshToken=false}) async {
-    final user = FirebaseAuth.instance.currentUser;
-    final idToken = await user!.getIdToken(reFreshToken);
-    // final idToken = await AppUser.getIdToken();
-    Dio dio = Dio();
-    dio.options.headers['content-Type'] = 'application/json';
-    dio.options.headers["authorization"] = "$idToken";
-
-    return dio.get(
-      Server.getServerApiPath('$url', onlineServer: onlineServer),
-      queryParameters: data,
-    );
-  }
-
-
+// static Future<Response> apiGet(String url, Map<String, dynamic> data, {onlineServer = false,bool reFreshToken=false}) async {
+//   final user = FirebaseAuth.instance.currentUser;
+//   final idToken = await user!.getIdToken(reFreshToken);
+//   // final idToken = await AppUser.getIdToken();
+//   Dio dio = Dio();
+//   dio.options.headers['content-Type'] = 'application/json';
+//   dio.options.headers["authorization"] = "$idToken";
+//
+//   return dio.get(
+//     Server.getServerApiPath('$url', onlineServer: onlineServer),
+//     queryParameters: data,
+//   );
+// }
 
 // static updateStandardTicketsDB(context) async {
 //   return DB

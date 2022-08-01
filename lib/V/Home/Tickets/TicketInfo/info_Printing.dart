@@ -32,8 +32,8 @@ class _info_PrintingState extends State<info_Printing> {
     TextStyle linkStyle = const TextStyle(color: Colors.blue);
     TextStyle timeStyle = const TextStyle(color: Colors.grey);
 
-    return printList.length <= 0
-        ? const Center(child: const Text("No Print Details"))
+    return printList.isEmpty
+        ? const Center(child: Text("No Print Details"))
         : Container(
             child: ListView.separated(
               padding: const EdgeInsets.all(8),
@@ -56,7 +56,7 @@ class _info_PrintingState extends State<info_Printing> {
                         children: [
                           // Text(getAgoTime(ticketPrint.doneOn), textAlign: TextAlign.start, style: TextStyle(color: Colors.grey)),
                           RichText(text: TextSpan(style: defaultStyle, children: [TextSpan(text: user?.name ?? "", style: linkStyle), TextSpan(text: " ${action}")])),
-                          Align(child: Text("${ticketPrint.doneOn}", textAlign: TextAlign.end, style: timeStyle), alignment: Alignment.bottomRight),
+                          Align(alignment: Alignment.bottomRight, child: Text(ticketPrint.doneOn, textAlign: TextAlign.end, style: timeStyle)),
                           const Divider(thickness: 1.5)
                         ],
                       ),

@@ -4,14 +4,12 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:smartwind/V/Home/Tickets/ProductionPool/TicketStartDialog.dart';
 
 import '../../../../C/Api.dart';
-import '../../../../C/OnlineDB.dart';
 import '../../../../M/AppUser.dart';
 import '../../../../M/Enums.dart';
 import '../../../../M/Ticket.dart';
 import '../../../../ns_icons_icons.dart';
 import '../../BlueBook/BlueBook.dart';
 import '../StandardFiles/factory_selector.dart';
-import '../TicketInfo/TicketInfo.dart';
 import 'Finish/FinishCheckList.dart';
 import 'FlagDialog.dart';
 
@@ -52,7 +50,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                   leading: const Icon(NsIcons.delete, color: Colors.red),
                   onTap: () async {
                     //TODO set delete url
-                    OnlineDB.apiPost("tickets/delete", {"id": ticket.id.toString()}).then((response) async {
+                    Api.post("tickets/delete", {"id": ticket.id.toString()}).then((response) async {
                       print('TICKET DELETED');
                       print(response.data);
                       print(response.statusCode);
@@ -107,7 +105,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                         Navigator.of(context).pop();
                         // await FlagDialog.showRushDialog(context1, ticket);
                         var u = ticket.isRush == 1 ? "removeFlag" : "setFlag";
-                        OnlineDB.apiPost("tickets/flags/$u", {"ticket": ticket.id.toString(), "comment": "", "type": "rush"}).then((response) async {});
+                        Api.post("tickets/flags/$u", {"ticket": ticket.id.toString(), "comment": "", "type": "rush"}).then((response) async {});
                       }),
                 // if (AppUser.havePermissionFor(Permissions.SEND_TO_PRINTING))
                 //   ListTile(
@@ -234,7 +232,7 @@ showAlertDialog(BuildContext context, ticket) {
             child: const Text("Yes"),
             onPressed: () {
               Navigator.of(context1).pop();
-              OnlineDB.apiPost("tickets/crossProduction/removeCrossProduction", {'ticketId': ticket.id.toString()}).then((response) async {
+              Api.post("tickets/crossProduction/removeCrossProduction", {'ticketId': ticket.id.toString()}).then((response) async {
                 print(response.data);
               });
             },
@@ -247,7 +245,7 @@ showAlertDialog(BuildContext context, ticket) {
 
 Future sendToPrint(Ticket ticket) async {
   if (ticket.inPrint == 0) {
-    await OnlineDB.apiPost("tickets/print", {"ticket": ticket.id.toString(), "action": "sent"}).then((value) {
+    await Api.post("tickets/print", {"ticket": ticket.id.toString(), "action": "sent"}).then((value) {
       print('Send to print  ${value.data}');
       ticket.inPrint = 1;
     }).onError((error, stackTrace) {
@@ -256,7 +254,7 @@ Future sendToPrint(Ticket ticket) async {
 
     return 1;
   } else {
-    await OnlineDB.apiPost("tickets/print", {"ticket": ticket.id.toString(), "action": "cancel"});
+    await Api.post("tickets/print", {"ticket": ticket.id.toString(), "action": "cancel"});
     ticket.inPrint = 0;
     return 0;
   }
@@ -344,7 +342,7 @@ Future<void> chooseFactories(Ticket ticket, BuildContext context1) async {
         decoration: const BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
         height: 650,
         child: FactorySelector(ticket.production ?? "", onSelect: (factory) async {
-          OnlineDB.apiPost("tickets/crossProduction/setCrossProduction", {'ticketId': ticket.id.toString(), "factory": factory}).then((response) async {
+          Api.post("tickets/crossProduction/setCrossProduction", {'ticketId': ticket.id.toString(), "factory": factory}).then((response) async {
             print(response.data);
             Navigator.of(context).pop();
           });
@@ -366,28 +364,20 @@ Future<void> showOpenActions(Ticket ticket, BuildContext context1, reLoad) async
           children: [
             ListTile(title: Text(ticket.mo ?? ticket.oe ?? ''), subtitle: Text(ticket.oe ?? '')),
             const Divider(),
-            ListTile(
-                leading: const Icon(Icons.not_started_outlined),
-                title: const Text('Start Ticket'),
-                onTap: () async {
-                  Navigator.of(context).pop();
-                  TicketStartDialog(ticket).show(context);
-
-                  // Navigator.of(context).pop();
-                  // ScaffoldMessenger.of(context1).showSnackBar(const SnackBar(content: Text("Ticket is Starting")));
-                  // await ticket.start(context1);
-                  // ScaffoldMessenger.of(context1).showSnackBar(const SnackBar(content: Text("Ticket is Started"), backgroundColor: Colors.green));
-                  // ticket.isStarted = true;
-                  // ticket.save();
-                  // reLoad();
-                }),
+            if ((AppUser.getSelectedSection()?.id ?? 0) == ticket.nowAt)
+              ListTile(
+                  leading: const Icon(Icons.not_started_outlined),
+                  title: const Text('Start Production'),
+                  onTap: () async {
+                    Navigator.of(context).pop();
+                    await TicketStartDialog(ticket).show(context);
+                  }),
             ListTile(
                 leading: const Icon(Icons.open_in_new_outlined),
                 title: const Text('View Ticket'),
                 onTap: () {
                   Navigator.of(context).pop();
-                  var ticketInfo = TicketInfo(ticket);
-                  ticketInfo.show(context);
+                  ticket.open(context1);
                 })
           ],
         ),

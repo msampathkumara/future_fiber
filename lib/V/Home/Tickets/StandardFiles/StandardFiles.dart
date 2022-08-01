@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/DB/DB.dart';
-import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/StandardTicket.dart';
 import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/V/Home/Tickets/StandardFiles/factory_selector.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 
+import '../../../../C/Api.dart';
 import '../../../../M/Enums.dart';
 import '../../../Widgets/NoResultFoundMsg.dart';
 import 'StandardTicketInfo.dart';
@@ -76,26 +76,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
           ]))
         : Scaffold(
             appBar: AppBar(
-              // actions: <Widget>[
-              //   PopupMenuButton<String>(
-              //     onSelected: (s) {
-              //       print(s);
-              //       _showAllTickets = !_showAllTickets;
-              //       _tabBarController = TabController(length: tabs.length, vsync: this);
-              //       loadData();
-              //     },
-              //     itemBuilder: (BuildContext context) {
-              //       return {"Show All Tickets"}.map((String choice) {
-              //         return CheckedPopupMenuItem<String>(
-              //           value: choice,
-              //           child: Text(choice),
-              //           checked: _showAllTickets,
-              //         );
-              //       }).toList();
-              //     },
-              //   ),
-              // ],
-          elevation: 0.0,
+              elevation: 0.0,
               toolbarHeight: 80,
               backgroundColor: Colors.green,
               leading: IconButton(
@@ -256,7 +237,18 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
             },
             child: _filesList.isEmpty
                 // ? Center(child: Text(searchText.isEmpty ? "No Tickets Found" : "⛔ Work Ticket not found.\n Please contact  Ticket Checking department", textScaleFactor: 1.5))
-                ? Center(child: Container(padding: const EdgeInsets.all(20), child: const NoResultFoundMsg()))
+                ? Center(
+                    child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(padding: const EdgeInsets.all(20), child: const NoResultFoundMsg()),
+                      ElevatedButton(
+                          onPressed: () {
+                            reloadData();
+                          },
+                          child: Text("Reload"))
+                    ],
+                  ))
                 : Padding(
                     padding: const EdgeInsets.only(top: 16),
                     child: ListView.separated(
@@ -302,6 +294,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
   }
 
   List<StandardTicket> _load(Production selectedProduction, section, _showAllTickets, searchText) {
+    print('HiveBox.standardTicketsBox.values${HiveBox.standardTicketsBox.values.length}');
     List<StandardTicket> l = HiveBox.standardTicketsBox.values.where((t) {
       if (selectedProduction == Production.None) {
         if ((t.production ?? "") != "") {
@@ -369,7 +362,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
   }
 
   Future reloadData() async {
-    await HiveBox.getDataFromServer(clean: true);
+    await HiveBox.getDataFromServer();
     loadData();
     setLoading(false);
   }
@@ -410,7 +403,7 @@ Future<void> showStandardTicketOptions(StandardTicket ticket, BuildContext conte
                   leading: const Icon(Icons.delete_forever, color: Colors.red),
                   onTap: () async {
                     // TODO add link
-                    OnlineDB.apiPost("tickets/standard/delete", {'id': ticket.id.toString()}).then((response) async {
+                    Api.post("tickets/standard/delete", {'id': ticket.id.toString()}).then((response) async {
                       print(response.data);
                     });
                     Navigator.of(context).pop();
@@ -433,7 +426,7 @@ Future<void> showFactories(StandardTicket ticket, BuildContext context1) async {
         decoration: const BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
         height: 650,
         child: FactorySelector(ticket.production ?? "", onSelect: (factory) async {
-          await OnlineDB.apiPost("tickets/standard/changeFactory", {'production': factory, 'ticketId': ticket.id});
+          await Api.post("tickets/standard/changeFactory", {'production': factory, 'ticketId': ticket.id});
           // await HiveBox.getDataFromServer();
 
           print(factory);

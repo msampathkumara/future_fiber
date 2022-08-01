@@ -15,7 +15,7 @@ CPR _$CPRFromJson(Map<String, dynamic> json) => CPR()
   ..comment = json['comment'] as String? ?? ''
   ..image = json['image'] as String? ?? ''
   ..items = (json['items'] as List<dynamic>?)?.map((e) => CprItem.fromJson(e as Map<String, dynamic>)).toList() ?? []
-  ..suppliers = (json['suppliers'] as List<dynamic>?)?.map((e) => e as String).toList() ?? []
+  ..suppliers = json['suppliers'] == null ? [] : CPR.arryFromObject(json['suppliers'])
   ..status = json['status'] as String? ?? ''
   ..id = json['id'] as int? ?? 0
   ..sentUserId = json['sentUserId'] as int?
@@ -24,7 +24,8 @@ CPR _$CPRFromJson(Map<String, dynamic> json) => CPR()
   ..addedUserId = json['addedUserId'] as int? ?? 0
   ..addedOn = json['addedOn'] as String? ?? ''
   ..isExpanded = json['isExpanded'] as bool? ?? false
-  ..cprs = (json['cprs'] as List<dynamic>?)?.map((e) => CprActivity.fromJson(e as Map<String, dynamic>)).toList() ?? [];
+  ..cprs = (json['cprs'] as List<dynamic>?)?.map((e) => CprActivity.fromJson(e as Map<String, dynamic>)).toList() ?? []
+  ..shipDate = json['shipDate'] as String? ?? '';
 
 Map<String, dynamic> _$CPRToJson(CPR instance) => <String, dynamic>{
       'ticket': instance.ticket?.toJson(),
@@ -45,4 +46,5 @@ Map<String, dynamic> _$CPRToJson(CPR instance) => <String, dynamic>{
       'addedOn': instance.addedOn,
       'isExpanded': instance.isExpanded,
       'cprs': instance.cprs.map((e) => e.toJson()).toList(),
+      'shipDate': instance.shipDate,
     };

@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:measured_size/measured_size.dart';
-import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/CPR/CPR.dart';
 import 'package:smartwind/V/Widgets/RefreshIndicatorMessageBox.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 
+import '../../../C/Api.dart';
 import '../../../M/Enums.dart';
 import 'CprDerails.dart';
 
@@ -456,7 +456,7 @@ class _CPRListState extends State<CPRList> {
   Future _reloadData(int page) {
     requested = true;
     // setState(() {});
-    return OnlineDB.apiGet("cpr/search", {
+    return Api.get("cpr/search", {
       'shortageType': _selectedShortageType,
       'cprType': _selectedCprTypes,
       'client': _client,
@@ -514,7 +514,7 @@ class _CPRListState extends State<CPRList> {
                     title: const Text("Delete"),
                     leading: const Icon(Icons.delete_forever_rounded, color: Colors.red),
                     onTap: () async {
-                      await OnlineDB.apiPost("cpr/delete", {"cpr": cpr.id});
+                      await Api.post("cpr/delete", {"cpr": cpr.id});
                       _cprList.removeWhere((element) => element.id == cpr.id);
                       // _reloadData(currentPage);
                       Navigator.of(context).pop();

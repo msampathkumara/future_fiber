@@ -19,8 +19,7 @@ QC _$QCFromJson(Map<String, dynamic> json) => QC()
   ..quality = json['quality'] as String?
   ..qc = json['qc'] as int;
 
-Map<String, dynamic> _$QCToJson(QC instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$QCToJson(QC instance) => <String, dynamic>{
       'id': instance.id,
       'ticketId': instance.ticketId,
       'dnt': instance.dnt,

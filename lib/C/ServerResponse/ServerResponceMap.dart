@@ -1,6 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:smartwind/M/CPR/CPR.dart';
 import 'package:smartwind/M/TicketFlag.dart';
 
+import '../../M/TicketComment.dart';
 import '../../M/TicketHistory.dart';
 import '../../M/TicketPrint.dart';
 import '../../M/UserRFCredentials.dart';
@@ -29,6 +31,12 @@ class ServerResponseMap {
   List<TicketPrint> printList = [];
   @JsonKey(defaultValue: [], includeIfNull: true)
   List<TicketHistory> ticketHistory = [];
+
+  @JsonKey(defaultValue: [], includeIfNull: true)
+  List<TicketComment> ticketComments = [];
+
+  @JsonKey(defaultValue: [], includeIfNull: true)
+  List<CPR> cprs = [];
 
   ServerResponseMap();
 

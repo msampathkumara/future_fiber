@@ -5,7 +5,7 @@ import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/TicketFlag.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 
-import '../../../../C/OnlineDB.dart';
+import '../../../../C/Api.dart';
 import '../../../../M/NsUser.dart';
 import '../../../../ns_icons_icons.dart';
 import '../../../Widgets/UserImage.dart';
@@ -64,6 +64,7 @@ class _FlagDialogNewState extends State<FlagDialogNew> {
             scrollbarTheme:
                 const ScrollbarThemeData().copyWith(thumbColor: MaterialStateProperty.all(Theme.of(context).primaryColor), thumbVisibility: MaterialStateProperty.all(true))),
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           body: commentList == null
               ? const Center(child: CircularProgressIndicator())
               : Stack(
@@ -147,39 +148,6 @@ class _FlagDialogNewState extends State<FlagDialogNew> {
                                           ),
                                         ),
                                       ),
-                                    // Container(
-                                    //   decoration: BoxDecoration(borderRadius: BorderRadius.circular(24), color: Colors.grey.shade100),
-                                    //   child: SizedBox(
-                                    //     height: 50,
-                                    //     child: Padding(
-                                    //       padding: const EdgeInsets.only(left: 0.0),
-                                    //       child: TextFormField(
-                                    //         controller: _commentController,
-                                    //         onChanged: (c) {
-                                    //           setState(() {});
-                                    //         },
-                                    //         onFieldSubmitted: (x) {
-                                    //           if (x.isNotEmpty) {
-                                    //             saveComment(_commentController.value.text);
-                                    //             _commentController.clear();
-                                    //           }
-                                    //         },
-                                    //         decoration: InputDecoration(
-                                    //             fillColor: Colors.transparent,
-                                    //             focusColor: Colors.transparent,
-                                    //             border: InputBorder.none,
-                                    //             focusedBorder: OutlineInputBorder(
-                                    //               borderRadius: BorderRadius.circular(24.0),
-                                    //             ),
-                                    //             enabledBorder: InputBorder.none,
-                                    //             hintText: 'Enter your Comment',
-                                    //             hintStyle: const TextStyle(color: Colors.grey)
-                                    //             // prefixIcon: Icon(Icons.search, color: Colors.white)
-                                    //             ),
-                                    //       ),
-                                    //     ),
-                                    //   ),
-                                    // ),
                                     (!isFlaged)
                                         ? SizedBox(
                                             width: double.infinity,
@@ -300,11 +268,11 @@ class _FlagDialogNewState extends State<FlagDialogNew> {
   }
 
   static Future setFlag(String type, String comment, Ticket ticket) {
-    return OnlineDB.apiPost("tickets/flags/setFlag", {"comment": comment, "type": type, "ticket": ticket.id.toString()});
+    return Api.post("tickets/flags/setFlag", {"comment": comment, "type": type, "ticket": ticket.id.toString()});
   }
 
   static removeFlag(String type, Ticket ticket) {
-    return OnlineDB.apiPost("tickets/flags/removeFlag", {"type": type, "ticket": ticket.id.toString()});
+    return Api.post("tickets/flags/removeFlag", {"type": type, "ticket": ticket.id.toString()});
   }
 
   void setFlagInfo() {

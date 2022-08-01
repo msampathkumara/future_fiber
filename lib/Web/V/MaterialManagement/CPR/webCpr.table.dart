@@ -30,22 +30,22 @@ class _WebCPRTableState extends State<WebCPRTable> {
     super.didChangeDependencies();
   }
 
-  void sort(
-    int columnIndex,
-    bool ascending,
-  ) {
+  void sort(int columnIndex, bool ascending) {
     var columnName = "oe";
-    switch (columnIndex) {
-      case 1:
-        columnName = "production";
-        break;
-      case 2:
-        columnName = "usedCount";
-        break;
-      case 3:
-        columnName = "uptime";
-        break;
-    }
+
+    columnName = ['ticketName', 'client', 'suppliers', 'shortageType', 'addedOn', 'cprType', 'shipDate', 'status'][columnIndex];
+
+    // switch (columnIndex) {
+    //   case 1:
+    //     columnName = "production";
+    //     break;
+    //   case 2:
+    //     columnName = "usedCount";
+    //     break;
+    //   case 3:
+    //     columnName = "uptime";
+    //     break;
+    // }
     _dessertsDataSource!.sort(columnName, ascending);
     setState(() {
       _sortColumnIndex = columnIndex;
@@ -113,7 +113,7 @@ class _WebCPRTableState extends State<WebCPRTable> {
           scrollController: _scrollController,
           showFirstLastButtons: true,
           smRatio: 0.5,
-          lmRatio: 2.8,
+          lmRatio: 2.7,
           horizontalMargin: 20,
           checkboxHorizontalMargin: 12,
           columnSpacing: 16,
@@ -247,7 +247,7 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
       _errorCounter = _errorCounter! + 1;
 
       if (_errorCounter! % 2 == 1) {
-        await Future.delayed(Duration(milliseconds: 1000));
+        await Future.delayed(const Duration(milliseconds: 1000));
         throw 'Error #${((_errorCounter! - 1) / 2).round() + 1} has occured';
       }
     }
@@ -285,8 +285,8 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
             cells: [
               DataCell(ListTile(
                   visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-                  title: Text('${cpr.ticket?.mo}'),
-                  subtitle: Text('${cpr.ticket?.oe}', style: const TextStyle(color: Colors.deepOrange, fontSize: 12)))),
+                  title: Text(cpr.ticket?.mo ?? ''),
+                  subtitle: Text(cpr.ticket?.oe ?? '', style: const TextStyle(color: Colors.deepOrange, fontSize: 12)))),
               DataCell(Text((cpr.client) ?? "")),
               DataCell(Text((cpr.suppliers.join(',')))),
               DataCell(Text((cpr.shortageType) ?? "")),
@@ -295,7 +295,7 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                   direction: Axis.vertical,
                   children: [Text((cpr.date) ?? ""), Text((cpr.time) ?? "", style: const TextStyle(color: Colors.grey, fontSize: 12))])),
               DataCell(Text((cpr.cprType) ?? "")),
-              DataCell(Text((cpr.date) ?? "")),
+              DataCell(Text((cpr.shipDate))),
               DataCell(Text((cpr.status), style: TextStyle(color: cpr.status.getColor()))),
               DataCell(IconButton(
                 icon: const Icon(Icons.more_vert_rounded),

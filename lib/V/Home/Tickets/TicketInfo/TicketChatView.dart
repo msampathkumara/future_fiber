@@ -73,7 +73,10 @@ class _TicketChatViewState extends State<TicketChatView> {
                   children: [
                     Wrap(
                       direction: Axis.vertical,
-                      children: [Text("${ticketChat.ticket.mo}", textScaleFactor: 1), Text("${ticketChat.ticket.oe}", style: const TextStyle(), textScaleFactor: 0.8)],
+                      children: [
+                        Text(ticketChat.ticket.mo ?? ticketChat.ticket.oe ?? '', textScaleFactor: 1),
+                        Text("${ticketChat.ticket.oe}", style: const TextStyle(), textScaleFactor: 0.8)
+                      ],
                     ),
                     const Spacer(),
                     // Stack(
@@ -92,12 +95,11 @@ class _TicketChatViewState extends State<TicketChatView> {
                 controller: _scrollController,
                 padding: const EdgeInsets.only(bottom: 154.0),
                 reverse: true,
-                itemBuilder: (BuildContext context, int index) {
+                separatorBuilder: (BuildContext context, int index) {
                   return const Divider(height: 0, color: Colors.transparent);
                 },
-                itemCount: (ticketChat.commentList?.length ?? 0) + 1,
-                separatorBuilder: (BuildContext context, int index) {
-                  print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz $index');
+                itemCount: (ticketChat.commentList?.length ?? 0),
+                itemBuilder: (BuildContext context, int index) {
                   return getChatElement(ticketChat.commentList![index]);
                 },
               )),

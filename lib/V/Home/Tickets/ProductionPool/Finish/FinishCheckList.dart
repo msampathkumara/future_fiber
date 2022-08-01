@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:smartwind/C/Api.dart';
-import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/Ticket.dart';
+import 'package:smartwind/V/Home/Tickets/ProductionPool/Finish/SelectSectionBottomSheet.dart';
 
 import '../../../../../C/ServerResponse/ServerResponceMap.dart';
+import '../../../../../M/UserRFCredentials.dart';
+import '../../FinishedGoods/AddRFCredentials.dart';
 import 'RF.dart';
 
 class FinishCheckList extends StatefulWidget {
@@ -76,13 +78,19 @@ class _FinishCheckListState extends State<FinishCheckList> {
                             }
 
                             var isQc = false;
+                            var selectedSection = AppUser.getSelectedSection()?.id;
                             if (AppUser.getSelectedSection()?.sectionTitle.toLowerCase() == "qc") {
                               isQc = true;
+
+                              selectedSection = await selectSection();
+                              if (selectedSection == null) return;
                             }
+                            var userCurrentSection = AppUser.getSelectedSection()?.id ?? 0;
 
                             var xx = await platform.invokeMethod('qcEdit', {
+                              'userCurrentSection': userCurrentSection.toString(),
                               "qc": isQc,
-                              "sectionId": "${AppUser.getSelectedSection()?.id}",
+                              "sectionId": "$selectedSection",
                               "serverUrl": Server.getServerApiPath("tickets/qc/uploadEdits"),
                               'ticket': {'id': ticket.id, "qc": isQc}.toString()
                             });
@@ -112,36 +120,47 @@ class _FinishCheckListState extends State<FinishCheckList> {
 
   Future<void> finish(String quality) async {
     var isQc = false;
+    int? selectedSection = AppUser.getSelectedSection()?.id;
     if (AppUser.getSelectedSection()?.sectionTitle.toLowerCase() == "qc") {
       isQc = true;
+      selectedSection = await selectSection();
+      if (selectedSection == null) return;
     }
 
     await showDialog(
         context: context,
         builder: (BuildContext context1) {
           Api.get("users/getRfCredentials", {}).then((response) async {
-            ServerResponseMap res = ServerResponseMap.fromJson((response.data));
-            var r = await OnlineDB.apiGet("tickets/finish/getProgress", {'ticket': ticket.id.toString()});
+            Map data = response.data;
+            UserRFCredentials? userRFCredentials;
+            if (mounted) Navigator.of(context1).pop();
+            if (data["userRFCredentials"] == null) {
+              userRFCredentials = await const AddRFCredentials().show(context);
+            } else {
+              userRFCredentials = UserRFCredentials.fromJson(data["userRFCredentials"]);
+            }
+
+            if (userRFCredentials == null) {
+              return;
+            }
+
+            // ServerResponseMap res = ServerResponseMap.fromJson((response.data));
+            var r = await Api.get("tickets/finish/getProgress", {'ticket': ticket.id.toString()});
             ServerResponseMap res1 = ServerResponseMap.fromJson((r.data));
 
-            if (mounted) Navigator.of(context1).pop();
-
-            if (res.userRFCredentials != null) {
-              if (mounted) await ticket.getFile(context);
-              if (res1.done != null) {
-                if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(backgroundColor: Colors.red, content: Text('Already Completed')));
-              } else if (ticket.ticketFile != null) {
-                if (mounted) {
-                  await Navigator.push(context, MaterialPageRoute(builder: (context) => RF(ticket, res.userRFCredentials!, res1.operationMinMax!, res1.progressList)));
-                  await LoadingDialog(
-                      Api.post("tickets/qc/uploadEdits", {'quality': quality, 'ticketId': ticket.id, 'type': isQc, "sectionId": "${AppUser.getSelectedSection()?.id}"}).then((res) {
-                    Map data = res.data;
-                  }));
-                }
+            if (mounted) await ticket.getFile(context);
+            if (res1.done != null) {
+              if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(backgroundColor: Colors.red, content: Text('Already Completed')));
+            } else if (ticket.ticketFile != null) {
+              if (mounted) {
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => RF(ticket, userRFCredentials!, res1.operationMinMax!, res1.progressList)));
+                await LoadingDialog(Api.post("tickets/qc/uploadEdits", {'quality': quality, 'ticketId': ticket.id, 'type': isQc, "sectionId": selectedSection}).then((res) {
+                  Map data = res.data;
+                }));
               }
-
-              if (mounted) Navigator.pop(context);
             }
+
+            if (mounted) Navigator.pop(context);
           });
 
           return AlertDialog(
@@ -166,5 +185,19 @@ class _FinishCheckListState extends State<FinishCheckList> {
                 return const SizedBox(height: 150, width: 50, child: Center(child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator())));
               }));
         });
+  }
+
+  Future<int?> selectSection() async {
+    int? selectedSectionId;
+
+    await showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return SelectSectionBottomSheet(widget.ticket.id, (_selectedSectionId) {
+          selectedSectionId = _selectedSectionId;
+        });
+      },
+    );
+    return selectedSectionId;
   }
 }

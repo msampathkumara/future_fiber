@@ -4,10 +4,11 @@ import 'package:flutter/widgets.dart';
 import 'package:hex/hex.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:nfc_manager/platform_tags.dart';
-import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
+
+import '../../../C/Api.dart';
 
 class AddNfcCard extends StatefulWidget {
   final NsUser nsUser;
@@ -141,7 +142,7 @@ class _AddNfcCardState extends State<AddNfcCard> {
   var nfcCode;
 
   Future<void> save(bool confirm) async {
-    await OnlineDB.apiPost("users/setNfcCard", {"nfc": nfcCode, "userId": widget.nsUser.id, "confirm": confirm}).then((value) {
+    await Api.post("users/setNfcCard", {"nfc": nfcCode, "userId": widget.nsUser.id, "confirm": confirm}).then((value) {
       print("value.statusCode == ${value.data.toString()}");
       loading = false;
       Map data = value.data;

@@ -65,6 +65,10 @@ class _InfoHistoryState extends State<InfoHistory> {
                   if (ticketHistory.action == 'ADD_FLAG' || ticketHistory.action == 'REMOVE_FLAG')
                     Text("${((ticketHistory.data!["type"] ?? "").toString().capitalizeFirstofEach)} Flag"),
 
+                  if (ticketHistory.section != null)
+                    Align(
+                        alignment: Alignment.topRight,
+                        child: Text("${ticketHistory.section?.sectionTitle} @ ${ticketHistory.section?.factory}", textAlign: TextAlign.end, style: timeStyle)),
                   Align(alignment: Alignment.bottomRight, child: Text("${ticketHistory.uptime}", textAlign: TextAlign.end, style: timeStyle)),
                   const Divider(thickness: 1.5)
                 ],

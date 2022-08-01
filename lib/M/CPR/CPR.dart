@@ -25,7 +25,7 @@ class CPR {
   String image = "";
   @JsonKey(defaultValue: [], includeIfNull: true)
   List<CprItem> items = <CprItem>[];
-  @JsonKey(defaultValue: [], includeIfNull: true)
+  @JsonKey(defaultValue: [], includeIfNull: true, fromJson: arryFromObject)
   List<String> suppliers = <String>[];
 
   @JsonKey(defaultValue: "", includeIfNull: true)
@@ -49,6 +49,9 @@ class CPR {
   @JsonKey(defaultValue: [], includeIfNull: true)
   List<CprActivity> cprs = [];
 
+  @JsonKey(defaultValue: '', includeIfNull: true)
+  String shipDate = '';
+
   NsUser? get user {
     return HiveBox.usersBox.get(addedUserId);
   }
@@ -70,6 +73,12 @@ class CPR {
   get time => addedOn.toString().split(" ")[1];
 
   String get supplier => suppliers.first;
+
+  static arryFromObject(object) => (object.runtimeType == String
+      ? object.toString().split(',')
+      : object.runtimeType == List
+          ? object
+          : []);
 
   Map<String, dynamic> toJson() => _$CPRToJson(this);
 

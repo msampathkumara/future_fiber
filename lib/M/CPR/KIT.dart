@@ -33,6 +33,8 @@ class KIT {
   String status = "";
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int id = 0;
+  @JsonKey(defaultValue: '', includeIfNull: true)
+  String shipDate = '';
 
   int? sentUserId;
   int? receivedUserId;

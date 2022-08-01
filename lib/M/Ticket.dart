@@ -13,7 +13,6 @@ import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/StandardTicket.dart';
 import 'package:smartwind/M/TicketFlag.dart';
@@ -24,6 +23,7 @@ import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/Loading.dart';
 import 'package:universal_html/html.dart' as html;
 
+import '../C/Api.dart';
 import '../V/Widgets/TicketPdfViwer.dart';
 import 'AppUser.dart';
 import 'DataObject.dart';
@@ -359,7 +359,9 @@ class Ticket extends DataObject {
     print("____________________________________________________________________________________________________________________________*****");
     print(t.toString());
     var serverUrl = Server.getServerApiPath(isStandard ? "tickets/standard/uploadEdits" : "tickets/uploadEdits");
-    return await platform.invokeMethod('editPdf', {'path': ticketFile!.path, 'fileID': id, 'ticket': t.toString(), "serverUrl": serverUrl});
+    var userCurrentSection = (AppUser.getSelectedSection()?.id ?? 0).toString();
+    return await platform
+        .invokeMethod('editPdf', {'path': ticketFile!.path, 'userCurrentSection': userCurrentSection.toString(), 'fileID': id, 'ticket': t.toString(), "serverUrl": serverUrl});
   }
 
   static const platform = MethodChannel('editPdf');
@@ -408,7 +410,7 @@ class Ticket extends DataObject {
 
   Future<List<TicketFlag>> getFlagList(String flagType) async {
     print("tickets/flags/getList");
-    return OnlineDB.apiGet("tickets/flags/getList", {"ticket": id.toString(), "type": flagType}).then((response) {
+    return Api.get("tickets/flags/getList", {"ticket": id.toString(), "type": flagType}).then((response) {
       print(response.data);
       print("-----------------vvvvvvvvvvv-----------------------");
       Map<String, dynamic> res = response.data;
@@ -489,7 +491,7 @@ class Ticket extends DataObject {
   }
 
   Future start(context) {
-    return OnlineDB.apiPost("tickets/start", {"ticket": id.toString()}).then((response) {
+    return Api.post("tickets/start", {"ticket": id.toString()}).then((response) {
       if (kDebugMode) {
         print(response.data);
         print("-----------------vvvvvvvvxxxxxxxxxxvvv-----------------------");

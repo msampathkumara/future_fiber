@@ -13,6 +13,9 @@ class Api {
       dio.options.headers['content-Type'] = 'application/json';
       dio.options.headers["authorization"] = "$idToken";
       print('apiPost - ${Server.getServerApiPath(url)}');
+
+      data["userCurrentSection"] = (AppUser.getSelectedSection()?.id ?? 0).toString();
+
       return dio.post(Server.getServerApiPath(url), data: formData ?? (data), onSendProgress: onSendProgress);
     } on DioError catch (e) {
       if (e.response?.statusCode == 401) {
@@ -26,11 +29,14 @@ class Api {
   static Future<Response> get(String url, Map<String, dynamic> data, {onlineServer = false, bool reFreshToken = false}) async {
     try {
       final idToken = await AppUser.getIdToken(reFreshToken);
-      Dio dio = new Dio();
+      Dio dio = Dio();
       dio.options.headers['content-Type'] = 'application/json';
       dio.options.headers["authorization"] = "$idToken";
 
-      return dio.get(Server.getServerApiPath('$url', onlineServer: onlineServer), queryParameters: data);
+      data["userCurrentSection"] = (AppUser.getSelectedSection()?.id ?? 0).toString();
+      print('userCurrentSection ${data["userCurrentSection"]}');
+
+      return dio.get(Server.getServerApiPath(url, onlineServer: onlineServer), queryParameters: data);
     } on DioError catch (e) {
       if (e.response?.statusCode == 401) {
         print(e.response?.statusCode);

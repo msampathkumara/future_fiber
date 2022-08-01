@@ -285,11 +285,11 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     );
   }
 
-  List<Ticket> _load(selectedProduction, section, showAllTickets, searchText, {crossProduction = false, bySection = false}) {
-    print('ticket count == ${HiveBox.ticketBox.length}');
+  List<Ticket> _load(selectedProduction, section, showAllTickets, searchText, {bySection = false}) {
+    // print('ticket count == ${HiveBox.ticketBox.length}');
     var production = nsUser?.section?.factory;
-    print('====== == $production');
-    print('crossProduction == $crossProduction');
+    // print('====== == $production');
+    // print('====== == ${nsUser?.section?.toJson()}');
 
     List<Ticket> l = HiveBox.ticketBox.values.where((t) {
       if (bySection && t.nowAt != nsUser?.section?.id) {
@@ -454,19 +454,12 @@ class TicketTile extends StatelessWidget {
           onLongPress();
         },
         onTap: () async {
-          print('is started === ${ticket.isStarted}');
-          if (ticket.isStarted) {
-            var ticketInfo = TicketInfo(ticket);
-            ticketInfo.show(context);
-          } else {
-            await showOpenActions(ticket, context, () {
-              onReload();
-            });
-          }
+          var ticketInfo = TicketInfo(ticket);
+          ticketInfo.show(context);
         },
-        onDoubleTap: () async {
-          ticket.open(context);
-        },
+        // onDoubleTap: () async {
+        //   // ticket.open(context);
+        // },
         child: Ink(
             decoration: BoxDecoration(
                 color: ticket.isHold == 1 ? Colors.black12 : Colors.white,
@@ -554,7 +547,7 @@ class TicketTile extends StatelessWidget {
                           WebTicketQView(ticket, true).show(context);
                         }),
                   IconButton(
-                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.chat, color: Colors.blue)),
+                      icon: CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.chat, color: ticket.haveComments ? Colors.blue : Colors.grey)),
                       onPressed: () {
                         TicketChatView(ticket).show(context);
                       }),

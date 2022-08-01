@@ -3,13 +3,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/StandardTicket.dart';
 import 'package:smartwind/M/TicketHistory.dart';
 import 'package:smartwind/V/Home/Tickets/TicketInfo/info_History.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
+import '../../../../C/Api.dart';
 import '../../../../C/DB/DB.dart';
 import '../../../../M/NsUser.dart';
 import '../../../../M/hive.dart';
@@ -185,7 +185,7 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
 
   Future<Null> loadData() {
     print('xxxxxxxxxxxxxxxxxxxxxxx');
-    return OnlineDB.apiGet("/tickets/standard/getInfo", {'id': standardTicket.id}).then((data) {
+    return Api.get("/tickets/standard/getInfo", {'id': standardTicket.id}).then((data) {
       print(data.data["history"]);
 
       historyList = TicketHistory.fromJsonArray(data.data["history"]);

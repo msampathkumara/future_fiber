@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/CPR/CPR.dart';
 import 'package:smartwind/M/CPR/CprItem.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
+
+import '../../../C/Api.dart';
 
 class CprDetails extends StatefulWidget {
   final CPR cpr;
@@ -42,7 +43,7 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
       setState(() {});
     });
 
-    OnlineDB.apiGet("cpr/getCpr", {"id": _cpr.id}).then((res) async {
+    Api.get("cpr/getCpr", {"id": _cpr.id}).then((res) async {
       print("res.data ${res.data}");
       if (res.data["error"] == null) {
         _cpr = CPR.fromJson(res.data);

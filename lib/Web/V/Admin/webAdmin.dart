@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:smartwind/M/Admin/Settings.dart';
 
 import '../../../C/Api.dart';
-import '../../../C/OnlineDB.dart';
 import '../../../C/Validations.dart';
 
 class WebAdmin extends StatefulWidget {
@@ -55,7 +54,7 @@ class _WebAdminState extends State<WebAdmin> {
                                       subtitle: const Text("Update Files on server with production pool tickets "),
                                       trailing: ElevatedButton.icon(
                                           onPressed: () {
-                                            OnlineDB.apiGet("tickets/updateFiles", {}).then((response) async {
+                                            Api.get("tickets/updateFiles", {}).then((response) async {
                                               print(response.data);
                                             });
                                           },
@@ -70,7 +69,7 @@ class _WebAdminState extends State<WebAdmin> {
                                       subtitle: const Text(""),
                                       trailing: ElevatedButton.icon(
                                           onPressed: () {
-                                            OnlineDB.apiGet("admin/updateStandardLibUsage", {}).then((response) async {
+                                            Api.get("admin/updateStandardLibUsage", {}).then((response) async {
                                               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Update Standard Library Usage success")));
                                             });
                                           },

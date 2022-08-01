@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/QC.dart';
 import 'package:smartwind/M/Section.dart';
@@ -7,6 +6,8 @@ import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Widgets/NoResultFoundMsg.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 import 'package:smartwind/Web/V/QC/webTicketQView.dart';
+
+import '../../../../C/Api.dart';
 
 class QCList extends StatefulWidget {
   const QCList();
@@ -60,9 +61,11 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
                 searchText = text;
                 _ticketQcList = [];
 
-                loadData(0).then((value) {
-                  setState(() {});
-                });
+                _refreshIndicatorKey.currentState?.show();
+
+                // loadData(0).then((value) {
+                //   setState(() {});
+                // });
               },
               onSubmitted: (text) {}),
           centerTitle: true,
@@ -193,11 +196,14 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
         body: _getTicketsList());
   }
 
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+
   _getTicketsList() {
     return Stack(
       children: [
         if (requestFinished && _ticketQcList.isEmpty) const Center(child: NoResultFoundMsg()),
         RefreshIndicator(
+          key: _refreshIndicatorKey,
           onRefresh: () {
             return loadData(0).then((value) {
               setState(() {});
@@ -271,17 +277,11 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
                         child: ListTile(
                             leading: Container(width: 50, alignment: Alignment.center, height: double.infinity, child: Text("${index + 1}", textAlign: TextAlign.center)),
                             title: Text(_ticketQc.ticket!.getName(), style: TextStyle(fontWeight: FontWeight.bold, color: tc)),
-                            subtitle: Wrap(direction: Axis.vertical, children: [
-                              if ((_ticketQc.ticket!.mo ?? "").trim().isNotEmpty) Text((_ticketQc.ticket!.oe ?? "")),
-                              Text("${_ticketQc.getDateTime()}"),
-                            ]),
-                            // subtitle: Text(ticket.fileVersion.toString()),
-                            trailing: Wrap(alignment: WrapAlignment.center, direction: Axis.vertical, children: [
-                              Text(section?.factory ?? ''),
-                              Text(section?.sectionTitle ?? '')
-                              // UserImage(nsUser: NsUser.fromId(_ticketQc.userId), radius: 20),
-                              // Text(_ticketQc.user != null ? _ticketQc.user!.uname : "", textScaleFactor: 1)
-                            ]))));
+                            subtitle: Wrap(
+                                direction: Axis.vertical,
+                                children: [if ((_ticketQc.ticket!.mo ?? "").trim().isNotEmpty) Text((_ticketQc.ticket!.oe ?? "")), Text("${_ticketQc.getDateTime()}")]),
+                            trailing:
+                                Wrap(alignment: WrapAlignment.center, direction: Axis.vertical, children: [Text(section?.factory ?? ''), Text(section?.sectionTitle ?? '')]))));
               },
               separatorBuilder: (BuildContext context, int index) {
                 return const Divider(
@@ -310,8 +310,8 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
               ListTile(
-                title: Text(ticket.mo ?? ticket.oe!),
-                subtitle: Text(ticket.oe!),
+                title: Text(ticket.mo ?? ticket.oe ?? ''),
+                subtitle: Text(ticket.oe ?? ''),
               ),
               const Divider(),
               Expanded(
@@ -346,7 +346,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
   Future loadData(int page) {
     requested = true;
     requestFinished = false;
-    return OnlineDB.apiGet("tickets/qc/getList", {
+    return Api.get("tickets/qc/getList", {
       'type': _selectedType.getValue(),
       'production': _selectedProduction.getValue(),
       'sortDirection': "desc",

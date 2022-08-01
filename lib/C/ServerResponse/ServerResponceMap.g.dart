@@ -25,18 +25,11 @@ ServerResponseMap _$ServerResponseMapFromJson(Map<String, dynamic> json) =>
               ?.map((e) => TicketFlag.fromJson(e as Map<String, dynamic>))
               .toList() ??
           []
-      ..flagsHistory = (json['flagsHistory'] as List<dynamic>?)
-              ?.map((e) => TicketFlag.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          []
-      ..printList = (json['printList'] as List<dynamic>?)
-              ?.map((e) => TicketPrint.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          []
-      ..ticketHistory = (json['ticketHistory'] as List<dynamic>?)
-              ?.map((e) => TicketHistory.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [];
+      ..flagsHistory = (json['flagsHistory'] as List<dynamic>?)?.map((e) => TicketFlag.fromJson(e as Map<String, dynamic>)).toList() ?? []
+  ..printList = (json['printList'] as List<dynamic>?)?.map((e) => TicketPrint.fromJson(e as Map<String, dynamic>)).toList() ?? []
+  ..ticketHistory = (json['ticketHistory'] as List<dynamic>?)?.map((e) => TicketHistory.fromJson(e as Map<String, dynamic>)).toList() ?? []
+  ..ticketComments = (json['ticketComments'] as List<dynamic>?)?.map((e) => TicketComment.fromJson(e as Map<String, dynamic>)).toList() ?? []
+  ..cprs = (json['cprs'] as List<dynamic>?)?.map((e) => CPR.fromJson(e as Map<String, dynamic>)).toList() ?? [];
 
 Map<String, dynamic> _$ServerResponseMapToJson(ServerResponseMap instance) =>
     <String, dynamic>{
@@ -48,4 +41,6 @@ Map<String, dynamic> _$ServerResponseMapToJson(ServerResponseMap instance) =>
       'flagsHistory': instance.flagsHistory.map((e) => e.toJson()).toList(),
       'printList': instance.printList.map((e) => e.toJson()).toList(),
       'ticketHistory': instance.ticketHistory.map((e) => e.toJson()).toList(),
+      'ticketComments': instance.ticketComments.map((e) => e.toJson()).toList(),
+      'cprs': instance.cprs.map((e) => e.toJson()).toList(),
     };

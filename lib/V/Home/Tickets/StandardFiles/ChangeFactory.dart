@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Section.dart';
 import 'package:smartwind/M/StandardTicket.dart';
+
+import '../../../../C/Api.dart';
 
 class changeFactory extends StatefulWidget {
   StandardTicket ticket;
@@ -77,7 +78,7 @@ class _changeFactoryState extends State<changeFactory> {
               ElevatedButton(
                 onPressed: () {
                   // TODO add link
-                  OnlineDB.apiPost("tickets/", {'ticketId': widget.ticket.id.toString(), "factory": selectedSection.factory}).then((response) async {
+                  Api.post("tickets/", {'ticketId': widget.ticket.id.toString(), "factory": selectedSection.factory}).then((response) async {
                     print(response.data);
                     Navigator.of(context).pop();
                   });

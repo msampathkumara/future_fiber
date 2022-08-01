@@ -29,6 +29,7 @@ class _UserSectionSelectorState extends State<UserSectionSelector> {
     super.initState();
     print('-------------------------------------SectionSelector');
     print(widget.nsUser.toJson());
+    widget.nsUser.sections.sort((a, b) => a.factory.compareTo(b.factory));
   }
 
   @override

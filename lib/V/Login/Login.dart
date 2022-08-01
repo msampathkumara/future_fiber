@@ -249,7 +249,8 @@ class _LoginState extends State<Login> {
                                           width: double.infinity,
                                           child: TextButton(
                                             onPressed: () async {
-                                              await Navigator.push(context, MaterialPageRoute(builder: (context) => const PasswordRecovery()));
+                                              // await Navigator.push(context, MaterialPageRoute(builder: (context) => const PasswordRecovery()));
+                                              await const PasswordRecovery().show(context);
                                             },
                                             child: const Text('forgot my password'),
                                             // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0), side: const BorderSide(color: Colors.orange)),
@@ -286,34 +287,8 @@ class _LoginState extends State<Login> {
       Map res = response.data;
 
       if (res["locked"] == true) {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                content: SizedBox(
-                  height: 400,
-                  child: Column(
-                    children: [
-                      SizedBox(width: 400, child: Image.asset(Res.accountBlocked)),
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text("Locked", textScaleFactor: 1.2, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
-                      ),
-                      const Text("Your account has been locked please contact Admin", textScaleFactor: 1, style: TextStyle(color: Colors.grey)),
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text("OK")),
-                      )
-                    ],
-                  ),
-                ),
-                actions: [],
-              );
-            });
+        showAccountLockedAlertDialog(context);
+        setLoading(false);
       }
       if (res["login"] == false) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Login failed, Check user name and password"), backgroundColor: Colors.red));
@@ -321,8 +296,8 @@ class _LoginState extends State<Login> {
         return;
       } else if (res["deactivate"] != null) {
         setLoading(false);
-        return showAlertDialog(context);
-      } else if (res["user"] == null) {
+        return showAccountDeactivatedAlertDialog(context);
+      } else if (res["token"] == null) {
         if (nfcCode.isNotEmpty) {
           ErrorMessageView(errorMessage: "Scan Valid ID Card", icon: Icons.badge_outlined).show(context);
           nfcCode = "";
@@ -342,7 +317,7 @@ class _LoginState extends State<Login> {
           if (section != null) {
             AppUser.setSelectedSection(section);
           }
-          AppUser.setUser(nsUser);
+          // AppUser.setUser(nsUser);
           HiveBox.getDataFromServer();
 
           if (kIsWeb) {
@@ -367,25 +342,6 @@ class _LoginState extends State<Login> {
     setState(() {
       loading = show;
     });
-  }
-
-  showAlertDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context1) {
-        return AlertDialog(
-          title: const Text("Deactivated User"),
-          content: const Text("Your Account has been deactivated .. please contact admin to activate your account"),
-          actions: [
-            TextButton(
-                child: const Text("Ok"),
-                onPressed: () {
-                  Navigator.of(context1).pop();
-                })
-          ],
-        );
-      },
-    );
   }
 
   getWebUi() {
@@ -537,7 +493,8 @@ class _LoginState extends State<Login> {
                         child: TextButton(
                           onPressed: () async {
                             print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-                            await Navigator.push(context, MaterialPageRoute(builder: (context) => const PasswordRecovery()));
+                            // await Navigator.push(context, MaterialPageRoute(builder: (context) => const PasswordRecovery()));
+                            await const PasswordRecovery().show(context);
                           },
                           child: const Text('forgot my password'),
                           // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0), side: const BorderSide(color: Colors.orange)),
@@ -549,4 +506,54 @@ class _LoginState extends State<Login> {
           ))
     ]);
   }
+}
+
+showAccountDeactivatedAlertDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context1) {
+      return AlertDialog(
+        title: const Text("Deactivated User"),
+        content: const Text("Your Account has been deactivated .. please contact admin to activate your account"),
+        actions: [
+          TextButton(
+              child: const Text("Ok"),
+              onPressed: () {
+                Navigator.of(context1).pop();
+              })
+        ],
+      );
+    },
+  );
+}
+
+showAccountLockedAlertDialog(BuildContext context1) {
+  showDialog(
+      context: context1,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: SizedBox(
+            height: 400,
+            child: Column(
+              children: [
+                SizedBox(width: 400, child: Image.asset(Res.accountBlocked)),
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text("Locked", textScaleFactor: 1.2, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
+                ),
+                const Text("Your account has been locked please contact Admin", textScaleFactor: 1, style: TextStyle(color: Colors.grey)),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text("OK")),
+                )
+              ],
+            ),
+          ),
+          actions: [],
+        );
+      });
 }

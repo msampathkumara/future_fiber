@@ -79,7 +79,7 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
                           Loading loading = Loading();
                           loading.show(context1);
 
-                          OnlineDB.apiPost('users/deactivate', {"userId": nsUser.id, "deactivate": (!nsUser.isDisabled)}).then((value) {
+                          Api.post('users/deactivate', {"userId": nsUser.id, "deactivate": (!nsUser.isDisabled)}).then((value) {
                             print('cccccccccccccccccccccccccc');
                             HiveBox.getDataFromServer();
                             loading.close(context1);
@@ -99,7 +99,7 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
                           Loading loading = Loading();
                           loading.show(context1);
 
-                          OnlineDB.apiPost('users/unlock', {"userId": nsUser.id}).then((value) {
+                          Api.post('users/unlock', {"userId": nsUser.id}).then((value) {
                             print('cccccccccccccccccccccccccc');
                             HiveBox.getDataFromServer();
                             loading.close(context1);

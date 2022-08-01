@@ -11,7 +11,8 @@ TicketHistory _$TicketHistoryFromJson(Map<String, dynamic> json) => TicketHistor
   ..action = json['action'] as String?
   ..uptime = json['uptime'] as String?
   ..data = json['data'] as Map<String, dynamic>?
-  ..doneBy = json['doneBy'] as int?;
+  ..doneBy = json['doneBy'] as int?
+  ..section = json['section'] == null ? null : Section.fromJson(json['section'] as Map<String, dynamic>);
 
 Map<String, dynamic> _$TicketHistoryToJson(TicketHistory instance) => <String, dynamic>{
       'id': instance.id,
@@ -19,4 +20,5 @@ Map<String, dynamic> _$TicketHistoryToJson(TicketHistory instance) => <String, d
       'uptime': instance.uptime,
       'data': instance.data,
       'doneBy': instance.doneBy,
+      'section': instance.section?.toJson(),
     };

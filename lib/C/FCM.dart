@@ -21,7 +21,7 @@ class FCM {
 
   static setListener(context) {
     subscribe();
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       print("---------------- FCM ------------------");
       print(message.from);
       print(message.messageId);
@@ -36,6 +36,13 @@ class FCM {
         HiveBox.getDataFromServer();
         print('--------------------------UPDATING USER DATABASE-----------------');
       } else if (message.from == "/topics/file_update") {
+        if (message.data["standardLibrary"] != null) {
+          // print('--------------------------standardLibrary-----------------');
+          if (message.data["delete"] != null) {
+            // print('--------------------------delete-----------------');
+            await HiveBox.cleanStandardLibrary();
+          }
+        }
         HiveBox.getDataFromServer();
         print('--------------------------UPDATING DATABASE-----------------');
       } else if (message.data["updateTicketDB"] != null) {
@@ -59,7 +66,7 @@ class FCM {
     await FirebaseMessaging.instance.unsubscribeFromTopic('userUpdates');
     var userId = AppUser.getUser()?.id;
     if (AppUser.getUser() != null) {
-      await FirebaseMessaging.instance.unsubscribeFromTopic('userUpdate_${userId}');
+      await FirebaseMessaging.instance.unsubscribeFromTopic('userUpdate_$userId');
     }
   }
 }

@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/Api.dart';
-import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/user_config.dart';
@@ -56,7 +55,7 @@ class AppUser extends NsUser {
 
   static Future refreshUserData() {
     _userIsAdmin = null;
-    return OnlineDB.apiGet("user/getUserData", {}).then((value) {
+    return Api.get("user/getUserData", {}).then((value) {
       Map res = value.data;
       print(res);
       NsUser nsUser = NsUser.fromJson(res["user"]);
@@ -76,7 +75,7 @@ class AppUser extends NsUser {
     UserConfig userConfig = getUserConfig();
     userConfig.user = nsUser;
     HiveBox.userConfigBox.put(configKey, userConfig);
-    print(nsUser.toJson());
+    // print(nsUser.toJson());
     updateUserChangers();
   }
 

@@ -16,7 +16,7 @@ class UserImage extends StatefulWidget {
   final double padding;
 
   UserImage({this.padding = 0, required this.nsUser, this.backgroundColor, required this.radius, this.disable = false, Key? key})
-      : super(key: key ?? Key("ui${nsUser?.id}${nsUser?.upon}$radius${nsUser?.deactivate}${nsUser?.img}"));
+      : super(key: key ?? Key("ui${nsUser?.id}${nsUser?.upon}$radius${nsUser?.deactivate}${nsUser?.img}${nsUser?.locked}"));
 
   @override
   _UserImageState createState() => _UserImageState();

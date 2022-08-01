@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/C/OnlineDB.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/TicketPrint.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
+
+import '../../../../C/Api.dart';
 
 class PrintManager extends StatefulWidget {
   const PrintManager({Key? key}) : super(key: key);
@@ -355,7 +356,7 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
 
   Future sendToPrint(Ticket ticket) async {
     if (ticket.inPrint == 0) {
-      OnlineDB.apiPost("tickets/print", {"ticket": ticket.id.toString(), "action": "sent"}).then((value) {
+      Api.post("tickets/print", {"ticket": ticket.id.toString(), "action": "sent"}).then((value) {
         print('Send to print  ${value.data}');
         ticket.inPrint = 1;
         setState(() {});
@@ -365,7 +366,7 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
 
       return 1;
     } else {
-      await OnlineDB.apiPost("tickets/print", {"ticket": ticket.id.toString(), "action": "cancel"});
+      await Api.post("tickets/print", {"ticket": ticket.id.toString(), "action": "cancel"});
       ticket.inPrint = 0;
       return 0;
     }
@@ -378,7 +379,7 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
 
   Future loadData(int page) {
     requested = true;
-    return OnlineDB.apiGet("tickets/print/getList", {
+    return Api.get("tickets/print/getList", {
       'status': _selectedStatus.getValue(),
       'sortDirection': "desc",
       'sortBy': listSortBy,
