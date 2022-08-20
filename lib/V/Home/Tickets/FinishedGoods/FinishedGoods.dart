@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:smartwind/C/Api.dart';
@@ -99,7 +100,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                 child: Wrap(direction: Axis.horizontal, children: [
                   // flagIcon(Filters.isCrossPro, Icons.merge_type_rounded),
                   flagIcon(Filters.isError, Icons.warning_rounded),
-                  flagIcon(Filters.inPrint, Icons.print_rounded),
+                  // flagIcon(Filters.inPrint, Icons.print_rounded),
                   flagIcon(Filters.isRush, Icons.offline_bolt_rounded),
                   flagIcon(Filters.isRed, Icons.flag_rounded),
                   flagIcon(Filters.isHold, NsIcons.stop),
@@ -255,7 +256,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
               return _loadData(0);
             },
             child: (_ticketList.isEmpty && (!requested))
-                // ? Center(child: Text(searchText.isEmpty ? "No Tickets Found" : "⛔ Work Ticket not found.\n Please contact  Ticket Checking department", textScaleFactor: 1.5))
+            // ? Center(child: Text(searchText.isEmpty ? "No Tickets Found" : "⛔ Work Ticket not found.\n Please contact  Ticket Checking department", textScaleFactor: 1.5))
                 ? Center(child: Container(padding: const EdgeInsets.all(20), child: const NoResultFoundMsg()))
                 : Padding(
                     padding: const EdgeInsets.only(top: 16),
@@ -314,7 +315,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                             ticketInfo.show(context);
                           },
                           onDoubleTap: () async {
-                            ticket.open(context);
+                            Ticket.open(context, ticket);
                           },
                           child: Ink(
                             decoration: BoxDecoration(
@@ -333,11 +334,11 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                               // subtitle: Text(ticket.fileVersion.toString()),
                               trailing: Wrap(
                                 children: [
-                                  if (ticket.inPrint == 1)
-                                    IconButton(
-                                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)),
-                                      onPressed: () {},
-                                    ),
+                                  // if (ticket.inPrint == 1)
+                                  //   IconButton(
+                                  //     icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)),
+                                  //     onPressed: () {},
+                                  //   ),
                                   if (ticket.isHold == 1)
                                     IconButton(
                                       icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.pan_tool_rounded, color: Colors.black)),
@@ -443,7 +444,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                     title: const Text("Send Ticket"),
                     leading: const Icon(Icons.send_rounded, color: Colors.lightBlue),
                     onTap: () async {
-                      await ticket.sharePdf(context);
+                      await Ticket.sharePdf(context, ticket);
                       Navigator.of(context).pop();
                     }),
                 if (AppUser.havePermissionFor(Permissions.DELETE_COMPLETED_TICKETS))
@@ -497,20 +498,30 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
   int dataCount = 0;
   List<Ticket> _ticketList = [];
   bool _dataLoadingError = false;
+  CancelToken cancelToken = CancelToken();
 
   Future _loadData(int page) {
-    // setState(() {
+    if (!cancelToken.isCancelled) {
+      cancelToken.cancel();
+    }
+    cancelToken = CancelToken();
     requested = true;
-    // });
-    return Api.get("tickets/completed/getList", {
-      'production': _selectedProduction.getValue(),
-      "flag": dataFilter.getValue(),
-      'sortDirection': "desc",
-      'sortBy': listSortBy,
-      'pageIndex': page,
-      'pageSize': 20,
-      'searchText': searchText
-    }).then((res) {
+
+    print('searchText== $searchText');
+
+    return Api.get(
+            "tickets/completed/getList",
+            {
+              'production': _selectedProduction.getValue(),
+              "flag": dataFilter.getValue(),
+              'sortDirection': "desc",
+              'sortBy': listSortBy,
+              'pageIndex': page,
+              'pageSize': 20,
+              'searchText': searchText
+            },
+            cancelToken: cancelToken)
+        .then((res) {
       print(res.data);
       List tickets = res.data["tickets"];
       dataCount = res.data["count"];

@@ -15,7 +15,7 @@ KIT _$KITFromJson(Map<String, dynamic> json) => KIT()
   ..comment = json['comment'] as String? ?? ''
   ..image = json['image'] as String? ?? ''
   ..items = (json['items'] as List<dynamic>?)?.map((e) => KitItem.fromJson(e as Map<String, dynamic>)).toList() ?? []
-  ..suppliers = (json['suppliers'] as List<dynamic>?)?.map((e) => e as String).toList() ?? []
+  ..suppliers = json['suppliers'] == null ? [] : KIT.arryFromObject(json['suppliers'])
   ..status = json['status'] as String? ?? ''
   ..id = json['id'] as int? ?? 0
   ..shipDate = json['shipDate'] as String? ?? ''

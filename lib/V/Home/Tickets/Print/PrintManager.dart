@@ -150,7 +150,7 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
                           //     CircleAvatar(radius: 12, backgroundColor: Colors.grey, child: Center(child: Text("GR", style: TextStyle(color: Colors.white, fontSize: 8)))), "isgr"),
                           getListItem("Short", Icons.local_mall_rounded, "sort"),
                           getListItem("Error Route", Icons.warning_rounded, "errOut"),
-                          getListItem("Print", Icons.print_rounded, "inprint"),
+                          getListItem("Print", Icons.print_rounded, "inprint")
                         ],
                       )),
                 ),
@@ -336,7 +336,7 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
                       title: const Text("Send Ticket"),
                       leading: const Icon(Icons.send_rounded, color: Colors.lightBlue),
                       onTap: () async {
-                        await ticket.sharePdf(context);
+                        await Ticket.sharePdf(context, ticket);
                         Navigator.of(context).pop();
                       }),
                   ListTile(

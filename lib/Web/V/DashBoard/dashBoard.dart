@@ -1,8 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/Web/V/underConstruction.dart';
+import 'package:smartwind/Web/V/DashBoard/CountCards.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_charts/sparkcharts.dart';
+
+import 'DailyInputs.dart';
 
 class DashBoard extends StatefulWidget {
   const DashBoard({Key? key}) : super(key: key);
@@ -22,7 +23,27 @@ class _DashBoardState extends State<DashBoard> {
 
   @override
   Widget build(BuildContext context) {
-    return UnderConstructions();
+    return Scaffold(
+      appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0, actions: [
+        IconButton(
+            onPressed: () {
+              const DailyInputs().show(context);
+            },
+            icon: const Icon(Icons.settings, color: Colors.redAccent)),
+        const SizedBox(width: 50)
+      ]),
+      body: const Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Card(
+          child: SizedBox(
+              // height: 700,
+              child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: CountCards(),
+          )),
+        ),
+      ),
+    );
 
     return Scaffold(
       body: SingleChildScrollView(

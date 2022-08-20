@@ -81,58 +81,59 @@ class _CSState extends State<CS> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    // if (selectedPage != null && _pdfController1==null) {
-    //   _pdfController1 = PdfController(document: PdfDocument.openFile(selectedPage), initialPage: 0);
-    // }
-
     var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
-    return selectedPage == null
-        ? SelectPdfPage(ticket, (selectedPage) {
-            setState(() {
-              this.selectedPage = selectedPage;
-              _pdfController1 = PdfController(document: PdfDocument.openFile(selectedPage), initialPage: 0);
-            });
-          })
-        : Scaffold(
-            body: _tabBarController == null
-                ? Container()
-                : isPortrait
-                    ? DefaultTabController(
-                        length: tabs.length,
-                        child: Scaffold(
-                            backgroundColor: Colors.white,
-                            appBar: AppBar(
-                              toolbarHeight: 0,
-                              automaticallyImplyLeading: false,
-                              backgroundColor: Colors.green,
-                              elevation: 4.0,
-                              bottom: TabBar(
-                                controller: _tabBarController,
-                                indicatorWeight: 4.0,
-                                indicatorColor: Colors.white,
-                                isScrollable: true,
-                                tabs: [
-                                  for (final tab in tabs) Tab(text: tab),
-                                ],
-                              ),
-                            ),
-                            body: Column(
-                              children: [
-                                Expanded(
-                                  child: TabBarView(physics: const NeverScrollableScrollPhysics(), controller: _tabBarController, children: [getPdf(1), getPdf(2)]),
-                                ),
-                                Container(height: 30, color: Colors.blue),
-                                Expanded(
-                                    child: Stack(
-                                  children: [
-                                    _webView,
-                                    if (_loading) const Center(child: CircularProgressIndicator()),
-                                  ],
-                                ))
-                              ],
-                            )),
-                      )
-                    : SafeArea(child: _webView));
+    var height = MediaQuery.of(context).size.height;
+
+    if (selectedPage == null) {
+      return SelectPdfPage(ticket, (selectedPage) {
+        setState(() {
+          this.selectedPage = selectedPage;
+          _pdfController1 = PdfController(document: PdfDocument.openFile(selectedPage), initialPage: 0);
+        });
+      });
+    }
+    return Scaffold(
+        body: Stack(
+      children: [
+        Positioned(
+          top: 0,
+          height: (height / 2) - 24,
+          left: 0,
+          right: 0,
+          child: DefaultTabController(
+            length: tabs.length,
+            child: Scaffold(
+                backgroundColor: Colors.white,
+                appBar: AppBar(
+                  toolbarHeight: 0,
+                  automaticallyImplyLeading: false,
+                  backgroundColor: Colors.green,
+                  elevation: 4.0,
+                  bottom: TabBar(
+                    controller: _tabBarController,
+                    indicatorWeight: 4.0,
+                    indicatorColor: Colors.white,
+                    isScrollable: true,
+                    tabs: [
+                      for (final tab in tabs) Tab(text: tab),
+                    ],
+                  ),
+                ),
+                body: TabBarView(physics: const NeverScrollableScrollPhysics(), controller: _tabBarController, children: [getPdf(1), getPdf(2)])),
+          ),
+        ),
+        Positioned(top: height / 2, left: 0, right: 0, child: const Divider(height: 30, thickness: 30)),
+        Positioned(
+            bottom: 0,
+            height: isPortrait ? (height / 2) - 24 : height,
+            left: 0,
+            right: 0,
+            child: Stack(
+              children: [_webView, if (_loading) const Center(child: CircularProgressIndicator())],
+            ))
+      ],
+    ));
+    // : SafeArea(child: _webView));
   }
 
   var errorMessage;

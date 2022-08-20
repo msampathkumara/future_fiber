@@ -183,7 +183,7 @@ class __LoadingState extends State<_Loading> {
                   ? const SizedBox()
                   : Center(
                       child: Container(
-                        color: Colors.yellow,
+                      color: Colors.yellow,
                       padding: const EdgeInsets.all(7),
                       width: 150,
                       height: 50,
@@ -269,8 +269,8 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
             cells: [
               DataCell(ListTile(
                   visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-                  title: Text('${kit.ticket?.mo}'),
-                  subtitle: Text('${kit.ticket?.oe}', style: const TextStyle(color: Colors.deepOrange, fontSize: 12)))),
+                  title: TextMenu(child: Text(kit.ticket?.mo ?? kit.ticket?.oe ?? '')),
+                  subtitle: TextMenu(child: Text(kit.ticket?.oe ?? '', style: const TextStyle(color: Colors.deepOrange, fontSize: 12))))),
               DataCell(Text((kit.client) ?? "")),
               DataCell(Text((kit.shortageType) ?? "")),
               DataCell(Wrap(
@@ -292,12 +292,12 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                               order(kit);
                             },
                             child: const Text("Order"))),
-                  IconButton(
-                    icon: const Icon(Icons.more_vert_rounded),
-                    onPressed: () {
-                      // showKitOptions(kit, context, context);
-                    },
-                  ),
+                  // IconButton(
+                  //   icon: const Icon(Icons.more_vert_rounded),
+                  //   onPressed: () {
+                  //     // showKitOptions(kit, context, context);
+                  //   },
+                  // ),
                 ],
               ))
             ],

@@ -1,13 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pdfx/pdfx.dart';
-
 // import 'package:native_pdf_view/native_pdf_view.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Home/BlueBook/BlueBook.dart';
-import 'package:smartwind/V/Home/Tickets/ProductionPool/Finish/FinishCheckList.dart';
 
 import '../../M/AppUser.dart';
+import '../Home/Tickets/ProductionPool/Finish/FinishCheckList.dart';
 
 class TicketPdfViewer extends StatefulWidget {
   final Ticket ticket;
@@ -71,13 +71,20 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
                   } else if (s == ActionMenuItems.BlueBook) {
                     var data = await Navigator.push(context, MaterialPageRoute(builder: (context) => BlueBook(ticket: widget.ticket)));
                   } else if (s == ActionMenuItems.Share) {
-                    await widget.ticket.sharePdf(context);
+                    await Ticket.sharePdf(context, widget.ticket);
                   } else if (s == ActionMenuItems.Finish) {
                     await showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return FinishCheckList(widget.ticket);
                         });
+                    if (mounted) {
+                      int count = 0;
+                      Navigator.popUntil(context, (route) {
+                        return count++ == 2;
+                      });
+                      //   await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const ProductionPool()), (Route<dynamic> route) => route.isFirst);
+                    }
                   }
                 },
                 itemBuilder: (BuildContext context) {
@@ -86,7 +93,8 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
                     {'action': ActionMenuItems.BlueBook, 'icon': Icons.menu_book_rounded, 'text': "Blue Book", "color": Colors.blueAccent},
                     {'action': ActionMenuItems.ShippingSystem, 'icon': Icons.directions_boat_rounded, 'text': "Shipping System", "color": Colors.brown},
                     {'action': ActionMenuItems.CS, 'icon': Icons.pivot_table_chart_rounded, 'text': "CS", "color": Colors.green},
-                    {'action': ActionMenuItems.Finish, 'icon': Icons.check_circle_outline_outlined, 'text': "Finish", "color": Colors.green}
+                    if (widget.ticket.isStarted && (widget.ticket.nowAt == AppUser.getSelectedSection()?.id) && AppUser.havePermissionFor(Permissions.FINISH_TICKET) && (!kIsWeb))
+                      {'action': ActionMenuItems.Finish, 'icon': Icons.check_circle_outline_outlined, 'text': "Finish", "color": Colors.green}
                   }.map((choice) {
                     return PopupMenuItem<ActionMenuItems>(
                       value: (choice["action"] as ActionMenuItems),
@@ -109,11 +117,11 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
         ]),
         floatingActionButton: (AppUser.havePermissionFor(Permissions.EDIT_ANY_PDF)) && (widget.ticket.isStarted)
             ? FloatingActionButton.extended(
-                icon: const Icon(Icons.edit_outlined),
-                label: const Text("Edit"),
-                onPressed: () async {
-                  widget.onClickEdit();
-                })
+            icon: const Icon(Icons.edit_outlined),
+            label: const Text("Edit"),
+            onPressed: () async {
+              widget.onClickEdit();
+            })
             : null);
   }
 

@@ -1,7 +1,9 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/UserRFCredentials.dart';
+import 'package:smartwind/res.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../../../C/Api.dart';
@@ -52,12 +54,12 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
 
     _tabBarController = TabController(length: tabs.length, vsync: this);
 
-    DefaultAssetBundle.of(context).loadString('assets/js1.txt').then((value) {
+    DefaultAssetBundle.of(context).loadString(Res.js1).then((value) {
+      print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
       jsString = setupData(value);
       _webView = WebView(
-        // initialUrl:
-        //     'https://www.w3schools.com/howto/howto_css_register_form.asp',
-        initialUrl: "http://10.200.4.31/webclient/",
+        initialUrl: 'https://www.w3schools.com/howto/howto_css_register_form.asp',
+        // initialUrl: "http://10.200.4.31/webclient/",
         javascriptMode: JavascriptMode.unrestricted,
         onWebViewCreated: (WebViewController webViewController) {
           print('WebViewController set');
@@ -140,9 +142,22 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
               icon: const Icon(Icons.check_circle_outline_outlined),
               label: const Text("Finish"),
               onPressed: () async {
-                var r = await Api.post("tickets/finish", {'erpDone': erpNotWorking ? 0 : 1, 'ticket': ticket.id.toString(), 'doAt': operationMinMax.doAt.toString()});
+                var v = await LoadingDialog(Api.post("tickets/finish", {
+                  'erpDone': erpNotWorking ? 0 : 1,
+                  'ticket': ticket.id.toString(),
+                  'userSectionId': AppUser.getSelectedSection()?.id,
+                  'doAt': operationMinMax.doAt.toString()
+                }).then((res) {
+                  Map data = res.data;
+                  print(data);
 
-                if (mounted) Navigator.pop(context, true);
+                  if (data["errorResponce"] != null) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${data["errorResponce"]["message"]}"), backgroundColor: Colors.red));
+                  }
+                  return data["errorResponce"] == null;
+                }));
+
+                if (mounted) Navigator.pop(context, v);
               },
             ), // set it to false
           ),
@@ -261,6 +276,22 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
           print('Call Finish ');
 
           setState(() {});
+        });
+  }
+
+  Future LoadingDialog(Future future) async {
+    return await showDialog(
+        context: context,
+        builder: (BuildContext context1) {
+          future.then((value) {
+            Navigator.of(context1).pop(value);
+          });
+
+          return AlertDialog(
+              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
+              content: Builder(builder: (context) {
+                return const SizedBox(height: 150, width: 50, child: Center(child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator())));
+              }));
         });
   }
 }

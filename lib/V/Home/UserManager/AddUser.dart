@@ -35,15 +35,15 @@ class AddUser extends StatefulWidget {
 }
 
 class _AddUserState extends State<AddUser> {
-  NsUser nsUser = new NsUser();
+  NsUser nsUser = NsUser();
 
   TextStyle stStyle = const TextStyle(color: Colors.black, fontSize: 18);
 
-  final TextEditingController _phoneNumberControll = new TextEditingController();
-  final TextEditingController _emaiAddressControll = new TextEditingController();
-  final TextEditingController _epfNumberControll = new TextEditingController();
+  final TextEditingController _phoneNumberControll = TextEditingController();
+  final TextEditingController _emailAddressControll = TextEditingController();
+  final TextEditingController _epfNumberControll = TextEditingController();
 
-  Section? selectedSection = new Section();
+  Section? selectedSection = Section();
 
   Uint8List? imageByte;
 
@@ -171,7 +171,7 @@ class _AddUserState extends State<AddUser> {
                             textScaleFactor: 1.5,
                           ),
                         ),
-                  Text('#${nsUser.uname}', style: const TextStyle(color: Colors.blue))
+                        Text('#${nsUser.uname}', style: const TextStyle(color: Colors.blue))
                       ]),
                     ),
                   if (showFormUi)
@@ -265,10 +265,10 @@ class _AddUserState extends State<AddUser> {
                                                 keyboardType: TextInputType.emailAddress,
                                                 inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                                                 validator: (input) => Validations.isValidEmail(input) ? null : "Check your email",
-                                                controller: _emaiAddressControll,
+                                                controller: _emailAddressControll,
                                                 onFieldSubmitted: (t) {
                                                   nsUser.addEmailAddress(t);
-                                                  _emaiAddressControll.text = "";
+                                                  _emailAddressControll.text = "";
                                                   setState(() {});
                                                 }),
                                             Align(
@@ -285,7 +285,7 @@ class _AddUserState extends State<AddUser> {
                                                             onTapDown: (TapDownDetails details) {
                                                               _showPopupmenu(details.globalPosition, (val) {
                                                                 if (val == 1) {
-                                                                  _emaiAddressControll.text = number;
+                                                                  _emailAddressControll.text = number;
                                                                   nsUser.removeEmail(number);
                                                                 } else {
                                                                   nsUser.removeEmail(number);

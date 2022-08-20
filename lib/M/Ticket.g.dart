@@ -47,13 +47,14 @@ class TicketAdapter extends TypeAdapter<Ticket> {
       ..isQa = fields[29] == null ? 0 : fields[29] as int
       ..completedOn = fields[30] as String?
       ..isStarted = fields[31] == null ? false : fields[31] as bool
-      ..haveComments = fields[32] == null ? false : fields[32] as bool;
+      ..haveComments = fields[32] == null ? false : fields[32] as bool
+      ..openAny = fields[33] == null ? false : fields[33] as bool;
   }
 
   @override
   void write(BinaryWriter writer, Ticket obj) {
     writer
-      ..writeByte(31)
+      ..writeByte(32)
       ..writeByte(0)
       ..write(obj.mo)
       ..writeByte(1)
@@ -115,7 +116,9 @@ class TicketAdapter extends TypeAdapter<Ticket> {
       ..writeByte(31)
       ..write(obj.isStarted)
       ..writeByte(32)
-      ..write(obj.haveComments);
+      ..write(obj.haveComments)
+      ..writeByte(33)
+      ..write(obj.openAny);
   }
 
   @override
@@ -165,6 +168,7 @@ Ticket _$TicketFromJson(Map<String, dynamic> json) => Ticket()
   ..completedOn = json['completedOn'] as String?
   ..isStarted = json['isStarted'] == null ? false : Ticket.boolFromO(json['isStarted'])
   ..haveComments = json['haveComments'] == null ? false : Ticket.boolFromO(json['haveComments'])
+  ..openAny = json['openAny'] == null ? false : Ticket.boolFromO(json['openAny'])
   ..loading = json['loading'] as bool? ?? false;
 
 Map<String, dynamic> _$TicketToJson(Ticket instance) => <String, dynamic>{
@@ -199,5 +203,6 @@ Map<String, dynamic> _$TicketToJson(Ticket instance) => <String, dynamic>{
       'completedOn': instance.completedOn,
       'isStarted': Ticket.boolToInt(instance.isStarted),
       'haveComments': Ticket.boolToInt(instance.haveComments),
+      'openAny': Ticket.boolToInt(instance.openAny),
       'loading': instance.loading,
     };

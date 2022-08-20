@@ -39,8 +39,6 @@ class _KitViewState extends State<KitView> {
 
   late KIT _kit;
 
-  int? _canSend;
-
   late List<KIT> kits;
 
   List<Message> kitComments = [];
@@ -128,7 +126,7 @@ class _KitViewState extends State<KitView> {
                                 Expanded(
                                   child: SizedBox(
                                     width: double.infinity,
-                                    child: DataTable2(smRatio: 0.3, columns: const [
+                                    child: DataTable2(smRatio: 0.2, columns: const [
                                       DataColumn2(label: Text(''), size: ColumnSize.S),
                                       DataColumn2(label: Text('Item'), size: ColumnSize.L),
                                       DataColumn2(label: Text('Qty'), size: ColumnSize.M),
@@ -198,7 +196,7 @@ class _KitViewState extends State<KitView> {
                 ),
               ),
               SizedBox(
-                  width: 400,
+                  width: 395,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Card(

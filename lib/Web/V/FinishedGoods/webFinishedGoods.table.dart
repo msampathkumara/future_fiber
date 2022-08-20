@@ -309,11 +309,11 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                         TicketChatView(ticket).show(context);
                       }),
                   const Spacer(),
-                  if (ticket.inPrint == 1)
-                    IconButton(
-                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)),
-                      onPressed: () {},
-                    ),
+                  // if (ticket.inPrint == 1)
+                  //   IconButton(
+                  //     icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)),
+                  //     onPressed: () {},
+                  //   ),
                   if (ticket.isHold == 1)
                     IconButton(
                       icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.stop, color: Colors.black)),

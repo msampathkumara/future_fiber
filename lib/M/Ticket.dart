@@ -162,6 +162,10 @@ class Ticket extends DataObject {
   @JsonKey(defaultValue: false, includeIfNull: true, fromJson: boolFromO, toJson: boolToInt)
   bool haveComments = false;
 
+  @HiveField(33, defaultValue: false)
+  @JsonKey(defaultValue: false, includeIfNull: true, fromJson: boolFromO, toJson: boolToInt)
+  bool openAny = false;
+
   @JsonKey(ignore: true)
   File? ticketFile;
 
@@ -197,95 +201,27 @@ class Ticket extends DataObject {
     }
   }
 
-  Future<File?> _getFile(context, {onReceiveProgress}) async {
-    final key = GlobalKey<LoadingState>();
-
-    var loadingWidget = Loading(key: key, loadingText: "Downloading Ticket");
-    loadingWidget.show(context);
-
-    var dio = Dio();
-    String filePath;
-    if (kIsWeb) {
-      filePath = isStandard ? '/st$id.pdf' : '/$id.pdf';
-    } else {
-      var ed = await getExternalStorageDirectory();
-      filePath = isStandard ? '${ed!.path}/st$id.pdf' : '${ed!.path}/$id.pdf';
-    }
-
-    final user = FirebaseAuth.instance.currentUser;
-    final idToken = await user!.getIdToken();
-    dio.options.headers['content-Type'] = 'application/json';
-    dio.options.headers["authorization"] = idToken;
-    String queryString = Uri(queryParameters: {"id": id.toString()}).query;
-
-    Response response;
-    try {
-      var path = isStandard ? "tickets/standard/getPdf?" : 'tickets/getTicketFile?';
-
-      await dio.download(Server.getServerApiPath(path + queryString), filePath, deleteOnError: true, onReceiveProgress: (received, total) {
-        // print("${received}/${total}");
-        int percentage = ((received / total) * 100).floor();
-        key.currentState?.onProgressChange(percentage);
-        if (onReceiveProgress != null) {
-          onReceiveProgress(percentage);
-        }
-      }).then((value) async {
-        response = value;
-        print('+++++++++++++++++++++++++++++++++++++++++++++');
-        print(response.headers["fileVersion"].toString());
-        String fileVersion = response.headers["fileVersion"]![0];
-        await setLocalFileVersion(int.parse(fileVersion), getTicketType());
-      });
-    } on DioError catch (e) {
-      if (e.response != null) {
-        print('"******************************************** response');
-        print(e.response.toString());
-        if (e.response!.statusCode == 404) {
-          loadingWidget.close(context);
-          var errorView = ErrorMessageView(
-            errorMessage: "File Not Found",
-            icon: Icons.sd_card_alert,
-          );
-          await errorView.show(context);
-          return Future.value(null);
-        }
-
-        print(e.response!.statusCode.toString());
-        print(e.response!.data);
-        print(e.response!.headers.toString());
-      } else {
-        print(e.message);
-      }
-    }
-
-    loadingWidget.close(context);
-    File file = File(filePath);
-    ticketFile = file;
-    return file;
-  }
-
-  Future<File?> getFile(context, {onReceiveProgress}) async {
-    File file = await getLocalFile();
-    // var i = await getLocalFileVersion();
-    var isNew = await isFileNew();
+  static Future<File?> getFile(Ticket ticket, context, {onReceiveProgress}) async {
+    File file = await ticket.getLocalFile();
+    var isNew = await Ticket.isFileNew(ticket);
     if (isNew && file.existsSync()) {
-      return ticketFile;
+      return ticket.ticketFile;
     } else {
-      ticketFile = await _getFile(context);
+      ticket.ticketFile = await _getFile(ticket, context);
     }
-    return ticketFile;
+    return ticket.ticketFile;
   }
 
-  Future<void> open(context, {onReceiveProgress}) async {
-    if (isHold == 1) {
+  static Future<void> open(context, Ticket ticket, {onReceiveProgress}) async {
+    if (ticket.isHold == 1) {
       return;
     }
     if (kIsWeb) {
       var loadingWidget = const Loading(loadingText: "Downloading Ticket");
       loadingWidget.show(context);
 
-      var path = isStandard ? "tickets/standard/getPdf?" : 'tickets/getTicketFile?';
-      String queryString = Uri(queryParameters: {"id": id.toString()}).query;
+      var path = ticket.isStandard ? "tickets/standard/getPdf?" : 'tickets/getTicketFile?';
+      String queryString = Uri(queryParameters: {"id": ticket.id.toString()}).query;
       final idToken = await AppUser.getIdToken(false);
 
       Dio dio = Dio();
@@ -318,19 +254,19 @@ class Ticket extends DataObject {
       return;
     }
 
-    File file = await getLocalFile();
-    var isNew = await isFileNew();
+    File file = await ticket.getLocalFile();
+    var isNew = await Ticket.isFileNew(ticket);
 
     print('file ${file.existsSync()}');
 
     if (isNew && file.existsSync()) {
       print("File exists ");
-      view(context);
+      view(ticket, context);
     } else {
       print("File not exists or old ");
-      _getFile(context).then((file) async {
+      _getFile(ticket, context).then((file) async {
         if (file != null) {
-          view(context);
+          view(ticket, context);
         }
       });
     }
@@ -348,8 +284,8 @@ class Ticket extends DataObject {
     return file;
   }
 
-  Future openEditor() async {
-    Map t = toJson();
+  static Future openEditor(Ticket ticket) async {
+    Map t = ticket.toJson();
     t["openSections"] = "";
     t["crossProList"] = "";
     t["crossPro"] = "";
@@ -358,25 +294,25 @@ class Ticket extends DataObject {
     t.keys.where((k) => (t[k] ?? "").toString().isEmpty).toList().forEach(t.remove);
     print("____________________________________________________________________________________________________________________________*****");
     print(t.toString());
-    var serverUrl = Server.getServerApiPath(isStandard ? "tickets/standard/uploadEdits" : "tickets/uploadEdits");
+    var serverUrl = Server.getServerApiPath(ticket.isStandard ? "tickets/standard/uploadEdits" : "tickets/uploadEdits");
     var userCurrentSection = (AppUser.getSelectedSection()?.id ?? 0).toString();
-    return await platform
-        .invokeMethod('editPdf', {'path': ticketFile!.path, 'userCurrentSection': userCurrentSection.toString(), 'fileID': id, 'ticket': t.toString(), "serverUrl": serverUrl});
+    return await platform.invokeMethod(
+        'editPdf', {'path': ticket.ticketFile!.path, 'userCurrentSection': userCurrentSection.toString(), 'fileID': ticket.id, 'ticket': t.toString(), "serverUrl": serverUrl});
   }
 
   static const platform = MethodChannel('editPdf');
 
-  isFileNew() async {
-    var ticket = isStandard ? HiveBox.standardTicketsBox.get(id) : HiveBox.ticketBox.get(id);
-    var f = HiveBox.localFileVersionsBox.values.where((element) => element.type == getTicketType().getValue() && element.ticketId == id);
+  static isFileNew(Ticket ticket) async {
+    var ticket1 = ticket.isStandard ? HiveBox.standardTicketsBox.get(ticket.id) : HiveBox.ticketBox.get(ticket.id);
+    var f = HiveBox.localFileVersionsBox.values.where((element) => element.type == ticket.getTicketType().getValue() && element.ticketId == ticket.id);
     if (f.isNotEmpty) {
       LocalFileVersion fileVersion = f.first;
       print("---------------------------fileVersion.toJson()");
       print(fileVersion.toJson().toString());
-      print(ticket?.fileVersion.toString());
+      print(ticket1?.fileVersion.toString());
 
-      if (ticket != null) {
-        if (ticket.fileVersion > fileVersion.version) {
+      if (ticket1 != null) {
+        if (ticket1.fileVersion > fileVersion.version) {
           return false;
         }
         return true;
@@ -408,9 +344,9 @@ class Ticket extends DataObject {
     }
   }
 
-  Future<List<TicketFlag>> getFlagList(String flagType) async {
+  static Future<List<TicketFlag>> getFlagList(String flagType, Ticket ticket) async {
     print("tickets/flags/getList");
-    return Api.get("tickets/flags/getList", {"ticket": id.toString(), "type": flagType}).then((response) {
+    return Api.get("tickets/flags/getList", {"ticket": ticket.id.toString(), "type": flagType}).then((response) {
       print(response.data);
       print("-----------------vvvvvvvvvvv-----------------------");
       Map<String, dynamic> res = response.data;
@@ -426,20 +362,20 @@ class Ticket extends DataObject {
     });
   }
 
-  sharePdf(context) async {
+  static sharePdf(context, Ticket ticket) async {
     // var status = await Permission.storage.isDenied;
     if (await Permission.storage.isDenied) {
       await Permission.storage.request();
     }
-    File? file = await getFile(context);
+    File? file = await getFile(ticket, context);
     if (file != null && file.existsSync()) {
       print('--------------------- ${file.path}');
 
-      File? file1 = await file.copy("${file.parent.path}/${(mo ?? oe ?? id)}.pdf");
+      File? file1 = await file.copy("${file.parent.path}/${(ticket.mo ?? ticket.oe ?? ticket.id)}.pdf");
       print('copied');
       await FlutterShare.shareFile(
         chooserTitle: "Share Ticket",
-        title: mo ?? oe ?? "$id.pdf",
+        title: ticket.mo ?? ticket.oe ?? "${ticket.id}.pdf",
         text: "share ticket file",
         filePath: file1.path,
       );
@@ -454,12 +390,12 @@ class Ticket extends DataObject {
   }
 
   Future openInShippingSystem(BuildContext context) async {
-    await getFile(context);
+    await getFile(this, context);
     return Navigator.push(context, MaterialPageRoute(builder: (context) => ShippingSystem(this)));
   }
 
   Future openInCS(BuildContext context) async {
-    var file = await getFile(context);
+    var file = await getFile(this, context);
     if (file == null) {
       return false;
     }
@@ -490,8 +426,8 @@ class Ticket extends DataObject {
     return HiveBox.ticketBox.get(id, defaultValue: null);
   }
 
-  Future start(context) {
-    return Api.post("tickets/start", {"ticket": id.toString()}).then((response) {
+  static Future start(Ticket ticket, context) {
+    return Api.post("tickets/start", {"ticket": ticket.id.toString()}).then((response) {
       if (kDebugMode) {
         print(response.data);
         print("-----------------vvvvvvvvxxxxxxxxxxvvv-----------------------");
@@ -503,11 +439,11 @@ class Ticket extends DataObject {
     });
   }
 
-  Future view(context) async {
+  static Future view(Ticket ticket, context) async {
     TicketPdfViewer ticketPdfViwer;
     GlobalKey<TicketPdfViewerState> myKey = GlobalKey();
-    ticketPdfViwer = TicketPdfViewer(this, onClickEdit: () async {
-      var x = await openEditor();
+    ticketPdfViwer = TicketPdfViewer(ticket, onClickEdit: () async {
+      var x = await Ticket.openEditor(ticket);
       if (x == true) {
         await showDialog(
             context: context,
@@ -522,11 +458,11 @@ class Ticket extends DataObject {
                   }));
             });
 
-        File file = await getLocalFile();
+        File file = await ticket.getLocalFile();
         await file.delete(recursive: true);
-        await getFile(context);
+        await Ticket.getFile(ticket, context);
         myKey.currentState?.close();
-        view(context);
+        view(ticket, context);
       }
     }, key: myKey);
     return await ticketPdfViwer.show(context);

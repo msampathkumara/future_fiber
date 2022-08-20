@@ -4,14 +4,11 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pdf_render/pdf_render_widgets.dart';
-// import 'package:pdfx/pdfx.dart';
 import 'package:smartwind/M/QC.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/Web/V/QC/QFileView.dart';
 import 'package:smartwind/res.dart';
 import 'package:universal_html/html.dart' as html;
-
-// import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../C/Api.dart';
 import '../../../V/Widgets/UserImage.dart';
@@ -59,7 +56,7 @@ class _WebTicketQViewState extends State<WebTicketQView> {
 
   editUserUi() {
     return Scaffold(
-        appBar: AppBar(actions: [
+        appBar: AppBar(title: Text(ticket.mo ?? ticket.oe ?? ''), actions: [
           if (!_pdfLoading && selectedQc != null)
             IconButton(
                 onPressed: () {
@@ -96,9 +93,14 @@ class _WebTicketQViewState extends State<WebTicketQView> {
                               leading: UserImage(nsUser: qc.user, radius: 16, padding: 2),
                               title: Row(children: [
                                 const SizedBox(width: 4),
-                                Wrap(
-                                    direction: Axis.vertical,
-                                    children: [Text("${qc.user?.name}"), Text("${qc.user?.uname}", style: const TextStyle(color: Colors.blue, fontSize: 12))])
+                                Wrap(direction: Axis.vertical, children: [
+                                  Text("${qc.user?.name}"),
+                                  Text("${qc.user?.uname}", style: const TextStyle(color: Colors.blue, fontSize: 12)),
+                                  Text(
+                                    "${qc.getSection()?.sectionTitle}@${qc.getSection()?.factory}",
+                                    style: const TextStyle(fontSize: 12, color: Colors.redAccent),
+                                  )
+                                ])
                               ]),
                               subtitle: Text(qc.getDateTime(), style: const TextStyle(fontSize: 12)));
                         },
@@ -134,6 +136,7 @@ class _WebTicketQViewState extends State<WebTicketQView> {
                               _data = value;
                             });
                           },
+                          trailing: Text("${qc.getSection()?.sectionTitle} @ ${qc.getSection()?.factory}", style: const TextStyle(color: Colors.redAccent)),
                           leading: UserImage(nsUser: qc.user, radius: 16, padding: 2),
                           title: Row(children: [
                             const SizedBox(width: 4),

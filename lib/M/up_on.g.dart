@@ -19,7 +19,7 @@ class UponsAdapter extends TypeAdapter<Upons> {
     return Upons()
       ..tickets = fields[1] == null ? 0 : fields[1] as int
       ..deletedTicketsIds = fields[2] == null ? 0 : fields[2] as int
-      ..completedTicketsIds = fields[3] == null ? 0 : fields[3] as int
+      ..completedTickets = fields[3] == null ? 0 : fields[3] as int
       ..users = fields[4] == null ? 0 : fields[4] as int
       ..factorySections = fields[5] == null ? 0 : fields[5] as int
       ..standardTickets = fields[6] == null ? 0 : fields[6] as int
@@ -36,7 +36,7 @@ class UponsAdapter extends TypeAdapter<Upons> {
       ..writeByte(2)
       ..write(obj.deletedTicketsIds)
       ..writeByte(3)
-      ..write(obj.completedTicketsIds)
+      ..write(obj.completedTickets)
       ..writeByte(4)
       ..write(obj.users)
       ..writeByte(5)
@@ -65,17 +65,18 @@ Upons _$UponsFromJson(Map<String, dynamic> json) => Upons()
   ..uptime = json['uptime'] as int? ?? 0
   ..tickets = json['tickets'] as int? ?? 0
   ..deletedTicketsIds = json['deletedTicketsIds'] as int? ?? 0
-  ..completedTicketsIds = json['completedTicketsIds'] as int? ?? 0
+  ..completedTickets = json['completedTickets'] as int? ?? 0
   ..users = json['users'] as int? ?? 0
   ..factorySections = json['factorySections'] as int? ?? 0
   ..standardTickets = json['standardTickets'] as int? ?? 0;
 
-Map<String, dynamic> _$UponsToJson(Upons instance) => <String, dynamic>{
+Map<String, dynamic> _$UponsToJson(Upons instance) =>
+    <String, dynamic>{
       'id': instance.id,
       'uptime': instance.uptime,
       'tickets': instance.tickets,
       'deletedTicketsIds': instance.deletedTicketsIds,
-      'completedTicketsIds': instance.completedTicketsIds,
+      'completedTickets': instance.completedTickets,
       'users': instance.users,
       'factorySections': instance.factorySections,
       'standardTickets': instance.standardTickets,

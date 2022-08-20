@@ -3,6 +3,8 @@ import 'package:smartwind/M/Chat/message.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
 
+import '../V/ProductionPool/copy.dart';
+
 class ChatBubble extends StatefulWidget {
   final Message message;
   final isSelf;
@@ -43,7 +45,7 @@ class _ChatBubbleState extends State<ChatBubble> {
             minLeadingWidth: 32,
             horizontalTitleGap: 0,
             title: Padding(
-              padding: const EdgeInsets.only(left: 32.0),
+              padding: const EdgeInsets.only(left: 0.0),
               child: Material(
                   elevation: 4,
                   borderRadius: selfBorderRadius,
@@ -53,9 +55,13 @@ class _ChatBubbleState extends State<ChatBubble> {
                     child: Text(widget.message.text, style: const TextStyle(color: Colors.white)),
                   )),
             ),
-            subtitle: const Align(
-              child: Text("Nov 7, 2020 at 14:13", style: TextStyle(fontSize: 8)),
-              alignment: Alignment.bottomRight,
+            trailing: UserImage(nsUser: user, radius: 12, padding: 0),
+            subtitle: Row(
+              children: [
+                Text("${user?.name}", style: const TextStyle(fontSize: 8)),
+                const Spacer(),
+                Align(alignment: Alignment.bottomRight, child: Text(widget.message.dnt, style: const TextStyle(fontSize: 8))),
+              ],
             ))
         : ListTile(
             contentPadding: EdgeInsets.zero,
@@ -67,13 +73,7 @@ class _ChatBubbleState extends State<ChatBubble> {
                 elevation: 4,
                 borderRadius: borderRadius,
                 color: Colors.grey,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(widget.message.text, style: const TextStyle(color: Colors.white)),
-                )),
-            subtitle: Align(
-              child: Text(widget.message.dnt, style: const TextStyle(fontSize: 8)),
-              alignment: Alignment.bottomRight,
-            ));
+                child: Padding(padding: const EdgeInsets.all(8.0), child: TextMenu(child: Text(widget.message.text, style: const TextStyle(color: Colors.white))))),
+            subtitle: Align(alignment: Alignment.bottomRight, child: Text(widget.message.dnt, style: const TextStyle(fontSize: 8))));
   }
 }

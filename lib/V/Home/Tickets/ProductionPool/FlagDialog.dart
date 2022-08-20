@@ -232,7 +232,7 @@ class _FlagDialogNewState extends State<FlagDialogNew> {
   }
 
   void loadData() {
-    ticket.getFlagList(flagType.getValue()).then((list) {
+    Ticket.getFlagList(flagType.getValue(), ticket).then((list) {
       commentList = list;
 
       if (commentList!.isEmpty) {

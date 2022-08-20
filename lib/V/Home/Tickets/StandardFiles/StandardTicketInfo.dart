@@ -3,8 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/StandardTicket.dart';
+import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/TicketHistory.dart';
 import 'package:smartwind/V/Home/Tickets/TicketInfo/info_History.dart';
 import 'package:timeline_tile/timeline_tile.dart';
@@ -40,7 +40,7 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
 
   List<TicketHistory> historyList = [];
 
-  var _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+  final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   late DbChangeCallBack _dbChangeCallBack;
 
@@ -119,15 +119,15 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
                       ],
                     ),
                   ),
-                  indicatorStyle: IndicatorStyle(
-                      indicatorXY: 0.1, width: 40, height: 40, drawGap: true, padding: const EdgeInsets.all(8), indicator: UserImage(nsUser: AppUser.getUser(), radius: 24)));
+                  indicatorStyle:
+                      IndicatorStyle(indicatorXY: 0.1, width: 40, height: 40, drawGap: true, padding: const EdgeInsets.all(8), indicator: UserImage(nsUser: user, radius: 24)));
             }),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.import_contacts),
         onPressed: () {
-          widget.standardTicket.open(context);
+          Ticket.open(context, widget.standardTicket);
         },
       ),
     );
@@ -158,7 +158,7 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
                     children: [
                       Text(_ticket.oe ?? "_", style: ts),
                       Text(_ticket.production ?? "_", style: ts.merge(smallText)),
-                      Text("update on : " + (_ticket.getUpdateDateTime()), style: ts.merge(smallText)),
+                      Text("update on : ${_ticket.getUpdateDateTime()}", style: ts.merge(smallText)),
                       Text("usage : ${_ticket.usedCount} ", style: ts.merge(smallText)),
                     ],
                   ),
@@ -170,7 +170,7 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
                       radius: 50.0,
                       lineWidth: 4.0,
                       percent: (_progress / 100).toDouble(),
-                      center: Text(_progress.toStringAsFixed(2) + "%", style: ts),
+                      center: Text("${_progress.toStringAsFixed(2)}%", style: ts),
                       progressColor: Colors.white,
                       animateFromLastPercent: true,
                       animation: true,

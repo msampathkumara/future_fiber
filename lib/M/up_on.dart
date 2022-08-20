@@ -17,7 +17,7 @@ class Upons extends HiveClass {
 
   @HiveField(3, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
-  int completedTicketsIds = 0;
+  int completedTickets = 0;
 
   @HiveField(4, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)

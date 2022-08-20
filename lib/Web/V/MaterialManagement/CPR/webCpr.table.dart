@@ -35,17 +35,6 @@ class _WebCPRTableState extends State<WebCPRTable> {
 
     columnName = ['ticketName', 'client', 'suppliers', 'shortageType', 'addedOn', 'cprType', 'shipDate', 'status'][columnIndex];
 
-    // switch (columnIndex) {
-    //   case 1:
-    //     columnName = "production";
-    //     break;
-    //   case 2:
-    //     columnName = "usedCount";
-    //     break;
-    //   case 3:
-    //     columnName = "uptime";
-    //     break;
-    // }
     _dessertsDataSource!.sort(columnName, ascending);
     setState(() {
       _sortColumnIndex = columnIndex;
@@ -112,7 +101,7 @@ class _WebCPRTableState extends State<WebCPRTable> {
       AsyncPaginatedDataTable2(
           scrollController: _scrollController,
           showFirstLastButtons: true,
-          smRatio: 0.5,
+          smRatio: 0.4,
           lmRatio: 2.7,
           horizontalMargin: 20,
           checkboxHorizontalMargin: 12,
@@ -285,8 +274,8 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
             cells: [
               DataCell(ListTile(
                   visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-                  title: Text(cpr.ticket?.mo ?? ''),
-                  subtitle: Text(cpr.ticket?.oe ?? '', style: const TextStyle(color: Colors.deepOrange, fontSize: 12)))),
+                  title: TextMenu(child: Text(cpr.ticket?.mo ?? '')),
+                  subtitle: TextMenu(child: Text(cpr.ticket?.oe ?? '', style: const TextStyle(color: Colors.deepOrange, fontSize: 12))))),
               DataCell(Text((cpr.client) ?? "")),
               DataCell(Text((cpr.suppliers.join(',')))),
               DataCell(Text((cpr.shortageType) ?? "")),
@@ -300,7 +289,10 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
               DataCell(IconButton(
                 icon: const Icon(Icons.more_vert_rounded),
                 onPressed: () {
-                  showCprOptions(cpr, context, context);
+                  showCprOptions(cpr, context, context, () {
+                    print('------------------------------------------------refreshDatasource');
+                    refreshDatasource();
+                  });
                 },
               ))
             ],

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/Web/V/MaterialManagement/CPR/TicketSortMaterials.dart';
-import 'package:smartwind/Web/V/Print/ticket_print_list.dart';
 
 import '../../../M/Enums.dart';
 import '../../../M/hive.dart';
@@ -19,7 +18,7 @@ import 'copy.dart';
 class PaginatedDataTable2Demo extends StatefulWidget {
   final Null Function(DessertDataSource dataSource) onInit;
 
-  const PaginatedDataTable2Demo({required this.onInit});
+    const PaginatedDataTable2Demo({Key? key, required this.onInit}) : super(key: key);
 
   @override
   _PaginatedDataTable2DemoState createState() => _PaginatedDataTable2DemoState();
@@ -194,7 +193,7 @@ class DessertDataSource extends DataTableSource {
           ? () {
               if (ticket.hasFile) {
                 if (ticket.isHold == 0) {
-                  ticket.open(context);
+                  Ticket.open(context, ticket);
                 }
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Theme.of(context).errorColor, content: const Text('No file')));
@@ -244,13 +243,13 @@ class DessertDataSource extends DataTableSource {
                   onPressed: () {
                     WebTicketQView(ticket, false).show(context);
                   }),
-            if (ticket.inPrint == 1)
-              IconButton(
-                icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)),
-                onPressed: () {
-                  TicketPrintList(ticket).show(context);
-                },
-              ),
+            // if (ticket.inPrint == 1)
+            //   IconButton(
+            //     icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)),
+            //     onPressed: () {
+            //       TicketPrintList(ticket).show(context);
+            //     },
+            //   ),
             // if (ticket.isCrossPro)
             //   IconButton(
             //       icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.merge_type_rounded, color: Colors.green)),

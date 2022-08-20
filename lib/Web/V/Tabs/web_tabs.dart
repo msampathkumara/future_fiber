@@ -42,37 +42,35 @@ class _WebTabsState extends State<WebTabs> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-            title: Row(
-              children: [
-                Text("Devices", style: mainWidgetsTitleTextStyle),
-                const Spacer(),
-                Wrap(children: [
-                  const SizedBox(width: 20),
-                  SearchBar(
-                      delay: 300,
-                      onSearchTextChanged: (text) {
-                        searchText = text;
-                        loadData();
-                      },
-                      searchController: _controller)
-                ])
-              ],
-            ),
-            backgroundColor: Colors.transparent,
-            elevation: 0),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Material(
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+          title: Row(
+            children: [
+              Text("Devices", style: mainWidgetsTitleTextStyle),
+              const Spacer(),
+              Wrap(children: [
+                const SizedBox(width: 20),
+                SearchBar(
+                    delay: 300,
+                    onSearchTextChanged: (text) {
+                      searchText = text;
+                      loadData();
+                    },
+                    searchController: _controller)
+              ])
+            ],
+          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Material(
             elevation: 4,
             borderRadius: BorderRadius.circular(8),
             child: DeviceDataTable(onInit: (DeviceSourceAsync dataSource) {
               _dataSource = dataSource;
             }, onRequestData: (int page, int startingAt, int count, String sortedBy, bool sortedAsc) {
               return getData(page, startingAt, count, sortedBy, sortedAsc);
-            }, onTap: (Device tab) {
-              TabLog(tab).show(context);
             })),
       ),
       // bottomNavigationBar: BottomAppBar(
@@ -135,7 +133,6 @@ class _WebTabsState extends State<WebTabs> {
       'searchText': searchText,
       'production': _selectedProduction.getValue()
     }).then((res) {
-      print(res.data);
       List tab = res.data["tabs"];
       dataCount = res.data["count"];
 
@@ -146,7 +143,6 @@ class _WebTabsState extends State<WebTabs> {
         requested = false;
       });
     }).catchError((err) {
-      print(err);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(err.toString()),
           action: SnackBarAction(

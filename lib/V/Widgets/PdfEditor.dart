@@ -1,15 +1,10 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:smartwind/M/Ticket.dart';
 
-// import 'package:flutter_full_pdf_viewer/flutter_full_pdf_viewer.dart';
-
 class PdfEditor extends StatefulWidget {
-  // String pathPDF = "";
-  // int fileID = 0;
   final Ticket ticket;
 
   PdfEditor(this.ticket);
@@ -27,7 +22,7 @@ class _PdfEditorState extends State<PdfEditor> {
   void initState() {
     super.initState();
 
-    ppp = new PDFView(
+    ppp = PDFView(
       filePath: widget.ticket.ticketFile!.path,
       enableSwipe: true,
       swipeHorizontal: false,
@@ -86,36 +81,34 @@ class _PdfEditorState extends State<PdfEditor> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text((widget.ticket.mo ?? widget.ticket.oe ?? "") + " ${widget.ticket.mo != null ? "(${widget.ticket.oe})" : ""}  ", style: TextStyle(color: Colors.white)),
+          title: Text("${widget.ticket.mo ?? widget.ticket.oe ?? ""} ${widget.ticket.mo != null ? "(${widget.ticket.oe})" : ""}  ", style: const TextStyle(color: Colors.white)),
           actions: <Widget>[
             IconButton(
-              icon: Icon(Icons.share),
+              icon: const Icon(Icons.share),
               onPressed: () async {
-                await widget.ticket.sharePdf(context);
+                await Ticket.sharePdf(context, widget.ticket);
               },
             ),
           ],
         ),
-        body: Container(
-          child: Stack(
-            children: <Widget>[
-              ppp,
-              // if (errorMessage.isEmpty)Center(
-              //   child: Text(errorMessage),
-              // ),
-              // if(!isReady)
+        body: Stack(
+          children: <Widget>[
+            ppp,
+            // if (errorMessage.isEmpty)Center(
+            //   child: Text(errorMessage),
+            // ),
+            // if(!isReady)
 
-              errorMessage.isEmpty
-                  ? ((!isReady)
-                      ? Center(
-                          child: CircularProgressIndicator(),
-                        )
-                      : Container())
-                  : Center(
-                      child: Text(errorMessage),
-                    )
-            ],
-          ),
+            errorMessage.isEmpty
+                ? ((!isReady)
+                    ? const Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : Container())
+                : Center(
+                    child: Text(errorMessage),
+                  )
+          ],
         )
         // ,
         // floatingActionButton: FutureBuilder<PDFViewController>(

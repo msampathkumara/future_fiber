@@ -15,7 +15,7 @@ class MaterialManagementHomePage extends StatefulWidget {
 }
 
 class _MaterialManagementHomePageState extends State<MaterialManagementHomePage> with SingleTickerProviderStateMixin {
-  bool _menuExpanded = false;
+  bool _menuExpanded = true;
 
   @override
   void initState() {

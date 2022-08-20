@@ -61,9 +61,11 @@ class _SelectSectionBottomSheetState extends State<SelectSectionBottomSheet> {
       ServerResponseMap res = ServerResponseMap.fromJson((response.data));
       var progressList = res.progressList;
 
-      pendingList = progressList.where((p) {
-        return (p.status != 1);
-      }).toList();
+      // pendingList = progressList.where((p) {
+      //   return (p.status != 1);
+      // }).toList();
+
+      pendingList = progressList;
 
       final ids = (pendingList ?? []).map((e) => e.section?.id).toSet();
       (pendingList ?? []).retainWhere((x) => ids.remove(x.section?.id));

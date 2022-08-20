@@ -150,7 +150,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
               Wrap(children: [
                 // flagIcon(Filters.isCrossPro, Icons.merge_type_rounded),
                 flagIcon(Filters.isError, Icons.warning_rounded),
-                flagIcon(Filters.inPrint, Icons.print_rounded),
+                // flagIcon(Filters.inPrint, Icons.print_rounded),
                 flagIcon(Filters.isRush, Icons.offline_bolt_rounded),
                 flagIcon(Filters.isRed, Icons.flag_rounded),
                 flagIcon(Filters.isHold, NsIcons.stop),
@@ -287,7 +287,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
 
   List<Ticket> _load(selectedProduction, section, showAllTickets, searchText, {bySection = false}) {
     // print('ticket count == ${HiveBox.ticketBox.length}');
-    var production = nsUser?.section?.factory;
+    // var production = nsUser?.section?.factory;
     // print('====== == $production');
     // print('====== == ${nsUser?.section?.toJson()}');
 
@@ -493,11 +493,11 @@ class TicketTile extends StatelessWidget {
               // subtitle: Text(ticket.fileVersion.toString()),
               trailing: Wrap(
                 children: [
-                  if (ticket.inPrint == 1)
-                    IconButton(
-                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)),
-                      onPressed: () {},
-                    ),
+                  // if (ticket.inPrint == 1)
+                  //   IconButton(
+                  //     icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)),
+                  //     onPressed: () {},
+                  //   ),
                   if (ticket.isHold == 1)
                     IconButton(
                       icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.stop, color: Colors.black)),

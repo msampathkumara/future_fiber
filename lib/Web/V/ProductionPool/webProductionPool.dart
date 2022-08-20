@@ -62,7 +62,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                 Wrap(children: [
                   // flagIcon(Filters.isCrossPro, Icons.merge_type_rounded, "Filter by cross production"),
                   flagIcon(Filters.isError, Icons.warning_rounded, "Filter by Error Route"),
-                  flagIcon(Filters.inPrint, Icons.print_rounded, "Filter by in print"),
+                  // flagIcon(Filters.inPrint, Icons.print_rounded, "Filter by in print"),
                   flagIcon(Filters.isRush, Icons.offline_bolt_rounded, "Filter by rush"),
                   flagIcon(Filters.isRed, Icons.flag_rounded, "Filter by red flag"),
                   flagIcon(Filters.isHold, NsIcons.stop, "Filter by stop"),

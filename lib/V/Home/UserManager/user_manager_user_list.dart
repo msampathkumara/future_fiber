@@ -202,7 +202,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
           child: RefreshIndicator(
             key: _refreshIndicatorKey,
             onRefresh: () {
-              return HiveBox.getDataFromServer();
+              return HiveBox.getDataFromServer(cleanUsers: true);
             },
             child: Padding(
               padding: const EdgeInsets.only(top: 16),

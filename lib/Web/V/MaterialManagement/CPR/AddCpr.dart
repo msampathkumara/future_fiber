@@ -1,5 +1,4 @@
 import 'package:data_table_2/data_table_2.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
@@ -62,22 +61,23 @@ class _AddCprState extends State<AddCpr> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        theme: ThemeData(
-            textTheme: Theme.of(context).textTheme.apply(),
-            inputDecorationTheme: InputDecorationTheme(
-                border: const OutlineInputBorder(),
-                contentPadding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                labelStyle: const TextStyle(fontSize: 12, decorationColor: Colors.red),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(),
-                  borderRadius: BorderRadius.circular(2.0),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blueGrey.shade50, width: 1.0),
-                  borderRadius: BorderRadius.circular(4.0),
-                ))),
-        home: IfWeb(elseIf: getUi(), child: DialogView(child: getWebUi())));
+    return IfWeb(elseIf: getUi(), child: DialogView(child: getWebUi()));
+    // return MaterialApp(
+    //     theme: ThemeData(
+    //         textTheme: Theme.of(context).textTheme.apply(),
+    //         inputDecorationTheme: InputDecorationTheme(
+    //             border: const OutlineInputBorder(),
+    //             contentPadding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+    //             labelStyle: const TextStyle(fontSize: 12, decorationColor: Colors.red),
+    //             focusedBorder: OutlineInputBorder(
+    //               borderSide: const BorderSide(),
+    //               borderRadius: BorderRadius.circular(2.0),
+    //             ),
+    //             enabledBorder: OutlineInputBorder(
+    //               borderSide: BorderSide(color: Colors.blueGrey.shade50, width: 1.0),
+    //               borderRadius: BorderRadius.circular(4.0),
+    //             ))),
+    //     home: IfWeb(elseIf: getUi(), child: DialogView(child: getWebUi())));
   }
 
   var titleTheme = const TextStyle(fontSize: 12, color: Colors.grey);
@@ -95,16 +95,10 @@ class _AddCprState extends State<AddCpr> {
     List<CprItem> _selectedItems = List.from(selectedItems);
     return Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
-        bottomNavigationBar: BottomAppBar(
-            color: err_msg.isEmpty ? Colors.white : Colors.red,
-            shape: const CircularNotchedRectangle(),
-            child: SizedBox(
-              height: 32,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text("${err_msg}", style: const TextStyle(color: Colors.white)),
-              ),
-            )),
+        // bottomNavigationBar: BottomAppBar(
+        //     color: err_msg.isEmpty ? Colors.white : Colors.red,
+        //     shape: const CircularNotchedRectangle(),
+        //     child: SizedBox(height: 50, child: Padding(padding: const EdgeInsets.all(8.0), child: Text(err_msg, style: const TextStyle(color: Colors.white))))),
         appBar: AppBar(title: Text(cpr.ticket?.mo ?? ''), actions: [
           IconButton(
               onPressed: () {
@@ -235,24 +229,24 @@ class _AddCprState extends State<AddCpr> {
                                                       ),
                                                     );
                                                   }).toList()))))),
-                              if (cpr.ticket!.production == null)
-                                ListTile(
-                                  title: Text("Client", style: titleTheme),
-                                  subtitle: SizedBox(
-                                    width: 200,
-                                    child: Padding(
-                                        padding: const EdgeInsets.all(16.0),
-                                        child: DropdownSearch<String>(
-                                            selectedItem: cpr.client,
-                                            // mode: Mode.BOTTOM_SHEET,
-                                            // showSelectedItem: true,
-                                            items: const ["Upwind", "OD", "Nylon", "OEM"],
-                                            dropdownDecoratorProps: const DropDownDecoratorProps(dropdownSearchDecoration: InputDecoration(hintText: "Select Client")),
-                                            onChanged: (c) {
-                                              cpr.client = c;
-                                            })),
-                                  ),
-                                ),
+                              // if (cpr.ticket!.production == null)
+                              //   ListTile(
+                              //     title: Text("Client", style: titleTheme),
+                              //     subtitle: SizedBox(
+                              //       width: 200,
+                              //       child: Padding(
+                              //           padding: const EdgeInsets.all(16.0),
+                              //           child: DropdownSearch<String>(
+                              //               selectedItem: cpr.client,
+                              //               // mode: Mode.BOTTOM_SHEET,
+                              //               // showSelectedItem: true,
+                              //               items: const ["Upwind", "OD", "Nylon", "OEM"],
+                              //               dropdownDecoratorProps: const DropDownDecoratorProps(dropdownSearchDecoration: InputDecoration(hintText: "Select Client")),
+                              //               onChanged: (c) {
+                              //                 cpr.client = c;
+                              //               })),
+                              //     ),
+                              //   ),
                               Padding(
                                 padding: const EdgeInsets.only(left: 12.0),
                                 child: Text("Suppliers", style: titleTheme),
@@ -383,14 +377,16 @@ class _AddCprState extends State<AddCpr> {
                       Card(
                           child: IconButton(
                               color: Colors.blue,
-                              onPressed: () {
-                                currentMaterial.item = textEditingController.text;
-                                _addMaterialToList(currentMaterial);
-                                currentMaterial = CprItem();
-                                _qtyController.clear();
-                                textEditingController.clear();
-                                setState(() {});
-                              },
+                              onPressed: (currentMaterial.item.isEmpty || currentMaterial.qty.isEmpty)
+                                  ? null
+                                  : () {
+                                      currentMaterial.item = textEditingController.text;
+                                      _addMaterialToList(currentMaterial);
+                                      currentMaterial = CprItem();
+                                      _qtyController.clear();
+                                      textEditingController.clear();
+                                      setState(() {});
+                                    },
                               icon: const Icon(Icons.add_rounded)))
                     ]),
                   ),

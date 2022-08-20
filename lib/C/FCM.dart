@@ -28,6 +28,10 @@ class FCM {
       if (message.from == "/topics/userUpdate_$userId") {
         AppUser.refreshUserData();
       } else if (message.from == "/topics/ticketComplete") {
+        if (message.data["ticketId"] != null) {
+          await HiveBox.deleteTicket(message.data["ticketId"]);
+        }
+
         HiveBox.getDataFromServer();
       } else if (message.from == "/topics/resetDb") {
         HiveBox.getDataFromServer(clean: true);

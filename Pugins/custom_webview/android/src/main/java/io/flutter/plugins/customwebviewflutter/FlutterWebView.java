@@ -4,14 +4,13 @@
 
 package io.flutter.plugins.customwebviewflutter;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.hardware.display.DisplayManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.webkit.CookieManager;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -55,11 +54,11 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
                 public void success(@Nullable Object result) {
                     System.out.println("------------------ result -----------------------");
                     System.out.println(result);
-                  if(result!=null && (!result.toString().trim().isEmpty())){
-                      File file = new File(result.toString());
-                      Uri r = Uri.fromFile(file);
-                      filePathCallback.onReceiveValue(new Uri[]{r});
-                  }
+                    if (result != null && (!result.toString().trim().isEmpty())) {
+                        File file = new File(result.toString());
+                        Uri r = Uri.fromFile(file);
+                        filePathCallback.onReceiveValue(new Uri[]{r});
+                    }
                 }
 
                 @Override
@@ -77,17 +76,20 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
         }
 
         @Override
-        public boolean onCreateWindow(
-                final WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
+        public boolean onCreateWindow(final WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
+
+            CookieManager.setAcceptFileSchemeCookies(true);
+            CookieManager cookieManager = CookieManager.getInstance();
+            cookieManager.setAcceptCookie(true);
+            cookieManager.acceptCookie();
+
             final WebViewClient webViewClient =
                     new WebViewClient() {
-                        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
                         @Override
                         public boolean shouldOverrideUrlLoading(
                                 @NonNull WebView view, @NonNull WebResourceRequest request) {
                             final String url = request.getUrl().toString();
-                            if (!flutterWebViewClient.shouldOverrideUrlLoading(
-                                    FlutterWebView.this.webView, request)) {
+                            if (!flutterWebViewClient.shouldOverrideUrlLoading(FlutterWebView.this.webView, request)) {
                                 webView.loadUrl(url);
                             }
                             return true;
@@ -95,13 +97,26 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
 
                         @Override
                         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                            if (!flutterWebViewClient.shouldOverrideUrlLoading(
-                                    FlutterWebView.this.webView, url)) {
+                            if (!flutterWebViewClient.shouldOverrideUrlLoading( FlutterWebView.this.webView, url)) {
                                 webView.loadUrl(url);
                             }
                             return true;
                         }
+
+                        public void onReceivedError(WebView webView, int errorCode, String description, String failingUrl) {
+
+
+                        }
+
+                        public void onPageFinished(WebView webView, String url) {
+                            CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
+                            CookieManager.getInstance().flush();
+
+                        }
+
+
                     };
+
 
             final WebView newWebView = new WebView(view.getContext());
             newWebView.setWebViewClient(webViewClient);
@@ -120,22 +135,20 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     @SuppressWarnings("unchecked")
-    FlutterWebView(
-            final Context context,
-            MethodChannel methodChannel,
-            Map<String, Object> params,
-            View containerView) {
+    FlutterWebView(final Context context, MethodChannel methodChannel, Map<String, Object> params, View containerView) {
 
         DisplayListenerProxy displayListenerProxy = new DisplayListenerProxy();
         DisplayManager displayManager =
                 (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
         displayListenerProxy.onPreWebViewInitialization(displayManager);
 
-        webView =
-                createWebView(
-                        new WebViewBuilder(context, containerView), params, new FlutterWebChromeClient());
+        CookieManager.setAcceptFileSchemeCookies(true);
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.setAcceptCookie(true);
+        cookieManager.acceptCookie();
+
+        webView = createWebView(new WebViewBuilder(context, containerView), params, new FlutterWebChromeClient());
 
         displayListenerProxy.onPostWebViewInitialization(displayManager);
 
@@ -194,8 +207,7 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
      * @return The new {@link WebView} object.
      */
     @VisibleForTesting
-    static WebView createWebView(
-            WebViewBuilder webViewBuilder, Map<String, Object> params, WebChromeClient webChromeClient) {
+    static WebView createWebView(WebViewBuilder webViewBuilder, Map<String, Object> params, WebChromeClient webChromeClient) {
         boolean usesHybridComposition = Boolean.TRUE.equals(params.get("usesHybridComposition"));
         webViewBuilder
                 .setUsesHybridComposition(usesHybridComposition)
@@ -364,13 +376,11 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
         result.success(webView.getUrl());
     }
 
-    @SuppressWarnings("unchecked")
     private void updateSettings(MethodCall methodCall, Result result) {
         applySettings((Map<String, Object>) methodCall.arguments);
         result.success(null);
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     private void evaluateJavaScript(MethodCall methodCall, final Result result) {
         String jsString = (String) methodCall.arguments;
         if (jsString == null) {
@@ -386,14 +396,12 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
                 });
     }
 
-    @SuppressWarnings("unchecked")
     private void addJavaScriptChannels(MethodCall methodCall, Result result) {
         List<String> channelNames = (List<String>) methodCall.arguments;
         registerJavaScriptChannelNames(channelNames);
         result.success(null);
     }
 
-    @SuppressWarnings("unchecked")
     private void removeJavaScriptChannels(MethodCall methodCall, Result result) {
         List<String> channelNames = (List<String>) methodCall.arguments;
         for (String channelName : channelNames) {

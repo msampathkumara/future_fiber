@@ -98,7 +98,10 @@ class QC {
     return rs?.data;
   }
 
+  Section? section;
+
   Section? getSection() {
-    return HiveBox.sectionsBox.get(sectionId);
+    section = section ?? HiveBox.sectionsBox.get(sectionId);
+    return section;
   }
 }

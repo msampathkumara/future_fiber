@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/QC.dart';
@@ -271,9 +272,9 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
                         decoration: BoxDecoration(
                             border: Border(
                                 left: BorderSide(
-                          color: _ticketQc.isQc() ? Colors.redAccent : Colors.white,
-                          width: 3.0,
-                        ))),
+                                  color: _ticketQc.isQc() ? Colors.redAccent : Colors.white,
+                                  width: 3.0,
+                                ))),
                         child: ListTile(
                             leading: Container(width: 50, alignment: Alignment.center, height: double.infinity, child: Text("${index + 1}", textAlign: TextAlign.center)),
                             title: Text(_ticketQc.ticket!.getName(), style: TextStyle(fontWeight: FontWeight.bold, color: tc)),
@@ -281,7 +282,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
                                 direction: Axis.vertical,
                                 children: [if ((_ticketQc.ticket!.mo ?? "").trim().isNotEmpty) Text((_ticketQc.ticket!.oe ?? "")), Text("${_ticketQc.getDateTime()}")]),
                             trailing:
-                                Wrap(alignment: WrapAlignment.center, direction: Axis.vertical, children: [Text(section?.factory ?? ''), Text(section?.sectionTitle ?? '')]))));
+                            Wrap(alignment: WrapAlignment.center, direction: Axis.vertical, children: [Text(section?.factory ?? ''), Text(section?.sectionTitle ?? '')]))));
               },
               separatorBuilder: (BuildContext context, int index) {
                 return const Divider(
@@ -317,20 +318,20 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
               Expanded(
                   child: SingleChildScrollView(
                       child: Column(children: [
-                ListTile(
-                    title: const Text("Send Ticket"),
-                    leading: const Icon(Icons.send_rounded, color: Colors.lightBlue),
-                    onTap: () async {
-                      await ticket.sharePdf(context);
+                        ListTile(
+                            title: const Text("Send Ticket"),
+                            leading: const Icon(Icons.send_rounded, color: Colors.lightBlue),
+                            onTap: () async {
+                              await Ticket.sharePdf(context, ticket);
                       Navigator.of(context).pop();
                     }),
-                ListTile(
-                    title: const Text("Delete"),
-                    leading: const Icon(Icons.delete_forever, color: Colors.red),
-                    onTap: () async {
-                      Navigator.of(context).pop();
-                    }),
-              ])))
+                        ListTile(
+                            title: const Text("Delete"),
+                            leading: const Icon(Icons.delete_forever, color: Colors.red),
+                            onTap: () async {
+                              Navigator.of(context).pop();
+                            }),
+                      ])))
             ],
           ),
         );
@@ -343,18 +344,29 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
   List<QC> _ticketQcList = [];
   bool _dataLoadingError = false;
 
+  var cancelToken = CancelToken();
+
   Future loadData(int page) {
+    if (!cancelToken.isCancelled) {
+      cancelToken.cancel();
+    }
+    cancelToken = CancelToken();
+
     requested = true;
     requestFinished = false;
-    return Api.get("tickets/qc/getList", {
-      'type': _selectedType.getValue(),
-      'production': _selectedProduction.getValue(),
-      'sortDirection': "desc",
-      'sortBy': listSortBy,
-      'pageIndex': page,
-      'pageSize': 20,
-      'searchText': searchText
-    }).then((res) {
+    return Api.get(
+            "tickets/qc/getList",
+            {
+              'type': _selectedType.getValue(),
+              'production': _selectedProduction.getValue(),
+              'sortDirection': "desc",
+              'sortBy': listSortBy,
+              'pageIndex': page,
+              'pageSize': 20,
+              'searchText': searchText
+            },
+            cancelToken: cancelToken)
+        .then((res) {
       print(res.data);
       List qcs = res.data["qcs"];
       dataCount = res.data["count"];

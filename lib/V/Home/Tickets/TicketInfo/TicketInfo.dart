@@ -122,16 +122,15 @@ class _TicketInfoState extends State<TicketInfo> {
                   ),
                 )),
             floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-            floatingActionButton: (!_ticket.hasFile)
+            floatingActionButton: (!_ticket.hasFile || _loading)
                 ? null
                 : (_ticket.isHold == 1)
                     ? null
                     : FloatingActionButton(
-              child: const Icon(Icons.import_contacts),
+                        child: const Icon(Icons.import_contacts),
                         onPressed: () async {
                           openFile();
-                        },
-                      ),
+                        }),
           );
   }
 
@@ -171,9 +170,9 @@ class _TicketInfoState extends State<TicketInfo> {
                         padding: const EdgeInsets.only(top: 8),
                         child: Wrap(
                           children: [
-                            if (_ticket.inPrint == 1)
-                              IconButton(
-                                  icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)), onPressed: () {}),
+                            // if (_ticket.inPrint == 1)
+                            //   IconButton(
+                            //       icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)), onPressed: () {}),
                             if (_ticket.isHold == 1)
                               IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.pan_tool_rounded, color: Colors.black)), onPressed: () {}),
                             if (_ticket.isGr == 1)
@@ -304,9 +303,9 @@ class _TicketInfoState extends State<TicketInfo> {
                         Padding(
                           padding: const EdgeInsets.only(top: 8),
                           child: Wrap(children: [
-                            if (_ticket.inPrint == 1)
-                              IconButton(
-                                  icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)), onPressed: () {}),
+                            // if (_ticket.inPrint == 1)
+                            //   IconButton(
+                            //       icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)), onPressed: () {}),
                             if (_ticket.isHold == 1)
                               IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.pan_tool_rounded, color: Colors.black)), onPressed: () {}),
                             if (_ticket.isGr == 1)
@@ -386,7 +385,7 @@ class _TicketInfoState extends State<TicketInfo> {
                         : FloatingActionButton(
                             child: const Icon(Icons.import_contacts),
                             onPressed: () {
-                              _ticket.open(context);
+                              Ticket.open(context, _ticket);
                             })))
       ]),
     );
@@ -432,11 +431,16 @@ class _TicketInfoState extends State<TicketInfo> {
     int userSectionId = AppUser.getSelectedSection()?.id ?? 0;
     var pendingList = progressList.where((p) {
       return (p.status == 0) ? true : false;
-    });
+    }).toList();
 
-    if (progressList.where((p) {
-      return (p.status == 1 || p.section?.id == _ticket.nowAt) && (userSectionId == (p.section?.id)) ? true : false;
-    }).isEmpty) {
+    if ((_ticket.completed == 0) &&
+        (!_ticket.openAny) &&
+        progressList.where((p) {
+          return (p.status == 1 || p.section?.id == _ticket.nowAt) && (userSectionId == (p.section?.id)) ? true : false;
+        }).isEmpty) {
+      final ids = pendingList.map((e) => e.section?.id).toSet();
+      pendingList.retainWhere((x) => ids.remove(x.section?.id));
+
       return await showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -478,7 +482,7 @@ class _TicketInfoState extends State<TicketInfo> {
     }
 
     if (_ticket.isStarted) {
-      _ticket.open(context);
+      Ticket.open(context, _ticket);
     } else {
       await showOpenActions(_ticket, context, () {});
     }

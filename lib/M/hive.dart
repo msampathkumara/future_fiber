@@ -72,6 +72,9 @@ class HiveBox {
           FirebaseDatabase.instance.ref('db_upon').onValue.listen((DatabaseEvent event) {
             HiveBox.getDataFromServer();
           });
+          FirebaseDatabase.instance.ref('db_upon').child("ticketComplete").onValue.listen((DatabaseEvent event) {
+            HiveBox.updateCompletedTickets();
+          });
           FirebaseDatabase.instance.ref('resetDb').onValue.listen((DatabaseEvent event) {
             HiveBox.getDataFromServer(clean: true);
           });
@@ -96,12 +99,15 @@ class HiveBox {
     }
   }
 
-  static Future getDataFromServer({clean = false, afterLoad}) async {
+  static Future getDataFromServer({clean = false, afterLoad, cleanUsers = false}) async {
     print('__________________________________________________________________________________________________________getDataFromServer');
     if (clean) {
       await userConfigBox.delete('upons');
     }
     Upons uptimes = getUptimes();
+    if (cleanUsers) {
+      uptimes.users = 0;
+    }
     Map<String, dynamic> d = uptimes.toJson();
     d["z"] = DateTime.now().millisecondsSinceEpoch;
     print(uptimes.toJson());
@@ -114,6 +120,8 @@ class HiveBox {
         await sectionsBox.clear();
         await userPermissions.clear();
         await standardTicketsBox.clear();
+      } else if (cleanUsers) {
+        await usersBox.clear();
       }
 
       print('5');
@@ -127,7 +135,7 @@ class HiveBox {
       List<StandardTicket> standardTicketsList = StandardTicket.fromJsonArray(res["standardTickets"] ?? []);
 
       List<Ticket> deletedTicketsIdsList = Ticket.fromJsonArray(res["deletedTicketsIds"] ?? []);
-      List<Ticket> completedTicketsIdsList = Ticket.fromJsonArray(res["completedTicketsIds"] ?? []);
+      List<Ticket> completedTicketsIdsList = Ticket.fromJsonArray(res["completedTickets"] ?? []);
 
       usersBox.putMany(usersList);
 
@@ -142,6 +150,9 @@ class HiveBox {
       }
       for (var element in completedTicketsIdsList) {
         ticketBox.delete(element.id);
+      }
+      for (var element in ticketsList) {
+        if (element.completed == 1) ticketBox.delete(element.id);
       }
 
       if (usersList.where((element) => element.id == AppUser.getUser()?.id).isNotEmpty) {
@@ -220,4 +231,10 @@ class HiveBox {
     i.standardTickets = 0;
     setUptimes(i.toJson());
   }
+
+  static deleteTicket(data) {
+    ticketBox.delete(data);
+  }
+
+  static void updateCompletedTickets() {}
 }

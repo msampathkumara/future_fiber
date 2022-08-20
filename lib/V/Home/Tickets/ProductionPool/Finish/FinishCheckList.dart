@@ -71,29 +71,31 @@ class _FinishCheckListState extends State<FinishCheckList> {
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(primary: Colors.redAccent, textStyle: const TextStyle(fontWeight: FontWeight.bold)),
                           onPressed: () async {
-                            if (Navigator.canPop(context)) {
-                              Navigator.pop(context);
-                            } else {
-                              SystemNavigator.pop();
-                            }
+                            // if (Navigator.canPop(context)) {
+                            //   Navigator.pop(context);
+                            // } else {
+                            //   SystemNavigator.pop();
+                            // }
 
                             var isQc = false;
                             var selectedSection = AppUser.getSelectedSection()?.id;
                             if (AppUser.getSelectedSection()?.sectionTitle.toLowerCase() == "qc") {
                               isQc = true;
-
                               selectedSection = await selectSection();
                               if (selectedSection == null) return;
                             }
                             var userCurrentSection = AppUser.getSelectedSection()?.id ?? 0;
 
-                            var xx = await platform.invokeMethod('qcEdit', {
+                            await platform.invokeMethod('qcEdit', {
                               'userCurrentSection': userCurrentSection.toString(),
                               "qc": isQc,
                               "sectionId": "$selectedSection",
                               "serverUrl": Server.getServerApiPath("tickets/qc/uploadEdits"),
                               'ticket': {'id': ticket.id, "qc": isQc}.toString()
                             });
+                            if (mounted) {
+                              Navigator.pop(context);
+                            }
                           },
                           child: const Text("Quality Reject"))
                     ],
@@ -123,8 +125,8 @@ class _FinishCheckListState extends State<FinishCheckList> {
     int? selectedSection = AppUser.getSelectedSection()?.id;
     if (AppUser.getSelectedSection()?.sectionTitle.toLowerCase() == "qc") {
       isQc = true;
-      selectedSection = await selectSection();
-      if (selectedSection == null) return;
+      //   selectedSection = await selectSection();
+      //   if (selectedSection == null) return;
     }
 
     await showDialog(
@@ -144,19 +146,20 @@ class _FinishCheckListState extends State<FinishCheckList> {
               return;
             }
 
-            // ServerResponseMap res = ServerResponseMap.fromJson((response.data));
             var r = await Api.get("tickets/finish/getProgress", {'ticket': ticket.id.toString()});
             ServerResponseMap res1 = ServerResponseMap.fromJson((r.data));
 
-            if (mounted) await ticket.getFile(context);
+            if (mounted) await Ticket.getFile(ticket, context);
             if (res1.done != null) {
               if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(backgroundColor: Colors.red, content: Text('Already Completed')));
             } else if (ticket.ticketFile != null) {
               if (mounted) {
-                await Navigator.push(context, MaterialPageRoute(builder: (context) => RF(ticket, userRFCredentials!, res1.operationMinMax!, res1.progressList)));
-                await LoadingDialog(Api.post("tickets/qc/uploadEdits", {'quality': quality, 'ticketId': ticket.id, 'type': isQc, "sectionId": selectedSection}).then((res) {
-                  Map data = res.data;
-                }));
+                var x = await Navigator.push(context, MaterialPageRoute(builder: (context) => RF(ticket, userRFCredentials!, res1.operationMinMax!, res1.progressList)));
+                if (x != null || x == true) {
+                  await LoadingDialog(Api.post("tickets/qc/uploadEdits", {'quality': quality, 'ticketId': ticket.id, 'type': isQc, "sectionId": selectedSection}).then((res) {
+                    Map data = res.data;
+                  }));
+                }
               }
             }
 

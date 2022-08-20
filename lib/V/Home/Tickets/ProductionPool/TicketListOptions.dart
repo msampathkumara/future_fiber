@@ -115,7 +115,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                 //         Navigator.of(context).pop();
                 //         await sendToPrint(ticket);
                 //       }),
-                if (AppUser.havePermissionFor(Permissions.FINISH_TICKET) && (!kIsWeb))
+                if (ticket.isStarted && (ticket.nowAt == AppUser.getSelectedSection()?.id) && AppUser.havePermissionFor(Permissions.FINISH_TICKET) && (!kIsWeb))
                   ListTile(
                       title: const Text("Finish"),
                       leading: const Icon(Icons.check_circle_outline_outlined, color: Colors.green),
@@ -152,7 +152,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                       title: const Text("Share Work Ticket"),
                       leading: const Icon(NsIcons.share, color: Colors.lightBlue),
                       onTap: () async {
-                        await ticket.sharePdf(context);
+                        await Ticket.sharePdf(context, ticket);
                         Navigator.of(context).pop();
                       }),
                 if (AppUser.havePermissionFor(Permissions.BLUE_BOOK) && (!kIsWeb))
@@ -160,7 +160,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                       title: const Text("Blue Book"),
                       leading: const Icon(Icons.menu_book_rounded, color: Colors.lightBlue),
                       onTap: () async {
-                        if (await ticket.getFile(context) != null) {
+                        if (await Ticket.getFile(ticket, context) != null) {
                           await Navigator.push(context, MaterialPageRoute(builder: (context) => BlueBook(ticket: ticket)));
                         }
                         Navigator.of(context).pop();
@@ -370,14 +370,16 @@ Future<void> showOpenActions(Ticket ticket, BuildContext context1, reLoad) async
                   title: const Text('Start Production'),
                   onTap: () async {
                     Navigator.of(context).pop();
-                    await TicketStartDialog(ticket).show(context);
+                    if (await TicketStartDialog(ticket).show(context) == true) {
+                      Ticket.open(context1, ticket);
+                    }
                   }),
             ListTile(
                 leading: const Icon(Icons.open_in_new_outlined),
                 title: const Text('View Ticket'),
                 onTap: () {
                   Navigator.of(context).pop();
-                  ticket.open(context1);
+                  Ticket.open(context1, ticket);
                 })
           ],
         ),

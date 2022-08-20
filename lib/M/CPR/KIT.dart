@@ -26,7 +26,7 @@ class KIT {
   String image = "";
   @JsonKey(defaultValue: [], includeIfNull: true)
   List<KitItem> items = <KitItem>[];
-  @JsonKey(defaultValue: [], includeIfNull: true)
+  @JsonKey(defaultValue: [], includeIfNull: true, fromJson: arryFromObject)
   List<String> suppliers = <String>[];
 
   @JsonKey(defaultValue: "", includeIfNull: true)
@@ -48,6 +48,12 @@ class KIT {
 
   @JsonKey(defaultValue: false, includeIfNull: true)
   var isExpanded = false;
+
+  static arryFromObject(object) => (object.runtimeType == String
+      ? object.toString().split(',')
+      : object.runtimeType == List
+          ? object
+          : []);
 
   NsUser? get user {
     return HiveBox.usersBox.get(addedUserId);

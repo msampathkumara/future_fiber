@@ -14,7 +14,6 @@
 ///
 ///
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class NsIconsSuper {
   static const IconData rush = Icons.offline_bolt_outlined;

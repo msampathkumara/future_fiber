@@ -11,6 +11,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/hive.dart';
+import 'package:smartwind/V/Home/Tickets/ProductionPool/ProductionPool.dart';
 
 import 'C/App.dart';
 import 'M/AppUser.dart';
@@ -57,36 +58,8 @@ Future<void> mainThings({viewIssMaterialManagement = false}) async {
   });
 
   FirebaseAuth.instance.authStateChanges().listen((event) {
-    print('----------------------------------------------------------');
-
     print(FirebaseAuth.instance.currentUser);
-    print(event);
-    print('----------------------------------------------------------');
   });
-
-  try {
-    print("***xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx${Firebase.apps.length}___${FirebaseAuth.instance.currentUser}");
-  } catch (e) {
-    // if (Firebase.apps.isEmpty) {
-    // } else {
-    //   Firebase.app();
-    // }
-
-    //   if (kIsWeb) {
-    //     await Firebase.initializeApp(
-    //         options: const FirebaseOptions(
-    //             apiKey: "AIzaSyCgW6bXgp0PmoKNcAUsAzTqOS8YYFPd0dM",
-    //             authDomain: "smart-wind.firebaseapp.com",
-    //             databaseURL: "https://smart-wind-default-rtdb.firebaseio.com",
-    //             projectId: "smart-wind",
-    //             storageBucket: "smart-wind.appspot.com",
-    //             messagingSenderId: "27155477934",
-    //             appId: "1:27155477934:web:1ff8578ac037a6e330043f",
-    //             measurementId: "G-SEBNEV8XVM"));
-    //   } else {
-    //     await Firebase.initializeApp();
-    //   }
-  }
 
   DatabaseReference ref = FirebaseDatabase.instance.ref('devServerIp');
 
@@ -110,27 +83,29 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Smart Wind',
-        theme: ThemeData(
-            primarySwatch: Colors.green,
-            bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.black.withOpacity(0)),
-            inputDecorationTheme: InputDecorationTheme(
-                border: const OutlineInputBorder(),
-                contentPadding: const EdgeInsets.symmetric(vertical: 22, horizontal: 26),
-                labelStyle: const TextStyle(fontSize: 18, decorationColor: Colors.red),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.orange),
-                  borderRadius: BorderRadius.circular(4.0),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blueGrey.shade50, width: 1.0),
-                  borderRadius: BorderRadius.circular(4.0),
-                ))),
-        home: const MyHomePage(),
-        // home: const MainApp1(),
-        navigatorObservers: const [
-          // FirebaseAnalyticsObserver(analytics: analytics),
-        ]);
+      title: 'Smart Wind',
+      theme: ThemeData(
+          primarySwatch: Colors.green,
+          bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.black.withOpacity(0)),
+          inputDecorationTheme: InputDecorationTheme(
+              border: const OutlineInputBorder(),
+              contentPadding: const EdgeInsets.symmetric(vertical: 22, horizontal: 26),
+              labelStyle: const TextStyle(fontSize: 18, decorationColor: Colors.red),
+              focusedBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: Colors.orange),
+                borderRadius: BorderRadius.circular(4.0),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.blueGrey.shade50, width: 1.0),
+                borderRadius: BorderRadius.circular(4.0),
+              ))),
+      home: const MyHomePage(),
+      // home: const MainApp1(),
+      navigatorObservers: const [
+        // FirebaseAnalyticsObserver(analytics: analytics),
+      ],
+      routes: <String, WidgetBuilder>{'/login': (BuildContext context) => const Login(), '/pp': (BuildContext context) => const ProductionPool()},
+    );
   }
 }
 
@@ -215,6 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
       }
 
       if (FirebaseAuth.instance.currentUser != null && App.currentUser != null) {
+        // return const DashBoard();
         return const Home();
       }
       return const Login();

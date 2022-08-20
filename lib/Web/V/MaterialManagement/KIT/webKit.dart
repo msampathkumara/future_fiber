@@ -10,6 +10,7 @@ import 'package:smartwind/Web/V/MaterialManagement/KIT/SendKits.dart';
 import '../../../../C/DB/DB.dart';
 import '../../../../V/Widgets/NoResultFoundMsg.dart';
 import '../../../Widgets/myDropDown.dart';
+import '../../ProductionPool/copy.dart';
 import 'KitView.dart';
 
 part 'webKit.table.dart';
@@ -232,9 +233,14 @@ class _WebKitState extends State<WebKit> {
       'searchText': searchText
     }).then((res) {
       print(res.data);
+
       List kits = res.data["kits"];
       dataCount = res.data["count"];
+      print('--------------------------555555');
 
+      print(KIT.fromJsonArray(kits));
+
+      print('----------------------------------------66666666666666666');
       _dataLoadingError = false;
       var x = KIT.fromJsonArray(kits);
       setState(() {});
@@ -244,6 +250,7 @@ class _WebKitState extends State<WebKit> {
         requested = false;
       });
     }).catchError((err) {
+      print(err);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(err.toString()),
           action: SnackBarAction(

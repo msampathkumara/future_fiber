@@ -26,7 +26,7 @@ class Api {
     }
   }
 
-  static Future<Response> get(String url, Map<String, dynamic> data, {onlineServer = false, bool reFreshToken = false}) async {
+  static Future<Response> get(String url, Map<String, dynamic> data, {onlineServer = false, bool reFreshToken = false, cancelToken}) async {
     try {
       final idToken = await AppUser.getIdToken(reFreshToken);
       Dio dio = Dio();
@@ -36,7 +36,7 @@ class Api {
       data["userCurrentSection"] = (AppUser.getSelectedSection()?.id ?? 0).toString();
       print('userCurrentSection ${data["userCurrentSection"]}');
 
-      return dio.get(Server.getServerApiPath(url, onlineServer: onlineServer), queryParameters: data);
+      return dio.get(Server.getServerApiPath(url, onlineServer: onlineServer), queryParameters: data, cancelToken: cancelToken);
     } on DioError catch (e) {
       if (e.response?.statusCode == 401) {
         print(e.response?.statusCode);

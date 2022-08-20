@@ -14,18 +14,11 @@ ServerResponseMap _$ServerResponseMapFromJson(Map<String, dynamic> json) =>
               json['userRFCredentials'] as Map<String, dynamic>)
       ..operationMinMax = json['operationMinMax'] == null
           ? null
-          : OperationMinMax.fromJson(
-              json['operationMinMax'] as Map<String, dynamic>)
-      ..done = json['done'] as bool?
-      ..progressList = (json['progressList'] as List<dynamic>?)
-              ?.map((e) => Progress.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          []
-      ..flags = (json['flags'] as List<dynamic>?)
-              ?.map((e) => TicketFlag.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          []
-      ..flagsHistory = (json['flagsHistory'] as List<dynamic>?)?.map((e) => TicketFlag.fromJson(e as Map<String, dynamic>)).toList() ?? []
+          : OperationMinMax.fromJson(json['operationMinMax'] as Map<String, dynamic>)
+  ..done = json['done'] as bool?
+  ..progressList = (json['progressList'] as List<dynamic>?)?.map((e) => Progress.fromJson(e as Map<String, dynamic>)).toList() ?? []
+  ..flags = (json['flags'] as List<dynamic>?)?.map((e) => TicketFlag.fromJson(e as Map<String, dynamic>)).toList() ?? []
+  ..flagsHistory = (json['flagsHistory'] as List<dynamic>?)?.map((e) => TicketFlag.fromJson(e as Map<String, dynamic>)).toList() ?? []
   ..printList = (json['printList'] as List<dynamic>?)?.map((e) => TicketPrint.fromJson(e as Map<String, dynamic>)).toList() ?? []
   ..ticketHistory = (json['ticketHistory'] as List<dynamic>?)?.map((e) => TicketHistory.fromJson(e as Map<String, dynamic>)).toList() ?? []
   ..ticketComments = (json['ticketComments'] as List<dynamic>?)?.map((e) => TicketComment.fromJson(e as Map<String, dynamic>)).toList() ?? []

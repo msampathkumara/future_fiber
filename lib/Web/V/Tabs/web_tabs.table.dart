@@ -3,9 +3,8 @@ part of 'web_tabs.dart';
 class DeviceDataTable extends StatefulWidget {
   final Null Function(DeviceSourceAsync dataSource) onInit;
   final Future<DataResponse> Function(int page, int startingAt, int count, String sortedBy, bool sortedAsc) onRequestData;
-  final Null Function(Device _device) onTap;
 
-  const DeviceDataTable({required this.onInit, required this.onRequestData, required this.onTap});
+  const DeviceDataTable({required this.onInit, required this.onRequestData});
 
   @override
   _WebPrintTableState createState() => _WebPrintTableState();
@@ -24,9 +23,7 @@ class _WebPrintTableState extends State<DeviceDataTable> {
   @override
   void didChangeDependencies() {
     // initState is to early to access route options, context is invalid at that stage
-    _dessertsDataSource ??= DeviceSourceAsync(context, onRequestData: widget.onRequestData, onTap: (Device device) {
-      widget.onTap(device);
-    });
+    _dessertsDataSource ??= DeviceSourceAsync(context, onRequestData: widget.onRequestData);
 
     widget.onInit(_dessertsDataSource!);
 
@@ -214,9 +211,8 @@ class __LoadingState extends State<_Loading> {
 
 class DeviceSourceAsync extends AsyncDataTableSource {
   Future<DataResponse> Function(int page, int startingAt, int count, String sortedBy, bool sortedAsc) onRequestData;
-  Null Function(Device device) onTap;
 
-  DeviceSourceAsync(this.context, {required this.onRequestData, required this.onTap}) {
+  DeviceSourceAsync(this.context, {required this.onRequestData}) {
     print('DessertDataSourceAsync created');
   }
 
@@ -273,11 +269,11 @@ class DeviceSourceAsync extends AsyncDataTableSource {
           return DataRow2(
               selected: false,
               onTap: () {
-                onTap(device);
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  duration: const Duration(seconds: 1),
-                  content: Text('Tapped on ${device}'),
-                ));
+                TabLog(device).show(context);
+                // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                //   duration: const Duration(seconds: 1),
+                //   content: Text('Tapped on ${device}'),
+                // ));
               },
               onSecondaryTap: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 duration: const Duration(seconds: 1),
@@ -291,11 +287,10 @@ class DeviceSourceAsync extends AsyncDataTableSource {
                   await DeviceRenameDialog(device).show(context);
                   refreshDatasource();
                 }, onTap: () {
-                  onTap(device);
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    duration: const Duration(seconds: 1),
-                    content: Text('Tapped on $device'),
-                  ));
+                  // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  //   duration: const Duration(seconds: 1),
+                  //   content: Text('Tapped on $device'),
+                  // ));
                 }),
                 DataCell(Text((device.imei) ?? "")),
                 DataCell(Wrap(

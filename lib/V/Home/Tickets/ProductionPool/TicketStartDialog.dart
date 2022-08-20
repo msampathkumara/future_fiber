@@ -1,9 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 
 import '../../../../M/Ticket.dart';
-import '../TicketInfo/TicketInfo.dart';
 
 class TicketStartDialog extends StatefulWidget {
   final Ticket ticket;
@@ -66,11 +64,10 @@ class _TicketStartDialogState extends State<TicketStartDialog> {
                           setState(() {
                             loading = true;
                           });
-                          await ticket.start(context);
+                          await Ticket.start(ticket, context);
                           ticket.isStarted = true;
                           ticket.save();
-                          Navigator.of(context).pop();
-                          TicketInfo(ticket).show(context);
+                          Navigator.of(context).pop(true);
                         },
                         child: const Text("Start")))
               ])));

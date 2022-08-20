@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.webkit.CookieManager;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -125,9 +126,12 @@ class FlutterWebViewClient {
     }
 
     private void onPageFinished(WebView view, String url) {
+        CookieManager.getInstance().setAcceptThirdPartyCookies(view, true);
         Map<String, Object> args = new HashMap<>();
         args.put("url", url);
         methodChannel.invokeMethod("onPageFinished", args);
+        CookieManager.getInstance().flush();
+
     }
 
     void onLoadingProgress(int progress) {
@@ -139,7 +143,7 @@ class FlutterWebViewClient {
     }
 
 
-    void onShowFileChooser(  MethodChannel.Result result) {
+    void onShowFileChooser(MethodChannel.Result result) {
 
         Map<String, Object> args = new HashMap<>();
         methodChannel.invokeMethod("onShowFileChooser", args, result);
@@ -196,8 +200,10 @@ class FlutterWebViewClient {
             }
 
             @Override
-            public void onPageFinished(WebView view, String url) {
-                FlutterWebViewClient.this.onPageFinished(view, url);
+            public void onPageFinished(WebView view, String url) {CookieManager.getInstance().setAcceptThirdPartyCookies(view, true);
+                CookieManager.getInstance().setAcceptThirdPartyCookies(view, true);     FlutterWebViewClient.this.onPageFinished(view, url);
+                CookieManager.getInstance().flush();
+
             }
 
             @TargetApi(Build.VERSION_CODES.M)
@@ -244,12 +250,13 @@ class FlutterWebViewClient {
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                FlutterWebViewClient.this.onPageFinished(view, url);
+                CookieManager.getInstance().setAcceptThirdPartyCookies(view, true);  FlutterWebViewClient.this.onPageFinished(view, url);
+                CookieManager.getInstance().flush();
+
             }
 
             // This method is only called when the WebViewFeature.RECEIVE_WEB_RESOURCE_ERROR feature is
             // enabled. The deprecated method is called when a device doesn't support this.
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @SuppressLint("RequiresFeature")
             @Override
             public void onReceivedError(

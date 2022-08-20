@@ -8,6 +8,7 @@ import 'package:smartwind/V/Widgets/SearchBar.dart';
 
 import '../../../../C/Api.dart';
 import '../../../../M/Enums.dart';
+import '../../../../M/Ticket.dart';
 import '../../../Widgets/NoResultFoundMsg.dart';
 import 'StandardTicketInfo.dart';
 
@@ -269,7 +270,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
                               ticketInfo.show(context);
                             },
                             onDoubleTap: () async {
-                              ticket.open(context);
+                              Ticket.open(context, ticket);
                             },
                             child: Ink(
                                 decoration: BoxDecoration(

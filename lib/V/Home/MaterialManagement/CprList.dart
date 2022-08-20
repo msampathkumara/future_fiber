@@ -141,7 +141,9 @@ class _CprListState extends State<CprList> {
                         return GestureDetector(
                           behavior: HitTestBehavior.opaque,
                           onLongPress: () async {
-                            await showCprOptions(cpr, context, context);
+                            await showCprOptions(cpr, context, context, () {
+                              loadData(0);
+                            });
                             setState(() {});
                           },
                           onTap: () {

@@ -96,7 +96,7 @@ class _CprViewState extends State<CprView> {
                                 children: [
                                   ListTile(visualDensity: vd, title: Text('Shortage Type', style: titleTheme), subtitle: Text('${_cpr.shortageType}', style: valTheme)),
                                   ListTile(visualDensity: vd, title: Text('CPR Type', style: titleTheme), subtitle: Text('${_cpr.cprType}', style: valTheme)),
-                                  ListTile(visualDensity: vd, title: Text('Status', style: titleTheme), subtitle: Text('${_cpr.status}', style: valTheme)),
+                                  ListTile(visualDensity: vd, title: Text('Status', style: titleTheme), subtitle: Text(_cpr.status, style: valTheme)),
                                 ],
                               ),
                             ],
@@ -243,7 +243,7 @@ class _CprViewState extends State<CprView> {
                                 children: [
                                   ListTile(visualDensity: vd, title: Text('Shortage Type', style: titleTheme), subtitle: Text('${_cpr.shortageType}', style: valTheme)),
                                   ListTile(visualDensity: vd, title: Text('CPR Type', style: titleTheme), subtitle: Text('${_cpr.cprType}', style: valTheme)),
-                                  ListTile(visualDensity: vd, title: Text('Status', style: titleTheme), subtitle: Text('${_cpr.status}', style: valTheme)),
+                                  ListTile(visualDensity: vd, title: Text('Status', style: titleTheme), subtitle: Text(_cpr.status, style: valTheme)),
                                 ],
                               ),
                             ],
@@ -365,7 +365,7 @@ class _CprViewState extends State<CprView> {
       Map data = res.data;
 
       _cpr = CPR.fromJson(res.data);
-
+      //
       cprs = _cpr.cprs;
 
       print(data);

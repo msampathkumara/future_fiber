@@ -36,16 +36,17 @@ class _info_short_itemsState extends State<info_short_items> {
               Table(
                 children: [
                   TableRow(children: [
-                    ListTile(dense: true, title: Text("Form Type", style: _title), subtitle: Text("${cpr.cprType}", style: _value)),
-                    ListTile(dense: true, title: Text("Status", style: _title), subtitle: Text("${cpr.status}", style: _value)),
+                    ListTile(dense: true, title: Text("Form Type", style: _title), subtitle: Text(cpr.formType, style: _value)),
+                    ListTile(dense: true, title: Text("Status", style: _title), subtitle: Text(cpr.status, style: _value)),
                   ]),
                   TableRow(children: [
+                    ListTile(dense: true, title: Text("CPR Type", style: _title), subtitle: Text("${cpr.cprType}", style: _value)),
                     ListTile(dense: true, title: Text("Shortage Type", style: _title), subtitle: Text("${cpr.shortageType}", style: _value)),
-                    ListTile(dense: true, title: Text("Date & Time", style: _title), subtitle: Text("${cpr.date}", style: _value)),
                   ]),
+                  TableRow(children: [ListTile(dense: true, title: Text("Date & Time", style: _title), subtitle: Text("${cpr.date}", style: _value)), Container()]),
                 ],
               ),
-              ListTile(dense: true, title: Text("Comment", style: _title), subtitle: Text("${cpr.comment}", style: _value.copyWith(fontStyle: FontStyle.italic))),
+              ListTile(dense: true, title: Text("Comment", style: _title), subtitle: Text(cpr.comment, style: _value.copyWith(fontStyle: FontStyle.italic))),
               const Divider(),
               ...cpr.items
                   .map((e) => ListTile(
