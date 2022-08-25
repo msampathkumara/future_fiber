@@ -13,13 +13,13 @@ class TabLogDataTable extends StatefulWidget {
 
 class _WebPrintTableState extends State<TabLogDataTable> {
   int _rowsPerPage = 20;
-  bool _sortAscending = true;
+  bool _sortAscending = false;
   int? _sortColumnIndex;
   TabLogDataSourceAsync? _dessertsDataSource;
-  PaginatorController _controller = PaginatorController();
+  final PaginatorController _controller = PaginatorController();
 
-  bool _dataSourceLoading = false;
-  int _initialRow = 0;
+  final bool _dataSourceLoading = false;
+  final int _initialRow = 0;
 
   @override
   void didChangeDependencies() {
@@ -59,8 +59,8 @@ class _WebPrintTableState extends State<TabLogDataTable> {
   List<DataColumn> get _columns {
     return [
       const DataColumn2(size: ColumnSize.S, label: Text('#')),
-      DataColumn2(size: ColumnSize.L, label: Text('User'), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: Text('Date & Time'), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.L, label: const Text('User'), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('Date & Time'), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
     ];
   }
 
@@ -69,13 +69,13 @@ class _WebPrintTableState extends State<TabLogDataTable> {
   @override
   Widget build(BuildContext context) {
     // Last ppage example uses extra API call to get the number of items in datasource
-    if (_dataSourceLoading) return SizedBox();
+    if (_dataSourceLoading) return const SizedBox();
 
     return Stack(alignment: Alignment.bottomCenter, children: [
       AsyncPaginatedDataTable2(
           scrollController: _scrollController,
           showFirstLastButtons: true,
-          smRatio: 0.4,
+          smRatio: 0.3,
           lmRatio: 3,
           horizontalMargin: 20,
           checkboxHorizontalMargin: 12,
@@ -111,7 +111,7 @@ class _WebPrintTableState extends State<TabLogDataTable> {
           controller: _controller,
           hidePaginator: false,
           columns: _columns,
-          empty: Center(child: Container(padding: EdgeInsets.all(20), color: Colors.grey[200], child: Text('No data'))),
+          empty: Center(child: Container(padding: const EdgeInsets.all(20), color: Colors.grey[200], child: const Text('No data'))),
           loading: _Loading(),
           errorBuilder: (e) => _ErrorAndRetry(e.toString(), () => _dessertsDataSource!.refreshDatasource()),
           source: _dessertsDataSource!),
@@ -128,11 +128,11 @@ class _ErrorAndRetry extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Center(
         child: Container(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             height: 170,
             color: Colors.red,
             child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text('Oops! $errorMessage', style: TextStyle(color: Colors.white)),
+              Text('Oops! $errorMessage', style: const TextStyle(color: Colors.white)),
               TextButton(
                   onPressed: retry,
                   child: Row(mainAxisSize: MainAxisSize.min, children: const [Icon(Icons.refresh, color: Colors.white), Text('Retry', style: TextStyle(color: Colors.white))]))
@@ -152,7 +152,7 @@ class __LoadingState extends State<_Loading> {
         color: Colors.white.withAlpha(128),
         // at first show shade, if loading takes longer than 0,5s show spinner
         child: FutureBuilder(
-            future: Future.delayed(Duration(milliseconds: 500), () => true),
+            future: Future.delayed(const Duration(milliseconds: 500), () => true),
             builder: (context, snapshot) {
               return !snapshot.hasData
                   ? const SizedBox()
@@ -160,6 +160,8 @@ class __LoadingState extends State<_Loading> {
                       child: Container(
                       color: Colors.yellow,
                       padding: const EdgeInsets.all(7),
+                      width: 150,
+                      height: 50,
                       child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: const [
                         CircularProgressIndicator(
                           strokeWidth: 2,
@@ -167,8 +169,6 @@ class __LoadingState extends State<_Loading> {
                         ),
                         Text('Loading..')
                       ]),
-                      width: 150,
-                      height: 50,
                     ));
             }));
   }
@@ -183,7 +183,7 @@ class TabLogDataSourceAsync extends AsyncDataTableSource {
   }
 
   final BuildContext context;
-  bool _empty = false;
+  final bool _empty = false;
   int? _errorCounter;
 
   RangeValues? _caloriesFilter;
@@ -196,7 +196,7 @@ class TabLogDataSourceAsync extends AsyncDataTableSource {
   }
 
   String _sortColumn = "dnt";
-  bool _sortAscending = true;
+  bool _sortAscending = false;
 
   void sort(String columnName, bool ascending) {
     _sortColumn = columnName;
@@ -211,7 +211,7 @@ class TabLogDataSourceAsync extends AsyncDataTableSource {
       _errorCounter = _errorCounter! + 1;
 
       if (_errorCounter! % 2 == 1) {
-        await Future.delayed(Duration(milliseconds: 1000));
+        await Future.delayed(const Duration(milliseconds: 1000));
         throw 'Error #${((_errorCounter! - 1) / 2).round() + 1} has occured';
       }
     }
@@ -222,7 +222,7 @@ class TabLogDataSourceAsync extends AsyncDataTableSource {
 
     // List returned will be empty is there're fewer items than startingAt
     var x = _empty
-        ? await Future.delayed(Duration(milliseconds: 2000), () => DataResponse(0, []))
+        ? await Future.delayed(const Duration(milliseconds: 2000), () => DataResponse(0, []))
         : await onRequestData(int.parse("${startIndex / count}"), startIndex, count, _sortColumn, _sortAscending);
     int _i = 0;
     var r = AsyncRowsResponse(
@@ -234,22 +234,16 @@ class TabLogDataSourceAsync extends AsyncDataTableSource {
               selected: false,
               onTap: () {
                 onTap(deviceLog);
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  duration: Duration(seconds: 1),
-                  content: Text('Tapped on ${deviceLog}'),
-                ));
+                // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                //   duration: Duration(seconds: 1),
+                //   content: Text('Tapped on ${deviceLog}'),
+                // ));
               },
-              onSecondaryTap: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    duration: Duration(seconds: 1),
-                    backgroundColor: Theme.of(context).errorColor,
-                    content: Text('Right clicked on ${deviceLog}'),
-                  )),
-              // specificRowHeight: this.hasRowHeightOverrides && deviceLog.fat >= 25 ? 100 : null,
               cells: [
                 DataCell(Text("$_i")),
                 DataCell(Row(children: [
                   UserImage(nsUser: nsUser, radius: 16, padding: 2),
-                  SizedBox(width: 4),
+                  const SizedBox(width: 4),
                   Wrap(direction: Axis.vertical, children: [Text("${nsUser?.name}"), Text("${nsUser?.uname}")])
                 ])),
                 DataCell(Text((deviceLog.getDateTime()) ?? "")),

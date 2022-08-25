@@ -41,7 +41,7 @@ class _TabLogState extends State<TabLog> {
     return DialogView(
         width: 1000,
         child: Scaffold(
-            appBar: AppBar(title: Text("Tab Log")),
+            appBar: AppBar(title: const Text("Tab Log")),
             body: Row(
               children: [
                 Padding(
@@ -55,7 +55,7 @@ class _TabLogState extends State<TabLog> {
                             child: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Column(children: [
-                                  Text("${device.name}", textScaleFactor: 1.2, style: TextStyle(color: Colors.red)),
+                                  Text(device.name, textScaleFactor: 1.2, style: const TextStyle(color: Colors.red)),
                                   Text("${device.imei}"),
                                   Text("${device.model}"),
                                   Text("${device.modelNumber}")

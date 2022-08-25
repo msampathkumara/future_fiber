@@ -1,5 +1,6 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:smartwind/C/Api.dart';
 import 'package:smartwind/M/CPR/KIT.dart';
 import 'package:smartwind/M/Enums.dart';
@@ -9,6 +10,7 @@ import 'package:smartwind/Web/V/MaterialManagement/KIT/SendKits.dart';
 
 import '../../../../C/DB/DB.dart';
 import '../../../../V/Widgets/NoResultFoundMsg.dart';
+import '../../../../V/Widgets/SearchBar.dart';
 import '../../../Widgets/myDropDown.dart';
 import '../../ProductionPool/copy.dart';
 import 'KitView.dart';
@@ -35,14 +37,12 @@ class _WebKitState extends State<WebKit> {
 
   int dataCount = 0;
 
-  bool _dataLoadingError = false;
-
   late DessertDataSourceAsync _dataSource;
 
   final _status = ['All', 'Sent', 'Ready', 'Pending', 'Order'];
   String selectedStatus = 'All';
 
-  var _dbChangeCallBack;
+  DbChangeCallBack? _dbChangeCallBack;
 
   // get kitCount => _dataSource == null ? 0 : _dataSource?.rowCount;
 
@@ -59,114 +59,113 @@ class _WebKitState extends State<WebKit> {
 
   @override
   void dispose() {
-    _dbChangeCallBack.dispose();
+    _dbChangeCallBack?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-            title: Row(
-              children: [
-                Text("KIT", style: mainWidgetsTitleTextStyle),
-                const Spacer(),
-                Wrap(children: [
-                  myDropDown<Production>(
-                      items: Production.values,
-                      elevation: 4,
-                      lable: 'Production',
-                      value: Production.None,
-                      selectedText: (selectedItem) {
-                        return (selectedItem as Production).getValue();
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+          title: Row(
+            children: [
+              Text("KIT", style: mainWidgetsTitleTextStyle),
+              const Spacer(),
+              SizedBox(
+                  height: 36,
+                  child: ElevatedButton.icon(
+                      onPressed: () {
+                        DateTime now = DateTime.now();
+                        String lastMonth = DateFormat('yyyy-MM-dd').format(DateTime(now.year, now.month - 1, now.day));
+                        String nextMonth = DateFormat('yyyy-MM-dd').format(DateTime(now.year, now.month + 1, now.day));
+                        Api.downloadFile("materialManagement/kit/getExcel", {}, "$lastMonth - $nextMonth.xlsx");
                       },
-                      onSelect: (x) {
-                        selectedProduction = x;
-                        setState(() {});
-                        loadData();
-                        return selectedProduction.getValue();
-                      },
-                      onChildBuild: (Production item) {
-                        return Text('${item.getValue()}');
-                      }),
-                  const SizedBox(width: 20),
-                  myDropDown<String>(
-                      items: _status,
-                      elevation: 4,
-                      lable: 'Status',
-                      value: selectedStatus,
-                      selectedText: (selectedItem) {
-                        return (selectedItem);
-                      },
-                      onSelect: (x) {
-                        selectedStatus = x;
-                        setState(() {});
-                        loadData();
-                        return selectedStatus;
-                      },
-                      onChildBuild: (item) {
-                        return Text('${item}');
-                      }),
+                      label: const Text("Download Exel"),
+                      icon: const Icon(Icons.download))),
+              const SizedBox(width: 50),
+              Wrap(children: [
+                myDropDown<Production>(
+                    items: Production.values,
+                    elevation: 4,
+                    lable: 'Production',
+                    value: Production.None,
+                    selectedText: (selectedItem) {
+                      return (selectedItem).getValue();
+                    },
+                    onSelect: (x) {
+                      selectedProduction = x;
+                      setState(() {});
+                      loadData();
+                      return selectedProduction.getValue();
+                    },
+                    onChildBuild: (Production item) {
+                      return Text(item.getValue());
+                    }),
+                const SizedBox(width: 20),
+                myDropDown<String>(
+                    items: _status,
+                    elevation: 4,
+                    lable: 'Status',
+                    value: selectedStatus,
+                    selectedText: (selectedItem) {
+                      return (selectedItem);
+                    },
+                    onSelect: (x) {
+                      selectedStatus = x;
+                      setState(() {});
+                      loadData();
+                      return selectedStatus;
+                    },
+                    onChildBuild: (item) {
+                      return Text(item);
+                    }),
 
-                  //-------------------------------------------------------------------------------------------------
+                //-------------------------------------------------------------------------------------------------
 
-                  const SizedBox(width: 20),
-                  Material(
+                const SizedBox(width: 20),
+                Material(
                     elevation: 4,
                     borderRadius: BorderRadius.circular(8),
                     child: SizedBox(
                         height: 40,
                         width: 200,
-                        child: TextFormField(
-                          controller: _controller,
-                          onChanged: (text) {
-                            searchText = text;
-                            loadData();
-                          },
-                          cursorColor: Colors.black,
-                          decoration: InputDecoration(
-                              prefixIcon: const Icon(Icons.search_rounded),
-                              suffixIcon: IconButton(icon: const Icon(Icons.clear), onPressed: _controller.clear),
-                              border: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              errorBorder: InputBorder.none,
-                              disabledBorder: InputBorder.none,
-                              contentPadding: const EdgeInsets.only(left: 15, bottom: 11, top: 10, right: 15),
-                              hintText: "Search Text"),
-                        )),
-                  ),
-                  const VerticalDivider(color: Colors.red),
-                  ElevatedButton.icon(
+                        child: SearchBar(
+                            searchController: _controller,
+                            onSearchTextChanged: (text) {
+                              searchText = text;
+                              loadData();
+                            }))),
+                const VerticalDivider(color: Colors.red),
+                ElevatedButton.icon(
+                    onPressed: () async {
+                      await const ScanReadyKits().show(context);
+                      loadData();
+                    },
+                    label: const Padding(
+                      padding: EdgeInsets.all(12.0),
+                      child: Text("Scan Ready Kits"),
+                    ),
+                    icon: const Icon(Icons.settings_overscan)),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: ElevatedButton.icon(
                       onPressed: () async {
-                        await const ScanReadyKits().show(context);
+                        await const SendKits().show(context);
                         loadData();
                       },
                       label: const Padding(
                         padding: EdgeInsets.all(12.0),
-                        child: Text("Scan Ready Kits"),
+                        child: Text("Send"),
                       ),
-                      icon: const Icon(Icons.settings_overscan)),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: ElevatedButton.icon(
-                        onPressed: () async {
-                          await const SendKits().show(context);
-                          loadData();
-                        },
-                        label: const Padding(
-                          padding: EdgeInsets.all(12.0),
-                          child: Text("Send"),
-                        ),
-                        icon: const Icon(Icons.send)),
-                  ),
-                ])
-              ],
-            ),
-            backgroundColor: Colors.transparent,
-            elevation: 0),
-        body: Padding(
+                      icon: const Icon(Icons.send)),
+                ),
+              ])
+            ],
+          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0),
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Material(
             elevation: 4,
@@ -232,16 +231,9 @@ class _WebKitState extends State<WebKit> {
       'pageSize': count,
       'searchText': searchText
     }).then((res) {
-      print(res.data);
-
       List kits = res.data["kits"];
       dataCount = res.data["count"];
-      print('--------------------------555555');
 
-      print(KIT.fromJsonArray(kits));
-
-      print('----------------------------------------66666666666666666');
-      _dataLoadingError = false;
       var x = KIT.fromJsonArray(kits);
       setState(() {});
       return DataResponse(dataCount, x);
@@ -258,9 +250,7 @@ class _WebKitState extends State<WebKit> {
               onPressed: () {
                 getData(page, startingAt, count, sortedBy, sortedAsc);
               })));
-      setState(() {
-        _dataLoadingError = true;
-      });
+      setState(() {});
     });
   }
 }

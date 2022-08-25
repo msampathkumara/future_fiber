@@ -24,8 +24,8 @@ class AddCpr extends StatefulWidget {
     return _AddCprState();
   }
 
-  void show(context) {
-    kIsWeb ? showDialog(context: context, builder: (_) => this) : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
+  show(context) {
+    return kIsWeb ? showDialog(context: context, builder: (_) => this) : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
   }
 }
 
@@ -210,7 +210,7 @@ class _AddCprState extends State<AddCpr> {
                                               decoration: BoxDecoration(
                                                   border: Border.all(color: Colors.grey.shade400, width: 1, style: BorderStyle.solid), borderRadius: BorderRadius.circular(4)),
                                               child: DropdownButton<String>(
-                                                  hint: const Text("Select Shortage Type"),
+                                                  hint: const Text("Select CPR Type"),
                                                   value: cpr.cprType,
                                                   icon: const Icon(Icons.arrow_downward),
                                                   elevation: 16,

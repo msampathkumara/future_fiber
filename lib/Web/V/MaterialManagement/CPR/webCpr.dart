@@ -1,9 +1,11 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:smartwind/C/Api.dart';
 import 'package:smartwind/M/CPR/CPR.dart';
 import 'package:smartwind/M/Enums.dart';
+import 'package:smartwind/V/Widgets/SearchBar.dart';
 import 'package:smartwind/Web/Styles/styles.dart';
 import 'package:smartwind/Web/V/MaterialManagement/CPR/AddCpr.dart';
 import 'package:smartwind/Web/V/MaterialManagement/CPR/CprView.dart';
@@ -38,8 +40,6 @@ class _WebCprState extends State<WebCpr> {
 
   int dataCount = 0;
 
-  bool _dataLoadingError = false;
-
   late DessertDataSourceAsync _dataSource;
 
   final _status = ['All', 'Sent', 'Ready', 'Pending', 'Order'];
@@ -49,316 +49,106 @@ class _WebCprState extends State<WebCpr> {
 
   @override
   void initState() {
-    // Ticket t = HiveBox.ticketBox.values.where((element) => element.mo == 'MO-00317274').toList()[0];
-    // WidgetsBinding.instance?.addPostFrameCallback((_) => AddCpr(t).show(context));
-
-    // getData(0);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
-      floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            Ticket? ticket = await const TicketSelector().show(context);
-            if (ticket != null) {
-              AddCpr(ticket).show(context);
-            }
-          },
-          child: const Icon(Icons.add)),
-      backgroundColor: Colors.transparent,
-      appBar: AppBar(
-          title: Row(
-            children: [
-              Text("CPR", style: mainWidgetsTitleTextStyle),
-              const Spacer(),
-              Wrap(children: [
-                myDropDown<Production>(
-                    items: Production.values,
-                    elevation: 4,
-                    lable: 'Production',
-                    value: Production.None,
-                    selectedText: (selectedItem) {
-                      return (selectedItem).getValue();
-                    },
-                    onSelect: (x) {
-                      selectedProduction = x;
-                      setState(() {});
-                      loadData();
-                      return selectedProduction.getValue();
-                    },
-                    onChildBuild: (Production item) {
-                      return Text(item.getValue());
-                    }),
-                const SizedBox(width: 20),
-                myDropDown<String>(
-                    items: _status,
-                    elevation: 4,
-                    lable: 'Status',
-                    value: selectedStatus,
-                    selectedText: (selectedItem) {
-                      return (selectedItem);
-                    },
-                    onSelect: (x) {
-                      selectedStatus = x;
-                      setState(() {});
-                      loadData();
-                      return selectedStatus;
-                    },
-                    onChildBuild: (item) {
-                      return Text('$item');
-                    }),
-                // const SizedBox(
-                //   width: 200,
-                // ),
-                // Material(
-                //   elevation: 4,
-                //   borderRadius: BorderRadius.circular(8),
-                //   child: SizedBox(
-                //     height: 40,
-                //     child: DropdownButtonHideUnderline(
-                //       child: DropdownButton<Production>(
-                //         value: selectedProduction,
-                //         selectedItemBuilder: (_) {
-                //           return Production.values.map<Widget>((Production item) {
-                //             return Center(
-                //                 child: Padding(
-                //               padding: const EdgeInsets.all(8.0),
-                //               child: Text("${item.getValue()}"),
-                //             ));
-                //           }).toList();
-                //         },
-                //         items: Production.values.map((Production value) {
-                //           return DropdownMenuItem<Production>(
-                //             value: value,
-                //             child: Text(value.getValue()),
-                //           );
-                //         }).toList(),
-                //         onChanged: (_) {
-                //           selectedProduction = _ ?? Production.All;
-                //           setState(() {});
-                //           loadData();
-                //         },
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                // const SizedBox(width: 20),
-                // Material(
-                //   elevation: 4,
-                //   borderRadius: BorderRadius.circular(8),
-                //   child: SizedBox(
-                //     height: 40,
-                //     child: DropdownButtonHideUnderline(
-                //       child: DropdownButton<String>(
-                //         value: selectedStatus,
-                //         selectedItemBuilder: (_) {
-                //           return _status.map<Widget>((String item) {
-                //             return Padding(
-                //               padding: const EdgeInsets.only(left: 8, right: 8),
-                //               child: Column(
-                //                 mainAxisAlignment: MainAxisAlignment.center,
-                //                 crossAxisAlignment: CrossAxisAlignment.start,
-                //                 children: [
-                //                   const Text("Status", style: TextStyle(fontSize: 12)),
-                //                   Text("${item}", style: const TextStyle(fontSize: 16)),
-                //                 ],
-                //               ),
-                //             );
-                //           }).toList();
-                //         },
-                //         items: _status.map((String value) {
-                //           return DropdownMenuItem<String>(value: value, child: Text(value));
-                //         }).toList(),
-                //         onChanged: (_) {
-                //           selectedStatus = _ ?? 'All';
-                //           setState(() {});
-                //           loadData();
-                //         },
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                const SizedBox(width: 20),
-                Material(
-                  elevation: 4,
-                  borderRadius: BorderRadius.circular(8),
-                  child: SizedBox(
-                      height: 40,
-                      width: 200,
-                      child: TextFormField(
-                        controller: _controller,
-                        onChanged: (text) {
-                          searchText = text;
-                          loadData();
+        floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
+        floatingActionButton: FloatingActionButton.small(
+            onPressed: () async {
+              Ticket? ticket = await const TicketSelector().show(context);
+              if (ticket != null) {
+                await AddCpr(ticket).show(context);
+              }
+            },
+            child: const Icon(Icons.add)),
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+            title: Row(
+              children: [
+                Text("CPR", style: mainWidgetsTitleTextStyle),
+                const Spacer(),
+                SizedBox(
+                    height: 36,
+                    child: ElevatedButton.icon(
+                        onPressed: () {
+                          downloadExcel();
                         },
-                        cursorColor: Colors.black,
-                        decoration: InputDecoration(
-                            prefixIcon: const Icon(Icons.search_rounded),
-                            suffixIcon: IconButton(icon: const Icon(Icons.clear), onPressed: _controller.clear),
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            contentPadding: const EdgeInsets.only(left: 15, bottom: 11, top: 10, right: 15),
-                            hintText: "Search Text"),
-                      )),
-                ),
-              ])
-            ],
-          ),
-          backgroundColor: Colors.transparent,
-          elevation: 0),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Material(
-            elevation: 4,
-            borderRadius: BorderRadius.circular(8),
-            child: WebCPRTable(onInit: (DessertDataSourceAsync dataSource) {
-              _dataSource = dataSource;
-            }, onRequestData: (int page, int startingAt, int count, String sortedBy, bool sortedAsc) {
-              return getData(page, startingAt, count, sortedBy, sortedAsc);
-            })),
-      ),
-      // bottomNavigationBar: Material(
-      //   borderRadius: BorderRadius.circular(8.0),
-      //   clipBehavior: Clip.antiAlias,
-      //   child: BottomAppBar(
-      //       shape: const CircularNotchedRectangle(),
-      //       child: IconTheme(
-      //         data: const IconThemeData(color: Colors.white),
-      //         child: Row(
-      //           children: [
-      //             InkWell(
-      //               onTap: () {},
-      //               splashColor: Colors.red,
-      //               child: Ink(
-      //                 child: IconButton(
-      //                   icon: const Icon(Icons.refresh),
-      //                   onPressed: () {
-      //                     _dataSource.refreshDatasource();
-      //                   },
-      //                 ),
-      //               ),
-      //             ),
-      //             // const Spacer(),
-      //             // const Padding(
-      //             //   padding: EdgeInsets.all(8.0),
-      //             //   child: Text(
-      //             //     "${0}",
-      //             //     textScaleFactor: 1.1,
-      //             //     style: TextStyle(color: Colors.white),
-      //             //   ),
-      //             // ),
-      //             const Spacer(),
-      //             const SizedBox(width: 36)
-      //           ],
-      //         ),
-      //       )),
-      // )
-    );
+                        label: const Text("Download Exel"),
+                        icon: const Icon(Icons.download))),
+                const SizedBox(width: 50),
+                Wrap(children: [
+                  myDropDown<Production>(
+                      items: Production.values,
+                      elevation: 4,
+                      lable: 'Production',
+                      value: Production.None,
+                      selectedText: (selectedItem) {
+                        return (selectedItem).getValue();
+                      },
+                      onSelect: (x) {
+                        selectedProduction = x;
+                        setState(() {});
+                        loadData();
+                        return selectedProduction.getValue();
+                      },
+                      onChildBuild: (Production item) {
+                        return Text(item.getValue());
+                      }),
+                  const SizedBox(width: 20),
+                  myDropDown<String>(
+                      items: _status,
+                      elevation: 4,
+                      lable: 'Status',
+                      value: selectedStatus,
+                      selectedText: (selectedItem) {
+                        return (selectedItem);
+                      },
+                      onSelect: (x) {
+                        selectedStatus = x;
+                        setState(() {});
+                        loadData();
+                        return selectedStatus;
+                      },
+                      onChildBuild: (item) {
+                        return Text(item);
+                      }),
+                  const SizedBox(width: 20),
+                  Material(
+                      elevation: 4,
+                      borderRadius: BorderRadius.circular(8),
+                      child: SizedBox(
+                          height: 40,
+                          width: 200,
+                          child: SearchBar(
+                              searchController: _controller,
+                              onSearchTextChanged: (text) {
+                                searchText = text;
+                                loadData();
+                              })))
+                ])
+              ],
+            ),
+            backgroundColor: Colors.transparent,
+            elevation: 0),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Material(
+              elevation: 4,
+              borderRadius: BorderRadius.circular(8),
+              child: WebCPRTable(onInit: (DessertDataSourceAsync dataSource) {
+                _dataSource = dataSource;
+              }, onRequestData: (int page, int startingAt, int count, String sortedBy, bool sortedAsc) {
+                return getData(page, startingAt, count, sortedBy, sortedAsc);
+              })),
+        ));
   }
 
   Filters dataFilter = Filters.none;
 
   void loadData() {
-    // print(CPR.fromJson({
-    //   'id': 27565,
-    //   'ticketId': 222038,
-    //   'itemtype': null,
-    //   'finishdate': 2022 - 01 - 08,
-    //   'comment': null,
-    //   'status': 'pending',
-    //   'userId': 0,
-    //   'formType': 'kit',
-    //   'shortageType': 'new',
-    //   'uptime': 1659890628133,
-    //   'cprType': null,
-    //   'cprSection': null,
-    //   'imageUrl': null,
-    //   'sailType': null,
-    //   'delete': 0,
-    //   'client': 'Nylon',
-    //   'suppliers': '',
-    //   'sentUserId': null,
-    //   'receivedUserId': null,
-    //   'recivedOn': null,
-    //   'addSection': null,
-    //   'startSection': null,
-    //   'recivedSection': null,
-    //   'group': 0,
-    //   'addedOn': '2022-08-07 18:05:00',
-    //   'addedUserId': null,
-    //   'orderBy': null,
-    //   'orderOn': null,
-    //   'sentOn': null,
-    //   'sentBy': null,
-    //   'createdAt': null,
-    //   'updatedAt': null,
-    //   'user': {
-    //     'id': 0,
-    //     'uname': 'system',
-    //     'utype': 'admin',
-    //     'status': 'ok',
-    //     'epf': '',
-    //     'etype': null,
-    //     'loft': null,
-    //     'phone': '',
-    //     'sectionId': 0,
-    //     'name': 'system',
-    //     'img': 'l1mz7mikkdwwj5v1byg',
-    //     'claimVersion': 0,
-    //     'uptime': 1653073226540,
-    //     'deleted': 0,
-    //     'md5Id': 'cfcd208495d565ef66e7dff9f98764da',
-    //     'emailAddress': '',
-    //     'address': '',
-    //     'deactivate': 0,
-    //     'nic': null,
-    //     'locked': 0
-    //   },
-    //   'ticket': {
-    //     'id': 222038,
-    //     'mo': 'MO-00115222',
-    //     'oe': 'YO-00372252Fs',
-    //     'isStarted': false,
-    //     'isRed': 0,
-    //     'isRush': 0,
-    //     'isError': 0,
-    //     'isGr': 0,
-    //     'isSk': 0,
-    //     'isHold': 0,
-    //     'inPrint': 0,
-    //     'finished': 0,
-    //     'isSort': 0,
-    //     'isQa': 0,
-    //     'isQc': 0,
-    //     'isStandard': 0,
-    //     'isCrossPro': 0,
-    //     'dir': 0,
-    //     'file': 0,
-    //     'sheet': 1,
-    //     'production': 'Nylon',
-    //     'delete': 0,
-    //     'reNamed': 0,
-    //     'progress': 0,
-    //     'fileVersion': 0,
-    //     'completed': 0,
-    //     'oldProd': null,
-    //     'fileName': null,
-    //     'custom': 1,
-    //     'shipDate': null,
-    //     'deliveryDate': '2022-01-08',
-    //     'uptime': 1659564185237,
-    //     'completedOn': null,
-    //     'haveComments': 0,
-    //     'createdAt': '2022-07-22 16:23:29'
-    //   }
-    // }));
-
     _dataSource.refreshDatasource();
   }
 
@@ -378,7 +168,6 @@ class _WebCprState extends State<WebCpr> {
       print('--------------------------------------------------------------------------------------------------xxxxxxxx-');
       dataCount = res.data["count"];
 
-      _dataLoadingError = false;
       var x = CPR.fromJsonArray(res.data["cprs"]);
       print('---------------------------------------------------------------------------------------------------');
       return DataResponse(dataCount, x);
@@ -395,9 +184,15 @@ class _WebCprState extends State<WebCpr> {
               onPressed: () {
                 getData(page, startingAt, count, sortedBy, sortedAsc);
               })));
-      setState(() {
-        _dataLoadingError = true;
-      });
+      setState(() {});
     });
+  }
+
+  Future<void> downloadExcel() async {
+    DateTime now = DateTime.now();
+    String lastMonth = DateFormat('yyyy-MM-dd').format(DateTime(now.year, now.month - 1, now.day));
+    String nextMonth = DateFormat('yyyy-MM-dd').format(DateTime(now.year, now.month + 1, now.day));
+
+    Api.downloadFile("materialManagement/cpr/getExcel", {}, "cpr-$lastMonth - $nextMonth.xlsx");
   }
 }

@@ -19,6 +19,8 @@ class ScanReadyKits extends StatefulWidget {
 }
 
 class _ScanReadyKitsState extends State<ScanReadyKits> {
+  var _controller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return IfWeb(elseIf: getUi(), child: DialogView(width: 300, height: 500, child: getWebUi()));
@@ -35,11 +37,13 @@ class _ScanReadyKitsState extends State<ScanReadyKits> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextFormField(
+                controller: _controller,
                 decoration: FormInputDecoration.getDeco(hintText: "MO"),
                 onFieldSubmitted: (mo) {
                   setState(() {
                     Ticket t = Ticket();
                     t.mo = mo;
+                    _controller.clear();
                     t.loading = true;
                     ticketList.add(t);
                     send(t);

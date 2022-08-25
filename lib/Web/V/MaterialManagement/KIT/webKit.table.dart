@@ -31,7 +31,7 @@ class _WebKITTableState extends State<WebKITTable> {
   }
 
   void sort(int columnIndex, bool ascending) {
-    var columnName = ['ticketName', 'client', 'shortageType', 'addedOn', 'shipDate', 'shipDate', 'status'][columnIndex];
+    var columnName = ['mo', 'client', 'shortageType', 'addedOn', 'shipDate', 'shipDate', 'status'][columnIndex];
     // var columnName = "oe";
     // switch (columnIndex) {
     //   case 1:
@@ -129,7 +129,7 @@ class _WebKITTableState extends State<WebKITTable> {
           },
           initialFirstRowIndex: _initialRow,
           onPageChanged: (rowIndex) {
-            print("${rowIndex}${_rowsPerPage}xxxxxxxx =${rowIndex / _rowsPerPage}");
+            print("$rowIndex${_rowsPerPage}xxxxxxxx =${rowIndex / _rowsPerPage}");
           },
           sortColumnIndex: _sortColumnIndex,
           sortAscending: _sortAscending,

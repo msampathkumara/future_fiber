@@ -223,7 +223,6 @@ class Ticket extends DataObject {
       var path = ticket.isStandard ? "tickets/standard/getPdf?" : 'tickets/getTicketFile?';
       String queryString = Uri(queryParameters: {"id": ticket.id.toString()}).query;
       final idToken = await AppUser.getIdToken(false);
-
       Dio dio = Dio();
       dio.options.headers["authorization"] = "$idToken";
       Response<List<int>>? rs;

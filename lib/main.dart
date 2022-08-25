@@ -24,7 +24,7 @@ import 'mainFuncs.dart';
 main() async {
   bool x = Uri.base.host.contains('mm.');
   if (kDebugMode) {
-    x = false;
+    x = true;
   }
   await mainThings(viewIssMaterialManagement: x);
 }
@@ -178,8 +178,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       PermissionStatus p = await Permission.phone.request();
                       await Permission.storage.request();
                       await Permission.camera.request();
-                      print("******************************************************************************");
-                      print(p);
                       if (!mounted) return;
                       await AppUser.logout(context);
                     },

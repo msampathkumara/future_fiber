@@ -162,14 +162,14 @@ class _KitViewState extends State<KitView> {
                                                   title: Text(_kit.user!.uname, style: valTheme),
                                                   subtitle: Text(_kit.addedOn, style: const TextStyle(fontSize: 12, color: Colors.black))))
                                           : Container(),
-                                      (_kit.sentUser != null)
+                                      (_kit.sentUserId != null)
                                           ? ListTile(
                                               visualDensity: vd,
                                               title: Text("Sent By ", style: titleTheme),
                                               subtitle: ListTile(
                                                   leading: UserImage(nsUser: NsUser.fromId(_kit.sentUser!.id), radius: 16),
                                                   title: Text(_kit.sentUser!.uname, style: valTheme),
-                                                  subtitle: Text("${_kit.sentOn ?? ""}", style: const TextStyle(fontSize: 12, color: Colors.black))))
+                                                  subtitle: Text(_kit.sentOn ?? "", style: const TextStyle(fontSize: 12, color: Colors.black))))
                                           : Container(),
                                       if (_kit.status.isReady(caseInsensitive: true, trim: true))
                                         Row(
@@ -179,7 +179,13 @@ class _KitViewState extends State<KitView> {
                                             const Spacer(),
                                             Padding(
                                               padding: const EdgeInsets.all(8.0),
-                                              child: SizedBox(width: 100, child: ElevatedButton(onPressed: () {}, child: const Text("Send"))),
+                                              child: SizedBox(
+                                                  width: 100,
+                                                  child: ElevatedButton(
+                                                      onPressed: () {
+                                                        sendKit();
+                                                      },
+                                                      child: const Text("Send"))),
                                             ),
                                           ],
                                         )

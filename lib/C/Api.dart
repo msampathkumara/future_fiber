@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:universal_html/html.dart' as html;
 
 import '../M/AppUser.dart';
 import 'Server.dart';
@@ -37,6 +38,37 @@ class Api {
       print('userCurrentSection ${data["userCurrentSection"]}');
 
       return dio.get(Server.getServerApiPath(url, onlineServer: onlineServer), queryParameters: data, cancelToken: cancelToken);
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 401) {
+        print(e.response?.statusCode);
+        return get(url, data, onlineServer: onlineServer, reFreshToken: true);
+      }
+      throw Exception(e.message);
+    }
+  }
+
+  static Future downloadFile(String url, Map<String, dynamic> data, fileName, {onlineServer = false, bool reFreshToken = false, cancelToken}) async {
+    try {
+      final idToken = await AppUser.getIdToken(reFreshToken);
+      Dio dio = Dio();
+      dio.options.headers['content-Type'] = 'application/json';
+      dio.options.headers["authorization"] = "$idToken";
+
+      data["userCurrentSection"] = (AppUser.getSelectedSection()?.id ?? 0).toString();
+      print('userCurrentSection ${data["userCurrentSection"]}');
+
+      Response response = await dio.get<List<int>>(Server.getServerApiPath(url), options: Options(responseType: ResponseType.bytes));
+
+      print(response.headers['content-type']);
+
+      // var file = File.fromRawPath(response.data);
+      final blob = html.Blob([response.data], (response.headers.value('content-type')));
+      final url_ = html.Url.createObjectUrlFromBlob(blob);
+      // html.window.open(url_, "_blank");
+
+      final anchor = html.AnchorElement(href: url_)
+        ..setAttribute("download", fileName)
+        ..click();
     } on DioError catch (e) {
       if (e.response?.statusCode == 401) {
         print(e.response?.statusCode);

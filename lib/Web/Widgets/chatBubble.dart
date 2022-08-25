@@ -39,41 +39,43 @@ class _ChatBubbleState extends State<ChatBubble> {
     //   ],
     // );
 
-    return (widget.isSelf)
-        ? ListTile(
-            contentPadding: EdgeInsets.zero,
-            minLeadingWidth: 32,
-            horizontalTitleGap: 0,
-            title: Padding(
-              padding: const EdgeInsets.only(left: 0.0),
-              child: Material(
-                  elevation: 4,
-                  borderRadius: selfBorderRadius,
-                  color: Theme.of(context).primaryColor,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(widget.message.text, style: const TextStyle(color: Colors.white)),
-                  )),
-            ),
-            trailing: UserImage(nsUser: user, radius: 12, padding: 0),
-            subtitle: Row(
-              children: [
-                Text("${user?.name}", style: const TextStyle(fontSize: 8)),
-                const Spacer(),
-                Align(alignment: Alignment.bottomRight, child: Text(widget.message.dnt, style: const TextStyle(fontSize: 8))),
-              ],
-            ))
-        : ListTile(
-            contentPadding: EdgeInsets.zero,
-            minLeadingWidth: 24,
-            horizontalTitleGap: 8,
-            minVerticalPadding: 4,
-            leading: UserImage(nsUser: user, radius: 12, padding: 0),
-            title: Material(
+    if ((widget.isSelf)) {
+      return ListTile(
+          contentPadding: EdgeInsets.zero,
+          minLeadingWidth: 32,
+          horizontalTitleGap: 0,
+          title: Padding(
+            padding: const EdgeInsets.only(left: 0.0),
+            child: Material(
                 elevation: 4,
-                borderRadius: borderRadius,
-                color: Colors.grey,
-                child: Padding(padding: const EdgeInsets.all(8.0), child: TextMenu(child: Text(widget.message.text, style: const TextStyle(color: Colors.white))))),
-            subtitle: Align(alignment: Alignment.bottomRight, child: Text(widget.message.dnt, style: const TextStyle(fontSize: 8))));
+                borderRadius: selfBorderRadius,
+                color: Theme.of(context).primaryColor,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextMenu(child: Text(widget.message.text, style: const TextStyle(color: Colors.white))),
+                )),
+          ),
+          trailing: UserImage(nsUser: user, radius: 12, padding: 0),
+          subtitle: Row(
+            children: [
+              Text("${user?.name}", style: const TextStyle(fontSize: 8)),
+              const Spacer(),
+              Align(alignment: Alignment.bottomRight, child: Text(widget.message.dnt, style: const TextStyle(fontSize: 8))),
+            ],
+          ));
+    } else {
+      return ListTile(
+          contentPadding: EdgeInsets.zero,
+          minLeadingWidth: 24,
+          horizontalTitleGap: 8,
+          minVerticalPadding: 4,
+          leading: UserImage(nsUser: user, radius: 12, padding: 0),
+          title: Material(
+              elevation: 4,
+              borderRadius: borderRadius,
+              color: Colors.grey,
+              child: Padding(padding: const EdgeInsets.all(8.0), child: TextMenu(child: Text(widget.message.text, style: const TextStyle(color: Colors.white))))),
+          subtitle: Align(alignment: Alignment.bottomRight, child: Text(widget.message.dnt, style: const TextStyle(fontSize: 8))));
+    }
   }
 }

@@ -33,7 +33,7 @@ class _WebCPRTableState extends State<WebCPRTable> {
   void sort(int columnIndex, bool ascending) {
     var columnName = "oe";
 
-    columnName = ['ticketName', 'client', 'suppliers', 'shortageType', 'addedOn', 'cprType', 'shipDate', 'status'][columnIndex];
+    columnName = ['mo', 'client', 'suppliers', 'shortageType', 'addedOn', 'cprType', 'shipDate', 'status'][columnIndex];
 
     _dessertsDataSource!.sort(columnName, ascending);
     setState(() {
@@ -94,7 +94,7 @@ class _WebCPRTableState extends State<WebCPRTable> {
 
   @override
   Widget build(BuildContext context) {
-    // Last ppage example uses extra API call to get the number of items in datasource
+    // Last page example uses extra API call to get the number of items in datasource
     if (_dataSourceLoading) return const SizedBox();
 
     return Stack(alignment: Alignment.bottomCenter, children: [
