@@ -56,6 +56,13 @@ class CPR {
   @JsonKey(defaultValue: '', includeIfNull: true)
   String formType = '';
 
+  @JsonKey(defaultValue: null, includeIfNull: true)
+  String? orderType;
+  @JsonKey(defaultValue: null, includeIfNull: true)
+  int? orderBy;
+  @JsonKey(defaultValue: null, includeIfNull: true)
+  String? orderOn;
+
   NsUser? get user {
     return HiveBox.usersBox.get(addedUserId);
   }
@@ -79,11 +86,14 @@ class CPR {
   String get supplier => suppliers.first;
 
   static List<String> arrayFromObject(object) {
-    return (object.runtimeType == String
+    if (object == null) return [];
+    List<String> x = (object.runtimeType == String
         ? object.toString().split(',')
         : object.runtimeType == List
             ? (object as List).map((e) => "$e").toList()
             : []);
+
+    return x;
   }
 
   Map<String, dynamic> toJson() => _$CPRToJson(this);

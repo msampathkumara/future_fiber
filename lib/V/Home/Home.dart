@@ -269,13 +269,14 @@ class _HomeState extends State<Home> {
           // DB.updateDatabase(context, showLoadingDialog: true, reset: true);
           HiveBox.getDataFromServer(clean: true);
         } else if (result == MenuItems.changeSection) {
-          Navigator.pushAndRemoveUntil(
+          // Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminCpanel()));
+
+          Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => UserSectionSelector(nsUser!, (Section section) {
                         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const Home()), (Route<dynamic> route) => false);
-                      })),
-              (Route<dynamic> route) => false);
+                      })));
         } else if (result == MenuItems.cpanel) {
           Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminCpanel()));
         } else if (result == MenuItems.deleteDownloadedFiles) {

@@ -19,8 +19,8 @@ class CprItem {
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int id = 0;
 
-  @JsonKey(defaultValue: null, includeIfNull: true)
-  String? supplier;
+  // @JsonKey(defaultValue: null, includeIfNull: true)
+  // String? supplier;
 
   @JsonKey(defaultValue: false, includeIfNull: true)
   bool selected = false;

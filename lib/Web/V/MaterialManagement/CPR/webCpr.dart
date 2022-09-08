@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:smartwind/C/Api.dart';
 import 'package:smartwind/M/CPR/CPR.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 import 'package:smartwind/Web/Styles/styles.dart';
@@ -15,6 +16,7 @@ import 'package:smartwind/Web/Widgets/myDropDown.dart';
 import '../../../../M/AppUser.dart';
 import '../../../../M/Ticket.dart';
 import '../../../../V/Widgets/NoResultFoundMsg.dart';
+import '../../../Widgets/ShowMessage.dart';
 import '../../ProductionPool/copy.dart';
 
 part 'webCpr.options.dart';
@@ -46,6 +48,8 @@ class _WebCprState extends State<WebCpr> {
   String selectedStatus = 'All';
 
   bool e = false;
+
+  String selectedOrderType = 'All';
 
   @override
   void initState() {
@@ -80,6 +84,24 @@ class _WebCprState extends State<WebCpr> {
                         icon: const Icon(Icons.download))),
                 const SizedBox(width: 50),
                 Wrap(children: [
+                  myDropDown<String>(
+                      items: const ['All', 'Urgent', 'Normal'],
+                      elevation: 4,
+                      lable: 'OrderType',
+                      value: 'All',
+                      selectedText: (selectedItem) {
+                        return (selectedItem);
+                      },
+                      onSelect: (x) {
+                        selectedOrderType = x;
+                        setState(() {});
+                        loadData();
+                        return selectedOrderType;
+                      },
+                      onChildBuild: (item) {
+                        return Text(item);
+                      }),
+                  const SizedBox(width: 20),
                   myDropDown<Production>(
                       items: Production.values,
                       elevation: 4,
@@ -163,6 +185,7 @@ class _WebCprState extends State<WebCpr> {
       'sortBy': sortedBy,
       'pageIndex': page,
       'pageSize': count,
+      'orderType': selectedOrderType,
       'searchText': searchText
     }).then((res) {
       print('--------------------------------------------------------------------------------------------------xxxxxxxx-');

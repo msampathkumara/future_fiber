@@ -28,6 +28,7 @@ import '../V/Widgets/TicketPdfViwer.dart';
 import 'AppUser.dart';
 import 'DataObject.dart';
 import 'LocalFileVersion.dart';
+import 'Ticket/CprReport.dart';
 import 'hive.dart';
 
 part 'Ticket.g.dart';
@@ -169,6 +170,26 @@ class Ticket extends DataObject {
   @JsonKey(ignore: true)
   File? ticketFile;
 
+  @HiveField(34, defaultValue: 0)
+  @JsonKey(defaultValue: 0, includeIfNull: true)
+  int kit = 0;
+
+  @HiveField(35, defaultValue: 0)
+  @JsonKey(defaultValue: 0, includeIfNull: true)
+  int cpr = 0;
+
+  @HiveField(36, defaultValue: 0)
+  @JsonKey(defaultValue: 0, includeIfNull: true)
+  int haveKit = 0;
+
+  @HiveField(37, defaultValue: 0)
+  @JsonKey(defaultValue: 0, includeIfNull: true)
+  int haveCpr = 0;
+
+  @HiveField(38, defaultValue: [])
+  @JsonKey(defaultValue: [], includeIfNull: true, fromJson: stringToCprReportList)
+  List<CprReport> cprReport = [];
+
   String get atSection {
     var x = HiveBox.sectionsBox.get(nowAt)?.sectionTitle;
 
@@ -185,6 +206,8 @@ class Ticket extends DataObject {
   bool get hasNoFile => file != 1;
 
   static stringToList(string) => (string == null || string.toString().isEmpty) ? [] : json.decode(string);
+
+  static List<CprReport> stringToCprReportList(string) => (string == null || string.toString().isEmpty) ? [] : CprReport.fromJsonArray(json.decode(string));
 
   String getUpdateDateTime() {
     var date = DateTime.fromMicrosecondsSinceEpoch(uptime * 1000);
@@ -465,5 +488,18 @@ class Ticket extends DataObject {
       }
     }, key: myKey);
     return await ticketPdfViwer.show(context);
+  }
+
+  var _kitReport;
+  var _cprReport;
+
+  List<CprReport> getKitReport() {
+    print(_kitReport == null);
+    return _kitReport = _kitReport ?? cprReport.where((element) => element.type == 'kit').toList();
+  }
+
+  List<CprReport> getCprReport() {
+    print(_cprReport == null);
+    return _cprReport = _cprReport ?? cprReport.where((element) => element.type == 'cpr').toList();
   }
 }

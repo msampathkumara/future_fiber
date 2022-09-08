@@ -6,15 +6,9 @@ part of 'ServerResponceMap.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ServerResponseMap _$ServerResponseMapFromJson(Map<String, dynamic> json) =>
-    ServerResponseMap()
-      ..userRFCredentials = json['userRFCredentials'] == null
-          ? null
-          : UserRFCredentials.fromJson(
-              json['userRFCredentials'] as Map<String, dynamic>)
-      ..operationMinMax = json['operationMinMax'] == null
-          ? null
-          : OperationMinMax.fromJson(json['operationMinMax'] as Map<String, dynamic>)
+ServerResponseMap _$ServerResponseMapFromJson(Map<String, dynamic> json) => ServerResponseMap()
+  ..userRFCredentials = json['userRFCredentials'] == null ? null : UserRFCredentials.fromJson(json['userRFCredentials'] as Map<String, dynamic>)
+  ..operationMinMax = json['operationMinMax'] == null ? null : OperationMinMax.fromJson(json['operationMinMax'] as Map<String, dynamic>)
   ..done = json['done'] as bool?
   ..progressList = (json['progressList'] as List<dynamic>?)?.map((e) => Progress.fromJson(e as Map<String, dynamic>)).toList() ?? []
   ..flags = (json['flags'] as List<dynamic>?)?.map((e) => TicketFlag.fromJson(e as Map<String, dynamic>)).toList() ?? []

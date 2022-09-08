@@ -55,7 +55,7 @@ class _info_short_itemsState extends State<info_short_items> {
                         trailing: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Padding(padding: const EdgeInsets.only(top: 8.0), child: Text(e.supplier ?? '', textScaleFactor: 1)),
+                            // Padding(padding: const EdgeInsets.only(top: 8.0), child: Text(e.supplier ?? '', textScaleFactor: 1)),
                             Padding(padding: const EdgeInsets.only(top: 8.0), child: Text(e.dnt))
                           ],
                         ),

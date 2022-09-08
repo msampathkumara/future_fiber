@@ -1,11 +1,12 @@
 import 'package:data_table_2/data_table_2.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:just_the_tooltip/just_the_tooltip.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/Web/V/MaterialManagement/CPR/TicketSortMaterials.dart';
 
 import '../../../M/Enums.dart';
-import '../../../M/hive.dart';
 import '../../../V/Home/Tickets/ProductionPool/FlagDialog.dart';
 import '../../../V/Home/Tickets/ProductionPool/TicketListOptions.dart';
 import '../../../V/Home/Tickets/TicketInfo/TicketChatView.dart';
@@ -18,7 +19,7 @@ import 'copy.dart';
 class PaginatedDataTable2Demo extends StatefulWidget {
   final Null Function(DessertDataSource dataSource) onInit;
 
-    const PaginatedDataTable2Demo({Key? key, required this.onInit}) : super(key: key);
+  const PaginatedDataTable2Demo({Key? key, required this.onInit}) : super(key: key);
 
   @override
   _PaginatedDataTable2DemoState createState() => _PaginatedDataTable2DemoState();
@@ -92,14 +93,16 @@ class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
           label: const Text('Shipping Date', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
           onSort: (columnIndex, ascending) => sort<String>((d) => d.shipDate, columnIndex, ascending)),
+      const DataColumn2(size: ColumnSize.S, label: Text('Kit/CPR', style: TextStyle(fontWeight: FontWeight.bold)), numeric: true),
       const DataColumn2(size: ColumnSize.L, label: Text('Product Notifications', style: TextStyle(fontWeight: FontWeight.bold)), numeric: true),
       const DataColumn2(numeric: true, size: ColumnSize.S, tooltip: "Options", label: Text('Options', style: TextStyle(fontWeight: FontWeight.bold)))
     ];
   }
 
+  GlobalKey menuKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
-    GlobalKey menuKey = GlobalKey();
     return Stack(key: menuKey, alignment: Alignment.bottomCenter, children: [
       PaginatedDataTable2(
           scrollController: _scrollController,
@@ -139,6 +142,7 @@ class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
           empty: Center(child: Container(padding: const EdgeInsets.all(20), child: const NoResultFoundMsg())),
           source: _dessertsDataSource)
       // Positioned(bottom: 16, child: CustomPager(_controller!))
+      ,
     ]);
   }
 }
@@ -150,10 +154,17 @@ class DessertDataSource extends DataTableSource {
 
   var sts = const TextStyle(color: Colors.redAccent, fontSize: 12);
 
+  late TapGestureRecognizer _longPressRecognizer;
+
   DessertDataSource(this.context, this.filter) {
+    _longPressRecognizer = TapGestureRecognizer()..onTap = _handlePress;
     tickets = _tickets;
     print("ddddddddd ${tickets.length}");
     sort((d) => d.shipDate, true);
+  }
+
+  void _handlePress() {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Theme.of(context).errorColor, content: const Text('No file')));
   }
 
   final BuildContext context;
@@ -219,6 +230,30 @@ class DessertDataSource extends DataTableSource {
               Wrap(children: [const Icon(Icons.local_shipping_rounded, size: 12, color: Colors.grey), const SizedBox(width: 16), Text(ticket.deliveryDate.toString())]),
             if (ticket.shipDate.toString().isNotEmpty)
               Wrap(children: [const Icon(Icons.directions_boat_rounded, size: 12, color: Colors.grey), const SizedBox(width: 16), Text(ticket.shipDate.toString(), style: sts)]),
+          ],
+        )),
+        DataCell(Wrap(
+          children: [
+            ticket.haveKit == 1
+                ? JustTheTooltip(
+                    content: SizedBox(
+                      width: 150,
+                      child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Wrap(children: ticket.getKitReport().map((e) => Row(children: [Text("${e.status}"), const Spacer(), Text("${e.count}")])).toList())),
+                    ),
+                    child: IconButton(icon: const Icon(Icons.view_in_ar_rounded, color: Colors.red), onPressed: () {}))
+                : const IconButton(icon: Icon(Icons.view_in_ar_rounded, color: Colors.grey), onPressed: null),
+            ticket.haveCpr == 1
+                ? JustTheTooltip(
+                    content: SizedBox(
+                      width: 150,
+                      child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Wrap(children: ticket.getCprReport().map((e) => Row(children: [Text("${e.status}"), const Spacer(), Text("${e.count}")])).toList())),
+                    ),
+                    child: IconButton(icon: const Icon(Icons.local_mall_rounded, color: Colors.red), onPressed: () {}))
+                : const IconButton(icon: Icon(Icons.local_mall_rounded, color: Colors.grey), onPressed: null),
           ],
         )),
         DataCell(Row(
@@ -332,6 +367,10 @@ class DessertDataSource extends DataTableSource {
     tickets = _tickets;
     sort(sortField, _ascending);
     print("DATA SETED");
+  }
+
+  getColor(int i) {
+    return [Colors.grey, Colors.green, Colors.red][i];
   }
 }
 

@@ -30,6 +30,9 @@ class _WebProductionPoolState extends State<WebProductionPool> {
 
   late DbChangeCallBack _dbChangeCallBack;
 
+  bool filterByFiles = false;
+  bool filterByStart = false;
+
   get ticketCount => _dataSource == null ? 0 : _dataSource?.rowCount;
 
   @override
@@ -61,6 +64,17 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                 const Spacer(),
                 Wrap(children: [
                   // flagIcon(Filters.isCrossPro, Icons.merge_type_rounded, "Filter by cross production"),
+                  flagIcon(Filters.isError, Icons.picture_as_pdf_rounded, "Files", checked: filterByFiles, onPressed: () {
+                    filterByFiles = !filterByFiles;
+                    loadData();
+                    setState(() {});
+                  }),
+                  flagIcon(Filters.isError, Icons.play_arrow, "Filter By Start", checked: filterByStart, onPressed: () {
+                    filterByStart = !filterByStart;
+                    loadData();
+                    setState(() {});
+                  }),
+                  const VerticalDivider(color: Colors.redAccent, width: 50, thickness: 5),
                   flagIcon(Filters.isError, Icons.warning_rounded, "Filter by Error Route"),
                   // flagIcon(Filters.inPrint, Icons.print_rounded, "Filter by in print"),
                   flagIcon(Filters.isRush, Icons.offline_bolt_rounded, "Filter by rush"),
@@ -68,7 +82,8 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                   flagIcon(Filters.isHold, NsIcons.stop, "Filter by stop"),
                   flagIcon(Filters.isSk, NsIcons.sk, "Filter by SK"),
                   flagIcon(Filters.isGr, NsIcons.gr, "Filter by GR"),
-                  flagIcon(Filters.isSort, NsIcons.short, "Filter by CPR"),
+                  flagIcon(Filters.haveKit, Icons.view_in_ar_rounded, "Filter by Kit"),
+                  flagIcon(Filters.haveCpr, NsIcons.short, "Filter by CPR"),
                   flagIcon(Filters.isQc, NsIcons.short, "Filter by QC", text: "QC"),
                   flagIcon(Filters.isQa, NsIcons.short, "Filter by QA", text: "QA"),
                   const SizedBox(width: 50),
@@ -102,34 +117,15 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                     elevation: 4,
                     borderRadius: BorderRadius.circular(8),
                     child: SizedBox(
-                      height: 40,
-                      width: 200,
-                      child: SearchBar(
-                          onSearchTextChanged: (String text) {
-                            searchText = text;
-                            loadData();
-                          },
-                          delay: 300,
-                          searchController: _controller),
-                      // child: TextFormField(
-                      //   controller: _controller,
-                      //   onChanged: (text) {
-                      //     searchText = text;
-                      //     loadData();
-                      //   },
-                      //   cursorColor: Colors.black,
-                      //   decoration: InputDecoration(
-                      //       prefixIcon: const Icon(Icons.search_rounded),
-                      //       suffixIcon: IconButton(icon: const Icon(Icons.clear), onPressed: _controller.clear),
-                      //       border: InputBorder.none,
-                      //       focusedBorder: InputBorder.none,
-                      //       enabledBorder: InputBorder.none,
-                      //       errorBorder: InputBorder.none,
-                      //       disabledBorder: InputBorder.none,
-                      //       contentPadding: const EdgeInsets.only(left: 15, bottom: 11, top: 10, right: 15),
-                      //       hintText: "Search Text"),
-                      // )
-                    ),
+                        height: 40,
+                        width: 200,
+                        child: SearchBar(
+                            onSearchTextChanged: (String text) {
+                              searchText = text;
+                              loadData();
+                            },
+                            delay: 300,
+                            searchController: _controller)),
                   ),
                 ])
               ],
@@ -155,16 +151,23 @@ class _WebProductionPoolState extends State<WebProductionPool> {
 
   Filters dataFilter = Filters.none;
 
-  flagIcon(Filters filter, IconData? icon, tooltip, {String? text}) {
+  flagIcon(Filters filter, IconData? icon, tooltip, {String? text, Function? onPressed, bool? checked}) {
+    checked = checked ?? dataFilter == filter;
+
     return IconButton(
       icon: CircleAvatar(
           backgroundColor: Colors.white,
           radius: 16,
           child: (text != null)
-              ? Text(text, style: TextStyle(color: dataFilter == filter ? Colors.red : Colors.black, fontWeight: FontWeight.bold))
-              : Icon(icon, color: dataFilter == filter ? Colors.red : Colors.black, size: 20)),
+              ? Text(text, style: TextStyle(color: checked ? Colors.red : Colors.black, fontWeight: FontWeight.bold))
+              : Icon(icon, color: checked ? Colors.red : Colors.black, size: 20)),
       tooltip: tooltip,
       onPressed: () async {
+        if (onPressed != null) {
+          onPressed();
+          return;
+        }
+
         dataFilter = dataFilter == filter ? Filters.none : filter;
         loadData();
         setState(() {});
@@ -175,7 +178,11 @@ class _WebProductionPoolState extends State<WebProductionPool> {
   void loadData() {
     print(dataFilter);
     var tickets = HiveBox.ticketBox.values.where((ticket) {
-      return searchText.containsInArrayIgnoreCase([ticket.mo, ticket.oe]) && searchByFilters(ticket, dataFilter) && searchByProduction(ticket, selectedProduction);
+      return (filterByStart ? ticket.isStarted : true) &&
+          (filterByFiles ? ticket.hasFile : true) &&
+          searchText.containsInArrayIgnoreCase([ticket.mo, ticket.oe]) &&
+          searchByFilters(ticket, dataFilter) &&
+          searchByProduction(ticket, selectedProduction);
     }).toList();
     _dataSource?.setData(tickets);
   }

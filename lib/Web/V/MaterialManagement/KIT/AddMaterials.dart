@@ -116,6 +116,7 @@ class _AddMaterialsState extends State<AddMaterials> {
                     controller: textEditingController,
                     onSubmit: (v) {
                       currentMaterial.item = v;
+                      setState(() {});
                     },
                     suggestions: _matList.map((e) => SearchFieldListItem(e)).toList(),
                     suggestionState: Suggestion.expand,
@@ -140,6 +141,7 @@ class _AddMaterialsState extends State<AddMaterials> {
                     itemHeight: 50,
                     onSuggestionTap: (v) {
                       currentMaterial.item = v.searchKey;
+                      setState(() {});
                     },
                   )),
                   const SizedBox(width: 8),
@@ -150,19 +152,22 @@ class _AddMaterialsState extends State<AddMaterials> {
                           decoration: const InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.teal)), labelText: 'QTY'),
                           onChanged: (text) {
                             currentMaterial.qty = (text);
+                            setState(() {});
                           })),
                   const SizedBox(width: 8),
                   Card(
                       child: IconButton(
                           color: Colors.blue,
-                          onPressed: () {
-                            currentMaterial.item = textEditingController.text;
-                            _addMaterialToList(currentMaterial);
-                            currentMaterial = KitItem();
-                            _qtyController.clear();
-                            textEditingController.clear();
-                            setState(() {});
-                          },
+                          onPressed: (textEditingController.text.isEmpty || _qtyController.text.isEmpty)
+                              ? null
+                              : () {
+                                  currentMaterial.item = textEditingController.text;
+                                  _addMaterialToList(currentMaterial);
+                                  currentMaterial = KitItem();
+                                  _qtyController.clear();
+                                  textEditingController.clear();
+                                  setState(() {});
+                                },
                           icon: const Icon(Icons.add_rounded)))
                 ]),
               ),
@@ -270,27 +275,27 @@ class _AddMaterialsState extends State<AddMaterials> {
   save() {
     print(kit.toJson());
 
-    if (kit.items.where((element) => element.supplier == null).isEmpty) {
-      err_msg = 'items';
-    } else {
-      Api.post("materialManagement/kit/saveKitMaterials", {'kit': kit}).then((res) {
-        Map s = res.data;
-        Navigator.pop(context, true);
-      }).whenComplete(() {
-        setState(() {});
-      }).catchError((err) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(err.toString()),
-            action: SnackBarAction(
-                label: 'Retry',
-                onPressed: () {
-                  getAllMaterials();
-                })));
-        setState(() {
-          // _dataLoadingError = true;
-        });
+    // if (kit.items.where((element) => element.supplier == null).isEmpty) {
+    //   err_msg = 'items';
+    // } else {
+    Api.post("materialManagement/kit/saveKitMaterials", {'kit': kit}).then((res) {
+      Map s = res.data;
+      Navigator.pop(context, true);
+    }).whenComplete(() {
+      setState(() {});
+    }).catchError((err) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(err.toString()),
+          action: SnackBarAction(
+              label: 'Retry',
+              onPressed: () {
+                getAllMaterials();
+              })));
+      setState(() {
+        // _dataLoadingError = true;
       });
-    }
+    });
+    // }
     print(err_msg);
   }
 }

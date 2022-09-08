@@ -76,14 +76,7 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
                         ),
                         onTap: () async {
                           Navigator.of(context).pop();
-                          Loading loading = Loading();
-                          loading.show(context1);
-
-                          Api.post('users/deactivate', {"userId": nsUser.id, "deactivate": (!nsUser.isDisabled)}).then((value) {
-                            print('cccccccccccccccccccccccccc');
-                            HiveBox.getDataFromServer();
-                            loading.close(context1);
-                          });
+                          deactivateUser(nsUser);
                         },
                       ),
                     if (nsUser.isLocked && AppUser.havePermissionFor(Permissions.DEACTIVATE_USERS))
@@ -141,6 +134,25 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
       );
     },
   );
+}
+
+void deactivateUser(nsUser) {
+  ShowMessage(nsUser.isDisabled ? "Activating" : "Deactivating..");
+  Api.post('users/deactivate', {"userId": nsUser.id, "deactivate": (!nsUser.isDisabled)}).then((value) {
+    print('cccccccccccccccccccccccccc');
+    ShowMessage(nsUser.isDisabled ? "User Account Activating" : "User Account Deactivated..");
+    HiveBox.getDataFromServer();
+  }).catchError((err) {
+    ShowMessage("Something went wrong.. please retry",
+        duration: const Duration(seconds: 15),
+        messageType: MessageTypes.error,
+        action: SnackBarAction(
+            label: 'Retry',
+            onPressed: () {
+              deactivateUser(nsUser);
+            },
+            textColor: Colors.white));
+  });
 }
 
 showRemoveCardAlertDialog(BuildContext context, onRemoveNfcCard) {

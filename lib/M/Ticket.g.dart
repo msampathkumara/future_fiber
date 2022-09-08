@@ -48,13 +48,18 @@ class TicketAdapter extends TypeAdapter<Ticket> {
       ..completedOn = fields[30] as String?
       ..isStarted = fields[31] == null ? false : fields[31] as bool
       ..haveComments = fields[32] == null ? false : fields[32] as bool
-      ..openAny = fields[33] == null ? false : fields[33] as bool;
+      ..openAny = fields[33] == null ? false : fields[33] as bool
+      ..kit = fields[34] == null ? 0 : fields[34] as int
+      ..cpr = fields[35] == null ? 0 : fields[35] as int
+      ..haveKit = fields[36] == null ? 0 : fields[36] as int
+      ..haveCpr = fields[37] == null ? 0 : fields[37] as int
+      ..cprReport = fields[38] == null ? [] : (fields[38] as List).cast<CprReport>();
   }
 
   @override
   void write(BinaryWriter writer, Ticket obj) {
     writer
-      ..writeByte(32)
+      ..writeByte(37)
       ..writeByte(0)
       ..write(obj.mo)
       ..writeByte(1)
@@ -118,7 +123,17 @@ class TicketAdapter extends TypeAdapter<Ticket> {
       ..writeByte(32)
       ..write(obj.haveComments)
       ..writeByte(33)
-      ..write(obj.openAny);
+      ..write(obj.openAny)
+      ..writeByte(34)
+      ..write(obj.kit)
+      ..writeByte(35)
+      ..write(obj.cpr)
+      ..writeByte(36)
+      ..write(obj.haveKit)
+      ..writeByte(37)
+      ..write(obj.haveCpr)
+      ..writeByte(38)
+      ..write(obj.cprReport);
   }
 
   @override
@@ -169,6 +184,11 @@ Ticket _$TicketFromJson(Map<String, dynamic> json) => Ticket()
   ..isStarted = json['isStarted'] == null ? false : Ticket.boolFromO(json['isStarted'])
   ..haveComments = json['haveComments'] == null ? false : Ticket.boolFromO(json['haveComments'])
   ..openAny = json['openAny'] == null ? false : Ticket.boolFromO(json['openAny'])
+  ..kit = json['kit'] as int? ?? 0
+  ..cpr = json['cpr'] as int? ?? 0
+  ..haveKit = json['haveKit'] as int? ?? 0
+  ..haveCpr = json['haveCpr'] as int? ?? 0
+  ..cprReport = json['cprReport'] == null ? [] : Ticket.stringToCprReportList(json['cprReport'])
   ..loading = json['loading'] as bool? ?? false;
 
 Map<String, dynamic> _$TicketToJson(Ticket instance) => <String, dynamic>{
@@ -204,5 +224,10 @@ Map<String, dynamic> _$TicketToJson(Ticket instance) => <String, dynamic>{
       'isStarted': Ticket.boolToInt(instance.isStarted),
       'haveComments': Ticket.boolToInt(instance.haveComments),
       'openAny': Ticket.boolToInt(instance.openAny),
+      'kit': instance.kit,
+      'cpr': instance.cpr,
+      'haveKit': instance.haveKit,
+      'haveCpr': instance.haveCpr,
+      'cprReport': instance.cprReport.map((e) => e.toJson()).toList(),
       'loading': instance.loading,
     };

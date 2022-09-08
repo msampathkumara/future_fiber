@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
@@ -15,7 +17,7 @@ enum Type { All, QA, QC }
 
 enum TicketFlagTypes { RED, GR, RUSH, SK, HOLD, CROSS }
 
-enum Filters { isRed, isRush, inPrint, isError, isGr, isSk, isHold, none, isSort, isQc, isQa }
+enum Filters { isRed, isRush, inPrint, isError, isGr, isSk, isHold, none, isSort, isQc, isQa, haveCpr, haveKit }
 
 enum Collection { User, Ticket, Any }
 
@@ -182,7 +184,24 @@ extension PermissionsExtension on Permissions {
   }
 }
 
+extension NumberExtention on num {
+  String timeFromHours() {
+    var d = Duration(minutes: (this * 60).toInt());
+    List<String> parts = d.toString().split(':');
+    return '${parts[0].padLeft(2, '0')}:${parts[1].padLeft(2, '0')}';
+  }
+}
+
 extension StringContainsInArrayExtension on String {
+  bool isJson() {
+    try {
+      var decodedJSON = json.decode(this) as Map<String, dynamic>;
+      return true;
+    } on FormatException catch (e) {
+      return false;
+    }
+  }
+
   bool containsInArrayIgnoreCase(List<String?> list) {
     return list.where((element) => element != null && element.toLowerCase().contains(toLowerCase())).isNotEmpty;
   }
@@ -213,6 +232,8 @@ extension StringContainsInArrayExtension on String {
   MaterialColor getColor() {
     String t = trim().toLowerCase();
     switch (t) {
+      case 'readying':
+        return Colors.deepPurple;
       case 'ready':
         return Colors.amber;
         break;
@@ -228,8 +249,20 @@ extension StringContainsInArrayExtension on String {
       case 'order':
         return Colors.purple;
         break;
+      case 'normal':
+        return Colors.green;
+        break;
+      case 'urgent':
+        return Colors.red;
+        break;
     }
 
     return Colors.red;
+  }
+}
+
+extension listExt<T> on List<T> {
+  List<T> without(List<T> withoutList) {
+    return where((x) => withoutList.contains(x) == false).toList();
   }
 }

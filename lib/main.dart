@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:app_settings/app_settings.dart';
+
 // import 'package:firebase_analytics/firebase_analytics.dart';
 // import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,7 +11,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/V/Home/Tickets/ProductionPool/ProductionPool.dart';
@@ -19,59 +21,101 @@ import 'V/Home/Home.dart';
 import 'V/Login/Login.dart';
 import 'Web/webMain.dart';
 import 'firebase_options.dart';
+import 'globals.dart';
 import 'mainFuncs.dart';
+
+void runLoggedApp(Widget app) async {
+  runZoned(() {
+    runApp(app);
+  }, zoneSpecification: ZoneSpecification(print: (Zone self, ZoneDelegate parent, Zone zone, String line) {
+    if (kDebugMode) {
+      parent.print(zone, "out > $line");
+    }
+  }));
+}
 
 main() async {
   bool x = Uri.base.host.contains('mm.');
   if (kDebugMode) {
-    x = true;
+    x = false;
   }
-  await mainThings(viewIssMaterialManagement: x);
+
+  isMaterialManagement = x;
+  runLoggedApp(const MaterialApp(home: MainApp()));
 }
 
 bool isMaterialManagement = false;
 
-Future<void> mainThings({viewIssMaterialManagement = false}) async {
-  isMaterialManagement = viewIssMaterialManagement;
+Future mainThings({viewIssMaterialManagement = false}) async {
+  // isMaterialManagement = viewIssMaterialManagement;
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform).catchError((e) {
-    print(" Error : ${e.toString()}");
+    if (kDebugMode) {
+      print(" Error : ${e.toString()}");
+    }
   });
 
   if (kIsWeb) {
     await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
   }
   if (kIsWeb) {
-    var xx = await FirebaseAuth.instance.authStateChanges().first;
-    print(xx);
-    print('User----------------------------------------------------------s');
+    await FirebaseAuth.instance.authStateChanges().first;
+    // print(xx);
+    // print('User----------------------------------------------------------s');
   }
 
   FirebaseAuth.instance.userChanges().listen((User? user) {
-    print('User----------------------------------------------------------');
+    // print('User----------------------------------------------------------');
     if (user == null) {
-      print('User is currently signed out!***');
+      // print('User is currently signed out!***');
     } else {
-      print('User is signed in!');
+      // print('User is signed in!');
     }
   });
 
   FirebaseAuth.instance.authStateChanges().listen((event) {
-    print(FirebaseAuth.instance.currentUser);
+    // print(FirebaseAuth.instance.currentUser);
   });
 
   DatabaseReference ref = FirebaseDatabase.instance.ref('devServerIp');
 
   ref.onValue.listen((event) {
     Server.devServerIp = event.snapshot.value.toString();
-    print('ip == ${Server.devServerIp}');
+    // print('ip == ${Server.devServerIp}');
   });
   await HiveBox.create();
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
 
-  runApp(kIsWeb ? webApp() : const MyApp());
+  // runLoggedApp(kIsWeb ? webApp() : const MyApp());
+}
+
+class MainApp extends StatefulWidget {
+  const MainApp({Key? key}) : super(key: key);
+
+  @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
+  bool loading = true;
+
+  @override
+  void initState() {
+    mainThings().then((value) => {
+          setState(() {
+            loading = false;
+          })
+        });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    screenSize = MediaQuery.of(context).size;
+    return loading ? const Center(child: SizedBox(width: 200, height: 200, child: CircularProgressIndicator(color: Colors.red))) : (kIsWeb ? webApp() : const MyApp());
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -84,6 +128,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Smart Wind',
+      scaffoldMessengerKey: snackBarKey,
       theme: ThemeData(
           primarySwatch: Colors.green,
           bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.black.withOpacity(0)),
@@ -131,10 +176,6 @@ class _MyHomePageState extends State<MyHomePage> {
       primaryColor = Theme.of(context).primaryColor;
       appTheme = Theme.of(context);
     });
-
-    if (kDebugMode) {
-      SharedPreferences.setMockInitialValues({});
-    }
   }
 
   @override
@@ -158,33 +199,33 @@ class _MyHomePageState extends State<MyHomePage> {
       if (snapshot.data['permission'] == false) {
         return Scaffold(
             body: Center(
-          child: Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
-            direction: Axis.vertical,
-            children: [
-              const Text("Enable Permissions", textScaleFactor: 1.5),
-              const SizedBox(height: 16),
-              if (snapshot.data['isPermanentlyDenied'] == true)
-                ElevatedButton(
-                    onPressed: () async {
-                      await AppSettings.openAppSettings();
-                      if (!mounted) return;
-                      await AppUser.logout(context);
-                    },
-                    child: const Text("Open Settings")),
-              if (snapshot.data['isPermanentlyDenied'] == false)
-                ElevatedButton(
-                    onPressed: () async {
-                      PermissionStatus p = await Permission.phone.request();
+              child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                direction: Axis.vertical,
+                children: [
+                  const Text("Enable Permissions", textScaleFactor: 1.5),
+                  const SizedBox(height: 16),
+                  if (snapshot.data['isPermanentlyDenied'] == true)
+                    ElevatedButton(
+                        onPressed: () async {
+                          await AppSettings.openAppSettings();
+                          if (!mounted) return;
+                          await AppUser.logout(context);
+                        },
+                        child: const Text("Open Settings")),
+                  if (snapshot.data['isPermanentlyDenied'] == false)
+                    ElevatedButton(
+                        onPressed: () async {
+                          await Permission.phone.request();
                       await Permission.storage.request();
                       await Permission.camera.request();
                       if (!mounted) return;
                       await AppUser.logout(context);
                     },
-                    child: const Text("Request permissions"))
-            ],
-          ),
-        ));
+                        child: const Text("Request permissions"))
+                ],
+              ),
+            ));
       }
 
       if (FirebaseAuth.instance.currentUser != null && App.currentUser != null) {

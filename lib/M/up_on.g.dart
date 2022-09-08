@@ -70,8 +70,7 @@ Upons _$UponsFromJson(Map<String, dynamic> json) => Upons()
   ..factorySections = json['factorySections'] as int? ?? 0
   ..standardTickets = json['standardTickets'] as int? ?? 0;
 
-Map<String, dynamic> _$UponsToJson(Upons instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$UponsToJson(Upons instance) => <String, dynamic>{
       'id': instance.id,
       'uptime': instance.uptime,
       'tickets': instance.tickets,

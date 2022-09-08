@@ -1,1 +1,1 @@
-xcopy /s ..\build\web ..\..\smartwind-server\UI /Y
+xcopy /s .\build\web ..\smartwind-server\UI /Y

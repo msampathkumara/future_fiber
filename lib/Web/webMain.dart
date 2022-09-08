@@ -6,6 +6,7 @@ import 'package:smartwind/main.dart';
 import '../C/App.dart';
 import '../M/AppUser.dart';
 import '../V/Login/Login.dart';
+import '../globals.dart';
 import 'home_page.dart';
 
 class webApp extends StatelessWidget {
@@ -18,6 +19,7 @@ class webApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'Smart Wind',
+      scaffoldMessengerKey: snackBarKey,
       theme: ThemeData(
         iconTheme: const IconThemeData(size: 16.0),
         primarySwatch: Colors.green,

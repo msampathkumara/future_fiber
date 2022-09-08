@@ -33,7 +33,7 @@ class _WebCPRTableState extends State<WebCPRTable> {
   void sort(int columnIndex, bool ascending) {
     var columnName = "oe";
 
-    columnName = ['mo', 'client', 'suppliers', 'shortageType', 'addedOn', 'cprType', 'shipDate', 'status'][columnIndex];
+    columnName = ['mo', 'client', 'suppliers', 'shortageType', 'addedOn', 'cprType', 'shipDate', 'status', 'order'][columnIndex];
 
     _dessertsDataSource!.sort(columnName, ascending);
     setState(() {
@@ -80,6 +80,11 @@ class _WebCPRTableState extends State<WebCPRTable> {
       DataColumn2(
           size: ColumnSize.S,
           label: const Text('Status', style: TextStyle(fontWeight: FontWeight.bold)),
+          numeric: true,
+          onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(
+          size: ColumnSize.S,
+          label: const Text('Order', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
           onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(
@@ -286,6 +291,7 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
               DataCell(Text((cpr.cprType) ?? "")),
               DataCell(Text((cpr.shipDate))),
               DataCell(Text((cpr.status), style: TextStyle(color: cpr.status.getColor()))),
+              DataCell(Text((cpr.orderType ?? ''), style: TextStyle(color: (cpr.orderType ?? '').getColor()))),
               DataCell(IconButton(
                 icon: const Icon(Icons.more_vert_rounded),
                 onPressed: () {

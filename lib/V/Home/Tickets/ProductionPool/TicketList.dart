@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:just_the_tooltip/just_the_tooltip.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/NsUser.dart';
@@ -38,6 +39,8 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
   var _refreshIndicatorKey;
 
   late DbChangeCallBack _dbChangeCallBack;
+
+  var startedCount = 0;
 
   @override
   initState() {
@@ -187,7 +190,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      "${currentFileList.length}",
+                      "${startedCount}/${currentFileList.length}",
                       textScaleFactor: 1.1,
                       style: const TextStyle(color: Colors.white),
                     ),
@@ -234,63 +237,46 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
   }
 
   getTicketListByCategory(List<Ticket> filesList) {
-    return Column(
-      children: [
-        Expanded(
+    return Column(children: [
+      Expanded(
           child: RefreshIndicator(
-            key: _refreshIndicatorKey,
-            onRefresh: () {
-              return HiveBox.getDataFromServer().then((value) {
-                loadData();
-              });
-            },
-            child: Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: filesList.isNotEmpty
-                    ? ListView.separated(
-                        padding: const EdgeInsets.all(8),
-                        itemCount: filesList.length,
-                        itemBuilder: (BuildContext context1, int index) {
-                          // print(FilesList[index]);
-                          Ticket ticket = (filesList[index]);
-                          // print(ticket.toJson());
-                          return TicketTile(index, ticket, onLongPress: () async {
-                            print('Long pres');
-                            await showTicketOptions(ticket, context1, context, loadData: () {
+              key: _refreshIndicatorKey,
+              onRefresh: () {
+                return HiveBox.getDataFromServer().then((value) {
+                  loadData();
+                });
+              },
+              child: Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: filesList.isNotEmpty
+                      ? ListView.separated(
+                          padding: const EdgeInsets.all(8),
+                          itemCount: filesList.length,
+                          itemBuilder: (BuildContext context1, int index) {
+                            // print(FilesList[index]);
+                            Ticket ticket = (filesList[index]);
+                            // print(ticket.toJson());
+                            return TicketTile(index, ticket, onLongPress: () async {
+                              print('Long pres');
+                              await showTicketOptions(ticket, context1, context, loadData: () {
+                                loadData();
+                              });
+
+                              setState(() {});
+                            }, onReload: () {
+                              print('************************************************************************************************************');
                               loadData();
                             });
-
-                            setState(() {});
-                          }, onReload: () {
-                            print('************************************************************************************************************');
-                            loadData();
-                          });
-                        },
-                        separatorBuilder: (BuildContext context, int index) {
-                          return const Divider(
-                            height: 1,
-                            endIndent: 0.5,
-                            color: Colors.black12,
-                          );
-                        },
-                      )
-                    : const Center(child: NoResultFoundMsg()
-
-                        // Text(searchText.isEmpty ? "No Tickets Found" : "⛔ Work Ticket not found.\n Please contact  Ticket Checking department", textScaleFactor: 1.5)
-
-                        )),
-          ),
-        ),
-      ],
-    );
+                          },
+                          separatorBuilder: (BuildContext context, int index) {
+                            return const Divider(height: 1, endIndent: 0.5, color: Colors.black12);
+                          },
+                        )
+                      : const Center(child: NoResultFoundMsg()))))
+    ]);
   }
 
   List<Ticket> _load(selectedProduction, section, showAllTickets, searchText, {bySection = false}) {
-    // print('ticket count == ${HiveBox.ticketBox.length}');
-    // var production = nsUser?.section?.factory;
-    // print('====== == $production');
-    // print('====== == ${nsUser?.section?.toJson()}');
-
     List<Ticket> l = HiveBox.ticketBox.values.where((t) {
       if (bySection && t.nowAt != nsUser?.section?.id) {
         return false;
@@ -299,22 +285,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
       if (t.completed != 0) {
         return false;
       }
-      // if (crossProduction) {
-      //   if (t.isCrossPro) {
-      //     print([t.id, t.crossPro?.fromSection?.factory, t.crossPro?.toSection?.factory, "$production"]);
-      //     if (showAllTickets) {
-      //       return true;
-      //     }
-      //
-      //     if ([t.crossPro?.fromSection?.factory, t.crossPro?.toSection?.factory].contains("$production") == false) {
-      //       return false;
-      //     }
-      //   } else {
-      //     return false;
-      //   }
-      //   // print('${t.crossProList}');
-      //   print([t.crossPro?.fromSection?.factory, t.crossPro?.toSection?.factory, "$production"]);
-      // }
+
       if (selectedProduction == Production.None && (t.production != null || (t.production ?? '').isNotEmpty)) {
         return false;
       }
@@ -330,6 +301,9 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
         return false;
       }
 
+      if (t.isStarted) {
+        wipCountMap[selectedProduction]++;
+      }
       return true;
     }).toList();
     l.sort((a, b) => (a.toJson()[listSortBy] ?? "").compareTo((b.toJson()[listSortBy] ?? "")));
@@ -341,20 +315,23 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
 
   List<Ticket> currentFileList = [];
   Map listsMap = {};
+  Map wipCountMap = {};
 
   loadData() {
     listsMap = {};
+    wipCountMap = {};
     print('---------------------------------------------- Start loading');
 
     String searchText = this.searchText.toLowerCase();
 
     if (_showAllTickets) {
       for (var element in Production.values) {
+        wipCountMap[element] = 0;
         listsMap[element] = _load(element, 0, true, searchText);
       }
     } else {
+      wipCountMap[Production.All] = 0;
       listsMap[Production.All] = _load(Production.All, 0, false, searchText, bySection: true);
-      // listsMap["crossProduct"] = _load(Production.Upwind, 0, false, searchText, crossProduction: true);
     }
     tabListener();
     print('---------------------------------------------- end loading');
@@ -364,6 +341,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     print("Selected Index: ${_tabBarController!.index}");
 
     currentFileList = listsMap.values.toList()[_tabBarController!.index];
+    startedCount = wipCountMap.values.toList()[_tabBarController!.index];
     setState(() {
       print('${currentFileList.length}');
     });
@@ -493,11 +471,23 @@ class TicketTile extends StatelessWidget {
               // subtitle: Text(ticket.fileVersion.toString()),
               trailing: Wrap(
                 children: [
-                  // if (ticket.inPrint == 1)
-                  //   IconButton(
-                  //     icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)),
-                  //     onPressed: () {},
-                  //   ),
+                  //********************************************************************************************************************************************
+
+                  ticket.haveKit == 1
+                      ? const IconButton(icon: Icon(Icons.view_in_ar_rounded, color: Colors.red), onPressed: null)
+                      : const IconButton(icon: Icon(Icons.view_in_ar_rounded, color: Colors.grey), onPressed: null),
+                  ticket.haveCpr == 1
+                      ? JustTheTooltip(
+                          content: SizedBox(
+                            width: 150,
+                            child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Wrap(children: ticket.getCprReport().map((e) => Row(children: [Text("${e.status}"), const Spacer(), Text("${e.count}")])).toList())),
+                          ),
+                          child: IconButton(icon: const Icon(Icons.local_mall_rounded, color: Colors.red), onPressed: () {}))
+                      : const IconButton(icon: Icon(Icons.local_mall_rounded, color: Colors.grey), onPressed: null),
+
+                  //********************************************************************************************************************************************
                   if (ticket.isHold == 1)
                     IconButton(
                       icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.stop, color: Colors.black)),

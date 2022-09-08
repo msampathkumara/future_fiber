@@ -272,10 +272,10 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
             onTap: () {
               var ticketInfo = TicketInfo(ticket);
               ticketInfo.show(context);
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                duration: const Duration(seconds: 1),
-                content: Text('Tapped on ${ticket.mo}'),
-              ));
+              // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              //   duration: const Duration(seconds: 1),
+              //   content: Text('Tapped on ${ticket.mo}'),
+              // ));
             },
 
             // onSecondaryTap: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(

@@ -2,6 +2,8 @@ import 'package:contextmenu/contextmenu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../globals.dart';
+
 class TextCopy extends StatefulWidget {
   final Widget child;
 
@@ -14,7 +16,7 @@ class TextCopy extends StatefulWidget {
 class _TextCopyState extends State<TextCopy> {
   @override
   Widget build(BuildContext context) {
-    return Container(key: menuKey, child: MouseRegion(onHover: (event) => showMenus(context), child: widget.child));
+    return Container(key: menuKey, child: MouseRegion(onExit: (event) => {}, onHover: (event) => showMenus(context), child: widget.child));
   }
 
   GlobalKey menuKey = GlobalKey();
@@ -50,7 +52,7 @@ class TextMenu extends StatelessWidget {
                 onTap: () {
                   Clipboard.setData(ClipboardData(text: child.data));
                   Navigator.of(context).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Copied')));
+                  snackBarKey.currentState?.showSnackBar(const SnackBar(behavior: SnackBarBehavior.floating, width: 200, content: Text('Copied')));
                 },
               )
             ],

@@ -6,6 +6,7 @@ import '../../../C/Api.dart';
 import '../../../C/DB/DB.dart';
 import '../../../M/Enums.dart';
 import '../../../M/Ticket.dart';
+import '../../../V/Widgets/SearchBar.dart';
 import '../../Styles/styles.dart';
 import '../AddTicket/add_ticket.dart';
 import 'webStandardLibrary.table.dart';
@@ -111,26 +112,34 @@ class _WebStandardLibraryState extends State<WebStandardLibrary> {
                   elevation: 4,
                   borderRadius: BorderRadius.circular(8),
                   child: SizedBox(
-                      height: 40,
-                      width: 200,
-                      child: TextFormField(
-                        controller: _controller,
-                        onChanged: (text) {
+                    height: 40,
+                    width: 200,
+                    child: SearchBar(
+                        onSearchTextChanged: (String text) {
                           searchText = text;
                           loadData();
                         },
-                        cursorColor: Colors.black,
-                        decoration: InputDecoration(
-                            prefixIcon: const Icon(Icons.search_rounded),
-                            suffixIcon: IconButton(icon: const Icon(Icons.clear), onPressed: _controller.clear),
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            contentPadding: const EdgeInsets.only(left: 15, bottom: 11, top: 10, right: 15),
-                            hintText: "Search Text"),
-                      )),
+                        delay: 300,
+                        searchController: _controller),
+                    // child: TextFormField(
+                    //   controller: _controller,
+                    //   onChanged: (text) {
+                    //     searchText = text;
+                    //     loadData();
+                    //   },
+                    //   cursorColor: Colors.black,
+                    //   decoration: InputDecoration(
+                    //       prefixIcon: const Icon(Icons.search_rounded),
+                    //       suffixIcon: IconButton(icon: const Icon(Icons.clear), onPressed: _controller.clear),
+                    //       border: InputBorder.none,
+                    //       focusedBorder: InputBorder.none,
+                    //       enabledBorder: InputBorder.none,
+                    //       errorBorder: InputBorder.none,
+                    //       disabledBorder: InputBorder.none,
+                    //       contentPadding: const EdgeInsets.only(left: 15, bottom: 11, top: 10, right: 15),
+                    //       hintText: "Search Text"),
+                    // )
+                  ),
                 ),
               ])
             ],

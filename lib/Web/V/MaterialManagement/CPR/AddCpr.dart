@@ -95,10 +95,10 @@ class _AddCprState extends State<AddCpr> {
     List<CprItem> _selectedItems = List.from(selectedItems);
     return Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
-        // bottomNavigationBar: BottomAppBar(
-        //     color: err_msg.isEmpty ? Colors.white : Colors.red,
-        //     shape: const CircularNotchedRectangle(),
-        //     child: SizedBox(height: 50, child: Padding(padding: const EdgeInsets.all(8.0), child: Text(err_msg, style: const TextStyle(color: Colors.white))))),
+        bottomNavigationBar: BottomAppBar(
+            color: err_msg.isEmpty ? Colors.white : Colors.red,
+            shape: const CircularNotchedRectangle(),
+            child: SizedBox(height: 50, child: Padding(padding: const EdgeInsets.all(8.0), child: Text(err_msg, style: const TextStyle(color: Colors.white))))),
         appBar: AppBar(title: Text(cpr.ticket?.mo ?? ''), actions: [
           IconButton(
               onPressed: () {
@@ -311,84 +311,62 @@ class _AddCprState extends State<AddCpr> {
                     ],
                   ),
                 ),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(children: [
-                      Flexible(
-                          child: SearchField(
-                        controller: textEditingController,
-                        onSubmit: (v) {
-                          currentMaterial.item = v;
-                        },
-                        suggestions: _matList.map((e) => SearchFieldListItem(e)).toList(),
-                        suggestionState: Suggestion.expand,
-                        textInputAction: TextInputAction.next,
-                        hint: 'Material',
-                        hasOverlay: true,
-                        searchStyle: TextStyle(
-                          fontSize: 15,
-                          color: Colors.black.withOpacity(0.8),
-                        ),
-                        searchInputDecoration: InputDecoration(
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.black.withOpacity(0.8),
-                            ),
-                          ),
-                          border: const OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.red),
-                          ),
-                        ),
-                        maxSuggestionsInViewPort: 6,
-                        itemHeight: 50,
-                        onSuggestionTap: (v) {
-                          currentMaterial.item = v.searchKey;
-                        },
-                      )),
-                      const SizedBox(width: 8),
-                      SizedBox(
-                          width: 100,
-                          child: TextField(
-                              controller: _qtyController,
-                              decoration: const InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.teal)), labelText: 'QTY'),
-                              onChanged: (text) {
-                                currentMaterial.qty = (text);
-                              })),
-                      const SizedBox(width: 8),
-                      DropdownButtonHideUnderline(
-                          child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                              decoration:
-                                  BoxDecoration(border: Border.all(color: Colors.grey.shade300, width: 0.5, style: BorderStyle.solid), borderRadius: BorderRadius.circular(4)),
-                              child: DropdownButton<String>(
-                                  hint: const Text("Supplier"),
-                                  icon: const Icon(Icons.arrow_downward, size: 12),
-                                  value: currentMaterial.supplier,
-                                  style: const TextStyle(color: Colors.deepPurple),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      currentMaterial.supplier = newValue;
-                                    });
-                                  },
-                                  items: cpr.suppliers.map<DropdownMenuItem<String>>((String value) {
-                                    return DropdownMenuItem<String>(value: value, child: Padding(padding: const EdgeInsets.only(left: 8.0), child: Text(value)));
-                                  }).toList()))),
-                      Card(
-                          child: IconButton(
-                              color: Colors.blue,
-                              onPressed: (currentMaterial.item.isEmpty || currentMaterial.qty.isEmpty)
-                                  ? null
-                                  : () {
-                                      currentMaterial.item = textEditingController.text;
-                                      _addMaterialToList(currentMaterial);
-                                      currentMaterial = CprItem();
-                                      _qtyController.clear();
-                                      textEditingController.clear();
-                                      setState(() {});
-                                    },
-                              icon: const Icon(Icons.add_rounded)))
-                    ]),
+                SizedBox(
+                  height: 72,
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(children: [
+                        Flexible(
+                            child: SearchField(
+                          controller: textEditingController,
+                          onSubmit: (v) {
+                            currentMaterial.item = v;
+                          },
+                          suggestions: _matList.map((e) => SearchFieldListItem(e)).toList(),
+                          suggestionState: Suggestion.expand,
+                          textInputAction: TextInputAction.next,
+                          hint: 'Material',
+                          hasOverlay: true,
+                          searchStyle: TextStyle(fontSize: 15, color: Colors.black.withOpacity(0.8)),
+                          searchInputDecoration: InputDecoration(
+                              isDense: true,
+                              focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black.withOpacity(0.8))),
+                              border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.red))),
+                          maxSuggestionsInViewPort: 6,
+                          // itemHeight: 36,
+                          onSuggestionTap: (v) {
+                            currentMaterial.item = v.searchKey;
+                            setState(() {});
+                          },
+                        )),
+                        const SizedBox(width: 8),
+                        SizedBox(
+                            width: 100,
+                            child: TextField(
+                                controller: _qtyController,
+                                decoration: const InputDecoration(isDense: true, border: OutlineInputBorder(borderSide: BorderSide(color: Colors.teal)), labelText: 'QTY'),
+                                onChanged: (text) {
+                                  currentMaterial.qty = (text);
+                                  setState(() {});
+                                })),
+                        const SizedBox(width: 8),
+                        Card(
+                            child: IconButton(
+                                color: Colors.blue,
+                                onPressed: (textEditingController.text.isEmpty || currentMaterial.qty.isEmpty)
+                                    ? null
+                                    : () {
+                                        currentMaterial.item = textEditingController.text;
+                                        _addMaterialToList(currentMaterial);
+                                        currentMaterial = CprItem();
+                                        _qtyController.clear();
+                                        textEditingController.clear();
+                                        setState(() {});
+                                      },
+                                icon: const Icon(Icons.add_rounded)))
+                      ]),
+                    ),
                   ),
                 ),
                 getOptions(_selectedItems),
@@ -405,7 +383,7 @@ class _AddCprState extends State<AddCpr> {
                           columns: const [
                             DataColumn2(label: Text('Item', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)), size: ColumnSize.L),
                             DataColumn2(label: Text('Qty', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)), size: ColumnSize.L),
-                            DataColumn2(label: Text('Supplier', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)), size: ColumnSize.S),
+                            // DataColumn2(label: Text('Supplier', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)), size: ColumnSize.S),
                           ],
                           rows: cpr.items
                               .map<DataRow>((item) => DataRow2(
@@ -418,22 +396,22 @@ class _AddCprState extends State<AddCpr> {
                                       cells: [
                                         DataCell(Text(item.item)),
                                         DataCell(Text(item.qty)),
-                                        DataCell(DropdownButtonHideUnderline(
-                                            child: Container(
-                                                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                                child: DropdownButton<String>(
-                                                    hint: const Text("Supplier"),
-                                                    icon: const Icon(Icons.arrow_downward, size: 12),
-                                                    value: item.supplier,
-                                                    style: const TextStyle(color: Colors.deepPurple),
-                                                    onChanged: (String? newValue) {
-                                                      setState(() {
-                                                        item.supplier = newValue;
-                                                      });
-                                                    },
-                                                    items: cpr.suppliers.map<DropdownMenuItem<String>>((String value) {
-                                                      return DropdownMenuItem<String>(value: value, child: Padding(padding: const EdgeInsets.only(left: 8.0), child: Text(value)));
-                                                    }).toList()))))
+                                        // DataCell(DropdownButtonHideUnderline(
+                                        //     child: Container(
+                                        //         padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                        //         child: DropdownButton<String>(
+                                        //             hint: const Text("Supplier"),
+                                        //             icon: const Icon(Icons.arrow_downward, size: 12),
+                                        //             value: item.supplier,
+                                        //             style: const TextStyle(color: Colors.deepPurple),
+                                        //             onChanged: (String? newValue) {
+                                        //               setState(() {
+                                        //                 item.supplier = newValue;
+                                        //               });
+                                        //             },
+                                        //             items: cpr.suppliers.map<DropdownMenuItem<String>>((String value) {
+                                        //               return DropdownMenuItem<String>(value: value, child: Padding(padding: const EdgeInsets.only(left: 8.0), child: Text(value)));
+                                        //             }).toList()))))
                                       ]))
                               .toList(),
                         ),
@@ -461,8 +439,12 @@ class _AddCprState extends State<AddCpr> {
 
   void _addMaterialToList(CprItem currentMaterial) {
     print(currentMaterial.toJson());
-    int x = cpr.items.indexWhere((element) => element.item == currentMaterial.item && element.supplier == currentMaterial.supplier);
-    cpr.items.removeWhere((element) => element.item == currentMaterial.item && element.supplier == currentMaterial.supplier);
+    // int x = cpr.items.indexWhere((element) => element.item == currentMaterial.item && element.supplier == currentMaterial.supplier);
+    // cpr.items.removeWhere((element) => element.item == currentMaterial.item && element.supplier == currentMaterial.supplier);
+
+    int x = cpr.items.indexWhere((element) => element.item == currentMaterial.item);
+    cpr.items.removeWhere((element) => element.item == currentMaterial.item);
+
     // if (x.isEmpty) {
     cpr.items.insert(x == -1 ? 0 : x, CprItem.fromJson(currentMaterial.toJson()));
     // } else {
@@ -608,9 +590,11 @@ class _AddCprState extends State<AddCpr> {
       err_msg = 'select cprType ';
     } else if (cpr.suppliers.isEmpty) {
       err_msg = 'select suppliers ';
-    } else if (cpr.items.where((element) => element.supplier == null).isNotEmpty) {
-      err_msg = 'check materials';
-    } else {
+    }
+    // else if (cpr.items.where((element) => element.supplier == null).isNotEmpty) {
+    //   err_msg = 'check materials';
+    // }
+    else {
       setState(() {
         saving = true;
       });
@@ -679,29 +663,29 @@ class _AddCprState extends State<AddCpr> {
                 onPressed: () {
                   selectedItems.forEach((x) {
                     print(x.toJson());
-                    cpr.items.removeWhere((e) => e.item == x.item && e.supplier == x.supplier && e.qty == x.qty);
+                    cpr.items.removeWhere((e) => e.item == x.item && e.qty == x.qty);
                   });
                   setState(() {});
                 },
                 icon: const Icon(Icons.delete_rounded, size: 16)),
             const Spacer(),
-            DropdownButton<String>(
-                hint: const Text("Supplier"),
-                icon: const Icon(Icons.arrow_downward, size: 12),
-                value: _selectedItems.isEmpty ? null : _selectedItems[0].supplier,
-                style: const TextStyle(color: Colors.deepPurple),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    if (newValue != null) {
-                      selectedItems.forEach((element) {
-                        element.supplier = newValue;
-                      });
-                    }
-                  });
-                },
-                items: cpr.suppliers.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(value: value, child: Padding(padding: const EdgeInsets.only(left: 8.0), child: Text(value)));
-                }).toList())
+            // DropdownButton<String>(
+            //     hint: const Text("Supplier"),
+            //     icon: const Icon(Icons.arrow_downward, size: 12),
+            //     value: _selectedItems.isEmpty ? null : _selectedItems[0].supplier,
+            //     style: const TextStyle(color: Colors.deepPurple),
+            //     onChanged: (String? newValue) {
+            //       setState(() {
+            //         if (newValue != null) {
+            //           selectedItems.forEach((element) {
+            //             element.supplier = newValue;
+            //           });
+            //         }
+            //       });
+            //     },
+            //     items: cpr.suppliers.map<DropdownMenuItem<String>>((String value) {
+            //       return DropdownMenuItem<String>(value: value, child: Padding(padding: const EdgeInsets.only(left: 8.0), child: Text(value)));
+            //     }).toList())
           ]),
         ),
       ),

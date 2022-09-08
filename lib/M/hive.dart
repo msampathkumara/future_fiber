@@ -9,6 +9,7 @@ import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/StandardTicket.dart';
 import 'package:smartwind/M/Ticket.dart';
+import 'package:smartwind/M/Ticket/CprReport.dart';
 import 'package:smartwind/M/TicketFlag.dart';
 import 'package:smartwind/M/User/Email.dart';
 import 'package:smartwind/M/user_config.dart';
@@ -56,6 +57,7 @@ class HiveBox {
     Hive.registerAdapter(LocalFileVersionAdapter());
     Hive.registerAdapter(TicketFlagAdapter());
     Hive.registerAdapter(EmailAdapter());
+    Hive.registerAdapter(CprReportAdapter());
 
     usersBox = await Hive.openBox<NsUser>('userBox');
     ticketBox = await Hive.openBox<Ticket>('ticketBox');

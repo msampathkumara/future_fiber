@@ -5,6 +5,7 @@ import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/CPR/CPR.dart';
 import 'package:smartwind/M/CPR/CprItem.dart';
 import 'package:smartwind/M/Chat/message.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
@@ -46,6 +47,8 @@ class _CprViewState extends State<CprView> {
   List<Message> cprComments = [];
 
   TextEditingController commentController = TextEditingController();
+
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -103,73 +106,123 @@ class _CprViewState extends State<CprView> {
                           ),
                           const SizedBox(height: 20),
                           Expanded(
-                              child: SingleChildScrollView(
-                                  child: ExpansionPanelList(
-                            expansionCallback: (int index, bool isExpanded) {
-                              setState(() {
-                                cprsExpanded[cprs[index].supplier] = !isExpanded;
-                              });
-                            },
-                            children: cprs.map<ExpansionPanel>((CprActivity __cprA) {
-                              return ExpansionPanel(
-                                headerBuilder: (BuildContext context, bool isExpanded) {
-                                  return ListTile(
-                                    title: Text(__cprA.supplier),
-                                    subtitle: Text(__cprA.status),
-                                    leading: __cprA.status.isReady(caseInsensitive: true)
-                                        ? const Icon(Icons.done, color: Colors.green, size: 20)
-                                        : const Icon(Icons.done, color: Colors.grey, size: 20),
-                                    trailing: getButton(__cprA),
-                                  );
-                                },
-                                body: Card(
-                                  elevation: 0,
-                                  child: Column(children: [
-                                    SizedBox(
-                                      width: double.infinity,
-                                      child: DataTable(columns: const [
-                                        DataColumn(label: Text('')),
-                                        DataColumn(label: Text('Item')),
-                                        DataColumn(label: Text('Qty')),
-                                        DataColumn(label: Text('Date')),
-                                        DataColumn(label: Text('User')),
-                                      ], rows: [
-                                        for (var material in __cprA.items) getMatRow(material)
-                                      ]),
-                                    ),
-                                    const Divider(color: Colors.red),
-                                    Table(
-                                      children: [
-                                        TableRow(
-                                          children: [
-                                            __cprA.addedBy != null
-                                                ? ListTile(
-                                                    visualDensity: vd,
-                                                    title: Text("Added By ", style: titleTheme),
-                                                    subtitle: ListTile(
-                                                        leading: UserImage(nsUser: NsUser.fromId(__cprA.addedBy!.id), radius: 16),
-                                                        title: Text(__cprA.addedBy!.uname, style: valTheme),
-                                                        subtitle: Text(__cprA.addedOn, style: const TextStyle(fontSize: 12, color: Colors.black))))
-                                                : Container(),
-                                            (__cprA.sentBy != null)
-                                                ? ListTile(
-                                                    visualDensity: vd,
-                                                    title: Text("Sent By ", style: titleTheme),
-                                                    subtitle: ListTile(
-                                                        leading: UserImage(nsUser: NsUser.fromId(__cprA.sentBy!.id), radius: 16),
-                                                        title: Text(__cprA.sentBy!.uname, style: valTheme),
-                                                        subtitle: Text(__cprA.sentOn, style: const TextStyle(fontSize: 12, color: Colors.black))))
-                                                : Container(),
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ]),
-                                ),
-                                isExpanded: cprsExpanded[__cprA.supplier] ?? false,
-                              );
-                            }).toList(),
-                          )))
+                            child: SingleChildScrollView(
+                              controller: _scrollController,
+                              child: Card(
+                                elevation: 4,
+                                child: Column(children: [
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: DataTable(columns: const [
+                                      DataColumn(label: Text('')),
+                                      DataColumn(label: Text('Item')),
+                                      DataColumn(label: Text('Qty')),
+                                      DataColumn(label: Text('Date')),
+                                      DataColumn(label: Text('User')),
+                                    ], rows: [
+                                      for (var material in _cpr.items) getMatRow(material)
+                                    ]),
+                                  )
+                                ]),
+                              ),
+                            ),
+                          ),
+                          const Divider(color: Colors.red),
+                          Table(children: [
+                            TableRow(
+                                children: getCprActivities(cprs)
+                                    .map((e) => e == null
+                                        ? Container()
+                                        : (e.status != 'Sent'
+                                            ? Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: ElevatedButton(
+                                                    onPressed: () {
+                                                      sendCpr(e.id);
+                                                    },
+                                                    child: Text("${e.supplier} Send")),
+                                              )
+                                            : ListTile(
+                                                leading: UserImage(nsUser: e.sentBy, radius: 16),
+                                                title: Text(e.sentBy?.name ?? '', style: valTheme),
+                                                subtitle: Wrap(
+                                                  direction: Axis.vertical,
+                                                  children: [
+                                                    Text(e.supplier, style: const TextStyle(fontSize: 10, color: Colors.redAccent)),
+                                                    Text(e.sentOn, style: const TextStyle(fontSize: 10, color: Colors.black))
+                                                  ],
+                                                ))))
+                                    .toList())
+                          ]),
+                          if (false)
+                            Expanded(
+                                child: SingleChildScrollView(
+                                    child: ExpansionPanelList(
+                              expansionCallback: (int index, bool isExpanded) {
+                                setState(() {
+                                  cprsExpanded[cprs[index].supplier] = !isExpanded;
+                                });
+                              },
+                              children: cprs.map<ExpansionPanel>((CprActivity __cprA) {
+                                return ExpansionPanel(
+                                  headerBuilder: (BuildContext context, bool isExpanded) {
+                                    return ListTile(
+                                      title: Text(__cprA.supplier),
+                                      subtitle: Text(__cprA.status),
+                                      leading: __cprA.status.isReady(caseInsensitive: true)
+                                          ? const Icon(Icons.done, color: Colors.green, size: 20)
+                                          : const Icon(Icons.done, color: Colors.grey, size: 20),
+                                      trailing: getButton(__cprA),
+                                    );
+                                  },
+                                  body: Card(
+                                    elevation: 0,
+                                    child: Column(children: [
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: DataTable(columns: const [
+                                          DataColumn(label: Text('')),
+                                          DataColumn(label: Text('Item')),
+                                          DataColumn(label: Text('Qty')),
+                                          DataColumn(label: Text('Date')),
+                                          DataColumn(label: Text('User')),
+                                        ], rows: [
+                                          for (var material in __cprA.items) getMatRow(material)
+                                        ]),
+                                      ),
+                                      const Divider(color: Colors.red),
+                                      Table(
+                                        children: [
+                                          TableRow(
+                                            children: [
+                                              __cprA.addedBy != null
+                                                  ? ListTile(
+                                                      visualDensity: vd,
+                                                      title: Text("Added By ", style: titleTheme),
+                                                      subtitle: ListTile(
+                                                          leading: UserImage(nsUser: NsUser.fromId(__cprA.addedBy!.id), radius: 16),
+                                                          title: Text(__cprA.addedBy!.uname, style: valTheme),
+                                                          subtitle: Text(__cprA.addedOn, style: const TextStyle(fontSize: 12, color: Colors.black))))
+                                                  : Container(),
+                                              (__cprA.sentBy != null)
+                                                  ? ListTile(
+                                                      visualDensity: vd,
+                                                      title: Text("Sent By ", style: titleTheme),
+                                                      subtitle: ListTile(
+                                                          leading: UserImage(nsUser: NsUser.fromId(__cprA.sentBy!.id), radius: 16),
+                                                          title: Text(__cprA.sentBy!.uname, style: valTheme),
+                                                          subtitle: Text(__cprA.sentOn, style: const TextStyle(fontSize: 12, color: Colors.black))))
+                                                  : Container(),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    ]),
+                                  ),
+                                  isExpanded: cprsExpanded[__cprA.supplier] ?? false,
+                                );
+                              }).toList(),
+                            )))
                         ],
                       ),
                     ),
@@ -233,8 +286,8 @@ class _CprViewState extends State<CprView> {
                                     visualDensity: vd,
                                     title: Text('Ticket', style: titleTheme),
                                     subtitle: Wrap(direction: Axis.vertical, children: [
-                                      Text('${_cpr.ticket?.mo}', style: valTheme),
-                                      Text('${_cpr.ticket?.oe}', style: const TextStyle(fontSize: 12, color: Colors.deepOrange))
+                                      Text(_cpr.ticket?.mo ?? '', style: valTheme),
+                                      Text(_cpr.ticket?.oe ?? '', style: const TextStyle(fontSize: 12, color: Colors.deepOrange))
                                     ])),
                                 ListTile(visualDensity: vd, title: Text('Client', style: titleTheme), subtitle: Text('${_cpr.client}', style: valTheme)),
                                 ListTile(visualDensity: vd, title: Text('Supplier(s)', style: titleTheme), subtitle: Text((_cpr.suppliers).join(','), style: valTheme)),
@@ -361,7 +414,7 @@ class _CprViewState extends State<CprView> {
   }
 
   Future apiGetData() {
-    return Api.get("materialManagement/cpr/getCpr", {'id': _cpr.id}).then((res) {
+    return Api.get(EndPoints.materialManagement_cpr_getCpr, {'id': _cpr.id}).then((res) {
       Map data = res.data;
 
       _cpr = CPR.fromJson(res.data);
@@ -438,8 +491,9 @@ class _CprViewState extends State<CprView> {
   }
 
   Future sendCpr(id) {
-    return Api.post("materialManagement/cpr/sendCpr", {'id': id}).then((res) {
+    return Api.post("materialManagement/cpr/sendCpr", {'cprActivityId': id}).then((res) {
       Map data = res.data;
+      widget.isCprChange(true);
       apiGetData();
     }).whenComplete(() {
       setState(() {});
@@ -523,5 +577,12 @@ class _CprViewState extends State<CprView> {
     _cpr.suppliers.forEach((sup) {
       _suppliersPermissions[sup] = (AppUser.getUser()?.sections ?? []).where((element) => element.sectionTitle.equalIgnoreCase(sup)).isNotEmpty;
     });
+  }
+
+  List<CprActivity?> getCprActivities(List<CprActivity?> cprs) {
+    for (var i = cprs.length; i < 3; i++) {
+      cprs.add(null);
+    }
+    return cprs;
   }
 }
