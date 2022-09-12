@@ -76,31 +76,31 @@ class _DailyInputsState extends State<DailyInputs> {
                           .map((e) => CheckboxListTile(
                                 value: e.deleted == 0,
                                 title: Row(children: [
-                                  ElevatedButton(onPressed: null, child: Text(DateFormat("yyyy-MM-dd").format(DateTime.parse(e.startAt ?? '')))),
+                                  ElevatedButton(onPressed: null, child: Text(DateFormat("yyyy-MM-dd").format((e.startAt ?? DateTime.now())))),
                                   const SizedBox(width: 20),
                                   ElevatedButton(
                                       onPressed: () async {
                                         // _selectTime(context, DateTime.parse(e.startAt ?? ''));
                                         final TimeOfDay? newTime = await showTimePicker(
-                                            context: context, initialTime: TimeOfDay(hour: int.parse(DateFormat("hh").format(DateTime.parse(e.startAt ?? ''))), minute: 00));
-                                        DateTime d = DateTime.parse(e.startAt ?? '');
-                                        e.startAt = DateFormat("yyyy-MM-dd hh:mm").format(DateTime(d.year, d.month, d.day, newTime?.hour ?? 0, 0));
+                                            context: context, initialTime: TimeOfDay(hour: int.parse(DateFormat("hh").format((e.startAt ?? DateTime.now()))), minute: 00));
+                                        DateTime d = (e.startAt ?? DateTime.now());
+                                        e.startAt = DateTime(d.year, d.month, d.day, newTime?.hour ?? 0, 0);
                                         setState(() {});
                                       },
-                                      child: Text(DateFormat("hh:mm").format(DateTime.parse(e.startAt ?? '')))),
+                                      child: Text(DateFormat("hh:mm").format((e.startAt ?? DateTime.now())))),
                                   const SizedBox(width: 20),
-                                  ElevatedButton(onPressed: null, child: Text(DateFormat("yyyy-MM-dd").format(DateTime.parse(e.endAt ?? '')))),
+                                  ElevatedButton(onPressed: null, child: Text(DateFormat("yyyy-MM-dd").format((e.endAt ?? DateTime.now())))),
                                   const SizedBox(width: 20),
                                   ElevatedButton(
                                       onPressed: () async {
                                         // _selectTime(context, DateTime.parse(e.startAt ?? ''));
                                         final TimeOfDay? newTime = await showTimePicker(
-                                            context: context, initialTime: TimeOfDay(hour: int.parse(DateFormat("hh").format(DateTime.parse(e.endAt ?? ''))), minute: 00));
-                                        DateTime d = DateTime.parse(e.endAt ?? '');
-                                        e.endAt = DateFormat("yyyy-MM-dd hh:mm").format(DateTime(d.year, d.month, d.day, newTime?.hour ?? 0, 0));
+                                            context: context, initialTime: TimeOfDay(hour: int.parse(DateFormat("hh").format((e.endAt ?? DateTime.now()))), minute: 00));
+                                        DateTime d = (e.endAt ?? DateTime.now());
+                                        e.endAt = (DateTime(d.year, d.month, d.day, newTime?.hour ?? 0, 0));
                                         setState(() {});
                                       },
-                                      child: Text(DateFormat("hh:mm").format(DateTime.parse(e.endAt ?? '')))),
+                                      child: Text(DateFormat("hh:mm").format((e.endAt ?? DateTime.now())))),
                                   const SizedBox(width: 20),
                                   DecoratedBox(
                                     decoration: BoxDecoration(

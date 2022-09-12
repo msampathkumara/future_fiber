@@ -205,6 +205,10 @@ class Ticket extends DataObject {
 
   bool get hasNoFile => file != 1;
 
+  bool get isCompleted => completed == 1;
+
+  bool get isNotCompleted => completed == 0;
+
   static stringToList(string) => (string == null || string.toString().isEmpty) ? [] : json.decode(string);
 
   static List<CprReport> stringToCprReportList(string) => (string == null || string.toString().isEmpty) ? [] : CprReport.fromJsonArray(json.decode(string));

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:just_the_tooltip/just_the_tooltip.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/NsUser.dart';
@@ -16,6 +15,7 @@ import 'package:smartwind/ns_icons_icons.dart';
 import '../../../../C/DB/DB.dart';
 import '../../../../M/AppUser.dart';
 import '../../../../Web/V/QC/webTicketQView.dart';
+import '../../../../globals.dart';
 import '../TicketInfo/TicketChatView.dart';
 import '../TicketInfo/TicketInfo.dart';
 import 'TicketListOptions.dart';
@@ -474,17 +474,28 @@ class TicketTile extends StatelessWidget {
                   //********************************************************************************************************************************************
 
                   ticket.haveKit == 1
-                      ? const IconButton(icon: Icon(Icons.view_in_ar_rounded, color: Colors.red), onPressed: null)
+                      ? IconButton(
+                          icon: const Icon(Icons.view_in_ar_rounded, color: Colors.red),
+                          onPressed: () {
+                            snackBarKey.currentState?.hideCurrentSnackBar();
+                            snackBarKey.currentState?.showSnackBar(SnackBar(
+                                content: Wrap(children: ticket.getKitReport().map((e) => Row(children: [Text("${e.status}"), const Spacer(), Text("${e.count}")])).toList()),
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                                width: 200));
+                          })
                       : const IconButton(icon: Icon(Icons.view_in_ar_rounded, color: Colors.grey), onPressed: null),
                   ticket.haveCpr == 1
-                      ? JustTheTooltip(
-                          content: SizedBox(
-                            width: 150,
-                            child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Wrap(children: ticket.getCprReport().map((e) => Row(children: [Text("${e.status}"), const Spacer(), Text("${e.count}")])).toList())),
-                          ),
-                          child: IconButton(icon: const Icon(Icons.local_mall_rounded, color: Colors.red), onPressed: () {}))
+                      ? IconButton(
+                          icon: const Icon(Icons.local_mall_rounded, color: Colors.red),
+                          onPressed: () {
+                            snackBarKey.currentState?.hideCurrentSnackBar();
+                            snackBarKey.currentState?.showSnackBar(SnackBar(
+                                content: Wrap(children: ticket.getCprReport().map((e) => Row(children: [Text("${e.status}"), const Spacer(), Text("${e.count}")])).toList()),
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                                width: 200));
+                          })
                       : const IconButton(icon: Icon(Icons.local_mall_rounded, color: Colors.grey), onPressed: null),
 
                   //********************************************************************************************************************************************
@@ -509,8 +520,8 @@ class TicketTile extends StatelessWidget {
                     ),
                   if (ticket.isError == 1)
                     IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.report_problem_rounded, color: Colors.red)), onPressed: () {}),
-                  if (ticket.isSort == 1)
-                    IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.local_mall_rounded, color: Colors.green)), onPressed: () {}),
+                  // if (ticket.isSort == 1)
+                  //   IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.local_mall_rounded, color: Colors.green)), onPressed: () {}),
                   if (ticket.isRush == 1)
                     IconButton(
                         icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent)),

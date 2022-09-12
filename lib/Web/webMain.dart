@@ -82,6 +82,7 @@ class _MainPageState extends State<MainPage> {
         Navigator.pushNamed(context, '/');
       }
     });
+    primaryColor = Theme.of(context).primaryColor;
   }
 
   @override

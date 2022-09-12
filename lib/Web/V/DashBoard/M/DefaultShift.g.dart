@@ -1,24 +1,23 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'Shift.dart';
+part of 'DefaultShift.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-Shift _$ShiftFromJson(Map<String, dynamic> json) => Shift()
+DefaultShift _$DefaultShiftFromJson(Map<String, dynamic> json) => DefaultShift()
   ..id = json['id'] as int? ?? 0
-  ..startAt = Shift.stringToDateTime(json['startAt'])
-  ..endAt = Shift.stringToDateTime(json['endAt'])
+  ..startAt = json['startAt'] as String?
+  ..endAt = json['endAt'] as String?
   ..shiftName = json['shiftName'] as String?
   ..deleted = json['deleted'] as int? ?? 0
   ..duration = (json['duration'] as num?)?.toDouble() ?? 0;
 
-Map<String, dynamic> _$ShiftToJson(Shift instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$DefaultShiftToJson(DefaultShift instance) => <String, dynamic>{
       'id': instance.id,
-      'startAt': Shift.dateTimeToString(instance.startAt),
-      'endAt': Shift.dateTimeToString(instance.endAt),
+      'startAt': instance.startAt,
+      'endAt': instance.endAt,
       'shiftName': instance.shiftName,
       'deleted': instance.deleted,
       'duration': instance.duration,

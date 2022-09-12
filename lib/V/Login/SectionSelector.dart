@@ -57,7 +57,7 @@ class _UserSectionSelectorState extends State<UserSectionSelector> {
                   _filterdSections = widget.nsUser.sections
                       .where((element) => element.sectionTitle.toLowerCase().contains(searchText) || element.factory.toLowerCase().contains(searchText))
                       .toList();
-                  setState(() {});
+                  if (mounted) setState(() {});
                 },
                 delay: 300,
                 searchController: _controller)),

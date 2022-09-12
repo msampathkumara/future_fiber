@@ -8,6 +8,7 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../C/Api.dart';
 import '../../../M/Enums.dart';
+import 'LineChart.dart';
 import 'M/MonthPicker.dart';
 import 'M/ProgressSummery.dart';
 
@@ -148,7 +149,11 @@ class _CountCardsState extends State<CountCards> {
                 : Wrap(
                     children: [
                       if (_allShiftSummery != null) getShiftsTotal(_allShiftSummery!),
-                      const SizedBox(height: 24),
+                      if (_selectedFilter != DaysFilters.Today && _selectedFilter != DaysFilters.Yesterday) ...[
+                        const SizedBox(height: 24),
+                        const SizedBox(height: 200, child: LineChart()),
+                        const SizedBox(height: 24)
+                      ],
                       ExpansionPanelList(
                         expandedHeaderPadding: const EdgeInsets.all(16),
                         dividerColor: Colors.blue,
@@ -195,7 +200,7 @@ class _CountCardsState extends State<CountCards> {
                                                   Container(alignment: Alignment.centerRight, child: Text("${(e.capacity ?? 0).toStringAsFixed(1)}")),
                                                   Container(alignment: Alignment.centerRight, child: Text(ProgressSummery.durationToString(((e.taktTime ?? 0) * 60).round()))),
                                                   Container(
-                                                      alignment: Alignment.centerRight, child: Text("${ProgressSummery.durationToString(((e.cycleTime ?? 0) * 60).round()) ?? 0}")),
+                                                      alignment: Alignment.centerRight, child: Text("${ProgressSummery.durationToString(((e.cycleTime ?? 0) * 60).round())}")),
                                                   Container(alignment: Alignment.centerRight, child: Text("${(e.efficiency ?? 0).toStringAsFixed(1)}%")),
                                                   Container(alignment: Alignment.centerRight, child: Text("${e.defects ?? 0}")),
                                                   Container(alignment: Alignment.centerRight, child: Text("${(e.defectsRate ?? 0).toStringAsFixed(2)}%")),
@@ -442,10 +447,7 @@ class _CountCardsState extends State<CountCards> {
                     } else if (args.value is DateTime) {
                       selectedDate = args.value;
                     } else if (args.value is List<DateTime>) {
-                      final List<DateTime> selectedDates = args.value;
-                    } else {
-                      final List<PickerDateRange> selectedRanges = args.value;
-                    }
+                    } else {}
                     setState(() {});
                   },
                   selectionMode: DateRangePickerSelectionMode.range)),

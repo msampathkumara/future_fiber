@@ -58,7 +58,8 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
       print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
       jsString = setupData(value);
       _webView = WebView(
-        initialUrl: 'https://www.w3schools.com/howto/howto_css_register_form.asp',
+        // initialUrl: 'https://www.w3schools.com/howto/howto_css_register_form.asp',
+        initialUrl: 'http://10.200.4.31/WebClient/default.aspx?ReturnUrl=%2fWebClient%2fRFSMenu.aspx',
         // initialUrl: "http://10.200.4.31/webclient/",
         javascriptMode: JavascriptMode.unrestricted,
         onWebViewCreated: (WebViewController webViewController) {
@@ -94,12 +95,12 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
 
       setState(() {});
     });
-    print('cxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
 
     db.child("settings").once().then((DatabaseEvent databaseEvent) {
       DataSnapshot result = databaseEvent.snapshot;
 
       erpNotWorking = result.child("erpNotWorking").value == 0;
+      setState(() {});
     });
     db.child("settings").onChildChanged.listen((DatabaseEvent event) {
       db.child("settings").once().then((DatabaseEvent databaseEvent) {
@@ -216,29 +217,30 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
               const Divider(),
               if (_webView != null && (erpNotWorking))
                 Expanded(
-                    child: (loading)
-                        ? const Center(child: Text("Loading", textScaleFactor: 1.5))
-                        : webPageConnectionError
-                            ? Center(
-                                child: Wrap(
-                                direction: Axis.vertical,
-                                alignment: WrapAlignment.center,
-                                children: [
-                                  const Text("No Network Or Not In Factory Network", textScaleFactor: 1.2),
-                                  Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: ElevatedButton(
-                                          onPressed: () {
-                                            webPageConnectionError = false;
-                                            loading = true;
-                                            setupTimeout();
-                                            setState(() {});
-                                            _controller!.reload();
-                                          },
-                                          child: const Text("Retry")))
-                                ],
-                              ))
-                            : _webView!),
+                    child: Stack(children: [
+                  webPageConnectionError
+                      ? Center(
+                          child: Wrap(
+                          direction: Axis.vertical,
+                          alignment: WrapAlignment.center,
+                          children: [
+                            const Text("No Network Or Not In Factory Network", textScaleFactor: 1.2),
+                            Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      webPageConnectionError = false;
+                                      loading = true;
+                                      setupTimeout();
+                                      setState(() {});
+                                      _controller!.reload();
+                                    },
+                                    child: const Text("Retry")))
+                          ],
+                        ))
+                      : _webView!,
+                  if (loading) Container(color: Colors.white, height: double.infinity, width: double.infinity, child: const Center(child: Text("Loading", textScaleFactor: 1.5))),
+                ])),
             ],
           ));
     } else {

@@ -256,7 +256,6 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
               return _loadData(0);
             },
             child: (_ticketList.isEmpty && (!requested))
-            // ? Center(child: Text(searchText.isEmpty ? "No Tickets Found" : "⛔ Work Ticket not found.\n Please contact  Ticket Checking department", textScaleFactor: 1.5))
                 ? Center(child: Container(padding: const EdgeInsets.all(20), child: const NoResultFoundMsg()))
                 : Padding(
                     padding: const EdgeInsets.only(top: 16),
@@ -494,7 +493,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
     }
   }
 
-  bool requested = false;
+  bool requested = true;
   int dataCount = 0;
   List<Ticket> _ticketList = [];
   bool _dataLoadingError = false;

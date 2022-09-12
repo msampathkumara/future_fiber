@@ -24,7 +24,8 @@ ShiftFactorySummery _$ShiftFactorySummeryFromJson(Map<String, dynamic> json) => 
   ..cycleTime = ShiftFactorySummery.numFromString(json['cycleTime'])
   ..efficiency = ShiftFactorySummery.numFromString(json['efficiency'])
   ..defectsRate = ShiftFactorySummery.numFromString(json['defectsRate'])
-  ..backLog = ShiftFactorySummery.numFromString(json['backLog']);
+  ..backLog = ShiftFactorySummery.numFromString(json['backLog'])
+  ..isCurrentShift = json['isCurrentShift'] == null ? false : ShiftFactorySummery.boolFromInt(json['isCurrentShift'] as int);
 
 Map<String, dynamic> _$ShiftFactorySummeryToJson(ShiftFactorySummery instance) => <String, dynamic>{
       'volume': instance.volume,
@@ -45,4 +46,5 @@ Map<String, dynamic> _$ShiftFactorySummeryToJson(ShiftFactorySummery instance) =
       'efficiency': instance.efficiency,
       'defectsRate': instance.defectsRate,
       'backLog': instance.backLog,
+      'isCurrentShift': instance.isCurrentShift,
     };

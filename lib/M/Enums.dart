@@ -202,6 +202,10 @@ extension StringContainsInArrayExtension on String {
     }
   }
 
+  String capitalize() {
+    return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
+  }
+
   bool containsInArrayIgnoreCase(List<String?> list) {
     return list.where((element) => element != null && element.toLowerCase().contains(toLowerCase())).isNotEmpty;
   }
@@ -264,5 +268,12 @@ extension StringContainsInArrayExtension on String {
 extension listExt<T> on List<T> {
   List<T> without(List<T> withoutList) {
     return where((x) => withoutList.contains(x) == false).toList();
+  }
+}
+
+extension TextEditingControllerExt on TextEditingController {
+  void selectAll() {
+    if (text.isEmpty) return;
+    selection = TextSelection(baseOffset: 0, extentOffset: text.length);
   }
 }

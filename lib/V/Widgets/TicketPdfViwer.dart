@@ -115,13 +115,13 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
           if (_loading) const Center(child: CircularProgressIndicator()),
           errorMessage.isEmpty ? ((!isReady) ? Container() : Container()) : Center(child: Text(errorMessage, style: const TextStyle(color: Colors.red)))
         ]),
-        floatingActionButton: (AppUser.havePermissionFor(Permissions.EDIT_ANY_PDF)) && (widget.ticket.isStarted)
+        floatingActionButton: (widget.ticket.isNotCompleted && (AppUser.havePermissionFor(Permissions.EDIT_ANY_PDF)) && (widget.ticket.isStarted))
             ? FloatingActionButton.extended(
-            icon: const Icon(Icons.edit_outlined),
-            label: const Text("Edit"),
-            onPressed: () async {
-              widget.onClickEdit();
-            })
+                icon: const Icon(Icons.edit_outlined),
+                label: Text("Edit ${widget.ticket.completed}"),
+                onPressed: () async {
+                  widget.onClickEdit();
+                })
             : null);
   }
 
