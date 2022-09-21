@@ -32,7 +32,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
   @override
   initState() {
     super.initState();
-    _productions = [Production.All, Production.Upwind, Production.OD, Production.Nylon, Production.OEM];
+    _productions = [Production.All, Production.Upwind, Production.OD, Production.Nylon_Standard, Production.OEM];
     tabs = _productions.map<String>((e) => e.getValue()).toList();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _tabBarController = TabController(length: tabs.length, vsync: this);
@@ -186,7 +186,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
   }
 
   var tabs = [];
-  final tabsColors = [null, "Upwind", "OD", "Nylon", "OEM", "No Pool"];
+  final tabsColors = [null, "Upwind", "OD", 'Nylon Standard', "Nylon Custom", "OEM", "No Pool"];
 
   TabController? _tabBarController;
 

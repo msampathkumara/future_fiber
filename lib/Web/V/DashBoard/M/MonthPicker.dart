@@ -63,7 +63,7 @@ class _MonthPickerState extends State<MonthPicker> {
                     ? Chip(
                         label: Text(month),
                         backgroundColor: Theme.of(context).primaryColor,
-                        labelStyle: TextStyle(color: Colors.white),
+                        labelStyle: const TextStyle(color: Colors.white),
                       )
                     : Chip(label: Text(month), backgroundColor: Colors.transparent),
                 onTap: () {

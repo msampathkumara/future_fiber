@@ -40,7 +40,6 @@ class StandardTicketAdapter extends TypeAdapter<StandardTicket> {
       ..progress = fields[18] == null ? 0 : fields[18] as int
       ..completed = fields[19] == null ? 0 : fields[19] as int
       ..nowAt = fields[20] == null ? 0 : fields[20] as int
-      ..isCrossPro = fields[21] == null ? false : fields[21] as bool
       ..openSections = fields[23] == null ? [] : (fields[23] as List).cast<dynamic>()
       ..shipDate = fields[24] == null ? '' : fields[24] as String
       ..deliveryDate = fields[25] == null ? '' : fields[25] as String
@@ -60,7 +59,7 @@ class StandardTicketAdapter extends TypeAdapter<StandardTicket> {
   @override
   void write(BinaryWriter writer, StandardTicket obj) {
     writer
-      ..writeByte(38)
+      ..writeByte(37)
       ..writeByte(50)
       ..write(obj.production)
       ..writeByte(51)
@@ -107,8 +106,6 @@ class StandardTicketAdapter extends TypeAdapter<StandardTicket> {
       ..write(obj.completed)
       ..writeByte(20)
       ..write(obj.nowAt)
-      ..writeByte(21)
-      ..write(obj.isCrossPro)
       ..writeByte(23)
       ..write(obj.openSections)
       ..writeByte(24)
@@ -175,7 +172,6 @@ StandardTicket _$StandardTicketFromJson(Map<String, dynamic> json) => StandardTi
   ..progress = json['progress'] as int? ?? 0
   ..completed = json['completed'] as int? ?? 0
   ..nowAt = json['nowAt'] as int? ?? 0
-  ..isCrossPro = json['isCrossPro'] == null ? false : Ticket.boolFromInt(json['isCrossPro'] as int)
   ..openSections = json['openSections'] == null ? [] : Ticket.stringToList(json['openSections'])
   ..shipDate = json['shipDate'] as String? ?? ''
   ..deliveryDate = json['deliveryDate'] as String? ?? ''
@@ -217,7 +213,6 @@ Map<String, dynamic> _$StandardTicketToJson(StandardTicket instance) =>
       'progress': instance.progress,
       'completed': instance.completed,
       'nowAt': instance.nowAt,
-      'isCrossPro': Ticket.boolToInt(instance.isCrossPro),
       'openSections': instance.openSections,
       'shipDate': instance.shipDate,
       'deliveryDate': instance.deliveryDate,

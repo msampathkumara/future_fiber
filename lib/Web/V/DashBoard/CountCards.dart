@@ -1,9 +1,11 @@
 import "package:collection/collection.dart";
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/V/Home/Tickets/TicketInfo/info_History.dart';
 import 'package:smartwind/V/Widgets/NoResultFoundMsg.dart';
 import 'package:smartwind/Web/V/DashBoard/M/ShiftFactorySummery.dart';
+import 'package:smartwind/Web/V/DashBoard/M/WeekPicker.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../C/Api.dart';
@@ -53,6 +55,12 @@ class _CountCardsState extends State<CountCards> {
 
   String _title = DaysFilters.Today.getText();
 
+  LineChartController lineChartController = LineChartController();
+
+  bool singleDate = false;
+
+  get isSingleDay => singleDate || (_selectedFilter == DaysFilters.Today || _selectedFilter == DaysFilters.Yesterday);
+
   String formatDate(DateTime date, {bool dateOnly = false}) => dateOnly ? DateFormat("yyyy MMMM d").format(date) : DateFormat("yyyy MMMM d HH:mm").format(date);
 
   List<Production> productionList = List.from(Production.values);
@@ -72,7 +80,10 @@ class _CountCardsState extends State<CountCards> {
 
   @override
   Widget build(BuildContext context) {
-    var _shifts = getCommens(['morning', 'evening', 'night'], progressSummeryByShiftName.keys);
+    List _shifts = getCommens(progressSummeryByShiftName.keys.toList(), ['morning', 'evening', 'night']);
+    print(progressSummeryByShiftName.keys);
+    print(_shifts);
+    print("-------------------------------------------------------shifts");
     return ListView(
       children: [
         Row(children: [
@@ -122,20 +133,19 @@ class _CountCardsState extends State<CountCards> {
           ...DaysFilters.values
               .without([DaysFilters.Today, DaysFilters.Yesterday])
               .map((e) => Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: PopupMenuButton<int>(
-                        offset: const Offset(0, 30),
-                        padding: const EdgeInsets.all(16.0),
-                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                        child: Chip(
-                            backgroundColor: _selectedFilter == e ? Colors.red : null,
-                            avatar: _selectedFilter == e ? const Icon(Icons.check, color: Colors.white) : null,
-                            label: Text(e.getText(), style: TextStyle(color: _selectedFilter == e ? Colors.white : Colors.black))),
-                        onSelected: (result) {},
-                        itemBuilder: (BuildContext context) {
-                          return getFilterValues(e);
-                        }),
-                  ))
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: PopupMenuButton<int>(
+                      offset: const Offset(0, 30),
+                      padding: const EdgeInsets.all(16.0),
+                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                      child: Chip(
+                          backgroundColor: _selectedFilter == e ? Colors.red : null,
+                          avatar: _selectedFilter == e ? const Icon(Icons.check, color: Colors.white) : null,
+                          label: Text(e.getText(), style: TextStyle(color: _selectedFilter == e ? Colors.white : Colors.black))),
+                      onSelected: (result) {},
+                      itemBuilder: (BuildContext context) {
+                        return getFilterValues(e);
+                      })))
               .toList(),
         ]),
         const SizedBox(height: 24),
@@ -149,11 +159,7 @@ class _CountCardsState extends State<CountCards> {
                 : Wrap(
                     children: [
                       if (_allShiftSummery != null) getShiftsTotal(_allShiftSummery!),
-                      if (_selectedFilter != DaysFilters.Today && _selectedFilter != DaysFilters.Yesterday) ...[
-                        const SizedBox(height: 24),
-                        const SizedBox(height: 200, child: LineChart()),
-                        const SizedBox(height: 24)
-                      ],
+                      if (!isSingleDay) ...[const SizedBox(height: 24), SizedBox(height: 350, child: LineChart(controller: lineChartController)), const SizedBox(height: 24)],
                       ExpansionPanelList(
                         expandedHeaderPadding: const EdgeInsets.all(16),
                         dividerColor: Colors.blue,
@@ -191,16 +197,15 @@ class _CountCardsState extends State<CountCards> {
                                           const Text("Scheduled backlog"),
                                           const Text("WIP")
                                         ].map((e) => Padding(padding: const EdgeInsets.all(8.0), child: e)).toList()),
-                                        ...progressSummeryByShiftName[shiftName]
-                                            .map((e) => TableRow(
+                                        ...(progressSummeryByShiftName[shiftName] ?? [ProgressSummery()])
+                                            .map((ProgressSummery e) => TableRow(
                                                     children: [
                                                   Container(alignment: Alignment.centerLeft, child: Text("${e.sectionTitle}")),
                                                   Container(alignment: Alignment.centerRight, child: Text("${e.volume ?? 0}")),
                                                   Container(alignment: Alignment.centerRight, child: Text("${e.employeeCount ?? 0}")),
-                                                  Container(alignment: Alignment.centerRight, child: Text("${(e.capacity ?? 0).toStringAsFixed(1)}")),
+                                                  Container(alignment: Alignment.centerRight, child: Text((e.capacity ?? 0).toStringAsFixed(1))),
                                                   Container(alignment: Alignment.centerRight, child: Text(ProgressSummery.durationToString(((e.taktTime ?? 0) * 60).round()))),
-                                                  Container(
-                                                      alignment: Alignment.centerRight, child: Text("${ProgressSummery.durationToString(((e.cycleTime ?? 0) * 60).round())}")),
+                                                  Container(alignment: Alignment.centerRight, child: Text(ProgressSummery.durationToString(((e.cycleTime ?? 0) * 60).round()))),
                                                   Container(alignment: Alignment.centerRight, child: Text("${(e.efficiency ?? 0).toStringAsFixed(1)}%")),
                                                   Container(alignment: Alignment.centerRight, child: Text("${e.defects ?? 0}")),
                                                   Container(alignment: Alignment.centerRight, child: Text("${(e.defectsRate ?? 0).toStringAsFixed(2)}%")),
@@ -219,8 +224,17 @@ class _CountCardsState extends State<CountCards> {
                                 return ListTile(
                                   leading: Padding(
                                       padding: const EdgeInsets.only(top: 8.0), child: shiftName.icon(shiftFactorySummery.isCurrentShift ? Colors.deepOrange : Colors.grey)),
-                                  title:
+                                  title: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
                                       Padding(padding: const EdgeInsets.only(top: 16.0), child: Text(shiftName.capitalizeFirstofEach, style: const TextStyle(color: Colors.black))),
+                                      if (isSingleDay)
+                                        Padding(
+                                            padding: const EdgeInsets.only(top: 4.0),
+                                            child: Text("${shiftFactorySummery.startAtTime} - ${shiftFactorySummery.endAtTime}",
+                                                style: const TextStyle(fontSize: 12, color: Colors.red))),
+                                    ],
+                                  ),
                                   subtitle: Table(
                                     children: [
                                       TableRow(children: [
@@ -247,7 +261,7 @@ class _CountCardsState extends State<CountCards> {
                                             subtitle: Text("${shiftFactorySummery.defects ?? 0}", style: valSt, textScaleFactor: 1.2)),
                                         ListTile(
                                             title: Text("Defects Rate", style: nameSt, textScaleFactor: 0.8),
-                                            subtitle: Text("${shiftFactorySummery.defectsRate ?? 0}%", style: valSt, textScaleFactor: 1.2)),
+                                            subtitle: Text("${(shiftFactorySummery.defectsRate ?? 0).toStringAsFixed(2)}%", style: valSt, textScaleFactor: 1.2)),
                                         ListTile(
                                             title: Text("Backlog", style: nameSt, textScaleFactor: 0.8),
                                             subtitle: Text("${shiftFactorySummery.backLog ?? 0}", style: valSt, textScaleFactor: 1.2)),
@@ -275,21 +289,21 @@ class _CountCardsState extends State<CountCards> {
 
   void loadData() {
     DateTime today = DateTime(now.year, now.month, now.day);
-
+    singleDate = false;
     switch (_selectedFilter) {
       case DaysFilters.Today:
         rangeStartDate = today;
-        rangeEndDate = DateTime(now.year, now.month, now.day, 24);
+        rangeEndDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
         _title = DaysFilters.Today.getText();
         break;
       case DaysFilters.Yesterday:
         rangeStartDate = today.subtract(const Duration(days: 1));
-        rangeEndDate = rangeStartDate.add(const Duration(hours: 24));
+        rangeEndDate = rangeStartDate.add(const Duration(hours: 23, minutes: 59, seconds: 59));
         _title = DaysFilters.Yesterday.getText();
         break;
       case DaysFilters.Week:
-        rangeStartDate = DateTime.now().subtract(const Duration(days: 7));
-        rangeEndDate = DateTime.now();
+        // rangeStartDate = DateTime.now().subtract(const Duration(days: 7));
+        // rangeEndDate = DateTime.now();
         break;
       case DaysFilters.Month:
         rangeEndDate = DateTime(rangeStartDate.year, rangeStartDate.month + 1, 0);
@@ -304,22 +318,31 @@ class _CountCardsState extends State<CountCards> {
         _title = (rangeEndDate == null)
             ? DateFormat("yyyy MMMM dd").format(rangeStartDate)
             : "${DateFormat("yyyy/MM/dd").format(rangeStartDate)} to ${DateFormat("yyyy/MM/dd").format(rangeEndDate!)}";
-
-        rangeEndDate ??= rangeStartDate.add(const Duration(hours: 24));
+        if (rangeEndDate == null) {
+          singleDate = true;
+        }
+        rangeEndDate ??= rangeStartDate.add(const Duration(hours: 23, minutes: 59, seconds: 59));
         break;
     }
+
     print("$rangeStartDate to $rangeEndDate");
     setState(() {
       loading = true;
     });
+
+    if (_selectedFilter != DaysFilters.Today && _selectedFilter != DaysFilters.Yesterday) {
+      lineChartController.updateData(rangeStartDate, rangeEndDate, selectedProduction, _selectedFilter);
+    }
+
     // ServerApi.dashboard_x({"rangeStartDate": rangeStartDate, 'rangeEndDate': rangeEndDate ?? rangeStartDate, 'production': selectedProduction.getValue()}).then((res) {
-    Api.get("dashboard/x", {"rangeStartDate": rangeStartDate, 'rangeEndDate': rangeEndDate ?? rangeStartDate, 'production': selectedProduction.getValue()}).then((res) {
+    Api.get(EndPoints.dashboard_x, {"rangeStartDate": rangeStartDate, 'rangeEndDate': rangeEndDate ?? rangeStartDate, 'production': selectedProduction.getValue()}).then((res) {
       Map data = res.data;
       progressSummeryByShiftName = {};
       progressSummery = ProgressSummery.fromJsonArray(data['shiftSectionSummary']);
       shiftFactorySummeryList = ShiftFactorySummery.fromJsonArray(data['shiftSummary']);
       _allShiftSummery = ShiftFactorySummery.fromJsonArray(data['factorySummary']).firstOrNull;
-      progressSummeryByShiftName = groupBy(progressSummery, (ProgressSummery obj) => obj.shiftName);
+      progressSummeryByShiftName = groupBy(progressSummery, (ProgressSummery obj) => obj.shiftName ?? '');
+      print(data);
     }).whenComplete(() {
       setState(() {
         loading = false;
@@ -339,8 +362,8 @@ class _CountCardsState extends State<CountCards> {
     });
   }
 
-  getCommens(List<String> list, Iterable<dynamic> keys) {
-    List k = keys.toList();
+  getCommens(List list, Iterable<dynamic> keys) {
+    List k = keys.map((e) => e.toString().toLowerCase()).toList();
     list.removeWhere((item) => !k.contains(item.toLowerCase()));
     return list;
   }
@@ -381,7 +404,7 @@ class _CountCardsState extends State<CountCards> {
                     subtitle: Text("${allShiftSummery.defects ?? 0}", style: valSt1, textScaleFactor: 1.3, textAlign: TextAlign.center)),
                 ListTile(
                     title: Text("Defects Rate", style: nameSt1, textScaleFactor: 0.8, textAlign: TextAlign.center),
-                    subtitle: Text("${allShiftSummery.defectsRate ?? 0}%", style: valSt1, textScaleFactor: 1.3, textAlign: TextAlign.center)),
+                    subtitle: Text("${(allShiftSummery.defectsRate ?? 0).toStringAsFixed(2)}%", style: valSt1, textScaleFactor: 1.3, textAlign: TextAlign.center)),
                 ListTile(
                     title: Text("Backlog", style: nameSt1, textScaleFactor: 0.8, textAlign: TextAlign.center),
                     subtitle: Text("${allShiftSummery.backLog ?? 0}", style: valSt1, textScaleFactor: 1.3, textAlign: TextAlign.center)),
@@ -463,7 +486,41 @@ class _CountCardsState extends State<CountCards> {
               },
               child: const Text('Done')),
         )
-      ]
+      ],
+      if (e == DaysFilters.Week)
+        PopupMenuItem(
+            child: SizedBox(
+                width: 350,
+                height: 320,
+                child: WeekPicker(
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime.now().add(const Duration(days: 390)),
+                    selectedDate: DateTime.now(),
+                    onSelect: (DateTime start, DateTime end, year, week) {
+                      rangeStartDate = start;
+                      rangeEndDate = end;
+                      _selectedFilter = DaysFilters.Week;
+                      _title = "$week ${getNumberSuffix(week)} week $year ";
+                      loadData();
+                      Navigator.of(context).pop();
+                    }))),
     ];
+  }
+
+  String getNumberSuffix(int dayNum) {
+    if (dayNum >= 11 && dayNum <= 13) {
+      return 'th';
+    }
+
+    switch (dayNum % 10) {
+      case 1:
+        return 'th';
+      case 2:
+        return 'nd';
+      case 3:
+        return 'rd';
+      default:
+        return 'th';
+    }
   }
 }

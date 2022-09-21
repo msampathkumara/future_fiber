@@ -59,7 +59,7 @@ class _WebStandardLibraryState extends State<WebStandardLibrary> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniStartDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniStartFloat,
       floatingActionButton: FloatingActionButton.small(
           onPressed: () async {
             addItemsBottomSheetMenu(context);
@@ -83,7 +83,7 @@ class _WebStandardLibraryState extends State<WebStandardLibrary> {
                         value: selectedProduction,
                         selectedItemBuilder: (_) {
                           return Production.values
-                              .where((element) => (!['None', '38 Upwind', '38 Nylon', '38 OEM', '38 OD'].contains(element.getValue())))
+                              .where((element) => (!['None', '38 Upwind', '38 Nylon Standard', '38 Nylon Custom', '38 OEM', '38 OD'].contains(element.getValue())))
                               .map<Widget>((Production item) {
                             return Center(
                                 child: Padding(
@@ -92,7 +92,9 @@ class _WebStandardLibraryState extends State<WebStandardLibrary> {
                             ));
                           }).toList();
                         },
-                        items: Production.values.where((element) => (!['None', '38 Upwind', '38 Nylon', '38 OEM', '38 OD'].contains(element.getValue()))).map((Production value) {
+                        items: Production.values
+                            .where((element) => (!['None', '38 Upwind', '38 Nylon Standard', '38 Nylon Custom', '38 OEM', '38 OD'].contains(element.getValue())))
+                            .map((Production value) {
                           return DropdownMenuItem<Production>(
                             value: value,
                             child: Text(value.getValue()),
@@ -257,7 +259,7 @@ class _WebStandardLibraryState extends State<WebStandardLibrary> {
                         padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
                         child: ListView(
                             children: Production.values
-                                .where((element) => (!['All', 'None', '38 Upwind', '38 Nylon', '38 OEM', '38 OD'].contains(element.getValue())))
+                                .where((element) => (!['All', 'None', '38 Upwind', '38 Nylon Standard', '38 Nylon Custom', '38 OEM', '38 OD'].contains(element.getValue())))
                                 .map((e) => ListTile(
                                     title: Text(e.getValue()),
                                     selectedTileColor: Colors.black12,

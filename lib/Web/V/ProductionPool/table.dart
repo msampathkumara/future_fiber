@@ -278,19 +278,6 @@ class DessertDataSource extends DataTableSource {
                   onPressed: () {
                     WebTicketQView(ticket, false).show(context);
                   }),
-            // if (ticket.inPrint == 1)
-            //   IconButton(
-            //     icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)),
-            //     onPressed: () {
-            //       TicketPrintList(ticket).show(context);
-            //     },
-            //   ),
-            // if (ticket.isCrossPro)
-            //   IconButton(
-            //       icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.merge_type_rounded, color: Colors.green)),
-            //       onPressed: () {
-            //         CrossProductionChangeList(ticket).show(context);
-            //       }),
             if (ticket.isHold == 1)
               IconButton(
                 icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.stop, color: Colors.black)),

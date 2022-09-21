@@ -118,7 +118,7 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
         floatingActionButton: (widget.ticket.isNotCompleted && (AppUser.havePermissionFor(Permissions.EDIT_ANY_PDF)) && (widget.ticket.isStarted))
             ? FloatingActionButton.extended(
                 icon: const Icon(Icons.edit_outlined),
-                label: Text("Edit ${widget.ticket.completed}"),
+                label: const Text("Edit"),
                 onPressed: () async {
                   widget.onClickEdit();
                 })

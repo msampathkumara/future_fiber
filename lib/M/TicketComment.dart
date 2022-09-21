@@ -29,7 +29,7 @@ class TicketComment {
 
   get dateTime {
     try {
-      return DateFormat("yyyy-MM-dd hh:mm").format(DateFormat("yyyy-MM-dd'T'HH:mm").parse(dnt));
+      return DateFormat("yyyy-MM-dd HH:mm").format(DateFormat("yyyy-MM-dd'T'HH:mm").parse(dnt));
     } catch (e) {
       return dnt;
     }

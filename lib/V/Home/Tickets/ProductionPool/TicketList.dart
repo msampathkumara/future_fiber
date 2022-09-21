@@ -91,7 +91,6 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                   _showAllTickets = !_showAllTickets;
 
                   if (_showAllTickets) {
-                    // tabs = ["All", "Upwind", "OD", "Nylon", "OEM", "No Pool"];
                     tabs = Production.values.map<String>((e) => e.getValue()).toList();
                   } else {
                     tabs = ["All"];
@@ -190,7 +189,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      "${startedCount}/${currentFileList.length}",
+                      "$startedCount/${currentFileList.length}",
                       textScaleFactor: 1.1,
                       style: const TextStyle(color: Colors.white),
                     ),

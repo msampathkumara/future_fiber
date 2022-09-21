@@ -10,6 +10,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartwind/C/FCM.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/AppUser.dart';
@@ -55,9 +56,14 @@ class _HomeState extends State<Home> {
 
   late Function onUserUpdate;
 
+  late SharedPreferences prefs;
+
   @override
   void initState() {
     super.initState();
+
+    SharedPreferences.getInstance().then((value) => prefs = value);
+
     FCM.setListener(context);
     // DB.updateDatabase(context);
 
@@ -236,6 +242,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _logout() async {
+    await prefs.setBool('tabCheck', false);
     PermissionStatus ps = await Permission.phone.request();
     if (ps.isGranted) {
       String imeiNo = await DeviceInformation.deviceIMEINumber;
@@ -264,13 +271,8 @@ class _HomeState extends State<Home> {
         if (result == MenuItems.logout) {
           await _logout();
         } else if (result == MenuItems.dbReload) {
-          // await DB.dropDatabase();
-          // await DB.loadDB();
-          // DB.updateDatabase(context, showLoadingDialog: true, reset: true);
           HiveBox.getDataFromServer(clean: true);
         } else if (result == MenuItems.changeSection) {
-          // Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminCpanel()));
-
           Navigator.push(
               context,
               MaterialPageRoute(

@@ -63,6 +63,8 @@ class CPR {
   @JsonKey(defaultValue: null, includeIfNull: true)
   String? orderOn;
 
+  get isTicketStarted => ticket?.isStarted;
+
   NsUser? get user {
     return HiveBox.usersBox.get(addedUserId);
   }

@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'ProgressSummery.g.dart';
@@ -47,6 +48,13 @@ class ProgressSummery {
 
   @JsonKey(defaultValue: null, includeIfNull: true, fromJson: numFromString)
   num? defectsRate;
+
+  @JsonKey(defaultValue: null, includeIfNull: true, fromJson: stringToDateTime, toJson: dateTimeToString)
+  DateTime? date;
+
+  static stringToDateTime(d) => d == null ? null : DateFormat('yyyy-MM-dd').parse(d);
+
+  static dateTimeToString(d) => d == null ? null : DateFormat("yyyy-MM-dd").format(d);
 
   static int? intFromString(d) => int.tryParse("$d");
 

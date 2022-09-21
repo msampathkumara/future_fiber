@@ -27,7 +27,6 @@ class _info_FlagsState extends State<info_Flags> {
     "hold": {"title": "Stop Production", "icon": const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.pan_tool_rounded, color: Colors.black)), "expanded": false},
     "gr": {"title": "Graphics", "icon": const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.red)), "expanded": false},
     "sk": {"title": "SK", "icon": const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.red)), "expanded": false},
-    "cross": {"title": "Cross Production", "icon": const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.crossProduction, color: Colors.green)), "expanded": false},
   };
 
   TextStyle defaultStyle = const TextStyle(color: Colors.black);

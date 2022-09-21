@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smartwind/Web/V/DashBoard/AddEmployeeCounts.dart';
-import 'package:smartwind/Web/V/DashBoard/ChangeShift.dart';
 import 'package:smartwind/Web/V/DashBoard/CountCards.dart';
+import 'package:smartwind/Web/V/DashBoard/Settings/ChangeShift.dart';
 
 import 'AddAvarageSailTimes.dart';
 import 'AddDefaultEmployeeCounts.dart';

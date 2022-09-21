@@ -123,10 +123,6 @@ class Ticket extends DataObject {
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int nowAt = 0;
 
-  @HiveField(21, defaultValue: false)
-  @JsonKey(defaultValue: false, includeIfNull: true, fromJson: boolFromInt, toJson: boolToInt)
-  bool isCrossPro = false;
-
   @HiveField(23, defaultValue: [])
   @JsonKey(defaultValue: [], includeIfNull: true, fromJson: stringToList)
   List openSections = [];
@@ -475,12 +471,12 @@ class Ticket extends DataObject {
             context: context,
             builder: (_) {
               HiveBox.getDataFromServer(afterLoad: () {
-                Navigator.of(context).pop();
+                Navigator.of(context, rootNavigator: true).pop();
               });
               return AlertDialog(
                   shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
                   content: Builder(builder: (context) {
-                    return const SizedBox(height: 50, width: 50, child: Center(child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator())));
+                    return const SizedBox(height: 150, width: 50, child: Center(child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator())));
                   }));
             });
 

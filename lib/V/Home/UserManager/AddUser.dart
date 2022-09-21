@@ -342,8 +342,18 @@ class _AddUserState extends State<AddUser> {
                                                             selectedSection!.factory = newValue!;
                                                           });
                                                         },
-                                                        items: <String>['Upwind', 'OD', 'Nylon', 'OEM', '38 Upwind', '38 OD', '38 Nylon', '38 OEM']
-                                                            .map<DropdownMenuItem<String>>((String value) {
+                                                        items: <String>[
+                                                          'Upwind',
+                                                          'OD',
+                                                          'Nylon Standard',
+                                                          'Nylon Custom',
+                                                          'OEM',
+                                                          '38 Upwind',
+                                                          '38 OD',
+                                                          '38 Nylon Standard',
+                                                          '38 Nylon Custom',
+                                                          '38 OEM'
+                                                        ].map<DropdownMenuItem<String>>((String value) {
                                                           return DropdownMenuItem<String>(value: value, child: SizedBox(width: 150, child: Text(value)));
                                                         }).toList(),
                                                       ),

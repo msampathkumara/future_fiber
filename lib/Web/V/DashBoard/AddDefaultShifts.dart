@@ -7,6 +7,7 @@ import 'package:smartwind/Web/Widgets/IfWeb.dart';
 import 'package:smartwind/globals.dart';
 
 import '../../../C/Api.dart';
+import '../../../M/Enums.dart';
 import 'M/DefaultShift.dart';
 
 class AddDefaultShifts extends StatefulWidget {
@@ -21,7 +22,11 @@ class AddDefaultShifts extends StatefulWidget {
 }
 
 class _AddDefaultShiftsState extends State<AddDefaultShifts> {
-  bool loading = true;
+  bool loading = false;
+
+  String? selectedFactory;
+
+  get isFactorySelected => selectedFactory != null;
 
   TimeOfDay getTime(startAt) => TimeOfDay(hour: int.tryParse(startAt!.split(":")[0]) ?? 0, minute: int.tryParse(startAt!.split(":")[1]) ?? 0);
 
@@ -34,7 +39,7 @@ class _AddDefaultShiftsState extends State<AddDefaultShifts> {
   @override
   void initState() {
     // TODO: implement initState
-    loadData();
+    // loadData();
     super.initState();
   }
 
@@ -48,35 +53,76 @@ class _AddDefaultShiftsState extends State<AddDefaultShifts> {
         appBar: AppBar(title: const Text("Set Default Shifts")),
         body: loading
             ? const Center(child: CircularProgressIndicator())
-            : Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Table(
-                      children: [
-                        TableRow(
-                            children: [const Text("Shift Name"), const Text("Start Time"), const Text("End Time"), const Text("Duration")]
-                                .map((e) => Padding(padding: const EdgeInsets.all(8.0), child: e))
-                                .toList()),
-                        ...shiftsMap.values
-                            .map((e) => TableRow(children: [
-                                  // Switch(value: e.isActive, onChanged: (bool v) => setState(() => e.deleted = v ? 0 : 1)),
-                                  Padding(padding: const EdgeInsets.all(8.0), child: Text(e.shiftName ?? '')),
-                                  (e.isActive)
-                                      ? getTimeSelector(getTime(e.startAt), (TimeOfDay t) => e.startAt = "${t.hour}:${t.minute}")
-                                      : Chip(label: Text(getTime(e.startAt).format(context))),
-                                  (e.isActive) ? getTimeSelector(getTime(e.endAt), (t) => e.endAt = "${t.hour}:${t.minute}") : Chip(label: Text(getTime(e.endAt).format(context))),
-                                  Padding(padding: const EdgeInsets.all(8.0), child: Text(dif(getTime(e.startAt), getTime(e.endAt))))
-                                ]))
-                            .toList()
-                      ],
-                    ),
+            : !isFactorySelected
+                ? getFactorySector()
+                : Column(
+                    children: [
+                      getFactorySector(),
+                      const Divider(),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Table(
+                          children: [
+                            TableRow(
+                                children: [const Text("Shift Name"), const Text("Start Time"), const Text("End Time"), const Text("Duration")]
+                                    .map((e) => Padding(padding: const EdgeInsets.all(8.0), child: e))
+                                    .toList()),
+                            ...shiftsMap.values
+                                .map((e) => TableRow(children: [
+                                      // Switch(value: e.isActive, onChanged: (bool v) => setState(() => e.deleted = v ? 0 : 1)),
+                                      Padding(padding: const EdgeInsets.all(8.0), child: Text(e.shiftName ?? '')),
+                                      (e.isActive)
+                                          ? getTimeSelector(getTime(e.startAt), (TimeOfDay t) => e.startAt = "${t.hour}:${t.minute}")
+                                          : Chip(label: Text(getTime(e.startAt).format(context))),
+                                      (e.isActive)
+                                          ? getTimeSelector(getTime(e.endAt), (t) => e.endAt = "${t.hour}:${t.minute}")
+                                          : Chip(label: Text(getTime(e.endAt).format(context))),
+                                      Padding(padding: const EdgeInsets.all(8.0), child: Text(dif(getTime(e.startAt), getTime(e.endAt))))
+                                    ]))
+                                .toList()
+                          ],
+                        ),
+                      ),
+                      Spacer()
+                    ],
                   ),
-                  Spacer()
-                ],
-              ),
-        bottomNavigationBar:
-            loading ? null : BottomAppBar(child: Padding(padding: const EdgeInsets.all(8.0), child: ElevatedButton(onPressed: save, child: const Text("Save as Defaults")))));
+        bottomNavigationBar: (loading || !isFactorySelected)
+            ? null
+            : BottomAppBar(child: Padding(padding: const EdgeInsets.all(8.0), child: ElevatedButton(onPressed: save, child: const Text("Save as Defaults")))));
+  }
+
+  Widget getFactorySector() {
+    var x = [
+      Padding(
+        padding: const EdgeInsets.only(top: 8),
+        child: PopupMenuButton<int>(
+            enabled: true,
+            offset: const Offset(0, 30),
+            padding: const EdgeInsets.all(16.0),
+            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+            child: Chip(label: Text(selectedFactory ?? 'Select Factory', style: const TextStyle(color: Colors.black))),
+            onSelected: (result) {},
+            itemBuilder: (BuildContext context) {
+              return Production.values
+                  .without([Production.None, Production.All])
+                  .map((e) => PopupMenuItem(
+                      onTap: () {
+                        selectedFactory = e.getValue();
+                        loadData();
+                      },
+                      value: 0,
+                      enabled: true,
+                      child: Text(e.getValue())))
+                  .toList();
+            }),
+      )
+    ];
+
+    return loading
+        ? const Center(child: CircularProgressIndicator())
+        : isFactorySelected
+            ? Row(children: x)
+            : Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: x));
   }
 
   String dif(TimeOfDay t1, TimeOfDay t2) {
@@ -120,7 +166,7 @@ class _AddDefaultShiftsState extends State<AddDefaultShifts> {
       return e;
     }).toList();
 
-    Api.post(EndPoints.dashboard_settings_saveDefaultShifts, {"defaultShifts": shifts}).then((res) {
+    Api.post(EndPoints.dashboard_settings_saveDefaultShifts, {"defaultShifts": shifts, 'factory': selectedFactory}).then((res) {
       Map data = res.data;
     }).whenComplete(() {
       setState(() {
@@ -141,7 +187,10 @@ class _AddDefaultShiftsState extends State<AddDefaultShifts> {
   }
 
   loadData() {
-    Api.get(EndPoints.dashboard_settings_getDefaultShifts, {}).then((res) {
+    setState(() {
+      loading = true;
+    });
+    Api.get(EndPoints.dashboard_settings_getDefaultShifts, {'factory': selectedFactory}).then((res) {
       Map data = res.data;
       print(data);
 

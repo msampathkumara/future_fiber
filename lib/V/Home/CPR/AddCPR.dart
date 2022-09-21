@@ -226,7 +226,7 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                                     selectedItem: _cpr.client,
                                     // mode: Mode.BOTTOM_SHEET,
                                     // showSelectedItem: true,
-                                    items: ["Upwind", "OD", "Nylon", "OEM"],
+                                    items: const ["Upwind", "OD", 'Nylon Standard', 'Nylon Custom', "OEM"],
                                     dropdownDecoratorProps: const DropDownDecoratorProps(
                                         dropdownSearchDecoration: InputDecoration(
                                       hintText: "Select Client",

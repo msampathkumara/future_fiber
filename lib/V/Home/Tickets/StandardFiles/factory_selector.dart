@@ -26,7 +26,7 @@ class FactorySelector extends StatefulWidget {
   }
 }
 
-List<String> factoryList = ['Upwind', 'OD', 'Nylon', 'OEM'];
+List<String> factoryList = ['Upwind', 'OD', 'Nylon Standard', 'Nylon Custom', 'OEM'];
 
 class _FactorySelectorState extends State<FactorySelector> {
   bool _loading = false;

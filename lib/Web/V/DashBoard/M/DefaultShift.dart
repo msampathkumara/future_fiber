@@ -25,6 +25,9 @@ class DefaultShift {
   @JsonKey(defaultValue: 0, includeIfNull: true)
   double duration = 0;
 
+  @JsonKey(defaultValue: null, includeIfNull: true)
+  String? factory;
+
   factory DefaultShift.fromJson(Map<String, dynamic> json) => _$DefaultShiftFromJson(json);
 
   TimeOfDay get startAtTime => TimeOfDay(hour: int.tryParse(startAt!.split(":")[0]) ?? 0, minute: int.tryParse(startAt!.split(":")[1]) ?? 0);

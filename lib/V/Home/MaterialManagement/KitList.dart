@@ -148,13 +148,10 @@ class _KitListState extends State<KitList> {
                               child: ListTile(
                                 leading: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [Text("${index + 1}")]),
                                 title: Text((kit.ticket?.mo ?? "").trim().isEmpty ? (kit.ticket?.oe ?? "") : kit.ticket?.mo ?? "",
-                                    style: const TextStyle(fontWeight: FontWeight.bold)),
+                                    style: TextStyle(fontWeight: FontWeight.bold, color: kit.isTicketStarted ? Colors.green : null)),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(kit.ticket?.oe ?? ""),
-                                    // Text(kit.shortageType ?? "", style: const TextStyle(color: Colors.blue)),
-                                  ],
+                                  children: [Text(kit.ticket?.oe ?? "")],
                                 ),
                                 trailing: Wrap(
                                   crossAxisAlignment: WrapCrossAlignment.end,

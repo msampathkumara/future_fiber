@@ -12,7 +12,8 @@ DefaultShift _$DefaultShiftFromJson(Map<String, dynamic> json) => DefaultShift()
   ..endAt = json['endAt'] as String?
   ..shiftName = json['shiftName'] as String?
   ..deleted = json['deleted'] as int? ?? 0
-  ..duration = (json['duration'] as num?)?.toDouble() ?? 0;
+  ..duration = (json['duration'] as num?)?.toDouble() ?? 0
+  ..factory = json['factory'] as String?;
 
 Map<String, dynamic> _$DefaultShiftToJson(DefaultShift instance) => <String, dynamic>{
       'id': instance.id,
@@ -21,4 +22,5 @@ Map<String, dynamic> _$DefaultShiftToJson(DefaultShift instance) => <String, dyn
       'shiftName': instance.shiftName,
       'deleted': instance.deleted,
       'duration': instance.duration,
+      'factory': instance.factory,
     };

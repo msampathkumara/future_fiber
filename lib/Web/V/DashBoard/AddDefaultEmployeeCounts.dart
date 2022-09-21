@@ -42,7 +42,7 @@ class _AddDefaultEmployeeCountsState extends State<AddDefaultEmployeeCounts> {
   }
 
   final List<String> _sections = ['3D Drawing', 'Hand Work', 'layout', 'Qc', 'Sewing', 'Stickup'];
-  final List<String> _factories = ["Upwind", "Nylon", "OD", "OEM", "38 Upwind", "38 Nylon", "38 OD", "38 OEM", "None"];
+  final List<String> _factories = ["Upwind", 'Nylon Standard', 'Nylon Custom', "OD", "OEM", "38 Upwind", '38 Nylon Standard', '38 Nylon Custom', "38 OD", "38 OEM", "None"];
 
   getWebUi() {
     return Scaffold(

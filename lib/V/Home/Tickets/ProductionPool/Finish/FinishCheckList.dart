@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:smartwind/C/Api.dart';
@@ -28,11 +29,20 @@ class _FinishCheckListState extends State<FinishCheckList> {
   Map? checkListMap;
 
   late Ticket ticket;
+  final DatabaseReference db = FirebaseDatabase.instance.ref();
+
+  bool erpNotWorking = false;
 
   @override
   void initState() {
     super.initState();
     ticket = widget.ticket;
+    db.child("settings").once().then((DatabaseEvent databaseEvent) {
+      DataSnapshot result = databaseEvent.snapshot;
+
+      erpNotWorking = result.child("erpNotWorking").value == 0;
+      setState(() {});
+    });
   }
 
   @override
@@ -136,7 +146,7 @@ class _FinishCheckListState extends State<FinishCheckList> {
             Map data = response.data;
             UserRFCredentials? userRFCredentials;
             if (mounted) Navigator.of(context1).pop();
-            if (data["userRFCredentials"] == null) {
+            if (data["userRFCredentials"] == null && (!erpNotWorking)) {
               userRFCredentials = await const AddRFCredentials().show(context);
             } else {
               userRFCredentials = UserRFCredentials.fromJson(data["userRFCredentials"]);

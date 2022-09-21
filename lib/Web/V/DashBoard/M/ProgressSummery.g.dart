@@ -23,7 +23,8 @@ ProgressSummery _$ProgressSummeryFromJson(Map<String, dynamic> json) => Progress
   ..taktTime = ProgressSummery.numFromString(json['taktTime'])
   ..cycleTime = ProgressSummery.numFromString(json['cycleTime'])
   ..efficiency = ProgressSummery.numFromString(json['efficiency'])
-  ..defectsRate = ProgressSummery.numFromString(json['defectsRate']);
+  ..defectsRate = ProgressSummery.numFromString(json['defectsRate'])
+  ..date = ProgressSummery.stringToDateTime(json['date']);
 
 Map<String, dynamic> _$ProgressSummeryToJson(ProgressSummery instance) => <String, dynamic>{
       'volume': instance.volume,
@@ -43,4 +44,5 @@ Map<String, dynamic> _$ProgressSummeryToJson(ProgressSummery instance) => <Strin
       'cycleTime': instance.cycleTime,
       'efficiency': instance.efficiency,
       'defectsRate': instance.defectsRate,
+      'date': ProgressSummery.dateTimeToString(instance.date),
     };

@@ -35,7 +35,11 @@ class _AddEmployeeCountsState extends State<AddEmployeeCounts> {
   List sectionEmployeeCounts = [];
   Map sectionEmployeeCountsMap = {};
 
+  List _selectedFactoryShiftsList = [];
+
   get isFactorySelected => selectedFactory != null;
+
+  get isShiftSelected => selectedShift != null;
 
   @override
   Widget build(BuildContext context) {
@@ -47,12 +51,11 @@ class _AddEmployeeCountsState extends State<AddEmployeeCounts> {
   }
 
   final List<String> _sections = ['3D Drawing', 'Hand Work', 'layout', 'Qc', 'Sewing', 'Stickup'];
-  final List<String> _factories = ["Upwind", "Nylon", "OD", "OEM", "38 Upwind", "38 Nylon", "38 OD", "38 OEM", "None"];
 
   getWebUi() {
     return Scaffold(
         appBar: AppBar(title: const Text("Add Employee Count")),
-        body: selectedFactory == null
+        body: !isShiftSelected
             ? getFactorySector()
             : loading
                 ? const Center(child: CircularProgressIndicator())
@@ -101,7 +104,7 @@ class _AddEmployeeCountsState extends State<AddEmployeeCounts> {
                       ),
                     ],
                   ),
-        bottomNavigationBar: (isFactorySelected && !loading)
+        bottomNavigationBar: (isShiftSelected && !loading)
             ? BottomAppBar(child: Padding(padding: const EdgeInsets.all(8.0), child: ElevatedButton(onPressed: save, child: const Text('Save'))))
             : null);
   }
@@ -127,12 +130,12 @@ class _AddEmployeeCountsState extends State<AddEmployeeCounts> {
                       height: 300,
                       child: SfDateRangePicker(
                           onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
-                            print(args.value);
                             if (args.value is DateTime) {
                               selectedDate = args.value;
-                              getShiftsByDate();
                             }
                             Navigator.of(context).pop();
+                            selectedShift = null;
+                            selectedFactory = null;
                             setState(() {});
                           },
                           selectionMode: DateRangePickerSelectionMode.single)),
@@ -140,18 +143,44 @@ class _AddEmployeeCountsState extends State<AddEmployeeCounts> {
               ];
             }),
       ),
+      if (isShiftSelected) const SizedBox(width: 16),
+      Padding(
+        padding: const EdgeInsets.only(top: 8),
+        child: PopupMenuButton<int>(
+            enabled: selectedDate != null,
+            offset: const Offset(0, 30),
+            padding: const EdgeInsets.all(16.0),
+            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+            child: Chip(label: Text(selectedFactory ?? 'Select Factory', style: const TextStyle(color: Colors.black))),
+            onSelected: (result) {},
+            itemBuilder: (BuildContext context) {
+              return Production.values
+                  .without([Production.None, Production.All])
+                  .map((e) => PopupMenuItem(
+                      onTap: () {
+                        selectedShift = null;
+                        selectedFactory = e.getValue();
+
+                        getShiftsByDate();
+                      },
+                      value: 0,
+                      enabled: true,
+                      child: Text(e.getValue())))
+                  .toList();
+            }),
+      ),
       const SizedBox(width: 16),
       Padding(
         padding: const EdgeInsets.only(top: 8),
         child: PopupMenuButton<int>(
-            enabled: _shiftsList.isNotEmpty,
+            enabled: _selectedFactoryShiftsList.isNotEmpty,
             offset: const Offset(0, 30),
             padding: const EdgeInsets.all(16.0),
             shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
             child: Chip(label: Text(selectedShift?["shiftName"] ?? 'Select Shift', style: const TextStyle(color: Colors.black))),
             onSelected: (result) {},
             itemBuilder: (BuildContext context) {
-              return _shiftsList
+              return _selectedFactoryShiftsList
                   .map((e) => PopupMenuItem(
                       onTap: () {
                         selectedShift = e;
@@ -166,37 +195,11 @@ class _AddEmployeeCountsState extends State<AddEmployeeCounts> {
                   .toList();
             }),
       ),
-      if (isFactorySelected) const SizedBox(width: 16),
-      Padding(
-        padding: const EdgeInsets.only(top: 8),
-        child: PopupMenuButton<int>(
-            enabled: selectedShift != null,
-            offset: const Offset(0, 30),
-            padding: const EdgeInsets.all(16.0),
-            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
-            child: isFactorySelected
-                ? Chip(label: Text(selectedFactory ?? 'Select Factory', style: const TextStyle(color: Colors.black)))
-                : Chip(label: Text(selectedFactory ?? 'Select Factory', style: const TextStyle(color: Colors.black))),
-            onSelected: (result) {},
-            itemBuilder: (BuildContext context) {
-              return Production.values
-                  .without([Production.None, Production.All])
-                  .map((e) => PopupMenuItem(
-                      onTap: () {
-                        selectedFactory = e.getValue();
-                        getShiftData();
-                      },
-                      value: 0,
-                      enabled: true,
-                      child: Text(e.getValue())))
-                  .toList();
-            }),
-      )
     ];
 
     return loading
         ? const Center(child: CircularProgressIndicator())
-        : isFactorySelected
+        : isShiftSelected
             ? Row(children: x)
             : Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: x));
   }
@@ -204,15 +207,15 @@ class _AddEmployeeCountsState extends State<AddEmployeeCounts> {
   getShiftsByDate() {
     setState(() {
       loading = true;
-      selectedFactory = null;
       selectedShift = null;
     });
 
-    Api.get(EndPoints.dashboard_settings_getShiftsByDate, {'date': selectedDate}).then((res) {
+    Api.get(EndPoints.dashboard_settings_getShiftsByDate, {'date': selectedDate, 'factory': selectedFactory}).then((res) {
       Map data = res.data;
       print(data);
 
       _shiftsList = data["shifts"];
+      _selectedFactoryShiftsList = _shiftsList.where((element) => (element['factoryName'] ?? '').toString().toLowerCase() == selectedFactory?.toLowerCase()).toList();
     }).whenComplete(() {
       setState(() {
         loading = false;
@@ -251,8 +254,6 @@ class _AddEmployeeCountsState extends State<AddEmployeeCounts> {
     });
 
     Api.post(EndPoints.dashboard_settings_saveShiftSectionEmployeeCount, {'shiftSectionEmployeeCounts': sectionEmployeeCountsMap.values.toList()}).then((res) {
-      Map data = res.data;
-      selectedFactory = null;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Saved"), width: 200, behavior: SnackBarBehavior.floating));
     }).whenComplete(() {
       setState(() {

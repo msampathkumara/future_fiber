@@ -6,7 +6,6 @@ import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/V/Home/UserManager/GenerateOTP.dart';
-import 'package:smartwind/V/Widgets/Loading.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
 import 'package:smartwind/Web/V/UserManager/GenaratePassword.dart';
@@ -181,7 +180,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
   var subscription;
   List<Map> currentFileList = [];
 
-  final tabs = ["All", "Upwind", "OD", "Nylon", "OEM", "No Pool"];
+  final tabs = ["All", "Upwind", "OD", 'Nylon Standard', 'Nylon Custom', "OEM", "No Pool"];
   TabController? _tabBarController;
 
   getBody() {

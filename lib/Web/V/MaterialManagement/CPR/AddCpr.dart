@@ -38,7 +38,7 @@ class _AddCprState extends State<AddCpr> {
   final _shortageTypes = ["Short", "Damage", "Unreceived"];
   final _cprTypes = ["Pocket", "Rope Luff", "Purchase Cover", "Overhead Tape", "Tape Cover", "Take Down", "Soft Hanks", "Windows", "Stow pouch", "VPC**", "Other"];
   final _suppliers = ["Cutting", "SA", "Printing", 'None'];
-  final _clients = ['Upwind', 'OD', 'Nylon', 'OEM', '38 Upwind', '38 OD', '38 Nylon', '38 OEM'];
+  final _clients = ['Upwind', 'OD', 'Nylon Standard', 'Nylon Custom', 'OEM', '38 Upwind', '38 OD', '38 Nylon Standard', '38 Nylon Custom', '38 OEM'];
   var textEditingController = TextEditingController();
 
   bool saving = false;

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:app_settings/app_settings.dart';
-
 // import 'package:firebase_analytics/firebase_analytics.dart';
 // import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,6 +17,7 @@ import 'package:smartwind/V/Home/Tickets/ProductionPool/ProductionPool.dart';
 import 'C/App.dart';
 import 'M/AppUser.dart';
 import 'V/Home/Home.dart';
+import 'V/Login/CheckTabStatus.dart';
 import 'V/Login/Login.dart';
 import 'Web/webMain.dart';
 import 'firebase_options.dart';
@@ -37,7 +37,7 @@ void runLoggedApp(Widget app) async {
 main() async {
   bool x = Uri.base.host.contains('mm.');
   if (kDebugMode) {
-    x = false;
+    x = true;
   }
 
   isMaterialManagement = x;
@@ -199,39 +199,42 @@ class _MyHomePageState extends State<MyHomePage> {
       if (snapshot.data['permission'] == false) {
         return Scaffold(
             body: Center(
-              child: Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                direction: Axis.vertical,
-                children: [
-                  const Text("Enable Permissions", textScaleFactor: 1.5),
-                  const SizedBox(height: 16),
-                  if (snapshot.data['isPermanentlyDenied'] == true)
-                    ElevatedButton(
-                        onPressed: () async {
-                          await AppSettings.openAppSettings();
-                          if (!mounted) return;
-                          await AppUser.logout(context);
-                        },
-                        child: const Text("Open Settings")),
-                  if (snapshot.data['isPermanentlyDenied'] == false)
-                    ElevatedButton(
-                        onPressed: () async {
-                          await Permission.phone.request();
+          child: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            direction: Axis.vertical,
+            children: [
+              const Text("Enable Permissions", textScaleFactor: 1.5),
+              const SizedBox(height: 16),
+              if (snapshot.data['isPermanentlyDenied'] == true)
+                ElevatedButton(
+                    onPressed: () async {
+                      await AppSettings.openAppSettings();
+                      if (!mounted) return;
+                      await AppUser.logout(context);
+                    },
+                    child: const Text("Open Settings")),
+              if (snapshot.data['isPermanentlyDenied'] == false)
+                ElevatedButton(
+                    onPressed: () async {
+                      await Permission.phone.request();
                       await Permission.storage.request();
                       await Permission.camera.request();
                       if (!mounted) return;
                       await AppUser.logout(context);
                     },
-                        child: const Text("Request permissions"))
-                ],
-              ),
-            ));
+                    child: const Text("Request permissions"))
+            ],
+          ),
+        ));
       }
-
+      print("tttttttttttttttttttttttttt = ${snapshot.data['tabChecked']}");
       if (FirebaseAuth.instance.currentUser != null && App.currentUser != null) {
-        // return const DashBoard();
+        if (snapshot.data['tabChecked'] == false) {
+          return CheckTabStatus(App.currentUser!);
+        }
         return const Home();
       }
+
       return const Login();
     } else {
       return Center(

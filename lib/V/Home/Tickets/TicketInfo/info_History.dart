@@ -102,7 +102,7 @@ extension CapExtension on String {
 
   Icon? icon(Color color) => {
         'morning': Icon(Icons.sunny_snowing, color: color, size: 24),
-        'evening': Icon(Icons.light_mode_rounded, color: Colors.deepOrange, size: 24),
-        'night': Icon(Icons.dark_mode_rounded, color: Colors.deepOrange, size: 24),
-      }[this];
+        'evening': const Icon(Icons.light_mode_rounded, color: Colors.deepOrange, size: 24),
+        'night': const Icon(Icons.dark_mode_rounded, color: Colors.deepOrange, size: 24),
+      }[toLowerCase()];
 }

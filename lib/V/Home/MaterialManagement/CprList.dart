@@ -157,7 +157,7 @@ class _CprListState extends State<CprList> {
                               child: ListTile(
                                 leading: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [Text("${index + 1}")]),
                                 title: Text((cpr.ticket?.mo ?? "").trim().isEmpty ? (cpr.ticket?.oe ?? "") : cpr.ticket?.mo ?? "",
-                                    style: const TextStyle(fontWeight: FontWeight.bold)),
+                                    style: TextStyle(fontWeight: FontWeight.bold, color: cpr.isTicketStarted ? Colors.green : null)),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [

@@ -192,7 +192,7 @@ class __LoadingState extends State<_Loading> {
                   ? const SizedBox()
                   : Center(
                       child: Container(
-                        color: Colors.yellow,
+                      color: Colors.yellow,
                       padding: const EdgeInsets.all(7),
                       width: 150,
                       height: 50,
@@ -267,7 +267,6 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
               bool c = false;
               await CprView(cpr, (p0) {
                 c = true;
-                print('7777777777');
               }).show(context);
               if (c == true) {
                 refreshDatasource();
@@ -279,7 +278,7 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
             cells: [
               DataCell(ListTile(
                   visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-                  title: TextMenu(child: Text(cpr.ticket?.mo ?? '')),
+                  title: TextMenu(child: Text(cpr.ticket?.mo ?? '', style: TextStyle(color: cpr.isTicketStarted ? Colors.green : null))),
                   subtitle: TextMenu(child: Text(cpr.ticket?.oe ?? '', style: const TextStyle(color: Colors.deepOrange, fontSize: 12))))),
               DataCell(Text((cpr.client) ?? "")),
               DataCell(Text((cpr.suppliers.join(',')))),

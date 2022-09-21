@@ -9,7 +9,6 @@ import '../../../../M/Enums.dart';
 import '../../../../M/Ticket.dart';
 import '../../../../ns_icons_icons.dart';
 import '../../BlueBook/BlueBook.dart';
-import '../StandardFiles/factory_selector.dart';
 import 'Finish/FinishCheckList.dart';
 import 'FlagDialog.dart';
 
@@ -128,25 +127,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                             });
                         // await Navigator.push(context1, MaterialPageRoute(builder: (context) => FinishCheckList(ticket)));
                       }),
-                // if ((!ticket.isCrossPro) && AppUser.havePermissionFor(Permissions.SET_CROSS_PRODUCTION))
-                //   ListTile(
-                //       title: const Text("Set Cross Production"),
-                //       leading: const Icon(NsIcons.crossProduction, color: Colors.green),
-                //       onTap: () async {
-                //         Navigator.of(context).pop();
-                //         chooseFactories(ticket, context1);
-                //         // CrossProduction(ticket).show(context1);
-                //         // await Navigator.push(context1, MaterialPageRoute(builder: (context) => CrossProduction(ticket)));
-                //         //
-                //       }),
-                // if (ticket.isCrossPro && AppUser.havePermissionFor(Permissions.SET_CROSS_PRODUCTION))
-                //   ListTile(
-                //       title: const Text("Remove Cross Production"),
-                //       leading: const Icon(NsIcons.crossProduction, color: Colors.green),
-                //       onTap: () async {
-                //         Navigator.of(context).pop();
-                //         showAlertDialog(context, ticket);
-                //       }),
+
                 if (AppUser.havePermissionFor(Permissions.SHARE_TICKETS) && (!kIsWeb))
                   ListTile(
                       title: const Text("Share Work Ticket"),
@@ -209,35 +190,6 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
               ])))
           ],
         ),
-      );
-    },
-  );
-}
-
-showAlertDialog(BuildContext context, ticket) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context1) {
-      return AlertDialog(
-        title: const Text("Remove Cross Production"),
-        content: const Text("Do you really want to remove cross production from this ticket ? "),
-        actions: [
-          TextButton(
-            child: const Text("No"),
-            onPressed: () {
-              Navigator.of(context1).pop();
-            },
-          ),
-          TextButton(
-            child: const Text("Yes"),
-            onPressed: () {
-              Navigator.of(context1).pop();
-              Api.post("tickets/crossProduction/removeCrossProduction", {'ticketId': ticket.id.toString()}).then((response) async {
-                print(response.data);
-              });
-            },
-          ),
-        ],
       );
     },
   );
@@ -331,25 +283,6 @@ bool searchByFilters(Ticket t, Filters dataFilter) {
     }
   }
   return true;
-}
-
-Future<void> chooseFactories(Ticket ticket, BuildContext context1) async {
-  await showModalBottomSheet<void>(
-    constraints: kIsWeb ? const BoxConstraints(maxWidth: 600) : null,
-    context: context1,
-    builder: (BuildContext context) {
-      return Container(
-        decoration: const BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
-        height: 650,
-        child: FactorySelector(ticket.production ?? "", onSelect: (factory) async {
-          Api.post("tickets/crossProduction/setCrossProduction", {'ticketId': ticket.id.toString(), "factory": factory}).then((response) async {
-            print(response.data);
-            Navigator.of(context).pop();
-          });
-        }),
-      );
-    },
-  );
 }
 
 Future<void> showOpenActions(Ticket ticket, BuildContext context1, reLoad) async {

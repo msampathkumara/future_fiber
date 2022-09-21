@@ -7,7 +7,7 @@ import 'package:uuid/uuid.dart';
 import '../ns_icons_icons.dart';
 import 'HiveClass.dart';
 
-enum Production { All, Upwind, OD, Nylon, OEM, _38_Upwind, _38_Nylon, _38_OEM, _38_OD, None }
+enum Production { All, Upwind, OD, Nylon_Standard, Nylon_Custom, OEM, _38_Upwind, _38_Nylon_Standard, _38_OEM, _38_OD, _38_Nylon_Custom, None }
 
 enum SortByItem { id, mo, oe, finished, dir, uptime, file, sheet, production, isRed, isRush, inPrint, isError, isGr, isSk, isHold, delete, reNamed, progress, fileVersion }
 
@@ -66,20 +66,8 @@ extension TicketFlagTypesToString on TicketFlagTypes {
       TicketFlagTypes.GR: NsIcons.gr,
       TicketFlagTypes.RUSH: Icons.flash_on_rounded,
       TicketFlagTypes.SK: NsIcons.sk,
-      TicketFlagTypes.HOLD: NsIcons.stop,
-      TicketFlagTypes.CROSS: NsIcons.crossProduction
+      TicketFlagTypes.HOLD: NsIcons.stop
     }[this];
-
-    getColor() {
-      return {
-        TicketFlagTypes.RED: Colors.red,
-        TicketFlagTypes.GR: Colors.red,
-        TicketFlagTypes.RUSH: Colors.red,
-        TicketFlagTypes.SK: Colors.red,
-        TicketFlagTypes.HOLD: Colors.red,
-        TicketFlagTypes.CROSS: Colors.red,
-      }[this];
-    }
   }
 }
 
@@ -240,25 +228,24 @@ extension StringContainsInArrayExtension on String {
         return Colors.deepPurple;
       case 'ready':
         return Colors.amber;
-        break;
+
       case 'pending':
         return Colors.red;
-        break;
+
       case 'sent':
         return Colors.green;
-        break;
+
       case 'received':
         return Colors.blue;
-        break;
+
       case 'order':
         return Colors.purple;
-        break;
+
       case 'normal':
         return Colors.green;
-        break;
+
       case 'urgent':
         return Colors.red;
-        break;
     }
 
     return Colors.red;

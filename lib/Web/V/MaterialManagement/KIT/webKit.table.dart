@@ -269,7 +269,7 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
             cells: [
               DataCell(ListTile(
                   visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-                  title: TextMenu(child: Text(kit.ticket?.mo ?? kit.ticket?.oe ?? '')),
+                  title: TextMenu(child: Text(kit.ticket?.mo ?? kit.ticket?.oe ?? '', style: TextStyle(color: kit.isTicketStarted ? Colors.green : null))),
                   subtitle: TextMenu(child: Text(kit.ticket?.oe ?? '', style: const TextStyle(color: Colors.deepOrange, fontSize: 12))))),
               DataCell(Text((kit.client) ?? "")),
               DataCell(Text((kit.shortageType) ?? "")),

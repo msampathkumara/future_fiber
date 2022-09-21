@@ -27,8 +27,7 @@ Future<void> showCprOptions(CPR cpr, BuildContext context1, BuildContext context
                     leading: const Icon(Icons.delete_rounded),
                     onTap: () async {
                       Navigator.of(context).pop();
-                      await showDeleteDialog(context1, cpr);
-                      reload();
+                      await showDeleteDialog(context1, cpr, reload);
                     }),
               ListTile(
                   title: const Text("Order"),
@@ -113,47 +112,39 @@ void order(context, CPR cpr, int i, reload) {
       });
 }
 
-showDeleteDialog(BuildContext context, CPR cpr) async {
-  // DeleteDialog().show(context);
-
-  // set up the buttons
-  Widget cancelButton = TextButton(
-    child: const Text("Cancel"),
-    onPressed: () {
-      Navigator.of(context).pop();
-    },
-  );
-  Widget continueButton = TextButton(
-    child: const Text("Continue"),
-    onPressed: () async {
-      await delete(cpr, context);
-      Navigator.of(context).pop();
-    },
-  );
-
-  // set up the AlertDialog
-  AlertDialog alert = AlertDialog(
-    title: const Text("Delete"),
-    content: const Text("Do you really want to delete this cpr?"),
-    actions: [
-      cancelButton,
-      continueButton,
-    ],
-  );
-
+showDeleteDialog(BuildContext context, CPR cpr, reload) async {
   // show the dialog
   await showDialog(
     context: context,
     builder: (BuildContext context) {
-      return alert;
+      return AlertDialog(
+        title: const Text("Delete"),
+        content: const Text("Do you really want to delete this cpr?"),
+        actions: [
+          TextButton(
+            child: const Text("Cancel"),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: const Text("Continue"),
+            onPressed: () async {
+              delete(cpr, context, reload);
+              Navigator.of(context).pop();
+            },
+          )
+        ],
+      );
     },
   );
 }
 
-Future<void> delete(CPR cpr, BuildContext context) async {
-  await Api.post("materialManagement/cpr/delete", {'cpr': cpr.id})
+Future<void> delete(CPR cpr, BuildContext context, reload) async {
+  await Api.post(EndPoints.materialManagement_cpr_delete, {'cpr': cpr.id})
       .then((res) {
         Map data = res.data;
+        reload();
       })
       .whenComplete(() {})
       .catchError((err) {
@@ -162,7 +153,7 @@ Future<void> delete(CPR cpr, BuildContext context) async {
             action: SnackBarAction(
                 label: 'Retry',
                 onPressed: () {
-                  delete(cpr, context);
+                  delete(cpr, context, reload);
                 })));
       });
 }

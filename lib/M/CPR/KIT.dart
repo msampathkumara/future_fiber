@@ -49,6 +49,8 @@ class KIT {
   @JsonKey(defaultValue: false, includeIfNull: true)
   var isExpanded = false;
 
+  get isTicketStarted => ticket?.isStarted;
+
   static arryFromObject(object) => (object.runtimeType == String
       ? object.toString().split(',')
       : object.runtimeType == List

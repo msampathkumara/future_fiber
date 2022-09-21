@@ -89,13 +89,11 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
                         ),
                         onTap: () async {
                           Navigator.of(context).pop();
-                          Loading loading = Loading();
-                          loading.show(context1);
+                          ShowMessage("Unlocking user..");
 
                           Api.post('users/unlock', {"userId": nsUser.id}).then((value) {
-                            print('cccccccccccccccccccccccccc');
                             HiveBox.getDataFromServer();
-                            loading.close(context1);
+                            ShowMessage("User Unlocked");
                           });
                         },
                       ),

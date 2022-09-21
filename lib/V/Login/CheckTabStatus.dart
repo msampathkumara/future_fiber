@@ -3,6 +3,8 @@ import 'package:device_information/device_information.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Section.dart';
 import 'package:smartwind/V/Home/Home.dart';
@@ -24,10 +26,12 @@ class CheckTabStatus extends StatefulWidget {
 
 class _CheckTabStatusState extends State<CheckTabStatus> {
   static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+  late SharedPreferences prefs;
 
   @override
   void initState() {
     super.initState();
+    SharedPreferences.getInstance().then((value) => prefs = value);
   }
 
   @override
@@ -161,9 +165,10 @@ class _CheckTabStatusState extends State<CheckTabStatus> {
     print(await DeviceInformation.deviceName);
     print(deviceInfo);
 
-    return Api.post("tabs/check", {"deviceInfo": deviceInfo}).then((response) async {
+    return Api.post(EndPoints.tab_check, {"deviceInfo": deviceInfo}).then((response) async {
       if (response.data["saved"] == true) {
         print("----------------------------------------");
+        await prefs.setBool('tabCheck', true);
 
         if (widget.nsUser.sections.length > 1) {
           await Navigator.pushAndRemoveUntil(

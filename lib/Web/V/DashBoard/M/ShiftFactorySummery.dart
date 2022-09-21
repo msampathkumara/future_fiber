@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'ShiftFactorySummery.g.dart';
@@ -53,6 +54,13 @@ class ShiftFactorySummery {
 
   @JsonKey(defaultValue: false, includeIfNull: true, fromJson: boolFromInt)
   bool isCurrentShift = false;
+
+  String? _startAtTime;
+  String? _endAtTime;
+
+  get startAtTime => _startAtTime ??= DateFormat("HH:mm").format(DateTime.parse(startAt!));
+
+  get endAtTime => _endAtTime ??= DateFormat("HH:mm").format(DateTime.parse(endAt!));
 
   static bool boolFromInt(int done) => done == 1;
 

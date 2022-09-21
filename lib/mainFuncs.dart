@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartwind/C/App.dart';
 
 class mainFuncs {
@@ -51,6 +52,8 @@ class mainFuncs {
 
   init() async {
     await initializeFlutterFireFuture;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool tabChecked = prefs.getBool("tabCheck") ?? false;
 
     PermissionStatus ps = await Permission.phone.request();
     PermissionStatus storage = await Permission.storage.request();
@@ -58,7 +61,8 @@ class mainFuncs {
     return {
       'permission': ps.isGranted && storage.isGranted && camera.isGranted,
       'isPermanentlyDenied': ps.isPermanentlyDenied || storage.isPermanentlyDenied || camera.isPermanentlyDenied,
-      'permissions': {'phone': ps, 'camera': camera, 'storage': storage}
+      'permissions': {'phone': ps, 'camera': camera, 'storage': storage},
+      'tabChecked': tabChecked
     };
   }
 }
