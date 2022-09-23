@@ -13,7 +13,7 @@ class MessageBox {
             TextButton(
               child: const Text("OK"),
               onPressed: () {
-                Navigator.of(context).pop(true);
+                Navigator.of(context, rootNavigator: true).pop(true);
               },
             )
           ],

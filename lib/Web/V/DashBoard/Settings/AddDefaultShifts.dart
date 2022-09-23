@@ -6,9 +6,9 @@ import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/Web/Widgets/IfWeb.dart';
 import 'package:smartwind/globals.dart';
 
-import '../../../C/Api.dart';
-import '../../../M/Enums.dart';
-import 'M/DefaultShift.dart';
+import '../../../../C/Api.dart';
+import '../../../../M/Enums.dart';
+import '../M/DefaultShift.dart';
 
 class AddDefaultShifts extends StatefulWidget {
   const AddDefaultShifts({Key? key}) : super(key: key);
@@ -168,6 +168,9 @@ class _AddDefaultShiftsState extends State<AddDefaultShifts> {
 
     Api.post(EndPoints.dashboard_settings_saveDefaultShifts, {"defaultShifts": shifts, 'factory': selectedFactory}).then((res) {
       Map data = res.data;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Saved"), width: 200, behavior: SnackBarBehavior.floating));
+      Navigator.pop(context);
+      selectedFactory = null;
     }).whenComplete(() {
       setState(() {
         loading = false;

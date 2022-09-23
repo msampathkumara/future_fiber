@@ -264,3 +264,9 @@ extension TextEditingControllerExt on TextEditingController {
     selection = TextSelection(baseOffset: 0, extentOffset: text.length);
   }
 }
+
+extension DateOnlyCompare on DateTime {
+  bool isSameDate(DateTime other) {
+    return year == other.year && month == other.month && day == other.day;
+  }
+}

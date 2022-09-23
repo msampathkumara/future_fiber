@@ -4,10 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:smartwind/C/form_input_decoration.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 
-import '../../../C/Api.dart';
-import '../../../M/EndPoints.dart';
-import '../../../M/Enums.dart';
-import '../../../globals.dart';
+import '../../../../C/Api.dart';
+import '../../../../M/EndPoints.dart';
+import '../../../../M/Enums.dart';
+import '../../../../globals.dart';
 
 class AddDefaultEmployeeCounts extends StatefulWidget {
   const AddDefaultEmployeeCounts({Key? key}) : super(key: key);
@@ -175,6 +175,7 @@ class _AddDefaultEmployeeCountsState extends State<AddDefaultEmployeeCounts> {
       Map data = res.data;
       selectedFactory = null;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Saved"), width: 200, behavior: SnackBarBehavior.floating));
+      Navigator.pop(context);
     }).whenComplete(() {
       setState(() {
         loading = false;
