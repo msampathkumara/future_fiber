@@ -6,9 +6,9 @@ import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/Web/Widgets/IfWeb.dart';
 import 'package:smartwind/globals.dart';
 
-import '../../../C/Api.dart';
-import '../../../C/form_input_decoration.dart';
-import '../../../M/Enums.dart';
+import '../../../../C/Api.dart';
+import '../../../../C/form_input_decoration.dart';
+import '../../../../M/Enums.dart';
 
 class AddAverageSailTimes extends StatefulWidget {
   const AddAverageSailTimes({Key? key}) : super(key: key);
@@ -187,13 +187,14 @@ class _AddAverageSailTimesState extends State<AddAverageSailTimes> {
     Api.post(EndPoints.dashboard_settings_saveSailAverageTime, {'sectionAverages': sectionAveragesMap.values.toList(), 'factoryAverages': factoryAverages}).then((res) {
       Map data = res.data;
       selectedFactory = null;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Saved"), width: 200, behavior: SnackBarBehavior.floating));
+      // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Saved"), width: 200, behavior: SnackBarBehavior.floating));
+      Navigator.pop(context);
     }).whenComplete(() {
       setState(() {
         loading = false;
       });
     }).catchError((err) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Something went wrong"), action: SnackBarAction(label: 'Retry', onPressed: save)));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text("Something went wrong"), action: SnackBarAction(label: 'Retry', onPressed: save)));
       setState(() {
         // _dataLoadingError = true;
       });

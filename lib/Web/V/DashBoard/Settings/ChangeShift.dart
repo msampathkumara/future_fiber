@@ -79,7 +79,7 @@ class _ChangeShiftsState extends State<ChangeShifts> {
                           ],
                         ),
                       ),
-            const Spacer()
+                      const Spacer()
                     ],
                   ),
         bottomNavigationBar: (loading || !isFactorySelected)

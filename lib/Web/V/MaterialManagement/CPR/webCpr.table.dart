@@ -265,9 +265,7 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
             selected: false,
             onTap: () async {
               bool c = false;
-              await CprView(cpr, (p0) {
-                c = true;
-              }).show(context);
+              await CprView(cpr, (p0) => c = true).show(context);
               if (c == true) {
                 refreshDatasource();
               }

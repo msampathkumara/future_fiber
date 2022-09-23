@@ -4,7 +4,7 @@ description: NorthSails Smart Wind
 
 publish_to: 'none'
 
-version: 1.2.2+142
+version: 1.2.3+143
 
 environment:
   sdk: ">=2.17.0 <3.0.0"
@@ -16,12 +16,12 @@ dependencies:
     sdk: flutter
 
   #  firebase------------------------------------------
-  firebase_core: ^1.22.0
-  firebase_crashlytics: ^2.8.10
-  firebase_auth: ^3.9.0
-  firebase_messaging: ^13.0.2
-  firebase_database: ^9.1.4
-  firebase_auth_platform_interface: ^6.8.0
+  firebase_core: ^1.23.0
+  firebase_crashlytics: ^2.8.11
+  firebase_auth: ^3.10.0
+  firebase_messaging: ^13.0.3
+  firebase_database: ^9.1.5
+  firebase_auth_platform_interface: ^6.9.0
   firebase_core_web: ^1.7.2
 
   #  --------------------------------------------------
@@ -37,15 +37,15 @@ dependencies:
   percent_indicator: ^4.2.2
   nfc_manager: ^3.2.0
   shared_preferences: ^2.0.15
-  animations: ^2.0.4
+  animations: ^2.0.5
   image_picker: ^0.8.5+3
   jwt_decode: ^0.3.1
   webview_flutter: ^3.0.4
-  permission_handler: ^10.0.0
+  permission_handler: ^10.0.1
   path_provider: ^2.0.11
   hex: ^0.2.0
   package_info_plus: ^1.4.3+1
-  dropdown_search: ^5.0.2
+  dropdown_search: ^5.0.3
   measured_size: ^1.0.0
   device_information: ^0.0.4
   device_info: ^2.0.3
@@ -57,7 +57,7 @@ dependencies:
 
   custom_webview:
     path: ./Pugins/custom_webview
-  json_annotation: ^4.6.0
+  json_annotation: ^4.7.0
 
   graphql_flutter: ^5.1.0
   hive: ^2.2.3
@@ -71,21 +71,21 @@ dependencies:
 
   dotted_border: ^2.0.0+2
   socket_io_client: ^2.0.0
-  file_picker: ^5.1.0
+  file_picker: ^5.2.0
   universal_html: ^2.0.8
-  dropdown_button2: ^1.8.1
+  dropdown_button2: ^1.8.2
   pdfx: ^2.2.0
   textfield_search: ^0.10.0
   searchfield: ^0.7.0
   csv: ^5.0.1
   pdf_render: ^1.3.2
-  syncfusion_flutter_charts: ^20.2.49
+  syncfusion_flutter_charts: ^20.2.50
   random_password_generator: ^0.2.1
   flutter_slidable: ^2.0.0
   intl: ^0.17.0
   app_settings: ^4.1.8
   contextmenu: ^3.0.0
-  syncfusion_flutter_datepicker: ^20.2.49
+  syncfusion_flutter_datepicker: ^20.2.50
   badges: ^2.0.3
   just_the_tooltip: ^0.0.12
 

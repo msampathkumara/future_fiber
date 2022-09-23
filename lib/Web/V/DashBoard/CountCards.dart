@@ -304,6 +304,7 @@ class _CountCardsState extends State<CountCards> {
       case DaysFilters.Week:
         // rangeStartDate = DateTime.now().subtract(const Duration(days: 7));
         // rangeEndDate = DateTime.now();
+        rangeEndDate = rangeEndDate?.add(const Duration(hours: 23, minutes: 59, seconds: 59));
         break;
       case DaysFilters.Month:
         rangeEndDate = DateTime(rangeStartDate.year, rangeStartDate.month + 1, 0);
@@ -315,12 +316,13 @@ class _CountCardsState extends State<CountCards> {
         break;
       case DaysFilters.Custom:
         rangeEndDate = rangeEndDate == rangeStartDate ? null : rangeEndDate;
-        _title = (rangeEndDate == null)
-            ? DateFormat("yyyy MMMM dd").format(rangeStartDate)
-            : "${DateFormat("yyyy/MM/dd").format(rangeStartDate)} to ${DateFormat("yyyy/MM/dd").format(rangeEndDate!)}";
-        if (rangeEndDate == null) {
+        if (rangeEndDate == null || rangeStartDate.isSameDate(rangeEndDate!)) {
           singleDate = true;
         }
+        _title = singleDate
+            ? DateFormat("yyyy MMMM dd").format(rangeStartDate)
+            : "${DateFormat("yyyy/MM/dd").format(rangeStartDate)} to ${DateFormat("yyyy/MM/dd").format(rangeEndDate!)}";
+
         rangeEndDate ??= rangeStartDate.add(const Duration(hours: 23, minutes: 59, seconds: 59));
         break;
     }
@@ -330,7 +332,7 @@ class _CountCardsState extends State<CountCards> {
       loading = true;
     });
 
-    if (_selectedFilter != DaysFilters.Today && _selectedFilter != DaysFilters.Yesterday) {
+    if (_selectedFilter != DaysFilters.Today && _selectedFilter != DaysFilters.Yesterday && !singleDate) {
       lineChartController.updateData(rangeStartDate, rangeEndDate, selectedProduction, _selectedFilter);
     }
 
@@ -459,6 +461,7 @@ class _CountCardsState extends State<CountCards> {
               height: 300,
               child: SfDateRangePicker(
                   initialSelectedRange: PickerDateRange(rangeStartDate, rangeEndDate),
+                  maxDate: DateTime.now(),
                   onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
                     print(args.value);
 
@@ -467,6 +470,9 @@ class _CountCardsState extends State<CountCards> {
                     if (args.value is PickerDateRange) {
                       rangeStartDate = args.value.startDate;
                       rangeEndDate = args.value.endDate;
+                      if (rangeStartDate == rangeEndDate) {
+                        rangeEndDate = null;
+                      }
                     } else if (args.value is DateTime) {
                       selectedDate = args.value;
                     } else if (args.value is List<DateTime>) {

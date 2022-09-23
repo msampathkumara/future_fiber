@@ -6,9 +6,9 @@ import 'package:smartwind/C/form_input_decoration.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
-import '../../../C/Api.dart';
-import '../../../M/EndPoints.dart';
-import '../../../M/Enums.dart';
+import '../../../../C/Api.dart';
+import '../../../../M/EndPoints.dart';
+import '../../../../M/Enums.dart';
 
 class AddEmployeeCounts extends StatefulWidget {
   const AddEmployeeCounts({Key? key}) : super(key: key);
@@ -255,6 +255,8 @@ class _AddEmployeeCountsState extends State<AddEmployeeCounts> {
 
     Api.post(EndPoints.dashboard_settings_saveShiftSectionEmployeeCount, {'shiftSectionEmployeeCounts': sectionEmployeeCountsMap.values.toList()}).then((res) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Saved"), width: 200, behavior: SnackBarBehavior.floating));
+      Navigator.pop(context);
+      selectedFactory = null;
     }).whenComplete(() {
       setState(() {
         loading = false;

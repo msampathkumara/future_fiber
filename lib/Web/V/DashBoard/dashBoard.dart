@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:smartwind/Web/V/DashBoard/AddEmployeeCounts.dart';
 import 'package:smartwind/Web/V/DashBoard/CountCards.dart';
+import 'package:smartwind/Web/V/DashBoard/Settings/AddEmployeeCounts.dart';
 import 'package:smartwind/Web/V/DashBoard/Settings/ChangeShift.dart';
 
-import 'AddAvarageSailTimes.dart';
-import 'AddDefaultEmployeeCounts.dart';
-import 'AddDefaultShifts.dart';
+import 'Settings/AddAvarageSailTimes.dart';
+import 'Settings/AddDefaultEmployeeCounts.dart';
+import 'Settings/AddDefaultShifts.dart';
 
 class DashBoard extends StatefulWidget {
   const DashBoard({Key? key}) : super(key: key);
@@ -48,10 +48,4 @@ class _DashBoardState extends State<DashBoard> {
   }
 }
 
-class _PieData {
-  _PieData(this.xData, this.yData, this.text);
 
-  final String xData;
-  final num yData;
-  final String text;
-}

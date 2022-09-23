@@ -28,16 +28,16 @@ void runLoggedApp(Widget app) async {
   runZoned(() {
     runApp(app);
   }, zoneSpecification: ZoneSpecification(print: (Zone self, ZoneDelegate parent, Zone zone, String line) {
-    if (kDebugMode) {
-      parent.print(zone, "out > $line");
-    }
+    // if (kDebugMode) {
+    parent.print(zone, "out > $line");
+    // }
   }));
 }
 
 main() async {
   bool x = Uri.base.host.contains('mm.');
   if (kDebugMode) {
-    x = true;
+    x = false;
   }
 
   isMaterialManagement = x;

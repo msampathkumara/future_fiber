@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/DB/DB.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/StandardTicket.dart';
 import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/V/Home/Tickets/StandardFiles/factory_selector.dart';
@@ -9,6 +10,7 @@ import 'package:smartwind/V/Widgets/SearchBar.dart';
 import '../../../../C/Api.dart';
 import '../../../../M/Enums.dart';
 import '../../../../M/Ticket.dart';
+import '../../../../globals.dart';
 import '../../../Widgets/NoResultFoundMsg.dart';
 import 'StandardTicketInfo.dart';
 
@@ -403,10 +405,33 @@ Future<void> showStandardTicketOptions(StandardTicket ticket, BuildContext conte
                   title: const Text("Delete"),
                   leading: const Icon(Icons.delete_forever, color: Colors.red),
                   onTap: () async {
-                    // TODO add link
-                    Api.post("tickets/standard/delete", {'id': ticket.id.toString()}).then((response) async {
-                      print(response.data);
-                    });
+                    snackBarKey.currentState?.showSnackBar(SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        width: 500,
+                        backgroundColor: Colors.red,
+                        content: Row(
+                          children: [
+                            const Text("Do You really want to delete this standard ticket ?"),
+                            const Spacer(),
+                            TextButton(
+                                onPressed: () {
+                                  snackBarKey.currentState?.showSnackBar(const SnackBar(behavior: SnackBarBehavior.floating, width: 200, content: Text('Deleting')));
+                                  Api.post(EndPoints.tickets_standard_delete, {'id': ticket.id.toString()}).then((response) async {
+                                    print(response.data);
+                                    snackBarKey.currentState?.showSnackBar(
+                                        const SnackBar(behavior: SnackBarBehavior.floating, width: 200, backgroundColor: Colors.green, content: Text('Delete Successfully')));
+                                  });
+                                },
+                                child: const Text("Yes"))
+                          ],
+                        ),
+                        action: SnackBarAction(
+                            label: 'No',
+                            textColor: Colors.white,
+                            onPressed: () {
+                              snackBarKey.currentState?.removeCurrentSnackBar();
+                            })));
+
                     Navigator.of(context).pop();
                   }),
             ])))
