@@ -55,7 +55,7 @@ class _KitViewState extends State<KitView> {
 
   @override
   Widget build(BuildContext context) {
-    return IfWeb(elseIf: getUi(), child: DialogView(width: 1200, child: getWebUi()));
+    return IfWeb(elseIf: getWebUi(), child: DialogView(width: 1200, child: getWebUi()));
   }
 
   bool _loading = true;
@@ -115,11 +115,12 @@ class _KitViewState extends State<KitView> {
                                       textScaleFactor: 1.5,
                                       style: TextStyle(color: Colors.grey),
                                     ),
-                                    TextButton(
-                                        onPressed: () async {
-                                          await AddMaterials(_kit.id).show(context);
-                                        },
-                                        child: const Text("Add Materials"))
+                                    if (kIsWeb)
+                                      TextButton(
+                                          onPressed: () async {
+                                            await AddMaterials(_kit.id).show(context);
+                                          },
+                                          child: const Text("Add Materials"))
                                   ],
                                 ))),
                               if (_kit.items.isNotEmpty)
@@ -201,52 +202,51 @@ class _KitViewState extends State<KitView> {
                   ),
                 ),
               ),
-              SizedBox(
-                  width: 395,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Card(
-                      elevation: 4,
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ListView.builder(
-                                  itemCount: kitComments.length,
-                                  itemBuilder: (context, index) {
-                                    Message msg = kitComments[index];
-                                    return ChatBubble(msg, isSelf: msg.isSelf);
-                                  }),
+              if (kIsWeb)
+                SizedBox(
+                    width: 395,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Card(
+                        elevation: 4,
+                        child: Column(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ListView.builder(
+                                    itemCount: kitComments.length,
+                                    itemBuilder: (context, index) {
+                                      Message msg = kitComments[index];
+                                      return ChatBubble(msg, isSelf: msg.isSelf);
+                                    }),
+                              ),
                             ),
-                          ),
-                          ListTile(
-                            title: TextFormField(
-                                controller: commentController,
-                                onFieldSubmitted: (r) {
-                                  saveComment();
-                                }),
-                            trailing: IconButton(
-                                onPressed: () {
-                                  saveComment();
-                                },
-                                icon: const Icon(
-                                  Icons.send,
-                                  color: Colors.green,
-                                  size: 24,
-                                )),
-                          )
-                        ],
+                            ListTile(
+                              title: TextFormField(
+                                  controller: commentController,
+                                  onFieldSubmitted: (r) {
+                                    saveComment();
+                                  }),
+                              trailing: IconButton(
+                                  onPressed: () {
+                                    saveComment();
+                                  },
+                                  icon: const Icon(
+                                    Icons.send,
+                                    color: Colors.green,
+                                    size: 24,
+                                  )),
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                  ))
+                    ))
             ]),
       // floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
       // floatingActionButton: getButton()
     );
   }
-
-  getUi() {}
 
   Future apiGetData() {
     return Api.get("materialManagement/kit/getKit", {'id': _kit.id}).then((res) {

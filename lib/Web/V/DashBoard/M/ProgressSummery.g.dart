@@ -10,6 +10,7 @@ ProgressSummery _$ProgressSummeryFromJson(Map<String, dynamic> json) => Progress
   ..volume = ProgressSummery.intFromString(json['volume'])
   ..factory = json['factory'] as String?
   ..sectionTitle = json['sectionTitle'] as String?
+  ..sectionId = json['sectionId'] as int?
   ..doAt = json['doAt'] as num?
   ..status = json['status'] as num?
   ..startAt = json['startAt'] as String?
@@ -30,6 +31,7 @@ Map<String, dynamic> _$ProgressSummeryToJson(ProgressSummery instance) => <Strin
       'volume': instance.volume,
       'factory': instance.factory,
       'sectionTitle': instance.sectionTitle,
+      'sectionId': instance.sectionId,
       'doAt': instance.doAt,
       'status': instance.status,
       'startAt': instance.startAt,

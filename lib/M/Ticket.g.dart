@@ -19,7 +19,6 @@ class TicketAdapter extends TypeAdapter<Ticket> {
     return Ticket()
       ..mo = fields[0] as String?
       ..oe = fields[1] as String?
-      ..finished = fields[2] == null ? 0 : fields[2] as int
       ..uptime = fields[3] == null ? 0 : fields[3] as int
       ..file = fields[4] == null ? 0 : fields[4] as int
       ..sheet = fields[5] == null ? 0 : fields[5] as int
@@ -58,13 +57,11 @@ class TicketAdapter extends TypeAdapter<Ticket> {
   @override
   void write(BinaryWriter writer, Ticket obj) {
     writer
-      ..writeByte(36)
+      ..writeByte(35)
       ..writeByte(0)
       ..write(obj.mo)
       ..writeByte(1)
       ..write(obj.oe)
-      ..writeByte(2)
-      ..write(obj.finished)
       ..writeByte(3)
       ..write(obj.uptime)
       ..writeByte(4)
@@ -151,7 +148,6 @@ class TicketAdapter extends TypeAdapter<Ticket> {
 Ticket _$TicketFromJson(Map<String, dynamic> json) => Ticket()
   ..mo = json['mo'] as String?
   ..oe = json['oe'] as String?
-  ..finished = json['finished'] as int? ?? 0
   ..uptime = json['uptime'] as int? ?? 0
   ..file = json['file'] as int? ?? 0
   ..sheet = json['sheet'] as int? ?? 0
@@ -190,7 +186,6 @@ Ticket _$TicketFromJson(Map<String, dynamic> json) => Ticket()
 Map<String, dynamic> _$TicketToJson(Ticket instance) => <String, dynamic>{
       'mo': instance.mo,
       'oe': instance.oe,
-      'finished': instance.finished,
       'uptime': instance.uptime,
       'file': instance.file,
       'sheet': instance.sheet,

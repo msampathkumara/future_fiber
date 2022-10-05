@@ -162,7 +162,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                         await ticket.openInCS(context);
                         Navigator.of(context).pop();
                       }),
-                        if (ticket.hasFile && AppUser.havePermissionFor(Permissions.DELETE_TICKETS))
+                if (ticket.hasFile && AppUser.havePermissionFor(Permissions.DELETE_TICKETS))
                   ListTile(
                       title: const Text("Delete PDF"),
                       leading: const Icon(NsIcons.delete, color: Colors.red),
@@ -297,7 +297,7 @@ Future<void> showOpenActions(Ticket ticket, BuildContext context1, reLoad) async
           children: [
             ListTile(title: Text(ticket.mo ?? ticket.oe ?? ''), subtitle: Text(ticket.oe ?? '')),
             const Divider(),
-            if ((AppUser.getSelectedSection()?.id ?? 0) == ticket.nowAt)
+            if (ticket.error || ((AppUser.getSelectedSection()?.id ?? 0) == ticket.nowAt))
               ListTile(
                   leading: const Icon(Icons.not_started_outlined),
                   title: const Text('Start Production'),

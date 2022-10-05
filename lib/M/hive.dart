@@ -77,6 +77,11 @@ class HiveBox {
           FirebaseDatabase.instance.ref('db_upon').child("ticketComplete").onValue.listen((DatabaseEvent event) {
             HiveBox.updateCompletedTickets();
           });
+          FirebaseDatabase.instance.ref('db_upon').child("standardLibrary").onValue.listen((DatabaseEvent event) async {
+            await HiveBox.cleanStandardLibrary();
+            await HiveBox.getDataFromServer();
+            DB.callChangesCallBack(DataTables.standardTickets);
+          });
           FirebaseDatabase.instance.ref('resetDb').onValue.listen((DatabaseEvent event) {
             HiveBox.getDataFromServer(clean: true);
           });

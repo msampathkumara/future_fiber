@@ -45,10 +45,6 @@ class Ticket extends DataObject {
   @JsonKey(defaultValue: null, includeIfNull: true)
   String? oe;
 
-  @HiveField(2, defaultValue: 0)
-  @JsonKey(defaultValue: 0, includeIfNull: true)
-  int finished = 0;
-
   @override
   @HiveField(3, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
@@ -204,6 +200,8 @@ class Ticket extends DataObject {
   bool get isCompleted => completed == 1;
 
   bool get isNotCompleted => completed == 0;
+
+  bool get error => isError == 1;
 
   static stringToList(string) => (string == null || string.toString().isEmpty) ? [] : json.decode(string);
 

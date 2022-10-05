@@ -2,6 +2,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/hive.dart';
 
+import 'DB/DB.dart';
+
 class FCM {
   static get userId => AppUser.getUser()?.id;
 
@@ -41,10 +43,14 @@ class FCM {
         print('--------------------------UPDATING USER DATABASE-----------------');
       } else if (message.from == "/topics/file_update") {
         if (message.data["standardLibrary"] != null) {
-          // print('--------------------------standardLibrary-----------------');
+          print('--------------------------standardLibrary-----------------');
           if (message.data["delete"] != null) {
-            // print('--------------------------delete-----------------');
-            await HiveBox.cleanStandardLibrary();
+            print('--------------------------delete-----------------');
+            // await HiveBox.cleanStandardLibrary();
+            var id = message.data["fileId"];
+            HiveBox.standardTicketsBox.delete(id);
+            DB.callChangesCallBack(DataTables.standardTickets);
+            return;
           }
         }
         HiveBox.getDataFromServer();

@@ -10,8 +10,6 @@ import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Home/Tickets/ProductionPool/Finish/SelectSectionBottomSheet.dart';
 
 import '../../../../../C/ServerResponse/ServerResponceMap.dart';
-import '../../../../../M/UserRFCredentials.dart';
-import '../../FinishedGoods/AddRFCredentials.dart';
 import 'RF.dart';
 
 class FinishCheckList extends StatefulWidget {
@@ -52,8 +50,6 @@ class _FinishCheckListState extends State<FinishCheckList> {
 
   @override
   Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.height;
-    var width = MediaQuery.of(context).size.width;
     return FutureBuilder(
         future: _loadData(), // async work
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -67,19 +63,21 @@ class _FinishCheckListState extends State<FinishCheckList> {
                 return AlertDialog(
                     actions: [
                       ElevatedButton(
-                          style: ElevatedButton.styleFrom(primary: Colors.green, textStyle: const TextStyle(fontWeight: FontWeight.bold)),
-                          onPressed: () {
-                            finish("Excellent");
+                          style: ElevatedButton.styleFrom(backgroundColor: Colors.green, textStyle: const TextStyle(fontWeight: FontWeight.bold)),
+                          onPressed: () async {
+                            await finish("Excellent");
+                            Navigator.of(context).pop();
                           },
                           child: const Text("Excellent")),
                       ElevatedButton(
-                          style: ElevatedButton.styleFrom(primary: Colors.lightGreen, textStyle: const TextStyle(fontWeight: FontWeight.bold)),
-                          onPressed: () {
-                            finish("Good");
+                          style: ElevatedButton.styleFrom(backgroundColor: Colors.lightGreen, textStyle: const TextStyle(fontWeight: FontWeight.bold)),
+                          onPressed: () async {
+                            await finish("Good");
+                            Navigator.of(context).pop();
                           },
                           child: const Text("Good")),
                       ElevatedButton(
-                          style: ElevatedButton.styleFrom(primary: Colors.redAccent, textStyle: const TextStyle(fontWeight: FontWeight.bold)),
+                          style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, textStyle: const TextStyle(fontWeight: FontWeight.bold)),
                           onPressed: () async {
                             // if (Navigator.canPop(context)) {
                             //   Navigator.pop(context);
@@ -135,53 +133,70 @@ class _FinishCheckListState extends State<FinishCheckList> {
     int? selectedSection = AppUser.getSelectedSection()?.id;
     if (AppUser.getSelectedSection()?.sectionTitle.toLowerCase() == "qc") {
       isQc = true;
-      //   selectedSection = await selectSection();
-      //   if (selectedSection == null) return;
     }
 
-    await showDialog(
-        context: context,
-        builder: (BuildContext context1) {
-          Api.get("users/getRfCredentials", {}).then((response) async {
-            Map data = response.data;
-            UserRFCredentials? userRFCredentials;
-            if (mounted) Navigator.of(context1).pop();
-            if (data["userRFCredentials"] == null && (!erpNotWorking)) {
-              userRFCredentials = await const AddRFCredentials().show(context);
-            } else {
-              userRFCredentials = UserRFCredentials.fromJson(data["userRFCredentials"]);
-            }
+    var r = await Api.get("tickets/finish/getProgress", {'ticket': ticket.id.toString()});
+    ServerResponseMap res1 = ServerResponseMap.fromJson((r.data));
 
-            if (userRFCredentials == null) {
-              return;
-            }
+    if (mounted) await Ticket.getFile(ticket, context);
+    if (res1.done != null) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(backgroundColor: Colors.red, content: Text('Already Completed')));
+    } else if (ticket.ticketFile != null) {
+      if (mounted) {
+        var x = await Navigator.push(context, MaterialPageRoute(builder: (context) => RF(ticket, res1.operationMinMax!, res1.progressList)));
+        if (x != null || x == true) {
+          await LoadingDialog(Api.post("tickets/qc/uploadEdits", {'quality': quality, 'ticketId': ticket.id, 'type': isQc, "sectionId": selectedSection}).then((res) {
+            Map data = res.data;
+          }));
+        }
+      }
+    }
 
-            var r = await Api.get("tickets/finish/getProgress", {'ticket': ticket.id.toString()});
-            ServerResponseMap res1 = ServerResponseMap.fromJson((r.data));
-
-            if (mounted) await Ticket.getFile(ticket, context);
-            if (res1.done != null) {
-              if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(backgroundColor: Colors.red, content: Text('Already Completed')));
-            } else if (ticket.ticketFile != null) {
-              if (mounted) {
-                var x = await Navigator.push(context, MaterialPageRoute(builder: (context) => RF(ticket, userRFCredentials!, res1.operationMinMax!, res1.progressList)));
-                if (x != null || x == true) {
-                  await LoadingDialog(Api.post("tickets/qc/uploadEdits", {'quality': quality, 'ticketId': ticket.id, 'type': isQc, "sectionId": selectedSection}).then((res) {
-                    Map data = res.data;
-                  }));
-                }
-              }
-            }
-
-            if (mounted) Navigator.pop(context);
-          });
-
-          return AlertDialog(
-              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
-              content: Builder(builder: (context) {
-                return const SizedBox(height: 150, width: 50, child: Center(child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator())));
-              }));
-        });
+    // await showDialog(
+    //     context: context,
+    //     builder: (BuildContext context1) {
+    //       Api.get("users/getRfCredentials", {}).then((response) async {
+    //         Map data = response.data;
+    //         UserRFCredentials? userRFCredentials;
+    //         if (mounted) Navigator.of(context1).pop();
+    //         if (data["userRFCredentials"] == null && (!erpNotWorking)) {
+    //           userRFCredentials = await const AddRFCredentials().show(context);
+    //         } else {
+    //           userRFCredentials = UserRFCredentials.fromJson(data["userRFCredentials"]);
+    //         }
+    //
+    //         if (userRFCredentials == null) {
+    //           return;
+    //         }
+    //
+    //         var r = await Api.get("tickets/finish/getProgress", {'ticket': ticket.id.toString()});
+    //         ServerResponseMap res1 = ServerResponseMap.fromJson((r.data));
+    //
+    //         if (mounted) await Ticket.getFile(ticket, context);
+    //         if (res1.done != null) {
+    //           if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(backgroundColor: Colors.red, content: Text('Already Completed')));
+    //         } else if (ticket.ticketFile != null) {
+    //           if (mounted) {
+    //             var x = await Navigator.push(context, MaterialPageRoute(builder: (context) => RF(ticket, userRFCredentials!, res1.operationMinMax!, res1.progressList)));
+    //             if (x != null || x == true) {
+    //               await LoadingDialog(Api.post("tickets/qc/uploadEdits", {'quality': quality, 'ticketId': ticket.id, 'type': isQc, "sectionId": selectedSection}).then((res) {
+    //                 Map data = res.data;
+    //               }));
+    //             }
+    //           }
+    //         }
+    //
+    //         if (mounted) Navigator.pop(context);
+    //       });
+    //
+    //
+    //
+    //       return AlertDialog(
+    //           shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
+    //           content: Builder(builder: (context) {
+    //             return const SizedBox(height: 150, width: 50, child: Center(child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator())));
+    //           }));
+    //     });
   }
 
   Future LoadingDialog(Future future) async {

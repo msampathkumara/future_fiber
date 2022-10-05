@@ -6,6 +6,7 @@ import 'package:smartwind/V/Home/Tickets/TicketInfo/info_History.dart';
 import 'package:smartwind/V/Widgets/NoResultFoundMsg.dart';
 import 'package:smartwind/Web/V/DashBoard/M/ShiftFactorySummery.dart';
 import 'package:smartwind/Web/V/DashBoard/M/WeekPicker.dart';
+import 'package:smartwind/Web/V/DashBoard/WipTicketList.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../C/Api.dart';
@@ -61,7 +62,7 @@ class _CountCardsState extends State<CountCards> {
 
   get isSingleDay => singleDate || (_selectedFilter == DaysFilters.Today || _selectedFilter == DaysFilters.Yesterday);
 
-  String formatDate(DateTime date, {bool dateOnly = false}) => dateOnly ? DateFormat("yyyy MMMM d").format(date) : DateFormat("yyyy MMMM d HH:mm").format(date);
+  String formatDate(DateTime date, {bool dateOnly = false}) => dateOnly ? DateFormat("yyyy MMMM d").format(date) : DateFormat("yyyy MMMM d HH:mm ").format(date);
 
   List<Production> productionList = List.from(Production.values);
 
@@ -151,7 +152,8 @@ class _CountCardsState extends State<CountCards> {
         const SizedBox(height: 24),
         ListTile(
             title: Text(_title, textScaleFactor: 2, style: const TextStyle(color: Colors.black)),
-            subtitle: Text("${formatDate(rangeStartDate, dateOnly: rangeEndDate == null)} ${rangeEndDate == null ? "" : " to ${formatDate(rangeEndDate!)}"}")),
+            subtitle: Text(
+                "${formatDate(rangeStartDate, dateOnly: rangeEndDate == null)} ${rangeEndDate == null ? "" : " to ${formatDate(rangeEndDate!.subtract(const Duration(seconds: 1)))}"}")),
         (loading)
             ? const Center(child: CircularProgressIndicator())
             : _allShiftSummery == null
@@ -159,7 +161,7 @@ class _CountCardsState extends State<CountCards> {
                 : Wrap(
                     children: [
                       if (_allShiftSummery != null) getShiftsTotal(_allShiftSummery!),
-                      if (!isSingleDay) ...[const SizedBox(height: 24), SizedBox(height: 350, child: LineChart(controller: lineChartController)), const SizedBox(height: 24)],
+                      if (!isSingleDay) ...[const SizedBox(height: 24), SizedBox(height: 450, child: LineChart(controller: lineChartController)), const SizedBox(height: 24)],
                       ExpansionPanelList(
                         expandedHeaderPadding: const EdgeInsets.all(16),
                         dividerColor: Colors.blue,
@@ -194,7 +196,7 @@ class _CountCardsState extends State<CountCards> {
                                           const Text("Efficiency"),
                                           const Text("Number of Defects"),
                                           const Text("Defects Rate"),
-                                          const Text("Scheduled backlog"),
+                                              // const Text("Scheduled backlog"),
                                           const Text("WIP")
                                         ].map((e) => Padding(padding: const EdgeInsets.all(8.0), child: e)).toList()),
                                         ...(progressSummeryByShiftName[shiftName] ?? [ProgressSummery()])
@@ -209,8 +211,14 @@ class _CountCardsState extends State<CountCards> {
                                                   Container(alignment: Alignment.centerRight, child: Text("${(e.efficiency ?? 0).toStringAsFixed(1)}%")),
                                                   Container(alignment: Alignment.centerRight, child: Text("${e.defects ?? 0}")),
                                                   Container(alignment: Alignment.centerRight, child: Text("${(e.defectsRate ?? 0).toStringAsFixed(2)}%")),
-                                                  Container(alignment: Alignment.centerRight, child: const Text("")),
-                                                  Container(alignment: Alignment.centerRight, child: Text("${e.wip ?? 0}"))
+                                                  // Container(alignment: Alignment.centerRight, child: const Text("")),
+                                                  Container(
+                                                      alignment: Alignment.centerRight,
+                                                      child: InkWell(
+                                                          onTap: () {
+                                                            WipTicketList(e.sectionId).show(context);
+                                                          },
+                                                          child: Text("${e.wip ?? 0}")))
                                                 ].map((e) => Padding(padding: const EdgeInsets.all(8.0), child: e)).toList()))
                                             .toList()
                                       ],
@@ -288,42 +296,39 @@ class _CountCardsState extends State<CountCards> {
   bool loading = true;
 
   void loadData() {
+    now = DateTime.now();
     DateTime today = DateTime(now.year, now.month, now.day);
-    singleDate = false;
+    // singleDate = false;
+
     switch (_selectedFilter) {
       case DaysFilters.Today:
         rangeStartDate = today;
-        rangeEndDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
+        rangeEndDate = DateTime(now.year, now.month, now.day, 24);
         _title = DaysFilters.Today.getText();
         break;
       case DaysFilters.Yesterday:
         rangeStartDate = today.subtract(const Duration(days: 1));
-        rangeEndDate = rangeStartDate.add(const Duration(hours: 23, minutes: 59, seconds: 59));
+        rangeEndDate = rangeStartDate.add(const Duration(hours: 24));
         _title = DaysFilters.Yesterday.getText();
         break;
       case DaysFilters.Week:
-        // rangeStartDate = DateTime.now().subtract(const Duration(days: 7));
-        // rangeEndDate = DateTime.now();
-        rangeEndDate = rangeEndDate?.add(const Duration(hours: 23, minutes: 59, seconds: 59));
+        // if(rangeEndDate?.second==0) {
+        //   rangeEndDate = rangeEndDate?.add(const Duration(hours:24));
+        // }
+        singleDate = false;
         break;
       case DaysFilters.Month:
         rangeEndDate = DateTime(rangeStartDate.year, rangeStartDate.month + 1, 0);
         _title = DateFormat("yyyy MMMM").format(rangeStartDate);
+        singleDate = false;
         break;
       case DaysFilters.Year:
         rangeEndDate = DateTime(rangeStartDate.year + 1, rangeStartDate.month, 0);
         _title = DateFormat("yyyy").format(rangeStartDate);
+        singleDate = false;
         break;
       case DaysFilters.Custom:
-        rangeEndDate = rangeEndDate == rangeStartDate ? null : rangeEndDate;
-        if (rangeEndDate == null || rangeStartDate.isSameDate(rangeEndDate!)) {
-          singleDate = true;
-        }
-        _title = singleDate
-            ? DateFormat("yyyy MMMM dd").format(rangeStartDate)
-            : "${DateFormat("yyyy/MM/dd").format(rangeStartDate)} to ${DateFormat("yyyy/MM/dd").format(rangeEndDate!)}";
-
-        rangeEndDate ??= rangeStartDate.add(const Duration(hours: 23, minutes: 59, seconds: 59));
+        rangeEndDate ??= rangeStartDate.add(const Duration(hours: 24));
         break;
     }
 
@@ -331,10 +336,6 @@ class _CountCardsState extends State<CountCards> {
     setState(() {
       loading = true;
     });
-
-    if (_selectedFilter != DaysFilters.Today && _selectedFilter != DaysFilters.Yesterday && !singleDate) {
-      lineChartController.updateData(rangeStartDate, rangeEndDate, selectedProduction, _selectedFilter);
-    }
 
     // ServerApi.dashboard_x({"rangeStartDate": rangeStartDate, 'rangeEndDate': rangeEndDate ?? rangeStartDate, 'production': selectedProduction.getValue()}).then((res) {
     Api.get(EndPoints.dashboard_x, {"rangeStartDate": rangeStartDate, 'rangeEndDate': rangeEndDate ?? rangeStartDate, 'production': selectedProduction.getValue()}).then((res) {
@@ -344,6 +345,11 @@ class _CountCardsState extends State<CountCards> {
       shiftFactorySummeryList = ShiftFactorySummery.fromJsonArray(data['shiftSummary']);
       _allShiftSummery = ShiftFactorySummery.fromJsonArray(data['factorySummary']).firstOrNull;
       progressSummeryByShiftName = groupBy(progressSummery, (ProgressSummery obj) => obj.shiftName ?? '');
+
+      if (_selectedFilter != DaysFilters.Today && _selectedFilter != DaysFilters.Yesterday && !singleDate) {
+        lineChartController.updateData(rangeStartDate, rangeEndDate, selectedProduction, _selectedFilter, ProgressSummery.fromJsonArray(data['graphData']));
+      }
+
       print(data);
     }).whenComplete(() {
       setState(() {
@@ -351,13 +357,7 @@ class _CountCardsState extends State<CountCards> {
       });
     }).catchError((err) {
       print(err);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(err.toString()),
-          action: SnackBarAction(
-              label: 'Retry',
-              onPressed: () {
-                loadData();
-              })));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.toString()), action: SnackBarAction(label: 'Retry', onPressed: loadData)));
       setState(() {
         // _dataLoadingError = true;
       });
@@ -477,7 +477,16 @@ class _CountCardsState extends State<CountCards> {
                       selectedDate = args.value;
                     } else if (args.value is List<DateTime>) {
                     } else {}
-                    setState(() {});
+                    rangeEndDate = rangeEndDate == rangeStartDate ? null : rangeEndDate;
+                    if (rangeEndDate == null || rangeStartDate.isSameDate(rangeEndDate!)) {
+                      singleDate = true;
+                    } else {
+                      singleDate = false;
+                    }
+                    _title = singleDate
+                        ? DateFormat("yyyy MMMM dd").format(rangeStartDate)
+                        : "${DateFormat("yyyy/MM/dd").format(rangeStartDate)} to ${DateFormat("yyyy/MM/dd").format(rangeEndDate!)}";
+                    // setState(() {});
                   },
                   selectionMode: DateRangePickerSelectionMode.range)),
         ),
@@ -505,6 +514,7 @@ class _CountCardsState extends State<CountCards> {
                     onSelect: (DateTime start, DateTime end, year, week) {
                       rangeStartDate = start;
                       rangeEndDate = end;
+                      rangeEndDate = rangeEndDate?.add(const Duration(hours: 24));
                       _selectedFilter = DaysFilters.Week;
                       _title = "$week ${getNumberSuffix(week)} week $year ";
                       loadData();

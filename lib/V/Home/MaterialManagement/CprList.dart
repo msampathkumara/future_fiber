@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:smartwind/Web/V/MaterialManagement/CPR/CprView.dart';
 
 import '../../../C/Api.dart';
 import '../../../M/CPR/CPR.dart';
 import '../../../M/Enums.dart';
 import '../../../Web/V/MaterialManagement/CPR/webCpr.dart';
+import '../../../Web/V/MaterialManagement/CPR/webCprView.dart';
 import '../../Widgets/NoResultFoundMsg.dart';
 import '../../Widgets/SearchBar.dart';
 
@@ -31,7 +31,6 @@ class _CprListState extends State<CprList> {
   bool _dataLoadingError = false;
 
   Production selectedProduction = Production.All;
-  final _status = ['All', 'Sent', 'Ready', 'Pending', 'Order'];
   String selectedStatus = 'All';
 
   @override

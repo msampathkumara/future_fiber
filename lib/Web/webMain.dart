@@ -23,7 +23,7 @@ class webApp extends StatelessWidget {
       theme: ThemeData(
         iconTheme: const IconThemeData(size: 16.0),
         primarySwatch: Colors.green,
-        primaryColor: Colors.lightGreen,
+        // primaryColor: Colors.lightGreen,
         primaryColorDark: Colors.green,
         bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.black.withOpacity(0)),
         inputDecorationTheme: InputDecorationTheme(

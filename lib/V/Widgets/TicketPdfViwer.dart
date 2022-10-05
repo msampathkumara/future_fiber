@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:pdfx/pdfx.dart';
 // import 'package:native_pdf_view/native_pdf_view.dart';
 import 'package:smartwind/M/Enums.dart';
@@ -33,6 +34,10 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
 
   bool _loading = false;
 
+  var _controller;
+
+  String pageString = '';
+
   Widget pdfView() => PdfViewPinch(controller: pdfPinchController, padding: 10, scrollDirection: Axis.vertical);
 
   @override
@@ -59,7 +64,13 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("${widget.ticket.mo ?? widget.ticket.oe ?? ""} ${widget.ticket.mo != null ? "(${widget.ticket.oe})" : ""}  ", style: const TextStyle(color: Colors.white)),
+          title: Row(
+            children: [
+              Text("${widget.ticket.mo ?? widget.ticket.oe ?? ""} ${widget.ticket.mo != null ? "(${widget.ticket.oe})" : ""}  ", style: const TextStyle(color: Colors.white)),
+              const Spacer(),
+              Text(pageString, textScaleFactor: 1.2)
+            ],
+          ),
           actions: <Widget>[
             if (!widget.ticket.isStandard)
               PopupMenuButton<ActionMenuItems>(
@@ -69,7 +80,7 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
                   } else if (s == ActionMenuItems.ShippingSystem) {
                     widget.ticket.openInShippingSystem(context);
                   } else if (s == ActionMenuItems.BlueBook) {
-                    var data = await Navigator.push(context, MaterialPageRoute(builder: (context) => BlueBook(ticket: widget.ticket)));
+                    await Navigator.push(context, MaterialPageRoute(builder: (context) => BlueBook(ticket: widget.ticket)));
                   } else if (s == ActionMenuItems.Share) {
                     await Ticket.sharePdf(context, widget.ticket);
                   } else if (s == ActionMenuItems.Finish) {
@@ -111,7 +122,39 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
           ],
         ),
         body: Stack(children: <Widget>[
-          if (!_loading) pdfView(),
+          // if (!_loading) pdfView(),
+
+          PDFView(
+            filePath: widget.ticket.ticketFile!.path,
+            enableSwipe: true,
+            swipeHorizontal: false,
+            autoSpacing: true,
+            pageFling: true,
+            fitPolicy: FitPolicy.BOTH,
+            fitEachPage: true,
+            pageSnap: true,
+            onRender: (_pages) {
+              setState(() {
+                pages = _pages!;
+                isReady = true;
+              });
+            },
+            onError: (error) {
+              print(error.toString());
+            },
+            onPageError: (page, error) {
+              print('$page: ${error.toString()}');
+            },
+            onViewCreated: (PDFViewController pdfViewController) {
+              _controller.complete(pdfViewController);
+            },
+            onPageChanged: (int? page, int? total) {
+              print('page change: $page/$total');
+              pageString = '$page/$total';
+              setState(() {});
+            },
+          ),
+
           if (_loading) const Center(child: CircularProgressIndicator()),
           errorMessage.isEmpty ? ((!isReady) ? Container() : Container()) : Center(child: Text(errorMessage, style: const TextStyle(color: Colors.red)))
         ]),
@@ -134,8 +177,8 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
   void reload() {
     setLoading(true);
     pdfPath = widget.ticket.ticketFile!.path;
-    pdfController = PdfController(document: PdfDocument.openFile(pdfPath));
-    pdfPinchController = PdfControllerPinch(document: PdfDocument.openFile(pdfPath));
+    // pdfController = PdfController(document: PdfDocument.openFile(pdfPath));
+    // pdfPinchController = PdfControllerPinch(document: PdfDocument.openFile(pdfPath));
     setLoading(false);
   }
 

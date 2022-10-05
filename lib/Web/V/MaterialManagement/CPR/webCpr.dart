@@ -9,8 +9,8 @@ import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 import 'package:smartwind/Web/Styles/styles.dart';
 import 'package:smartwind/Web/V/MaterialManagement/CPR/AddCpr.dart';
-import 'package:smartwind/Web/V/MaterialManagement/CPR/CprView.dart';
 import 'package:smartwind/Web/V/MaterialManagement/CPR/TicketSelector.dart';
+import 'package:smartwind/Web/V/MaterialManagement/CPR/webCprView.dart';
 import 'package:smartwind/Web/Widgets/myDropDown.dart';
 
 import '../../../../M/AppUser.dart';
@@ -56,6 +56,8 @@ class _WebCprState extends State<WebCpr> {
     super.initState();
   }
 
+  bool filterByStartTicket = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,6 +76,16 @@ class _WebCprState extends State<WebCpr> {
               children: [
                 Text("CPR", style: mainWidgetsTitleTextStyle),
                 const Spacer(),
+                IconButton(
+                  icon: CircleAvatar(backgroundColor: Colors.white, radius: 16, child: Icon(Icons.play_arrow, color: filterByStartTicket ? Colors.red : Colors.black, size: 20)),
+                  tooltip: 'Filter by start ticket',
+                  onPressed: () async {
+                    filterByStartTicket = !filterByStartTicket;
+
+                    loadData();
+                  },
+                ),
+                const SizedBox(width: 50),
                 SizedBox(
                     height: 36,
                     child: ElevatedButton.icon(

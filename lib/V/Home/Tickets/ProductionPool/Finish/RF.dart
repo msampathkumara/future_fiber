@@ -2,7 +2,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/Ticket.dart';
-import 'package:smartwind/M/UserRFCredentials.dart';
 import 'package:smartwind/res.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -13,11 +12,12 @@ import 'PDFViewWidget.dart';
 
 class RF extends StatefulWidget {
   Ticket ticket;
-  UserRFCredentials userRFCredentials;
+
+  // UserRFCredentials userRFCredentials;
   OperationMinMax operationMinMax;
   List<Progress> progressList;
 
-  RF(this.ticket, this.userRFCredentials, this.operationMinMax, this.progressList, {Key? key}) : super(key: key);
+  RF(this.ticket, this.operationMinMax, this.progressList, {Key? key}) : super(key: key);
 
   @override
   _RFState createState() {
@@ -33,13 +33,13 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
 
   late Ticket ticket;
 
-  late UserRFCredentials userRFCredentials;
+  // late UserRFCredentials userRFCredentials;
   late OperationMinMax operationMinMax;
   late List<Progress> progressList;
   var showFinishButton = true;
 
-  WebView? _webView;
-  WebViewController? _controller;
+  // WebView? _webView;
+  // WebViewController? _controller;
   bool webPageConnectionError = false;
   bool loading = true;
 
@@ -48,7 +48,7 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
     super.initState();
 
     ticket = widget.ticket;
-    userRFCredentials = widget.userRFCredentials;
+    // userRFCredentials = widget.userRFCredentials;
     operationMinMax = widget.operationMinMax;
     progressList = widget.progressList;
 
@@ -57,59 +57,59 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
     DefaultAssetBundle.of(context).loadString(Res.js1).then((value) {
       print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
       jsString = setupData(value);
-      _webView = WebView(
-        // initialUrl: 'https://www.w3schools.com/howto/howto_css_register_form.asp',
-        initialUrl: 'http://10.200.4.31/WebClient/default.aspx?ReturnUrl=%2fWebClient%2fRFSMenu.aspx',
-        // initialUrl: "http://10.200.4.31/webclient/",
-        javascriptMode: JavascriptMode.unrestricted,
-        onWebViewCreated: (WebViewController webViewController) {
-          print('WebViewController set');
-          _controller = webViewController;
-          // _controller.complete(webViewController);
-        },
-        onProgress: (int progress) {
-          print("WebView is loading (progress : $progress%)");
-        },
-        javascriptChannels: <JavascriptChannel>{
-          _toasterJavascriptChannel(context),
-        },
-        navigationDelegate: (NavigationRequest request) {
-          return NavigationDecision.navigate;
-        },
-        onPageStarted: (String url) {
-          print('Page started loading: $url');
-        },
-        onPageFinished: (String url) {
-          print('Page finished loading: $url');
-          _controller!.runJavascript(jsString);
-          loading = false;
-          setState(() {});
-        },
-        onWebResourceError: (c) {
-          loading = false;
-          webPageConnectionError = true;
-          setState(() {});
-        },
-        gestureNavigationEnabled: true,
-      );
+      // _webView = WebView(
+      //   // initialUrl: 'https://www.w3schools.com/howto/howto_css_register_form.asp',
+      //   initialUrl: 'http://10.200.4.31/WebClient/default.aspx?ReturnUrl=%2fWebClient%2fRFSMenu.aspx',
+      //   // initialUrl: "http://10.200.4.31/webclient/",
+      //   javascriptMode: JavascriptMode.unrestricted,
+      //   onWebViewCreated: (WebViewController webViewController) {
+      //     print('WebViewController set');
+      //     _controller = webViewController;
+      //     // _controller.complete(webViewController);
+      //   },
+      //   onProgress: (int progress) {
+      //     print("WebView is loading (progress : $progress%)");
+      //   },
+      //   javascriptChannels: <JavascriptChannel>{
+      //     _toasterJavascriptChannel(context),
+      //   },
+      //   navigationDelegate: (NavigationRequest request) {
+      //     return NavigationDecision.navigate;
+      //   },
+      //   onPageStarted: (String url) {
+      //     print('Page started loading: $url');
+      //   },
+      //   onPageFinished: (String url) {
+      //     print('Page finished loading: $url');
+      //     _controller!.runJavascript(jsString);
+      //     loading = false;
+      //     setState(() {});
+      //   },
+      //   onWebResourceError: (c) {
+      //     loading = false;
+      //     webPageConnectionError = true;
+      //     setState(() {});
+      //   },
+      //   gestureNavigationEnabled: true,
+      // );
 
       setState(() {});
     });
 
-    db.child("settings").once().then((DatabaseEvent databaseEvent) {
-      DataSnapshot result = databaseEvent.snapshot;
-
-      erpNotWorking = result.child("erpNotWorking").value == 0;
-      setState(() {});
-    });
-    db.child("settings").onChildChanged.listen((DatabaseEvent event) {
-      db.child("settings").once().then((DatabaseEvent databaseEvent) {
-        DataSnapshot result = databaseEvent.snapshot;
-        erpNotWorking = result.child("erpNotWorking").value == 0;
-        print('------------ $erpNotWorking');
-        setState(() {});
-      });
-    });
+    // db.child("settings").once().then((DatabaseEvent databaseEvent) {
+    //   DataSnapshot result = databaseEvent.snapshot;
+    //
+    //   erpNotWorking = result.child("erpNotWorking").value == 0;
+    //   setState(() {});
+    // });
+    // db.child("settings").onChildChanged.listen((DatabaseEvent event) {
+    //   db.child("settings").once().then((DatabaseEvent databaseEvent) {
+    //     DataSnapshot result = databaseEvent.snapshot;
+    //     erpNotWorking = result.child("erpNotWorking").value == 0;
+    //     print('------------ $erpNotWorking');
+    //     setState(() {});
+    //   });
+    // });
   }
 
   setupTimeout() {
@@ -122,7 +122,7 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
     });
   }
 
-  var erpNotWorking = false;
+  // var erpNotWorking = false;
 
   @override
   void dispose() {
@@ -143,12 +143,8 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
               icon: const Icon(Icons.check_circle_outline_outlined),
               label: const Text("Finish"),
               onPressed: () async {
-                var v = await LoadingDialog(Api.post("tickets/finish", {
-                  'erpDone': erpNotWorking ? 0 : 1,
-                  'ticket': ticket.id.toString(),
-                  'userSectionId': AppUser.getSelectedSection()?.id,
-                  'doAt': operationMinMax.doAt.toString()
-                }).then((res) {
+                var v = await LoadingDialog(Api.post("tickets/finish",
+                    {'erpDone': 0, 'ticket': ticket.id.toString(), 'userSectionId': AppUser.getSelectedSection()?.id, 'doAt': operationMinMax.doAt.toString()}).then((res) {
                   Map data = res.data;
                   print(data);
 
@@ -214,33 +210,34 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
                                               )));
                                     }))
                           ])))),
-              const Divider(),
-              if (_webView != null && (erpNotWorking))
-                Expanded(
-                    child: Stack(children: [
-                  webPageConnectionError
-                      ? Center(
-                          child: Wrap(
-                          direction: Axis.vertical,
-                          alignment: WrapAlignment.center,
-                          children: [
-                            const Text("No Network Or Not In Factory Network", textScaleFactor: 1.2),
-                            Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ElevatedButton(
-                                    onPressed: () {
-                                      webPageConnectionError = false;
-                                      loading = true;
-                                      setupTimeout();
-                                      setState(() {});
-                                      _controller!.reload();
-                                    },
-                                    child: const Text("Retry")))
-                          ],
-                        ))
-                      : _webView!,
-                  if (loading) Container(color: Colors.white, height: double.infinity, width: double.infinity, child: const Center(child: Text("Loading", textScaleFactor: 1.5))),
-                ])),
+              // const Divider(),
+              // // if (_webView != null && (erpNotWorking))
+              // if (_webView != null)
+              //   Expanded(
+              //       child: Stack(children: [
+              //     webPageConnectionError
+              //         ? Center(
+              //             child: Wrap(
+              //             direction: Axis.vertical,
+              //             alignment: WrapAlignment.center,
+              //             children: [
+              //               const Text("No Network Or Not In Factory Network", textScaleFactor: 1.2),
+              //               Padding(
+              //                   padding: const EdgeInsets.all(8.0),
+              //                   child: ElevatedButton(
+              //                       onPressed: () {
+              //                         webPageConnectionError = false;
+              //                         loading = true;
+              //                         setupTimeout();
+              //                         setState(() {});
+              //                         _controller!.reload();
+              //                       },
+              //                       child: const Text("Retry")))
+              //             ],
+              //           ))
+              //         : _webView!,
+              //     if (loading) Container(color: Colors.white, height: double.infinity, width: double.infinity, child: const Center(child: Text("Loading", textScaleFactor: 1.5))),
+              //   ])),
             ],
           ));
     } else {
@@ -260,9 +257,9 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
   String jsString = "";
 
   String setupData(loadData) {
-    print(userRFCredentials.toJson());
-    loadData = loadData.toString().replaceAll("@@user", userRFCredentials.uname ?? "");
-    loadData = loadData.toString().replaceAll("@@pass", userRFCredentials.pword ?? "");
+    // print(userRFCredentials.toJson());
+    // loadData = loadData.toString().replaceAll("@@user", userRFCredentials.uname ?? "");
+    // loadData = loadData.toString().replaceAll("@@pass", userRFCredentials.pword ?? "");
     loadData = loadData.toString().replaceAll("@@mo", widget.ticket.mo ?? "");
     loadData = loadData.toString().replaceAll("@@low", operationMinMax.min.toString());
     loadData = loadData.toString().replaceAll("@@max", operationMinMax.max.toString());

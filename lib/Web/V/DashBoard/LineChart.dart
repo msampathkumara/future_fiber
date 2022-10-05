@@ -3,14 +3,15 @@ import 'package:intl/intl.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/Web/V/DashBoard/M/ProgressSummery.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:syncfusion_flutter_sliders/sliders.dart';
 
-import '../../../C/Api.dart';
-import '../../../M/EndPoints.dart';
 import 'CountCards.dart';
 
 class LineChartController {
   _LineChartState? lineChartState;
   List<ProgressSummery> chartData = [];
+  late DateTime rangeStartDate;
+  DateTime? rangeEndDate;
 
   DaysFilters filter = DaysFilters.Month;
 
@@ -18,43 +19,48 @@ class LineChartController {
     this.lineChartState = lineChartState;
   }
 
-  void updateData(DateTime rangeStartDate, DateTime? rangeEndDate, Production selectedProduction, DaysFilters filter) {
+  void updateData(DateTime _rangeStartDate, DateTime? _rangeEndDate, Production selectedProduction, DaysFilters filter, List<ProgressSummery> _chartData) {
     print('__UPDATE DATA');
     this.filter = filter;
+    rangeStartDate = _rangeStartDate;
+    rangeEndDate = _rangeEndDate;
 
-    Api.get(EndPoints.dashboard_getGraphData, {"startDate": rangeStartDate, "endDate": rangeEndDate, 'production': selectedProduction.getValue()}).then((res) {
-      Map data = res.data;
+    // Api.get(EndPoints.dashboard_getGraphData, {"startDate": rangeStartDate, "endDate": rangeEndDate, 'production': selectedProduction.getValue()}).then((res) {
+    //   Map data = res.data;
 
-      chartData = ProgressSummery.fromJsonArray(data["shiftsData"]);
+    // chartData = ProgressSummery.fromJsonArray(data["shiftsData"]);
+    chartData = _chartData;
 
-      Map<String, ProgressSummery> dataMap = {};
-      getDaysInBetween(rangeStartDate, rangeEndDate ?? rangeStartDate).forEach((element) {
-        var p = ProgressSummery();
-        p.date = element;
-        p.shiftName = 'morning';
-        dataMap["$element morning"] = p;
-        var p1 = ProgressSummery();
-        p1.date = element;
-        p1.shiftName = 'evening';
-        dataMap["$element evening"] = p1;
-      });
-      for (var element in chartData) {
-        dataMap["${element.date} ${element.shiftName?.toLowerCase()}"] = element;
-      }
-
-      chartData = dataMap.values.toList();
-    }).whenComplete(() {
-      lineChartState?.refresh();
-    }).catchError((err) {
-      print(err);
-
-      lineChartState?.refresh();
+    Map<String, ProgressSummery> dataMap = {};
+    getDaysInBetween(_rangeStartDate, _rangeEndDate ?? _rangeStartDate).forEach((element) {
+      var p = ProgressSummery();
+      p.date = element;
+      p.startAt = element.toString();
+      p.shiftName = 'morning';
+      dataMap["$element morning"] = p;
+      var p1 = ProgressSummery();
+      p1.date = element;
+      p1.startAt = element.toString();
+      p1.shiftName = 'evening';
+      dataMap["$element evening"] = p1;
     });
+    for (var element in chartData) {
+      dataMap["${element.date} ${element.shiftName?.toLowerCase()}"] = element;
+    }
+
+    chartData = dataMap.values.toList();
+    // }).whenComplete(() {
+    //   lineChartState?.refresh();
+    // }).catchError((err) {
+    //   print(err);
+
+    lineChartState?.refresh();
+    // });
   }
 
   List<DateTime> getDaysInBetween(DateTime startDate, DateTime endDate) {
     List<DateTime> days = [];
-    for (int i = 0; i <= endDate.difference(startDate).inDays; i++) {
+    for (int i = 0; i <= endDate.difference(startDate).inDays - 1; i++) {
       days.add(startDate.add(Duration(days: i)));
     }
     return days;
@@ -71,9 +77,6 @@ class LineChart extends StatefulWidget {
 }
 
 class _LineChartState extends State<LineChart> {
-  DateTime? rangeStartDate;
-  DateTime? rangeEndDate;
-
   late LineChartController controller;
   late TooltipBehavior _tooltipBehavior;
 
@@ -88,6 +91,12 @@ class _LineChartState extends State<LineChart> {
     SeriesInfo("Defects Rate", Colors.orange, (ProgressSummery s) => s.defectsRate, setText: (x) => "${(x.defectsRate ?? 0).toStringAsFixed(2)}%"),
     SeriesInfo("WIP", Colors.brown, (ProgressSummery s) => s.wip)
   ];
+
+  var sc = ScrollController();
+
+  late final _zoomPanBehavior;
+
+  late TrackballBehavior _trackballBehavior;
 
   @override
   void initState() {
@@ -130,60 +139,83 @@ class _LineChartState extends State<LineChart> {
                 ),
               ));
         });
+    _zoomPanBehavior = ZoomPanBehavior(
+        enablePinching: true,
+        zoomMode: ZoomMode.x,
+        enablePanning: true,
+        enableSelectionZooming: true,
+        enableMouseWheelZooming: true,
+        selectionRectBorderColor: Colors.red,
+        selectionRectBorderWidth: 1,
+        selectionRectColor: Colors.grey);
+    _trackballBehavior = TrackballBehavior(
+        // Enables the trackball
+        enable: true,
+        tooltipDisplayMode: TrackballDisplayMode.floatAllPoints);
+    // _values = SfRangeValues(controller.rangeStartDate, controller.rangeStartDate?.add(const Duration(days: 1)));
+    _values = SfRangeValues(0, controller.chartData.length - 1);
     super.initState();
   }
+
+  late SfRangeValues _values;
 
   @override
   Widget build(BuildContext context) {
     List<FastLineSeries> series = [];
 
     series = names
-        .map((e) => FastLineSeries<ProgressSummery, String>(
+        .map((e) => FastLineSeries(
             name: e.caption,
             isVisible: e.selected,
             enableTooltip: true,
             color: e.color,
             dataSource: controller.chartData,
             xValueMapper: (ProgressSummery s, _) => "${getDate(s)} ${s.shiftName?.toLowerCase() == "morning" ? "🌞" : "🌑"}",
-            yValueMapper: (ProgressSummery s, _) => e.getValue(s) ?? 0))
+            // xValueMapper: (ProgressSummery s, _) => stringToDateTime(s.startAt),
+            yValueMapper: (ProgressSummery s, _) => e.getValue(s) ?? 0,
+            markerSettings: const MarkerSettings(isVisible: true, shape: DataMarkerType.circle)))
         .toList();
 
     return Scaffold(
         body: Column(
       children: [
-        // Padding(
-        //   padding: const EdgeInsets.only(left: 24.0),
-        //   child: Row(
-        //       children: names
-        //           .map((e) => Padding(
-        //                 padding: const EdgeInsets.all(4.0),
-        //                 child: FilterChip(
-        //                   showCheckmark: false,
-        //                   elevation: 1,
-        //                   avatar: Icon(Icons.fiber_manual_record_rounded, color: e.color),
-        //                   label: Text(e.caption ?? '', style: TextStyle(color: e.selected ? Colors.white : Colors.black)),
-        //                   backgroundColor: Colors.white,
-        //                   selected: e.selected,
-        //                   selectedColor: getPrimaryColor(context),
-        //                   onSelected: (bool value) {
-        //                     e.selected = value;
-        //                     setState(() {});
-        //                   },
-        //                 ),
-        //               ))
-        //           .toList()),
-        // ),
         Expanded(
-          child: Center(
-              child: SizedBox(
-                  width: double.infinity,
-                  height: 500,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 8.0, bottom: 8),
-                    child: SfCartesianChart(
-                        tooltipBehavior: _tooltipBehavior, primaryXAxis: CategoryAxis(), series: series, legend: Legend(isVisible: true, position: LegendPosition.left)),
-                  ))),
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8.0, bottom: 8),
+            child: SfCartesianChart(
+                enableAxisAnimation: true,
+                // zoomPanBehavior: _zoomPanBehavior,
+                tooltipBehavior: _tooltipBehavior,
+                zoomPanBehavior: ZoomPanBehavior(
+                  enablePanning: false,
+                ),
+                primaryXAxis: CategoryAxis(title: AxisTitle(text: 'Shift'), maximum: _values.start, minimum: _values.end, isVisible: true),
+                // primaryXAxis: DateTimeAxis(title: AxisTitle(text: 'Shift'),   visibleMaximum: _values.start, visibleMinimum: _values.end ),
+                // primaryXAxis: CategoryAxis(title: AxisTitle(text: 'Shift') ),
+                series: series,
+                legend: Legend(isVisible: true, position: LegendPosition.left)),
+          ),
         ),
+        SfRangeSlider(
+          // min: controller.rangeStartDate,
+          // max: controller.rangeEndDate,
+          min: 0,
+          max: controller.chartData.length - 1,
+          dateFormat: DateFormat.MMMMd(),
+          dateIntervalType: DateIntervalType.days,
+          values: _values,
+          dragMode: SliderDragMode.both,
+          interval: 1,
+          showTicks: false,
+          showLabels: false,
+          enableTooltip: false,
+          minorTicksPerInterval: 1,
+          onChanged: (SfRangeValues values) {
+            setState(() {
+              _values = values;
+            });
+          },
+        )
       ],
     ));
   }
@@ -192,17 +224,19 @@ class _LineChartState extends State<LineChart> {
     if (mounted) setState(() {});
   }
 
-  getDate(s) {
+  static stringToDateTime(d) => d == null ? null : DateFormat('yyyy-MM-dd HH:mm').parse(d);
+
+  getDate(ProgressSummery s) {
     switch (controller.filter) {
       case DaysFilters.Today:
         break;
       case DaysFilters.Yesterday:
         break;
       case DaysFilters.Week:
-        return DateFormat("MM/dd").format(s.date ?? DateTime.now());
+        return DateFormat("MM/dd").format((s.date) ?? DateTime.now());
         break;
       case DaysFilters.Month:
-        return DateFormat("dd").format(s.date ?? DateTime.now());
+        return DateFormat("dd").format((s.date) ?? DateTime.now());
         break;
       case DaysFilters.Year:
         return DateFormat("MM/dd").format(s.date ?? DateTime.now());

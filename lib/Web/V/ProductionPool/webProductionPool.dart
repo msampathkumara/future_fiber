@@ -118,7 +118,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                     borderRadius: BorderRadius.circular(8),
                     child: SizedBox(
                         height: 40,
-                        width: 200,
+                        width: 250,
                         child: SearchBar(
                             onSearchTextChanged: (String text) {
                               searchText = text;

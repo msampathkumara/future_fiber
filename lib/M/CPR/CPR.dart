@@ -23,6 +23,10 @@ class CPR {
   String comment = "";
   @JsonKey(defaultValue: "", includeIfNull: true)
   String image = "";
+
+  @JsonKey(defaultValue: null, includeIfNull: true)
+  String? imageUrl;
+
   @JsonKey(defaultValue: [], includeIfNull: true)
   List<CprItem> items = <CprItem>[];
 

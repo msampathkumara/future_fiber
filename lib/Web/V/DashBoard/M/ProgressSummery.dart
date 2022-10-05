@@ -13,6 +13,10 @@ class ProgressSummery {
   String? factory;
   @JsonKey(defaultValue: null, includeIfNull: true)
   String? sectionTitle;
+
+  @JsonKey(defaultValue: null, includeIfNull: true)
+  int? sectionId;
+
   @JsonKey(defaultValue: null, includeIfNull: true)
   num? doAt;
   @JsonKey(defaultValue: null, includeIfNull: true)

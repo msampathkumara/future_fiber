@@ -2,7 +2,9 @@
 class Assets {
   Assets._();
 
+  static const String assets1735U1RVRElPIEtBVCA0MTQtMzM = 'assets/1735_U1RVRElPIEtBVCA0MTQtMzM.jpg';
   static const String assetsAccountBlocked = 'assets/accountBlocked.jpg';
+  static const String assetsAppainterTheme = 'assets/appainter_theme.json';
   static const String assetsFileNotFound = 'assets/fileNotFound.png';
   static const String assetsJs = 'assets/js.js';
   static const String assetsJs1 = 'assets/js1.txt';

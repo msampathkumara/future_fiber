@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:app_settings/app_settings.dart';
 // import 'package:firebase_analytics/firebase_analytics.dart';
@@ -9,6 +10,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:json_theme/json_theme.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/hive.dart';
@@ -35,13 +37,19 @@ void runLoggedApp(Widget app) async {
 }
 
 main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   bool x = Uri.base.host.contains('mm.');
   if (kDebugMode) {
     x = false;
   }
 
   isMaterialManagement = x;
-  runLoggedApp(const MaterialApp(home: MainApp()));
+
+  final themeStr = await rootBundle.loadString('assets/appainter_theme.json');
+  final themeJson = jsonDecode(themeStr);
+  var theme = ThemeDecoder.decodeThemeData(themeJson)!;
+
+  runLoggedApp(MaterialApp(home: const MainApp()));
 }
 
 bool isMaterialManagement = false;
@@ -227,7 +235,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ));
       }
-      print("tttttttttttttttttttttttttt = ${snapshot.data['tabChecked']}");
+
       if (FirebaseAuth.instance.currentUser != null && App.currentUser != null) {
         if (snapshot.data['tabChecked'] == false) {
           return CheckTabStatus(App.currentUser!);

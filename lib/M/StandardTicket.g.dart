@@ -22,7 +22,6 @@ class StandardTicketAdapter extends TypeAdapter<StandardTicket> {
       ..uptime = fields[52] == null ? 0 : fields[52] as int
       ..mo = fields[0] as String?
       ..oe = fields[1] as String?
-      ..finished = fields[2] == null ? 0 : fields[2] as int
       ..file = fields[4] == null ? 0 : fields[4] as int
       ..sheet = fields[5] == null ? 0 : fields[5] as int
       ..dir = fields[6] == null ? 0 : fields[6] as int
@@ -59,7 +58,7 @@ class StandardTicketAdapter extends TypeAdapter<StandardTicket> {
   @override
   void write(BinaryWriter writer, StandardTicket obj) {
     writer
-      ..writeByte(37)
+      ..writeByte(36)
       ..writeByte(50)
       ..write(obj.production)
       ..writeByte(51)
@@ -70,8 +69,6 @@ class StandardTicketAdapter extends TypeAdapter<StandardTicket> {
       ..write(obj.mo)
       ..writeByte(1)
       ..write(obj.oe)
-      ..writeByte(2)
-      ..write(obj.finished)
       ..writeByte(4)
       ..write(obj.file)
       ..writeByte(5)
@@ -154,7 +151,6 @@ class StandardTicketAdapter extends TypeAdapter<StandardTicket> {
 StandardTicket _$StandardTicketFromJson(Map<String, dynamic> json) => StandardTicket()
   ..mo = json['mo'] as String?
   ..oe = json['oe'] as String?
-  ..finished = json['finished'] as int? ?? 0
   ..file = json['file'] as int? ?? 0
   ..sheet = json['sheet'] as int? ?? 0
   ..dir = json['dir'] as int? ?? 0
@@ -195,7 +191,6 @@ Map<String, dynamic> _$StandardTicketToJson(StandardTicket instance) =>
     <String, dynamic>{
       'mo': instance.mo,
       'oe': instance.oe,
-      'finished': instance.finished,
       'file': instance.file,
       'sheet': instance.sheet,
       'dir': instance.dir,

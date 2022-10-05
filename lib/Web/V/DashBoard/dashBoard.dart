@@ -28,6 +28,7 @@ class _DashBoardState extends State<DashBoard> {
           // IconButton(onPressed: () => const AddShifts().show(context), icon: const Icon(Icons.more_time, color: Colors.redAccent)),
           // IconButton(onPressed: () => const ChangeShifts().show(context), icon: const Icon(Icons.more_time, color: Colors.redAccent)),
           PopupMenuButton<int>(
+              tooltip: 'Settings',
               offset: const Offset(0, 30),
               padding: const EdgeInsets.all(16.0),
               shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),

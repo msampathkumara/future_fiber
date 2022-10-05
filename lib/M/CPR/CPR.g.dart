@@ -14,6 +14,7 @@ CPR _$CPRFromJson(Map<String, dynamic> json) => CPR()
   ..client = json['client'] as String? ?? ''
   ..comment = json['comment'] as String? ?? ''
   ..image = json['image'] as String? ?? ''
+  ..imageUrl = json['imageUrl'] as String?
   ..items = (json['items'] as List<dynamic>?)?.map((e) => CprItem.fromJson(e as Map<String, dynamic>)).toList() ?? []
   ..suppliers = json['suppliers'] == null ? [] : CPR.arrayFromObject(json['suppliers'])
   ..status = json['status'] as String? ?? ''
@@ -31,7 +32,8 @@ CPR _$CPRFromJson(Map<String, dynamic> json) => CPR()
   ..orderBy = json['orderBy'] as int?
   ..orderOn = json['orderOn'] as String?;
 
-Map<String, dynamic> _$CPRToJson(CPR instance) => <String, dynamic>{
+Map<String, dynamic> _$CPRToJson(CPR instance) =>
+    <String, dynamic>{
       'ticket': instance.ticket?.toJson(),
       'sailType': instance.sailType,
       'shortageType': instance.shortageType,
@@ -39,6 +41,7 @@ Map<String, dynamic> _$CPRToJson(CPR instance) => <String, dynamic>{
       'client': instance.client,
       'comment': instance.comment,
       'image': instance.image,
+      'imageUrl': instance.imageUrl,
       'items': instance.items.map((e) => e.toJson()).toList(),
       'suppliers': instance.suppliers,
       'status': instance.status,
