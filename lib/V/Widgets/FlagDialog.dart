@@ -6,6 +6,7 @@ import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/ns_icons_icons.dart';
 
 import '../../C/Api.dart';
+import '../../M/EndPoints.dart';
 import 'UserButton.dart';
 
 class FlagDialog extends StatefulWidget {
@@ -138,11 +139,11 @@ class FlagDialog1 {
   }
 
   static Future setFlag(String type, String comment, Ticket ticket) {
-    return Api.post("tickets/flags/setFlag", {"comment": comment, "type": type, "ticket": ticket.id.toString()});
+    return Api.post(EndPoints.tickets_flags_setFlag, {"comment": comment, "type": type, "ticket": ticket.id.toString()});
   }
 
   static removeFlag(String type, Ticket ticket) {
-    return Api.post("tickets/flags/removeFlag", {"type": type, "ticket": ticket.id.toString()});
+    return Api.post(EndPoints.tickets_flags_removeFlag, {"type": type, "ticket": ticket.id.toString()});
   }
 
   static late TicketFlagTypes flagType;

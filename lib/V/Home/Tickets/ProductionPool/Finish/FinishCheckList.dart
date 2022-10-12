@@ -10,6 +10,7 @@ import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Home/Tickets/ProductionPool/Finish/SelectSectionBottomSheet.dart';
 
 import '../../../../../C/ServerResponse/ServerResponceMap.dart';
+import '../../../../../M/EndPoints.dart';
 import 'RF.dart';
 
 class FinishCheckList extends StatefulWidget {
@@ -145,7 +146,7 @@ class _FinishCheckListState extends State<FinishCheckList> {
       if (mounted) {
         var x = await Navigator.push(context, MaterialPageRoute(builder: (context) => RF(ticket, res1.operationMinMax!, res1.progressList)));
         if (x != null || x == true) {
-          await LoadingDialog(Api.post("tickets/qc/uploadEdits", {'quality': quality, 'ticketId': ticket.id, 'type': isQc, "sectionId": selectedSection}).then((res) {
+          await LoadingDialog(Api.post(EndPoints.tickets_qc_uploadEdits, {'quality': quality, 'ticketId': ticket.id, 'type': isQc, "sectionId": selectedSection}).then((res) {
             Map data = res.data;
           }));
         }

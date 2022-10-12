@@ -8,6 +8,7 @@ import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Home/BlueBook/BlueBook.dart';
 
 import '../../M/AppUser.dart';
+import '../../M/PermissionsEnum.dart';
 import '../Home/Tickets/ProductionPool/Finish/FinishCheckList.dart';
 
 class TicketPdfViewer extends StatefulWidget {
@@ -68,7 +69,10 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
             children: [
               Text("${widget.ticket.mo ?? widget.ticket.oe ?? ""} ${widget.ticket.mo != null ? "(${widget.ticket.oe})" : ""}  ", style: const TextStyle(color: Colors.white)),
               const Spacer(),
-              Text(pageString, textScaleFactor: 1.2)
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(pageString, textScaleFactor: 0.8),
+              )
             ],
           ),
           actions: <Widget>[
@@ -104,7 +108,10 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
                     {'action': ActionMenuItems.BlueBook, 'icon': Icons.menu_book_rounded, 'text': "Blue Book", "color": Colors.blueAccent},
                     {'action': ActionMenuItems.ShippingSystem, 'icon': Icons.directions_boat_rounded, 'text': "Shipping System", "color": Colors.brown},
                     {'action': ActionMenuItems.CS, 'icon': Icons.pivot_table_chart_rounded, 'text': "CS", "color": Colors.green},
-                    if (widget.ticket.isStarted && (widget.ticket.nowAt == AppUser.getSelectedSection()?.id) && AppUser.havePermissionFor(Permissions.FINISH_TICKET) && (!kIsWeb))
+                    if (widget.ticket.isStarted &&
+                        (widget.ticket.nowAt == AppUser.getSelectedSection()?.id) &&
+                        AppUser.havePermissionFor(NsPermissions.TICKET_FINISH_TICKET) &&
+                        (!kIsWeb))
                       {'action': ActionMenuItems.Finish, 'icon': Icons.check_circle_outline_outlined, 'text': "Finish", "color": Colors.green}
                   }.map((choice) {
                     return PopupMenuItem<ActionMenuItems>(
@@ -150,7 +157,7 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
             },
             onPageChanged: (int? page, int? total) {
               print('page change: $page/$total');
-              pageString = '$page/$total';
+              pageString = '${((page ?? 0) + 1)}/$total';
               setState(() {});
             },
           ),
@@ -158,7 +165,7 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
           if (_loading) const Center(child: CircularProgressIndicator()),
           errorMessage.isEmpty ? ((!isReady) ? Container() : Container()) : Center(child: Text(errorMessage, style: const TextStyle(color: Colors.red)))
         ]),
-        floatingActionButton: (widget.ticket.isNotCompleted && (AppUser.havePermissionFor(Permissions.EDIT_ANY_PDF)) && (widget.ticket.isStarted))
+        floatingActionButton: (widget.ticket.isNotCompleted && (AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_ANY_PDF)) && (widget.ticket.isStarted))
             ? FloatingActionButton.extended(
                 icon: const Icon(Icons.edit_outlined),
                 label: const Text("Edit"),

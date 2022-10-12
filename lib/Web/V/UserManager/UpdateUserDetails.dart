@@ -15,6 +15,8 @@ import 'package:smartwind/M/Section.dart';
 import 'package:smartwind/V/Home/UserManager/section_list.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 
+import '../../../M/EndPoints.dart';
+
 class UpdateUserDetails extends StatefulWidget {
   late NsUser nsUser;
 
@@ -414,7 +416,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
 
     print('ssssssssssssssssssssss');
 
-    return Api.post("users/saveUser", {"user": nsUser, "image": imageId}).then((res) async {
+    return Api.post(EndPoints.users_saveUser, {"user": nsUser, "image": imageId}).then((res) async {
       Map data = res.data;
       var duplicates = [];
       if (data["error"] == true) {
@@ -479,7 +481,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
       _timer.cancel();
     }
     _timer = Timer(const Duration(milliseconds: 1000), () {
-      Api.post("users/checkDuplicate", {"k": key, "v": value}).then((res) async {
+      Api.post(EndPoints.users_checkDuplicate, {"k": key, "v": value}).then((res) async {
         print(res.data);
         _userNameCheking = 0;
         if (res.data["duplicate"] == true) {

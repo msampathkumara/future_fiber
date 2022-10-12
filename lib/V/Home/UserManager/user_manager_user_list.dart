@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:smartwind/C/DB/DB.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/hive.dart';
@@ -13,6 +14,7 @@ import 'package:smartwind/Web/Widgets/ShowMessage.dart';
 
 import '../../../C/Api.dart';
 import '../../../M/AppUser.dart';
+import '../../../M/PermissionsEnum.dart';
 import '../../../Web/V/UserManager/UpdateUserDetails.dart';
 import 'AddNfcCard.dart';
 import 'UserDetails.dart';

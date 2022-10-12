@@ -192,7 +192,7 @@ class __LoadingState extends State<_Loading> {
                   ? const SizedBox()
                   : Center(
                       child: Container(
-                        color: Colors.yellow,
+                      color: Colors.yellow,
                       padding: const EdgeInsets.all(7),
                       width: 150,
                       height: 50,
@@ -286,8 +286,14 @@ class QcDataSourceAsync extends AsyncDataTableSource {
             )),
             // specificRowHeight: this.hasRowHeightOverrides && qc.fat >= 25 ? 100 : null,
             cells: [
-              DataCell(
-                  Wrap(direction: Axis.vertical, children: [Text((qc.ticket?.mo) ?? ""), Text((qc.ticket?.oe) ?? "", style: const TextStyle(color: Colors.red, fontSize: 12))])),
+              DataCell(InkWell(
+                  onTap: () {
+                    if (qc.ticket != null) {
+                      TicketInfo(qc.ticket!).show(context);
+                    }
+                  },
+                  child: Wrap(
+                      direction: Axis.vertical, children: [Text((qc.ticket?.mo) ?? ""), Text((qc.ticket?.oe) ?? "", style: const TextStyle(color: Colors.red, fontSize: 12))]))),
               DataCell(Text(qc.quality ?? '')),
               DataCell(Text('${qc.getDateTime()}')),
               DataCell(Text(qc.qc == 1 ? 'QC' : 'QA')),

@@ -109,10 +109,7 @@ class _AddDefaultEmployeeCountsState extends State<AddDefaultEmployeeCounts> {
                 child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ElevatedButton(
-                        onPressed: () {
-                          save();
-                        },
-                        child: const Text("Save as Defaults"))))
+                        onPressed: save, child: const Text("Save as Defaults"))))
             : null);
   }
 

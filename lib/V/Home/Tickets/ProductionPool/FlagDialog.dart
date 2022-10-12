@@ -6,6 +6,7 @@ import 'package:smartwind/M/TicketFlag.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 
 import '../../../../C/Api.dart';
+import '../../../../M/EndPoints.dart';
 import '../../../../M/NsUser.dart';
 import '../../../../ns_icons_icons.dart';
 import '../../../Widgets/UserImage.dart';
@@ -268,11 +269,11 @@ class _FlagDialogNewState extends State<FlagDialogNew> {
   }
 
   static Future setFlag(String type, String comment, Ticket ticket) {
-    return Api.post("tickets/flags/setFlag", {"comment": comment, "type": type, "ticket": ticket.id.toString()});
+    return Api.post(EndPoints.tickets_flags_setFlag, {"comment": comment, "type": type, "ticket": ticket.id.toString()});
   }
 
   static removeFlag(String type, Ticket ticket) {
-    return Api.post("tickets/flags/removeFlag", {"type": type, "ticket": ticket.id.toString()});
+    return Api.post(EndPoints.tickets_flags_removeFlag, {"type": type, "ticket": ticket.id.toString()});
   }
 
   void setFlagInfo() {

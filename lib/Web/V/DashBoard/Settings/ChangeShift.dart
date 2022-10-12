@@ -34,9 +34,55 @@ class _ChangeShiftsState extends State<ChangeShifts> {
 
   String? selectedFactory;
 
+  late DateTime minStartTime;
+
+  late DateTime maxEndTime;
+
   get isFactorySelected => selectedFactory != null;
 
-  // get isDateSelected => selectedDate != null;
+  get timeValidateOk {
+    List<Map<String, DateTime>> times = [];
+
+    times.add({'start': minStartTime.subtract(const Duration(hours: 1)), 'end': minStartTime});
+    times.add({'start': maxEndTime, 'end': maxEndTime.add(const Duration(hours: 1))});
+
+    for (var e in _shiftsList) {
+      DateTime? d = e.startAt;
+      TimeOfDay? t = e.startAtTime;
+      DateTime start = DateTime(d?.year ?? 0, d?.month ?? 0, d?.day ?? 0, t.hour, t.minute);
+      DateTime end = start.add(Duration(minutes: int.parse("${getDuration(e.startAtTime, e.endAtTime) * 60}")));
+      times.add({'start': start, 'end': end});
+    }
+
+    // times.sort((a, b) => (a['start'])!.compareTo(b['start']!));
+
+    bool x = true;
+
+    times.sort((a, b) {
+      // print('${a['start']} -${a['end']} --- ${b['start']} - ${b['end']} ');
+      //
+      // print('${a['start'].isNotBetween(b['start']!, b['end']!)}'
+      //     ' ${b['start'].isNotBetween(a['start']!, a['end']!)}'
+      //     ' ${a['end'].isNotBetween(b['start']!, a['end']!)}'
+      //     ' ${b['end'].isNotBetween(a['start']!, a['end']!)}');
+
+      if (a['start'].isNotBetween(b['start']!, b['end']!)! &&
+          b['start'].isNotBetween(a['start']!, a['end']!)! &&
+          a['end'].isNotBetween(b['start']!, a['end']!)! &&
+          b['end'].isNotBetween(a['start']!, a['end']!)!) {
+      } else {
+        x = false;
+      }
+
+      return (b['start'])!.compareTo(a['start']!);
+    });
+
+    print('------------------------ $x ----------------------');
+
+    return x;
+  }
+
+// get isDateSelected => selectedDate != null;
 
   @override
   void initState() {
@@ -79,12 +125,14 @@ class _ChangeShiftsState extends State<ChangeShifts> {
                           ],
                         ),
                       ),
-                      const Spacer()
+                      const Spacer(),
+                      Text("Maximum end time :${DateFormat('yyyy-MM-dd HH:mm').format(maxEndTime ?? DateTime.now())}", style: const TextStyle(color: Colors.red)),
+                      Text("Minimum start time :${DateFormat('yyyy-MM-dd HH:mm').format(minStartTime ?? DateTime.now())}", style: const TextStyle(color: Colors.red))
                     ],
                   ),
         bottomNavigationBar: (loading || !isFactorySelected)
             ? null
-            : BottomAppBar(child: Padding(padding: const EdgeInsets.all(8.0), child: ElevatedButton(onPressed: save, child: const Text("Save")))));
+            : BottomAppBar(child: Padding(padding: const EdgeInsets.all(8.0), child: ElevatedButton(onPressed: (timeValidateOk) ? save : null, child: const Text("Save")))));
   }
 
   String dif(TimeOfDay t1, TimeOfDay t2) {
@@ -203,6 +251,8 @@ class _ChangeShiftsState extends State<ChangeShifts> {
       Map data = res.data;
 
       _shiftsList = Shift.fromJsonArray(data["shifts"]);
+      minStartTime = Shift.stringToDateTime(data["minStartTime"]);
+      maxEndTime = Shift.stringToDateTime(data["maxEndTime"]);
 
       shiftsMap = {for (var e in _shiftsList) e.shiftName ?? '': e};
     }).whenComplete(() {
@@ -229,18 +279,13 @@ class _ChangeShiftsState extends State<ChangeShifts> {
       return e;
     }).toList();
 
-    Api.post(EndPoints.dashboard_settings_saveShifts, {"shifts": shifts}).then((res) {}).whenComplete(() {
+    Api.post(EndPoints.dashboard_settings_saveShifts, {"shifts": shifts, 'factory': selectedFactory}).then((res) {}).whenComplete(() {
+      Navigator.pop(context);
       setState(() {
         loading = false;
       });
     }).catchError((err) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(err.toString()),
-          action: SnackBarAction(
-              label: 'Retry',
-              onPressed: () {
-                save();
-              })));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.toString()), action: SnackBarAction(label: 'Retry', onPressed: save)));
       setState(() {
         // _dataLoadingError = true;
       });

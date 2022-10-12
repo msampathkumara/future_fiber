@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -37,6 +39,8 @@ class HiveBox {
 
   static late final Box<UserPermissions> userPermissions;
 
+  static StreamSubscription<DatabaseEvent>? userUpdatesListener;
+
   /// Create an instance of HiveBox to use throughout the app.
   static Future create() async {
     var packageInfo = await PackageInfo.fromPlatform();
@@ -71,6 +75,13 @@ class HiveBox {
     if (kIsWeb) {
       FirebaseAuth.instance.authStateChanges().listen((User? user) async {
         if (user != null) {
+          if (userUpdatesListener != null) {
+            userUpdatesListener?.cancel();
+          }
+          userUpdatesListener = FirebaseDatabase.instance.ref('userUpdates').onValue.listen((DatabaseEvent event) {
+            HiveBox.getDataFromServer();
+          });
+
           FirebaseDatabase.instance.ref('db_upon').onValue.listen((DatabaseEvent event) {
             HiveBox.getDataFromServer();
           });
@@ -131,9 +142,9 @@ class HiveBox {
         await usersBox.clear();
       }
 
-      print('5');
+      // print('5');
       Map res = response.data;
-      print(res["users"]);
+      // print(res["users"]);
       List<NsUser> usersList = NsUser.fromJsonArray(res["users"] ?? []);
 
       List<Ticket> ticketsList = Ticket.fromJsonArray(res["tickets"] ?? []);
@@ -237,6 +248,7 @@ class HiveBox {
     var i = getUptimes();
     i.standardTickets = 0;
     setUptimes(i.toJson());
+    getDataFromServer();
   }
 
   static deleteTicket(data) {

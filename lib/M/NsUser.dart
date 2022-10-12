@@ -8,6 +8,7 @@ import 'package:smartwind/res.dart';
 
 import '../C/Api.dart';
 import 'AppUser.dart';
+import 'EndPoints.dart';
 import 'HiveClass.dart';
 import 'Section.dart';
 import 'User/Email.dart';
@@ -237,7 +238,7 @@ class NsUser extends HiveClass {
   }
 
   Future removeNfcCard(context, {required onDone}) async {
-    return await Api.post("users/removeNfcCard", {'userId': id})
+    return await Api.post(EndPoints.users_removeNfcCard, {'userId': id})
         .then((res) {
           Map data = res.data;
           hasNfc = 0;

@@ -135,17 +135,18 @@ class _KitViewState extends State<KitView> {
                                       DataColumn2(label: Text('User'), size: ColumnSize.L)
                                     ], rows: [
                                       for (var material in _kit.items) getMatRow(material),
-                                      DataRow2(cells: [
-                                        DataCell.empty,
-                                        DataCell.empty,
-                                        DataCell.empty,
-                                        DataCell.empty,
-                                        DataCell(TextButton(
-                                            onPressed: () async {
-                                              await AddMaterials(_kit.id).show(context) == true ? apiGetData() : null;
-                                            },
-                                            child: const Text("Add Materials")))
-                                      ])
+                                   if (kIsWeb)
+                                        DataRow2(cells: [
+                                          DataCell.empty,
+                                          DataCell.empty,
+                                          DataCell.empty,
+                                          DataCell.empty,
+                                          DataCell(TextButton(
+                                              onPressed: () async {
+                                                await AddMaterials(_kit.id).show(context) == true ? apiGetData() : null;
+                                              },
+                                              child: const Text("Add Materials")))
+                                        ])
                                     ]),
                                   ),
                                 ),

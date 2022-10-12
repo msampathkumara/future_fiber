@@ -9,6 +9,7 @@ import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/UserImage.dart';
 
 import '../../../C/Api.dart';
+import '../../../M/EndPoints.dart';
 
 class AddNfcCard extends StatefulWidget {
   final NsUser nsUser;
@@ -142,7 +143,7 @@ class _AddNfcCardState extends State<AddNfcCard> {
   var nfcCode;
 
   Future<void> save(bool confirm) async {
-    await Api.post("users/setNfcCard", {"nfc": nfcCode, "userId": widget.nsUser.id, "confirm": confirm}).then((value) {
+    await Api.post(EndPoints.users_setNfcCard, {"nfc": nfcCode, "userId": widget.nsUser.id, "confirm": confirm}).then((value) {
       print("value.statusCode == ${value.data.toString()}");
       loading = false;
       Map data = value.data;

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/CPR/CPR.dart';
 import 'package:smartwind/M/CPR/CprItem.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 
@@ -74,7 +75,7 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                 onPressed: () {
                   saving = true;
                   setState(() {});
-                  Api.post("cpr/saveCpr", _cpr.toJson()).then((value) {
+                  Api.post(EndPoints.materialManagement_cpr_saveCpr, _cpr.toJson()).then((value) {
                     saving = false;
                     Navigator.of(context).pop();
                   }).catchError((onError) {

@@ -21,7 +21,7 @@ Future<void> showCprOptions(CPR cpr, BuildContext context1, BuildContext context
             Expanded(
                 child: SingleChildScrollView(
                     child: Column(children: [
-              if (AppUser.havePermissionFor(Permissions.CPR))
+              if (AppUser.havePermissionFor(NsPermissions.CPR_DELETE_CPR))
                 ListTile(
                     title: const Text("Delete CPR"),
                     leading: const Icon(Icons.delete_rounded),

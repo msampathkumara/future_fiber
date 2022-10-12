@@ -2,10 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/Api.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/NsUser.dart';
+import 'package:smartwind/M/PermissionsEnum.dart';
 import 'package:smartwind/M/user_config.dart';
 
+import '../C/DB/DB.dart';
 import 'Section.dart';
 import 'hive.dart';
 
@@ -46,7 +49,7 @@ class AppUser extends NsUser {
   }
 
   static Future setSelectedSection(Section section) {
-    return Api.post("user/setUserSection", {'sectionId': section.id}).then((value) {
+    return Api.post(EndPoints.user_setUserSection, {'sectionId': section.id}).then((value) {
       UserConfig userConfig = getUserConfig();
       userConfig.selectedSection = section;
       userConfig.save();
@@ -55,11 +58,12 @@ class AppUser extends NsUser {
 
   static Future refreshUserData() {
     _userIsAdmin = null;
-    return Api.get("user/getUserData", {}).then((value) {
+    return Api.get(EndPoints.user_getUserData, {}).then((value) {
       Map res = value.data;
-      print(res);
+      // print(res);
       NsUser nsUser = NsUser.fromJson(res["user"]);
       AppUser.setUser(nsUser);
+      DB.callChangesCallBack(DataTables.AppUser);
       updateUserChangers();
       return nsUser;
     });
@@ -94,16 +98,16 @@ class AppUser extends NsUser {
   }
 
   static void updateUserChangers() {
-    listeners.forEach((element) {
+    for (var element in listeners) {
       try {
         element();
       } catch (e) {
         print('EEEEEEEEEEEEEE');
       }
-    });
+    }
   }
 
-  static havePermissionFor(Permissions permission) {
+  static havePermissionFor(NsPermissions permission) {
     return (getUser()?.permissions.indexOf(permission.getValue()) ?? -1) > -1;
   }
 

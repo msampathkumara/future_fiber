@@ -14,6 +14,7 @@ import 'package:smartwind/Web/V/MaterialManagement/CPR/webCprView.dart';
 import 'package:smartwind/Web/Widgets/myDropDown.dart';
 
 import '../../../../M/AppUser.dart';
+import '../../../../M/PermissionsEnum.dart';
 import '../../../../M/Ticket.dart';
 import '../../../../V/Widgets/NoResultFoundMsg.dart';
 import '../../../Widgets/ShowMessage.dart';

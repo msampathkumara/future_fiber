@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hex/hex.dart';
@@ -21,7 +24,7 @@ import 'CheckTabStatus.dart';
 import 'PasswordRecovery.dart';
 
 class Login extends StatefulWidget {
-  const Login();
+  const Login({super.key});
 
   @override
   _LoginState createState() {
@@ -45,6 +48,8 @@ class _LoginState extends State<Login> {
   String appVersion = "";
 
   bool visiblePassword = false;
+
+  StreamSubscription<DatabaseEvent>? userPermissionsUponListener;
 
   @override
   initState() {
@@ -110,133 +115,133 @@ class _LoginState extends State<Login> {
         backgroundColor: Colors.white,
         body: loading
             ? Center(
-                child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: const [CircularProgressIndicator(), Padding(padding: EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
-              ))
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: const [CircularProgressIndicator(), Padding(padding: EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
+            ))
             : kIsWeb
-                ? getWebUi()
-                : Stack(
-                    children: [
-                      if (kIsWeb)
-                        Container(
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(image: AssetImage(Res.background), fit: BoxFit.cover),
-                          ),
-                          child: null /* add child content here */,
-                        ),
-                      if (!kIsWeb)
-                        SizedBox.expand(
-                            child: FittedBox(
-                                clipBehavior: Clip.antiAlias,
-                                fit: BoxFit.fill,
-                                child: SizedBox(
-                                    width: _videoPlayerController.value.size.width, height: _videoPlayerController.value.size.height, child: VideoPlayer(_videoPlayerController)))),
-                      Center(
-                          child: Container(
-                              decoration: const BoxDecoration(
-                                borderRadius: BorderRadius.all(Radius.circular(15)),
-                                color: Colors.white70,
+            ? getWebUi()
+            : Stack(
+          children: [
+            if (kIsWeb)
+              Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(image: AssetImage(Res.background), fit: BoxFit.cover),
+                ),
+                child: null /* add child content here */,
+              ),
+            if (!kIsWeb)
+              SizedBox.expand(
+                  child: FittedBox(
+                      clipBehavior: Clip.antiAlias,
+                      fit: BoxFit.fill,
+                      child: SizedBox(
+                          width: _videoPlayerController.value.size.width, height: _videoPlayerController.value.size.height, child: VideoPlayer(_videoPlayerController)))),
+            Center(
+                child: Container(
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                      color: Colors.white70,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(32.0),
+                      child: SizedBox(
+                          width: 300,
+                          child: Wrap(direction: Axis.horizontal, children: [
+                            Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: Center(
+                                child: CircleAvatar(
+                                  radius: 100,
+                                  child: Image.asset(Res.north_sails_logo),
+                                ),
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(32.0),
-                                child: SizedBox(
-                                    width: 300,
-                                    child: Wrap(direction: Axis.horizontal, children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(24.0),
-                                        child: Center(
-                                          child: CircleAvatar(
-                                            radius: 100,
-                                            child: Image.asset(Res.north_sails_logo),
-                                          ),
-                                        ),
+                            ),
+                            const SizedBox(
+                              height: 62,
+                            ),
+                            TextFormField(
+                                autofocus: false,
+                                onFieldSubmitted: (d) {
+                                  _passwordFocusNode.requestFocus();
+                                },
+                                style: const TextStyle(fontSize: 20, color: Colors.blue),
+                                cursorColor: Colors.blue,
+                                initialValue: _user.uname,
+                                // decoration: FormInputDecoration.getDeco(hintText: 'Enter User Name', prefixIcon: Icon(Icons.account_circle_outlined, color: Colors.lightBlue)),
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    borderSide: const BorderSide(color: Colors.black),
+                                  ),
+                                  prefixIcon: const Padding(
+                                    padding: EdgeInsets.only(left: 8.0),
+                                    child: Icon(Icons.account_circle_outlined, color: Colors.blue),
+                                  ),
+                                  hintText: 'Enter User Name',
+                                  hintStyle: TextStyle(color: Colors.blue.shade200),
+                                  fillColor: Colors.white,
+                                  filled: true,
+                                  contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                                ),
+                                onChanged: (uname) {
+                                  _user.uname = uname;
+                                }),
+                            const SizedBox(
+                              height: 84,
+                            ),
+                            // Text("Password",
+                            //     style:
+                            //         TextStyle(color: Colors.black, fontSize: 20)),
+                            TextFormField(
+                                focusNode: _passwordFocusNode,
+                                cursorColor: Colors.blue,
+                                onFieldSubmitted: (f) {
+                                  _login();
+                                },
+                                style: const TextStyle(fontSize: 20, color: Colors.blue),
+                                initialValue: _user.pword,
+                                obscureText: hidePassword,
+                                autofocus: false,
+                                decoration: InputDecoration(
+                                    suffixIcon: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          hidePassword = !hidePassword;
+                                        });
+                                      },
+                                      icon: Icon(hidePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: Colors.blue),
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                      borderSide: const BorderSide(
+                                        color: Colors.black,
                                       ),
-                                      const SizedBox(
-                                        height: 62,
-                                      ),
-                                      TextFormField(
-                                          autofocus: false,
-                                          onFieldSubmitted: (d) {
-                                            _passwordFocusNode.requestFocus();
-                                          },
-                                          style: const TextStyle(fontSize: 20, color: Colors.blue),
-                                          cursorColor: Colors.blue,
-                                          initialValue: _user.uname,
-                                          // decoration: FormInputDecoration.getDeco(hintText: 'Enter User Name', prefixIcon: Icon(Icons.account_circle_outlined, color: Colors.lightBlue)),
-                                          decoration: InputDecoration(
-                                            border: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(5.0),
-                                              borderSide: const BorderSide(color: Colors.black),
-                                            ),
-                                            prefixIcon: const Padding(
-                                              padding: EdgeInsets.only(left: 8.0),
-                                              child: Icon(Icons.account_circle_outlined, color: Colors.blue),
-                                            ),
-                                            hintText: 'Enter User Name',
-                                            hintStyle: TextStyle(color: Colors.blue.shade200),
-                                            fillColor: Colors.white,
-                                            filled: true,
-                                            contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                                          ),
-                                          onChanged: (uname) {
-                                            _user.uname = uname;
-                                          }),
-                                      const SizedBox(
-                                        height: 84,
-                                      ),
-                                      // Text("Password",
-                                      //     style:
-                                      //         TextStyle(color: Colors.black, fontSize: 20)),
-                                      TextFormField(
-                                          focusNode: _passwordFocusNode,
-                                          cursorColor: Colors.blue,
-                                          onFieldSubmitted: (f) {
-                                            _login();
-                                          },
-                                          style: const TextStyle(fontSize: 20, color: Colors.blue),
-                                          initialValue: _user.pword,
-                                          obscureText: hidePassword,
-                                          autofocus: false,
-                                          decoration: InputDecoration(
-                                              suffixIcon: IconButton(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    hidePassword = !hidePassword;
-                                                  });
-                                                },
-                                                icon: Icon(hidePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: Colors.blue),
-                                              ),
-                                              border: OutlineInputBorder(
-                                                borderRadius: BorderRadius.circular(5.0),
-                                                borderSide: const BorderSide(
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                              prefixIcon: const Padding(
-                                                padding: EdgeInsets.only(left: 8.0),
-                                                child: Icon(Icons.lock_outlined, color: Colors.blue),
-                                              ),
-                                              hintText: 'Enter Password',
-                                              hintStyle: TextStyle(color: Colors.blue.shade200),
-                                              fillColor: Colors.white,
-                                              filled: true,
-                                              contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                                              focusedBorder:
-                                                  OutlineInputBorder(borderSide: const BorderSide(color: Colors.blueAccent, width: 1.0), borderRadius: BorderRadius.circular(5.0)),
-                                              enabledBorder:
-                                                  OutlineInputBorder(borderRadius: BorderRadius.circular(5.0), borderSide: BorderSide(color: Colors.blueGrey.shade50, width: 1.0))),
-                                          onChanged: (pword) {
-                                            _user.pword = pword;
-                                          }),
-                                      const SizedBox(height: 64),
+                                    ),
+                                    prefixIcon: const Padding(
+                                      padding: EdgeInsets.only(left: 8.0),
+                                      child: Icon(Icons.lock_outlined, color: Colors.blue),
+                                    ),
+                                    hintText: 'Enter Password',
+                                    hintStyle: TextStyle(color: Colors.blue.shade200),
+                                    fillColor: Colors.white,
+                                    filled: true,
+                                    contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                                    focusedBorder:
+                                    OutlineInputBorder(borderSide: const BorderSide(color: Colors.blueAccent, width: 1.0), borderRadius: BorderRadius.circular(5.0)),
+                                    enabledBorder:
+                                    OutlineInputBorder(borderRadius: BorderRadius.circular(5.0), borderSide: BorderSide(color: Colors.blueGrey.shade50, width: 1.0))),
+                                onChanged: (pword) {
+                                  _user.pword = pword;
+                                }),
+                            const SizedBox(height: 64),
 
-                                      Text(errorMessage, style: const TextStyle(color: Colors.red, fontSize: 20)),
-                                      // Align(
-                                      //     alignment: Alignment.centerRight,
-                                      //     child: Padding(
-                                      //         padding: const EdgeInsets.all(4.0),
-                                      //         child: TextButton(onPressed: _recoverPassword, child: const Text("Forgot Password ?", style: TextStyle(color: Colors.white))))),
+                            Text(errorMessage, style: const TextStyle(color: Colors.red, fontSize: 20)),
+                            // Align(
+                            //     alignment: Alignment.centerRight,
+                            //     child: Padding(
+                            //         padding: const EdgeInsets.all(4.0),
+                            //         child: TextButton(onPressed: _recoverPassword, child: const Text("Forgot Password ?", style: TextStyle(color: Colors.white))))),
 
                                       SizedBox(
                                           width: double.infinity,
@@ -248,42 +253,33 @@ class _LoginState extends State<Login> {
                                       SizedBox(
                                           width: double.infinity,
                                           child: TextButton(
-                                            onPressed: () async {
-                                              // await Navigator.push(context, MaterialPageRoute(builder: (context) => const PasswordRecovery()));
-                                              await const PasswordRecovery().show(context);
-                                            },
-                                            child: const Text('forgot my password'),
-                                            // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0), side: const BorderSide(color: Colors.orange)),
-                                          )),
+                                              onPressed: () async {
+                                                await const PasswordRecovery().show(context);
+                                              },
+                                              child: const Text('forgot my password'))),
                                       if (nfcIsAvailable) const SizedBox(height: 84),
                                       if (nfcIsAvailable) const Center(child: Text("  Or ", style: TextStyle(color: Colors.grey, fontSize: 20), textAlign: TextAlign.center)),
                                       if (nfcIsAvailable) const SizedBox(height: 32),
                                       if (nfcIsAvailable) const Center(child: Text("Use NFC card to login ", style: TextStyle(color: Colors.black, fontSize: 25)))
                                     ])),
-                              ))),
-                    ],
-                  ));
+                    ))),
+          ],
+        ));
   }
 
   _login() {
-    print('-----------------------------------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx__login__');
     errorMessage = "";
     if (nfcCode.isEmpty && (_user.uname.isEmpty || _user.pword.isEmpty)) {
-      print(_user.toJson());
       errorMessage = "Enter username and password";
       setState(() {});
       return;
     }
-    print({"uname": _user.uname, "pword": _user.pword, "nfc": nfcCode});
 
     setLoading(true);
 
     Dio dio = Dio();
     dio.options.headers['content-Type'] = 'application/json';
     dio.post(Server.getServerPath("user/login"), data: {"uname": _user.uname, "pword": _user.pword, "nfc": nfcCode}).then((response) async {
-      print('-----------------------------------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx__login__2');
-      print(response.data);
-
       Map res = response.data;
 
       if (res["locked"] == true) {
@@ -311,7 +307,18 @@ class _LoginState extends State<Login> {
       if (googleUserCredential.user != null) {
         if (!kIsWeb) {
           NfcManager.instance.stopSession();
+        } else {
+          var userId = res['userId'];
+
+          if (userPermissionsUponListener != null) {
+            userPermissionsUponListener?.cancel();
+          }
+          // userPermissionsUponListener = FirebaseDatabase.instance.ref('userPermissionsUpon').child('$userId').onValue.listen((DatabaseEvent event) {
+          //   print('--------------------------------------------------------userPermissionsUpon');
+          //   // AppUser.refreshUserData();
+          // });
         }
+
         AppUser.refreshUserData().then((nsUser) async {
           Section? section = nsUser.sections.length > 0 ? nsUser.sections[0] : null;
           if (section != null) {
@@ -349,9 +356,9 @@ class _LoginState extends State<Login> {
       if (kIsWeb)
         SizedBox.expand(
             child: FittedBox(
-          fit: BoxFit.cover,
-          child: Image.asset(Res.background),
-        )),
+              fit: BoxFit.cover,
+              child: Image.asset(Res.background),
+            )),
       if (!loading) Center(child: _body()),
       if (loading) ConstrainedBox(constraints: const BoxConstraints.expand(), child: Container(color: Colors.black54, child: const Center(child: CircularProgressIndicator()))),
       Align(

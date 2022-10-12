@@ -11,6 +11,7 @@ import 'package:smartwind/Web/V/QC/webQView.dart';
 import '../../../C/Api.dart';
 import '../../../M/Enums.dart';
 import '../../../M/Ticket.dart';
+import '../../../V/Home/Tickets/TicketInfo/TicketInfo.dart';
 import '../../../V/Widgets/NoResultFoundMsg.dart';
 import '../../Styles/styles.dart';
 

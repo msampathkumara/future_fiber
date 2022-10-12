@@ -27,6 +27,7 @@ import '../C/Api.dart';
 import '../V/Widgets/TicketPdfViwer.dart';
 import 'AppUser.dart';
 import 'DataObject.dart';
+import 'EndPoints.dart';
 import 'LocalFileVersion.dart';
 import 'Ticket/CprReport.dart';
 import 'hive.dart';
@@ -268,7 +269,10 @@ class Ticket extends DataObject {
         final blob = html.Blob([rs.data], 'application/pdf');
         final url = html.Url.createObjectUrlFromBlob(blob);
         html.window.open(url, "_blank");
-        html.Url.revokeObjectUrl(url);
+
+        // var windowBase = html.window.open(url, "_blank");
+
+        // html.Url.revokeObjectUrl(url);
       }
 
       return;
@@ -447,7 +451,7 @@ class Ticket extends DataObject {
   }
 
   static Future start(Ticket ticket, context) {
-    return Api.post("tickets/start", {"ticket": ticket.id.toString()}).then((response) {
+    return Api.post(EndPoints.tickets_start, {"ticket": ticket.id.toString()}).then((response) {
       if (kDebugMode) {
         print(response.data);
         print("-----------------vvvvvvvvxxxxxxxxxxvvv-----------------------");

@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:smartwind/M/AppUser.dart';
-import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/V/Home/UserManager/UserDetails.dart';
 import 'package:universal_html/html.dart' as html;
 
+import '../M/PermissionsEnum.dart';
 import '../V/Home/AppInfo.dart';
 import '../V/Widgets/UserImage.dart';
 import 'V/Admin/webAdmin.dart';
 import 'V/DashBoard/dashBoard.dart';
 import 'V/FinishedGoods/webFinishedGoods.dart';
-import 'V/Print/web_print.dart';
 import 'V/ProductionPool/webProductionPool.dart';
 import 'V/QC/web_qc.dart';
 import 'V/SheetData/webSheetData.dart';
@@ -96,7 +95,7 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                                             extended: false,
                                             selectedIndex: _selectedIndex,
                                             onDestinationSelected: (int index) {
-                                              if (index == 2 && (AppUser.havePermissionFor(Permissions.MATERIAL_MANAGEMENT))) {
+                                              if (index == 2) {
                                                 html.window.open("https://mm.smartwind.nsslsupportservices.com", 'new tab');
                                                 return;
                                               }
@@ -114,61 +113,61 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                                                   icon: const Icon(Icons.favorite_border),
                                                   selectedIcon: const Icon(Icons.favorite),
                                                   label: Text('Dash Board', style: TextStyle(fontSize: size))),
-                                              if (AppUser.havePermissionFor(Permissions.PRODUCTION_POOL))
+                                              if (AppUser.havePermissionFor(NsPermissions.TICKET_PRODUCTION_POOL))
                                                 NavigationRailDestination(
                                                     padding: const EdgeInsets.all(0),
                                                     icon: const Icon(Icons.bookmark_border),
                                                     selectedIcon: const Icon(Icons.book),
                                                     label: Text('Production Pool', style: TextStyle(fontSize: size))),
-                                              if (AppUser.havePermissionFor(Permissions.MATERIAL_MANAGEMENT))
+                                              if (AppUser.havePermissionFor(NsPermissions.MATERIAL_MANAGEMENT_MATERIAL_MANAGEMENT))
                                                 NavigationRailDestination(
                                                     icon: const Icon(Icons.extension_outlined),
                                                     selectedIcon: const Icon(Icons.extension_rounded),
                                                     label: Text('Material Management', style: TextStyle(fontSize: size))),
-                                              if (AppUser.havePermissionFor(Permissions.FINISH_TICKET))
+                                              if (AppUser.havePermissionFor(NsPermissions.TICKET_FINISH_TICKET))
                                                 NavigationRailDestination(
                                                     icon: const Icon(Icons.check_box),
                                                     selectedIcon: const Icon(Icons.check_box_outlined),
                                                     label: Text('Finished Goods', style: TextStyle(fontSize: size))),
-                                              if (AppUser.havePermissionFor(Permissions.STANDARD_FILES))
+                                              if (AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_STANDARD_FILES))
                                                 NavigationRailDestination(
                                                     icon: const Icon(Icons.library_books_rounded),
                                                     selectedIcon: const Icon(Icons.library_books_outlined),
                                                     label: Text('Standard Library', style: TextStyle(fontSize: size))),
-                                              // if (AppUser.havePermissionFor(Permissions.CPR))
+                                              // if (AppUser.havePermissionFor(NsPermissions.CPR))
                                               //   NavigationRailDestination(
                                               //       icon: Icon(Icons.star_border), selectedIcon: Icon(Icons.star), label: Text('CPR', style: TextStyle(fontSize: size))),
-                                              if (AppUser.havePermissionFor(Permissions.USER_MANAGER))
+                                              if (AppUser.havePermissionFor(NsPermissions.USERS_USER_MANAGER))
                                                 NavigationRailDestination(
                                                     icon: const Icon(Icons.supervised_user_circle_outlined),
                                                     selectedIcon: const Icon(Icons.supervised_user_circle_rounded),
                                                     label: Text('User Manager', style: TextStyle(fontSize: size))),
-                                              if (AppUser.havePermissionFor(Permissions.QC))
+                                              if (AppUser.havePermissionFor(NsPermissions.QC_QC))
                                                 NavigationRailDestination(
                                                     icon: const Icon(Icons.star_border),
                                                     selectedIcon: const Icon(Icons.star),
                                                     label: Text('QA & QC', style: TextStyle(fontSize: size))),
-                                              // if (AppUser.havePermissionFor(Permissions.PRINTING))
+                                              // if (AppUser.havePermissionFor(NsPermissions.PRINTING))
                                               //   NavigationRailDestination(
                                               //       icon: const Icon(Icons.print_outlined),
                                               //       selectedIcon: const Icon(Icons.print_rounded),
                                               //       label: Text('Printing', style: TextStyle(fontSize: size))),
-                                              // if (AppUser.havePermissionFor(Permissions.PENDING_TO_FINISH))
+                                              // if (AppUser.havePermissionFor(NsPermissions.PENDING_TO_FINISH))
                                               //   NavigationRailDestination(
                                               //       icon: Icon(Icons.pending_actions_outlined),
                                               //       selectedIcon: Icon(Icons.pending_actions_rounded),
                                               //       label: Text('Pending To Finish', style: TextStyle(fontSize: size))),
-                                              if (AppUser.havePermissionFor(Permissions.SHEET_DATA))
+                                              if (AppUser.havePermissionFor(NsPermissions.SHEET_ADD_DATA_SHEET))
                                                 NavigationRailDestination(
                                                     icon: const Icon(Icons.list_alt_outlined),
                                                     selectedIcon: const Icon(Icons.list_alt_rounded),
                                                     label: Text('Sheet Data', style: TextStyle(fontSize: size))),
-                                              if (AppUser.havePermissionFor(Permissions.TAB))
+                                              if (AppUser.havePermissionFor(NsPermissions.TAB_TAB))
                                                 NavigationRailDestination(
                                                     icon: const Icon(Icons.tablet_android_outlined),
                                                     selectedIcon: const Icon(Icons.tablet_android_rounded),
                                                     label: Text('Tabs', style: TextStyle(fontSize: size))),
-                                              if (AppUser.havePermissionFor(Permissions.ADMIN))
+                                              if (AppUser.havePermissionFor(NsPermissions.ADMIN_ADMIN))
                                                 NavigationRailDestination(
                                                     icon: const Icon(Icons.admin_panel_settings_outlined),
                                                     selectedIcon: const Icon(Icons.admin_panel_settings_rounded),
@@ -245,16 +244,16 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                   child: Center(
                       child: [
                 const DashBoard(),
-                if (AppUser.havePermissionFor(Permissions.PRODUCTION_POOL)) const WebProductionPool(),
-                if (AppUser.havePermissionFor(Permissions.MATERIAL_MANAGEMENT)) Container(),
-                if (AppUser.havePermissionFor(Permissions.FINISH_TICKET)) const WebFinishedGoods(),
-                if (AppUser.havePermissionFor(Permissions.STANDARD_FILES)) const WebStandardLibrary(),
-                if (AppUser.havePermissionFor(Permissions.USER_MANAGER)) const WebUserManager(),
-                if (AppUser.havePermissionFor(Permissions.QC)) const WebQc(),
-                        // if (AppUser.havePermissionFor(Permissions.PRINTING)) const WebPrint(),
-                if (AppUser.havePermissionFor(Permissions.SHEET_DATA)) const WebSheetData(),
-                if (AppUser.havePermissionFor(Permissions.TAB)) const WebTabs(),
-                if (AppUser.havePermissionFor(Permissions.ADMIN)) const WebAdmin(),
+                if (AppUser.havePermissionFor(NsPermissions.TICKET_PRODUCTION_POOL)) const WebProductionPool(),
+                if (AppUser.havePermissionFor(NsPermissions.MATERIAL_MANAGEMENT_MATERIAL_MANAGEMENT)) Container(),
+                if (AppUser.havePermissionFor(NsPermissions.TICKET_FINISH_TICKET)) const WebFinishedGoods(),
+                if (AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_STANDARD_FILES)) const WebStandardLibrary(),
+                if (AppUser.havePermissionFor(NsPermissions.USERS_USER_MANAGER)) const WebUserManager(),
+                if (AppUser.havePermissionFor(NsPermissions.QC_QC)) const WebQc(),
+                // if (AppUser.havePermissionFor(NsPermissions.PRINTING)) const WebPrint(),
+                if (AppUser.havePermissionFor(NsPermissions.SHEET_ADD_DATA_SHEET)) const WebSheetData(),
+                if (AppUser.havePermissionFor(NsPermissions.TAB_TAB)) const WebTabs(),
+                if (AppUser.havePermissionFor(NsPermissions.ADMIN_ADMIN)) const WebAdmin(),
                 const AppInfo()
               ].elementAt(_selectedIndex)))
             ],

@@ -4,7 +4,7 @@ description: NorthSails Smart Wind
 
 publish_to: 'none'
 
-version: 1.2.8+148
+version: 1.2.11+151
 
 environment:
   sdk: ">=2.17.0 <3.0.0"
@@ -17,11 +17,11 @@ dependencies:
 
   #  firebase------------------------------------------
   firebase_core: ^1.24.0
-  firebase_crashlytics: ^2.8.12
-  firebase_auth: ^3.11.1
-  firebase_messaging: ^13.0.4
-  firebase_database: ^9.1.6
-  firebase_auth_platform_interface: ^6.10.0
+  firebase_crashlytics: ^2.8.13
+  firebase_auth: ^3.11.2
+  firebase_messaging: ^13.1.0
+  firebase_database: ^9.1.7
+  firebase_auth_platform_interface: ^6.10.1
   firebase_core_web: ^1.7.3
 
   #  --------------------------------------------------
@@ -29,7 +29,7 @@ dependencies:
   flutter_share: 2.0.0
   flutter_barcode_scanner: ^2.0.0
   flutter_pdfview: ^1.2.5
-  flutter_inappwebview: ^5.4.4+2
+  flutter_inappwebview: ^5.4.4+3
   flutter_dropzone: ^3.0.5
 
   #  --------------------------------------------------
@@ -37,11 +37,11 @@ dependencies:
   percent_indicator: ^4.2.2
   nfc_manager: ^3.2.0
   shared_preferences: ^2.0.15
-  animations: ^2.0.5
-  image_picker: ^0.8.5+3
+  animations: ^2.0.7
+  image_picker: ^0.8.6
   jwt_decode: ^0.3.1
   webview_flutter: ^3.0.4
-  permission_handler: ^10.0.2
+  permission_handler: ^10.1.0
   path_provider: ^2.0.11
   hex: ^0.2.0
   package_info_plus: ^1.4.3+1
@@ -76,22 +76,22 @@ dependencies:
   dropdown_button2: ^1.8.2
   pdfx: ^2.2.0
   textfield_search: ^0.10.0
-  searchfield: ^0.7.0
+  searchfield: ^0.7.1
   csv: ^5.0.1
   pdf_render: ^1.3.4
-  syncfusion_flutter_charts: ^20.3.47
+  syncfusion_flutter_charts: ^20.3.48
   random_password_generator: ^0.2.1
   flutter_slidable: ^2.0.0
   intl: ^0.17.0
   app_settings: ^4.1.8
   contextmenu: ^3.0.0
-  syncfusion_flutter_datepicker: ^20.3.47
+  syncfusion_flutter_datepicker: ^20.3.48
   badges: ^2.0.3
   just_the_tooltip: ^0.0.12
   url_launcher: ^6.1.6
 
   json_theme: ^4.0.1+3
-  syncfusion_flutter_sliders: ^20.3.47
+  syncfusion_flutter_sliders: ^20.3.48
 
 
 

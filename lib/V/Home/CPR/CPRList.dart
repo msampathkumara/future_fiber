@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:measured_size/measured_size.dart';
 import 'package:smartwind/M/CPR/CPR.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/V/Widgets/RefreshIndicatorMessageBox.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 
@@ -514,7 +515,7 @@ class _CPRListState extends State<CPRList> {
                     title: const Text("Delete"),
                     leading: const Icon(Icons.delete_forever_rounded, color: Colors.red),
                     onTap: () async {
-                      await Api.post("cpr/delete", {"cpr": cpr.id});
+                      await Api.post(EndPoints.materialManagement_cpr_delete, {"cpr": cpr.id});
                       _cprList.removeWhere((element) => element.id == cpr.id);
                       // _reloadData(currentPage);
                       Navigator.of(context).pop();

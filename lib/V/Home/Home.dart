@@ -14,7 +14,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartwind/C/FCM.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/AppUser.dart';
-import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Section.dart';
 import 'package:smartwind/M/hive.dart';
@@ -28,6 +27,8 @@ import 'package:smartwind/V/Widgets/UserImage.dart';
 import 'package:smartwind/res.dart';
 
 import '../../C/Api.dart';
+import '../../M/EndPoints.dart';
+import '../../M/PermissionsEnum.dart';
 import 'About.dart';
 import 'Admin/AdminCpanel.dart';
 import 'BlueBook/BlueBook.dart';
@@ -171,21 +172,21 @@ class _HomeState extends State<Home> {
                               openWidget: const StandardFiles(),
                               onClosed: _showMarkedAsDoneSnackBar,
                             ),
-                            if (AppUser.havePermissionFor(Permissions.USER_MANAGER))
+                            if (AppUser.havePermissionFor(NsPermissions.USERS_USER_MANAGER))
                               _OpenContainerWrapper(
                                   closedBuilder: (BuildContext _, VoidCallback openContainer) {
                                     return _menuButton(openContainer, Icon(Icons.people_outline_outlined, color: Colors.lightGreen, size: iconSize), "User Manager");
                                   },
                                   openWidget: const UserManager(),
                                   onClosed: _showMarkedAsDoneSnackBar),
-                            // if (AppUser.havePermissionFor(Permissions.PRINTING))
+                            // if (AppUser.havePermissionFor(NsPermissions.PRINTING))
                             //   _OpenContainerWrapper(
                             //       closedBuilder: (BuildContext _, VoidCallback openContainer) {
                             //         return _menuButton(openContainer, Icon(Icons.print_rounded, size: iconSize, color: Colors.blue), "Print");
                             //       },
                             //       openWidget: const PrintManager(),
                             //       onClosed: _showMarkedAsDoneSnackBar),
-                            if (AppUser.havePermissionFor(Permissions.QC))
+                            if (AppUser.havePermissionFor(NsPermissions.QC_QC))
                               _OpenContainerWrapper(
                                   closedBuilder: (BuildContext _, VoidCallback openContainer) {
                                     return _menuButton(openContainer, Icon(Icons.verified_rounded, size: iconSize, color: Colors.green), "QA & QC");
@@ -246,7 +247,7 @@ class _HomeState extends State<Home> {
     PermissionStatus ps = await Permission.phone.request();
     if (ps.isGranted) {
       String imeiNo = await DeviceInformation.deviceIMEINumber;
-      await Api.post("tabs/logout", {"imei": imeiNo}).then((response) async {
+      await Api.post(EndPoints.tab_logout, {"imei": imeiNo}).then((response) async {
         if (response.data["saved"] == true) {
           print("----------------------------------------55555555555555555555");
         } else {

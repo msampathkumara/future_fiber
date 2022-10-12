@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 
 import '../ns_icons_icons.dart';
 import 'HiveClass.dart';
+import 'PermissionsEnum.dart';
 
 enum Production { All, Upwind, OD, Nylon_Standard, Nylon_Custom, OEM, _38_Upwind, _38_Nylon_Standard, _38_OEM, _38_OD, _38_Nylon_Custom, None }
 
@@ -104,69 +105,69 @@ extension f on Box {
     return values.toList();
   }
 }
+//
+// enum ns {
+//   TAB,
+//   ALERT_MANAGER,
+//   SHORT_MANAGER_RESPOND,
+//   SHORT_MANAGER_DELETE,
+//   UPLOAD_TICKET,
+//   UPLOAD_STANDARD_FILES,
+//   DELETE_TICKETS,
+//   DELETE_COMPLETED_TICKETS,
+//   DELETE_STANDARD_FILES,
+//   CANCEL_ROUTE,
+//   PRINTING,
+//   USER_MANAGER,
+//   DATABASE_UPLOAD,
+//   WEB,
+//   SEND_TO_PRINTING,
+//   EMAIL_PDF,
+//   EDIT_ANY_PDF,
+//   Edit_PDF_IN_STANDED_LIB,
+//   QC,
+//   EDIT_COMPLETED_TICKET,
+//   ADD_MISSING_DATES,
+//   ADD_CPR,
+//   SEND_ANY_CPR,
+//   RECEIVE_ANY_CPR,
+//   USER_ADD_USER,
+//   TICKET_RENAME_MO,
+//   CPR,
+//   PRODUCTION_POOL,
+//   HR,
+//   BLUE_BOOK,
+//   J109,
+//   SET_RED_FLAG,
+//   STOP_PRODUCTION,
+//   SET_GR,
+//   SET_RUSH,
+//   FINISH_TICKET,
+//   SET_CROSS_PRODUCTION,
+//   SHARE_TICKETS,
+//   SHIPPING_SYSTEM,
+//   CS,
+//   CHANGE_STANDARD_FILES_FACTORY,
+//   DELETE_USER,
+//   UPDATE_USER,
+//   SET_USER_PERMISSIONS,
+//   DEACTIVATE_USERS,
+//   UNLOCK_USERS,
+//   SET_ID_CARD,
+//   REMOVE_ID_CARD,
+//   PENDING_TO_FINISH,
+//   SHEET_DATA,
+//   ADMIN,
+//   STANDARD_FILES,
+//   CHECK_CPR_ITEMS,
+//   SCAN_READY_KITS,
+//   ORDER_KITS,
+//   SEND_KITS,
+//   RESET_PASSWORD,
+//   MATERIAL_MANAGEMENT
+// }
 
-enum Permissions {
-  TAB,
-  ALERT_MANAGER,
-  SHORT_MANAGER_RESPOND,
-  SHORT_MANAGER_DELETE,
-  UPLOAD_TICKET,
-  UPLOAD_STANDARD_FILES,
-  DELETE_TICKETS,
-  DELETE_COMPLETED_TICKETS,
-  DELETE_STANDARD_FILES,
-  CANCEL_ROUTE,
-  PRINTING,
-  USER_MANAGER,
-  DATABASE_UPLOAD,
-  WEB,
-  SEND_TO_PRINTING,
-  EMAIL_PDF,
-  EDIT_ANY_PDF,
-  Edit_PDF_IN_STANDED_LIB,
-  QC,
-  EDIT_COMPLETED_TICKET,
-  ADD_MISSING_DATES,
-  ADD_CPR,
-  SEND_ANY_CPR,
-  RECEIVE_ANY_CPR,
-  USER_ADD_USER,
-  TICKET_RENAME_MO,
-  CPR,
-  PRODUCTION_POOL,
-  HR,
-  BLUE_BOOK,
-  J109,
-  SET_RED_FLAG,
-  STOP_PRODUCTION,
-  SET_GR,
-  SET_RUSH,
-  FINISH_TICKET,
-  SET_CROSS_PRODUCTION,
-  SHARE_TICKETS,
-  SHIPPING_SYSTEM,
-  CS,
-  CHANGE_STANDARD_FILES_FACTORY,
-  DELETE_USER,
-  UPDATE_USER,
-  SET_USER_PERMISSIONS,
-  DEACTIVATE_USERS,
-  UNLOCK_USERS,
-  SET_ID_CARD,
-  REMOVE_ID_CARD,
-  PENDING_TO_FINISH,
-  SHEET_DATA,
-  ADMIN,
-  STANDARD_FILES,
-  CHECK_CPR_ITEMS,
-  SCAN_READY_KITS,
-  ORDER_KITS,
-  SEND_KITS,
-  RESET_PASSWORD,
-  MATERIAL_MANAGEMENT
-}
-
-extension PermissionsExtension on Permissions {
+extension PermissionsExtension on NsPermissions {
   String getValue() {
     return (this).toString().split('.').last;
   }
@@ -268,5 +269,39 @@ extension TextEditingControllerExt on TextEditingController {
 extension DateOnlyCompare on DateTime {
   bool isSameDate(DateTime other) {
     return year == other.year && month == other.month && day == other.day;
+  }
+}
+
+extension DateTimeExtension on DateTime? {
+  bool? isAfterOrEqualTo(DateTime dateTime) {
+    final date = this;
+    if (date != null) {
+      final isAtSameMomentAs = dateTime.isAtSameMomentAs(date);
+      return date.isAfter(dateTime);
+    }
+    return null;
+  }
+
+  bool? isBeforeOrEqualTo(DateTime dateTime) {
+    final date = this;
+    if (date != null) {
+      final isAtSameMomentAs = dateTime.isAtSameMomentAs(date);
+      return date.isBefore(dateTime);
+    }
+    return null;
+  }
+
+  bool? isNotBetween(DateTime fromDateTime, DateTime toDateTime) {
+    return !(isBetween(fromDateTime, toDateTime))!;
+  }
+
+  bool? isBetween(DateTime fromDateTime, DateTime toDateTime) {
+    final date = this;
+    if (date != null) {
+      final isAfter = date.isAfterOrEqualTo(fromDateTime) ?? false;
+      final isBefore = date.isBeforeOrEqualTo(toDateTime) ?? false;
+      return isAfter && isBefore;
+    }
+    return null;
   }
 }

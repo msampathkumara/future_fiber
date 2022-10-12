@@ -108,11 +108,7 @@ class _AddAverageSailTimesState extends State<AddAverageSailTimes> {
             ? BottomAppBar(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                      onPressed: () {
-                        save();
-                      },
-                      child: const Text('Save')),
+                  child: ElevatedButton(onPressed: save, child: const Text('Save')),
                 ),
               )
             : null);

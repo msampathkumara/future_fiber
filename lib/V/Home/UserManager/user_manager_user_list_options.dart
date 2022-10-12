@@ -40,7 +40,7 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
                           }
                         },
                       ),
-                    if ((kIsWeb) && AppUser.havePermissionFor(Permissions.UPDATE_USER))
+                    if ((kIsWeb) && AppUser.havePermissionFor(NsPermissions.USERS_UPDATE_USER))
                       ListTile(
                         title: const Text("Edit"),
                         subtitle: const Text("Update user details"),
@@ -53,7 +53,7 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
                           UpdateUserDetails(nsUser).show(context);
                         },
                       ),
-                    if (AppUser.havePermissionFor(Permissions.SET_USER_PERMISSIONS))
+                    if (AppUser.havePermissionFor(NsPermissions.USERS_EDIT_PERMISSIONS))
                       ListTile(
                         title: const Text("Permissions"),
                         subtitle: const Text("Update,Add or Remove Permissions"),
@@ -66,7 +66,7 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
                           UserPermissions(nsUser).show(context);
                         },
                       ),
-                    if (AppUser.havePermissionFor(Permissions.DEACTIVATE_USERS))
+                    if (AppUser.havePermissionFor(NsPermissions.USERS_DEACTIVATE_USERS))
                       ListTile(
                         title: Text(nsUser.isDisabled ? "Activate User" : "Deactivate User"),
                         subtitle: Text(nsUser.isDisabled ? "Activate all activities on system for this user" : "Deactivate all activities on system for this user"),
@@ -79,7 +79,7 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
                           deactivateUser(nsUser);
                         },
                       ),
-                    if (nsUser.isLocked && AppUser.havePermissionFor(Permissions.DEACTIVATE_USERS))
+                    if (nsUser.isLocked && AppUser.havePermissionFor(NsPermissions.USER_UNLOCK_USER))
                       ListTile(
                         title: const Text("Unlock User"),
                         subtitle: const Text(" "),
@@ -91,13 +91,13 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
                           Navigator.of(context).pop();
                           ShowMessage("Unlocking user..");
 
-                          Api.post('users/unlock', {"userId": nsUser.id}).then((value) {
+                          Api.post(EndPoints.users_unlock, {"userId": nsUser.id}).then((value) {
                             HiveBox.getDataFromServer();
                             ShowMessage("User Unlocked");
                           });
                         },
                       ),
-                    if (AppUser.havePermissionFor(Permissions.RESET_PASSWORD))
+                    if (AppUser.havePermissionFor(NsPermissions.USERS_RESET_PASSWORD))
                       ListTile(
                         title: const Text("Reset Password"),
                         subtitle: const Text("Generate OTP to reset Password"),
@@ -110,7 +110,7 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
                           GenerateOTP(nsUser).show(context);
                         },
                       ),
-                    if (AppUser.havePermissionFor(Permissions.RESET_PASSWORD))
+                    if (AppUser.havePermissionFor(NsPermissions.USERS_RESET_PASSWORD))
                       ListTile(
                         title: const Text("Generate Password"),
                         subtitle: const Text("Generate   Password"),
@@ -136,7 +136,7 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
 
 void deactivateUser(nsUser) {
   ShowMessage(nsUser.isDisabled ? "Activating" : "Deactivating..");
-  Api.post('users/deactivate', {"userId": nsUser.id, "deactivate": (!nsUser.isDisabled)}).then((value) {
+  Api.post(EndPoints.users_deactivate, {"userId": nsUser.id, "deactivate": (!nsUser.isDisabled)}).then((value) {
     print('cccccccccccccccccccccccccc');
     ShowMessage(nsUser.isDisabled ? "User Account Activating" : "User Account Deactivated..");
     HiveBox.getDataFromServer();

@@ -8,6 +8,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import '../../../../../C/Api.dart';
 import '../../../../../C/ServerResponse/OperationMinMax.dart';
 import '../../../../../C/ServerResponse/Progress.dart';
+import '../../../../../M/EndPoints.dart';
 import 'PDFViewWidget.dart';
 
 class RF extends StatefulWidget {
@@ -143,7 +144,7 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
               icon: const Icon(Icons.check_circle_outline_outlined),
               label: const Text("Finish"),
               onPressed: () async {
-                var v = await LoadingDialog(Api.post("tickets/finish",
+                var v = await LoadingDialog(Api.post(EndPoints.tickets_finish,
                     {'erpDone': 0, 'ticket': ticket.id.toString(), 'userSectionId': AppUser.getSelectedSection()?.id, 'doAt': operationMinMax.doAt.toString()}).then((res) {
                   Map data = res.data;
                   print(data);

@@ -122,78 +122,18 @@ class DB {
 
   static DbChangeCallBack setOnDBChangeListener(callBack, context, {collection = DataTables.None}) {
     print('DbChangeCallBack $collection ');
-    var dbChangeCallBack = new DbChangeCallBack(callBack, context, collection);
+    var dbChangeCallBack = DbChangeCallBack(callBack, context, collection);
     onDBChangeCallBacks.add(dbChangeCallBack);
     return dbChangeCallBack;
   }
 
-  // static Future<void> processData(Map<dynamic, dynamic> res) async {
-  //   if (res.containsKey("tickets")) {
-  //     List tickets = (res["tickets"] ?? []);
-  //     print('tickets = ' + tickets.length.toString());
-  //     insertTickets(tickets);
-  //   }
-  //   if (res.containsKey("deletedTicketsIds")) {
-  //     List deletedTickets = (res["deletedTicketsIds"] ?? []);
-  //     deleteTickets(deletedTickets);
-  //     if (deletedTickets.length > 0) {
-  //       var maxTime = deletedTickets.map<int>((e) => e['uptime']).reduce(max);
-  //       var db = await getDB();
-  //       db!.insert('maxUpTimes', {"collection": "deletedTickets", "uptime": maxTime}, conflictAlgorithm: ConflictAlgorithm.replace);
-  //     }
-  //   }
-  //   if (res.containsKey("completedTicketsIds")) {
-  //     List completedTickets = (res["completedTicketsIds"] ?? []);
-  //     deleteTickets(completedTickets);
-  //     if (completedTickets.length > 0) {
-  //       var maxTime = completedTickets.map<int>((e) => e['uptime']).reduce(max);
-  //       var db = await getDB();
-  //       db!.insert('maxUpTimes', {"collection": "completedTickets", "uptime": maxTime}, conflictAlgorithm: ConflictAlgorithm.replace);
-  //     }
-  //   }
-  //   if (res.containsKey("ticketProgressDetails")) {
-  //     List ticketProgressDetails = (res["ticketProgressDetails"] ?? []);
-  //     insertTicketProgressDetails(ticketProgressDetails);
-  //   }
-  //   if (res.containsKey("users")) {
-  //     List users = (res["users"] ?? []);
-  //     insertUsers(users);
-  //   }
-  //   if (res.containsKey("factorySections")) {
-  //     List factorySections = (res["factorySections"] ?? []);
-  //     insertFactorySections(factorySections);
-  //   }
-  //   if (res.containsKey("standardTickets")) {
-  //     List standardTickets = (res["standardTickets"] ?? []);
-  //     await insertStandardTickets(standardTickets);
-  //     if (standardTickets.length > 0) {
-  //       var maxTime = standardTickets.map<int>((e) => e['uptime']).reduce(max);
-  //       var db = await getDB();
-  //       db!.insert('maxUpTimes', {"collection": "standardTickets", "uptime": maxTime}, conflictAlgorithm: ConflictAlgorithm.replace);
-  //     }
-  //   }
-  // }
-
-  // static Future<void> insertTickets(List<dynamic> tickets) async {
-  //   await db!.transaction((txn) async {
-  //     Batch batch = txn.batch();
-  //     tickets.forEach((ticket) {
-  //       insertFlags(ticket["flags"] ?? [], batch);
-  //       ticket.remove("flags");
-  //       // print(ticket);
-  //       batch.insert('tickets', ticket, conflictAlgorithm: ConflictAlgorithm.replace);
-  //     });
-  //     await batch.commit(noResult: true);
-  //     print('tickets inserted ');
-  //   });
-  // }
 
   static Future<void> deleteTickets(List<dynamic> deletedTickets) async {
     Batch batch = db!.batch();
 
-    deletedTickets.forEach((ticket) {
+    for (var ticket in deletedTickets) {
       batch.delete('tickets', where: 'id = ?', whereArgs: [ticket["id"]]);
-    });
+    }
 
     print(await batch.commit(noResult: false));
   }
@@ -306,7 +246,7 @@ class DB {
 // }
 }
 
-enum DataTables { None, Users, Tickets, standardTickets, Sections, Any, cpr, kit }
+enum DataTables { None, Users, Tickets, standardTickets, Sections, Any, cpr, kit, AppUser }
 
 class DbChangeCallBack {
   DataTables collection;

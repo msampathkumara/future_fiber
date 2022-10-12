@@ -196,7 +196,7 @@ class _CountCardsState extends State<CountCards> {
                                           const Text("Efficiency"),
                                           const Text("Number of Defects"),
                                           const Text("Defects Rate"),
-                                              // const Text("Scheduled backlog"),
+                                          // const Text("Scheduled backlog"),
                                           const Text("WIP")
                                         ].map((e) => Padding(padding: const EdgeInsets.all(8.0), child: e)).toList()),
                                         ...(progressSummeryByShiftName[shiftName] ?? [ProgressSummery()])
@@ -318,12 +318,12 @@ class _CountCardsState extends State<CountCards> {
         singleDate = false;
         break;
       case DaysFilters.Month:
-        rangeEndDate = DateTime(rangeStartDate.year, rangeStartDate.month + 1, 0);
+        rangeEndDate = DateTime(rangeStartDate.year, rangeStartDate.month + 1, 0).add(const Duration(days: 1));
         _title = DateFormat("yyyy MMMM").format(rangeStartDate);
         singleDate = false;
         break;
       case DaysFilters.Year:
-        rangeEndDate = DateTime(rangeStartDate.year + 1, rangeStartDate.month, 0);
+        rangeEndDate = DateTime(rangeStartDate.year + 1, rangeStartDate.month, 0).add(const Duration(days: 1));
         _title = DateFormat("yyyy").format(rangeStartDate);
         singleDate = false;
         break;
@@ -337,7 +337,6 @@ class _CountCardsState extends State<CountCards> {
       loading = true;
     });
 
-    // ServerApi.dashboard_x({"rangeStartDate": rangeStartDate, 'rangeEndDate': rangeEndDate ?? rangeStartDate, 'production': selectedProduction.getValue()}).then((res) {
     Api.get(EndPoints.dashboard_x, {"rangeStartDate": rangeStartDate, 'rangeEndDate': rangeEndDate ?? rangeStartDate, 'production': selectedProduction.getValue()}).then((res) {
       Map data = res.data;
       progressSummeryByShiftName = {};
@@ -350,7 +349,7 @@ class _CountCardsState extends State<CountCards> {
         lineChartController.updateData(rangeStartDate, rangeEndDate, selectedProduction, _selectedFilter, ProgressSummery.fromJsonArray(data['graphData']));
       }
 
-      print(data);
+      // print(data);
     }).whenComplete(() {
       setState(() {
         loading = false;

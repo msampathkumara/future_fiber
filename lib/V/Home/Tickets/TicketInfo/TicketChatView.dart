@@ -7,6 +7,7 @@ import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/Web/Widgets/IfWeb.dart';
 
 import '../../../../C/Api.dart';
+import '../../../../M/EndPoints.dart';
 import '../../../../M/NsUser.dart';
 import '../../../../M/TicketComment.dart';
 import '../../../Widgets/UserImage.dart';
@@ -248,7 +249,7 @@ class _TicketChatViewState extends State<TicketChatView> {
     //   _newComment.comment = newComment;
     //   ticketChat.commentList.add(_newComment);
     // });
-    Api.post("tickets/comments/save", {'comment': newComment, 'ticketId': ticketChat.ticket.id}).then((res) {
+    Api.post(EndPoints.tickets_comments_save, {'comment': newComment, 'ticketId': ticketChat.ticket.id}).then((res) {
       Map data = res.data;
       print(data['comment']);
 

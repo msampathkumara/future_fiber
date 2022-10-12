@@ -6,6 +6,7 @@ import 'package:smartwind/M/TicketPrint.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 
 import '../../../../C/Api.dart';
+import '../../../../M/EndPoints.dart';
 
 class PrintManager extends StatefulWidget {
   const PrintManager({Key? key}) : super(key: key);
@@ -356,7 +357,7 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
 
   Future sendToPrint(Ticket ticket) async {
     if (ticket.inPrint == 0) {
-      Api.post("tickets/print", {"ticket": ticket.id.toString(), "action": "sent"}).then((value) {
+      Api.post(EndPoints.tickets_print, {"ticket": ticket.id.toString(), "action": "sent"}).then((value) {
         print('Send to print  ${value.data}');
         ticket.inPrint = 1;
         setState(() {});
@@ -366,7 +367,7 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
 
       return 1;
     } else {
-      await Api.post("tickets/print", {"ticket": ticket.id.toString(), "action": "cancel"});
+      await Api.post(EndPoints.tickets_print, {"ticket": ticket.id.toString(), "action": "cancel"});
       ticket.inPrint = 0;
       return 0;
     }

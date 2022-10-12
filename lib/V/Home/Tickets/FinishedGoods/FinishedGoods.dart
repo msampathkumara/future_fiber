@@ -10,6 +10,8 @@ import 'package:smartwind/V/Widgets/SearchBar.dart';
 import 'package:smartwind/ns_icons_icons.dart';
 
 import '../../../../M/AppUser.dart';
+import '../../../../M/EndPoints.dart';
+import '../../../../M/PermissionsEnum.dart';
 import '../../../../Web/V/QC/webTicketQView.dart';
 import '../../../Widgets/NoResultFoundMsg.dart';
 import '../TicketInfo/TicketChatView.dart';
@@ -446,7 +448,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                       await Ticket.sharePdf(context, ticket);
                       Navigator.of(context).pop();
                     }),
-                if (AppUser.havePermissionFor(Permissions.DELETE_COMPLETED_TICKETS))
+                        if (AppUser.havePermissionFor(NsPermissions.TICKET_DELETE_TICKET_COMPLETE))
                   ListTile(
                       title: const Text("Delete"),
                       leading: const Icon(Icons.delete_forever, color: Colors.red),
@@ -457,7 +459,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                             content: Text('Do you really want to delete ${ticket.mo}/${ticket.oe}'),
                             action: SnackBarAction(
                                 onPressed: () {
-                                  Api.post("tickets/delete", {"id": ticket.id.toString()}).then((response) async {
+                                  Api.post(EndPoints.tickets_completed_delete, {"id": ticket.id.toString()}).then((response) async {
                                     print('TICKET DELETED');
                                     print(response.data);
                                     print(response.statusCode);
@@ -477,7 +479,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
 
   Future sendToPrint(Ticket ticket) async {
     if (ticket.inPrint == 0) {
-      Api.post("tickets/print", {"ticket": ticket.id.toString(), "action": "sent"}).then((value) {
+      Api.post(EndPoints.tickets_print, {"ticket": ticket.id.toString(), "action": "sent"}).then((value) {
         print('Send to print  ${value.data}');
         ticket.inPrint = 1;
         setState(() {});
@@ -487,7 +489,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
 
       return 1;
     } else {
-      await Api.post("tickets/print", {"ticket": ticket.id.toString(), "action": "cancel"});
+      await Api.post(EndPoints.tickets_print, {"ticket": ticket.id.toString(), "action": "cancel"});
       ticket.inPrint = 0;
       return 0;
     }
