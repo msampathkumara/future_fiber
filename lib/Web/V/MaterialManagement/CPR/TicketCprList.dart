@@ -66,7 +66,7 @@ class _TicketCprListState extends State<TicketCprList> {
               .map((cpr) => DataRow2(
                       specificRowHeight: 60,
                       onTap: () {
-                        showOrderOptions(cpr, context, context, () {
+                        showOrderOptions(cpr, cpr.ticket, context, context, () {
                           Navigator.of(context).pop();
                         });
                       },
@@ -97,7 +97,7 @@ class _TicketCprListState extends State<TicketCprList> {
                 margin: const EdgeInsets.all(4.0),
                 child: InkWell(
                   onTap: () {
-                    showOrderOptions(cpr, context, context, () {
+                    showOrderOptions(cpr, cpr.ticket, context, context, () {
                       Navigator.of(context).pop();
                     });
                   },

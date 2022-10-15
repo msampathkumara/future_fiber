@@ -1,4 +1,5 @@
 import 'package:data_table_2/data_table_2.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:smartwind/C/Api.dart';
@@ -9,11 +10,17 @@ import 'package:smartwind/Web/V/MaterialManagement/KIT/ScanReadyKits.dart';
 import 'package:smartwind/Web/V/MaterialManagement/KIT/SendKits.dart';
 
 import '../../../../C/DB/DB.dart';
+import '../../../../M/AppUser.dart';
+import '../../../../M/EndPoints.dart';
+import '../../../../M/PermissionsEnum.dart';
 import '../../../../V/Widgets/NoResultFoundMsg.dart';
 import '../../../../V/Widgets/SearchBar.dart';
+import '../../../Widgets/ShowMessage.dart';
 import '../../../Widgets/myDropDown.dart';
 import '../../ProductionPool/copy.dart';
 import 'KitView.dart';
+
+part 'webKit.options.dart';
 
 part 'webKit.table.dart';
 
@@ -44,7 +51,7 @@ class _WebKitState extends State<WebKit> {
 
   DbChangeCallBack? _dbChangeCallBack;
 
-  // get kitCount => _dataSource == null ? 0 : _dataSource?.rowCount;
+  bool filterByStartTicket = false;
 
   @override
   void initState() {
@@ -72,6 +79,15 @@ class _WebKitState extends State<WebKit> {
             children: [
               Text("KIT", style: mainWidgetsTitleTextStyle),
               const Spacer(),
+              IconButton(
+                icon: CircleAvatar(backgroundColor: Colors.white, radius: 16, child: Icon(Icons.play_arrow, color: filterByStartTicket ? Colors.red : Colors.black, size: 20)),
+                tooltip: 'Filter by start ticket',
+                onPressed: () async {
+                  filterByStartTicket = !filterByStartTicket;
+                  loadData();
+                },
+              ),
+              const SizedBox(width: 50),
               SizedBox(
                   height: 36,
                   child: ElevatedButton.icon(
@@ -222,14 +238,15 @@ class _WebKitState extends State<WebKit> {
     setState(() {
       requested = true;
     });
-    return Api.get("materialManagement/kit/search", {
+    return Api.get(EndPoints.materialManagement_kit_search, {
       'production': selectedProduction.getValue(),
       'status': selectedStatus,
       'sortDirection': sortedAsc ? "asc" : "desc",
       'sortBy': sortedBy,
       'pageIndex': page,
       'pageSize': count,
-      'searchText': searchText
+      'searchText': searchText,
+      'filterByStartTicket': filterByStartTicket
     }).then((res) {
       List kits = res.data["kits"];
       dataCount = res.data["count"];

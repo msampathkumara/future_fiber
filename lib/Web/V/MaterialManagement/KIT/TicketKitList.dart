@@ -65,7 +65,7 @@ class _TicketKitListState extends State<TicketKitList> {
               .map((cpr) => DataRow2(
                       specificRowHeight: 60,
                       onTap: () {
-                        showOrderOptions(cpr, context, context, () {
+                        showOrderOptions(cpr, cpr.ticket, context, context, () {
                           Navigator.of(context).pop();
                         });
                       },

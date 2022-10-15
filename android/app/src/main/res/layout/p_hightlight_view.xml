@@ -54,7 +54,7 @@
                         android:text="Color"
                         android:textAllCaps="false"
                         android:textSize="11sp"
-                        android:contentDescription="TODO" />
+                        android:contentDescription="@string/todo" />
 
 
                     <ImageButton

@@ -82,14 +82,14 @@ class _WebPrintTableState<T extends Object> extends State<WebSheetDataTable> {
 
   List<DataColumn> get _columns {
     return [
-      DataColumn2(size: ColumnSize.L, label: Text('MO'), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: Text('OE'), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: Text('Operation NO'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: Text('Next'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: Text('Operation'), numeric: false, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: Text('pool'), numeric: false, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: Text('Shipping Date'), numeric: false, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: Text('Ship Date'), numeric: false, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.L, label: const Text('MO'), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('OE'), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('Operation NO'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('Next'), numeric: true, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('Operation'), numeric: false, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('pool'), numeric: false, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('Delivery Date'), numeric: false, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('Ship Date'), numeric: false, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
     ];
   }
 
@@ -98,7 +98,7 @@ class _WebPrintTableState<T extends Object> extends State<WebSheetDataTable> {
   @override
   Widget build(BuildContext context) {
     // Last ppage example uses extra API call to get the number of items in datasource
-    if (_dataSourceLoading) return SizedBox();
+    if (_dataSourceLoading) return const SizedBox();
 
     return Stack(alignment: Alignment.bottomCenter, children: [
       AsyncPaginatedDataTable2(
@@ -117,7 +117,7 @@ class _WebPrintTableState<T extends Object> extends State<WebSheetDataTable> {
           minWidth: 800,
           fit: FlexFit.tight,
           border: TableBorder(
-              top: BorderSide(color: Colors.transparent),
+              top: const BorderSide(color: Colors.transparent),
               bottom: BorderSide(color: Colors.grey[300]!),
               left: BorderSide(color: Colors.grey[300]!),
               right: BorderSide(color: Colors.grey[300]!),
@@ -140,7 +140,7 @@ class _WebPrintTableState<T extends Object> extends State<WebSheetDataTable> {
           controller: _controller,
           hidePaginator: false,
           columns: _columns,
-          empty: Center(child: Container(padding: EdgeInsets.all(20), color: Colors.grey[200], child: Text('No data'))),
+          empty: Center(child: Container(padding: const EdgeInsets.all(20), color: Colors.grey[200], child: const Text('No data'))),
           loading: _Loading(),
           errorBuilder: (e) => _ErrorAndRetry(e.toString(), () => _dessertsDataSource!.refreshDatasource()),
           source: _dessertsDataSource!),
@@ -157,19 +157,19 @@ class _ErrorAndRetry extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Center(
         child: Container(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             height: 170,
             color: Colors.red,
             child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text('Oops! $errorMessage', style: TextStyle(color: Colors.white)),
+              Text('Oops! $errorMessage', style: const TextStyle(color: Colors.white)),
               TextButton(
                   onPressed: retry,
                   child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    Icon(
+                    const Icon(
                       Icons.refresh,
                       color: Colors.white,
                     ),
-                    Text('Retry', style: TextStyle(color: Colors.white))
+                    const Text('Retry', style: TextStyle(color: Colors.white))
                   ]))
             ])),
       );
@@ -187,20 +187,20 @@ class __LoadingState extends State<_Loading> {
         color: Colors.white.withAlpha(128),
         // at first show shade, if loading takes longer than 0,5s show spinner
         child: FutureBuilder(
-            future: Future.delayed(Duration(milliseconds: 500), () => true),
+            future: Future.delayed(const Duration(milliseconds: 500), () => true),
             builder: (context, snapshot) {
               return !snapshot.hasData
-                  ? SizedBox()
+                  ? const SizedBox()
                   : Center(
                       child: Container(
                       color: Colors.yellow,
-                      padding: EdgeInsets.all(7),
+                      padding: const EdgeInsets.all(7),
                       child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                        CircularProgressIndicator(
+                        const CircularProgressIndicator(
                           strokeWidth: 2,
                           color: Colors.black,
                         ),
-                        Text('Loading..')
+                        const Text('Loading..')
                       ]),
                       width: 150,
                       height: 50,
@@ -246,7 +246,7 @@ class SheetDataSourceAsync<T extends Object> extends AsyncDataTableSource {
       _errorCounter = _errorCounter! + 1;
 
       if (_errorCounter! % 2 == 1) {
-        await Future.delayed(Duration(milliseconds: 1000));
+        await Future.delayed(const Duration(milliseconds: 1000));
         throw 'Error #${((_errorCounter! - 1) / 2).round() + 1} has occured';
       }
     }
@@ -257,7 +257,7 @@ class SheetDataSourceAsync<T extends Object> extends AsyncDataTableSource {
 
     // List returned will be empty is there're fewer items than startingAt
     var x = _empty
-        ? await Future.delayed(Duration(milliseconds: 2000), () => DataResponse(0, <T>[]))
+        ? await Future.delayed(const Duration(milliseconds: 2000), () => DataResponse(0, <T>[]))
         : await onRequestData(int.parse("${startIndex / count}"), startIndex, count, _sortColumn, _sortAscending);
 
     var r = AsyncRowsResponse(
@@ -269,7 +269,7 @@ class SheetDataSourceAsync<T extends Object> extends AsyncDataTableSource {
                 onTap(sheetData);
               },
               onSecondaryTap: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    duration: Duration(seconds: 1),
+                duration: const Duration(seconds: 1),
                     backgroundColor: Theme.of(context).errorColor,
                     content: Text('Right clicked on ${sheetData}'),
                   )),

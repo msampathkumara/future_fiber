@@ -5,13 +5,10 @@ import 'package:smartwind/C/Api.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/V/Home/Tickets/TicketInfo/TicketInfo.dart';
-import 'package:smartwind/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/Widgets/SearchBar.dart';
 import 'package:smartwind/ns_icons_icons.dart';
 
-import '../../../../M/AppUser.dart';
 import '../../../../M/EndPoints.dart';
-import '../../../../M/PermissionsEnum.dart';
 import '../../../../Web/V/QC/webTicketQView.dart';
 import '../../../Widgets/NoResultFoundMsg.dart';
 import '../TicketInfo/TicketChatView.dart';
@@ -448,27 +445,27 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                       await Ticket.sharePdf(context, ticket);
                       Navigator.of(context).pop();
                     }),
-                        if (AppUser.havePermissionFor(NsPermissions.TICKET_DELETE_TICKET_COMPLETE))
-                  ListTile(
-                      title: const Text("Delete"),
-                      leading: const Icon(Icons.delete_forever, color: Colors.red),
-                      onTap: () async {
-                        Navigator.of(context).pop();
-
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text('Do you really want to delete ${ticket.mo}/${ticket.oe}'),
-                            action: SnackBarAction(
-                                onPressed: () {
-                                  Api.post(EndPoints.tickets_completed_delete, {"id": ticket.id.toString()}).then((response) async {
-                                    print('TICKET DELETED');
-                                    print(response.data);
-                                    print(response.statusCode);
-                                  }).catchError((error) {
-                                    ErrorMessageView(errorMessage: error.toString()).show(context);
-                                  });
-                                },
-                                label: 'Yes')));
-                      }),
+                //       if (AppUser.havePermissionFor(NsPermissions.TICKET_DELETE_TICKET_COMPLETE))
+                // ListTile(
+                //     title: const Text("Delete"),
+                //     leading: const Icon(Icons.delete_forever, color: Colors.red),
+                //     onTap: () async {
+                //       Navigator.of(context).pop();
+                //
+                //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                //           content: Text('Do you really want to delete ${ticket.mo}/${ticket.oe}'),
+                //           action: SnackBarAction(
+                //               onPressed: () {
+                //                 Api.post(EndPoints.tickets_completed_delete, {"id": ticket.id.toString()}).then((response) async {
+                //                   print('TICKET DELETED');
+                //                   print(response.data);
+                //                   print(response.statusCode);
+                //                 }).catchError((error) {
+                //                   ErrorMessageView(errorMessage: error.toString()).show(context);
+                //                 });
+                //               },
+                //               label: 'Yes')));
+                //     }),
               ])))
             ],
           ),

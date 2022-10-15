@@ -29,13 +29,14 @@ Future<void> showCprOptions(CPR cpr, BuildContext context1, BuildContext context
                       Navigator.of(context).pop();
                       await showDeleteDialog(context1, cpr, reload);
                     }),
-              ListTile(
-                  title: const Text("Order"),
-                  leading: const Icon(Icons.access_alarm),
-                  onTap: () async {
-                    Navigator.of(context).pop();
-                    showOrderOptions(cpr, context1, context, reload);
-                  })
+              if (AppUser.havePermissionFor(NsPermissions.CPR_OREDR_CPR))
+                ListTile(
+                    title: const Text("Order"),
+                    leading: const Icon(Icons.access_alarm),
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                      showOrderOptions(cpr, cpr.ticket, context1, context, reload);
+                    })
             ])))
           ],
         ),
@@ -44,7 +45,7 @@ Future<void> showCprOptions(CPR cpr, BuildContext context1, BuildContext context
   );
 }
 
-Future<void> showOrderOptions(CPR cpr, BuildContext context1, BuildContext context, reload) async {
+Future<void> showOrderOptions(CPR? cpr, Ticket? ticket, BuildContext context1, BuildContext context, reload) async {
   await showModalBottomSheet<void>(
     constraints: kIsWeb ? const BoxConstraints(maxWidth: 600) : null,
     context: context,
@@ -58,8 +59,8 @@ Future<void> showOrderOptions(CPR cpr, BuildContext context1, BuildContext conte
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             ListTile(
-              title: Text(cpr.ticket?.mo ?? cpr.ticket?.oe ?? ''),
-              subtitle: Text(cpr.ticket?.oe ?? ''),
+              title: Text(ticket?.mo ?? ticket?.oe ?? ''),
+              subtitle: Text(ticket?.oe ?? ''),
             ),
             const Divider(),
             Expanded(
@@ -70,14 +71,14 @@ Future<void> showOrderOptions(CPR cpr, BuildContext context1, BuildContext conte
                   leading: const Icon(Icons.do_not_disturb_on_total_silence, color: Colors.red),
                   onTap: () async {
                     Navigator.of(context).pop();
-                    order(context, cpr, 1, reload);
+                    cpr == null ? orderByTicket(context, ticket, 1, reload) : order(context, cpr, 1, reload);
                   }),
               ListTile(
                   title: const Text("Normal", style: TextStyle(color: Colors.green)),
                   leading: const Icon(Icons.do_not_disturb_on_total_silence, color: Colors.green),
                   onTap: () async {
                     Navigator.of(context).pop();
-                    order(context, cpr, 0, reload);
+                    cpr == null ? orderByTicket(context, ticket, 0, reload) : order(context, cpr, 0, reload);
                   })
             ])))
           ],
@@ -87,10 +88,10 @@ Future<void> showOrderOptions(CPR cpr, BuildContext context1, BuildContext conte
   );
 }
 
-void order(context, CPR cpr, int i, reload) {
+void order(context, CPR? cpr, int i, reload) {
   ShowMessage('Saving', messageType: MessageTypes.message, icon: Icons.save);
 
-  Api.post(EndPoints.materialManagement_cpr_order, {'cprId': cpr.id, 'type': i})
+  Api.post(EndPoints.materialManagement_order, {'cprId': cpr?.id, 'type': i})
       .then((res) {
         Map data = res.data;
         ShowMessage('Saved', messageType: MessageTypes.success, icon: Icons.save);
@@ -108,6 +109,31 @@ void order(context, CPR cpr, int i, reload) {
                 textColor: Colors.white,
                 onPressed: () {
                   order(context, cpr, i, reload);
+                }));
+      });
+}
+
+void orderByTicket(context, Ticket? ticket, int i, reload) {
+  ShowMessage('Saving', messageType: MessageTypes.message, icon: Icons.save);
+
+  Api.post(EndPoints.materialManagement_orderKitByTicketId, {'ticketId': ticket?.id, 'type': i})
+      .then((res) {
+        Map data = res.data;
+        ShowMessage('Saved', messageType: MessageTypes.success, icon: Icons.save);
+        reload();
+      })
+      .whenComplete(() {})
+      .catchError((err) {
+        ShowMessage('Something went wrong',
+            duration: const Duration(seconds: 30),
+            messageType: MessageTypes.error,
+            icon: Icons.error,
+            closeButton: true,
+            action: SnackBarAction(
+                label: "Retry",
+                textColor: Colors.white,
+                onPressed: () {
+                  orderByTicket(context, ticket, i, reload);
                 }));
       });
 }

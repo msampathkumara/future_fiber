@@ -78,7 +78,7 @@ class _CprViewState extends State<CprView> {
         body: _loading
             ? const Center(child: CircularProgressIndicator())
             : Builder(builder: (context) {
-                List<CprActivity?> cprActivities = getCprActivities(cprs);
+                List<CprActivity> cprActivities = getCprActivities(cprs);
                 List<CprActivity?> cprActivitiesNoNull = cprs;
 
                 return Row(children: [
@@ -149,8 +149,8 @@ class _CprViewState extends State<CprView> {
                             const Divider(color: Colors.red),
                             Table(children: [
                               TableRow(
-                                  children: cprActivities
-                                      .map((e) => e == null
+                                  children: (cprActivities)
+                                      .map((e) => e.id == 0
                                           ? Container()
                                           : (e.status != 'Sent'
                                               ? Padding(
@@ -219,120 +219,6 @@ class _CprViewState extends State<CprView> {
                 ]);
               }));
   }
-
-  // getUi() {
-  //   return Scaffold(
-  //       appBar: AppBar(title: const Text("View CPR")),
-  //       body: _loading
-  //           ? const Center(child: CircularProgressIndicator())
-  //           : Row(children: [
-  //               Expanded(
-  //                 child: Padding(
-  //                   padding: const EdgeInsets.all(8.0),
-  //                   child: Padding(
-  //                     padding: const EdgeInsets.all(8.0),
-  //                     child: Column(
-  //                       children: [
-  //                         Table(
-  //                           children: [
-  //                             TableRow(children: [
-  //                               ListTile(
-  //                                   visualDensity: vd,
-  //                                   title: Text('Ticket', style: titleTheme),
-  //                                   subtitle: Wrap(direction: Axis.vertical, children: [
-  //                                     Text(_cpr.ticket?.mo ?? '', style: valTheme),
-  //                                     Text(_cpr.ticket?.oe ?? '', style: const TextStyle(fontSize: 12, color: Colors.deepOrange))
-  //                                   ])),
-  //                               ListTile(visualDensity: vd, title: Text('Client', style: titleTheme), subtitle: Text('${_cpr.client}', style: valTheme)),
-  //                               ListTile(visualDensity: vd, title: Text('Supplier(s)', style: titleTheme), subtitle: Text((_cpr.suppliers).join(','), style: valTheme)),
-  //                             ]),
-  //                             TableRow(
-  //                               children: [
-  //                                 ListTile(visualDensity: vd, title: Text('Shortage Type', style: titleTheme), subtitle: Text('${_cpr.shortageType}', style: valTheme)),
-  //                                 ListTile(visualDensity: vd, title: Text('CPR Type', style: titleTheme), subtitle: Text('${_cpr.cprType}', style: valTheme)),
-  //                                 ListTile(visualDensity: vd, title: Text('Status', style: titleTheme), subtitle: Text(_cpr.status, style: valTheme)),
-  //                               ],
-  //                             ),
-  //                           ],
-  //                         ),
-  //                         const SizedBox(height: 20),
-  //                         Expanded(
-  //                             child: SingleChildScrollView(
-  //                                 child: ExpansionPanelList(
-  //                           expansionCallback: (int index, bool isExpanded) {
-  //                             setState(() {
-  //                               cprsExpanded[cprs[index].supplier] = !isExpanded;
-  //                             });
-  //                           },
-  //                           children: cprs.map<ExpansionPanel>((CprActivity? __cprA) {
-  //                             return ExpansionPanel(
-  //                               headerBuilder: (BuildContext context, bool isExpanded) {
-  //                                 return __cprA == null
-  //                                     ? Container()
-  //                                     : ListTile(
-  //                                         title: Text(__cprA.supplier),
-  //                                         subtitle: Text(__cprA.status),
-  //                                         leading: __cprA.status.isReady(caseInsensitive: true)
-  //                                             ? const Icon(Icons.done, color: Colors.green, size: 20)
-  //                                             : const Icon(Icons.done, color: Colors.grey, size: 20),
-  //                                         trailing: getButton(__cprA),
-  //                                       );
-  //                               },
-  //                               body: __cprA == null
-  //                                   ? Container()
-  //                                   : Card(
-  //                                       elevation: 0,
-  //                                       child: Column(children: [
-  //                                         SizedBox(
-  //                                           width: double.infinity,
-  //                                           child: DataTable(columns: const [
-  //                                             DataColumn(label: Text('')),
-  //                                             DataColumn(label: Text('Item')),
-  //                                             DataColumn(label: Text('Qty')),
-  //                                             DataColumn(label: Text('Date')),
-  //                                             DataColumn(label: Text('User')),
-  //                                           ], rows: __cprA.items.map((material) => getMatRow(material)).toList()),
-  //                                         ),
-  //                                         const Divider(color: Colors.red),
-  //                                         Table(
-  //                                           children: [
-  //                                             TableRow(
-  //                                               children: [
-  //                                                 __cprA.addedBy != null
-  //                                                     ? ListTile(
-  //                                                         visualDensity: vd,
-  //                                                         title: Text("Added By ", style: titleTheme),
-  //                                                         subtitle: ListTile(
-  //                                                             leading: UserImage(nsUser: NsUser.fromId(__cprA.addedBy!.id), radius: 16),
-  //                                                             title: Text(__cprA.addedBy!.uname, style: valTheme),
-  //                                                             subtitle: Text(__cprA.addedOn, style: const TextStyle(fontSize: 12, color: Colors.black))))
-  //                                                     : Container(),
-  //                                                 (__cprA.sentBy != null)
-  //                                                     ? ListTile(
-  //                                                         visualDensity: vd,
-  //                                                         title: Text("Sent By ", style: titleTheme),
-  //                                                         subtitle: ListTile(
-  //                                                             leading: UserImage(nsUser: NsUser.fromId(__cprA.sentBy!.id), radius: 16),
-  //                                                             title: Text(__cprA.sentBy!.uname, style: valTheme),
-  //                                                             subtitle: Text(__cprA.sentOn, style: const TextStyle(fontSize: 12, color: Colors.black))))
-  //                                                     : Container(),
-  //                                               ],
-  //                                             )
-  //                                           ],
-  //                                         ),
-  //                                       ]),
-  //                                     ),
-  //                               isExpanded: __cprA == null ? false : cprsExpanded[__cprA.supplier] ?? false,
-  //                             );
-  //                           }).toList(),
-  //                         )))
-  //                       ],
-  //                     ),
-  //                   ),
-  //                 ),
-  //               ),
-  //             ]));
-  // }
 
   Future apiGetData() {
     return Api.get(EndPoints.materialManagement_cpr_getCpr, {'id': widget.cpr.id}).then((res) {
@@ -497,9 +383,9 @@ class _CprViewState extends State<CprView> {
     }
   }
 
-  List<CprActivity?> getCprActivities(List<CprActivity?> cprs) {
+  List<CprActivity> getCprActivities(List<CprActivity> cprs) {
     for (var i = cprs.length; i < 3; i++) {
-      cprs.add(null);
+      cprs.add(CprActivity());
     }
     return cprs;
   }

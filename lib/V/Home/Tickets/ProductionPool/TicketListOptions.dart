@@ -4,6 +4,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:smartwind/M/PermissionsEnum.dart';
 import 'package:smartwind/V/Home/Tickets/ProductionPool/TicketStartDialog.dart';
 import 'package:smartwind/Web/V/MaterialManagement/CPR/TicketCprList.dart';
+import 'package:smartwind/Web/V/MaterialManagement/CPR/webCpr.dart';
 
 import '../../../../C/Api.dart';
 import '../../../../M/AppUser.dart';
@@ -63,7 +64,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
               Expanded(
                   child: SingleChildScrollView(
                       child: Column(children: [
-                        if (AppUser.havePermissionFor(NsPermissions.TICKET_ALERT_MANAGER_))
+                        if (AppUser.havePermissionFor(NsPermissions.TICKET_ALERT_MANAGER))
                   ListTile(
                     title: Text(ticket.isRed == 1 ? "Remove Red Flag" : "Set Red Flag"),
                     leading: const Icon(Icons.flag),
@@ -74,7 +75,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                       FlagDialogNew(ticket, TicketFlagTypes.RED).show(context);
                     },
                   ),
-                        if (AppUser.havePermissionFor(NsPermissions.TICKET_ALERT_MANAGER_))
+                        if (AppUser.havePermissionFor(NsPermissions.TICKET_ALERT_MANAGER))
                   ListTile(
                     title: Text(ticket.isHold == 1 ? "Restart Production" : "Stop Production"),
                     leading: const Icon(Icons.pan_tool_rounded, color: Colors.red),
@@ -87,7 +88,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                       }
                     },
                   ),
-                        if (AppUser.havePermissionFor(NsPermissions.TICKET_ALERT_MANAGER_))
+                        if (AppUser.havePermissionFor(NsPermissions.TICKET_ALERT_MANAGER))
                   ListTile(
                     onTap: () async {
                       Navigator.of(context).pop();
@@ -99,7 +100,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                     //     width: 24, height: 24, child: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))))
                     leading: const Icon(NsIcons.gr, color: Colors.blue),
                   ),
-                        if (AppUser.havePermissionFor(NsPermissions.TICKET_ALERT_MANAGER_))
+                        if (AppUser.havePermissionFor(NsPermissions.TICKET_ALERT_MANAGER))
                   ListTile(
                       title: Text(ticket.isRush == 1 ? "Remove Rush" : "Set Rush"),
                       leading: const Icon(Icons.offline_bolt_outlined, color: Colors.orangeAccent),
@@ -130,7 +131,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                             });
                         // await Navigator.push(context1, MaterialPageRoute(builder: (context) => FinishCheckList(ticket)));
                       }),
-                if (ticket.haveCpr == 1)
+                if (ticket.haveCpr == 1 && AppUser.havePermissionFor(NsPermissions.CPR_OREDR_CPR))
                   ListTile(
                       title: const Text("Order CPR"),
                       leading: const Icon(Icons.access_alarm),
@@ -138,6 +139,14 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                         Navigator.of(context).pop();
                         // showOrderOptions(cpr, context1, context, reload);
                         await TicketCprList(ticket).show(context);
+                      }),
+                if (ticket.haveKit == 1 && AppUser.havePermissionFor(NsPermissions.KIT_ORDER_KITS))
+                  ListTile(
+                      title: const Text("Order KIT"),
+                      leading: const Icon(Icons.access_alarm),
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                        showOrderOptions(null, ticket, context1, context, () {});
                       }),
 
                 if (AppUser.havePermissionFor(NsPermissions.TICKET_SHARE_TICKETS) && (!kIsWeb))

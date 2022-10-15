@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Rect;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,7 +12,6 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 
 import com.pdfEditor.Editor;
 import com.pdfEditor.PAGE;
@@ -22,7 +20,6 @@ import com.pdfviewer.PDFView;
 import com.sampathkumara.northsails.smartwind.R;
 
 public class p_image_view extends RelativeLayout {
-
 
 
     public static image_container shapeC;
@@ -52,7 +49,7 @@ public class p_image_view extends RelativeLayout {
 
 
         pane = findViewById(R.id.pane);
-        ImageButton b_new = view.findViewById(R.id.b_new);
+//        ImageButton b_new = view.findViewById(R.id.b_new);
         done = view.findViewById(R.id.done);
         ImageButton b_cancel = view.findViewById(R.id.b_cancel);
         b_cancel.setOnClickListener(new OnClickListener() {
@@ -88,15 +85,15 @@ public class p_image_view extends RelativeLayout {
         });
 
 
-        b_new.setOnClickListener(new OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onClick(View view) {
-                done.callOnClick();
-                editor.browsImages(context);
-
-            }
-        });
+//        b_new.setOnClickListener(new OnClickListener() {
+//            @RequiresApi(api = Build.VERSION_CODES.O)
+//            @Override
+//            public void onClick(View view) {
+//                done.callOnClick();
+//                editor.browsImages(context);
+//
+//            }
+//        });
 
 
     }
@@ -115,10 +112,10 @@ public class p_image_view extends RelativeLayout {
         final Bitmap b = Bitmap.createScaledBitmap(shapeC.getImage(), (shapeC.getWidth()), (shapeC.getHeight()), false);
         final Bitmap b1 = Bitmap.createScaledBitmap(shapeC.getImage(), (shapeC.getWidth()), (shapeC.getHeight()), false);
 
-        float sp = ((((pdfView.pdfFile.getPageSpacing(pdfView.getCurrentPage(), zoom) / 2)/zoom) * (2*(pdfView.getCurrentPage()+1)-1 ))  );
+        float sp = ((((pdfView.pdfFile.getPageSpacing(pdfView.getCurrentPage(), zoom) / 2) / zoom) * (2 * (pdfView.getCurrentPage() + 1) - 1)));
 
         float dheight = (((getHeight() - pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight())) / 2);
-        final xImage xImage = new xImage(b, translateX, translateY - dheight , (TEXT_X/zoom), (TEXT_Y/zoom) ,
+        final xImage xImage = new xImage(b, translateX, translateY - dheight, (TEXT_X / zoom), (TEXT_Y / zoom),
                 pageNo, pdfView.pdfFile.getMaxPageWidth(), pdfView.pdfFile.getMaxPageHeight(), zoom);
         editor.editsList.add(xImage);
 //        mCanvas.restore();
@@ -132,7 +129,7 @@ public class p_image_view extends RelativeLayout {
         pdfEdit.setRect_height((shapeC.getHeight() / zoom) / pdfView.pdfFile.getMaxPageHeight());
 
         pdfEdit.setPositionX((translateX + (TEXT_X / zoom)) / pdfView.pdfFile.getMaxPageWidth());
-        pdfEdit.setPositionY((translateY + (TEXT_Y / zoom)-sp) / pdfView.pdfFile.getMaxPageHeight());
+        pdfEdit.setPositionY((translateY + (TEXT_Y / zoom) - sp) / pdfView.pdfFile.getMaxPageHeight());
         editor.getPdfEditsList().addEdit(pageNo, xImage.getId(), pdfEdit);
 
         editor.addImage(xImage.getId(), b1);
@@ -178,7 +175,8 @@ public class p_image_view extends RelativeLayout {
         });
     }
 
-PAGE page;
+    PAGE page;
+
     public void setPage(@NonNull PAGE page) {
 
         System.out.println(page.id + "____" + page.position);
@@ -186,7 +184,7 @@ PAGE page;
         mBitmap = page.getBitmap();
         mCanvas = new Canvas(mBitmap);
         pageNo = page.id;
-      this.  page=page;
+        this.page = page;
     }
 
     @Override
@@ -211,12 +209,12 @@ PAGE page;
 
         Matrix scaleMatrix = new Matrix();
         scaleMatrix.setScale(x / pdfView.getZoom(), y / pdfView.getZoom(), 0, 0);
-        scaleMatrix.postTranslate(kk.getCanvasX()    , kk.getCanvasY()    );
+        scaleMatrix.postTranslate(kk.getCanvasX(), kk.getCanvasY());
 
         float xp = (kk.translateX() / kk.getPageWidth()) * pdfView.pdfFile.getMaxPageWidth();
         float yp = (kk.translateY() / kk.getPageHeight()) * pdfView.pdfFile.getMaxPageHeight();
 
-        mCanvas.translate(xp   , (yp-Yposition+(page.dy*pdfView.getCurrentPage()))   );
+        mCanvas.translate(xp, (yp - Yposition + (page.dy * pdfView.getCurrentPage())));
 
         mCanvas.drawBitmap(kk.getBitmap(), scaleMatrix, null);
 
@@ -224,7 +222,7 @@ PAGE page;
         invalidate();
     }
 
- 
+
 }
  
 

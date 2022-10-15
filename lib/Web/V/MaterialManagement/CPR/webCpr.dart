@@ -191,7 +191,7 @@ class _WebCprState extends State<WebCpr> {
     setState(() {
       requested = true;
     });
-    return Api.get("materialManagement/cpr/search", {
+    return Api.get(EndPoints.materialManagement_cpr_search, {
       'production': selectedProduction.getValue(),
       'status': selectedStatus,
       'sortDirection': sortedAsc ? "asc" : "desc",
@@ -199,7 +199,8 @@ class _WebCprState extends State<WebCpr> {
       'pageIndex': page,
       'pageSize': count,
       'orderType': selectedOrderType,
-      'searchText': searchText
+      'searchText': searchText,
+      'filterByStartTicket': filterByStartTicket
     }).then((res) {
       print('--------------------------------------------------------------------------------------------------xxxxxxxx-');
       dataCount = res.data["count"];

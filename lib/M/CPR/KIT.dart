@@ -35,6 +35,8 @@ class KIT {
   int id = 0;
   @JsonKey(defaultValue: '', includeIfNull: true)
   String shipDate = '';
+  @JsonKey(defaultValue: null, includeIfNull: true)
+  String? orderType;
 
   int? sentUserId;
   int? receivedUserId;

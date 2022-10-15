@@ -32,8 +32,7 @@ CPR _$CPRFromJson(Map<String, dynamic> json) => CPR()
   ..orderBy = json['orderBy'] as int?
   ..orderOn = json['orderOn'] as String?;
 
-Map<String, dynamic> _$CPRToJson(CPR instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$CPRToJson(CPR instance) => <String, dynamic>{
       'ticket': instance.ticket?.toJson(),
       'sailType': instance.sailType,
       'shortageType': instance.shortageType,

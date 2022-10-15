@@ -19,6 +19,7 @@ KIT _$KITFromJson(Map<String, dynamic> json) => KIT()
   ..status = json['status'] as String? ?? ''
   ..id = json['id'] as int? ?? 0
   ..shipDate = json['shipDate'] as String? ?? ''
+  ..orderType = json['orderType'] as String?
   ..sentUserId = json['sentUserId'] as int?
   ..receivedUserId = json['receivedUserId'] as int?
   ..sentOn = json['sentOn'] as String?
@@ -39,6 +40,7 @@ Map<String, dynamic> _$KITToJson(KIT instance) => <String, dynamic>{
       'status': instance.status,
       'id': instance.id,
       'shipDate': instance.shipDate,
+      'orderType': instance.orderType,
       'sentUserId': instance.sentUserId,
       'receivedUserId': instance.receivedUserId,
       'sentOn': instance.sentOn,

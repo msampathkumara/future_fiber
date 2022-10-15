@@ -82,6 +82,11 @@ class _WebKITTableState extends State<WebKITTable> {
           numeric: true,
           onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(
+          size: ColumnSize.M,
+          label: const Text('Order', style: TextStyle(fontWeight: FontWeight.bold)),
+          numeric: true,
+          onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(
           size: ColumnSize.S,
           label: const Text('Options', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
@@ -94,7 +99,7 @@ class _WebKITTableState extends State<WebKITTable> {
   @override
   Widget build(BuildContext context) {
     // Last ppage example uses extra API call to get the number of items in datasource
-    if (_dataSourceLoading) return SizedBox();
+    if (_dataSourceLoading) return const SizedBox();
 
     return Stack(alignment: Alignment.bottomCenter, children: [
       AsyncPaginatedDataTable2(
@@ -278,27 +283,35 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                   direction: Axis.vertical,
                   children: [Text((kit.date) ?? ""), Text((kit.time) ?? "", style: const TextStyle(color: Colors.grey, fontSize: 12))])),
               DataCell(Text((kit.shipDate))),
-              DataCell(Text(
-                (kit.status),
-                style: TextStyle(color: kit.status.getColor()),
-              )),
-              DataCell(Wrap(
-                children: [
-                  if (kit.status.equalIgnoreCase('ready'))
-                    Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextButton(
-                            onPressed: () {
-                              order(kit);
-                            },
-                            child: const Text("Order"))),
-                  // IconButton(
-                  //   icon: const Icon(Icons.more_vert_rounded),
-                  //   onPressed: () {
-                  //     // showKitOptions(kit, context, context);
-                  //   },
-                  // ),
-                ],
+              DataCell(Text((kit.status), style: TextStyle(color: kit.status.getColor()))),
+              DataCell(Text((kit.orderType ?? ''), style: TextStyle(color: (kit.orderType ?? '').getColor()))),
+              // DataCell(Wrap(
+              //   children: [
+              //     if (kit.status.equalIgnoreCase('ready'))
+              //       Padding(
+              //           padding: const EdgeInsets.all(8.0),
+              //           child: TextButton(
+              //               onPressed: () {
+              //                 order(kit);
+              //               },
+              //               child: const Text("Order"))),
+              //     // IconButton(
+              //     //   icon: const Icon(Icons.more_vert_rounded),
+              //     //   onPressed: () {
+              //     //     // showKitOptions(kit, context, context);
+              //     //   },
+              //     // ),
+              //   ],
+              // ))
+
+              DataCell(IconButton(
+                icon: const Icon(Icons.more_vert_rounded),
+                onPressed: () {
+                  showCprOptions(kit, context, context, () {
+                    print('------------------------------------------------refreshDatasource');
+                    refreshDatasource();
+                  });
+                },
               ))
             ],
           );

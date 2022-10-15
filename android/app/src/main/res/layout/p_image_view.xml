@@ -60,23 +60,9 @@
                 android:baselineAligned="false">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1">
-
-                    <ImageButton
-                        android:id="@+id/b_new"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:backgroundTint="#00FFFFFF"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/b_cancel"
-                        app:layout_constraintStart_toEndOf="@+id/b_rotate_right"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@android:drawable/ic_menu_add"
-                        app:tint="#373737"
-                        tools:ignore="SpeakableTextPresentCheck"
-                        android:contentDescription="TODO" />
 
                     <ImageButton
                         android:id="@+id/done"
@@ -88,7 +74,7 @@
                         android:layout_weight="1"
                         android:backgroundTint="#00FFFFFF"
                         android:src="@drawable/ic_baseline_done_24"
-                        android:text="Done"
+                        android:text="@string/done"
                         android:textAllCaps="false"
                         android:textColor="@android:color/background_light"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -96,7 +82,7 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:tint="#4CAF50"
                         tools:ignore="SpeakableTextPresentCheck"
-                        android:contentDescription="TODO" />
+                        android:contentDescription="@string/todo" />
 
                     <ImageButton
                         android:id="@+id/b_cancel"
@@ -116,7 +102,7 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:tint="#E91E63"
                         tools:ignore="SpeakableTextPresentCheck"
-                        android:contentDescription="TODO" />
+                        android:contentDescription="@string/todo" />
 
                     <ImageButton
                         android:id="@+id/b_rotate_right"
@@ -134,7 +120,7 @@
                         app:srcCompat="@drawable/ic_baseline_rotate_right_24"
                         app:tint="#373737"
                         tools:ignore="SpeakableTextPresentCheck"
-                        android:contentDescription="TODO" />
+                        android:contentDescription="@string/todo" />
 
                     <ImageButton
                         android:id="@+id/b_rotate_left"
@@ -152,7 +138,7 @@
                         app:srcCompat="@drawable/ic_baseline_rotate_left_24"
                         app:tint="#373737"
                         tools:ignore="SpeakableTextPresentCheck"
-                        android:contentDescription="TODO" />
+                        android:contentDescription="@string/todo" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </LinearLayout>

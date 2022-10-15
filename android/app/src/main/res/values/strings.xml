@@ -8,4 +8,8 @@
     <string name="add_text">Add Text</string>
     <string name="new_page">New Page</string>
     <string name="app_name">Smart Wind</string>
+    <string name="done">Done</string>
+    <string name="todo">TODO</string>
+    <string name="color">Color</string>
+    <string name="_00">00</string>
 </resources>

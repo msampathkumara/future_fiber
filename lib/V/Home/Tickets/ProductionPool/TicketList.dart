@@ -484,18 +484,18 @@ class TicketTile extends StatelessWidget {
                                 width: 200));
                           })
                       : const IconButton(icon: Icon(Icons.view_in_ar_rounded, color: Colors.grey), onPressed: null),
-                  ticket.haveCpr == 1
-                      ? IconButton(
-                          icon: const Icon(Icons.local_mall_rounded, color: Colors.red),
-                          onPressed: () {
-                            snackBarKey.currentState?.hideCurrentSnackBar();
-                            snackBarKey.currentState?.showSnackBar(SnackBar(
-                                content: Wrap(children: ticket.getCprReport().map((e) => Row(children: [Text("${e.status}"), const Spacer(), Text("${e.count}")])).toList()),
-                                behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-                                width: 200));
-                          })
-                      : const IconButton(icon: Icon(Icons.local_mall_rounded, color: Colors.grey), onPressed: null),
+                  // ticket.haveCpr == 1
+                  //     ? IconButton(
+                  //         icon: const Icon(Icons.local_mall_rounded, color: Colors.red),
+                  //         onPressed: () {
+                  //           snackBarKey.currentState?.hideCurrentSnackBar();
+                  //           snackBarKey.currentState?.showSnackBar(SnackBar(
+                  //               content: Wrap(children: ticket.getCprReport().map((e) => Row(children: [Text("${e.status}"), const Spacer(), Text("${e.count}")])).toList()),
+                  //               behavior: SnackBarBehavior.floating,
+                  //               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                  //               width: 200));
+                  //         })
+                  //     : const IconButton(icon: Icon(Icons.local_mall_rounded, color: Colors.grey), onPressed: null),
 
                   //********************************************************************************************************************************************
                   if (ticket.isHold == 1)

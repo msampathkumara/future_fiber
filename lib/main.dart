@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:app_settings/app_settings.dart';
 // import 'package:firebase_analytics/firebase_analytics.dart';
@@ -10,7 +9,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:json_theme/json_theme.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/hive.dart';
@@ -30,9 +28,9 @@ void runLoggedApp(Widget app) async {
   runZoned(() {
     runApp(app);
   }, zoneSpecification: ZoneSpecification(print: (Zone self, ZoneDelegate parent, Zone zone, String line) {
-    // if (kDebugMode) {
-    parent.print(zone, "out > $line");
-    // }
+    if (kDebugMode) {
+      parent.print(zone, "out > $line");
+    }
   }));
 }
 
@@ -45,11 +43,11 @@ main() async {
 
   isMaterialManagement = x;
 
-  final themeStr = await rootBundle.loadString('assets/appainter_theme.json');
-  final themeJson = jsonDecode(themeStr);
-  var theme = ThemeDecoder.decodeThemeData(themeJson)!;
+  // final themeStr = await rootBundle.loadString('assets/appainter_theme.json');
+  // final themeJson = jsonDecode(themeStr);
+  // var theme = ThemeDecoder.decodeThemeData(themeJson)!;
 
-  runLoggedApp(MaterialApp(home: const MainApp()));
+  runLoggedApp(const MaterialApp(home: MainApp()));
 }
 
 bool isMaterialManagement = false;

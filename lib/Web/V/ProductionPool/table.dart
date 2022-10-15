@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:just_the_tooltip/just_the_tooltip.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/hive.dart';
-import 'package:smartwind/Web/V/MaterialManagement/CPR/TicketSortMaterials.dart';
 
 import '../../../M/Enums.dart';
 import '../../../V/Home/Tickets/ProductionPool/FlagDialog.dart';
@@ -301,12 +300,12 @@ class DessertDataSource extends DataTableSource {
               ),
             if (ticket.isError == 1)
               IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.report_problem_rounded, color: Colors.red)), onPressed: () {}),
-            if (ticket.isSort == 1)
-              IconButton(
-                  icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.local_mall_rounded, color: Colors.green)),
-                  onPressed: () {
-                    TicketSortMaterials(ticket).show(context);
-                  }),
+            // if (ticket.isSort == 1)
+            //   IconButton(
+            //       icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.local_mall_rounded, color: Colors.green)),
+            //       onPressed: () {
+            //         TicketSortMaterials(ticket).show(context);
+            //       }),
             if (ticket.isRush == 1)
               IconButton(
                   icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent)),
