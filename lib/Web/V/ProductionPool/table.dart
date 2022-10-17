@@ -6,11 +6,11 @@ import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/hive.dart';
 
 import '../../../M/Enums.dart';
-import '../../../V/Home/Tickets/ProductionPool/FlagDialog.dart';
-import '../../../V/Home/Tickets/ProductionPool/TicketListOptions.dart';
-import '../../../V/Home/Tickets/TicketInfo/TicketChatView.dart';
-import '../../../V/Home/Tickets/TicketInfo/TicketInfo.dart';
-import '../../../V/Widgets/NoResultFoundMsg.dart';
+import '../../../Mobile/V/Home/Tickets/ProductionPool/FlagDialog.dart';
+import '../../../Mobile/V/Home/Tickets/ProductionPool/TicketListOptions.dart';
+import '../../../Mobile/V/Home/Tickets/TicketInfo/TicketChatView.dart';
+import '../../../Mobile/V/Home/Tickets/TicketInfo/TicketInfo.dart';
+import '../../../Mobile/V/Widgets/NoResultFoundMsg.dart';
 import '../../../ns_icons_icons.dart';
 import '../QC/webTicketQView.dart';
 import 'copy.dart';

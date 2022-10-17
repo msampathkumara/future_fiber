@@ -5,7 +5,7 @@ import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/Web/Widgets/IfWeb.dart';
 
 import '../../../M/hive.dart';
-import '../../../V/Home/Tickets/TicketInfo/TicketInfo.dart';
+import '../../../Mobile/V/Home/Tickets/TicketInfo/TicketInfo.dart';
 
 class WipTicketList extends StatefulWidget {
   final int? sectionId;

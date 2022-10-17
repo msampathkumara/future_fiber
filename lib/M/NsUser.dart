@@ -3,10 +3,10 @@ import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/hive.dart';
-import 'package:smartwind/V/Widgets/UserImage.dart';
 import 'package:smartwind/res.dart';
 
 import '../C/Api.dart';
+import '../Mobile/V/Widgets/UserImage.dart';
 import 'AppUser.dart';
 import 'EndPoints.dart';
 import 'HiveClass.dart';
@@ -117,6 +117,8 @@ class NsUser extends HiveClass {
 
   get isLocked => locked == 1;
 
+  get isNotLocked => locked == 0;
+
   static int? intFromString(d) => int.tryParse("$d");
 
   getEpf({defaultValue = ''}) {
@@ -126,6 +128,8 @@ class NsUser extends HiveClass {
   factory NsUser.fromJson(Map<String, dynamic> json) => _$NsUserFromJson(json);
 
   bool get isDisabled => deactivate == 1;
+
+  bool get isNotDeactivated => deactivate == 0;
 
   get haveImage => img.trim().isNotEmpty;
 

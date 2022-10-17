@@ -5,7 +5,7 @@ class WebPrintTable extends StatefulWidget {
   final Future<DataResponse> Function(int page, int startingAt, int count, String sortedBy, bool sortedAsc) onRequestData;
   final Null Function(TicketPrint ticketPrint) onTap;
 
-  const WebPrintTable({required this.onInit, required this.onRequestData, required this.onTap});
+  const WebPrintTable({super.key, required this.onInit, required this.onRequestData, required this.onTap});
 
   @override
   _WebPrintTableState createState() => _WebPrintTableState();
@@ -16,10 +16,10 @@ class _WebPrintTableState extends State<WebPrintTable> {
   bool _sortAscending = true;
   int? _sortColumnIndex;
   PrintDataSourceAsync? _dessertsDataSource;
-  PaginatorController _controller = PaginatorController();
+  final PaginatorController _controller = PaginatorController();
 
-  bool _dataSourceLoading = false;
-  int _initialRow = 0;
+  final bool _dataSourceLoading = false;
+  final int _initialRow = 0;
 
   @override
   void didChangeDependencies() {
@@ -71,7 +71,7 @@ class _WebPrintTableState extends State<WebPrintTable> {
       ),
       DataColumn2(
         size: ColumnSize.S,
-        label: Tooltip(message: "Operation NO", child: Text('Production', overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.bold))),
+        label: const Tooltip(message: "Operation NO", child: Text('Production', overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.bold))),
         onSort: (columnIndex, ascending) => sort(columnIndex, ascending),
       ),
       DataColumn2(
@@ -133,7 +133,7 @@ class _WebPrintTableState extends State<WebPrintTable> {
           },
           initialFirstRowIndex: _initialRow,
           onPageChanged: (rowIndex) {
-            print("${rowIndex}${_rowsPerPage}xxxxxxxx =${rowIndex / _rowsPerPage}");
+            print("$rowIndex${_rowsPerPage}xxxxxxxx =${rowIndex / _rowsPerPage}");
           },
           sortColumnIndex: _sortColumnIndex,
           sortAscending: _sortAscending,
@@ -149,7 +149,7 @@ class _WebPrintTableState extends State<WebPrintTable> {
 }
 
 class _ErrorAndRetry extends StatelessWidget {
-  _ErrorAndRetry(this.errorMessage, this.retry);
+  const _ErrorAndRetry(this.errorMessage, this.retry);
 
   final String errorMessage;
   final void Function() retry;
@@ -164,12 +164,12 @@ class _ErrorAndRetry extends StatelessWidget {
               Text('Oops! $errorMessage', style: const TextStyle(color: Colors.white)),
               TextButton(
                   onPressed: retry,
-                  child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    const Icon(
+                  child: Row(mainAxisSize: MainAxisSize.min, children: const [
+                    Icon(
                       Icons.refresh,
                       color: Colors.white,
                     ),
-                    const Text('Retry', style: TextStyle(color: Colors.white))
+                    Text('Retry', style: TextStyle(color: Colors.white))
                   ]))
             ])),
       );
@@ -193,17 +193,17 @@ class __LoadingState extends State<_Loading> {
                   ? const SizedBox()
                   : Center(
                       child: Container(
-                      color: Colors.yellow,
+                        color: Colors.yellow,
                       padding: const EdgeInsets.all(7),
-                      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                        const CircularProgressIndicator(
+                      width: 150,
+                      height: 50,
+                      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: const [
+                        CircularProgressIndicator(
                           strokeWidth: 2,
                           color: Colors.black,
                         ),
-                        const Text('Loading..')
+                        Text('Loading..')
                       ]),
-                      width: 150,
-                      height: 50,
                     ));
             }));
   }
@@ -212,16 +212,15 @@ class __LoadingState extends State<_Loading> {
 class PrintDataSourceAsync extends AsyncDataTableSource {
   Future<DataResponse> Function(int page, int startingAt, int count, String sortedBy, bool sortedAsc) onRequestData;
   Null Function(TicketPrint ticketPrint) onTap;
-  var _selectedType;
 
-  var _colors = {'cancel': Colors.redAccent, 'sent': Colors.amberAccent, 'done': Colors.green};
+  final _colors = {'cancel': Colors.redAccent, 'sent': Colors.amberAccent, 'done': Colors.green};
 
   PrintDataSourceAsync(this.context, {required this.onRequestData, required this.onTap}) {
     print('DessertDataSourceAsync created');
   }
 
   final BuildContext context;
-  bool _empty = false;
+  final bool _empty = false;
   int? _errorCounter;
 
   RangeValues? _caloriesFilter;
@@ -243,8 +242,8 @@ class PrintDataSourceAsync extends AsyncDataTableSource {
   }
 
   @override
-  Future<AsyncRowsResponse> getRows(int startIndex, int count) async {
-    print('getRows($startIndex, $count)');
+  Future<AsyncRowsResponse> getRows(int start, int end) async {
+    print('getRows($start, $end)');
     if (_errorCounter != null) {
       _errorCounter = _errorCounter! + 1;
 
@@ -254,14 +253,14 @@ class PrintDataSourceAsync extends AsyncDataTableSource {
       }
     }
 
-    var index = startIndex;
+    var index = start;
 
     assert(index >= 0);
 
     // List returned will be empty is there're fewer items than startingAt
     var x = _empty
         ? await Future.delayed(const Duration(milliseconds: 2000), () => DataResponse(0, []))
-        : await onRequestData(int.parse("${startIndex / count}"), startIndex, count, _sortColumn, _sortAscending);
+        : await onRequestData(int.parse("${start / end}"), start, end, _sortColumn, _sortAscending);
 
     var r = AsyncRowsResponse(
         x.totalRecords,
@@ -286,8 +285,8 @@ class PrintDataSourceAsync extends AsyncDataTableSource {
                 DataCell(Wrap(
                     direction: Axis.vertical,
                     children: [Text((ticketPrint.ticket?.mo) ?? ""), Text((ticketPrint.ticket?.oe) ?? "", style: const TextStyle(color: Colors.red, fontSize: 12))])),
-                DataCell(Text('${ticketPrint.ticket?.production ?? ''}')),
-                DataCell(Text('${ticketPrint.doneOn}')),
+                DataCell(Text(ticketPrint.ticket?.production ?? '')),
+                DataCell(Text(ticketPrint.doneOn)),
                 DataCell(Text("${ticketPrint.action}", style: TextStyle(color: _colors["${ticketPrint.action}"]))),
                 DataCell(Row(children: [
                   UserImage(nsUser: nsUser, radius: 16, padding: 2),

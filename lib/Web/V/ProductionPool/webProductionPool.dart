@@ -2,14 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/M/Ticket.dart';
-import 'package:smartwind/V/Widgets/SearchBar.dart';
+import 'package:smartwind/Mobile/V/Widgets/SearchBar.dart';
 import 'package:smartwind/Web/V/AddSheet/add_sheet.dart';
 import 'package:smartwind/Web/V/AddTicket/add_ticket.dart';
 import 'package:smartwind/Web/V/ProductionPool/table.dart';
 
 import '../../../M/Enums.dart';
 import '../../../M/hive.dart';
-import '../../../V/Home/Tickets/ProductionPool/TicketListOptions.dart';
+import '../../../Mobile/V/Home/Tickets/ProductionPool/TicketListOptions.dart';
 import '../../../ns_icons_icons.dart';
 import '../../Styles/styles.dart';
 

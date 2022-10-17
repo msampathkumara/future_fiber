@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:smartwind/M/AppUser.dart';
-import 'package:smartwind/V/Home/UserManager/UserDetails.dart';
+import 'package:smartwind/Mobile/V/Home/UserManager/UserDetails.dart';
 import 'package:universal_html/html.dart' as html;
 
 import '../M/PermissionsEnum.dart';
-import '../V/Home/AppInfo.dart';
-import '../V/Widgets/UserImage.dart';
+import '../Mobile/V/Home/AppInfo.dart';
+import '../Mobile/V/Widgets/UserImage.dart';
 import 'V/Admin/webAdmin.dart';
 import 'V/DashBoard/dashBoard.dart';
 import 'V/FinishedGoods/webFinishedGoods.dart';

@@ -2,8 +2,7 @@ import "package:collection/collection.dart";
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:smartwind/M/EndPoints.dart';
-import 'package:smartwind/V/Home/Tickets/TicketInfo/info_History.dart';
-import 'package:smartwind/V/Widgets/NoResultFoundMsg.dart';
+import 'package:smartwind/Mobile/V/Home/Tickets/TicketInfo/info_History.dart';
 import 'package:smartwind/Web/V/DashBoard/M/ShiftFactorySummery.dart';
 import 'package:smartwind/Web/V/DashBoard/M/WeekPicker.dart';
 import 'package:smartwind/Web/V/DashBoard/WipTicketList.dart';
@@ -11,6 +10,7 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../C/Api.dart';
 import '../../../M/Enums.dart';
+import '../../../Mobile/V/Widgets/NoResultFoundMsg.dart';
 import 'LineChart.dart';
 import 'M/MonthPicker.dart';
 import 'M/ProgressSummery.dart';

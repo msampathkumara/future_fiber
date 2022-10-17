@@ -102,7 +102,7 @@ class _WebPrintTableState extends State<WebSheetDataTable> {
           onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(
           size: ColumnSize.M,
-          label: const Tooltip(message: "Shipping  Date", child: Text('Shipping  Date', overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.bold))),
+          label: const Tooltip(message: "Delivery Date", child: Text('Delivery Date', overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.bold))),
           numeric: false,
           onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(

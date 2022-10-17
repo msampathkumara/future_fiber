@@ -6,7 +6,7 @@ import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/hive.dart';
 
 import '../C/Server.dart';
-import '../V/Widgets/ErrorMessageView.dart';
+import '../Mobile/V/Widgets/ErrorMessageView.dart';
 import 'AppUser.dart';
 import 'Section.dart';
 import 'Ticket.dart';

@@ -1,12 +1,12 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/V/Widgets/NoResultFoundMsg.dart';
 
 import '../../../C/Api.dart';
 import '../../../M/Enums.dart';
 import '../../../M/SheetData.dart';
-import '../../../V/Widgets/SearchBar.dart';
+import '../../../Mobile/V/Widgets/NoResultFoundMsg.dart';
+import '../../../Mobile/V/Widgets/SearchBar.dart';
 import '../../Styles/styles.dart';
 
 part 'webSheetData.table.dart';

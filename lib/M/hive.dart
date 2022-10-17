@@ -18,7 +18,7 @@ import 'package:smartwind/M/user_config.dart';
 import 'package:smartwind/main.dart';
 
 import '../C/Api.dart';
-import '../V/Home/UserManager/UserPermissions.dart';
+import '../Mobile/V/Home/UserManager/UserPermissions.dart';
 import 'AppUser.dart';
 import 'HiveClass.dart';
 import 'LocalFileVersion.dart';

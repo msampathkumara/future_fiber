@@ -126,8 +126,8 @@ class _ChangeShiftsState extends State<ChangeShifts> {
                         ),
                       ),
                       const Spacer(),
-                      Text("Maximum end time :${DateFormat('yyyy-MM-dd HH:mm').format(maxEndTime ?? DateTime.now())}", style: const TextStyle(color: Colors.red)),
-                      Text("Minimum start time :${DateFormat('yyyy-MM-dd HH:mm').format(minStartTime ?? DateTime.now())}", style: const TextStyle(color: Colors.red))
+                      Text("Maximum end time :${DateFormat('yyyy-MM-dd HH:mm').format(maxEndTime)}", style: const TextStyle(color: Colors.red)),
+                      Text("Minimum start time :${DateFormat('yyyy-MM-dd HH:mm').format(minStartTime)}", style: const TextStyle(color: Colors.red))
                     ],
                   ),
         bottomNavigationBar: (loading || !isFactorySelected)

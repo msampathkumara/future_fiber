@@ -4,15 +4,15 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/QC.dart';
 import 'package:smartwind/M/Section.dart';
-import 'package:smartwind/V/Widgets/SearchBar.dart';
-import 'package:smartwind/V/Widgets/UserImage.dart';
+import 'package:smartwind/Mobile/V/Widgets/SearchBar.dart';
 import 'package:smartwind/Web/V/QC/webQView.dart';
 
 import '../../../C/Api.dart';
 import '../../../M/Enums.dart';
 import '../../../M/Ticket.dart';
-import '../../../V/Home/Tickets/TicketInfo/TicketInfo.dart';
-import '../../../V/Widgets/NoResultFoundMsg.dart';
+import '../../../Mobile/V/Home/Tickets/TicketInfo/TicketInfo.dart';
+import '../../../Mobile/V/Widgets/NoResultFoundMsg.dart';
+import '../../../Mobile/V/Widgets/UserImage.dart';
 import '../../Styles/styles.dart';
 
 part 'web_qc.table.dart';

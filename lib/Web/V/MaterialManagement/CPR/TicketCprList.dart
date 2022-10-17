@@ -3,13 +3,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/Ticket.dart';
-import 'package:smartwind/V/Widgets/UserImage.dart';
 import 'package:smartwind/Web/V/MaterialManagement/CPR/webCpr.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/Web/Widgets/IfWeb.dart';
 
 import '../../../../C/Api.dart';
 import '../../../../M/CPR/CPR.dart';
+import '../../../../Mobile/V/Widgets/UserImage.dart';
 
 class TicketCprList extends StatefulWidget {
   final Ticket ticket;
@@ -72,11 +72,11 @@ class _TicketCprListState extends State<TicketCprList> {
                       },
                       cells: [
                         // DataCell(Padding(padding: const EdgeInsets.all(16.0), child: Text('${index + 1}'))),
-                        DataCell(ListTile(title: Text(cpr.client ?? ''), subtitle: Text(cpr.suppliers.join(',') ?? ''))),
+                        DataCell(ListTile(title: Text(cpr.client ?? ''), subtitle: Text(cpr.suppliers.join(',')))),
                         DataCell(ListTile(title: Text(cpr.shortageType ?? ''), subtitle: Text(cpr.cprType ?? ''))),
-                        DataCell(ListTile(title: Text(cpr.shipDate ?? ''))),
-                        DataCell(ListTile(title: Text(cpr.status ?? ''), subtitle: Text(cpr.orderType ?? ''))),
-                        DataCell(ListTile(title: Text(cpr.user?.name ?? ''), subtitle: Text(cpr.addedOn ?? ''))),
+                        DataCell(ListTile(title: Text(cpr.shipDate))),
+                        DataCell(ListTile(title: Text(cpr.status), subtitle: Text(cpr.orderType ?? ''))),
+                        DataCell(ListTile(title: Text(cpr.user?.name ?? ''), subtitle: Text(cpr.addedOn))),
                       ]))
               .toList(),
         ));
@@ -104,13 +104,13 @@ class _TicketCprListState extends State<TicketCprList> {
                   child: Table(
                     children: [
                       TableRow(children: [
-                        ListTile(title: Text(cpr.client ?? ''), subtitle: Text(cpr.suppliers.join(',') ?? '')),
+                        ListTile(title: Text(cpr.client ?? ''), subtitle: Text(cpr.suppliers.join(','))),
                         ListTile(title: Text(cpr.shortageType ?? ''), subtitle: Text(cpr.cprType ?? '')),
-                        ListTile(title: Text(cpr.shipDate ?? '')),
+                        ListTile(title: Text(cpr.shipDate)),
                       ]),
                       TableRow(children: [
-                        ListTile(title: Text(cpr.status ?? ''), subtitle: Text(cpr.orderType ?? '')),
-                        ListTile(leading: UserImage(nsUser: cpr.user, radius: 16), title: Text(cpr.user?.name ?? ''), subtitle: Text(cpr.addedOn ?? '')),
+                        ListTile(title: Text(cpr.status), subtitle: Text(cpr.orderType ?? '')),
+                        ListTile(leading: UserImage(nsUser: cpr.user, radius: 16), title: Text(cpr.user?.name ?? ''), subtitle: Text(cpr.addedOn)),
                         Container()
                       ])
                     ],

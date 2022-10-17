@@ -6,7 +6,7 @@ import 'package:smartwind/M/DeviceLog.dart';
 import '../../../../C/Api.dart';
 import '../../../../M/Device.dart';
 import '../../../../M/NsUser.dart';
-import '../../../../V/Widgets/UserImage.dart';
+import '../../../../Mobile/V/Widgets/UserImage.dart';
 import '../../../Widgets/DialogView.dart';
 
 part 'tabLog.table.dart';

@@ -1,5 +1,4 @@
 import 'package:data_table_2/data_table_2.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/Api.dart';
@@ -7,14 +6,14 @@ import 'package:smartwind/M/CPR/KIT.dart';
 import 'package:smartwind/M/CPR/KitItem.dart';
 import 'package:smartwind/M/Chat/message.dart';
 import 'package:smartwind/M/Enums.dart';
-import 'package:smartwind/V/Widgets/UserImage.dart';
+import 'package:smartwind/Mobile/V/Home/Tickets/StandardFiles/factory_selector.dart';
+import 'package:smartwind/Mobile/V/Widgets/UserImage.dart';
 import 'package:smartwind/Web/V/MaterialManagement/KIT/AddMaterials.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/Web/Widgets/IfWeb.dart';
 import 'package:smartwind/Web/Widgets/chatBubble.dart';
 
 import '../../../../M/NsUser.dart';
-import '../../../../V/Home/Tickets/StandardFiles/factory_selector.dart';
 
 class KitView extends StatefulWidget {
   final KIT kit;
@@ -330,7 +329,6 @@ class _KitViewState extends State<KitView> {
 
   Future sendKit() {
     return Api.post("materialManagement/kit/sendKit", {'kit': _kit.id}).then((res) {
-      Map data = res.data;
       apiGetData();
     }).whenComplete(() {
       setState(() {});
@@ -403,7 +401,6 @@ class _KitViewState extends State<KitView> {
     String text = commentController.text;
     commentController.clear();
     return Api.post("materialManagement/saveCprComment", {'text': text, 'cprId': _kit.id}).then((res) {
-      Map data = res.data;
       getComments();
     }).whenComplete(() {
       setState(() {});
@@ -412,7 +409,6 @@ class _KitViewState extends State<KitView> {
 
   void updateProduction(String prod) {
     Api.post("materialManagement/kit/updateClient", {'client': prod, 'kitId': _kit.id}).then((res) {
-      Map data = res.data;
       apiGetData();
     }).whenComplete(() {
       setState(() {});

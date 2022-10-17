@@ -4,18 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/hive.dart';
-import 'package:smartwind/V/Home/UserManager/user_manager_user_list.dart';
-import 'package:smartwind/V/Widgets/SearchBar.dart';
+import 'package:smartwind/Mobile/V/Home/UserManager/user_manager_user_list.dart';
+import 'package:smartwind/Mobile/V/Widgets/SearchBar.dart';
 import 'package:smartwind/Web/V/UserManager/GenaratePassword.dart';
 import 'package:smartwind/Web/V/UserManager/UpdateUserDetails.dart';
 
 import '../../../M/Enums.dart';
-import '../../../M/hive.dart';
-import '../../../V/Widgets/NoResultFoundMsg.dart';
-import '../../../V/Widgets/UserImage.dart';
+import '../../../Mobile/V/Widgets/NoResultFoundMsg.dart';
+import '../../../Mobile/V/Widgets/UserImage.dart';
 import '../../Styles/styles.dart';
 
 part 'webUserManager.table.dart';
+
+enum UserFilters { none, locked, deactivated }
 
 class WebUserManager extends StatefulWidget {
   const WebUserManager({Key? key}) : super(key: key);
@@ -26,7 +27,7 @@ class WebUserManager extends StatefulWidget {
 
 class _WebUserManagerState extends State<WebUserManager> {
   final _controller = TextEditingController();
-  bool loading = false;
+  bool loading = true;
   DessertDataSource? _dataSource;
   String searchText = "";
 
@@ -48,7 +49,12 @@ class _WebUserManagerState extends State<WebUserManager> {
         loadData();
       }
     }, context, collection: DataTables.Users);
-    loadData();
+
+    HiveBox.getDataFromServer().then((value) {
+      loadData();
+      loading = false;
+      setState(() {});
+    });
 
     super.initState();
   }
@@ -68,6 +74,9 @@ class _WebUserManagerState extends State<WebUserManager> {
               children: [
                 Text("User Manager", style: mainWidgetsTitleTextStyle),
                 const Spacer(),
+                flagIcon(UserFilters.locked, Icons.lock, "Filter   Locked Account"),
+                flagIcon(UserFilters.deactivated, Icons.no_accounts_rounded, "Filter Deactivated accounts"),
+                const SizedBox(width: 50),
                 Wrap(children: [
                   SizedBox(
                     width: 300,
@@ -83,29 +92,31 @@ class _WebUserManagerState extends State<WebUserManager> {
             ),
             backgroundColor: Colors.transparent,
             elevation: 0),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: Material(
-                    elevation: 4,
-                    borderRadius: BorderRadius.circular(8),
-                    child: WebUserManagerTable(
-                      onInit: (DessertDataSource dataSource) {
-                        _dataSource = dataSource;
-                      },
-                      onTap: (NsUser nsUser) {
-                        _selectedUser = nsUser;
-                        setState(() {});
-                      },
-                    )),
+        body: loading
+            ? const Center(child: CircularProgressIndicator())
+            : Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Material(
+                          elevation: 4,
+                          borderRadius: BorderRadius.circular(8),
+                          child: WebUserManagerTable(
+                            onInit: (DessertDataSource dataSource) {
+                              _dataSource = dataSource;
+                            },
+                            onTap: (NsUser nsUser) {
+                              _selectedUser = nsUser;
+                              setState(() {});
+                            },
+                          )),
+                    ),
+                    const SizedBox(width: 8),
+                    if (_selectedUser != null) getUserDetailsUi(_selectedUser!)
+                  ],
+                ),
               ),
-              const SizedBox(width: 8),
-              if (_selectedUser != null) getUserDetailsUi(_selectedUser!)
-            ],
-          ),
-        ),
         floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
         floatingActionButton: FloatingActionButton(
             onPressed: () async {
@@ -123,6 +134,13 @@ class _WebUserManagerState extends State<WebUserManager> {
 
   void loadData() {
     var nsUser = HiveBox.usersBox.values.where((nsUser) {
+      if (dataFilter != UserFilters.none) {
+        if (dataFilter == UserFilters.deactivated && nsUser.isNotDeactivated) {
+          return false;
+        } else if (dataFilter == UserFilters.locked && nsUser.isNotLocked) {
+          return false;
+        }
+      }
       return (searchText.containsInArrayIgnoreCase([nsUser.name, nsUser.uname, nsUser.nic, nsUser.getEpf().toString()]));
     }).toList();
     _dataSource?.setData(nsUser);
@@ -249,6 +267,32 @@ class _WebUserManagerState extends State<WebUserManager> {
           //     )),
         ),
       ),
+    );
+  }
+
+  UserFilters dataFilter = UserFilters.none;
+
+  flagIcon(UserFilters filter, IconData? icon, tooltip, {String? text, Function? onPressed, bool? checked}) {
+    checked = checked ?? dataFilter == filter;
+
+    return IconButton(
+      icon: CircleAvatar(
+          backgroundColor: Colors.white,
+          radius: 16,
+          child: (text != null)
+              ? Text(text, style: TextStyle(color: checked ? Colors.red : Colors.black, fontWeight: FontWeight.bold))
+              : Icon(icon, color: checked ? Colors.red : Colors.black, size: 20)),
+      tooltip: tooltip,
+      onPressed: () async {
+        if (onPressed != null) {
+          onPressed();
+          return;
+        }
+
+        dataFilter = dataFilter == filter ? UserFilters.none : filter;
+        loadData();
+        setState(() {});
+      },
     );
   }
 }

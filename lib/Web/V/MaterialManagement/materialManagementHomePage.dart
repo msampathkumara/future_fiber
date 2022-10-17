@@ -4,7 +4,7 @@ import 'package:smartwind/Web/V/MaterialManagement/Batten/webBatten.dart';
 import 'package:smartwind/Web/V/MaterialManagement/CPR/webCpr.dart';
 import 'package:smartwind/Web/V/MaterialManagement/KIT/webKit.dart';
 
-import '../../../V/Widgets/UserImage.dart';
+import '../../../Mobile/V/Widgets/UserImage.dart';
 import '../../Widgets/login_change.dart';
 
 class MaterialManagementHomePage extends StatefulWidget {

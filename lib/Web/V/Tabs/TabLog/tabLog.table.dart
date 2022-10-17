@@ -5,7 +5,7 @@ class TabLogDataTable extends StatefulWidget {
   final Future<DataResponse> Function(int page, int startingAt, int count, String sortedBy, bool sortedAsc) onRequestData;
   final Null Function(DeviceLog _deviceLog) onTap;
 
-  const TabLogDataTable({required this.onInit, required this.onRequestData, required this.onTap});
+  const TabLogDataTable({super.key, required this.onInit, required this.onRequestData, required this.onTap});
 
   @override
   _WebPrintTableState createState() => _WebPrintTableState();
@@ -104,7 +104,7 @@ class _WebPrintTableState extends State<TabLogDataTable> {
           },
           initialFirstRowIndex: _initialRow,
           onPageChanged: (rowIndex) {
-            print("${rowIndex}${_rowsPerPage}xxxxxxxx =${rowIndex / _rowsPerPage}");
+            print("$rowIndex${_rowsPerPage}xxxxxxxx =${rowIndex / _rowsPerPage}");
           },
           sortColumnIndex: _sortColumnIndex,
           sortAscending: _sortAscending,

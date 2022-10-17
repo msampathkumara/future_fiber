@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
+import 'package:smartwind/Web/V/SheetData/ErrorSheetObjectList.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../C/Api.dart';
@@ -33,6 +34,8 @@ class _AddSheetState extends State<AddSheet> {
   String errorMessage = "";
 
   String? progressMsg;
+
+  List errorObjects = [];
 
   @override
   void initState() {
@@ -78,7 +81,16 @@ class _AddSheetState extends State<AddSheet> {
                                   padding: EdgeInsets.all(8.0),
                                   child: Icon(Icons.error_rounded, color: Colors.red, size: 48),
                                 ),
-                                Text(errorMessage),
+                                Text(errorMessage == 'error objects' ? "Found Some data with error. please fix them and upload sheet again" : errorMessage,
+                                    style: const TextStyle(color: Colors.red)),
+                                if (errorMessage == 'error objects')
+                                  Padding(
+                                    padding: const EdgeInsets.all(24.0),
+                                    child: ElevatedButton(
+                                        style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.red)),
+                                        onPressed: () => {ErrorSheetObjectList(errorObjects).show(context)},
+                                        child: const Text("Show Error Data", style: TextStyle(color: Colors.white))),
+                                  ),
                                 Padding(
                                   padding: const EdgeInsets.all(24.0),
                                   child: ElevatedButton(onPressed: reset, child: const Text("Upload Another")),
@@ -207,7 +219,7 @@ class _AddSheetState extends State<AddSheet> {
     ref.onValue.listen((DatabaseEvent event) {
       Map<dynamic, dynamic>? data = event.snapshot.value as Map?;
       setState(() {
-        progressMsg = data!["progress"];
+        if (data != null) progressMsg = data["progress"];
       });
     });
 
@@ -220,6 +232,7 @@ class _AddSheetState extends State<AddSheet> {
 
       if (value.data["err"] == true) {
         errorMessage = value.data["errorMsg"];
+        errorObjects = value.data["objects"];
         sheetUploadingError = true;
       } else {
         sheetUploadingDone = true;

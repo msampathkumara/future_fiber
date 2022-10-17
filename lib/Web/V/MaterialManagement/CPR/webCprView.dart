@@ -7,7 +7,6 @@ import 'package:smartwind/M/CPR/CprItem.dart';
 import 'package:smartwind/M/Chat/message.dart';
 import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/Enums.dart';
-import 'package:smartwind/V/Widgets/UserImage.dart';
 import 'package:smartwind/Web/V/MaterialManagement/CPR/LinkViewer.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/Web/Widgets/chatBubble.dart';
@@ -15,6 +14,7 @@ import 'package:universal_html/html.dart' as html;
 
 import '../../../../M/CPR/cprActivity.dart';
 import '../../../../M/NsUser.dart';
+import '../../../../Mobile/V/Widgets/UserImage.dart';
 import '../../../Widgets/IfWeb.dart';
 import '../../ProductionPool/copy.dart';
 
@@ -41,7 +41,6 @@ class _CprViewState extends State<CprView> {
 
   late CPR _cpr;
 
-  int? _canSend;
 
   List<CprActivity> cprs = [];
 
@@ -298,7 +297,6 @@ class _CprViewState extends State<CprView> {
 
   Future sendCpr(id) {
     return Api.post("materialManagement/cpr/sendCpr", {'cprActivityId': id}).then((res) {
-      Map data = res.data;
       widget.isCprChange(true);
       apiGetData();
     }).whenComplete(() {
@@ -368,14 +366,13 @@ class _CprViewState extends State<CprView> {
     String text = commentController.text;
     commentController.clear();
     return Api.post("materialManagement/saveCprComment", {'text': text, 'cprId': widget.cpr.id}).then((res) {
-      Map data = res.data;
       getComments();
     }).whenComplete(() {
       setState(() {});
     }).catchError((err) {});
   }
 
-  Map<String, bool> _suppliersPermissions = {};
+  final Map<String, bool> _suppliersPermissions = {};
 
   void setSupplierPermissions() {
     for (var sup in _cpr.suppliers) {

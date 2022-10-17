@@ -4,7 +4,7 @@ class WebKITTable extends StatefulWidget {
   final Null Function(DessertDataSourceAsync dataSource) onInit;
   final Future<DataResponse> Function(int page, int startingAt, int count, String sortedBy, bool sortedAsc) onRequestData;
 
-  const WebKITTable({required this.onInit, required this.onRequestData});
+  const WebKITTable({super.key, required this.onInit, required this.onRequestData});
 
   @override
   _WebKITTableState createState() => _WebKITTableState();
@@ -231,8 +231,8 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
   }
 
   @override
-  Future<AsyncRowsResponse> getRows(int startIndex, int count) async {
-    print('getRows($startIndex, $count)');
+  Future<AsyncRowsResponse> getRows(int start, int count) async {
+    print('getRows($start, $count)');
     if (_errorCounter != null) {
       _errorCounter = _errorCounter! + 1;
 
@@ -242,16 +242,16 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
       }
     }
 
-    var index = startIndex;
+    var index = start;
 
     assert(index >= 0);
 
-    print('xxxxxxxxxxxxxxxxxxxxxxx == ${int.parse("${startIndex / count}")}');
+    print('xxxxxxxxxxxxxxxxxxxxxxx == ${int.parse("${start / count}")}');
 
     // List returned will be empty is there're fewer items than startingAt
     var x = _empty
         ? await Future.delayed(const Duration(milliseconds: 2000), () => DataResponse(0, []))
-        : await onRequestData(int.parse("${startIndex / count}"), startIndex, count, _sortColumn, _sortAscending);
+        : await onRequestData(int.parse("${start / count}"), start, count, _sortColumn, _sortAscending);
     print('****************************************************************************xxxxxxxxxxxxx${x.totalRecords}');
     var r = AsyncRowsResponse(
         x.totalRecords,
@@ -323,7 +323,6 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
   void order(KIT kit) {
     Api.post("materialManagement/kit/order", {'kitId': kit.id})
         .then((res) {
-          Map data = res.data;
           refreshDatasource();
         })
         .whenComplete(() {})

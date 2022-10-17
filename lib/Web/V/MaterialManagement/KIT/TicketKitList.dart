@@ -71,11 +71,11 @@ class _TicketKitListState extends State<TicketKitList> {
                       },
                       cells: [
                         // DataCell(Padding(padding: const EdgeInsets.all(16.0), child: Text('${index + 1}'))),
-                        DataCell(ListTile(title: Text(cpr.client ?? ''), subtitle: Text(cpr.suppliers.join(',') ?? ''))),
+                        DataCell(ListTile(title: Text(cpr.client ?? ''), subtitle: Text(cpr.suppliers.join(',')))),
                         DataCell(ListTile(title: Text(cpr.shortageType ?? ''), subtitle: Text(cpr.cprType ?? ''))),
-                        DataCell(ListTile(title: Text(cpr.shipDate ?? ''))),
-                        DataCell(ListTile(title: Text(cpr.status ?? ''), subtitle: Text(cpr.orderType ?? ''))),
-                        DataCell(ListTile(title: Text(cpr.user?.name ?? ''), subtitle: Text(cpr.addedOn ?? ''))),
+                        DataCell(ListTile(title: Text(cpr.shipDate))),
+                        DataCell(ListTile(title: Text(cpr.status), subtitle: Text(cpr.orderType ?? ''))),
+                        DataCell(ListTile(title: Text(cpr.user?.name ?? ''), subtitle: Text(cpr.addedOn))),
                       ]))
               .toList(),
         ));

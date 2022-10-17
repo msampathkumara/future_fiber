@@ -12,7 +12,7 @@ import 'package:smartwind/C/Validations.dart';
 import 'package:smartwind/C/form_input_decoration.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Section.dart';
-import 'package:smartwind/V/Home/UserManager/section_list.dart';
+import 'package:smartwind/Mobile/V/Home/UserManager/section_list.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 
 import '../../../M/EndPoints.dart';

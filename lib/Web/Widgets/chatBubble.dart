@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/Chat/message.dart';
 import 'package:smartwind/M/NsUser.dart';
-import 'package:smartwind/V/Widgets/UserImage.dart';
 
+import '../../Mobile/V/Widgets/UserImage.dart';
 import '../V/ProductionPool/copy.dart';
 
 class ChatBubble extends StatefulWidget {

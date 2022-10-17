@@ -12,13 +12,13 @@ import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/hive.dart';
-import 'package:smartwind/V/Home/Tickets/ProductionPool/ProductionPool.dart';
+import 'package:smartwind/Mobile/V/Home/Tickets/ProductionPool/ProductionPool.dart';
 
 import 'C/App.dart';
 import 'M/AppUser.dart';
-import 'V/Home/Home.dart';
-import 'V/Login/CheckTabStatus.dart';
-import 'V/Login/Login.dart';
+import 'Mobile/V/Home/Home.dart';
+import 'Mobile/V/Login/CheckTabStatus.dart';
+import 'Mobile/V/Login/Login.dart';
 import 'Web/webMain.dart';
 import 'firebase_options.dart';
 import 'globals.dart';

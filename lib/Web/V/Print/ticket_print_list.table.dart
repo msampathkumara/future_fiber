@@ -24,11 +24,9 @@ class _TicketPrintListTableState extends State<TicketPrintListTable> {
   @override
   void didChangeDependencies() {
     // initState is to early to access route options, context is invalid at that stage
-    if (_dessertsDataSource == null) {
-      _dessertsDataSource = TicketPrintDataSourceAsync(context, onRequestData: widget.onRequestData, onTap: (TicketPrint ticketPrint) {
-        widget.onTap(ticketPrint);
-      });
-    }
+    _dessertsDataSource ??= TicketPrintDataSourceAsync(context, onRequestData: widget.onRequestData, onTap: (TicketPrint ticketPrint) {
+      widget.onTap(ticketPrint);
+    });
 
     widget.onInit(_dessertsDataSource!);
 
@@ -119,14 +117,14 @@ class _TicketPrintListTableState extends State<TicketPrintListTable> {
           },
           initialFirstRowIndex: _initialRow,
           onPageChanged: (rowIndex) {
-            print("${rowIndex}${_rowsPerPage}xxxxxxxx =${rowIndex / _rowsPerPage}");
+            print("$rowIndex${_rowsPerPage}xxxxxxxx =${rowIndex / _rowsPerPage}");
           },
           sortColumnIndex: _sortColumnIndex,
           sortAscending: _sortAscending,
           controller: _controller,
           hidePaginator: false,
           columns: _columns,
-          empty: Center(child: Container(padding: EdgeInsets.all(20), color: Colors.grey[200], child: Text('No data'))),
+          empty: Center(child: Container(padding: const EdgeInsets.all(20), color: Colors.grey[200], child: Text('No data'))),
           loading: _Loading(),
           errorBuilder: (e) => _ErrorAndRetry(e.toString(), () => _dessertsDataSource!.refreshDatasource()),
           source: _dessertsDataSource!),
@@ -269,11 +267,11 @@ class TicketPrintDataSourceAsync extends AsyncDataTableSource {
                   )),
               // specificRowHeight: this.hasRowHeightOverrides && ticketPrint.fat >= 25 ? 100 : null,
               cells: [
-                DataCell(Text('${ticketPrint.doneOn}')),
+                DataCell(Text(ticketPrint.doneOn)),
                 DataCell(Text("${ticketPrint.action}", style: TextStyle(color: _colors["${ticketPrint.action}"]))),
                 DataCell(Row(children: [
                   UserImage(nsUser: nsUser, radius: 16, padding: 2),
-                  SizedBox(width: 4),
+                  const SizedBox(width: 4),
                   Wrap(direction: Axis.vertical, children: [Text("${nsUser?.name}"), Text("${nsUser?.uname}")])
                 ]))
               ]);

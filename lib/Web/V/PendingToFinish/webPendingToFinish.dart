@@ -6,7 +6,7 @@ import 'package:smartwind/M/TicketProgressDetails.dart';
 import '../../../C/Api.dart';
 import '../../../M/Enums.dart';
 import '../../../M/NsUser.dart';
-import '../../../V/Widgets/SearchBar.dart';
+import '../../../Mobile/V/Widgets/SearchBar.dart';
 import '../../Styles/styles.dart';
 
 part 'webPendingToFinish.table.dart';

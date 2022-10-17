@@ -6,7 +6,7 @@ import 'package:smartwind/M/Ticket.dart';
 import '../../../C/Api.dart';
 import '../../../M/NsUser.dart';
 import '../../../M/TicketPrint.dart';
-import '../../../V/Widgets/UserImage.dart';
+import '../../../Mobile/V/Widgets/UserImage.dart';
 import '../../Widgets/DialogView.dart';
 
 part 'ticket_print_list.table.dart';

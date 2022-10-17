@@ -18,7 +18,7 @@ import 'src/webview_method_channel.dart';
 
 /// Optional callback invoked when a web view is first created. [controller] is
 /// the [CustomWebViewController] for the created web view.
-typedef void CustomWebViewCreatedCallback(CustomWebViewController controller);
+typedef CustomWebViewCreatedCallback = void Function(CustomWebViewController controller);
 
 /// Describes the state of JavaScript support in a given web view.
 enum JavascriptMode {
@@ -41,7 +41,7 @@ class JavascriptMessage {
 }
 
 /// Callback type for handling messages sent from Javascript running in a web view.
-typedef void JavascriptMessageHandler(JavascriptMessage message);
+typedef JavascriptMessageHandler = void Function(JavascriptMessage message);
 
 /// Information about a navigation action that is about to be executed.
 class NavigationRequest {
@@ -135,21 +135,21 @@ class SurfaceAndroidCustomWebView extends AndroidCustomWebView {
 /// `navigation` should be handled.
 ///
 /// See also: [CustomWebView.navigationDelegate].
-typedef FutureOr<NavigationDecision> NavigationDelegate(NavigationRequest navigation);
+typedef NavigationDelegate = FutureOr<NavigationDecision> Function(NavigationRequest navigation);
 
 /// Signature for when a [CustomWebView] has started loading a page.
-typedef void PageStartedCallback(String url);
+typedef PageStartedCallback = void Function(String url);
 
 /// Signature for when a [CustomWebView] has finished loading a page.
-typedef void PageFinishedCallback(String url);
+typedef PageFinishedCallback = void Function(String url);
 
 /// Signature for when a [CustomWebView] is loading a page.
-typedef void PageLoadingCallback(int progress);
+typedef PageLoadingCallback = void Function(int progress);
 
 /// Signature for when a [CustomWebView] has failed to load a resource.
-typedef void WebResourceErrorCallback(WebResourceError error);
+typedef WebResourceErrorCallback = void Function(WebResourceError error);
 
-typedef void onShowFileChooser();
+typedef onShowFileChooser = void Function();
 
 /// Specifies possible restrictions on automatic media playback.
 ///

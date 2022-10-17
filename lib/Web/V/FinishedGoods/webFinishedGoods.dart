@@ -6,7 +6,7 @@ import 'package:smartwind/Web/V/FinishedGoods/webFinishedGoods.table.dart';
 
 import '../../../M/Enums.dart';
 import '../../../M/Ticket.dart';
-import '../../../V/Widgets/SearchBar.dart';
+import '../../../Mobile/V/Widgets/SearchBar.dart';
 import '../../../ns_icons_icons.dart';
 import '../../Styles/styles.dart';
 

@@ -6,7 +6,7 @@ import 'package:smartwind/C/Api.dart';
 import 'package:smartwind/M/CPR/CPR.dart';
 import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/Enums.dart';
-import 'package:smartwind/V/Widgets/SearchBar.dart';
+import 'package:smartwind/Mobile/V/Widgets/SearchBar.dart';
 import 'package:smartwind/Web/Styles/styles.dart';
 import 'package:smartwind/Web/V/MaterialManagement/CPR/AddCpr.dart';
 import 'package:smartwind/Web/V/MaterialManagement/CPR/TicketSelector.dart';
@@ -16,7 +16,7 @@ import 'package:smartwind/Web/Widgets/myDropDown.dart';
 import '../../../../M/AppUser.dart';
 import '../../../../M/PermissionsEnum.dart';
 import '../../../../M/Ticket.dart';
-import '../../../../V/Widgets/NoResultFoundMsg.dart';
+import '../../../../Mobile/V/Widgets/NoResultFoundMsg.dart';
 import '../../../Widgets/ShowMessage.dart';
 import '../../ProductionPool/copy.dart';
 

@@ -11,7 +11,7 @@ import 'package:smartwind/res.dart';
 import 'package:universal_html/html.dart' as html;
 
 import '../../../C/Api.dart';
-import '../../../V/Widgets/UserImage.dart';
+import '../../../Mobile/V/Widgets/UserImage.dart';
 import '../../Widgets/DialogView.dart';
 
 class WebTicketQView extends StatefulWidget {
