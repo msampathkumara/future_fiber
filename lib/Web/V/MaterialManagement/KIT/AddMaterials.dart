@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:searchfield/searchfield.dart';
 import 'package:smartwind/M/CPR/CprItem.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/Web/Widgets/IfWeb.dart';
 
@@ -228,18 +229,18 @@ class _AddMaterialsState extends State<AddMaterials> {
                 ? IconButton(
                     onPressed: () {
                       setState(() {
-                        kit.items.forEach((element) {
+                        for (var element in kit.items) {
                           element.selected = false;
-                        });
+                        }
                       });
                     },
                     icon: const Icon(Icons.check_box, size: 16))
                 : IconButton(
                     onPressed: () {
                       setState(() {
-                        kit.items.forEach((element) {
+                        for (var element in kit.items) {
                           element.selected = true;
-                        });
+                        }
                       });
                     },
                     icon: const Icon(Icons.check_box_outlined, size: 16)),
@@ -256,10 +257,10 @@ class _AddMaterialsState extends State<AddMaterials> {
                   icon: const Icon(Icons.edit, size: 16)),
             IconButton(
                 onPressed: () {
-                  selectedItems.forEach((x) {
+                  for (var x in selectedItems) {
                     print(x.toJson());
                     kit.items.removeWhere((e) => e.item == x.item && e.qty == x.qty);
-                  });
+                  }
                   setState(() {});
                 },
                 icon: const Icon(Icons.delete_rounded, size: 16)),
@@ -270,7 +271,7 @@ class _AddMaterialsState extends State<AddMaterials> {
     );
   }
 
-  late String err_msg = "";
+  late String errMsg = "";
 
   save() {
     print(kit.toJson());
@@ -278,8 +279,7 @@ class _AddMaterialsState extends State<AddMaterials> {
     // if (kit.items.where((element) => element.supplier == null).isEmpty) {
     //   err_msg = 'items';
     // } else {
-    Api.post("materialManagement/kit/saveKitMaterials", {'kit': kit}).then((res) {
-      Map s = res.data;
+    Api.post(EndPoints.materialManagement_kit_saveKitMaterials, {'kit': kit}).then((res) {
       Navigator.pop(context, true);
     }).whenComplete(() {
       setState(() {});
@@ -296,6 +296,6 @@ class _AddMaterialsState extends State<AddMaterials> {
       });
     });
     // }
-    print(err_msg);
+    print(errMsg);
   }
 }

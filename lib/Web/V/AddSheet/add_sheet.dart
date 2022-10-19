@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/Web/V/SheetData/ErrorSheetObjectList.dart';
 import 'package:uuid/uuid.dart';
 
@@ -226,7 +226,7 @@ class _AddSheetState extends State<AddSheet> {
     final bytes = await controller1.getFileData(ev);
     FormData formData = FormData.fromMap({"sheet": MultipartFile.fromBytes(bytes, filename: ev.name), 'id': id});
 
-    Api.post(("sheet/upload"), {}, formData: formData, onSendProgress: (int sent, int total) {}).then((value) {
+    Api.post((EndPoints.sheet_upload), {}, formData: formData, onSendProgress: (int sent, int total) {}).then((value) {
       print('done');
       print(value.data["err"]);
 

@@ -26,7 +26,6 @@ class AndroidCustomWebView implements CustomWebViewPlatform {
     CustomWebViewPlatformCreatedCallback? onCustomWebViewPlatformCreated,
     Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers,
   }) {
-    assert(customWebViewPlatformCallbacksHandler != null);
     return GestureDetector(
       // We prevent text selection by intercepting the long press event.
       // This is a temporary stop gap due to issues with text selection on Android:

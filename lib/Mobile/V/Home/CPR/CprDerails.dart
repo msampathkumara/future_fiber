@@ -37,7 +37,7 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _tabBarController = TabController(length: 2, vsync: this);
       _tabBarController!.addListener(() {
-        print("Selected Index: " + _tabBarController!.index.toString());
+        print("Selected Index: ${_tabBarController!.index}");
       });
       setState(() {});
     });
@@ -49,8 +49,9 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
         // print(_cpr.toJson());
         setState(() {});
       } else {
-        await ErrorMessageView(errorMessage: res.data["error"]).show(context);
-        Navigator.of(context).pop();
+        await ErrorMessageView(errorMessage: res.data["error"]).show(context).then(() {
+          Navigator.of(context).pop();
+        });
       }
     });
   }
@@ -63,11 +64,10 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
 
     if (_tabBarController == null) {
       return saving
-          ? Container(
-              child: Center(
-                  child: Column(
-                    children: const [CircularProgressIndicator(), Text("Saving")],
-            )))
+          ? Center(
+              child: Column(
+              children: const [CircularProgressIndicator(), Text("Saving")],
+            ))
           : Container();
     } else {
       return DefaultTabController(
@@ -99,24 +99,24 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
                   isScrollable: true,
                   tabs: [
                     Tab(
-                      child: Wrap(alignment: WrapAlignment.center, children: [
-                        const Icon(
+                      child: Wrap(alignment: WrapAlignment.center, children: const [
+                        Icon(
                           Icons.info_rounded,
                         ),
-                        const Padding(
+                        Padding(
                           padding: EdgeInsets.only(top: 4, bottom: 4, left: 4),
-                          child: const Text("Info"),
+                          child: Text("Info"),
                         )
                       ]),
                     ),
                     Tab(
-                      child: Wrap(alignment: WrapAlignment.center, children: [
-                        const Icon(
+                      child: Wrap(alignment: WrapAlignment.center, children: const [
+                        Icon(
                           Icons.settings_suggest_rounded,
                         ),
-                        const Padding(
+                        Padding(
                           padding: EdgeInsets.only(top: 4, bottom: 4, left: 4),
-                          child: const Text("Materials"),
+                          child: Text("Materials"),
                         )
                       ]),
                     ),
@@ -128,8 +128,7 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
                 SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 100),
-                    child: Container(
-                        child: Column(children: [
+                    child: Column(children: [
                       ListTile(
                           title: const Text("Sail"),
                           subtitle: ListTile(
@@ -137,7 +136,7 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
                               subtitle: Text(_cpr.ticket?.mo != null ? _cpr.ticket?.oe ?? "" : "", style: const TextStyle(fontWeight: FontWeight.bold)))),
                       ListTile(title: const Text("Sail Type"), subtitle: Text("${_cpr.sailType}", style: st)),
                       ListTile(title: const Text("Client"), subtitle: Text("${_cpr.client}", style: st)),
-                      ListTile(title: const Text("Suppliers"), subtitle: Text("${_cpr.suppliers.join(',')}", style: st)),
+                      ListTile(title: const Text("Suppliers"), subtitle: Text(_cpr.suppliers.join(','), style: st)),
                       ListTile(title: const Text("Shortage Type"), subtitle: Text("${_cpr.shortageType}", style: st)),
                       ListTile(title: const Text("CPR Type"), subtitle: Text("${_cpr.cprType}", style: st)),
                       if (_cpr.user != null)
@@ -152,12 +151,11 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
                                 leading: UserImage(nsUser: NsUser.fromId(_cpr.sentUser!.id), radius: 24),
                                 title: Text(_cpr.sentUser!.uname, style: st),
                                 subtitle: Text(_cpr.sentOn ?? ""))),
-                    ])),
+                    ]),
                   ),
                 ),
-                Container(
-                    child: ListTile(
-                      title: const Text("Materials"),
+                ListTile(
+                  title: const Text("Materials"),
                   subtitle: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(children: [
@@ -175,12 +173,6 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
                                     },
                                     child: ListTile(
                                         title: Text(material.item, style: st),
-                                        // leading: Checkbox(
-                                        //     value: material.isChecked(),
-                                        //      onChanged: (checked){setState(() {
-                                        //       material.setChecked(checked!);
-                                        //     });}
-                                        // ),
                                         subtitle: material.isChecked()
                                             ? Row(
                                                 children: [
@@ -194,7 +186,7 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
                                               )
                                             : null,
                                         trailing: Wrap(alignment: WrapAlignment.center, direction: Axis.vertical, children: [
-                                          Text("${material.qty}", style: st),
+                                          Text(material.qty, style: st),
                                         ])),
                                   );
                                 },
@@ -205,16 +197,16 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
                           ),
                         )
                       ])),
-                ))
+                )
               ],
             )),
       );
     }
   }
 
-  List<String> _matList = [];
+  final List<String> _matList = [];
 
-  CprItem currentMaterial = new CprItem();
+  CprItem currentMaterial = CprItem();
 
   getData(String filter) {
     List<String> data = _matList.where((element) => element.toLowerCase().contains(filter.toLowerCase())).toList();
@@ -222,16 +214,16 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
     return Future.value(data);
   }
 
-  var _suppliers = ["Cutting", "SA", "Printing"];
-  var _supplier1;
-  var _supplier2;
-  var _supplier3;
+  final _suppliers = ["Cutting", "SA", "Printing"];
+  String? _supplier1;
+  String? _supplier2;
+  String? _supplier3;
 
   getSuppliers() {
     _supplier2 = _supplier1 == _supplier2 ? null : _supplier2;
     _supplier3 = _supplier2 == _supplier3 ? null : _supplier3;
-    _cpr.suppliers = [_supplier1, _supplier2, _supplier3];
-    _cpr.suppliers.removeWhere((value) => value == null);
+    _cpr.suppliers = [_supplier1, _supplier2, _supplier3].whereType<String>().toList();
+    // _cpr.suppliers.removeWhere((value) => value == null);
     print(_cpr.suppliers);
     return Column(
       children: [

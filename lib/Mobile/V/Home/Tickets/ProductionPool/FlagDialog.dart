@@ -13,10 +13,9 @@ import '../../../Widgets/UserImage.dart';
 class FlagDialogNew extends StatefulWidget {
   final Ticket ticket;
   final TicketFlagTypes ticketFlagType;
+  final bool editable;
 
-  bool editable;
-
-  FlagDialogNew(this.ticket, this.ticketFlagType, {Key? key, this.editable = true}) : super(key: key) {}
+  const FlagDialogNew(this.ticket, this.ticketFlagType, {Key? key, this.editable = true}) : super(key: key);
 
   @override
   State<FlagDialogNew> createState() => _FlagDialogNewState();
@@ -30,7 +29,6 @@ class _FlagDialogNewState extends State<FlagDialogNew> {
   late TicketFlagTypes flagType;
   late String addTitle;
   late String removeTitle;
-  late String _commentPlaceHolder;
   late Widget icon;
 
   final TextEditingController _commentController = TextEditingController();
@@ -282,7 +280,6 @@ class _FlagDialogNewState extends State<FlagDialogNew> {
         addTitle = "Set Red Flag";
         removeTitle = "Remove Red Flag";
         icon = const Icon(Icons.flag_rounded, color: Colors.red);
-        _commentPlaceHolder = "Red Flag Comment";
         break;
 
       case TicketFlagTypes.GR:
@@ -290,14 +287,12 @@ class _FlagDialogNewState extends State<FlagDialogNew> {
         addTitle = "Set GR";
         removeTitle = "Remove GR";
         icon = const Icon(NsIcons.gr, color: Colors.blue);
-        _commentPlaceHolder = "GR Comment";
         break;
       case TicketFlagTypes.RUSH:
         flagType = TicketFlagTypes.RUSH;
         addTitle = "Set Rush";
         removeTitle = "Remove Rush";
         icon = const Icon(NsIcons.rush, color: Colors.orange);
-        _commentPlaceHolder = "Rush Comment";
         break;
       case TicketFlagTypes.SK:
         // TODO: Handle this case.
@@ -307,7 +302,6 @@ class _FlagDialogNewState extends State<FlagDialogNew> {
         addTitle = "Stop Production";
         removeTitle = "Restart Production";
         icon = const Icon(Icons.pan_tool_rounded, color: Colors.red);
-        _commentPlaceHolder = "Comment";
         break;
       case TicketFlagTypes.CROSS:
         // TODO: Handle this case.

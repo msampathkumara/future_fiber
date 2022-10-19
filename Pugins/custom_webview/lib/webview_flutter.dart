@@ -18,7 +18,7 @@ import 'src/webview_method_channel.dart';
 
 /// Optional callback invoked when a web view is first created. [controller] is
 /// the [CustomWebViewController] for the created web view.
-typedef void CustomWebViewCreatedCallback(CustomWebViewController controller);
+typedef CustomWebViewCreatedCallback = void Function(CustomWebViewController controller);
 
 /// Describes the state of JavaScript support in a given web view.
 enum JavascriptMode {
@@ -34,14 +34,14 @@ class JavascriptMessage {
   /// Constructs a JavaScript message object.
   ///
   /// The `message` parameter must not be null.
-  const JavascriptMessage(this.message) : assert(message != null);
+  const JavascriptMessage(this.message);
 
   /// The contents of the message that was sent by the JavaScript code.
   final String message;
 }
 
 /// Callback type for handling messages sent from Javascript running in a web view.
-typedef void JavascriptMessageHandler(JavascriptMessage message);
+typedef JavascriptMessageHandler = void Function(JavascriptMessage message);
 
 /// Information about a navigation action that is about to be executed.
 class NavigationRequest {
@@ -87,7 +87,6 @@ class SurfaceAndroidCustomWebView extends AndroidCustomWebView {
     required CustomWebViewPlatformCallbacksHandler customWebViewPlatformCallbacksHandler,
   }) {
     assert(Platform.isAndroid);
-    assert(customWebViewPlatformCallbacksHandler != null);
     return PlatformViewLink(
       viewType: 'plugins.flutter.io/customwebview',
       surfaceFactory: (
@@ -135,21 +134,21 @@ class SurfaceAndroidCustomWebView extends AndroidCustomWebView {
 /// `navigation` should be handled.
 ///
 /// See also: [CustomWebView.navigationDelegate].
-typedef FutureOr<NavigationDecision> NavigationDelegate(NavigationRequest navigation);
+typedef NavigationDelegate = FutureOr<NavigationDecision> Function(NavigationRequest navigation);
 
 /// Signature for when a [CustomWebView] has started loading a page.
-typedef void PageStartedCallback(String url);
+typedef PageStartedCallback = void Function(String url);
 
 /// Signature for when a [CustomWebView] has finished loading a page.
-typedef void PageFinishedCallback(String url);
+typedef PageFinishedCallback = void Function(String url);
 
 /// Signature for when a [CustomWebView] is loading a page.
-typedef void PageLoadingCallback(int progress);
+typedef PageLoadingCallback = void Function(int progress);
 
 /// Signature for when a [CustomWebView] has failed to load a resource.
-typedef void WebResourceErrorCallback(WebResourceError error);
+typedef WebResourceErrorCallback = void Function(WebResourceError error);
 
-typedef String OnShowFileChooser();
+typedef OnShowFileChooser = String Function();
 
 /// Specifies possible restrictions on automatic media playback.
 ///
@@ -180,9 +179,7 @@ class JavascriptChannel {
   JavascriptChannel({
     required this.name,
     required this.onMessageReceived,
-  })  : assert(name != null),
-        assert(onMessageReceived != null),
-        assert(_validChannelNames.hasMatch(name));
+  }) : assert(_validChannelNames.hasMatch(name));
 
   /// The channel's name.
   ///
@@ -231,10 +228,7 @@ class CustomWebView extends StatefulWidget {
     this.userAgent,
     this.initialMediaPlaybackPolicy = AutoMediaPlaybackPolicy.require_user_action_for_all_media_types,
     this.allowsInlineMediaPlayback = false,
-  })  : assert(javascriptMode != null),
-        assert(initialMediaPlaybackPolicy != null),
-        assert(allowsInlineMediaPlayback != null),
-        super(key: key);
+  }) : super(key: key);
 
   static CustomWebViewPlatform? _platform;
 
@@ -497,11 +491,9 @@ WebSettings _clearUnchangedWebSettings(WebSettings currentValue, WebSettings new
   assert(currentValue.hasNavigationDelegate != null);
   assert(currentValue.hasProgressTracking != null);
   assert(currentValue.debuggingEnabled != null);
-  assert(currentValue.userAgent != null);
   assert(newValue.javascriptMode != null);
   assert(newValue.hasNavigationDelegate != null);
   assert(newValue.debuggingEnabled != null);
-  assert(newValue.userAgent != null);
 
   JavascriptMode? javascriptMode;
   bool? hasNavigationDelegate;
@@ -592,6 +584,7 @@ class _PlatformCallbacksHandler implements CustomWebViewPlatformCallbacksHandler
     return "";
   }
 
+  @override
   void onWebResourceError(WebResourceError error) {
     if (_widget.onWebResourceError != null) {
       _widget.onWebResourceError!(error);
@@ -618,7 +611,7 @@ class CustomWebViewController {
     this._widget,
     this._customWebViewPlatformController,
     this._platformCallbacksHandler,
-  ) : assert(_customWebViewPlatformController != null) {
+  ) {
     _settings = _webSettingsFromWidget(_widget);
   }
 
@@ -642,7 +635,6 @@ class CustomWebViewController {
     String url, {
     Map<String, String>? headers,
   }) async {
-    assert(url != null);
     _validateUrlString(url);
     return _customWebViewPlatformController.loadUrl(url, headers);
   }

@@ -26,7 +26,6 @@ class TicketPrintList extends StatefulWidget {
 
 class _TicketPrintListState extends State<TicketPrintList> {
   late Ticket ticket;
-  late TicketPrintDataSourceAsync _dataSource;
 
   @override
   void initState() {
@@ -46,13 +45,12 @@ class _TicketPrintListState extends State<TicketPrintList> {
             toolbarHeight: 100,
             centerTitle: true,
             automaticallyImplyLeading: false,
-            actions: [IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.close))],
+            actions: [IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close))],
             title: Column(
-              children: [Text("${ticket.mo ?? ''}"), Text("${ticket.oe ?? ''}")],
+              children: [Text(ticket.mo ?? ''), Text(ticket.oe ?? '')],
             )),
         body: TicketPrintListTable(
             onInit: (TicketPrintDataSourceAsync dataSource) {
-              _dataSource = dataSource;
             },
             onRequestData: (int page, int startingAt, int count, String sortedBy, bool sortedAsc) {
               return getData();

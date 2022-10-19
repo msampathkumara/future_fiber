@@ -30,9 +30,7 @@ class _WebPrintState extends State<WebPrint> {
 
   int dataCount = 0;
 
-  final List<TicketPrint> _ticketList = [];
 
-  bool _dataLoadingError = false;
 
   late PrintDataSourceAsync _dataSource;
 
@@ -178,7 +176,6 @@ class _WebPrintState extends State<WebPrint> {
       List ticketPrint = res.data["prints"];
       dataCount = res.data["count"];
 
-      _dataLoadingError = false;
 
       setState(() {});
       return DataResponse(dataCount, TicketPrint.fromJsonArray(ticketPrint));
@@ -195,7 +192,6 @@ class _WebPrintState extends State<WebPrint> {
                 getData(page, startingAt, count, sortedBy, sortedAsc);
               })));
       setState(() {
-        _dataLoadingError = true;
       });
     });
   }

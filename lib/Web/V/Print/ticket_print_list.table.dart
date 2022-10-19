@@ -5,7 +5,7 @@ class TicketPrintListTable extends StatefulWidget {
   final Future<DataResponse> Function(int page, int startingAt, int count, String sortedBy, bool sortedAsc) onRequestData;
   final Null Function(TicketPrint ticketPrint) onTap;
 
-  const TicketPrintListTable({required this.onInit, required this.onRequestData, required this.onTap});
+  const TicketPrintListTable({super.key, required this.onInit, required this.onRequestData, required this.onTap});
 
   @override
   _TicketPrintListTableState createState() => _TicketPrintListTableState();
@@ -16,10 +16,10 @@ class _TicketPrintListTableState extends State<TicketPrintListTable> {
   bool _sortAscending = true;
   int? _sortColumnIndex;
   TicketPrintDataSourceAsync? _dessertsDataSource;
-  PaginatorController _controller = PaginatorController();
+  final PaginatorController _controller = PaginatorController();
 
-  bool _dataSourceLoading = false;
-  int _initialRow = 0;
+  final bool _dataSourceLoading = false;
+  final int _initialRow = 0;
 
   @override
   void didChangeDependencies() {
@@ -64,16 +64,16 @@ class _TicketPrintListTableState extends State<TicketPrintListTable> {
 
   List<DataColumn> get _columns {
     return [
-      DataColumn2(
+      const DataColumn2(
         size: ColumnSize.M,
         label: Text('Date & Time'),
       ),
-      DataColumn2(
+      const DataColumn2(
         size: ColumnSize.M,
         label: Text('Status'),
         numeric: true,
       ),
-      DataColumn2(size: ColumnSize.M, label: Text('User'), numeric: false, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.M, label: const Text('User'), numeric: false, onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
     ];
   }
 
@@ -82,7 +82,7 @@ class _TicketPrintListTableState extends State<TicketPrintListTable> {
   @override
   Widget build(BuildContext context) {
     // Last ppage example uses extra API call to get the number of items in datasource
-    if (_dataSourceLoading) return SizedBox();
+    if (_dataSourceLoading) return const SizedBox();
 
     return Stack(alignment: Alignment.bottomCenter, children: [
       AsyncPaginatedDataTable2(
@@ -101,7 +101,7 @@ class _TicketPrintListTableState extends State<TicketPrintListTable> {
           minWidth: 800,
           fit: FlexFit.tight,
           border: TableBorder(
-              top: BorderSide(color: Colors.transparent),
+              top: const BorderSide(color: Colors.transparent),
               bottom: BorderSide(color: Colors.grey[300]!),
               left: BorderSide(color: Colors.grey[300]!),
               right: BorderSide(color: Colors.grey[300]!),
@@ -124,7 +124,7 @@ class _TicketPrintListTableState extends State<TicketPrintListTable> {
           controller: _controller,
           hidePaginator: false,
           columns: _columns,
-          empty: Center(child: Container(padding: const EdgeInsets.all(20), color: Colors.grey[200], child: Text('No data'))),
+          empty: Center(child: Container(padding: const EdgeInsets.all(20), color: Colors.grey[200], child: const Text('No data'))),
           loading: _Loading(),
           errorBuilder: (e) => _ErrorAndRetry(e.toString(), () => _dessertsDataSource!.refreshDatasource()),
           source: _dessertsDataSource!),
@@ -133,7 +133,7 @@ class _TicketPrintListTableState extends State<TicketPrintListTable> {
 }
 
 class _ErrorAndRetry extends StatelessWidget {
-  _ErrorAndRetry(this.errorMessage, this.retry);
+  const _ErrorAndRetry(this.errorMessage, this.retry);
 
   final String errorMessage;
   final void Function() retry;
@@ -141,20 +141,14 @@ class _ErrorAndRetry extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Center(
         child: Container(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             height: 170,
             color: Colors.red,
             child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text('Oops! $errorMessage', style: TextStyle(color: Colors.white)),
+              Text('Oops! $errorMessage', style: const TextStyle(color: Colors.white)),
               TextButton(
                   onPressed: retry,
-                  child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    Icon(
-                      Icons.refresh,
-                      color: Colors.white,
-                    ),
-                    Text('Retry', style: TextStyle(color: Colors.white))
-                  ]))
+                  child: Row(mainAxisSize: MainAxisSize.min, children: const [Icon(Icons.refresh, color: Colors.white), Text('Retry', style: TextStyle(color: Colors.white))]))
             ])),
       );
 }
@@ -171,23 +165,18 @@ class __LoadingState extends State<_Loading> {
         color: Colors.white.withAlpha(128),
         // at first show shade, if loading takes longer than 0,5s show spinner
         child: FutureBuilder(
-            future: Future.delayed(Duration(milliseconds: 500), () => true),
+            future: Future.delayed(const Duration(milliseconds: 500), () => true),
             builder: (context, snapshot) {
               return !snapshot.hasData
-                  ? SizedBox()
+                  ? const SizedBox()
                   : Center(
                       child: Container(
                       color: Colors.yellow,
-                      padding: EdgeInsets.all(7),
-                      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                        CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.black,
-                        ),
-                        Text('Loading..')
-                      ]),
+                      padding: const EdgeInsets.all(7),
                       width: 150,
                       height: 50,
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround, children: const [CircularProgressIndicator(strokeWidth: 2, color: Colors.black), Text('Loading..')]),
                     ));
             }));
   }
@@ -196,16 +185,15 @@ class __LoadingState extends State<_Loading> {
 class TicketPrintDataSourceAsync extends AsyncDataTableSource {
   Future<DataResponse> Function(int page, int startingAt, int count, String sortedBy, bool sortedAsc) onRequestData;
   Null Function(TicketPrint ticketPrint) onTap;
-  var _selectedType;
 
-  var _colors = {'cancel': Colors.redAccent, 'sent': Colors.amberAccent, 'done': Colors.green};
+  final _colors = {'cancel': Colors.redAccent, 'sent': Colors.amberAccent, 'done': Colors.green};
 
   TicketPrintDataSourceAsync(this.context, {required this.onRequestData, required this.onTap}) {
     print('DessertDataSourceAsync created');
   }
 
   final BuildContext context;
-  bool _empty = false;
+  final bool _empty = false;
   int? _errorCounter;
 
   RangeValues? _caloriesFilter;
@@ -227,25 +215,25 @@ class TicketPrintDataSourceAsync extends AsyncDataTableSource {
   }
 
   @override
-  Future<AsyncRowsResponse> getRows(int startIndex, int count) async {
-    print('getRows($startIndex, $count)');
+  Future<AsyncRowsResponse> getRows(int start, int end) async {
+    print('getRows($start, $end)');
     if (_errorCounter != null) {
       _errorCounter = _errorCounter! + 1;
 
       if (_errorCounter! % 2 == 1) {
-        await Future.delayed(Duration(milliseconds: 1000));
+        await Future.delayed(const Duration(milliseconds: 1000));
         throw 'Error #${((_errorCounter! - 1) / 2).round() + 1} has occured';
       }
     }
 
-    var index = startIndex;
+    var index = start;
 
     assert(index >= 0);
 
     // List returned will be empty is there're fewer items than startingAt
     var x = _empty
-        ? await Future.delayed(Duration(milliseconds: 2000), () => DataResponse(0, []))
-        : await onRequestData(int.parse("${startIndex / count}"), startIndex, count, _sortColumn, _sortAscending);
+        ? await Future.delayed(const Duration(milliseconds: 2000), () => DataResponse(0, []))
+        : await onRequestData(int.parse("${start / end}"), start, end, _sortColumn, _sortAscending);
 
     var r = AsyncRowsResponse(
         x.totalRecords,
@@ -256,12 +244,12 @@ class TicketPrintDataSourceAsync extends AsyncDataTableSource {
               onTap: () {
                 onTap(ticketPrint);
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  duration: Duration(seconds: 1),
+                  duration: const Duration(seconds: 1),
                   content: Text('Tapped on ${ticketPrint.ticket?.id}'),
                 ));
               },
               onSecondaryTap: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    duration: Duration(seconds: 1),
+                duration: const Duration(seconds: 1),
                     backgroundColor: Theme.of(context).errorColor,
                     content: Text('Right clicked on ${ticketPrint.ticket?.id}'),
                   )),

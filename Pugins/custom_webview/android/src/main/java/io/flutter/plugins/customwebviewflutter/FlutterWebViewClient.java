@@ -82,7 +82,6 @@ class FlutterWebViewClient {
         throw new IllegalArgumentException(message);
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
         if (!hasNavigationDelegate) {
             return false;

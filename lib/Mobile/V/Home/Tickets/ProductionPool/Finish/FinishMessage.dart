@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/Ticket.dart';
 
@@ -24,6 +23,6 @@ class FinishMessage extends StatefulWidget {
 class _FinishMessageState extends State<FinishMessage> {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(height: 300, child: Text("ddddd"));
+    return const SizedBox(height: 300, child: Text("ddddd"));
   }
 }

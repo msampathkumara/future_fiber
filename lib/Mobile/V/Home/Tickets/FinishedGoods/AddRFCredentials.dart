@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
@@ -99,7 +98,6 @@ class _AddRFCredentialsState extends State<AddRFCredentials> {
       saving = true;
     });
     Api.post(EndPoints.users_saveRfCredentials, userRFCredentials.toJson()).then((res) {
-      Map data = res.data;
       Navigator.of(context).pop(userRFCredentials);
     }).whenComplete(() {
       setState(() {

@@ -26,7 +26,7 @@ class TicketKitList extends StatefulWidget {
 class _TicketKitListState extends State<TicketKitList> {
   late Ticket ticket;
 
-  var dataCount;
+  int? dataCount;
 
   bool loading = true;
 

@@ -1,21 +1,20 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class J109 extends StatelessWidget {
   WebViewController? _webViewController;
 
-  J109();
+  J109({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("J109"),
+          title: const Text("J109"),
           actions: [
             if (_webViewController != null)
               IconButton(
-                  icon: Icon(Icons.autorenew_outlined),
+                  icon: const Icon(Icons.autorenew_outlined),
                   onPressed: () {
                     _webViewController!.reload();
                   })
@@ -32,7 +31,7 @@ class J109 extends StatelessWidget {
           onProgress: (int progress) {
             print("WebView is loading (progress : $progress%)");
           },
-          javascriptChannels: <JavascriptChannel>{},
+          javascriptChannels: const <JavascriptChannel>{},
           navigationDelegate: (NavigationRequest request) {
             return NavigationDecision.navigate;
           },

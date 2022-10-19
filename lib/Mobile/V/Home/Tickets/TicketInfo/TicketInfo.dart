@@ -60,9 +60,9 @@ class _TicketInfoState extends State<TicketInfo> {
     getData(_ticket);
     _dbChangeCallBack = DB.setOnDBChangeListener(() {
       if (mounted) {
-        var _ticket_ = HiveBox.ticketBox.get(_ticket.id);
-        if (_ticket_ != null && _ticket_.uptime != _ticket.uptime) {
-          _ticket = _ticket_;
+        var ticket_ = HiveBox.ticketBox.get(_ticket.id);
+        if (ticket_ != null && ticket_.uptime != _ticket.uptime) {
+          _ticket = ticket_;
           getData(_ticket);
         }
       }

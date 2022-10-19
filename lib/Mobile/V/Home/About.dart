@@ -3,7 +3,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:smartwind/res.dart';
 
 class About extends StatefulWidget {
-  About({Key? key}) : super(key: key);
+  const About({Key? key}) : super(key: key);
 
   @override
   _AboutState createState() {
@@ -12,7 +12,7 @@ class About extends StatefulWidget {
 }
 
 class _AboutState extends State<About> {
-  var appVersion;
+  String? appVersion;
 
   @override
   void initState() {

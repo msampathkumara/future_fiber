@@ -1,5 +1,4 @@
 import 'package:data_table_2/data_table_2.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class WebSheetDataTable<T extends Object> extends StatefulWidget {
@@ -9,7 +8,7 @@ class WebSheetDataTable<T extends Object> extends StatefulWidget {
 
   final List<DataColumn3> columns;
 
-  const WebSheetDataTable({required this.onInit, required this.onRequestData, required this.onTap, required this.columns});
+  const WebSheetDataTable({super.key, required this.onInit, required this.onRequestData, required this.onTap, required this.columns});
 
   @override
   _WebPrintTableState createState() => _WebPrintTableState();
@@ -32,19 +31,17 @@ class _WebPrintTableState<T extends Object> extends State<WebSheetDataTable> {
   bool _sortAscending = true;
   int? _sortColumnIndex;
   SheetDataSourceAsync? _dessertsDataSource;
-  PaginatorController _controller = PaginatorController();
+  final PaginatorController _controller = PaginatorController();
 
-  bool _dataSourceLoading = false;
-  int _initialRow = 0;
+  final bool _dataSourceLoading = false;
+  final int _initialRow = 0;
 
   @override
   void didChangeDependencies() {
     // initState is to early to access route options, context is invalid at that stage
-    if (_dessertsDataSource == null) {
-      _dessertsDataSource = SheetDataSourceAsync(context, onRequestData: widget.onRequestData, onTap: (element) {
-        widget.onTap(element);
-      });
-    }
+    _dessertsDataSource ??= SheetDataSourceAsync(context, onRequestData: widget.onRequestData, onTap: (element) {
+      widget.onTap(element);
+    });
 
     widget.onInit(_dessertsDataSource!);
 
@@ -133,7 +130,7 @@ class _WebPrintTableState<T extends Object> extends State<WebSheetDataTable> {
           },
           initialFirstRowIndex: _initialRow,
           onPageChanged: (rowIndex) {
-            print("${rowIndex}${_rowsPerPage}xxxxxxxx =${rowIndex / _rowsPerPage}");
+            print("$rowIndex${_rowsPerPage}xxxxxxxx =${rowIndex / _rowsPerPage}");
           },
           sortColumnIndex: _sortColumnIndex,
           sortAscending: _sortAscending,
@@ -149,7 +146,7 @@ class _WebPrintTableState<T extends Object> extends State<WebSheetDataTable> {
 }
 
 class _ErrorAndRetry extends StatelessWidget {
-  _ErrorAndRetry(this.errorMessage, this.retry);
+  const _ErrorAndRetry(this.errorMessage, this.retry);
 
   final String errorMessage;
   final void Function() retry;
@@ -164,12 +161,12 @@ class _ErrorAndRetry extends StatelessWidget {
               Text('Oops! $errorMessage', style: const TextStyle(color: Colors.white)),
               TextButton(
                   onPressed: retry,
-                  child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    const Icon(
+                  child: Row(mainAxisSize: MainAxisSize.min, children: const [
+                    Icon(
                       Icons.refresh,
                       color: Colors.white,
                     ),
-                    const Text('Retry', style: TextStyle(color: Colors.white))
+                    Text('Retry', style: TextStyle(color: Colors.white))
                   ]))
             ])),
       );
@@ -193,17 +190,17 @@ class __LoadingState extends State<_Loading> {
                   ? const SizedBox()
                   : Center(
                       child: Container(
-                      color: Colors.yellow,
+                        color: Colors.yellow,
                       padding: const EdgeInsets.all(7),
-                      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                        const CircularProgressIndicator(
+                      width: 150,
+                      height: 50,
+                      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: const [
+                        CircularProgressIndicator(
                           strokeWidth: 2,
                           color: Colors.black,
                         ),
-                        const Text('Loading..')
+                        Text('Loading..')
                       ]),
-                      width: 150,
-                      height: 50,
                     ));
             }));
   }
@@ -218,7 +215,7 @@ class SheetDataSourceAsync<T extends Object> extends AsyncDataTableSource {
   }
 
   final BuildContext context;
-  bool _empty = false;
+  final bool _empty = false;
   int? _errorCounter;
 
   RangeValues? _caloriesFilter;
@@ -240,8 +237,8 @@ class SheetDataSourceAsync<T extends Object> extends AsyncDataTableSource {
   }
 
   @override
-  Future<AsyncRowsResponse> getRows(int startIndex, int count) async {
-    print('getRows($startIndex, $count)');
+  Future<AsyncRowsResponse> getRows(int start, int end) async {
+    print('getRows($start, $end)');
     if (_errorCounter != null) {
       _errorCounter = _errorCounter! + 1;
 
@@ -251,14 +248,14 @@ class SheetDataSourceAsync<T extends Object> extends AsyncDataTableSource {
       }
     }
 
-    var index = startIndex;
+    var index = start;
 
     assert(index >= 0);
 
     // List returned will be empty is there're fewer items than startingAt
     var x = _empty
         ? await Future.delayed(const Duration(milliseconds: 2000), () => DataResponse(0, <T>[]))
-        : await onRequestData(int.parse("${startIndex / count}"), startIndex, count, _sortColumn, _sortAscending);
+        : await onRequestData(int.parse("${start / end}"), start, end, _sortColumn, _sortAscending);
 
     var r = AsyncRowsResponse(
         x.totalRecords,
@@ -269,12 +266,12 @@ class SheetDataSourceAsync<T extends Object> extends AsyncDataTableSource {
                 onTap(sheetData);
               },
               onSecondaryTap: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                duration: const Duration(seconds: 1),
+                    duration: const Duration(seconds: 1),
                     backgroundColor: Theme.of(context).errorColor,
-                    content: Text('Right clicked on ${sheetData}'),
+                    content: Text('Right clicked on $sheetData'),
                   )),
               // specificRowHeight: this.hasRowHeightOverrides && sheetData.fat >= 25 ? 100 : null,
-              cells: [
+              cells: const [
                 // DataCell(Text((sheetData.mo) ?? "")),
                 // DataCell(Text((sheetData.oe) ?? "")),
                 // DataCell(Text(("${sheetData.operationNo}"))),

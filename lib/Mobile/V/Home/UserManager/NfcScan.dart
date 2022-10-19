@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:smartwind/M/NsUser.dart';
 
 class NfcScan extends StatefulWidget {
-  late _NfcScanState state;
   final NsUser nsUser;
 
-  NfcScan(this.nsUser);
+  const NfcScan(this.nsUser, {super.key});
 
   @override
   _NfcScanState createState() {
-    state = _NfcScanState();
-    return state;
+    return _NfcScanState();
   }
 
   void show(context) {

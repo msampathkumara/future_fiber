@@ -11,7 +11,7 @@ class DeviceLog {
 
   @HiveField(1, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)
-  int? id = null;
+  int? id;
 
   @HiveField(2, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
@@ -23,15 +23,15 @@ class DeviceLog {
 
   @HiveField(4, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)
-  int? dnt = null;
+  int? dnt;
 
   @HiveField(5, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)
-  int? userId = null;
+  int? userId;
 
   @HiveField(6, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)
-  int? tabId = null;
+  int? tabId;
 
   factory DeviceLog.fromJson(Map<String, dynamic> json) => _$DeviceLogFromJson(json);
 

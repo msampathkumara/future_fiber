@@ -39,12 +39,12 @@ class _PastMaterialRowState extends State<PastMaterialRow> {
             items = [];
             List<String> c = t.split("	 ");
 
-            c.forEach((element) {
+            for (var element in c) {
               CprItem ci = CprItem();
               ci.item = element.split("	")[1];
               ci.qty = "${element.split("	")[2]} ${element.split("	")[3]}";
               items.add(ci);
-            });
+            }
             setState(() {});
           }),
           Expanded(

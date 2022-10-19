@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/Ticket.dart';
@@ -16,7 +15,6 @@ class PrintManager extends StatefulWidget {
 }
 
 class _PrintManagerState extends State<PrintManager> with TickerProviderStateMixin {
-  var database;
   var themeColor = Colors.blue;
 
   Production _selectedProduction = Production.All;
@@ -37,13 +35,13 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
     super.dispose();
   }
 
-  TextEditingController searchController = new TextEditingController();
+  TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          actions: <Widget>[],
+          actions: const <Widget>[],
           elevation: 0,
           toolbarHeight: 80,
           backgroundColor: themeColor,
@@ -94,72 +92,8 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
   String listSortBy = "doneOn";
   String sortedBy = "Date";
   String searchText = "";
-  var subscription;
+
   List<Map> currentFileList = [];
-
-  void _sortByBottomSheetMenu() {
-    getListItem(String title, icon, key) {
-      return ListTile(
-        title: Text(title),
-        selectedTileColor: Colors.black12,
-        selected: listSortBy == key,
-        leading: icon is IconData ? Icon(icon) : icon,
-        onTap: () {
-          listSortBy = key;
-          sortedBy = title;
-          Navigator.pop(context);
-          _ticketPrintList = [];
-          loadData(0);
-          setState(() {});
-        },
-      );
-    }
-
-    showModalBottomSheet(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        backgroundColor: Colors.white,
-        context: context,
-        builder: (builder) {
-          return Container(
-            color: Colors.transparent,
-            child: Column(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text(
-                    "Sort By",
-                    textScaleFactor: 1.2,
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
-                      child: ListView(
-                        children: [
-                          getListItem("Date", Icons.date_range_rounded, "uptime"),
-                          getListItem("Name", Icons.sort_by_alpha_rounded, "mo"),
-                          getListItem("Red Flag", Icons.tour_rounded, "isred"),
-                          getListItem("Hold", Icons.pan_tool_rounded, "ishold"),
-                          getListItem("Rush", Icons.flash_on_rounded, "isrush"),
-                          getListItem("SK", Icons.flash_on_rounded, "issk"),
-                          getListItem("GR", Icons.flash_on_rounded, "isgr"),
-                          // getListItem("SK",
-                          //     CircleAvatar(radius: 12, backgroundColor: Colors.grey, child: Center(child: Text("SK", style: TextStyle(color: Colors.white, fontSize: 8)))), "issk"),
-                          // getListItem("GR",
-                          //     CircleAvatar(radius: 12, backgroundColor: Colors.grey, child: Center(child: Text("GR", style: TextStyle(color: Colors.white, fontSize: 8)))), "isgr"),
-                          getListItem("Short", Icons.local_mall_rounded, "sort"),
-                          getListItem("Error Route", Icons.warning_rounded, "errOut"),
-                          getListItem("Print", Icons.print_rounded, "inprint")
-                        ],
-                      )),
-                ),
-              ],
-            ),
-          );
-        });
-  }
 
   getBody() {
     return Scaffold(
@@ -169,7 +103,7 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
           automaticallyImplyLeading: false,
           backgroundColor: themeColor,
           elevation: 10,
-          actions: [],
+          actions: const [],
           title: Column(
             children: [
               SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: Production.values.map<Widget>((e) => _productionChip(e)).toList())),
@@ -225,7 +159,7 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
 
                       loadData(x.toInt());
                     }
-                    return Container(
+                    return SizedBox(
                         height: 100,
                         child: Center(
                             child: Padding(
@@ -278,7 +212,7 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
                               border: Border.all(
                                 color: Colors.white,
                               ),
-                              borderRadius: const BorderRadius.all(const Radius.circular(20))),
+                              borderRadius: const BorderRadius.all(Radius.circular(20))),
                           child: ListTile(
                               leading: Text("${index + 1}"),
                               title: Text(
@@ -318,7 +252,7 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
       context: context,
       builder: (BuildContext context) {
         return Container(
-          decoration: const BoxDecoration(borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
+          decoration: const BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)), color: Colors.white),
           height: 350,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -330,24 +264,23 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
               ),
               const Divider(),
               Expanded(
-                  child: Container(
-                child: SingleChildScrollView(
-                    child: Column(children: [
-                  ListTile(
-                      title: const Text("Send Ticket"),
-                      leading: const Icon(Icons.send_rounded, color: Colors.lightBlue),
-                      onTap: () async {
-                        await Ticket.sharePdf(context, ticket);
+                  child: SingleChildScrollView(
+                      child: Column(children: [
+                ListTile(
+                    title: const Text("Send Ticket"),
+                    leading: const Icon(Icons.send_rounded, color: Colors.lightBlue),
+                    onTap: () async {
+                      await Ticket.sharePdf(context, ticket).then((value) {
                         Navigator.of(context).pop();
-                      }),
-                  ListTile(
-                      title: const Text("Delete"),
-                      leading: const Icon(Icons.delete_forever, color: Colors.red),
-                      onTap: () async {
-                        Navigator.of(context).pop();
-                      }),
-                ])),
-              ))
+                      });
+                    }),
+                ListTile(
+                    title: const Text("Delete"),
+                    leading: const Icon(Icons.delete_forever, color: Colors.red),
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                    }),
+              ])))
             ],
           ),
         );
@@ -393,9 +326,9 @@ class _PrintManagerState extends State<PrintManager> with TickerProviderStateMix
       List prints = res.data["prints"];
       dataCount = res.data["count"];
 
-      prints.forEach((element) {
+      for (var element in prints) {
         _ticketPrintList.add(TicketPrint.fromJson(element));
-      });
+      }
       final ids = _ticketPrintList.map((e) => e.id).toSet();
       _ticketPrintList.retainWhere((x) => ids.remove(x.id));
       _dataLoadingError = false;

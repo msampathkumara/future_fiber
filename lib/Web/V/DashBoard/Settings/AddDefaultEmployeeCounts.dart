@@ -42,7 +42,6 @@ class _AddDefaultEmployeeCountsState extends State<AddDefaultEmployeeCounts> {
   }
 
   final List<String> _sections = ['3D Drawing', 'Hand Work', 'layout', 'Qc', 'Sewing', 'Stickup'];
-  final List<String> _factories = ["Upwind", 'Nylon Standard', 'Nylon Custom', "OD", "OEM", "38 Upwind", '38 Nylon Standard', '38 Nylon Custom', "38 OD", "38 OEM", "None"];
 
   getWebUi() {
     return Scaffold(
@@ -169,7 +168,6 @@ class _AddDefaultEmployeeCountsState extends State<AddDefaultEmployeeCounts> {
     });
 
     Api.post(EndPoints.dashboard_settings_saveDefaultEmployeeCount, {'sectionDefaults': sectionDefaultsMap.values.toList()}).then((res) {
-      Map data = res.data;
       selectedFactory = null;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Saved"), width: 200, behavior: SnackBarBehavior.floating));
       Navigator.pop(context);

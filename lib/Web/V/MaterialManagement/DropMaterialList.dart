@@ -120,19 +120,20 @@ class _DropMaterialListState extends State<DropMaterialList> {
 
   upload(ev) async {
     List<CprItem> cprItems = [];
-    final bytes = await controller1.getFileData(ev);
-    String bar = utf8.decode(bytes);
-    List<List<dynamic>> rowsAsListOfValues = const CsvToListConverter().convert(bar);
+    await controller1.getFileData(ev).then((bytes) {
+      String bar = utf8.decode(bytes);
+      List<List<dynamic>> rowsAsListOfValues = const CsvToListConverter().convert(bar);
 
-    rowsAsListOfValues.forEach((element) {
-      print("${element[1]}---${element[2]} ${element[3]}");
+      for (var element in rowsAsListOfValues) {
+        print("${element[1]}---${element[2]} ${element[3]}");
 
-      CprItem item = CprItem();
-      item.item = element[1];
-      item.qty = "${element[2]} ${element[3]}";
-      cprItems.add(item);
+        CprItem item = CprItem();
+        item.item = element[1];
+        item.qty = "${element[2]} ${element[3]}";
+        cprItems.add(item);
+      }
+
+      Navigator.pop(context, cprItems);
     });
-
-    Navigator.pop(context, cprItems);
   }
 }

@@ -19,10 +19,10 @@ class _CSState extends State<CS> with TickerProviderStateMixin {
   TabController? _tabBarController;
 
   late Ticket ticket;
-  var selectedPage;
+  String? selectedPage;
 
   late CustomWebView _webView;
-  CustomWebViewController? _webViewController;
+  late CustomWebViewController _webViewController;
 
   bool _loading = true;
 
@@ -39,16 +39,20 @@ class _CSState extends State<CS> with TickerProviderStateMixin {
     });
     _webView = CustomWebView(
       initialUrl: "https://cs.northsails.com",
+      // initialUrl: "https://smartwind.nsslsupportservices.com",
       // initialUrl: "https://ps.uci.edu/~franklin/doc/file_upload.html",
       javascriptMode: JavascriptMode.unrestricted,
       onCustomWebViewCreated: (CustomWebViewController webViewController) {
         _webViewController = webViewController;
+        print('llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll');
+        _webViewController.evaluateJavascript(" setTimeout(function(){  console.log('Hello World');  }, 2000);");
         // webViewController.loadUrl("http://bluebook.northsails.com:8088/nsbb/app/blueBook.html", headers: {"Authorization": "Basic c3VtaXRyYUBsazpZeFpGZThIeA=="});
         // _controller.complete(webViewController);
+        _webViewController.evaluateJavascript("console.log('sssssssssssssssssssssssss')");
       },
       onShowFileChooser: () {
         print("------------------------------------------------------------------x $selectedPage");
-        return selectedPage;
+        return "$selectedPage";
       },
       onProgress: (int progress) {
         print("WebView is loading (progress : $progress%)");
@@ -63,6 +67,9 @@ class _CSState extends State<CS> with TickerProviderStateMixin {
       onPageFinished: (String url) {
         print('Page finished loading: $url');
         // _controller!.evaluateJavascript(jsString);
+        // _webViewController?.evaluateJavascript("document.getElementById('userName').value = 'My value';console.log('sssssssssssssssssssssssssxx')");
+        _webViewController.evaluateJavascript("console.log('sssssssssssssssssssssssssxx')");
+
         setState(() {
           _loading = false;
         });
@@ -136,7 +143,7 @@ class _CSState extends State<CS> with TickerProviderStateMixin {
     // : SafeArea(child: _webView));
   }
 
-  var errorMessage;
+  String? errorMessage;
   bool isSampleDoc = true;
   late PdfController _pdfController;
   late PdfController _pdfController1;

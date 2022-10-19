@@ -13,9 +13,9 @@ class DateChooser extends StatefulWidget {
 }
 
 class _DateChooserState extends State<DateChooser> {
-  var rangeEndDate;
+  DateTime? rangeEndDate;
 
-  var rangeStartDate;
+  DateTime? rangeStartDate;
   var now = DateTime.now();
 
   String formatDate(DateTime date, {bool dateOnly = false}) => dateOnly ? DateFormat("yyyy MMMM d").format(date) : DateFormat("yyyy MMMM d HH:mm").format(date);
@@ -80,7 +80,7 @@ class _DateChooserState extends State<DateChooser> {
                     onPressed: () {
                       Navigator.of(context).pop();
                       if (widget.onChose != null) {
-                        widget.onChose!(rangeStartDate, rangeEndDate);
+                        widget.onChose!(rangeStartDate!, rangeEndDate);
                       }
                     },
                     child: const Text('Done')),

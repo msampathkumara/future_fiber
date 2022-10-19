@@ -46,7 +46,7 @@ class _PasswordRecoveryState extends State<PasswordRecovery> {
           children: [
             Builder(builder: (context) {
               if (_enterPassword && user != null) {
-                return NewPassword(user?.id, onEnd: () {
+                return NewPassword(user!.id, onEnd: () {
                   Navigator.pop(context, true);
                 });
               }

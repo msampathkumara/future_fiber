@@ -2,9 +2,6 @@ package com.knef.stickerview;
 
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
@@ -29,14 +26,6 @@ public class StickerImageView extends StickerView {
         super(context, attrs, defStyle);
     }
 
-    public String getOwnerId() {
-        return this.owner_id;
-    }
-
-    public void setOwnerId(String owner_id) {
-        this.owner_id = owner_id;
-    }
-
     @Override
     public View getMainView() {
         if (this.iv_main == null) {
@@ -46,20 +35,6 @@ public class StickerImageView extends StickerView {
         return iv_main;
     }
 
-    public void setImageResource(int res_id) {
-        this.iv_main.setImageResource(res_id);
-    }
 
-    public void setImageDrawable(Drawable drawable) {
-        this.iv_main.setImageDrawable(drawable);
-    }
-
-    public Bitmap getImageBitmap() {
-        return ((BitmapDrawable) this.iv_main.getDrawable()).getBitmap();
-    }
-
-    public void setImageBitmap(Bitmap bmp) {
-        this.iv_main.setImageBitmap(bmp);
-    }
 
 }

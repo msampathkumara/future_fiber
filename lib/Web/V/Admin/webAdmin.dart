@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/Admin/Settings.dart';
+import 'package:smartwind/M/EndPoints.dart';
 
 import '../../../C/Api.dart';
 import '../../../C/Validations.dart';
@@ -236,7 +237,7 @@ class _WebAdminState extends State<WebAdmin> {
   }
 
   void saveSettings(String settingName, value) {
-    Api.post("admin/settings/setSetting", {'setting': settingName, 'value': value}).then((res) {
+    Api.post(EndPoints.admin_settings_setSetting, {'setting': settingName, 'value': value}).then((res) {
       Map data = res.data;
       loadSettings();
     }).whenComplete(() {

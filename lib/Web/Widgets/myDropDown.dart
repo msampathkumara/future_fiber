@@ -4,7 +4,7 @@ typedef PopupMenuItemSelected<T> = String Function(T value);
 typedef PopupMenuItemSelected1<T> = String Function(T value);
 typedef OnChildBuild<T> = Widget? Function(T value);
 
-class myDropDown<T> extends StatefulWidget {
+class MyDropDown<T> extends StatefulWidget {
   final T value;
   final List<T>? items;
   final int? elevation;
@@ -14,16 +14,16 @@ class myDropDown<T> extends StatefulWidget {
   final OnChildBuild<T> onChildBuild;
   final TextStyle? lableStyle;
 
-  const myDropDown(
-      {Key? key, this.items, this.elevation, required this.onSelect, required this.selectedText, required this.value, this.lable, this.lableStyle, required this.onChildBuild});
+  const MyDropDown(
+      {super.key, this.items, this.elevation, required this.onSelect, required this.selectedText, required this.value, this.lable, this.lableStyle, required this.onChildBuild});
 
   @override
-  State<myDropDown<T>> createState() => _myDropDownState<T>();
+  State<MyDropDown<T>> createState() => _MyDropDownState<T>();
 }
 
 enum WhyFarther { harder, smarter, selfStarter, tradingCharter }
 
-class _myDropDownState<T> extends State<myDropDown<T>> {
+class _MyDropDownState<T> extends State<MyDropDown<T>> {
   final GlobalKey _menuKey = GlobalKey();
 
   String? _selectinString = '';
@@ -41,7 +41,6 @@ class _myDropDownState<T> extends State<myDropDown<T>> {
   @override
   Widget build(BuildContext context) {
     final button = PopupMenuButton<T>(
-        child: Icon(Icons.arrow_drop_down_sharp, size: 24, color: Theme.of(context).primaryColor),
         key: _menuKey,
         shape: RoundedRectangleBorder(side: BorderSide(color: Theme.of(context).primaryColorLight), borderRadius: const BorderRadius.all(Radius.circular(4))),
         color: Colors.white,
@@ -53,8 +52,9 @@ class _myDropDownState<T> extends State<myDropDown<T>> {
           });
         },
         itemBuilder: (BuildContext context) {
-          return [for (T item in widget.items ?? []) PopupMenuItem<T>(child: widget.onChildBuild.call(item as T), value: item)];
-        });
+          return [for (T item in widget.items ?? []) PopupMenuItem<T>(value: item, child: widget.onChildBuild.call(item))];
+        },
+        child: Icon(Icons.arrow_drop_down_sharp, size: 24, color: Theme.of(context).primaryColor));
 
     return InkWell(
       onTap: () {

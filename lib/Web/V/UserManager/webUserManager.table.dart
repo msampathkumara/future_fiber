@@ -4,7 +4,7 @@ class WebUserManagerTable extends StatefulWidget {
   final Null Function(DessertDataSource dataSource) onInit;
   final Null Function(NsUser nsUser) onTap;
 
-    const WebUserManagerTable({Key? key, required this.onInit, required this.onTap}) : super(key: key);
+  const WebUserManagerTable({Key? key, required this.onInit, required this.onTap}) : super(key: key);
 
   @override
   _WebUserManagerTableState createState() => _WebUserManagerTableState();
@@ -131,14 +131,8 @@ class DessertDataSource extends DataTableSource {
   bool Function(NsUser nsUser) filter;
   Function(NsUser nsUser) onTap;
 
-  var searchString;
-
   DessertDataSource(this.context, this.filter, {required this.onTap}) {
     nsUsers = _nsUsers;
-    print("ddddddddd ${nsUsers.length}");
-    // if (sortedByCalories) {
-    //   sort((d) => d.mo, true);
-    // }
   }
 
   final BuildContext context;
@@ -158,7 +152,7 @@ class DessertDataSource extends DataTableSource {
 
   isNumeric(string) => num.tryParse(string) != null;
 
-  int _selectedCount = 0;
+  final int _selectedCount = 0;
 
   @override
   DataRow getRow(int index) {
@@ -234,8 +228,8 @@ class DessertDataSource extends DataTableSource {
     notifyListeners();
   }
 
-  void setData(List<NsUser> _nsUsers) {
-    nsUsers = _nsUsers;
+  void setData(List<NsUser> nsUsers) {
+    nsUsers = nsUsers;
     notifyListeners();
   }
 }

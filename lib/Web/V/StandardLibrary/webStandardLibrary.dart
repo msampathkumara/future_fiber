@@ -31,7 +31,7 @@ class _WebStandardLibraryState extends State<WebStandardLibrary> {
 
   int dataCount = 0;
 
-  List<Ticket> _ticketList = [];
+  final List<Ticket> _ticketList = [];
 
   late DessertDataSourceAsync _dataSource;
 

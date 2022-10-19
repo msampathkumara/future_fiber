@@ -76,7 +76,7 @@ class _UserImageState extends State<UserImage> {
                     height: widget.radius * 2,
                     fit: BoxFit.cover,
                     errorWidget: (context, url, error) {
-                      return Image.asset('assets/images/userPlaceholder.jpg', fit: BoxFit.cover, width: widget.radius * 2, height: widget.radius * 2);
+                      return Image.asset(Res.userPlaceholder, fit: BoxFit.cover, width: widget.radius * 2, height: widget.radius * 2);
                     },
                     progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress))),
             if (nsUser.isLocked) Positioned(right: 0, top: 0, child: Icon(Icons.lock, color: Colors.red, size: widget.radius * 0.6))

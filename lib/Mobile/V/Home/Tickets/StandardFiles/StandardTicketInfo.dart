@@ -17,9 +17,9 @@ import '../../../../../Web/Widgets/IfWeb.dart';
 import '../../../Widgets/UserImage.dart';
 
 class StandardTicketInfo extends StatefulWidget {
-  StandardTicket standardTicket;
+  final StandardTicket standardTicket;
 
-  StandardTicketInfo(this.standardTicket);
+  const StandardTicketInfo(this.standardTicket, {super.key});
 
   Future show(context) {
     return kIsWeb ? showDialog(context: context, builder: (_) => this) : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
@@ -133,7 +133,6 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
   }
 
   _appBar() {
-    double height = MediaQuery.of(context).size.height;
     var ts = const TextStyle(color: Colors.white, fontSize: 24);
     var smallText = const TextStyle(fontSize: 16);
 
@@ -182,7 +181,7 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
     );
   }
 
-  Future<Null> loadData() {
+  Future<void> loadData() {
     print('xxxxxxxxxxxxxxxxxxxxxxx');
     return Api.get("/tickets/standard/getInfo", {'id': standardTicket.id}).then((data) {
       print(data.data["history"]);

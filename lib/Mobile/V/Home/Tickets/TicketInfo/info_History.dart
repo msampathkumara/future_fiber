@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/TicketHistory.dart';
 import 'package:smartwind/M/hive.dart';
@@ -10,7 +9,7 @@ import '../../../Widgets/UserImage.dart';
 class InfoHistory extends StatefulWidget {
   final List<TicketHistory> ticketHistoryList;
 
-  const InfoHistory(this.ticketHistoryList);
+  const InfoHistory(this.ticketHistoryList, {super.key});
 
   @override
   _InfoHistoryState createState() => _InfoHistoryState();

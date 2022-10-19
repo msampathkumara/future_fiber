@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/Device.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 
 import '../../../C/Api.dart';
@@ -28,7 +28,7 @@ class _DeviceRenameDialogState extends State<DeviceRenameDialog> {
       width: 400,
       height: 150,
       child: Scaffold(
-        appBar: AppBar(actions: []),
+        appBar: AppBar(actions: const []),
         body: Padding(
             padding: const EdgeInsets.fromLTRB(8.0, 8, 8, 8),
             child: TextFormField(
@@ -39,8 +39,6 @@ class _DeviceRenameDialogState extends State<DeviceRenameDialog> {
               },
               initialValue: widget.device.name,
               onFieldSubmitted: (text) {
-                print('xxxxxxxxxx == ${text}');
-
                 if (text.trim().isNotEmpty && text.trim() != widget.device.name) {
                   saving = true;
                   setState(() {});
@@ -55,7 +53,7 @@ class _DeviceRenameDialogState extends State<DeviceRenameDialog> {
   bool _duplicate = false;
 
   void saveName(String text) {
-    Api.post("tabs/rename", {'name': text, 'id': widget.device.id}).then((res) {
+    Api.post(EndPoints.tabs_rename, {'name': text, 'id': widget.device.id}).then((res) {
       Map data = res.data;
       if (data['saved'] == true) {
         Navigator.pop(context);

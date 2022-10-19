@@ -56,7 +56,6 @@ class Shift {
   }
 
   setStartTime(TimeOfDay t) {
-    bool isPm = t.period == DayPeriod.pm;
     startAt = DateFormat('yyyy-MM-dd HH:mm').parse("${DateFormat("yyyy-MM-dd").format(startAt!)} ${t.hour}:${t.minute}");
     print(startAt);
   }

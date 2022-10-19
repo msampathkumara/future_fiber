@@ -45,10 +45,7 @@ Future<File?> _getFile(Ticket ticket, context, {onReceiveProgress}) async {
       print(e.response.toString());
       if (e.response!.statusCode == 404) {
         loadingWidget.close(context);
-        var errorView = ErrorMessageView(
-          errorMessage: "File Not Found",
-          icon: Icons.sd_card_alert,
-        );
+        var errorView = const ErrorMessageView(errorMessage: "File Not Found", icon: Icons.sd_card_alert);
         await errorView.show(context);
         return Future.value(null);
       }

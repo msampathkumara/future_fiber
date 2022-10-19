@@ -10,10 +10,10 @@ class AppInfo extends StatefulWidget {
 }
 
 class _AppInfoState extends State<AppInfo> {
-  var appVersion;
-  var buildNumber;
-  var appName;
-  var buildSignature;
+  String? appVersion;
+  String? buildNumber;
+  String? appName;
+  String? buildSignature;
 
   @override
   void initState() {

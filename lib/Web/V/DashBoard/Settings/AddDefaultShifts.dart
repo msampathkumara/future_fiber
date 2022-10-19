@@ -82,7 +82,7 @@ class _AddDefaultShiftsState extends State<AddDefaultShifts> {
                           ],
                         ),
                       ),
-                      Spacer()
+                      const Spacer()
                     ],
                   ),
         bottomNavigationBar: (loading || !isFactorySelected)
@@ -196,10 +196,10 @@ class _AddDefaultShiftsState extends State<AddDefaultShifts> {
       Map data = res.data;
       print(data);
 
-      var List = DefaultShift.fromJsonArray(data["defaultShifts"]);
+      var list = DefaultShift.fromJsonArray(data["defaultShifts"]);
       shiftsMap = {
         ...shiftsMap,
-        ...{for (var e in List) e.shiftName ?? '': e}
+        ...{for (var e in list) e.shiftName ?? '': e}
       };
     }).whenComplete(() {
       loading = false;

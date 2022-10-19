@@ -7,7 +7,9 @@ import '../../../../C/Api.dart';
 import '../../../../M/User/PermissionProfile.dart';
 
 class PermissionsProfiles extends StatefulWidget {
-  const PermissionsProfiles({Key? key}) : super(key: key);
+  final Function(List<int>) onSelect;
+
+  const PermissionsProfiles(this.onSelect, {Key? key}) : super(key: key);
 
   @override
   State<PermissionsProfiles> createState() => _PermissionsProfilesState();
@@ -50,14 +52,18 @@ class _PermissionsProfilesState extends State<PermissionsProfiles> {
                   return const Divider();
                 },
                 itemBuilder: (BuildContext context, int index) {
-                  print('index == ${index}');
+                  print('index == $index');
 
                   if (permissionProfileList.length == index) {
-                    return Text("ddddddddd", style: TextStyle(color: Colors.red));
+                    return const Text("ddddddddd", style: TextStyle(color: Colors.red));
                   }
                   var permissionProfile = permissionProfileList.elementAt(index);
 
-                  return ListTile(title: Text(permissionProfile.name));
+                  return ListTile(
+                      title: Text(permissionProfile.name),
+                      onTap: () {
+                        widget.onSelect(permissionProfile.permissions);
+                      });
                 },
               ),
             ));

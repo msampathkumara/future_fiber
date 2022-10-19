@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
 import 'package:searchfield/searchfield.dart';
 import 'package:smartwind/M/CPR/CPR.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/Web/V/MaterialManagement/CPR/PastMaterialRow.dart';
@@ -43,7 +44,6 @@ class _AddCprState extends State<AddCpr> {
 
   bool saving = false;
 
-  get _suppliersWithoutNone => ["Cutting", "SA", "Printing"];
 
   @override
   void initState() {
@@ -462,7 +462,7 @@ class _AddCprState extends State<AddCpr> {
     _supplier2 = _supplier1 == _supplier2 ? null : _supplier2;
     _supplier3 = _supplier2 == _supplier3 ? null : _supplier3;
     // cpr.suppliers = [_supplier1, _supplier2, _supplier3];
-    cpr.suppliers.removeWhere((value) => value == null || value == 'None');
+    cpr.suppliers.removeWhere((value) => value == 'None');
     cpr.suppliers = cpr.suppliers.toSet().toList();
     print(cpr.suppliers);
 
@@ -598,7 +598,7 @@ class _AddCprState extends State<AddCpr> {
       setState(() {
         saving = true;
       });
-      Api.post("materialManagement/cpr/saveCpr", {'cpr': cpr}).then((res) {
+      Api.post(EndPoints.materialManagement_cpr_saveCpr, {'cpr': cpr}).then((res) {
         Map s = res.data;
         print(s);
         Navigator.pop(context, true);
@@ -633,18 +633,18 @@ class _AddCprState extends State<AddCpr> {
                 ? IconButton(
                     onPressed: () {
                       setState(() {
-                        cpr.items.forEach((element) {
+                        for (var element in cpr.items) {
                           element.selected = false;
-                        });
+                        }
                       });
                     },
                     icon: const Icon(Icons.check_box, size: 16))
                 : IconButton(
                     onPressed: () {
                       setState(() {
-                        cpr.items.forEach((element) {
+                        for (var element in cpr.items) {
                           element.selected = true;
-                        });
+                        }
                       });
                     },
                     icon: const Icon(Icons.check_box_outlined, size: 16)),
@@ -661,10 +661,10 @@ class _AddCprState extends State<AddCpr> {
                   icon: const Icon(Icons.edit, size: 16)),
             IconButton(
                 onPressed: () {
-                  selectedItems.forEach((x) {
+                  for (var x in selectedItems) {
                     print(x.toJson());
                     cpr.items.removeWhere((e) => e.item == x.item && e.qty == x.qty);
-                  });
+                  }
                   setState(() {});
                 },
                 icon: const Icon(Icons.delete_rounded, size: 16)),

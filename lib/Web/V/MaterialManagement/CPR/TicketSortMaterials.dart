@@ -51,6 +51,6 @@ class _TicketSortMaterialsState extends State<TicketSortMaterials> {
   }
 
   getUi() {
-    return Scaffold();
+    return const Scaffold();
   }
 }

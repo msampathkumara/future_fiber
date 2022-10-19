@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/res.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../../../../C/Api.dart';
 import '../../../../../../C/ServerResponse/OperationMinMax.dart';
@@ -12,13 +11,13 @@ import '../../../../../../M/EndPoints.dart';
 import 'PDFViewWidget.dart';
 
 class RF extends StatefulWidget {
-  Ticket ticket;
+  final Ticket ticket;
 
   // UserRFCredentials userRFCredentials;
-  OperationMinMax operationMinMax;
-  List<Progress> progressList;
+  final OperationMinMax operationMinMax;
+  final List<Progress> progressList;
 
-  RF(this.ticket, this.operationMinMax, this.progressList, {Key? key}) : super(key: key);
+  const RF(this.ticket, this.operationMinMax, this.progressList, {Key? key}) : super(key: key);
 
   @override
   _RFState createState() {
@@ -268,16 +267,6 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
     return loadData;
   }
 
-  JavascriptChannel _toasterJavascriptChannel(BuildContext context) {
-    return JavascriptChannel(
-        name: 'App',
-        onMessageReceived: (JavascriptMessage message) {
-          showFinishButton = true;
-          print('Call Finish ');
-
-          setState(() {});
-        });
-  }
 
   Future LoadingDialog(Future future) async {
     return await showDialog(

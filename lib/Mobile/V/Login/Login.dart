@@ -292,7 +292,7 @@ class _LoginState extends State<Login> {
         return showAccountDeactivatedAlertDialog(context);
       } else if (res["token"] == null) {
         if (nfcCode.isNotEmpty) {
-          ErrorMessageView(errorMessage: "Scan Valid ID Card", icon: Icons.badge_outlined).show(context);
+          const ErrorMessageView(errorMessage: "Scan Valid ID Card", icon: Icons.badge_outlined).show(context);
           nfcCode = "";
         }
         errorMessage = "Enter valid username and password";
@@ -305,15 +305,10 @@ class _LoginState extends State<Login> {
         if (!kIsWeb) {
           NfcManager.instance.stopSession();
         } else {
-          var userId = res['userId'];
 
           if (userPermissionsUponListener != null) {
             userPermissionsUponListener?.cancel();
           }
-          // userPermissionsUponListener = FirebaseDatabase.instance.ref('userPermissionsUpon').child('$userId').onValue.listen((DatabaseEvent event) {
-          //   print('--------------------------------------------------------userPermissionsUpon');
-          //   // AppUser.refreshUserData();
-          // });
         }
 
         AppUser.refreshUserData().then((nsUser) async {
@@ -557,7 +552,7 @@ showAccountLockedAlertDialog(BuildContext context1) {
               ],
             ),
           ),
-          actions: [],
+          actions: const [],
         );
       });
 }

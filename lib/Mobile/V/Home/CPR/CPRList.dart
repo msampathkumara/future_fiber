@@ -13,7 +13,7 @@ import '../../Widgets/RefreshIndicatorMessageBox.dart';
 import 'CprDerails.dart';
 
 class CPRList extends StatefulWidget {
-  CPRList({Key? key}) : super(key: key);
+  const CPRList({Key? key}) : super(key: key);
 
   @override
   _CPRListState createState() {
@@ -22,11 +22,8 @@ class CPRList extends StatefulWidget {
 }
 
 class _CPRListState extends State<CPRList> {
-  var subscription;
-
-  var searchText;
-
-  var themeColor = Colors.amber;
+  String? searchText;
+  MaterialColor themeColor = Colors.amber;
 
   // bool _dataLoading = true;
 
@@ -171,7 +168,7 @@ class _CPRListState extends State<CPRList> {
 
                                 reloadData(x.toInt());
                               }
-                        return SizedBox(
+                              return SizedBox(
                                   height: 100,
                                   child: Center(
                                       child: Padding(
@@ -513,10 +510,10 @@ class _CPRListState extends State<CPRList> {
                     title: const Text("Delete"),
                     leading: const Icon(Icons.delete_forever_rounded, color: Colors.red),
                     onTap: () async {
-                      await Api.post(EndPoints.materialManagement_cpr_delete, {"cpr": cpr.id});
-                      _cprList.removeWhere((element) => element.id == cpr.id);
-                      // _reloadData(currentPage);
-                      Navigator.of(context).pop();
+                      await Api.post(EndPoints.materialManagement_cpr_delete, {"cpr": cpr.id}).then((value) {
+                        _cprList.removeWhere((element) => element.id == cpr.id);
+                        Navigator.of(context).pop();
+                      });
                     })
               ])
             ],

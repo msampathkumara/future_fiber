@@ -1,14 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 
 class Loading extends StatefulWidget {
-  final loadingText;
-
-  final showProgress;
-
+  final String loadingText;
+  final bool showProgress;
   final Future? future;
 
   const Loading({Key? key, this.loadingText = "Loading", this.showProgress = true, this.future}) : super(key: key);

@@ -1,5 +1,4 @@
 import 'package:data_table_2/data_table_2.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:just_the_tooltip/just_the_tooltip.dart';
 import 'package:smartwind/M/Ticket.dart';
@@ -149,21 +148,14 @@ class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
 class DessertDataSource extends DataTableSource {
   bool Function(Ticket ticket) filter;
 
-  var searchString;
+  String? searchString;
 
   var sts = const TextStyle(color: Colors.redAccent, fontSize: 12);
 
-  late TapGestureRecognizer _longPressRecognizer;
-
   DessertDataSource(this.context, this.filter) {
-    _longPressRecognizer = TapGestureRecognizer()..onTap = _handlePress;
     tickets = _tickets;
     print("ddddddddd ${tickets.length}");
     sort((d) => d.shipDate, true);
-  }
-
-  void _handlePress() {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Theme.of(context).errorColor, content: const Text('No file')));
   }
 
   final BuildContext context;

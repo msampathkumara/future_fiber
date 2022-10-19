@@ -18,7 +18,7 @@ import 'SectionSelector.dart';
 class CheckTabStatus extends StatefulWidget {
   final NsUser nsUser;
 
-  const CheckTabStatus(this.nsUser);
+  const CheckTabStatus(this.nsUser, {super.key});
 
   @override
   _CheckTabStatusState createState() => _CheckTabStatusState();
@@ -37,7 +37,6 @@ class _CheckTabStatusState extends State<CheckTabStatus> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
         appBar: AppBar(backgroundColor: Colors.white, elevation: 0, systemOverlayStyle: SystemUiOverlayStyle.dark),
@@ -168,19 +167,19 @@ class _CheckTabStatusState extends State<CheckTabStatus> {
     return Api.post(EndPoints.tab_check, {"deviceInfo": deviceInfo}).then((response) async {
       if (response.data["saved"] == true) {
         print("----------------------------------------");
-        await prefs.setBool('tabCheck', true);
-
-        if (widget.nsUser.sections.length > 1) {
-          await Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => UserSectionSelector(widget.nsUser, (Section section) {
-                        AppUser.setSelectedSection(section);
-                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const Home()), (Route<dynamic> route) => false);
-                      })),
-              (Route<dynamic> route) => false);
-        }
-        await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const Home()), (Route<dynamic> route) => false);
+        await prefs.setBool('tabCheck', true).then((value) async {
+          if (widget.nsUser.sections.length > 1) {
+            await Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => UserSectionSelector(widget.nsUser, (Section section) {
+                          AppUser.setSelectedSection(section);
+                          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const Home()), (Route<dynamic> route) => false);
+                        })),
+                (Route<dynamic> route) => false);
+          }
+          await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const Home()), (Route<dynamic> route) => false);
+        });
       } else {
         ErrorMessageView(errorMessage: response.data).show(context);
       }

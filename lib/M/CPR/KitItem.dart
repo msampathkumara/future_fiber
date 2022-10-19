@@ -13,5 +13,6 @@ class KitItem extends CprItem {
 
   factory KitItem.fromJson(Map<String, dynamic> json) => _$KitItemFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$KitItemToJson(this);
 }

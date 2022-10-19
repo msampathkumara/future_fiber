@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
@@ -88,7 +86,7 @@ extension FiltersExtension on Filters {
 
 var uuid = const Uuid();
 
-extension f on Box {
+extension F on Box {
   putObject(HiveClass value) {
     Object id = value.id != -1 ? value.id : uuid.v4();
     // print(id);
@@ -184,9 +182,8 @@ extension NumberExtention on num {
 extension StringContainsInArrayExtension on String {
   bool isJson() {
     try {
-      var decodedJSON = json.decode(this) as Map<String, dynamic>;
       return true;
-    } on FormatException catch (e) {
+    } on FormatException {
       return false;
     }
   }
@@ -253,7 +250,7 @@ extension StringContainsInArrayExtension on String {
   }
 }
 
-extension listExt<T> on List<T> {
+extension ListExt<T> on List<T> {
   List<T> without(List<T> withoutList) {
     return where((x) => withoutList.contains(x) == false).toList();
   }
@@ -276,7 +273,6 @@ extension DateTimeExtension on DateTime? {
   bool? isAfterOrEqualTo(DateTime dateTime) {
     final date = this;
     if (date != null) {
-      final isAtSameMomentAs = dateTime.isAtSameMomentAs(date);
       return date.isAfter(dateTime);
     }
     return null;
@@ -285,7 +281,6 @@ extension DateTimeExtension on DateTime? {
   bool? isBeforeOrEqualTo(DateTime dateTime) {
     final date = this;
     if (date != null) {
-      final isAtSameMomentAs = dateTime.isAtSameMomentAs(date);
       return date.isBefore(dateTime);
     }
     return null;

@@ -68,7 +68,7 @@ class QC {
     }));
   }
 
-  getFile(context, {onReceiveProgress}) async {
+ Future getFile(context, {onReceiveProgress}) async {
     var path = 'tickets/qc/qcImageView?';
     // if (kIsWeb) {
     // var loadingWidget = Loading(loadingText: "Downloading Ticket");
@@ -87,7 +87,7 @@ class QC {
         // print(e);
         if (e.response?.statusCode == 404) {
           print('404');
-          ErrorMessageView(errorMessage: 'Ticket Not Found', icon: Icons.broken_image_rounded).show(context);
+          const ErrorMessageView(errorMessage: 'Ticket Not Found', icon: Icons.broken_image_rounded).show(context);
         } else {
           print(e.message);
         }

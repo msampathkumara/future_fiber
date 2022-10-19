@@ -66,7 +66,7 @@ class Api {
       final url_ = html.Url.createObjectUrlFromBlob(blob);
       // html.window.open(url_, "_blank");
 
-      final anchor = html.AnchorElement(href: url_)
+      html.AnchorElement(href: url_)
         ..setAttribute("download", fileName)
         ..click();
     } on DioError catch (e) {

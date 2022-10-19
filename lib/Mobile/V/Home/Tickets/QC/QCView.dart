@@ -7,17 +7,18 @@ import 'package:webview_flutter/webview_flutter.dart';
 class QCView extends StatefulWidget {
   final QC qc;
 
-  const QCView(this.qc);
+  const QCView(this.qc, {super.key});
 
   @override
   _QCViewState createState() => _QCViewState();
 }
 
 class _QCViewState extends State<QCView> {
-  var idToken;
+  String? idToken;
 
   @override
   void initState() {
+    super.initState();
     var user = FirebaseAuth.instance.currentUser;
     user!.getIdToken().then((value) {
       setState(() {
@@ -37,7 +38,7 @@ class _QCViewState extends State<QCView> {
         body: idToken != null
             ? WebView(
                 onWebViewCreated: (WebViewController webViewController) {
-                  Map<String, String> headers = {"authorization": "" + idToken};
+                  Map<String, String> headers = {"authorization": "$idToken"};
                   webViewController.loadUrl(uRL, headers: headers);
                 },
               )

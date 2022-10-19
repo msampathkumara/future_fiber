@@ -5,11 +5,11 @@ import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 
 class SectionList extends StatefulWidget {
-  final List<Section> SelectedSections;
+  final List<Section> selectedSections;
 
   final Function(List<Section>) onSelect;
 
-  const SectionList(this.SelectedSections, this.onSelect, {Key? key}) : super(key: key);
+  const SectionList(this.selectedSections, this.onSelect, {Key? key}) : super(key: key);
 
   @override
   State<SectionList> createState() => _SectionListState();
@@ -22,12 +22,12 @@ class SectionList extends StatefulWidget {
 class _SectionListState extends State<SectionList> {
   List<Section> sectionList = [];
 
-  late List<Section> SelectedSections;
+  late List<Section> selectedSections;
 
   @override
   void initState() {
     sectionList = HiveBox.sectionsBox.values.toList();
-    SelectedSections = widget.SelectedSections;
+    selectedSections = widget.selectedSections;
 
     super.initState();
   }
@@ -46,18 +46,18 @@ class _SectionListState extends State<SectionList> {
             itemCount: sectionList.length,
             itemBuilder: (context, i) {
               Section section = sectionList[i];
-              bool selected = SelectedSections.where((element) => section.id == element.id).isNotEmpty;
+              bool selected = selectedSections.where((element) => section.id == element.id).isNotEmpty;
 
               return CheckboxListTile(
                 title: Text(section.sectionTitle, textScaleFactor: 1),
                 subtitle: Text(section.factory, style: const TextStyle(color: Colors.red)),
                 onChanged: (bool? value) {
                   if (value == true) {
-                    SelectedSections.add(section);
+                    selectedSections.add(section);
                   } else {
-                    SelectedSections.removeWhere((e) => e.id == section.id);
+                    selectedSections.removeWhere((e) => e.id == section.id);
                   }
-                  widget.onSelect(SelectedSections);
+                  widget.onSelect(selectedSections);
                   setState(() {});
                 },
                 value: selected,

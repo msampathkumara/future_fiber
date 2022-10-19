@@ -11,7 +11,7 @@ import '../../../ns_icons_icons.dart';
 import '../../Styles/styles.dart';
 
 class WebFinishedGoods extends StatefulWidget {
-  const WebFinishedGoods();
+  const WebFinishedGoods({super.key});
 
   @override
   State<WebFinishedGoods> createState() => _WebFinishedGoodsState();

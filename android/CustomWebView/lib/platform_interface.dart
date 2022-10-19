@@ -114,8 +114,7 @@ class WebResourceError {
     this.domain,
     this.errorType,
     this.failingUrl,
-  })  : assert(errorCode != null),
-        assert(description != null);
+  });
 
   /// Raw code of the error from the respective platform.
   ///
@@ -381,7 +380,7 @@ class WebSettings {
     this.gestureNavigationEnabled,
     this.allowsInlineMediaPlayback,
     required this.userAgent,
-  }) : assert(userAgent != null);
+  });
 
   /// The JavaScript execution mode to be used by the webview.
   final JavascriptMode? javascriptMode;
@@ -438,7 +437,7 @@ class CreationParams {
     this.javascriptChannelNames = const <String>{},
     this.userAgent,
     this.autoMediaPlaybackPolicy = AutoMediaPlaybackPolicy.require_user_action_for_all_media_types,
-  }) : assert(autoMediaPlaybackPolicy != null);
+  });
 
   /// The initialUrl to load in the webview.
   ///

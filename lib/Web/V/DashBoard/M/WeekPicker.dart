@@ -14,16 +14,12 @@ class WeekPicker extends StatefulWidget {
 }
 
 class _WeekPickerState extends State<WeekPicker> {
-  int _minYear = 0;
   int _currentYear = 0;
 
-  int _currentMonth = 0;
 
   @override
   void initState() {
-    _minYear = widget.firstDate.year;
     _currentYear = widget.selectedDate.year;
-    _currentMonth = widget.selectedDate.month;
 
     WidgetsBinding.instance.addPostFrameCallback((_) => _controller.jumpTo(_controller.position.maxScrollExtent));
 

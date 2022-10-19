@@ -18,8 +18,6 @@ class CprList extends StatefulWidget {
 class _CprListState extends State<CprList> {
   TextEditingController searchController = TextEditingController();
 
-  var subscription;
-
   String searchText = '';
 
   List<CPR> _cprList = [];
@@ -50,9 +48,6 @@ class _CprListState extends State<CprList> {
               delay: 300,
               searchController: searchController,
               onSearchTextChanged: (text) {
-                if (subscription != null) {
-                  subscription.cancel();
-                }
                 searchText = text;
                 _cprList = [];
 

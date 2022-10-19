@@ -31,13 +31,14 @@ class TicketList extends StatefulWidget {
 
 class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
   String searchText = "";
-  var subscription;
+
+  // var subscription;
   bool _showAllTickets = false;
   bool _filterByPdf = false;
 
   NsUser? nsUser;
 
-  var _refreshIndicatorKey;
+  Key? _refreshIndicatorKey;
 
   late DbChangeCallBack _dbChangeCallBack;
 
@@ -58,7 +59,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
       if (mounted) {
         loadData();
       }
-    }, context, collection: DataTables.Tickets);
+    }, context, collection: DataTables.tickets);
   }
 
   // late List listsArray;
@@ -128,9 +129,6 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                 searchController: searchController,
                 delay: 500,
                 onSearchTextChanged: (text) {
-                  if (subscription != null) {
-                    subscription.cancel();
-                  }
                   searchText = text;
 
                   loadData();
@@ -419,11 +417,10 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
 class TicketTile extends StatelessWidget {
   final Ticket ticket;
   final int index;
-  final onLongPress;
+  final Function onLongPress;
+  final Function onReload;
 
-  final onReload;
-
-  const TicketTile(this.index, this.ticket, {required this.onLongPress, required this.onReload});
+  const TicketTile(this.index, this.ticket, {super.key, required this.onLongPress, required this.onReload});
 
   @override
   Widget build(BuildContext context) {

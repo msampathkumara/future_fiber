@@ -4,7 +4,7 @@ class DeviceDataTable extends StatefulWidget {
   final Null Function(DeviceSourceAsync dataSource) onInit;
   final Future<DataResponse> Function(int page, int startingAt, int count, String sortedBy, bool sortedAsc) onRequestData;
 
-  const DeviceDataTable({required this.onInit, required this.onRequestData});
+  const DeviceDataTable({super.key, required this.onInit, required this.onRequestData});
 
   @override
   _WebPrintTableState createState() => _WebPrintTableState();
@@ -149,7 +149,7 @@ class _WebPrintTableState extends State<DeviceDataTable> {
 }
 
 class _ErrorAndRetry extends StatelessWidget {
-  _ErrorAndRetry(this.errorMessage, this.retry);
+  const _ErrorAndRetry(this.errorMessage, this.retry);
 
   final String errorMessage;
   final void Function() retry;
@@ -239,8 +239,8 @@ class DeviceSourceAsync extends AsyncDataTableSource {
   }
 
   @override
-  Future<AsyncRowsResponse> getRows(int startIndex, int count) async {
-    print('getRows($startIndex, $count)');
+  Future<AsyncRowsResponse> getRows(int start, int end) async {
+    print('getRows($start, $end)');
     if (_errorCounter != null) {
       _errorCounter = _errorCounter! + 1;
 
@@ -250,19 +250,19 @@ class DeviceSourceAsync extends AsyncDataTableSource {
       }
     }
 
-    var index = startIndex;
+    var index = start;
 
     assert(index >= 0);
 
     // List returned will be empty is there're fewer items than startingAt
     var x = _empty
         ? await Future.delayed(const Duration(milliseconds: 2000), () => DataResponse(0, []))
-        : await onRequestData(int.parse("${startIndex / count}"), startIndex, count, _sortColumn, _sortAscending);
-    int _i = 0;
+        : await onRequestData(int.parse("${start / end}"), start, end, _sortColumn, _sortAscending);
+    int i = 0;
     var r = AsyncRowsResponse(
         x.totalRecords,
         x.data.map((device) {
-          _i++;
+          i++;
 
           NsUser? nsUser = NsUser.fromId(device.userId);
 
@@ -282,7 +282,7 @@ class DeviceSourceAsync extends AsyncDataTableSource {
                   )),
               // specificRowHeight: this.hasRowHeightOverrides && device.fat >= 25 ? 100 : null,
               cells: [
-                DataCell(Text("$_i")),
+                DataCell(Text("$i")),
                 DataCell(Text((device.name)), onDoubleTap: () async {
                   await DeviceRenameDialog(device).show(context);
                   refreshDatasource();

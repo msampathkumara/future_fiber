@@ -94,9 +94,7 @@ class _LineChartState extends State<LineChart> {
 
   var sc = ScrollController();
 
-  late final _zoomPanBehavior;
 
-  late TrackballBehavior _trackballBehavior;
 
   @override
   void initState() {
@@ -139,19 +137,6 @@ class _LineChartState extends State<LineChart> {
                 ),
               ));
         });
-    _zoomPanBehavior = ZoomPanBehavior(
-        enablePinching: true,
-        zoomMode: ZoomMode.x,
-        enablePanning: true,
-        enableSelectionZooming: true,
-        enableMouseWheelZooming: true,
-        selectionRectBorderColor: Colors.red,
-        selectionRectBorderWidth: 1,
-        selectionRectColor: Colors.grey);
-    _trackballBehavior = TrackballBehavior(
-        // Enables the trackball
-        enable: true,
-        tooltipDisplayMode: TrackballDisplayMode.floatAllPoints);
     // _values = SfRangeValues(controller.rangeStartDate, controller.rangeStartDate?.add(const Duration(days: 1)));
     _values = SfRangeValues(0, controller.chartData.length - 1);
     super.initState();
@@ -224,7 +209,6 @@ class _LineChartState extends State<LineChart> {
     if (mounted) setState(() {});
   }
 
-  static stringToDateTime(d) => d == null ? null : DateFormat('yyyy-MM-dd HH:mm').parse(d);
 
   getDate(ProgressSummery s) {
     switch (controller.filter) {
@@ -234,16 +218,12 @@ class _LineChartState extends State<LineChart> {
         break;
       case DaysFilters.Week:
         return DateFormat("MM/dd").format((s.date) ?? DateTime.now());
-        break;
       case DaysFilters.Month:
         return DateFormat("dd").format((s.date) ?? DateTime.now());
-        break;
       case DaysFilters.Year:
         return DateFormat("MM/dd").format(s.date ?? DateTime.now());
-        break;
       case DaysFilters.Custom:
         return DateFormat("MM/dd").format(s.date ?? DateTime.now());
-        break;
     }
   }
 }

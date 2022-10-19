@@ -6,7 +6,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 class ShippingSystem extends StatefulWidget {
   final Ticket ticket;
 
-  ShippingSystem(this.ticket);
+  const ShippingSystem(this.ticket, {super.key});
 
   @override
   _ShippingSystemState createState() => _ShippingSystemState();
@@ -17,8 +17,9 @@ class _ShippingSystemState extends State<ShippingSystem> with TickerProviderStat
   TabController? _tabBarController;
   late Ticket ticket;
 
-  var _webView;
-  WebViewController? _controller;
+  WebView? _webView;
+
+  late WebViewController _webViewController;
 
   @override
   initState() {
@@ -32,12 +33,13 @@ class _ShippingSystemState extends State<ShippingSystem> with TickerProviderStat
     });
 
     _webView = WebView(
-      // initialUrl: 'https://www.w3schools.com/howto/howto_css_register_form.asp',
-      initialUrl: "http://dev.nsgshipping.com/userHome",
+      // initialUrl: "https://smartwind.nsslsupportservices.com",
+      initialUrl: "https://dev.nsgshipping.com/userHome",
       javascriptMode: JavascriptMode.unrestricted,
-      onWebViewCreated: (WebViewController webViewController) {
-        _controller = webViewController;
+      onWebViewCreated: (WebViewController webViewController) async {
         // _controller.complete(webViewController);
+        _webViewController = webViewController;
+        _webViewController.runJavascriptReturningResult("document.getElementById(\"userName\").value = \"My value\";");
       },
       onProgress: (int progress) {
         print("WebView is loading (progress : $progress%)");

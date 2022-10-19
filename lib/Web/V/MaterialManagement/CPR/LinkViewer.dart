@@ -45,8 +45,7 @@ class _State extends State<LinkViewer> {
             this.webViewController = webViewController;
           },
           zoomEnabled: false,
-          gestureRecognizers: Set()
-            ..add(
+          gestureRecognizers: {}..add(
               Factory<VerticalDragGestureRecognizer>(() => VerticalDragGestureRecognizer()
                 ..onDown = (DragDownDetails dragDownDetails) {
                   webViewController.getScrollY().then((value) {

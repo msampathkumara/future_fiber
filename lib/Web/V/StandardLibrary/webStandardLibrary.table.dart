@@ -13,7 +13,7 @@ class WebStandardLibraryTable extends StatefulWidget {
   final Null Function(DessertDataSourceAsync dataSource) onInit;
   final Future<DataResponse> Function(int page, int startingAt, int count, String sortedBy, bool sortedAsc) onRequestData;
 
-  const WebStandardLibraryTable({required this.onInit, required this.onRequestData});
+  const WebStandardLibraryTable({super.key, required this.onInit, required this.onRequestData});
 
   @override
   _WebStandardLibraryTableState createState() => _WebStandardLibraryTableState();
@@ -136,7 +136,7 @@ class _WebStandardLibraryTableState extends State<WebStandardLibraryTable> {
           },
           initialFirstRowIndex: _initialRow,
           onPageChanged: (rowIndex) {
-            print("${rowIndex}${_rowsPerPage}xxxxxxxx =${rowIndex / _rowsPerPage}");
+            print("$rowIndex${_rowsPerPage}xxxxxxxx =${rowIndex / _rowsPerPage}");
           },
           sortColumnIndex: _sortColumnIndex,
           sortAscending: _sortAscending,
@@ -152,7 +152,7 @@ class _WebStandardLibraryTableState extends State<WebStandardLibraryTable> {
 }
 
 class _ErrorAndRetry extends StatelessWidget {
-  _ErrorAndRetry(this.errorMessage, this.retry);
+  const _ErrorAndRetry(this.errorMessage, this.retry);
 
   final String errorMessage;
   final void Function() retry;
@@ -251,8 +251,8 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
   // }
 
   @override
-  Future<AsyncRowsResponse> getRows(int startIndex, int count) async {
-    print('getRows($startIndex, $count)');
+  Future<AsyncRowsResponse> getRows(int start, int end) async {
+    print('getRows($start, $end)');
     if (_errorCounter != null) {
       _errorCounter = _errorCounter! + 1;
 
@@ -262,14 +262,14 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
       }
     }
 
-    var index = startIndex;
+    var index = start;
 
     assert(index >= 0);
 
     // List returned will be empty is there're fewer items than startingAt
     var x = _empty
         ? await Future.delayed(const Duration(milliseconds: 2000), () => DataResponse(0, []))
-        : await onRequestData(int.parse("${startIndex / count}"), startIndex, count, _sortColumn, _sortAscending);
+        : await onRequestData(int.parse("${start / end}"), start, end, _sortColumn, _sortAscending);
 
     var r = AsyncRowsResponse(
         x.totalRecords,

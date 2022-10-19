@@ -38,34 +38,26 @@ class _FlagDialogState extends State<FlagDialog> {
   }
 
   _getUi(flagType) {
-    var title;
-    var titleText;
-    var titleIcon;
+    String titleText = "";
     switch (flagType) {
       case TicketFlagTypes.HOLD:
         titleText = "Hold";
-        titleIcon = const Icon(Icons.pan_tool_rounded);
         break;
       case TicketFlagTypes.RED:
         titleText = "Red Flag";
-        titleIcon = const Icon(Icons.tour_rounded);
         break;
       case TicketFlagTypes.GR:
         titleText = "Graphics";
-        titleIcon = const Icon(NsIcons.gr);
         break;
 
       case TicketFlagTypes.RUSH:
         titleText = "Rush";
-        titleIcon = const Icon(Icons.flash_on_rounded);
         break;
       case TicketFlagTypes.SK:
         titleText = "SK";
-        titleIcon = const Icon(NsIcons.sk);
         break;
     }
 
-    title = Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [(titleIcon), Text('$titleText')]));
     TicketFlag ticketFlag = TicketFlag.fromJson({});
     double w = MediaQuery.of(context).size.width;
 
@@ -176,7 +168,7 @@ class FlagDialog1 {
   }
 
   static _showDialog(context, ticket) {
-    TextEditingController _commentController = TextEditingController();
+    TextEditingController commentController = TextEditingController();
     showLoadingDialog(context, "Loading Data");
     bool dataLoaded = false;
     ticket.getFlagList(flagType.getValue()).then((list) {
@@ -196,12 +188,12 @@ class FlagDialog1 {
         builder: (BuildContext context) {
           return AlertDialog(
               title: ListTile(title: Text(isFlaged ? addTitle : removeTitle, textScaleFactor: 1.2), leading: icon),
-              content: Container(
+              content: SizedBox(
                 height: 500,
                 width: 500,
                 child: Column(
                   children: [
-                    Container(
+                    SizedBox(
                       height: 400,
                       child: ListView.builder(
                           itemCount: list.length,
@@ -251,19 +243,16 @@ class FlagDialog1 {
                           }),
                     ),
                     if (!isFlaged)
-                      Container(
+                      SizedBox(
                         width: 500,
                         child: TextFormField(
-                          controller: _commentController,
+                          controller: commentController,
                           decoration: InputDecoration(hintText: _commentPlaceHolder),
                           keyboardType: TextInputType.multiline,
                           maxLines: null,
                         ),
                       ),
-                    if (isFlaged)
-                      Container(
-                        child: const Text(""),
-                      ),
+                    if (isFlaged) const Text(""),
                   ],
                 ),
               ),
@@ -279,7 +268,7 @@ class FlagDialog1 {
                         child: const Text('Add Flag'),
                         onPressed: () {
                           showLoadingDialog(context, "Updating Data");
-                          setFlag(flagType.getValue(), _commentController.value.text, ticket).then((value) {
+                          setFlag(flagType.getValue(), commentController.value.text, ticket).then((value) {
                             print(value);
                             Navigator.of(context).pop(true);
                             Navigator.of(context).pop(true);
@@ -302,9 +291,9 @@ class FlagDialog1 {
   }
 
   static Future<void> showFlagView(BuildContext context, Ticket ticket, TicketFlagTypes flagType) async {
-    var title;
-    var titleText;
-    var titleIcon;
+    Center title;
+    String titleText;
+    Icon? titleIcon;
     switch (flagType) {
       case TicketFlagTypes.HOLD:
         titleText = "Hold";
@@ -330,25 +319,21 @@ class FlagDialog1 {
         titleIcon = const Icon(NsIcons.sk);
         break;
       case TicketFlagTypes.CROSS:
-        // TODO: Handle this case.
+        titleIcon = const Icon(NsIcons.sk);
+        titleText = "SK";
         break;
     }
 
-    title = Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [(titleIcon), Text('$titleText')]));
+    title = Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [(titleIcon), Text(titleText)]));
 
-    // var db = await DB.getDB();
-    // var data = await db!.rawQuery("select * from flags where ticket='${ticket.id}' and type='${flagType.getValue()}' ");
-    // print(data);
-
-    // TicketFlag ticketFlag = TicketFlag.fromJson(data[0]);
     TicketFlag ticketFlag = TicketFlag.fromJson({});
-    // TicketFlag ticketFlag = HiveBox.ticketFlagBox.values.where((element) => element.ticket == ticket.id && element.type == flagType.getValue()).first;
+
     double w = MediaQuery.of(context).size.width;
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
               title: title,
-              content: Container(
+              content: SizedBox(
                 width: w,
                 child: ListTile(
                   title: Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [

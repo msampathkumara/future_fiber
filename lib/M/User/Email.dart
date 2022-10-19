@@ -10,15 +10,15 @@ class Email {
 
   @HiveField(1, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)
-  int? id = null;
+  int? id;
 
   @HiveField(2, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)
-  int? userId = null;
+  int? userId;
 
   @HiveField(3, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)
-  String? email = null;
+  String? email;
 
   @HiveField(4, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)

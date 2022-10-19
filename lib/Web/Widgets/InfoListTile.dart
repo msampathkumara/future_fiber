@@ -1,9 +1,8 @@
 import 'package:flutter/cupertino.dart';
 
 class InfoListTile extends StatelessWidget {
-  final name;
-
-  final value;
+  final String name;
+  final String value;
 
   const InfoListTile(this.name, this.value, {Key? key}) : super(key: key);
 

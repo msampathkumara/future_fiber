@@ -2,6 +2,8 @@ import "package:collection/collection.dart";
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:group_list_view/group_list_view.dart';
+import 'package:smartwind/M/AppUser.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/user_permission.dart';
@@ -9,6 +11,7 @@ import 'package:smartwind/Mobile/V/Widgets/SearchBar.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 
 import '../../../../C/Api.dart';
+import '../../../../Web/V/UserManager/Permissions/PermissionsProfiles.dart';
 
 class UserPermissions extends StatefulWidget {
   final NsUser nsUser;
@@ -55,18 +58,25 @@ class _UserPermissionsState extends State<UserPermissions> {
     return isLoading
         ? const Scaffold(body: Center(child: CircularProgressIndicator()))
         : Scaffold(
-            appBar: AppBar(
-              title: const Text("Set User Permissions"),
-              bottom: SearchBar(
-                  delay: 300,
-                  onSearchTextChanged: (t) {
-                    _userPermissions = userPermissions.where((e) => t.containsInArrayIgnoreCase([e.name, e.category, e.description])).toList();
-                    userPermissionsGrouped = groupBy(_userPermissions, (a) => a.category);
-                    setState(() {});
-                  },
-                  searchController: searchController),
-              toolbarHeight: 100,
-            ),
+      appBar: AppBar(
+                title: const Text("Set User Permissions"),
+                actions: [
+                  if (AppUser.getUser()?.id == 1)
+                    TextButton(
+                        onPressed: () {
+                          PermissionsProfiles((List<int> permissionList) {}).show(context);
+                        },
+                        child: const Text("Choose Profile", style: TextStyle(color: Colors.white)))
+                ],
+                bottom: SearchBar(
+                    delay: 300,
+                    onSearchTextChanged: (t) {
+                      _userPermissions = userPermissions.where((e) => t.containsInArrayIgnoreCase([e.name, e.category, e.description])).toList();
+                      userPermissionsGrouped = groupBy(_userPermissions, (a) => a.category);
+                      setState(() {});
+                    },
+                    searchController: searchController),
+                toolbarHeight: 100),
             body: Padding(
               padding: const EdgeInsets.only(bottom: 62.0),
               child: Column(
@@ -146,7 +156,7 @@ class _UserPermissionsState extends State<UserPermissions> {
     setLoading(true);
     List permitionsIds = userPermissions.where((element) => element.permit == 1).map((e) => e.id).toList();
 
-    Api.post("permissions/saveUserPermissions", {'userId': widget.nsUser.id, 'permissions': permitionsIds}).then((v) {
+    Api.post(EndPoints.permissions_saveUserPermissions, {'userId': widget.nsUser.id, 'permissions': permitionsIds}).then((v) {
       setLoading(false);
     });
   }

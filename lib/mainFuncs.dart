@@ -5,13 +5,13 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartwind/C/App.dart';
 
-class mainFuncs {
+class MainFuncs {
   final _kShouldTestAsyncErrorOnInit = false;
   final _kTestingCrashlytics = true;
 
   late Future initializeFlutterFireFuture = initializeFlutterFire();
 
-  mainFuncs();
+  MainFuncs();
 
   Future<bool> initializeFlutterFire() async {
     // await DB.getDB();

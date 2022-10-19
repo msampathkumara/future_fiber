@@ -1,22 +1,17 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import '../../../Web/Widgets/DialogView.dart';
 
 class ErrorMessageView extends StatefulWidget {
-  late _ErrorMessageViewState state;
-
   final String errorMessage;
+  final IconData? icon;
 
-  var icon;
-
-  ErrorMessageView({Key? key, required this.errorMessage, this.icon}) : super(key: key);
+  const ErrorMessageView({Key? key, required this.errorMessage, this.icon}) : super(key: key);
 
   @override
   _ErrorMessageViewState createState() {
-    state = _ErrorMessageViewState();
-    return state;
+    return _ErrorMessageViewState();
   }
 
   show(context) async {
@@ -60,16 +55,16 @@ class _ErrorMessageViewState extends State<ErrorMessageView> with TickerProvider
                 child: Icon(
                   widget.icon ?? Icons.error,
                   color: Colors.pink,
-                      size: 100.0,
-                      semanticLabel: 'Text to announce in accessibility modes',
-                    )),
-              ),
-              Text(
-                widget.errorMessage,
-                textScaleFactor: 1.2,
-              ),
-            ],
-          )),
+                  size: 100.0,
+                  semanticLabel: 'Text to announce in accessibility modes',
+                )),
+          ),
+          Text(
+            widget.errorMessage,
+            textScaleFactor: 1.2,
+          ),
+        ],
+      )),
     );
   }
 }

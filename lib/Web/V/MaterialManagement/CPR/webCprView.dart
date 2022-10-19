@@ -250,7 +250,7 @@ class _CprViewState extends State<CprView> {
 
   checkMaterial(CprItem material, bool checked) {
     checkingMaterials.add(material.id);
-    return Api.post("materialManagement/cpr/checkItem", {'checked': checked, 'itemId': material.id, 'id': widget.cpr.id}).then((res) {
+    return Api.post(EndPoints.materialManagement_cpr_checkItem, {'checked': checked, 'itemId': material.id, 'id': widget.cpr.id}).then((res) {
       checkingMaterials.remove(material.id);
       apiGetData();
       widget.isCprChange(true);
@@ -296,7 +296,7 @@ class _CprViewState extends State<CprView> {
   }
 
   Future sendCpr(id) {
-    return Api.post("materialManagement/cpr/sendCpr", {'cprActivityId': id}).then((res) {
+    return Api.post(EndPoints.materialManagement_cpr_sendCpr, {'cprActivityId': id}).then((res) {
       widget.isCprChange(true);
       apiGetData();
     }).whenComplete(() {
@@ -365,7 +365,7 @@ class _CprViewState extends State<CprView> {
   saveComment() {
     String text = commentController.text;
     commentController.clear();
-    return Api.post("materialManagement/saveCprComment", {'text': text, 'cprId': widget.cpr.id}).then((res) {
+    return Api.post(EndPoints.materialManagement_saveCprComment, {'text': text, 'cprId': widget.cpr.id}).then((res) {
       getComments();
     }).whenComplete(() {
       setState(() {});

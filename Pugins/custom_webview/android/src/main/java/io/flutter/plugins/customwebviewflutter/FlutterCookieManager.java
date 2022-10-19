@@ -24,12 +24,10 @@ class FlutterCookieManager implements MethodCallHandler {
 
   @Override
   public void onMethodCall(MethodCall methodCall, Result result) {
-    switch (methodCall.method) {
-      case "clearCookies":
-        clearCookies(result);
-        break;
-      default:
-        result.notImplemented();
+    if ("clearCookies".equals(methodCall.method)) {
+      clearCookies(result);
+    } else {
+      result.notImplemented();
     }
   }
 
@@ -40,17 +38,12 @@ class FlutterCookieManager implements MethodCallHandler {
   private static void clearCookies(final Result result) {
     CookieManager cookieManager = CookieManager.getInstance();
     final boolean hasCookies = cookieManager.hasCookies();
-    if (Build.VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-      cookieManager.removeAllCookies(
-          new ValueCallback<Boolean>() {
-            @Override
-            public void onReceiveValue(Boolean value) {
-              result.success(hasCookies);
-            }
-          });
-    } else {
-      cookieManager.removeAllCookie();
-      result.success(hasCookies);
-    }
+    cookieManager.removeAllCookies(
+        new ValueCallback<Boolean>() {
+          @Override
+          public void onReceiveValue(Boolean value) {
+            result.success(hasCookies);
+          }
+        });
   }
 }

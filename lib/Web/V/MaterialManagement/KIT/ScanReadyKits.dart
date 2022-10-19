@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/Web/Widgets/IfWeb.dart';
 
@@ -19,7 +20,7 @@ class ScanReadyKits extends StatefulWidget {
 }
 
 class _ScanReadyKitsState extends State<ScanReadyKits> {
-  var _controller = TextEditingController();
+  final _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +77,7 @@ class _ScanReadyKitsState extends State<ScanReadyKits> {
   getUi() {}
 
   void send(Ticket t) {
-    Api.post("materialManagement/kit/readyKit", {'mo': t.mo}).then((res) {
+    Api.post(EndPoints.materialManagement_kit_readyKit, {'mo': t.mo}).then((res) {
       Map data = res.data;
       setState(() {
         t.loading = false;

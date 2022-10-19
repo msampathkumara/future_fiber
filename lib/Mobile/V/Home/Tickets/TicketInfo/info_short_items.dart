@@ -12,8 +12,8 @@ class info_short_items extends StatefulWidget {
 }
 
 class _info_short_itemsState extends State<info_short_items> {
-  final _value = TextStyle(fontSize: 20, color: Colors.black);
-  final _title = TextStyle(fontSize: 12, color: Colors.grey);
+  final _value = const TextStyle(fontSize: 20, color: Colors.black);
+  final _title = const TextStyle(fontSize: 12, color: Colors.grey);
 
   @override
   void initState() {

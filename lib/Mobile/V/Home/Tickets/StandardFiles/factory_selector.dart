@@ -1,13 +1,14 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class FactorySelector extends StatefulWidget {
-  String? selectedFactory = "";
-  String title = "";
-  Function(String)? onSelect;
+  final String? selectedFactory;
 
-  FactorySelector(this.selectedFactory, {this.onSelect, Key? key, this.title = "Select Factory"}) : super(key: key);
+  final String title;
+
+  final Function(String)? onSelect;
+
+  const FactorySelector(this.selectedFactory, {this.onSelect, Key? key, this.title = "Select Factory"}) : super(key: key);
 
   @override
   State<FactorySelector> createState() => _FactorySelectorState();

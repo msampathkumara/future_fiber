@@ -4,7 +4,7 @@ class WebCPRTable extends StatefulWidget {
   final Null Function(DessertDataSourceAsync dataSource) onInit;
   final Future<DataResponse> Function(int page, int startingAt, int count, String sortedBy, bool sortedAsc) onRequestData;
 
-  const WebCPRTable({required this.onInit, required this.onRequestData});
+  const WebCPRTable({super.key, required this.onInit, required this.onRequestData});
 
   @override
   _WebCPRTableState createState() => _WebCPRTableState();
@@ -135,7 +135,7 @@ class _WebCPRTableState extends State<WebCPRTable> {
           },
           initialFirstRowIndex: _initialRow,
           onPageChanged: (rowIndex) {
-            print("${rowIndex}${_rowsPerPage}xxxxxxxx =${rowIndex / _rowsPerPage}");
+            print("$rowIndex${_rowsPerPage}xxxxxxxx =${rowIndex / _rowsPerPage}");
           },
           sortColumnIndex: _sortColumnIndex,
           sortAscending: _sortAscending,
@@ -154,7 +154,7 @@ class _WebCPRTableState extends State<WebCPRTable> {
 }
 
 class _ErrorAndRetry extends StatelessWidget {
-  _ErrorAndRetry(this.errorMessage, this.retry);
+  const _ErrorAndRetry(this.errorMessage, this.retry);
 
   final String errorMessage;
   final void Function() retry;
@@ -235,8 +235,7 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
   }
 
   @override
-  Future<AsyncRowsResponse> getRows(int startIndex, int count) async {
-    print('getRows($startIndex, $count)');
+  Future<AsyncRowsResponse> getRows(int start, int end) async {
     if (_errorCounter != null) {
       _errorCounter = _errorCounter! + 1;
 
@@ -246,16 +245,16 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
       }
     }
 
-    var index = startIndex;
+    var index = start;
 
     assert(index >= 0);
 
-    print('xxxxxxxxxxxxxxxxxxxxxxx == ${int.parse("${startIndex / count}")}');
+    print('xxxxxxxxxxxxxxxxxxxxxxx == ${int.parse("${start / end}")}');
 
     // List returned will be empty is there're fewer items than startingAt
     var x = _empty
         ? await Future.delayed(const Duration(milliseconds: 2000), () => DataResponse(0, []))
-        : await onRequestData(int.parse("${startIndex / count}"), startIndex, count, _sortColumn, _sortAscending);
+        : await onRequestData(int.parse("${start / end}"), start, end, _sortColumn, _sortAscending);
     print('****************************************************************************xxxxxxxxxxxxx${x.totalRecords}');
     var r = AsyncRowsResponse(
         x.totalRecords,

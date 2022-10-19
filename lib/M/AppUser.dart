@@ -13,16 +13,13 @@ import 'Section.dart';
 import 'hive.dart';
 
 class AppUser extends NsUser {
-  static var _idToken;
 
   AppUser(context) {
     print('AppUser');
     FirebaseAuth.instance.idTokenChanges().listen((firebaseUser) {
       if (firebaseUser != null) {
-        firebaseUser.getIdToken().then((value) => _idToken = value);
         print('appUser firebase authStateChanges');
       } else {
-        _idToken = null;
       }
     });
   }
@@ -63,7 +60,7 @@ class AppUser extends NsUser {
       // print(res);
       NsUser nsUser = NsUser.fromJson(res["user"]);
       AppUser.setUser(nsUser);
-      DB.callChangesCallBack(DataTables.AppUser);
+      DB.callChangesCallBack(DataTables.appUser);
       updateUserChangers();
       return nsUser;
     });

@@ -8,6 +8,7 @@ part 'Section.g.dart';
 @JsonSerializable(explicitToJson: true)
 @HiveType(typeId: 7)
 class Section extends HiveClass {
+  @override
   @HiveField(0, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int id = 0;

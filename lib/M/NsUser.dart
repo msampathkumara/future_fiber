@@ -18,6 +18,7 @@ part 'NsUser.g.dart';
 @JsonSerializable(explicitToJson: true)
 @HiveType(typeId: 6)
 class NsUser extends HiveClass {
+  @override
   @HiveField(0, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int id = 0;
@@ -191,11 +192,11 @@ class NsUser extends HiveClass {
 
   void addSection(Section selectedSection) {
     bool have = false;
-    sections.forEach((element) {
+    for (var element in sections) {
       if (selectedSection.sectionTitle == element.sectionTitle && selectedSection.factory == element.factory) {
         have = true;
       }
-    });
+    }
     if (!have) {
       sections.add(selectedSection);
       print('addddd');
@@ -244,20 +245,19 @@ class NsUser extends HiveClass {
   Future removeNfcCard(context, {required onDone}) async {
     return await Api.post(EndPoints.users_removeNfcCard, {'userId': id})
         .then((res) {
-          Map data = res.data;
-          hasNfc = 0;
-          save();
-          onDone();
-        })
+      hasNfc = 0;
+      save();
+      onDone();
+    })
         .whenComplete(() {})
         .catchError((err) async {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(err.toString()),
-              action: SnackBarAction(
-                  label: 'Retry',
-                  onPressed: () async {
-                    return await removeNfcCard(context, onDone: onDone);
-                  })));
-        });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(err.toString()),
+          action: SnackBarAction(
+              label: 'Retry',
+              onPressed: () async {
+                return await removeNfcCard(context, onDone: onDone);
+              })));
+    });
   }
 }

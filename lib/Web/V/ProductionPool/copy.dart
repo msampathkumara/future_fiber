@@ -37,9 +37,9 @@ class _TextCopyState extends State<TextCopy> {
 }
 
 class TextMenu extends StatelessWidget {
-  Text child;
+  final Text child;
 
-  TextMenu({Key? key, required this.child}) : super(key: key);
+  const TextMenu({Key? key, required this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

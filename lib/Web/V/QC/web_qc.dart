@@ -9,7 +9,6 @@ import 'package:smartwind/Web/V/QC/webQView.dart';
 
 import '../../../C/Api.dart';
 import '../../../M/Enums.dart';
-import '../../../M/Ticket.dart';
 import '../../../Mobile/V/Home/Tickets/TicketInfo/TicketInfo.dart';
 import '../../../Mobile/V/Widgets/NoResultFoundMsg.dart';
 import '../../../Mobile/V/Widgets/UserImage.dart';
@@ -25,7 +24,7 @@ class WebQc extends StatefulWidget {
 }
 
 class _WebQcState extends State<WebQc> {
-  var _controller = TextEditingController();
+  final _controller = TextEditingController();
   bool loading = false;
 
   String searchText = "";
@@ -33,10 +32,6 @@ class _WebQcState extends State<WebQc> {
   bool requested = false;
 
   int dataCount = 0;
-
-  List<Ticket> _ticketList = [];
-
-  bool _dataLoadingError = false;
 
   late QcDataSourceAsync _dataSource;
 
@@ -180,7 +175,6 @@ class _WebQcState extends State<WebQc> {
       print('--------------------dddd----------- ');
       print('--------------------dddd-----------${QC.fromJsonArray(qcs)}');
 
-      _dataLoadingError = false;
 
       setState(() {});
       return DataResponse(dataCount, QC.fromJsonArray(qcs));
@@ -197,7 +191,6 @@ class _WebQcState extends State<WebQc> {
                 getData(page, startingAt, count, sortedBy, sortedAsc);
               })));
       setState(() {
-        _dataLoadingError = true;
       });
     });
   }

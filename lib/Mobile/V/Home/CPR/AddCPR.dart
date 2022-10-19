@@ -1,5 +1,4 @@
 import 'package:dropdown_search/dropdown_search.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/CPR/CPR.dart';
 import 'package:smartwind/M/CPR/CprItem.dart';
@@ -12,7 +11,7 @@ import '../../../../C/Api.dart';
 class AddCPR extends StatefulWidget {
   final Ticket ticket;
 
-  AddCPR(this.ticket);
+  const AddCPR(this.ticket, {super.key});
 
   @override
   _AddCPRState createState() => _AddCPRState();
@@ -25,7 +24,7 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
   var _sailType;
   var _shortageType;
 
-  final CPR _cpr = new CPR();
+  final CPR _cpr = CPR();
   bool saving = false;
 
   @override
@@ -36,7 +35,7 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _tabBarController = TabController(length: 2, vsync: this);
       _tabBarController!.addListener(() {
-        print("Selected Index: " + _tabBarController!.index.toString());
+        print("Selected Index: ${_tabBarController!.index}");
       });
       setState(() {});
     });
@@ -44,9 +43,9 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
     Api.get("cpr/getAllMaterials", {}).then((res) {
       List mats = res.data["materials"];
       print(mats);
-      mats.forEach((element) {
+      for (var element in mats) {
         _matList.add(CprItem.fromJson(element).item);
-      });
+      }
     });
   }
 
@@ -59,11 +58,10 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
     bool keyboardIsOpen = MediaQuery.of(context).viewInsets.bottom != 0;
     if (_tabBarController == null) {
       return saving
-          ? Container(
-              child: Center(
-                  child: Column(
-              children: [CircularProgressIndicator(), Text("Saving")],
-            )))
+          ? Center(
+              child: Column(
+              children: const [CircularProgressIndicator(), Text("Saving")],
+            ))
           : Container();
     } else {
       return DefaultTabController(
@@ -82,12 +80,12 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                     ErrorMessageView(errorMessage: onError.toString()).show(context);
                   });
                 },
-                child: const Icon(Icons.save),
                 backgroundColor: Colors.lightBlue,
+                child: const Icon(Icons.save),
               ),
             ),
             appBar: AppBar(
-                title: Text("Add CPR"),
+                title: const Text("Add CPR"),
                 bottom: TabBar(
                   controller: _tabBarController,
                   indicatorWeight: 4.0,
@@ -95,23 +93,23 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                   isScrollable: true,
                   tabs: [
                     Tab(
-                      child: Wrap(alignment: WrapAlignment.center, children: [
+                      child: Wrap(alignment: WrapAlignment.center, children: const [
                         Icon(
                           Icons.info_rounded,
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 4, bottom: 4, left: 4),
+                          padding: EdgeInsets.only(top: 4, bottom: 4, left: 4),
                           child: Text("Info"),
                         )
                       ]),
                     ),
                     Tab(
-                      child: Wrap(alignment: WrapAlignment.center, children: [
+                      child: Wrap(alignment: WrapAlignment.center, children: const [
                         Icon(
                           Icons.settings_suggest_rounded,
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 4, bottom: 4, left: 4),
+                          padding: EdgeInsets.only(top: 4, bottom: 4, left: 4),
                           child: Text("Materials"),
                         )
                       ]),
@@ -124,24 +122,23 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                 SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 100),
-                    child: Container(
-                        child: Column(children: [
+                    child: Column(children: [
                       ListTile(
-                          title: Text("Sail"),
+                          title: const Text("Sail"),
                           subtitle: Card(
                             child: ListTile(
                               title: Text(
                                 widget.ticket.mo ?? widget.ticket.oe ?? "",
-                                style: TextStyle(fontSize: 20),
+                                style: const TextStyle(fontSize: 20),
                               ),
                               subtitle: Text(widget.ticket.mo != null ? widget.ticket.oe ?? "" : ""),
                             ),
                           )),
                       ListTile(
-                        title: Text("Sail Type"),
+                        title: const Text("Sail Type"),
                         isThreeLine: true,
                         subtitle: Card(
-                          margin: EdgeInsets.all(8.0),
+                          margin: const EdgeInsets.all(8.0),
                           clipBehavior: Clip.antiAlias,
                           child: Row(
                             children: [
@@ -166,10 +163,10 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                         ),
                       ),
                       ListTile(
-                        title: Text("Shortage Type"),
+                        title: const Text("Shortage Type"),
                         isThreeLine: true,
                         subtitle: Card(
-                          margin: EdgeInsets.all(8.0),
+                          margin: const EdgeInsets.all(8.0),
                           clipBehavior: Clip.antiAlias,
                           child: Row(
                             children: [
@@ -194,7 +191,7 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                         ),
                       ),
                       ListTile(
-                        title: Text("CPR Type"),
+                        title: const Text("CPR Type"),
                         subtitle: SizedBox(
                           width: 200,
                           child: Padding(
@@ -218,7 +215,7 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                       ),
                       if (_cpr.ticket!.production == null)
                         ListTile(
-                          title: Text("Client"),
+                          title: const Text("Client"),
                           subtitle: SizedBox(
                             width: 200,
                             child: Padding(
@@ -237,40 +234,39 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                                     })),
                           ),
                         ),
-                      ListTile(title: Text("Suppliers"), subtitle: Card(child: getSuppliers())),
+                      ListTile(title: const Text("Suppliers"), subtitle: Card(child: getSuppliers())),
                       ListTile(
-                          title: Text("Comment"),
+                          title: const Text("Comment"),
                           subtitle: Card(
                               child: Padding(
-                                  padding: EdgeInsets.all(16.0),
+                                  padding: const EdgeInsets.all(16.0),
                                   child: TextFormField(
                                       initialValue: _cpr.comment,
                                       onChanged: (value) {
                                         _cpr.comment = value;
                                       },
                                       maxLines: 8,
-                                      decoration: InputDecoration.collapsed(hintText: "Enter your comment here"))))),
+                                      decoration: const InputDecoration.collapsed(hintText: "Enter your comment here"))))),
                       ListTile(
-                        title: Text("Image URL"),
+                        title: const Text("Image URL"),
                         subtitle: Card(
                             child: Padding(
-                                padding: EdgeInsets.all(16.0),
+                                padding: const EdgeInsets.all(16.0),
                                 child: TextFormField(
                                     initialValue: _cpr.image,
                                     onChanged: (value) {
                                       _cpr.image = value;
                                     },
                                     maxLines: 3,
-                                    decoration: InputDecoration.collapsed(hintText: "Enter your url here")))),
+                                    decoration: const InputDecoration.collapsed(hintText: "Enter your url here")))),
                       )
-                    ])),
+                    ]),
                   ),
                 ),
-                Container(
-                    child: ListTile(
-                  title: Text("Materials"),
+                ListTile(
+                  title: const Text("Materials"),
                   subtitle: Padding(
-                      padding: EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(16.0),
                       child: Column(children: [
                         SizedBox(
                             height: 50,
@@ -279,7 +275,7 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                                   child: DropdownSearch<String>(
                                       key: _dropdownSearchKey,
                                       selectedItem: "",
-                                      items: [],
+                                      items: const [],
                                       // searchBoxController: _nameController,
                                       // showSearchBox: true,
                                       // autoFocusSearchBox: true,
@@ -296,7 +292,7 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                                       onChanged: (mat) {
                                         currentMaterial.item = mat!;
                                       })),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               SizedBox(
                                   width: 100,
                                   child: TextField(
@@ -305,21 +301,21 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                                       onChanged: (text) {
                                         currentMaterial.qty = (text);
                                       })),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Card(
                                 child: IconButton(
                                     color: Colors.blue,
                                     onPressed: () {
                                       _addMaterialToList(currentMaterial);
-                                      currentMaterial = new CprItem();
+                                      currentMaterial = CprItem();
                                       _qtyController.clear();
                                       _dropdownSearchKey.currentState!.changeSelectedItem("");
                                       setState(() {});
                                     },
-                                    icon: Icon(Icons.add_rounded)),
+                                    icon: const Icon(Icons.add_rounded)),
                               )
                             ])),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         Expanded(
@@ -334,17 +330,17 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                                       setState(() {});
                                     },
                                     child: ListTile(
-                                        title: Text(material.item), trailing: Wrap(alignment: WrapAlignment.center, direction: Axis.vertical, children: [Text("${material.qty}")])),
+                                        title: Text(material.item), trailing: Wrap(alignment: WrapAlignment.center, direction: Axis.vertical, children: [Text(material.qty)])),
                                   );
                                 },
                                 itemCount: _cpr.items.length,
                                 separatorBuilder: (BuildContext context, int index) {
-                                  return Divider(height: 1, endIndent: 0.5, color: Colors.black12);
+                                  return const Divider(height: 1, endIndent: 0.5, color: Colors.black12);
                                 }),
                           ),
                         )
                       ])),
-                ))
+                )
               ],
             )),
       );
@@ -353,7 +349,7 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
 
   final List<String> _matList = [];
   final _qtyController = TextEditingController();
-  CprItem currentMaterial = new CprItem();
+  CprItem currentMaterial = CprItem();
   final _dropdownSearchKey = GlobalKey<DropdownSearchState<String>>();
 
   getData(String filter) {
@@ -364,7 +360,7 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
 
   void _addMaterialToList(CprItem currentMaterial) {
     List<CprItem> x = _cpr.items.where((element) => element.item == currentMaterial.item).toList();
-    if (x.length == 0) {
+    if (x.isEmpty) {
       _cpr.items.add(CprItem.fromJson(currentMaterial.toJson()));
     } else {
       x[0].qty += currentMaterial.qty;
@@ -372,102 +368,103 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
   }
 
   final _suppliers = ["Cutting", "SA", "Printing"];
-  var _supplier1;
-  var _supplier2;
-  var _supplier3;
+  String? _supplier1;
+  String? _supplier2;
+  String? _supplier3;
 
   getSuppliers() {
     _supplier2 = _supplier1 == _supplier2 ? null : _supplier2;
     _supplier3 = _supplier2 == _supplier3 ? null : _supplier3;
-    _cpr.suppliers = [_supplier1, _supplier2, _supplier3];
-    _cpr.suppliers.removeWhere((value) => value == null);
+
+    var l = [_supplier1, _supplier2, _supplier3];
+
+    _cpr.suppliers = l.whereType<String>().toList();
+
     print(_cpr.suppliers);
-    return Container(
-      child: Column(
-        children: [
+    return Column(
+      children: [
+        ListTile(
+          title: const Text("First Supplier"),
+          isThreeLine: true,
+          subtitle: Row(
+            children: [
+              for (final _supplier in _suppliers)
+                SizedBox(
+                  width: 200,
+                  child: RadioListTile<String>(
+                      selected: false,
+                      toggleable: true,
+                      title: Text(_supplier),
+                      value: _supplier,
+                      groupValue: _supplier1,
+                      onChanged: (value) {
+                        if (value == null) {
+                          _supplier2 = null;
+                          _supplier3 = null;
+                        }
+                        print(value);
+                        setState(() {
+                          _supplier1 = value;
+                        });
+                      }),
+                ),
+            ],
+          ),
+        ),
+        if (_supplier1 != null)
           ListTile(
-            title: Text("First Supplier"),
+            title: const Text("Second Supplier"),
             isThreeLine: true,
             subtitle: Row(
               children: [
                 for (final _supplier in _suppliers)
-                  SizedBox(
-                    width: 200,
-                    child: RadioListTile<String>(
-                        selected: false,
-                        toggleable: true,
-                        title: Text(_supplier),
-                        value: _supplier,
-                        groupValue: _supplier1,
-                        onChanged: (value) {
-                          if (value == null) {
-                            _supplier2 = null;
-                            _supplier3 = null;
-                          }
-                          print(value);
-                          setState(() {
-                            _supplier1 = value;
-                          });
-                        }),
-                  ),
+                  if (_supplier != _supplier1)
+                    SizedBox(
+                      width: 200,
+                      child: RadioListTile<String>(
+                          selected: false,
+                          toggleable: true,
+                          title: Text(_supplier),
+                          value: _supplier,
+                          groupValue: _supplier2,
+                          onChanged: (value) {
+                            if (value == null) {
+                              _supplier3 = null;
+                            }
+                            setState(() {
+                              _supplier2 = value;
+                            });
+                          }),
+                    ),
               ],
             ),
           ),
-          if (_supplier1 != null)
-            ListTile(
-              title: Text("Second Supplier"),
-              isThreeLine: true,
-              subtitle: Row(
-                children: [
-                  for (final _supplier in _suppliers)
-                    if (_supplier != _supplier1)
-                      SizedBox(
-                        width: 200,
-                        child: RadioListTile<String>(
-                            selected: false,
-                            toggleable: true,
-                            title: Text(_supplier),
-                            value: _supplier,
-                            groupValue: _supplier2,
-                            onChanged: (value) {
-                              if (value == null) {
-                                _supplier3 = null;
-                              }
-                              setState(() {
-                                _supplier2 = value;
-                              });
-                            }),
-                      ),
-                ],
-              ),
+        if (_supplier1 != null && _supplier2 != null)
+          ListTile(
+            title: const Text("Third Supplier"),
+            isThreeLine: true,
+            subtitle: Row(
+              children: [
+                for (final _supplier in _suppliers)
+                  if (_supplier != _supplier2)
+                    SizedBox(
+                      width: 200,
+                      child: RadioListTile<String>(
+                          toggleable: true,
+                          selected: false,
+                          title: Text(_supplier),
+                          value: _supplier,
+                          groupValue: _supplier3,
+                          onChanged: (value) {
+                            setState(() {
+                              _supplier3 = value;
+                            });
+                          }),
+                    ),
+              ],
             ),
-          if (_supplier1 != null && _supplier2 != null)
-            ListTile(
-              title: Text("Third Supplier"),
-              isThreeLine: true,
-              subtitle: Row(
-                children: [
-                  for (final _supplier in _suppliers)
-                    if (_supplier != _supplier2)
-                      SizedBox(
-                        width: 200,
-                        child: RadioListTile<String>(
-                            toggleable: true,
-                            selected: false,
-                            title: Text(_supplier),
-                            value: _supplier,
-                            groupValue: _supplier3,
-                            onChanged: (value) {
-                              setState(() {
-                                _supplier3 = value;
-                              });
-                            }),
-                      ),
-                ],
-              ),
-            ),
-        ],
-      ),
+          ),
+      ],
     );
   }
 
@@ -488,8 +485,8 @@ class _AddCPRState extends State<AddCPR> with TickerProviderStateMixin {
                   height: 20,
                 ),
                 ListTile(
-                    title: Text("Delete"),
-                    leading: Icon(Icons.delete_forever_rounded, color: Colors.red),
+                    title: const Text("Delete"),
+                    leading: const Icon(Icons.delete_forever_rounded, color: Colors.red),
                     onTap: () async {
                       _cpr.items.removeWhere((item) => item == material);
                       Navigator.of(context).pop();

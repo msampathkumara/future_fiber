@@ -13,14 +13,12 @@ class MonthPicker extends StatefulWidget {
 }
 
 class _MonthPickerState extends State<MonthPicker> {
-  int _minYear = 0;
   int _currentYear = 0;
 
   int _currentMonth = 0;
 
   @override
   void initState() {
-    _minYear = widget.firstDate.year;
     _currentYear = widget.selectedDate.year;
     _currentMonth = widget.selectedDate.month;
 

@@ -7,7 +7,7 @@ import 'package:smartwind/M/Ticket.dart';
 class PdfEditor extends StatefulWidget {
   final Ticket ticket;
 
-  PdfEditor(this.ticket);
+  const PdfEditor(this.ticket, {super.key});
 
   @override
   _PdfEditorState createState() {

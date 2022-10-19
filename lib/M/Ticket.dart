@@ -257,7 +257,7 @@ class Ticket extends DataObject {
           // print(e);
           if (e.response?.statusCode == 404) {
             print('404');
-            ErrorMessageView(errorMessage: 'Ticket Not Found', icon: Icons.broken_image_rounded).show(context);
+            const ErrorMessageView(errorMessage: 'Ticket Not Found', icon: Icons.broken_image_rounded).show(context);
           } else {
             print(e.message);
           }
@@ -386,8 +386,7 @@ class Ticket extends DataObject {
     });
   }
 
-  static sharePdf(context, Ticket ticket) async {
-    // var status = await Permission.storage.isDenied;
+  static Future sharePdf(context, Ticket ticket) async {
     if (await Permission.storage.isDenied) {
       await Permission.storage.request();
     }
@@ -405,7 +404,7 @@ class Ticket extends DataObject {
       );
       // file.delete();
     } else {
-      ErrorMessageView(errorMessage: "File Not Found", icon: Icons.insert_drive_file_outlined).show(context);
+      const ErrorMessageView(errorMessage: "File Not Found", icon: Icons.insert_drive_file_outlined).show(context);
     }
   }
 
@@ -414,16 +413,18 @@ class Ticket extends DataObject {
   }
 
   Future openInShippingSystem(BuildContext context) async {
-    await getFile(this, context);
-    return Navigator.push(context, MaterialPageRoute(builder: (context) => ShippingSystem(this)));
+    await getFile(this, context).then((value) {
+      return Navigator.push(context, MaterialPageRoute(builder: (context) => ShippingSystem(this)));
+    });
   }
 
   Future openInCS(BuildContext context) async {
-    var file = await getFile(this, context);
-    if (file == null) {
-      return false;
-    }
-    return Navigator.push(context, MaterialPageRoute(builder: (context) => CS(this)));
+    return await getFile(this, context).then((file) {
+      if (file == null) {
+        return false;
+      }
+      return Navigator.push(context, MaterialPageRoute(builder: (context) => CS(this)));
+    });
   }
 
   getName() {

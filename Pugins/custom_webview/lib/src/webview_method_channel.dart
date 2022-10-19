@@ -12,9 +12,7 @@ import '../platform_interface.dart';
 class MethodChannelCustomWebViewPlatform implements CustomWebViewPlatformController {
   /// Constructs an instance that will listen for webviews broadcasting to the
   /// given [id], using the given [CustomWebViewPlatformCallbacksHandler].
-  MethodChannelCustomWebViewPlatform(int id, this._platformCallbacksHandler)
-      : assert(_platformCallbacksHandler != null),
-        _channel = MethodChannel('plugins.flutter.io/customwebview_$id') {
+  MethodChannelCustomWebViewPlatform(int id, this._platformCallbacksHandler) : _channel = MethodChannel('plugins.flutter.io/customwebview_$id') {
     _channel.setMethodCallHandler(_onMethodCall);
   }
 
@@ -77,7 +75,6 @@ class MethodChannelCustomWebViewPlatform implements CustomWebViewPlatformControl
     String url,
     Map<String, String>? headers,
   ) async {
-    assert(url != null);
     return _channel.invokeMethod<void>('loadUrl', <String, dynamic>{
       'url': url,
       'headers': headers,

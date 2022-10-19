@@ -1,5 +1,7 @@
 package com.Dialogs;
 
+import static com.pdfEditor.BottomSheetsUtils.setupFullHeight;
+
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -21,8 +23,6 @@ import com.sampathkumara.northsails.smartwind.R;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.pdfEditor.BottomSheetsUtils.setupFullHeight;
-
 
 public class LoadingDialog extends BottomSheetDialogFragment {
 
@@ -30,12 +30,7 @@ public class LoadingDialog extends BottomSheetDialogFragment {
     String text;
 
     private boolean showButton;
-    private OnButtonClickCallBack onCancelClick = new OnButtonClickCallBack() {
-        @Override
-        public void onClick() {
-            System.out.println("no actions for OnButtonClickCallBack.onClick");
-        }
-    };
+    private final OnButtonClickCallBack onCancelClick = () -> System.out.println("no actions for OnButtonClickCallBack.onClick");
     private View errorView;
     private View loadView;
     private Button retryButton;
@@ -59,21 +54,13 @@ public class LoadingDialog extends BottomSheetDialogFragment {
     }
 
 
-    public void setOnCancelClick(OnButtonClickCallBack onCancelClick) {
-        this.onCancelClick = onCancelClick;
-        showButton = true;
-    }
-
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
-                BottomSheetDialog bottomSheetDialog = (BottomSheetDialog) dialogInterface;
-                setupFullHeight(bottomSheetDialog, getActivity(), 0);
-            }
+        dialog.setOnShowListener(dialogInterface -> {
+            BottomSheetDialog bottomSheetDialog = (BottomSheetDialog) dialogInterface;
+            setupFullHeight(bottomSheetDialog, getActivity(), 0);
         });
         return dialog;
     }
@@ -84,7 +71,7 @@ public class LoadingDialog extends BottomSheetDialogFragment {
         T.cancel();
         try {
             onCancelClick.onClick();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -98,12 +85,9 @@ public class LoadingDialog extends BottomSheetDialogFragment {
 
             @Override
             public void run() {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        timerTv.setText("" + count);
-                        count++;
-                    }
+                getActivity().runOnUiThread(() -> {
+                    timerTv.setText("" + count);
+                    count++;
                 });
             }
         }, 1000, 1000);
@@ -144,18 +128,15 @@ public class LoadingDialog extends BottomSheetDialogFragment {
 
         text.setText("" + this.text);
 
-        view.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    onCancelClick.onClick();
-                    return false;
-                } else {
-                    return true;
-                }
-
-
+        view.setOnKeyListener((v, keyCode, event) -> {
+            if (keyCode == KeyEvent.KEYCODE_BACK) {
+                onCancelClick.onClick();
+                return false;
+            } else {
+                return true;
             }
+
+
         });
 
 
@@ -168,16 +149,13 @@ public class LoadingDialog extends BottomSheetDialogFragment {
         errorView.setVisibility(View.VISIBLE);
         loadView.setVisibility(View.GONE);
         errorMessage.setText(message);
-        retryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startTimer();
-                errorView.setVisibility(View.GONE);
-                loadView.setVisibility(View.VISIBLE);
+        retryButton.setOnClickListener(v -> {
+            startTimer();
+            errorView.setVisibility(View.GONE);
+            loadView.setVisibility(View.VISIBLE);
 
-                if (onReteyClickCallBack != null) {
-                    onReteyClickCallBack.onClick();
-                }
+            if (onReteyClickCallBack != null) {
+                onReteyClickCallBack.onClick();
             }
         });
 

@@ -293,7 +293,6 @@ class _AddUserEmailState extends State<AddUserEmail> {
   void skipEmailVerify() {
     setLoading(true);
     Api.post("user/verifyEmailSkip", {}).then((response) {
-      Map data = response.data;
       setLoading(false);
       widget.onEnd();
     });

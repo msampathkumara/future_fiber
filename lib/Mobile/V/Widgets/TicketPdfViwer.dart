@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
-import 'package:pdfx/pdfx.dart';
-
 // import 'package:native_pdf_view/native_pdf_view.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/Ticket.dart';
@@ -14,7 +12,7 @@ import '../Home/Tickets/ProductionPool/Finish/FinishCheckList.dart';
 
 class TicketPdfViewer extends StatefulWidget {
   final Ticket ticket;
-  final onClickEdit;
+  final Function onClickEdit;
 
   const TicketPdfViewer(this.ticket, {Key? key, required this.onClickEdit}) : super(key: key);
 
@@ -29,18 +27,13 @@ class TicketPdfViewer extends StatefulWidget {
 }
 
 class TicketPdfViewerState extends State<TicketPdfViewer> {
-  var pdfPath;
-  late PdfController pdfController;
-
-  late PdfControllerPinch pdfPinchController;
+  String? pdfPath;
 
   bool _loading = false;
 
-  var _controller;
-
   String pageString = '';
 
-  Widget pdfView() => PdfViewPinch(controller: pdfPinchController, padding: 10, scrollDirection: Axis.vertical);
+  PDFViewController? _controller;
 
   @override
   void initState() {
@@ -50,8 +43,6 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
 
   @override
   void dispose() {
-    print('dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd');
-    pdfPinchController.dispose();
     super.dispose();
   }
 
@@ -154,7 +145,7 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
               print('$page: ${error.toString()}');
             },
             onViewCreated: (PDFViewController pdfViewController) {
-              _controller.complete(pdfViewController);
+              _controller = pdfViewController;
             },
             onPageChanged: (int? page, int? total) {
               print('page change: $page/$total');

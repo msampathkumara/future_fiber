@@ -64,7 +64,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
               Expanded(
                   child: SingleChildScrollView(
                       child: Column(children: [
-                        if (AppUser.havePermissionFor(NsPermissions.TICKET_ALERT_MANAGER))
+                if (AppUser.havePermissionFor(NsPermissions.TICKET_ALERT_MANAGER))
                   ListTile(
                     title: Text(ticket.isRed == 1 ? "Remove Red Flag" : "Set Red Flag"),
                     leading: const Icon(Icons.flag),
@@ -154,8 +154,9 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                       title: const Text("Share Work Ticket"),
                       leading: const Icon(NsIcons.share, color: Colors.lightBlue),
                       onTap: () async {
-                        await Ticket.sharePdf(context, ticket);
-                        Navigator.of(context).pop();
+                        Ticket.sharePdf(context, ticket).then((x) {
+                          Navigator.of(context).pop();
+                        });
                       }),
                 if (AppUser.havePermissionFor(NsPermissions.BLUE_BOOK_BLUE_BOOK) && (!kIsWeb))
                   ListTile(
@@ -172,16 +173,18 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                       title: const Text("Shipping"),
                       leading: const Icon(NsIcons.shipping, color: Colors.brown),
                       onTap: () async {
-                        await ticket.openInShippingSystem(context);
-                        Navigator.of(context).pop();
+                        await ticket.openInShippingSystem(context).then((value) {
+                          Navigator.of(context).pop();
+                        });
                       }),
                         if (AppUser.havePermissionFor(NsPermissions.QC_CS) && (!kIsWeb))
                   ListTile(
                       title: const Text("CS"),
                       leading: const Icon(Icons.pivot_table_chart_rounded, color: Colors.green),
                       onTap: () async {
-                        await ticket.openInCS(context);
-                        Navigator.of(context).pop();
+                        await ticket.openInCS(context).then((value) {
+                          Navigator.of(context).pop();
+                        });
                       }),
                         if (ticket.hasFile && AppUser.havePermissionFor(NsPermissions.TICKET_DELETE_TICKET))
                   ListTile(
@@ -200,9 +203,6 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                                     if (loadData != null) {
                                       loadData();
                                     }
-                                    print('TICKET DELETED');
-                                    print(response.data);
-                                    print(response.statusCode);
                                   });
                                 })));
 

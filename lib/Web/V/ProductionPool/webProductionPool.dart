@@ -44,7 +44,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
       if (mounted) {
         loadData();
       }
-    }, context, collection: DataTables.Tickets);
+    }, context, collection: DataTables.tickets);
   }
 
   @override

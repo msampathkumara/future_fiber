@@ -6,11 +6,10 @@ import '../../../../../C/ServerResponse/Progress.dart';
 import '../../../../../Web/V/QC/webTicketQView.dart';
 
 class info_Progress extends StatefulWidget {
-  List<Progress> progressList;
-
+  final List<Progress> progressList;
   final Ticket ticket;
 
-  info_Progress(this.progressList, this.ticket, {Key? key}) : super(key: key);
+  const info_Progress(this.progressList, this.ticket, {Key? key}) : super(key: key);
 
   @override
   _info_ProgressState createState() => _info_ProgressState();

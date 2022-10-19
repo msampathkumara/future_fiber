@@ -30,7 +30,7 @@ class UserManagerUserList extends StatefulWidget {
 }
 
 class _UserManagerUserListState extends State<UserManagerUserList> with TickerProviderStateMixin {
-  var database;
+  // var database;
 
   var _themeColor = Colors.orange;
   final _deactivateThemeColor = Colors.grey;
@@ -67,7 +67,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
       if (mounted) {
         filterUsers();
       }
-    }, context, collection: DataTables.Users);
+    }, context, collection: DataTables.users);
     filterUsers();
   }
 
@@ -144,7 +144,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    filteredAllUsersList == AllUsersList ? filteredAllUsersList.length.toString() : "${filteredAllUsersList.length.toString()}/${AllUsersList.length.toString()}",
+                    filteredAllUsersList == allUsersList ? filteredAllUsersList.length.toString() : "${filteredAllUsersList.length.toString()}/${allUsersList.length.toString()}",
                     textScaleFactor: 1.1,
                     style: const TextStyle(color: Colors.white),
                   ),
@@ -179,7 +179,8 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
   String listSortBy = "uptime";
   String sortedBy = "Date";
   String searchText = "";
-  var subscription;
+
+  // var subscription;
   List<Map> currentFileList = [];
 
   final tabs = ["All", "Upwind", "OD", 'Nylon Standard', 'Nylon Custom', "OEM", "No Pool"];
@@ -257,23 +258,16 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
     );
   }
 
-  List<NsUser> AllUsersList = [];
-
-  // Future<void> reloadData() {
-  //   filterUsers();
-  //   return DB.updateDatabase(context).then((value) {
-  //     return filterUsers();
-  //   });
-  // }
+  List<NsUser> allUsersList = [];
 
   Future<void> filterUsers() async {
-    AllUsersList = HiveBox.usersBox.values.toList();
-    print('Searching users $searchText __ ${AllUsersList.length} __ $_showDeactivatedUsers');
+    allUsersList = HiveBox.usersBox.values.toList();
+    print('Searching users $searchText __ ${allUsersList.length} __ $_showDeactivatedUsers');
 
     if (searchText.trim().isEmpty) {
-      filteredAllUsersList = AllUsersList.where((element) => element.isDisabled == (_showDeactivatedUsers)).toList();
+      filteredAllUsersList = allUsersList.where((element) => element.isDisabled == (_showDeactivatedUsers)).toList();
     } else {
-      filteredAllUsersList = AllUsersList.where((nsUser) {
+      filteredAllUsersList = allUsersList.where((nsUser) {
         return (_showDeactivatedUsers == nsUser.isDisabled) &&
             searchText.containsInArrayIgnoreCase([nsUser.uname, nsUser.nic, nsUser.name, nsUser.emailAddress, nsUser.phone, nsUser.getEpf().toString()]);
       }).toList();

@@ -227,19 +227,6 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                   ),
                 ),
               ),
-
-              // Expanded(
-              //   child: Builder(builder: (context) {
-              //     xxxx = context;
-              //     return MaterialApp(
-              //       initialRoute: '/dashBoard',
-              //       routes: <String, WidgetBuilder>{'/dashBoard': (BuildContext context) => DashBoard(), '/productionPool': (BuildContext context) => WebProductionPool()},
-              //     );
-              //   }),
-              // )
-
-              // VerticalDivider(thickness: 1, width: 1),
-              // This is the main content.
               Expanded(
                   child: Center(
                       child: [
@@ -260,6 +247,4 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
           ),
         ));
   }
-
-  late BuildContext xxxx;
 }

@@ -5,6 +5,7 @@ import 'package:smartwind/C/Api.dart';
 import 'package:smartwind/M/CPR/KIT.dart';
 import 'package:smartwind/M/CPR/KitItem.dart';
 import 'package:smartwind/M/Chat/message.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/Mobile/V/Home/Tickets/StandardFiles/factory_selector.dart';
 import 'package:smartwind/Mobile/V/Widgets/UserImage.dart';
@@ -283,7 +284,7 @@ class _KitViewState extends State<KitView> {
 
   checkMaterial(KitItem material, bool checked) {
     checkingMaterials.add(material.id);
-    return Api.post("materialManagement/kit/checkItem", {'checked': checked, 'itemId': material.id, 'id': _kit.id}).then((res) {
+    return Api.post(EndPoints.materialManagement_kit_checkItem, {'checked': checked, 'itemId': material.id, 'id': _kit.id}).then((res) {
       checkingMaterials.remove(material.id);
       apiGetData();
       widget.isKitChange(true);
@@ -328,7 +329,7 @@ class _KitViewState extends State<KitView> {
   }
 
   Future sendKit() {
-    return Api.post("materialManagement/kit/sendKit", {'kit': _kit.id}).then((res) {
+    return Api.post(EndPoints.materialManagement_kit_sendKit, {'kit': _kit.id}).then((res) {
       apiGetData();
     }).whenComplete(() {
       setState(() {});
@@ -400,7 +401,7 @@ class _KitViewState extends State<KitView> {
   saveComment() {
     String text = commentController.text;
     commentController.clear();
-    return Api.post("materialManagement/saveCprComment", {'text': text, 'cprId': _kit.id}).then((res) {
+    return Api.post(EndPoints.materialManagement_saveCprComment, {'text': text, 'cprId': _kit.id}).then((res) {
       getComments();
     }).whenComplete(() {
       setState(() {});
@@ -408,7 +409,7 @@ class _KitViewState extends State<KitView> {
   }
 
   void updateProduction(String prod) {
-    Api.post("materialManagement/kit/updateClient", {'client': prod, 'kitId': _kit.id}).then((res) {
+    Api.post(EndPoints.materialManagement_kit_updateClient, {'client': prod, 'kitId': _kit.id}).then((res) {
       apiGetData();
     }).whenComplete(() {
       setState(() {});

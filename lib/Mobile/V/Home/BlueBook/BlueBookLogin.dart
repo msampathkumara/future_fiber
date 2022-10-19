@@ -22,7 +22,7 @@ class BlurBookLogin extends StatefulWidget {
 }
 
 class _BlurBookLoginState extends State<BlurBookLogin> {
-  BlueBookCredentials blueBookCredentials = new BlueBookCredentials();
+  BlueBookCredentials blueBookCredentials = BlueBookCredentials();
 
   TextEditingController unameController = TextEditingController();
   TextEditingController pwordController = TextEditingController();
@@ -45,52 +45,50 @@ class _BlurBookLoginState extends State<BlurBookLogin> {
   }
 
   bool hidePassword = true;
-  var _passwordFocusNode = FocusNode();
-  var _unameFocusNode = FocusNode();
+  final _passwordFocusNode = FocusNode();
 
   String errorMsg = "";
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      content: Container(
-          child: Wrap(children: [
-        Center(
+      content: Wrap(children: [
+        const Center(
             child: Text(
           "User Login",
           textScaleFactor: 1.2,
         )),
-        SizedBox(height: 60),
+        const SizedBox(height: 60),
         TextFormField(
             controller: unameController,
             autofocus: true,
             onFieldSubmitted: (d) {
               _passwordFocusNode.requestFocus();
             },
-            style: TextStyle(fontSize: 20, color: Colors.blue),
+            style: const TextStyle(fontSize: 20, color: Colors.blue),
             cursorColor: Colors.blue,
             decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5.0),
-                  borderSide: BorderSide(
+                  borderSide: const BorderSide(
                     color: Colors.black,
                   ),
                 ),
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: new Icon(Icons.account_circle_outlined),
+                prefixIcon: const Padding(
+                  padding: EdgeInsets.only(left: 8.0),
+                  child: Icon(Icons.account_circle_outlined),
                 ),
                 hintText: 'Enter User Name',
-                hintStyle: TextStyle(color: Colors.grey),
+                hintStyle: const TextStyle(color: Colors.grey),
                 fillColor: Colors.white,
                 filled: true,
-                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                 focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.blueAccent, width: 1.0), borderRadius: BorderRadius.circular(5.0)),
                 enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0), borderSide: BorderSide(color: Colors.blueGrey.shade50, width: 1.0))),
             onChanged: (uname) {
               blueBookCredentials.userName = uname;
             }),
-        SizedBox(height: 60),
+        const SizedBox(height: 60),
         TextFormField(
             controller: pwordController,
             focusNode: _passwordFocusNode,
@@ -98,7 +96,7 @@ class _BlurBookLoginState extends State<BlurBookLogin> {
             onFieldSubmitted: (f) {
               _login();
             },
-            style: TextStyle(fontSize: 20, color: Colors.blue),
+            style: const TextStyle(fontSize: 20, color: Colors.blue),
             obscureText: hidePassword,
             onChanged: (t) {
               blueBookCredentials.password = t;
@@ -111,20 +109,20 @@ class _BlurBookLoginState extends State<BlurBookLogin> {
                       });
                     },
                     icon: Icon(hidePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: Colors.grey)),
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: new Icon(Icons.lock_outlined),
+                prefixIcon: const Padding(
+                  padding: EdgeInsets.only(left: 8.0),
+                  child: Icon(Icons.lock_outlined),
                 ),
                 hintText: 'Enter Password',
-                hintStyle: TextStyle(color: Colors.grey),
+                hintStyle: const TextStyle(color: Colors.grey),
                 fillColor: Colors.white,
                 filled: true,
-                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                 focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.blueAccent, width: 1.0), borderRadius: BorderRadius.circular(5.0)),
                 enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0), borderSide: BorderSide(color: Colors.blueGrey.shade50, width: 1.0)))),
-        SizedBox(height: 64),
-        Text(errorMsg, style: TextStyle(color: Colors.red)),
-        SizedBox(height: 32),
+        const SizedBox(height: 64),
+        Text(errorMsg, style: const TextStyle(color: Colors.red)),
+        const SizedBox(height: 32),
         Align(
           alignment: Alignment.bottomRight,
           child: Wrap(
@@ -133,17 +131,17 @@ class _BlurBookLoginState extends State<BlurBookLogin> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text("Cancel")),
-              SizedBox(width: 8),
+                  child: const Text("Cancel")),
+              const SizedBox(width: 8),
               ElevatedButton(
                   onPressed: () {
                     _login();
                   },
-                  child: Text("Login"))
+                  child: const Text("Login"))
             ],
           ),
         )
-      ])),
+      ]),
     );
   }
 

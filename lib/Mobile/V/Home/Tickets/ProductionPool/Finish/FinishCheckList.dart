@@ -8,6 +8,7 @@ import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/Mobile/V/Home/Tickets/ProductionPool/Finish/SelectSectionBottomSheet.dart';
+import 'package:smartwind/res.dart';
 
 import '../../../../../../C/ServerResponse/ServerResponceMap.dart';
 import '../../../../../../M/EndPoints.dart';
@@ -66,26 +67,22 @@ class _FinishCheckListState extends State<FinishCheckList> {
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(backgroundColor: Colors.green, textStyle: const TextStyle(fontWeight: FontWeight.bold)),
                           onPressed: () async {
-                            await finish("Excellent");
-                            Navigator.of(context).pop();
+                            await finish("Excellent").then((value) {
+                              Navigator.of(context).pop();
+                            });
                           },
                           child: const Text("Excellent")),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(backgroundColor: Colors.lightGreen, textStyle: const TextStyle(fontWeight: FontWeight.bold)),
                           onPressed: () async {
-                            await finish("Good");
-                            Navigator.of(context).pop();
+                            await finish("Good").then((value) {
+                              Navigator.of(context).pop();
+                            });
                           },
                           child: const Text("Good")),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, textStyle: const TextStyle(fontWeight: FontWeight.bold)),
                           onPressed: () async {
-                            // if (Navigator.canPop(context)) {
-                            //   Navigator.pop(context);
-                            // } else {
-                            //   SystemNavigator.pop();
-                            // }
-
                             var isQc = false;
                             var selectedSection = AppUser.getSelectedSection()?.id;
                             if (AppUser.getSelectedSection()?.sectionTitle.toLowerCase() == "qc") {
@@ -124,7 +121,7 @@ class _FinishCheckListState extends State<FinishCheckList> {
 
   _loadData() async {
     var x = DefaultAssetBundle.of(context);
-    var data = await x.loadString("assets/QACheckList.json");
+    var data = await x.loadString(Res.QACheckList);
     checkListMap = json.decode(data);
     return checkListMap;
   }
@@ -136,7 +133,7 @@ class _FinishCheckListState extends State<FinishCheckList> {
       isQc = true;
     }
 
-    var r = await Api.get("tickets/finish/getProgress", {'ticket': ticket.id.toString()});
+    var r = await Api.get(EndPoints.tickets_finish_getProgress, {'ticket': ticket.id.toString()});
     ServerResponseMap res1 = ServerResponseMap.fromJson((r.data));
 
     if (mounted) await Ticket.getFile(ticket, context);

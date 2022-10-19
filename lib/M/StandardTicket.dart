@@ -12,6 +12,7 @@ part 'StandardTicket.g.dart';
 @JsonSerializable(explicitToJson: true)
 @HiveType(typeId: 9)
 class StandardTicket extends Ticket {
+  @override
   @HiveField(50, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)
   String? production;
@@ -20,12 +21,14 @@ class StandardTicket extends Ticket {
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int usedCount = 0;
 
+  @override
   @HiveField(52, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int uptime = 0;
 
   StandardTicket();
 
+  @override
   Future<File> getLocalFile() async {
     var ed = await getExternalStorageDirectory();
     var filePath = '${ed!.path}/st$id.pdf';
@@ -36,13 +39,10 @@ class StandardTicket extends Ticket {
 
   factory StandardTicket.fromJson(Map<String, dynamic> json) => _$StandardTicketFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$StandardTicketToJson(this);
 
-  static List<StandardTicket> fromJsonArray(StandardTickets) {
-    return List<StandardTicket>.from(StandardTickets.map((model) => StandardTicket.fromJson(model)));
+  static List<StandardTicket> fromJsonArray(standardTickets) {
+    return List<StandardTicket>.from(standardTickets.map((model) => StandardTicket.fromJson(model)));
   }
-
-  static bool _boolFromInt(int done) => done == 1;
-
-  static int _boolToInt(bool done) => done ? 1 : 0;
 }

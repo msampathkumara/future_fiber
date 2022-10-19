@@ -17,20 +17,12 @@ class KitList extends StatefulWidget {
 class _KitListState extends State<KitList> {
   TextEditingController searchController = TextEditingController();
 
-  var subscription;
-
   String searchText = '';
-
   List<KIT> _kitList = [];
-
   bool requested = false;
-
   num dataCount = 0;
-
   bool _dataLoadingError = false;
-
   Production selectedProduction = Production.All;
-  final _status = ['All', 'Sent', 'Ready', 'Pending', 'Order'];
   String selectedStatus = 'All';
 
   @override
@@ -50,9 +42,6 @@ class _KitListState extends State<KitList> {
               delay: 300,
               searchController: searchController,
               onSearchTextChanged: (text) {
-                if (subscription != null) {
-                  subscription.cancel();
-                }
                 searchText = text;
                 _kitList = [];
                 loadData(0);

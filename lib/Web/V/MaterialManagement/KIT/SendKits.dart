@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/Web/Widgets/IfWeb.dart';
 
@@ -27,7 +28,7 @@ class _SendKitsState extends State<SendKits> {
   }
 
   List<String> ticketList = [];
-  TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
 
   getWebUi() {
     return Scaffold(
@@ -53,7 +54,7 @@ class _SendKitsState extends State<SendKits> {
             child: ListView.separated(
               itemBuilder: (BuildContext context, int index) {
                 String t = ticketList[index];
-                return ListTile(title: Text("${t}"));
+                return ListTile(title: Text(t));
               },
               itemCount: ticketList.length,
               separatorBuilder: (BuildContext context, int index) {
@@ -92,8 +93,7 @@ class _SendKitsState extends State<SendKits> {
   getUi() {}
 
   void send(Ticket t) {
-    Api.post("materialManagement/kit/sendKit", {'mo': t.mo}).then((res) {
-      Map data = res.data;
+    Api.post(EndPoints.materialManagement_kit_sendKit, {'mo': t.mo}).then((res) {
       setState(() {
         t.loading = false;
         print('xxxxxxxxx');
@@ -109,8 +109,7 @@ class _SendKitsState extends State<SendKits> {
   }
 
   void sendKits() {
-    Api.post("materialManagement/kit/sendKits", {'mos': ticketList, "comment": comment}).then((res) {
-      Map data = res.data;
+    Api.post(EndPoints.materialManagement_kit_sendKits, {'mos': ticketList, "comment": comment}).then((res) {
       setState(() {
         print('xxxxxxxxx');
       });

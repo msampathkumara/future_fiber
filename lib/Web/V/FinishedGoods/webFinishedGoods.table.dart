@@ -16,7 +16,7 @@ class AsyncPaginatedDataTable2Demo extends StatefulWidget {
   final Null Function(DessertDataSourceAsync dataSource) onInit;
   final Future<DataResponse> Function(int page, int startingAt, int count, String sortedBy, bool sortedAsc) onRequestData;
 
-  const AsyncPaginatedDataTable2Demo({required this.onInit, required this.onRequestData});
+  const AsyncPaginatedDataTable2Demo({super.key, required this.onInit, required this.onRequestData});
 
   @override
   _AsyncPaginatedDataTable2DemoState createState() => _AsyncPaginatedDataTable2DemoState();
@@ -27,10 +27,10 @@ class _AsyncPaginatedDataTable2DemoState extends State<AsyncPaginatedDataTable2D
   bool _sortAscending = true;
   int? _sortColumnIndex;
   DessertDataSourceAsync? _dessertsDataSource;
-  PaginatorController _controller = PaginatorController();
+  final PaginatorController _controller = PaginatorController();
 
-  bool _dataSourceLoading = false;
-  int _initialRow = 0;
+  final bool _dataSourceLoading = false;
+  final int _initialRow = 0;
 
   @override
   void didChangeDependencies() {
@@ -123,7 +123,7 @@ class _AsyncPaginatedDataTable2DemoState extends State<AsyncPaginatedDataTable2D
           },
           initialFirstRowIndex: _initialRow,
           onPageChanged: (rowIndex) {
-            print("${rowIndex}${_rowsPerPage}xxxxxxxx =${rowIndex / _rowsPerPage}");
+            print("$rowIndex${_rowsPerPage}xxxxxxxx =${rowIndex / _rowsPerPage}");
           },
           sortColumnIndex: _sortColumnIndex,
           sortAscending: _sortAscending,
@@ -139,7 +139,7 @@ class _AsyncPaginatedDataTable2DemoState extends State<AsyncPaginatedDataTable2D
 }
 
 class _ErrorAndRetry extends StatelessWidget {
-  _ErrorAndRetry(this.errorMessage, this.retry);
+  const _ErrorAndRetry(this.errorMessage, this.retry);
 
   final String errorMessage;
   final void Function() retry;
@@ -216,7 +216,7 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
   //   print('DessertDataSourceAsync.error created');
   // }
   final BuildContext context;
-  bool _empty = false;
+  final bool _empty = false;
   int? _errorCounter;
 
   RangeValues? _caloriesFilter;
@@ -244,8 +244,8 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
   // }
 
   @override
-  Future<AsyncRowsResponse> getRows(int startIndex, int count) async {
-    print('getRows($startIndex, $count)');
+  Future<AsyncRowsResponse> getRows(int start, int end) async {
+    print('getRows($start, $end)');
     if (_errorCounter != null) {
       _errorCounter = _errorCounter! + 1;
 
@@ -255,14 +255,14 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
       }
     }
 
-    var index = startIndex;
+    var index = start;
 
     assert(index >= 0);
 
     // List returned will be empty is there're fewer items than startingAt
     var x = _empty
         ? await Future.delayed(const Duration(milliseconds: 2000), () => DataResponse(0, []))
-        : await onRequestData(int.parse("${startIndex / count}"), startIndex, count, _sortColumn, _sortAscending);
+        : await onRequestData(int.parse("${start / end}"), start, end, _sortColumn, _sortAscending);
 
     var r = AsyncRowsResponse(
         x.totalRecords,

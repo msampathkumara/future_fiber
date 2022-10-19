@@ -30,7 +30,6 @@ class _TicketStartDialogState extends State<TicketStartDialog> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
 
     return DialogView(child: getUi(), width: width > 500 ? 500 : width - 100, height: 200);
   }
@@ -64,10 +63,11 @@ class _TicketStartDialogState extends State<TicketStartDialog> {
                           setState(() {
                             loading = true;
                           });
-                          await Ticket.start(ticket, context);
-                          ticket.isStarted = true;
-                          ticket.save();
-                          Navigator.of(context).pop(true);
+                          await Ticket.start(ticket, context).then((value) {
+                            ticket.isStarted = true;
+                            ticket.save();
+                            Navigator.of(context).pop(true);
+                          });
                         },
                         child: const Text("Start")))
               ])));

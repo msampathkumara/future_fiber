@@ -37,7 +37,7 @@ class _WebUserManagerState extends State<WebUserManager> {
 
   late DbChangeCallBack _dbChangeCallBack;
 
-  final _ScrollController = ScrollController();
+  final _scrollController = ScrollController();
 
   get nsUserCount => _dataSource == null ? 0 : _dataSource?.rowCount;
 
@@ -48,7 +48,7 @@ class _WebUserManagerState extends State<WebUserManager> {
       if (mounted) {
         loadData();
       }
-    }, context, collection: DataTables.Users);
+    }, context, collection: DataTables.users);
 
     HiveBox.getDataFromServer().then((value) {
       loadData();
@@ -120,13 +120,12 @@ class _WebUserManagerState extends State<WebUserManager> {
         floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
         floatingActionButton: FloatingActionButton(
             onPressed: () async {
-              NsUser? nsUser = await UpdateUserDetails(NsUser()).show(context);
-              print("nsUser------------------------------------------------------------------");
-              print(nsUser);
-              if (nsUser != null) {
-                await GeneratePassword(nsUser).show(context);
-              }
-              HiveBox.getDataFromServer();
+              UpdateUserDetails(NsUser()).show(context).then((NsUser? nsUser) async {
+                if (nsUser != null) {
+                  await GeneratePassword(nsUser).show(context);
+                }
+                HiveBox.getDataFromServer();
+              });
             },
             backgroundColor: Colors.green,
             child: const Icon(Icons.add)));
@@ -220,9 +219,9 @@ class _WebUserManagerState extends State<WebUserManager> {
                 ),
               )),
           body: Scrollbar(
-            controller: _ScrollController,
+            controller: _scrollController,
             child: ListView(
-              controller: _ScrollController,
+              controller: _scrollController,
               children: [
                 ListTile(title: Text('NIC', style: lt), subtitle: Text(selectedUser.nic ?? '-', style: lst)),
                 ListTile(title: Text('Type', style: lt), subtitle: Text(selectedUser.utype, style: lst)),

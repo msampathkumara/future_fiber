@@ -1,10 +1,9 @@
-import 'dart:typed_data';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
 import 'package:smartwind/C/Api.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/Enums.dart';
 
 class AddTicket extends StatefulWidget {
@@ -272,7 +271,7 @@ class UploadFile {
     }
     FormData formData = FormData.fromMap({"ticket": MultipartFile.fromBytes(_bytes!, filename: name), "production": standard ? production?.getValue() : ''});
     print(standard ? ("tickets/standard/upload") : ("tickets/upload"));
-    Api.post(standard ? ("tickets/standard/upload") : ("tickets/upload"), {}, formData: formData, onSendProgress: (int sent, int total) {
+    Api.post(standard ? (EndPoints.tickets_standard_upload) : ("tickets/upload"), {}, formData: formData, onSendProgress: (int sent, int total) {
       sent = sent;
       total = total;
       print('progress: ${getProgress()}% ($sent/$total)');

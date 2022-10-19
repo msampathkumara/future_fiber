@@ -180,15 +180,15 @@ class HiveBox {
       bool updated = false;
 
       if (HiveBox.usersBox.length > 0) {
-        DB.callChangesCallBack(DataTables.Users);
+        DB.callChangesCallBack(DataTables.users);
         updated = true;
       }
       if (HiveBox.ticketBox.length > 0 || deletedTicketsIdsList.isNotEmpty || completedTicketsIdsList.isNotEmpty) {
-        DB.callChangesCallBack(DataTables.Tickets);
+        DB.callChangesCallBack(DataTables.tickets);
         updated = true;
       }
       if (HiveBox.sectionsBox.length > 0) {
-        DB.callChangesCallBack(DataTables.Sections);
+        DB.callChangesCallBack(DataTables.sections);
         updated = true;
       }
       if (standardTicketsList.isNotEmpty) {
@@ -197,7 +197,7 @@ class HiveBox {
         updated = true;
       }
       if (updated) {
-        DB.callChangesCallBack(DataTables.Any);
+        DB.callChangesCallBack(DataTables.any);
       }
 
       print('__________________________________________________________________________________________________________');

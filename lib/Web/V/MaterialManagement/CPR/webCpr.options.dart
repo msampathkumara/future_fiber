@@ -93,7 +93,6 @@ void order(context, CPR? cpr, int i, reload) {
 
   Api.post(EndPoints.materialManagement_order, {'cprId': cpr?.id, 'type': i})
       .then((res) {
-        Map data = res.data;
         ShowMessage('Saved', messageType: MessageTypes.success, icon: Icons.save);
         reload();
       })

@@ -65,10 +65,11 @@ class _WebCprState extends State<WebCpr> {
         floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
         floatingActionButton: FloatingActionButton.small(
             onPressed: () async {
-              Ticket? ticket = await const TicketSelector().show(context);
-              if (ticket != null) {
-                await AddCpr(ticket).show(context);
-              }
+              await const TicketSelector().show(context).then((ticket) async {
+                if (ticket != null) {
+                  await AddCpr(ticket).show(context);
+                }
+              });
             },
             child: const Icon(Icons.add)),
         backgroundColor: Colors.transparent,
@@ -97,7 +98,7 @@ class _WebCprState extends State<WebCpr> {
                         icon: const Icon(Icons.download))),
                 const SizedBox(width: 50),
                 Wrap(children: [
-                  myDropDown<String>(
+                  MyDropDown<String>(
                       items: const ['All', 'Urgent', 'Normal'],
                       elevation: 4,
                       lable: 'OrderType',
@@ -115,7 +116,7 @@ class _WebCprState extends State<WebCpr> {
                         return Text(item);
                       }),
                   const SizedBox(width: 20),
-                  myDropDown<Production>(
+                  MyDropDown<Production>(
                       items: Production.values,
                       elevation: 4,
                       lable: 'Production',
@@ -133,7 +134,7 @@ class _WebCprState extends State<WebCpr> {
                         return Text(item.getValue());
                       }),
                   const SizedBox(width: 20),
-                  myDropDown<String>(
+                  MyDropDown<String>(
                       items: _status,
                       elevation: 4,
                       lable: 'Status',

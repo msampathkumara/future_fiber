@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:path_provider/path_provider.dart';
@@ -21,9 +20,9 @@ import 'BlueBookCredentials.dart';
 import 'BlueBookLogin.dart';
 
 class BlueBook extends StatefulWidget {
-  Ticket? ticket;
+  final Ticket? ticket;
 
-  BlueBook({Key? key, this.ticket}) : super(key: key);
+  const BlueBook({Key? key, this.ticket}) : super(key: key);
 
   @override
   _BlueBookState createState() => _BlueBookState();
@@ -36,8 +35,7 @@ class _BlueBookState extends State<BlueBook> {
   var showFinishButton = true;
 
   // WebView? _webView;
-  // static InAppWebView? wv;
-  static var wv;
+  static InAppWebView? wv;
 
   late PdfControllerPinch pdfPinchController;
 
@@ -82,17 +80,14 @@ class _BlueBookState extends State<BlueBook> {
 
           return HttpAuthResponse(action: HttpAuthResponseAction.CANCEL);
         },
-        onDownloadStart: (controller, url) async {
-          print("onDownloadStart $url");
-          var blueBookCredentials = await BlurBookLogin.getBlueBookCredentials();
-          File file = await _getFile(context, url.toString(), blueBookCredentials);
-          await Navigator.push(context, MaterialPageRoute(builder: (context) => PdfFileViewer(file)));
+        onDownloadStartRequest: (InAppWebViewController controller, DownloadStartRequest downloadStartRequest) async {
+          print("onDownloadStart ${downloadStartRequest.url}");
+          await BlurBookLogin.getBlueBookCredentials().then((blueBookCredentials) async {
+            _getFile(context, downloadStartRequest.url.toString(), blueBookCredentials).then((file) async {
+              await Navigator.push(context, MaterialPageRoute(builder: (context) => PdfFileViewer(file)));
+            });
+          });
         });
-    print('LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL');
-    // _pdfController = PdfController(
-    //   document: PdfDocument.openFile(path),
-    //   initialPage: _initialPage,
-    // );
 
     pdfPinchController = PdfControllerPinch(document: PdfDocument.openFile(path));
   }
@@ -121,7 +116,7 @@ class _BlueBookState extends State<BlueBook> {
     );
   }
 
-  Future<File> _getFile(context, url, BlueBookCredentials? credentials, {onReceiveProgress}) async {
+  Future<File> _getFile(context, url, BlueBookCredentials? credentials) async {
     if (credentials == null) {
       return Future.value(File(""));
     }
@@ -133,8 +128,6 @@ class _BlueBookState extends State<BlueBook> {
 
     var dio = Dio();
     var ed = await getExternalStorageDirectory();
-    final user = FirebaseAuth.instance.currentUser;
-    final idToken = await user!.getIdToken();
     String basicAuth = 'Basic ${base64Encode(utf8.encode('${credentials.userName}:${credentials.password}'))}';
     dio.options.headers['content-Type'] = 'application/json';
     dio.options.headers[HttpHeaders.authorizationHeader] = basicAuth;
@@ -143,7 +136,7 @@ class _BlueBookState extends State<BlueBook> {
     var id = UniqueKey();
     var filePath = '${ed!.path}/blueBook/$id.pdf';
 
-    var response;
+    Response response;
     try {
       await dio.download(url, filePath, onReceiveProgress: (received, total) {
         print('TOTAL = $total');
@@ -164,10 +157,7 @@ class _BlueBookState extends State<BlueBook> {
         print(e.response);
         if (e.response!.statusCode == 404) {
           loadingWidget.close(context);
-          var errorView = ErrorMessageView(
-            errorMessage: "File Not Found",
-            icon: Icons.sd_card_alert,
-          );
+          var errorView = const ErrorMessageView(errorMessage: "File Not Found", icon: Icons.sd_card_alert);
           await errorView.show(context);
           return Future.value(null);
         }

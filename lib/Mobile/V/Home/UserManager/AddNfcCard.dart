@@ -63,7 +63,7 @@ class _AddNfcCardState extends State<AddNfcCard> {
     double height = MediaQuery.of(context).size.height;
     return Center(
         child: Container(
-          height: (height / 3) * 2,
+      height: (height / 3) * 2,
       width: (width / 4) * 3,
       decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20))),
       child: Padding(
@@ -136,7 +136,7 @@ class _AddNfcCardState extends State<AddNfcCard> {
     );
   }
 
-  var nfcCode;
+  String? nfcCode;
 
   Future<void> save(bool confirm) async {
     await Api.post(EndPoints.users_setNfcCard, {"nfc": nfcCode, "userId": widget.nsUser.id, "confirm": confirm}).then((value) {

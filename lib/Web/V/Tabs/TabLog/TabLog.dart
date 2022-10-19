@@ -27,8 +27,6 @@ class TabLog extends StatefulWidget {
 class _TabLogState extends State<TabLog> {
   late Device device;
 
-  late TabLogDataSourceAsync _dataSource;
-
   @override
   void initState() {
     device = widget.device;
@@ -50,7 +48,7 @@ class _TabLogState extends State<TabLog> {
                         clipBehavior: Clip.antiAliasWithSaveLayer,
                         elevation: 4,
                         borderRadius: BorderRadius.circular(8),
-                        child: Container(
+                        child: SizedBox(
                             width: 250,
                             child: Padding(
                                 padding: const EdgeInsets.all(16.0),
@@ -68,13 +66,11 @@ class _TabLogState extends State<TabLog> {
                       elevation: 4,
                       borderRadius: BorderRadius.circular(8),
                       child: TabLogDataTable(
-                        onInit: (TabLogDataSourceAsync dataSource) {
-                          _dataSource = dataSource;
-                        },
+                        onInit: (TabLogDataSourceAsync dataSource) {},
                         onRequestData: (int page, int startingAt, int count, String sortedBy, bool sortedAsc) {
                           return getData(page, startingAt, count, sortedBy, sortedAsc);
                         },
-                        onTap: (_sheetData) {},
+                        onTap: (sheetData) {},
                       )),
                 ))
               ],
@@ -84,7 +80,6 @@ class _TabLogState extends State<TabLog> {
   getData(int page, int startingAt, int count, String sortedBy, bool sortedAsc) {
     return Api.get("tabs/logList", {'tab': device.id, 'type': 'All', 'sortedAsc': sortedAsc, 'sortBy': sortedBy, 'pageIndex': page, 'pageSize': count})
         .then((res) {
-          print(res.data);
           List log = res.data["tabLog"];
           var dataCount = res.data["count"];
           return DataResponse(dataCount, DeviceLog.fromJsonArray(log));

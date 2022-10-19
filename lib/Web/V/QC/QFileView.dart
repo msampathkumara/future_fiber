@@ -23,7 +23,7 @@ class _QFileViewState extends State<QFileView> {
   late QC selectedQc;
   bool _pdfLoading = true;
 
-  var _data;
+  Uint8List? _data;
 
   @override
   void initState() {
@@ -53,6 +53,6 @@ class _QFileViewState extends State<QFileView> {
             ? const Center(child: CircularProgressIndicator())
             : _data == null
                 ? const Text("No Data")
-                : PdfViewer.openData(_data, params: const PdfViewerParams()));
+                : PdfViewer.openData(_data!, params: const PdfViewerParams()));
   }
 }

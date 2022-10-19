@@ -9,8 +9,8 @@ import '../Mobile/V/Login/Login.dart';
 import '../globals.dart';
 import 'home_page.dart';
 
-class webApp extends StatelessWidget {
-  webApp({Key? key}) : super(key: key);
+class WebApp extends StatelessWidget {
+  const WebApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,6 @@ class webApp extends StatelessWidget {
       theme: ThemeData(
         iconTheme: const IconThemeData(size: 16.0),
         primarySwatch: Colors.green,
-        // primaryColor: Colors.lightGreen,
         primaryColorDark: Colors.green,
         bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.black.withOpacity(0)),
         inputDecorationTheme: InputDecorationTheme(
@@ -52,7 +51,7 @@ class webApp extends StatelessWidget {
       },
       routes: <String, WidgetBuilder>{
         '/login': (BuildContext context) => const Login(),
-        '/': (BuildContext context) => (isMaterialManagement ? const MaterialManagementHomePage() : const WebHomePage())
+        '/': (BuildContext context) => (isMaterialManagement ? const MaterialManagementHomePage() : const WebHomePage()),
       },
     );
   }

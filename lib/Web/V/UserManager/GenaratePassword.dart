@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:random_password_generator/random_password_generator.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/Web/Widgets/IfWeb.dart';
@@ -114,8 +115,7 @@ class _GeneratePasswordState extends State<GeneratePassword> {
     setState(() {
       loading = true;
     });
-    Api.post("user/recoverPassword/savePassword", {'userId': widget.nsUser.id, 'password': _newPassword}).then((res) {
-      Map data = res.data;
+    Api.post(EndPoints.user_recoverPassword_savePassword, {'userId': widget.nsUser.id, 'password': _newPassword}).then((res) {
       setState(() {
         loading = false;
       });

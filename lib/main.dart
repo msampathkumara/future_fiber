@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:app_settings/app_settings.dart';
-// import 'package:firebase_analytics/firebase_analytics.dart';
-// import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -67,12 +65,9 @@ Future mainThings({viewIssMaterialManagement = false}) async {
   }
   if (kIsWeb) {
     await FirebaseAuth.instance.authStateChanges().first;
-    // print(xx);
-    // print('User----------------------------------------------------------s');
   }
 
   FirebaseAuth.instance.userChanges().listen((User? user) {
-    // print('User----------------------------------------------------------');
     if (user == null) {
       // print('User is currently signed out!***');
     } else {
@@ -120,15 +115,12 @@ class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     screenSize = MediaQuery.of(context).size;
-    return loading ? const Center(child: SizedBox(width: 200, height: 200, child: CircularProgressIndicator(color: Colors.red))) : (kIsWeb ? webApp() : const MyApp());
+    return loading ? const Center(child: SizedBox(width: 200, height: 200, child: CircularProgressIndicator(color: Colors.red))) : (kIsWeb ? const WebApp() : const MobileApp());
   }
 }
 
-class MyApp extends StatelessWidget {
-  // static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-  // static FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(analytics: analytics);
-
-  const MyApp({Key? key}) : super(key: key);
+class MobileApp extends StatelessWidget {
+  const MobileApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -173,7 +165,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final mainFuncs _mainFuncs = mainFuncs();
+  final MainFuncs _mainFuncs = MainFuncs();
 
   @override
   void initState() {

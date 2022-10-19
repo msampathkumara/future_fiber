@@ -22,23 +22,18 @@ public abstract class E extends Fragment {
         String imageFileName = "IMG_" + timeStamp + "_";
         File storageDir =
                 getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
+
+
+        return File.createTempFile(
                 imageFileName,  /* prefix */
                 ".bmp",         /* suffix */
                 storageDir      /* directory */
         );
-
-
-        return image;
     }
 
     public abstract void openCameraIntent(Context context);
 
     public abstract void browsImages(final Context context);
-
-    public interface runAfterFileLoad {
-        void run(E editor);
-    }
 
     public interface runAfterLoad {
         void run(E editor);

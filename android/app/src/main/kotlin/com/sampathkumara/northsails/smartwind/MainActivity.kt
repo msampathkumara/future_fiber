@@ -1,8 +1,7 @@
 package com.sampathkumara.northsails.smartwind
 
 import android.content.Intent
-import androidx.annotation.NonNull
-import androidx.annotation.Nullable
+import android.webkit.CookieManager
 import com.pdfEditor.MainEditorActivity
 import com.pdfEditor.QCEditor
 import com.tom_roush.pdfbox.multipdf.Splitter
@@ -20,14 +19,15 @@ class MainActivity : FlutterActivity() {
 
     private val editPdf: Int = 0
     private val qaEdit: Int = 1
-    private val CHANNEL = "editPdf"
-    var editPdfResult: MethodChannel.Result? = null
+    private val _CHANNEL = "editPdf"
+    private var editPdfResult: MethodChannel.Result? = null
 
 
-    override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
+    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+        CookieManager.getInstance().setAcceptCookie(true)
         super.configureFlutterEngine(flutterEngine)
         println("ccccccccccccccccccccccccccccccccccccccccccccccc")
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, _CHANNEL).setMethodCallHandler { call, result ->
 
 //            startActivityForResult( { result: ActivityResult ->
 //            if (result.resultCode == Activity.RESULT_OK) {
@@ -71,7 +71,7 @@ class MainActivity : FlutterActivity() {
                         val document: PDDocument = PDDocument.load(File(filePath))
                         val pages: List<PDDocument> = splitter.split(document)
                         val pd = pages[pageIndex!!]
-                        val parentFile = File(filePath).parentFile
+
                         val fileNameWithOutExt = FilenameUtils.removeExtension(filePath)
                         out = File(fileNameWithOutExt + "_" + pageIndex + ".pdf")
                         pd.save(out)
@@ -112,12 +112,11 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, @Nullable data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == editPdf && editPdfResult != null) {
             editPdfResult!!.success(data?.getBooleanExtra("edited", false))
-        }
-        else if (requestCode == qaEdit && editPdfResult != null) {
+        } else if (requestCode == qaEdit && editPdfResult != null) {
             editPdfResult!!.success(data?.getBooleanExtra("edited", true))
         }
     }

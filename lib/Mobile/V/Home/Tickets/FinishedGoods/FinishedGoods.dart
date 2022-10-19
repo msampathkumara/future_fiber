@@ -23,7 +23,6 @@ class FinishedGoods extends StatefulWidget {
 }
 
 class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateMixin {
-  var database;
   var themeColor = Colors.deepOrange;
 
   List<Widget> factoryChipsList = [];
@@ -78,9 +77,6 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
               delay: 300,
               searchController: searchController,
               onSearchTextChanged: (text) {
-                if (subscription != null) {
-                  subscription.cancel();
-                }
                 searchText = text;
                 _ticketList = [];
 
@@ -171,7 +167,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
   String listSortBy = "uptime";
   String sortedBy = "Date";
   String searchText = "";
-  var subscription;
+
   List<Map> currentFileList = [];
 
   void _sortByBottomSheetMenu() {
@@ -442,8 +438,9 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                     title: const Text("Send Ticket"),
                     leading: const Icon(Icons.send_rounded, color: Colors.lightBlue),
                     onTap: () async {
-                      await Ticket.sharePdf(context, ticket);
-                      Navigator.of(context).pop();
+                      await Ticket.sharePdf(context, ticket).then((value) {
+                        Navigator.of(context).pop();
+                      });
                     }),
                 //       if (AppUser.havePermissionFor(NsPermissions.TICKET_DELETE_TICKET_COMPLETE))
                 // ListTile(

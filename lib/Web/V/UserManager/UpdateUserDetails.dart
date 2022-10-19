@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
@@ -14,6 +13,7 @@ import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Section.dart';
 import 'package:smartwind/Mobile/V/Home/UserManager/section_list.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
+import 'package:smartwind/res.dart';
 
 import '../../../M/EndPoints.dart';
 
@@ -29,7 +29,7 @@ class UpdateUserDetails extends StatefulWidget {
     return _UpdateUserDetailsState();
   }
 
-  Future show(context) {
+  Future<NsUser?> show(context) {
     return kIsWeb ? showDialog(context: context, builder: (_) => this) : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
   }
 }
@@ -99,7 +99,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
     imageId = '';
   }
 
-  var placeholder = const AssetImage('assets/images/userPlaceholder.jpg');
+  var placeholder = const AssetImage(Res.userPlaceholder);
 
   void setImage() {
     img = placeholder;
@@ -154,7 +154,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
                       CircleAvatar(
                           radius: 150,
                           foregroundImage: img ?? (nsUser.haveImage ? NetworkImage(nsUser.getImage()) : (img ?? placeholder)),
-                          backgroundImage: const AssetImage("assets/images/userPlaceholder.jpg")),
+                          backgroundImage: const AssetImage(Res.userPlaceholder)),
                       Row(children: [
                         SizedBox(width: 170, child: TextButton(onPressed: getImage, child: Text(isNew ? "Add Profile Picture" : "Change Profile Picture"))),
                         if (_image != null) const SizedBox(height: 20, child: VerticalDivider(color: Colors.grey, thickness: 1)),
@@ -473,12 +473,12 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
     return response.data['id'];
   }
 
-  var _timer;
+  Timer? _timer;
 
   check(String key, String value) {
     _userNameCheking = 1;
     if (_timer != null) {
-      _timer.cancel();
+      _timer?.cancel();
     }
     _timer = Timer(const Duration(milliseconds: 1000), () {
       Api.post(EndPoints.users_checkDuplicate, {"k": key, "v": value}).then((res) async {
@@ -495,7 +495,7 @@ class _UpdateUserDetailsState extends State<UpdateUserDetails> {
   }
 
   getSusfix(c) {
-    var x = null;
+    Widget? x;
     c = nsUser.uname.isEmpty ? 0 : c;
 
     switch (c) {

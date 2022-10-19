@@ -201,14 +201,14 @@ class _HomeState extends State<Home> {
                                   closedBuilder: (BuildContext _, VoidCallback openContainer) {
                                     return _menuButton(openContainer, Icon(Icons.menu_book_rounded, size: iconSize, color: Colors.blueAccent), "Blue Book");
                                   },
-                                  openWidget: BlueBook(),
+                                  openWidget: const BlueBook(),
                                   onClosed: _showMarkedAsDoneSnackBar),
                             if (AppUser.havePermissionFor(NsPermissions.HR_HR))
                               _OpenContainerWrapper(
                                   closedBuilder: (BuildContext _, VoidCallback openContainer) {
                                     return _menuButton(openContainer, Icon(Icons.groups_rounded, size: iconSize, color: Colors.orange), "HR System");
                                   },
-                                  openWidget: HESystem(),
+                                  openWidget: HRSystem(),
                                   onClosed: _showMarkedAsDoneSnackBar),
                             if (AppUser.havePermissionFor(NsPermissions.MATERIAL_MANAGEMENT_MATERIAL_MANAGEMENT))
                               _OpenContainerWrapper(
@@ -234,7 +234,7 @@ class _HomeState extends State<Home> {
                                   closedColor: Colors.transparent,
                                   transitionDuration: const Duration(milliseconds: 500),
                                   openBuilder: (BuildContext context, void Function({Object? returnValue}) action) {
-                                    return About();
+                                    return const About();
                                   },
                                   closedBuilder: (BuildContext context, void Function() action) {
                                     return Chip(

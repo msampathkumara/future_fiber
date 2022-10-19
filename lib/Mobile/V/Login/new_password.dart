@@ -5,7 +5,7 @@ import 'package:smartwind/M/NsUser.dart';
 
 class NewPassword extends StatefulWidget {
   final Function() onEnd;
-  final userId;
+  final int userId;
 
   const NewPassword(this.userId, {Key? key, required this.onEnd}) : super(key: key);
 
@@ -170,12 +170,12 @@ class _NewPasswordState extends State<NewPassword> {
       Map data = value.data;
 
       if (data["locked"] != null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Account has been locked", style: const TextStyle(color: Colors.white)), backgroundColor: Colors.red));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Account has been locked", style: TextStyle(color: Colors.white)), backgroundColor: Colors.red));
         return;
       }
       if (data["deactivate"] != null) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Account has been deactivate", style: const TextStyle(color: Colors.white)), backgroundColor: Colors.red));
+            .showSnackBar(const SnackBar(content: Text("Account has been deactivate", style: TextStyle(color: Colors.white)), backgroundColor: Colors.red));
         return;
       }
 

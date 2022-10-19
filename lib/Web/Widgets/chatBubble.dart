@@ -7,7 +7,7 @@ import '../V/ProductionPool/copy.dart';
 
 class ChatBubble extends StatefulWidget {
   final Message message;
-  final isSelf;
+  final bool isSelf;
 
   const ChatBubble(this.message, {this.isSelf = true, Key? key}) : super(key: key);
 

@@ -1,11 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CustomToolTip extends StatelessWidget {
   final Widget child;
   final String message;
 
-  CustomToolTip({required this.message, required this.child});
+  const CustomToolTip({super.key, required this.message, required this.child});
 
   @override
   Widget build(BuildContext context) {
