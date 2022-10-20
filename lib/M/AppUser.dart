@@ -13,14 +13,14 @@ import 'Section.dart';
 import 'hive.dart';
 
 class AppUser extends NsUser {
+  static get isDeveloper => getUser()?.id == 1;
 
   AppUser(context) {
     print('AppUser');
     FirebaseAuth.instance.idTokenChanges().listen((firebaseUser) {
       if (firebaseUser != null) {
         print('appUser firebase authStateChanges');
-      } else {
-      }
+      } else {}
     });
   }
 

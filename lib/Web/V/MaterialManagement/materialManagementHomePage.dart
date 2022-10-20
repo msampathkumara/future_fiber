@@ -5,6 +5,7 @@ import 'package:smartwind/Web/V/MaterialManagement/CPR/webCpr.dart';
 import 'package:smartwind/Web/V/MaterialManagement/KIT/webKit.dart';
 
 import '../../../Mobile/V/Widgets/UserImage.dart';
+import '../../../globals.dart';
 import '../../Widgets/login_change.dart';
 
 class MaterialManagementHomePage extends StatefulWidget {
@@ -80,9 +81,13 @@ class _MaterialManagementHomePageState extends State<MaterialManagementHomePage>
                                         destinations: [
                                           // if (AppUser.havePermissionFor(Permissions.CPR))
                                           NavigationRailDestination(
-                                              icon: const Icon(Icons.star_border), selectedIcon: const Icon(Icons.star), label: Text('CPR', style: TextStyle(fontSize: size))),
+                                              icon: const Icon(Icons.local_mall_outlined),
+                                              selectedIcon: const Icon(Icons.local_mall_rounded),
+                                              label: Text('CPR', style: TextStyle(fontSize: size))),
                                           NavigationRailDestination(
-                                              icon: const Icon(Icons.star_border), selectedIcon: const Icon(Icons.star), label: Text('KIT', style: TextStyle(fontSize: size))),
+                                              icon: const Icon(Icons.view_in_ar_outlined),
+                                              selectedIcon: const Icon(Icons.view_in_ar_rounded),
+                                              label: Text('KIT', style: TextStyle(fontSize: size))),
                                           NavigationRailDestination(
                                               icon: const Icon(Icons.star_border), selectedIcon: const Icon(Icons.star), label: Text('Batten', style: TextStyle(fontSize: size))),
                                         ],
@@ -96,21 +101,17 @@ class _MaterialManagementHomePageState extends State<MaterialManagementHomePage>
                       onSelected: (result) {
                         if (result == 1) {
                           AppUser.logout(context);
+                        } else if (result == 2) {
+                          isMaterialManagement = !isMaterialManagement;
+                          Navigator.pushNamed(context, "/");
                         }
                       },
-                      itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+                      itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<int>>[
                         PopupMenuItem(
-                          value: 0,
-                          enabled: false,
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: UserImage(nsUser: AppUser.getUser(), radius: 68),
-                          ),
-                        ),
-                        const PopupMenuItem(
-                          value: 1,
-                          child: Text('Logout'),
-                        )
+                            value: 0, enabled: false, child: Center(child: Padding(padding: const EdgeInsets.all(16.0), child: UserImage(nsUser: AppUser.getUser(), radius: 68)))),
+                        PopupMenuItem(value: 1, child: Row(children: const [Icon(Icons.logout_rounded), SizedBox(width: 36), Text('Logout')])),
+                        // CheckedPopupMenuItem(value: 2, checked: isMaterialManagement, child: const Text("Material Management"),padding: EdgeInsets.all(0.0),),
                       ],
                     )
                   ],

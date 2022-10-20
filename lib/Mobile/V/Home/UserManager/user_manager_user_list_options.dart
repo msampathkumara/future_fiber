@@ -68,8 +68,8 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
                       ),
                     if (AppUser.havePermissionFor(NsPermissions.USERS_DEACTIVATE_USERS))
                       ListTile(
-                        title: Text(nsUser.isDisabled ? "Activate User" : "Deactivate User"),
-                        subtitle: Text(nsUser.isDisabled ? "Activate all activities on system for this user" : "Deactivate all activities on system for this user"),
+                        title: Text(nsUser.isDeactivated ? "Activate User" : "Deactivate User"),
+                        subtitle: Text(nsUser.isDeactivated ? "Activate all activities on system for this user" : "Deactivate all activities on system for this user"),
                         leading: const Padding(
                           padding: EdgeInsets.all(8.0),
                           child: Icon(Icons.person_off_rounded),
@@ -135,10 +135,10 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
 }
 
 void deactivateUser(nsUser) {
-  ShowMessage(nsUser.isDisabled ? "Activating" : "Deactivating..");
-  Api.post(EndPoints.users_deactivate, {"userId": nsUser.id, "deactivate": (!nsUser.isDisabled)}).then((value) {
+  ShowMessage(nsUser.isDeactivated ? "Activating" : "Deactivating..");
+  Api.post(EndPoints.users_deactivate, {"userId": nsUser.id, "deactivate": (!nsUser.isDeactivated)}).then((value) {
     print('cccccccccccccccccccccccccc');
-    ShowMessage(nsUser.isDisabled ? "User Account Activating" : "User Account Deactivated..");
+    ShowMessage(nsUser.isDeactivated ? "User Account Activating" : "User Account Deactivated..");
     HiveBox.getDataFromServer();
   }).catchError((err) {
     ShowMessage("Something went wrong.. please retry",

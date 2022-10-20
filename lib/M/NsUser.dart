@@ -128,7 +128,7 @@ class NsUser extends HiveClass {
 
   factory NsUser.fromJson(Map<String, dynamic> json) => _$NsUserFromJson(json);
 
-  bool get isDisabled => deactivate == 1;
+  bool get isDeactivated => deactivate == 1;
 
   bool get isNotDeactivated => deactivate == 0;
 

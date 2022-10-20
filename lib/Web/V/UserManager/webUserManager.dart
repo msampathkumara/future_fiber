@@ -28,7 +28,7 @@ class WebUserManager extends StatefulWidget {
 class _WebUserManagerState extends State<WebUserManager> {
   final _controller = TextEditingController();
   bool loading = true;
-  DessertDataSource? _dataSource;
+  UserManagerDataSource? _dataSource;
   String searchText = "";
 
   Production selectedProduction = Production.All;
@@ -50,12 +50,7 @@ class _WebUserManagerState extends State<WebUserManager> {
       }
     }, context, collection: DataTables.users);
 
-    HiveBox.getDataFromServer().then((value) {
-      loadData();
-      loading = false;
-      setState(() {});
-    });
-
+    HiveBox.getDataFromServer();
     super.initState();
   }
 
@@ -74,49 +69,46 @@ class _WebUserManagerState extends State<WebUserManager> {
               children: [
                 Text("User Manager", style: mainWidgetsTitleTextStyle),
                 const Spacer(),
-                flagIcon(UserFilters.locked, Icons.lock, "Filter   Locked Account"),
+                flagIcon(UserFilters.locked, Icons.lock_rounded, "Filter   Locked Account"),
                 flagIcon(UserFilters.deactivated, Icons.no_accounts_rounded, "Filter Deactivated accounts"),
                 const SizedBox(width: 50),
                 Wrap(children: [
                   SizedBox(
-                    width: 300,
-                    child: SearchBar(
-                        onSearchTextChanged: (text) {
-                          searchText = text;
-                          loadData();
-                        },
-                        searchController: _controller),
-                  ),
+                      width: 400,
+                      child: SearchBar(
+                          onSearchTextChanged: (text) {
+                            searchText = text;
+                            loadData();
+                          },
+                          searchController: _controller))
                 ])
               ],
             ),
             backgroundColor: Colors.transparent,
             elevation: 0),
-        body: loading
-            ? const Center(child: CircularProgressIndicator())
-            : Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Material(
-                          elevation: 4,
-                          borderRadius: BorderRadius.circular(8),
-                          child: WebUserManagerTable(
-                            onInit: (DessertDataSource dataSource) {
-                              _dataSource = dataSource;
-                            },
-                            onTap: (NsUser nsUser) {
-                              _selectedUser = nsUser;
-                              setState(() {});
-                            },
-                          )),
-                    ),
-                    const SizedBox(width: 8),
-                    if (_selectedUser != null) getUserDetailsUi(_selectedUser!)
-                  ],
-                ),
+        body: Padding(
+          padding: const EdgeInsets.only(bottom: 16.0, right: 16),
+          child: Row(
+            children: [
+              Expanded(
+                child: Material(
+                    elevation: 4,
+                    borderRadius: BorderRadius.circular(8),
+                    child: WebUserManagerTable(
+                      onInit: (UserManagerDataSource dataSource) {
+                        _dataSource = dataSource;
+                      },
+                      onTap: (NsUser nsUser) {
+                        _selectedUser = nsUser;
+                        setState(() {});
+                      },
+                    )),
               ),
+              const SizedBox(width: 8),
+              if (_selectedUser != null) getUserDetailsUi(_selectedUser!)
+            ],
+          ),
+        ),
         floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
         floatingActionButton: FloatingActionButton(
             onPressed: () async {
@@ -132,20 +124,26 @@ class _WebUserManagerState extends State<WebUserManager> {
   }
 
   void loadData() {
+    print('*************************************************************$dataFilter');
     var nsUser = HiveBox.usersBox.values.where((nsUser) {
       if (dataFilter != UserFilters.none) {
-        if (dataFilter == UserFilters.deactivated && nsUser.isNotDeactivated) {
+        if ((dataFilter == UserFilters.deactivated && nsUser.isNotDeactivated)) {
           return false;
         } else if (dataFilter == UserFilters.locked && nsUser.isNotLocked) {
           return false;
         }
       }
+      if (dataFilter == UserFilters.none && nsUser.isDeactivated) {
+        return false;
+      }
+
       return (searchText.containsInArrayIgnoreCase([nsUser.name, nsUser.uname, nsUser.nic, nsUser.getEpf().toString()]));
     }).toList();
     _dataSource?.setData(nsUser);
     if (_selectedUser != null) {
       _selectedUser = HiveBox.usersBox.get(_selectedUser?.id);
     }
+    loading = false;
     setState(() {});
   }
 
@@ -246,24 +244,6 @@ class _WebUserManagerState extends State<WebUserManager> {
               ],
             ),
           ),
-          // bottomNavigationBar: BottomAppBar(
-          //     shape: const CircularNotchedRectangle(),
-          //     color: Colors.white,
-          //     child: IconTheme(
-          //       data: const IconThemeData(color: Colors.black),
-          //       child: Row(
-          //         children: [
-          //           IconButton(
-          //               tooltip: "Edit",
-          //               icon: const Icon(Icons.edit_rounded),
-          //               onPressed: () async {
-          //                 await UpdateUserDetails(_selectedUser!).show(context);
-          //               }),
-          //           const Spacer()
-          //           // IconButton(tooltip: "Delete", icon: const Icon(Icons.delete_rounded, color: Colors.red), onPressed: () {}),
-          //         ],
-          //       ),
-          //     )),
         ),
       ),
     );

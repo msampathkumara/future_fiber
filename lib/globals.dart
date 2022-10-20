@@ -4,3 +4,4 @@ final GlobalKey<ScaffoldMessengerState> snackBarKey = GlobalKey<ScaffoldMessenge
 Size screenSize = const Size(0, 0);
 
 Color getPrimaryColor(context) => Theme.of(context).primaryColor;
+bool isMaterialManagement = false;

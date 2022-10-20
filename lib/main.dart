@@ -48,8 +48,6 @@ main() async {
   runLoggedApp(const MaterialApp(home: MainApp()));
 }
 
-bool isMaterialManagement = false;
-
 Future mainThings({viewIssMaterialManagement = false}) async {
   // isMaterialManagement = viewIssMaterialManagement;
   WidgetsFlutterBinding.ensureInitialized();

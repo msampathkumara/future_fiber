@@ -132,7 +132,7 @@ class _WebFinishedGoodsState extends State<WebFinishedGoods> {
             backgroundColor: Colors.transparent,
             elevation: 0),
         body: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.only(bottom: 16.0, right: 16),
           child: Material(
               elevation: 4,
               borderRadius: BorderRadius.circular(8),

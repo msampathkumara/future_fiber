@@ -44,7 +44,6 @@ class _AddCprState extends State<AddCpr> {
 
   bool saving = false;
 
-
   @override
   void initState() {
     cpr.ticket = widget.ticket;
@@ -96,9 +95,9 @@ class _AddCprState extends State<AddCpr> {
     return Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
         bottomNavigationBar: BottomAppBar(
-            color: err_msg.isEmpty ? Colors.white : Colors.red,
+            color: errMsg.isEmpty ? Colors.white : Colors.red,
             shape: const CircularNotchedRectangle(),
-            child: SizedBox(height: 50, child: Padding(padding: const EdgeInsets.all(8.0), child: Text(err_msg, style: const TextStyle(color: Colors.white))))),
+            child: SizedBox(height: 50, child: Padding(padding: const EdgeInsets.all(8.0), child: Text(errMsg, style: const TextStyle(color: Colors.white))))),
         appBar: AppBar(title: Text(cpr.ticket?.mo ?? ''), actions: [
           IconButton(
               onPressed: () {
@@ -312,7 +311,7 @@ class _AddCprState extends State<AddCpr> {
                   ),
                 ),
                 SizedBox(
-                  height: 72,
+                  height: 80,
                   child: Card(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -577,19 +576,19 @@ class _AddCprState extends State<AddCpr> {
     });
   }
 
-  String err_msg = '';
+  String errMsg = '';
 
   save() {
     if (cpr.client == null) {
-      err_msg = 'select client ';
+      errMsg = 'select client ';
     } else if (cpr.sailType == null) {
-      err_msg = 'select sail type ';
+      errMsg = 'select sail type ';
     } else if (cpr.shortageType == null) {
-      err_msg = 'select shortageType   ';
+      errMsg = 'select shortageType   ';
     } else if (cpr.cprType == null) {
-      err_msg = 'select cprType ';
+      errMsg = 'select cprType ';
     } else if (cpr.suppliers.isEmpty) {
-      err_msg = 'select suppliers ';
+      errMsg = 'select suppliers ';
     }
     // else if (cpr.items.where((element) => element.supplier == null).isNotEmpty) {
     //   err_msg = 'check materials';
@@ -617,7 +616,7 @@ class _AddCprState extends State<AddCpr> {
         });
       });
     }
-    print(err_msg);
+    print(errMsg);
     setState(() {});
   }
 

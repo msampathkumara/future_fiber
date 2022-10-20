@@ -35,6 +35,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
   // var subscription;
   bool _showAllTickets = false;
   bool _filterByPdf = false;
+  bool _filterByNoPdf = false;
 
   NsUser? nsUser;
 
@@ -43,6 +44,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
   late DbChangeCallBack _dbChangeCallBack;
 
   var startedCount = 0;
+  bool filterByStart = false;
 
   @override
   initState() {
@@ -99,15 +101,22 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                     _tabBarController = TabController(length: tabs.length, vsync: this);
                     updateTabControler();
                     loadData();
-                  } else if (s == 'Filter By Pdf') {
+                  } else if (s == 'Pdf') {
                     _filterByPdf = !_filterByPdf;
+                    _filterByNoPdf = false;
+                    loadData();
+                  } else if (s == 'noPdf') {
+                    _filterByNoPdf = !_filterByNoPdf;
+                    _filterByPdf = false;
                     loadData();
                   }
+                  print(s);
                 },
                 itemBuilder: (BuildContext context) {
                   return [
                     CheckedPopupMenuItem<String>(value: 'Show All Tickets', checked: _showAllTickets, child: const Text("Show All Tickets")),
-                    CheckedPopupMenuItem<String>(value: "Filter By Pdf", checked: _filterByPdf, child: const Text("Filter By Pdf"))
+                    CheckedPopupMenuItem<String>(value: "Pdf", checked: _filterByPdf, child: const Text("Filter By Pdf")),
+                    CheckedPopupMenuItem<String>(value: 'noPdf', checked: _filterByNoPdf, child: const Text('Tickets don\'t have Pdf'))
                   ];
                 },
               ),
@@ -115,10 +124,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
             elevation: 0.0,
             toolbarHeight: 100,
             backgroundColor: Colors.green,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => Navigator.pop(context),
-            ),
+            leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Navigator.pop(context)),
             title: SizedBox(
                 height: ((!_showAllTickets) && nsUser != null && nsUser!.section != null) ? 50 : 30,
                 child: Column(children: [
@@ -273,9 +279,27 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     ]);
   }
 
-  List<Ticket> _load(selectedProduction, section, showAllTickets, searchText, {bySection = false}) {
+  List<Ticket> _load(selectedProduction, section, showAllTickets, String searchText, {bySection = false}) {
+    // var tickets = HiveBox.ticketBox.values.where((ticket) {
+    //   if (ticket.isStarted) {
+    //     wipCountMap[selectedProduction]++;
+    //   }
+    //
+    //   return (filterByStart ? ticket.isStarted : true) &&
+    //       (_filterByPdf ? ticket.hasFile : true) &&
+    //       (_filterByNoPdf ? ticket.hasNoFile : true) &&
+    //       searchText.containsInArrayIgnoreCase([ticket.mo, ticket.oe]) &&
+    //       searchByFilters(ticket, dataFilter) &&
+    //       searchByProduction(ticket, selectedProduction);
+    // }).toList();
+    //
+    // return tickets;
+
     List<Ticket> l = HiveBox.ticketBox.values.where((t) {
-      if (_filterByPdf && (!t.hasFile)) {
+      if ((_filterByPdf ? t.hasNoFile : false)) {
+        return false;
+      }
+      if ((_filterByNoPdf ? t.hasFile : false)) {
         return false;
       }
 

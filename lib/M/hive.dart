@@ -15,10 +15,10 @@ import 'package:smartwind/M/Ticket/CprReport.dart';
 import 'package:smartwind/M/TicketFlag.dart';
 import 'package:smartwind/M/User/Email.dart';
 import 'package:smartwind/M/user_config.dart';
-import 'package:smartwind/main.dart';
 
 import '../C/Api.dart';
 import '../Mobile/V/Home/UserManager/UserPermissions.dart';
+import '../globals.dart';
 import 'AppUser.dart';
 import 'HiveClass.dart';
 import 'LocalFileVersion.dart';
@@ -40,6 +40,10 @@ class HiveBox {
   static late final Box<UserPermissions> userPermissions;
 
   static StreamSubscription<DatabaseEvent>? userUpdatesListener;
+  static StreamSubscription<DatabaseEvent>? resetDbListener;
+  static StreamSubscription<DatabaseEvent>? db_uponListener;
+  static StreamSubscription<DatabaseEvent>? ticketCompleteListener;
+  static StreamSubscription<DatabaseEvent>? standardLibraryListener;
 
   /// Create an instance of HiveBox to use throughout the app.
   static Future create() async {
@@ -75,25 +79,33 @@ class HiveBox {
     if (kIsWeb) {
       FirebaseAuth.instance.authStateChanges().listen((User? user) async {
         if (user != null) {
-          if (userUpdatesListener != null) {
-            userUpdatesListener?.cancel();
-          }
+          userUpdatesListener?.cancel();
+          db_uponListener?.cancel();
+          ticketCompleteListener?.cancel();
+          standardLibraryListener?.cancel();
+          resetDbListener?.cancel();
+
           userUpdatesListener = FirebaseDatabase.instance.ref('userUpdates').onValue.listen((DatabaseEvent event) {
+            print('authStateChanges -> userUpdates');
             HiveBox.getDataFromServer();
           });
 
-          FirebaseDatabase.instance.ref('db_upon').onValue.listen((DatabaseEvent event) {
+          db_uponListener = FirebaseDatabase.instance.ref('db_upon').onValue.listen((DatabaseEvent event) {
+            print('authStateChanges -> db_upon');
             HiveBox.getDataFromServer();
           });
-          FirebaseDatabase.instance.ref('db_upon').child("ticketComplete").onValue.listen((DatabaseEvent event) {
+          ticketCompleteListener = FirebaseDatabase.instance.ref('db_upon').child("ticketComplete").onValue.listen((DatabaseEvent event) {
+            print('authStateChanges -> ticketComplete');
             HiveBox.updateCompletedTickets();
           });
-          FirebaseDatabase.instance.ref('db_upon').child("standardLibrary").onValue.listen((DatabaseEvent event) async {
+          standardLibraryListener = FirebaseDatabase.instance.ref('db_upon').child("standardLibrary").onValue.listen((DatabaseEvent event) async {
+            print('authStateChanges -> standardLibrary');
             await HiveBox.cleanStandardLibrary();
             await HiveBox.getDataFromServer();
             DB.callChangesCallBack(DataTables.standardTickets);
           });
-          FirebaseDatabase.instance.ref('resetDb').onValue.listen((DatabaseEvent event) {
+          resetDbListener = FirebaseDatabase.instance.ref('resetDb').onValue.listen((DatabaseEvent event) {
+            print('authStateChanges -> resetDb');
             HiveBox.getDataFromServer(clean: true);
           });
         }

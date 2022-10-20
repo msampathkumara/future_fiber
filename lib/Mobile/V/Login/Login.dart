@@ -318,6 +318,7 @@ class _LoginState extends State<Login> {
           }
           // AppUser.setUser(nsUser);
           HiveBox.getDataFromServer();
+          print('login__________________________________________________________________________________________');
 
           if (kIsWeb) {
             // await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => WebHomePage()), (Route<dynamic> route) => false);

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/Mobile/V/Widgets/SearchBar.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
@@ -49,7 +50,7 @@ class _TicketSelectorState extends State<TicketSelector> {
                       if (text.trim().isEmpty) {
                         ticketList = [];
                       } else {
-                        ticketList = HiveBox.ticketBox.values.where((element) => ((element.mo ?? "").contains(text) || (element.oe ?? "").contains(text))).toList();
+                        ticketList = HiveBox.ticketBox.values.where((element) => (text.containsInArrayIgnoreCase([(element.mo ?? ""), (element.oe ?? "")]))).toList();
                       }
                     });
                   },

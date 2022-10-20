@@ -182,13 +182,6 @@ class _HomeState extends State<Home> {
                                   },
                                   openWidget: const UserManager(),
                                   onClosed: _showMarkedAsDoneSnackBar),
-                            // if (AppUser.havePermissionFor(NsPermissions.PRINTING))
-                            //   _OpenContainerWrapper(
-                            //       closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                            //         return _menuButton(openContainer, Icon(Icons.print_rounded, size: iconSize, color: Colors.blue), "Print");
-                            //       },
-                            //       openWidget: const PrintManager(),
-                            //       onClosed: _showMarkedAsDoneSnackBar),
                             if (AppUser.havePermissionFor(NsPermissions.QC_QC))
                               _OpenContainerWrapper(
                                   closedBuilder: (BuildContext _, VoidCallback openContainer) {

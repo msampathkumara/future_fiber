@@ -51,6 +51,7 @@ class WebApp extends StatelessWidget {
       },
       routes: <String, WidgetBuilder>{
         '/login': (BuildContext context) => const Login(),
+        '/materialManagement': (BuildContext context) => const MaterialManagementHomePage(),
         '/': (BuildContext context) => (isMaterialManagement ? const MaterialManagementHomePage() : const WebHomePage()),
       },
     );

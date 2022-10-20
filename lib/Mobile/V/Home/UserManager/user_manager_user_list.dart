@@ -231,7 +231,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
                     title: Text(nsUser.name),
                     subtitle: Text("#${nsUser.uname}"),
                     trailing: Wrap(children: [
-                      if (nsUser.isDisabled)
+                      if (nsUser.isDeactivated)
                         const Icon(
                           Icons.person_off_outlined,
                         ),
@@ -265,10 +265,10 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
     print('Searching users $searchText __ ${allUsersList.length} __ $_showDeactivatedUsers');
 
     if (searchText.trim().isEmpty) {
-      filteredAllUsersList = allUsersList.where((element) => element.isDisabled == (_showDeactivatedUsers)).toList();
+      filteredAllUsersList = allUsersList.where((element) => element.isDeactivated == (_showDeactivatedUsers)).toList();
     } else {
       filteredAllUsersList = allUsersList.where((nsUser) {
-        return (_showDeactivatedUsers == nsUser.isDisabled) &&
+        return (_showDeactivatedUsers == nsUser.isDeactivated) &&
             searchText.containsInArrayIgnoreCase([nsUser.uname, nsUser.nic, nsUser.name, nsUser.emailAddress, nsUser.phone, nsUser.getEpf().toString()]);
       }).toList();
     }

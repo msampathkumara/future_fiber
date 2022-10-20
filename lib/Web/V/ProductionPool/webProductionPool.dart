@@ -5,7 +5,7 @@ import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/Mobile/V/Widgets/SearchBar.dart';
 import 'package:smartwind/Web/V/AddSheet/add_sheet.dart';
 import 'package:smartwind/Web/V/AddTicket/add_ticket.dart';
-import 'package:smartwind/Web/V/ProductionPool/table.dart';
+import 'package:smartwind/Web/V/ProductionPool/webProductionPool.table.dart';
 
 import '../../../M/Enums.dart';
 import '../../../M/hive.dart';
@@ -31,6 +31,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
   late DbChangeCallBack _dbChangeCallBack;
 
   bool filterByFiles = false;
+  bool filterByNoFiles = false;
   bool filterByStart = false;
 
   get ticketCount => _dataSource == null ? 0 : _dataSource?.rowCount;
@@ -64,8 +65,15 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                 const Spacer(),
                 Wrap(children: [
                   // flagIcon(Filters.isCrossPro, Icons.merge_type_rounded, "Filter by cross production"),
-                  flagIcon(Filters.isError, Icons.picture_as_pdf_rounded, "Files", checked: filterByFiles, onPressed: () {
+                  flagIcon(Filters.isError, Icons.sim_card_rounded, "Files", checked: filterByFiles, onPressed: () {
                     filterByFiles = !filterByFiles;
+                    filterByNoFiles = false;
+                    loadData();
+                    setState(() {});
+                  }),
+                  flagIcon(Filters.isError, Icons.no_sim_rounded, "No Files", checked: filterByNoFiles, onPressed: () {
+                    filterByNoFiles = !filterByNoFiles;
+                    filterByFiles = false;
                     loadData();
                     setState(() {});
                   }),
@@ -74,7 +82,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                     loadData();
                     setState(() {});
                   }),
-                  const VerticalDivider(color: Colors.redAccent, width: 50, thickness: 5),
+                  Padding(padding: const EdgeInsets.all(8.0), child: Container(width: 1, color: Colors.red, height: 24)),
                   flagIcon(Filters.isError, Icons.warning_rounded, "Filter by Error Route"),
                   // flagIcon(Filters.inPrint, Icons.print_rounded, "Filter by in print"),
                   flagIcon(Filters.isRush, Icons.offline_bolt_rounded, "Filter by rush"),
@@ -86,47 +94,62 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                   flagIcon(Filters.haveCpr, NsIcons.short, "Filter by CPR"),
                   flagIcon(Filters.isQc, NsIcons.short, "Filter by QC", text: "QC"),
                   flagIcon(Filters.isQa, NsIcons.short, "Filter by QA", text: "QA"),
-                  const SizedBox(width: 50),
-                  Material(
-                    elevation: 4,
-                    borderRadius: BorderRadius.circular(8),
-                    child: SizedBox(
-                      height: 40,
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<Production>(
-                          value: selectedProduction,
-                          selectedItemBuilder: (_) {
-                            return Production.values.map<Widget>((Production item) {
-                              return Center(child: Padding(padding: const EdgeInsets.all(8.0), child: Text(item.getValue())));
+                  Padding(padding: const EdgeInsets.all(8.0), child: Container(width: 1, color: Colors.red, height: 24)),
+                  Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: PopupMenuButton<Production>(
+                          offset: const Offset(0, 30),
+                          padding: const EdgeInsets.all(16.0),
+                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                          child: Chip(
+                              avatar: const Icon(Icons.factory, color: Colors.black),
+                              label: Row(children: [Text(selectedProduction.getValue()), const Icon(Icons.arrow_drop_down_rounded, color: Colors.black)])),
+                          onSelected: (result) {},
+                          itemBuilder: (BuildContext context) {
+                            return Production.values.map((Production value) {
+                              return PopupMenuItem<Production>(
+                                  value: value,
+                                  onTap: () {
+                                    selectedProduction = value;
+                                    setState(() {});
+                                    loadData();
+                                  },
+                                  child: Text(value.getValue()));
                             }).toList();
-                          },
-                          items: Production.values.map((Production value) {
-                            return DropdownMenuItem<Production>(value: value, child: Text(value.getValue()));
-                          }).toList(),
-                          onChanged: (_) {
-                            selectedProduction = _ ?? Production.All;
-                            setState(() {});
-                            loadData();
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
+                          })),
+                  // Material(
+                  //   elevation: 4,
+                  //   borderRadius: BorderRadius.circular(8),
+                  //   child: SizedBox(
+                  //     height: 40,
+                  //     child: DropdownButtonHideUnderline(
+                  //       child: DropdownButton<Production>(
+                  //         value: selectedProduction,
+                  //         selectedItemBuilder: (_) {
+                  //           return Production.values.map<Widget>((Production item) {
+                  //             return Center(child: Padding(padding: const EdgeInsets.all(8.0), child: Text(item.getValue())));
+                  //           }).toList();
+                  //         },
+                  //         items: Production.values.map((Production value) {
+                  //           return DropdownMenuItem<Production>(value: value, child: Text(value.getValue()));
+                  //         }).toList(),
+                  //         onChanged: (_) {
+                  //           selectedProduction = _ ?? Production.All;
+                  //           setState(() {});
+                  //           loadData();
+                  //         },
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                   const SizedBox(width: 20),
                   Material(
-                    elevation: 4,
-                    borderRadius: BorderRadius.circular(8),
-                    child: SizedBox(
-                        height: 40,
-                        width: 250,
-                        child: SearchBar(
-                            onSearchTextChanged: (String text) {
-                              searchText = text;
-                              loadData();
-                            },
-                            delay: 300,
-                            searchController: _controller)),
-                  ),
+                      elevation: 4,
+                      borderRadius: BorderRadius.circular(8),
+                      child: SizedBox(
+                          height: 40,
+                          width: 250,
+                          child: SearchBar(onSearchTextChanged: (String text) => {searchText = text, loadData()}, delay: 300, searchController: _controller))),
                 ])
               ],
             ),
@@ -151,7 +174,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
 
   Filters dataFilter = Filters.none;
 
-  flagIcon(Filters filter, IconData? icon, tooltip, {String? text, Function? onPressed, bool? checked}) {
+  flagIcon(Filters filter, IconData? icon, tooltip, {String? text, Function? onPressed, bool? checked, IconData? icon2}) {
     checked = checked ?? dataFilter == filter;
 
     return IconButton(
@@ -160,7 +183,12 @@ class _WebProductionPoolState extends State<WebProductionPool> {
           radius: 16,
           child: (text != null)
               ? Text(text, style: TextStyle(color: checked ? Colors.red : Colors.black, fontWeight: FontWeight.bold))
-              : Icon(icon, color: checked ? Colors.red : Colors.black, size: 20)),
+              : Stack(
+                  children: [
+                    Icon(icon, color: checked ? Colors.red : Colors.black, size: 20),
+                    Icon(icon2, color: checked ? Colors.red : Colors.black, size: 20),
+                  ],
+                )),
       tooltip: tooltip,
       onPressed: () async {
         if (onPressed != null) {
@@ -180,6 +208,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
     var tickets = HiveBox.ticketBox.values.where((ticket) {
       return (filterByStart ? ticket.isStarted : true) &&
           (filterByFiles ? ticket.hasFile : true) &&
+          (filterByNoFiles ? ticket.hasNoFile : true) &&
           searchText.containsInArrayIgnoreCase([ticket.mo, ticket.oe]) &&
           searchByFilters(ticket, dataFilter) &&
           searchByProduction(ticket, selectedProduction);

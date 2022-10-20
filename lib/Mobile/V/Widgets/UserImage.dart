@@ -35,7 +35,7 @@ class _UserImageState extends State<UserImage> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.disable || nsUser.isDisabled) {
+    if (widget.disable || nsUser.isDeactivated) {
       return SizedBox(
         width: widget.radius * 2,
         height: widget.radius * 2,

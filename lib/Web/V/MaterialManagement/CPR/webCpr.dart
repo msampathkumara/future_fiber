@@ -62,12 +62,16 @@ class _WebCprState extends State<WebCpr> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
+        floatingActionButtonLocation: FloatingActionButtonLocation.miniStartFloat,
         floatingActionButton: FloatingActionButton.small(
             onPressed: () async {
               await const TicketSelector().show(context).then((ticket) async {
                 if (ticket != null) {
-                  await AddCpr(ticket).show(context);
+                  await AddCpr(ticket).show(context).then((v) {
+                    if (v == true) {
+                      loadData();
+                    }
+                  });
                 }
               });
             },
@@ -155,22 +159,14 @@ class _WebCprState extends State<WebCpr> {
                   Material(
                       elevation: 4,
                       borderRadius: BorderRadius.circular(8),
-                      child: SizedBox(
-                          height: 40,
-                          width: 200,
-                          child: SearchBar(
-                              searchController: _controller,
-                              onSearchTextChanged: (text) {
-                                searchText = text;
-                                loadData();
-                              })))
+                      child: SizedBox(height: 40, width: 300, child: SearchBar(searchController: _controller, onSearchTextChanged: (text) => {searchText = text, loadData()})))
                 ])
               ],
             ),
             backgroundColor: Colors.transparent,
             elevation: 0),
         body: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.only(bottom: 16.0, right: 16),
           child: Material(
               elevation: 4,
               borderRadius: BorderRadius.circular(8),

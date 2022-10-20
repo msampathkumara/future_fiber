@@ -14,6 +14,11 @@ import '../../../Mobile/V/Widgets/NoResultFoundMsg.dart';
 import 'LineChart.dart';
 import 'M/MonthPicker.dart';
 import 'M/ProgressSummery.dart';
+import 'Settings/AddAvarageSailTimes.dart';
+import 'Settings/AddDefaultEmployeeCounts.dart';
+import 'Settings/AddDefaultShifts.dart';
+import 'Settings/AddEmployeeCounts.dart';
+import 'Settings/ChangeShift.dart';
 
 enum DaysFilters { Today, Yesterday, Week, Month, Year, Custom }
 
@@ -85,208 +90,223 @@ class _CountCardsState extends State<CountCards> {
     print(progressSummeryByShiftName.keys);
     print(_shifts);
     print("-------------------------------------------------------shifts");
-    return ListView(
+    return Stack(
       children: [
-        Row(children: [
-          Material(
-            elevation: 4,
-            borderRadius: BorderRadius.circular(8),
-            child: SizedBox(
-              height: 40,
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<Production>(
-                  value: selectedProduction,
-                  selectedItemBuilder: (_) {
-                    return productionList.map<Widget>((Production item) {
-                      return Center(child: Padding(padding: const EdgeInsets.all(8.0), child: Text(item.getValue())));
-                    }).toList();
-                  },
-                  items: productionList.map((Production value) {
-                    return DropdownMenuItem<Production>(value: value, child: Text(value.getValue()));
-                  }).toList(),
-                  onChanged: (_) {
-                    selectedProduction = _ ?? Production.Upwind;
-                    setState(() {});
-                    loadData();
-                  },
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 24),
-          ...[DaysFilters.Today, DaysFilters.Yesterday].map((e) => Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: FilterChip(
-                labelStyle: TextStyle(
-                  color: _selectedFilter == e ? Colors.white : Colors.black,
-                ),
-                checkmarkColor: _selectedFilter == e ? Colors.white : Colors.black,
-                label: Text(e.getText()),
-                selected: _selectedFilter == e,
-                selectedColor: Colors.red,
-                onSelected: (x) {
-                  setState(() {
-                    _selectedFilter = e;
-                  });
-                  loadData();
-                },
-              ))),
-          ...DaysFilters.values
-              .without([DaysFilters.Today, DaysFilters.Yesterday])
-              .map((e) => Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: PopupMenuButton<int>(
-                      offset: const Offset(0, 30),
-                      padding: const EdgeInsets.all(16.0),
-                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                      child: Chip(
-                          backgroundColor: _selectedFilter == e ? Colors.red : null,
-                          avatar: _selectedFilter == e ? const Icon(Icons.check, color: Colors.white) : null,
-                          label: Text(e.getText(), style: TextStyle(color: _selectedFilter == e ? Colors.white : Colors.black))),
-                      onSelected: (result) {},
-                      itemBuilder: (BuildContext context) {
-                        return getFilterValues(e);
-                      })))
-              .toList(),
-        ]),
-        const SizedBox(height: 24),
-        ListTile(
-            title: Text(_title, textScaleFactor: 2, style: const TextStyle(color: Colors.black)),
-            subtitle: Text(
-                "${formatDate(rangeStartDate, dateOnly: rangeEndDate == null)} ${rangeEndDate == null ? "" : " to ${formatDate(rangeEndDate!.subtract(const Duration(seconds: 1)))}"}")),
-        (loading)
+        loading
             ? const Center(child: CircularProgressIndicator())
             : _allShiftSummery == null
                 ? const Center(child: NoResultFoundMsg())
-                : Wrap(
-                    children: [
-                      if (_allShiftSummery != null) getShiftsTotal(_allShiftSummery!),
-                      if (!isSingleDay) ...[const SizedBox(height: 24), SizedBox(height: 450, child: LineChart(controller: lineChartController)), const SizedBox(height: 24)],
-                      ExpansionPanelList(
-                        expandedHeaderPadding: const EdgeInsets.all(16),
-                        dividerColor: Colors.blue,
-                        expansionCallback: (int index, bool isExpanded) {
+                : Container(),
+        if (_allShiftSummery == null) const Center(child: NoResultFoundMsg()),
+        ListView(
+          children: [
+            Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Row(children: [
+                  SizedBox(
+                    width: 400,
+                    child: ListTile(
+                        title: Text(_title, textScaleFactor: 1.2, style: const TextStyle(color: Colors.black)),
+                        subtitle: Text(
+                            "${formatDate(rangeStartDate, dateOnly: rangeEndDate == null)} ${rangeEndDate == null ? "" : " to ${formatDate(rangeEndDate!.subtract(const Duration(seconds: 1)))}"}")),
+                  ),
+                  const Spacer(),
+                  Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: PopupMenuButton<Production>(
+                          offset: const Offset(0, 30),
+                          padding: const EdgeInsets.all(16.0),
+                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                          child: Chip(avatar: const Icon(Icons.factory), label: Row(children: [Text(selectedProduction.getValue()), const Icon(Icons.arrow_drop_down_rounded)])),
+                          onSelected: (result) {},
+                          itemBuilder: (BuildContext context) {
+                            return productionList.map((Production value) {
+                              return PopupMenuItem<Production>(
+                                  value: value,
+                                  onTap: () {
+                                    selectedProduction = value;
+                                    setState(() {});
+                                    loadData();
+                                  },
+                                  child: Text(value.getValue()));
+                            }).toList();
+                          })),
+                  const SizedBox(width: 8),
+                  Container(width: 1, color: Colors.red, height: 24),
+                  const SizedBox(width: 8),
+                  ...[DaysFilters.Today, DaysFilters.Yesterday].map((e) => Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: FilterChip(
+                        labelStyle: TextStyle(
+                          color: _selectedFilter == e ? Colors.white : Colors.black,
+                        ),
+                        checkmarkColor: _selectedFilter == e ? Colors.white : Colors.black,
+                        label: Text(e.getText()),
+                        selected: _selectedFilter == e,
+                        selectedColor: Colors.red,
+                        onSelected: (x) {
                           setState(() {
-                            shiftsExpanded[_shifts[index]] = !isExpanded;
+                            _selectedFilter = e;
                           });
+                          loadData();
                         },
-                        children: [
-                          for (String shiftName in _shifts)
-                            ExpansionPanel(
-                              isExpanded: shiftsExpanded[shiftName] ?? false,
-                              body: Card(
-                                elevation: 0,
-                                child: Wrap(children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Table(
-                                      border: TableBorder.symmetric(
-                                        // outside: BorderSide.none,
-                                        inside: BorderSide(width: 1, color: Colors.grey.shade300, style: BorderStyle.solid),
-                                      ),
-                                      children: [
-                                        TableRow(
-                                            children: [
-                                          const Text("Section"),
-                                          const Text("Volume (Output)"),
-                                          const Text("employee Count"),
-                                          const Text("Production Capacity"),
-                                          const Text("Takt Time"),
-                                          const Text("Cycle time"),
-                                          const Text("Efficiency"),
-                                          const Text("Number of Defects"),
-                                          const Text("Defects Rate"),
-                                          // const Text("Scheduled backlog"),
-                                          const Text("WIP")
-                                        ].map((e) => Padding(padding: const EdgeInsets.all(8.0), child: e)).toList()),
-                                        ...(progressSummeryByShiftName[shiftName] ?? [ProgressSummery()])
-                                            .map((ProgressSummery e) => TableRow(
-                                                    children: [
-                                                  Container(alignment: Alignment.centerLeft, child: Text("${e.sectionTitle}")),
-                                                  Container(alignment: Alignment.centerRight, child: Text("${e.volume ?? 0}")),
-                                                  Container(alignment: Alignment.centerRight, child: Text("${e.employeeCount ?? 0}")),
-                                                  Container(alignment: Alignment.centerRight, child: Text((e.capacity ?? 0).toStringAsFixed(1))),
-                                                  Container(alignment: Alignment.centerRight, child: Text(ProgressSummery.durationToString(((e.taktTime ?? 0) * 60).round()))),
-                                                  Container(alignment: Alignment.centerRight, child: Text(ProgressSummery.durationToString(((e.cycleTime ?? 0) * 60).round()))),
-                                                  Container(alignment: Alignment.centerRight, child: Text("${(e.efficiency ?? 0).toStringAsFixed(1)}%")),
-                                                  Container(alignment: Alignment.centerRight, child: Text("${e.defects ?? 0}")),
-                                                  Container(alignment: Alignment.centerRight, child: Text("${(e.defectsRate ?? 0).toStringAsFixed(2)}%")),
-                                                  // Container(alignment: Alignment.centerRight, child: const Text("")),
-                                                  Container(
-                                                      alignment: Alignment.centerRight,
-                                                      child: InkWell(
-                                                          onTap: () {
-                                                            WipTicketList(e.sectionId).show(context);
-                                                          },
-                                                          child: Text("${e.wip ?? 0}")))
-                                                ].map((e) => Padding(padding: const EdgeInsets.all(8.0), child: e)).toList()))
-                                            .toList()
-                                      ],
-                                    ),
-                                  )
-                                ]),
-                              ),
-                              headerBuilder: (BuildContext context, bool isExpanded) {
-                                ShiftFactorySummery? shiftFactorySummery = shiftFactorySummeryList.singleWhere((element) => element.shiftName == shiftName);
+                      ))),
+                  ...DaysFilters.values
+                      .without([DaysFilters.Today, DaysFilters.Yesterday])
+                      .map((e) => Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: PopupMenuButton<int>(
+                              offset: const Offset(0, 30),
+                              padding: const EdgeInsets.all(16.0),
+                              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                              child: Chip(
+                                  backgroundColor: _selectedFilter == e ? Colors.red : null,
+                                  avatar: _selectedFilter == e ? const Icon(Icons.check, color: Colors.white) : null,
+                                  label: Text(e.getText(), style: TextStyle(color: _selectedFilter == e ? Colors.white : Colors.black))),
+                              onSelected: (result) {},
+                              itemBuilder: (BuildContext context) {
+                                return getFilterValues(e);
+                              })))
+                      .toList(),
+                  ...getSettingsMenu()
+                ]),
+              ),
+            ),
+            const SizedBox(height: 16),
+            if (!loading && _allShiftSummery != null)
+              Wrap(
+                children: [
+                  if (_allShiftSummery != null) getShiftsTotal(_allShiftSummery!),
+                  if (!isSingleDay) ...[const SizedBox(height: 24), SizedBox(height: 450, child: LineChart(controller: lineChartController)), const SizedBox(height: 24)],
+                  ExpansionPanelList(
+                    expandedHeaderPadding: const EdgeInsets.all(16),
+                    dividerColor: Colors.blue,
+                    expansionCallback: (int index, bool isExpanded) {
+                      setState(() {
+                        shiftsExpanded[_shifts[index]] = !isExpanded;
+                      });
+                    },
+                    children: [
+                      for (String shiftName in _shifts)
+                        ExpansionPanel(
+                          isExpanded: shiftsExpanded[shiftName] ?? false,
+                          body: Card(
+                            elevation: 0,
+                            child: Wrap(children: [
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Table(
+                                  border: TableBorder.symmetric(
+                                    // outside: BorderSide.none,
+                                    inside: BorderSide(width: 1, color: Colors.grey.shade300, style: BorderStyle.solid),
+                                  ),
+                                  children: [
+                                    TableRow(
+                                        children: [
+                                      const Text("Section"),
+                                      const Text("Volume (Output)"),
+                                      const Text("employee Count"),
+                                      const Text("Production Capacity"),
+                                      const Text("Takt Time"),
+                                      const Text("Cycle time"),
+                                      const Text("Efficiency"),
+                                      const Text("Number of Defects"),
+                                      const Text("Defects Rate"),
+                                      // const Text("Scheduled backlog"),
+                                      const Text("WIP")
+                                    ].map((e) => Padding(padding: const EdgeInsets.all(8.0), child: e)).toList()),
+                                    ...(progressSummeryByShiftName[shiftName] ?? [ProgressSummery()])
+                                        .map((ProgressSummery e) => TableRow(
+                                                children: [
+                                              Container(alignment: Alignment.centerLeft, child: Text("${e.sectionTitle}")),
+                                              Container(alignment: Alignment.centerRight, child: Text("${e.volume ?? 0}")),
+                                              Container(alignment: Alignment.centerRight, child: Text("${e.employeeCount ?? 0}")),
+                                              Container(alignment: Alignment.centerRight, child: Text((e.capacity ?? 0).toStringAsFixed(1))),
+                                              Container(alignment: Alignment.centerRight, child: Text(ProgressSummery.durationToString(((e.taktTime ?? 0) * 60).round()))),
+                                              Container(alignment: Alignment.centerRight, child: Text(ProgressSummery.durationToString(((e.cycleTime ?? 0) * 60).round()))),
+                                              Container(alignment: Alignment.centerRight, child: Text("${(e.efficiency ?? 0).toStringAsFixed(1)}%")),
+                                              Container(alignment: Alignment.centerRight, child: Text("${e.defects ?? 0}")),
+                                              Container(alignment: Alignment.centerRight, child: Text("${(e.defectsRate ?? 0).toStringAsFixed(2)}%")),
+                                              // Container(alignment: Alignment.centerRight, child: const Text("")),
+                                              Container(
+                                                  alignment: Alignment.centerRight,
+                                                  child: InkWell(
+                                                      onTap: () {
+                                                        WipTicketList(e.sectionId).show(context);
+                                                      },
+                                                      child: Text("${e.wip ?? 0}")))
+                                            ].map((e) => Padding(padding: const EdgeInsets.all(8.0), child: e)).toList()))
+                                        .toList()
+                                  ],
+                                ),
+                              )
+                            ]),
+                          ),
+                          headerBuilder: (BuildContext context, bool isExpanded) {
+                            ShiftFactorySummery? shiftFactorySummery = shiftFactorySummeryList.singleWhere((element) => element.shiftName == shiftName);
 
-                                return ListTile(
-                                  leading: Padding(
-                                      padding: const EdgeInsets.only(top: 8.0), child: shiftName.icon(shiftFactorySummery.isCurrentShift ? Colors.deepOrange : Colors.grey)),
-                                  title: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(padding: const EdgeInsets.only(top: 16.0), child: Text(shiftName.capitalizeFirstofEach, style: const TextStyle(color: Colors.black))),
-                                      if (isSingleDay)
-                                        Padding(
-                                            padding: const EdgeInsets.only(top: 4.0),
-                                            child: Text("${shiftFactorySummery.startAtTime} - ${shiftFactorySummery.endAtTime}",
-                                                style: const TextStyle(fontSize: 12, color: Colors.red))),
-                                    ],
-                                  ),
-                                  subtitle: Table(
-                                    children: [
-                                      TableRow(children: [
-                                        ListTile(
-                                            title: Text("Volume", style: nameSt, textScaleFactor: 0.8),
-                                            subtitle: Text("${shiftFactorySummery.volume ?? 0}", style: valSt, textScaleFactor: 1.2)),
-                                        ListTile(
-                                            title: Text("Employees", style: nameSt, textScaleFactor: 0.8),
-                                            subtitle: Text("${shiftFactorySummery.employeeCount ?? 0}", style: valSt, textScaleFactor: 1.2)),
-                                        ListTile(
-                                            title: Text("Production Capacity", style: nameSt, textScaleFactor: 0.8),
-                                            subtitle: Text((shiftFactorySummery.capacity ?? 0).toStringAsFixed(2), style: valSt, textScaleFactor: 1.2)),
-                                        ListTile(
-                                            title: Text("Takt Time", style: nameSt, textScaleFactor: 0.8),
-                                            subtitle: Text((shiftFactorySummery.taktTime ?? 0).timeFromHours(), style: valSt, textScaleFactor: 1.2)),
-                                        ListTile(
-                                            title: Text("Cycle Time", style: nameSt, textScaleFactor: 0.8),
-                                            subtitle: Text((shiftFactorySummery.cycleTime ?? 0).timeFromHours(), style: valSt, textScaleFactor: 1.2)),
-                                        ListTile(
-                                            title: Text("Efficiency", style: nameSt, textScaleFactor: 0.8),
-                                            subtitle: Text("${(shiftFactorySummery.efficiency ?? 0).toStringAsFixed(2)}%", style: valSt, textScaleFactor: 1.2)),
-                                        ListTile(
-                                            title: Text("Defects", style: nameSt, textScaleFactor: 0.8),
-                                            subtitle: Text("${shiftFactorySummery.defects ?? 0}", style: valSt, textScaleFactor: 1.2)),
-                                        ListTile(
-                                            title: Text("Defects Rate", style: nameSt, textScaleFactor: 0.8),
-                                            subtitle: Text("${(shiftFactorySummery.defectsRate ?? 0).toStringAsFixed(2)}%", style: valSt, textScaleFactor: 1.2)),
-                                        ListTile(
-                                            title: Text("Backlog", style: nameSt, textScaleFactor: 0.8),
-                                            subtitle: Text("${shiftFactorySummery.backLog ?? 0}", style: valSt, textScaleFactor: 1.2)),
-                                        ListTile(
-                                            title: Text("WIP", style: nameSt, textScaleFactor: 0.8),
-                                            subtitle: Text("${shiftFactorySummery.wip ?? 0}", style: valSt, textScaleFactor: 1.2)),
-                                      ])
-                                    ],
-                                  ),
-                                  // subtitle: Text(progressSummeryByShiftName[shiftName][0]['startAt'] + "-" + progressSummeryByShiftName[shiftName][0]['endAt'])
-                                );
-                              },
-                            ),
-                        ],
-                      ),
+                            return ListTile(
+                              leading:
+                                  Padding(padding: const EdgeInsets.only(top: 8.0), child: shiftName.icon(shiftFactorySummery.isCurrentShift ? Colors.deepOrange : Colors.grey)),
+                              title: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(padding: const EdgeInsets.only(top: 16.0), child: Text(shiftName.capitalizeFirstofEach, style: const TextStyle(color: Colors.black))),
+                                  if (isSingleDay)
+                                    Padding(
+                                        padding: const EdgeInsets.only(top: 4.0),
+                                        child:
+                                            Text("${shiftFactorySummery.startAtTime} - ${shiftFactorySummery.endAtTime}", style: const TextStyle(fontSize: 12, color: Colors.red))),
+                                ],
+                              ),
+                              subtitle: Table(
+                                children: [
+                                  TableRow(children: [
+                                    ListTile(
+                                        title: Text("Volume", style: nameSt, textScaleFactor: 0.8),
+                                        subtitle: Text("${shiftFactorySummery.volume ?? 0}", style: valSt, textScaleFactor: 1.2)),
+                                    ListTile(
+                                        title: Text("Employees", style: nameSt, textScaleFactor: 0.8),
+                                        subtitle: Text("${shiftFactorySummery.employeeCount ?? 0}", style: valSt, textScaleFactor: 1.2)),
+                                    ListTile(
+                                        title: Text("Production Capacity", style: nameSt, textScaleFactor: 0.8),
+                                        subtitle: Text((shiftFactorySummery.capacity ?? 0).toStringAsFixed(2), style: valSt, textScaleFactor: 1.2)),
+                                    ListTile(
+                                        title: Text("Takt Time", style: nameSt, textScaleFactor: 0.8),
+                                        subtitle: Text((shiftFactorySummery.taktTime ?? 0).timeFromHours(), style: valSt, textScaleFactor: 1.2)),
+                                    ListTile(
+                                        title: Text("Cycle Time", style: nameSt, textScaleFactor: 0.8),
+                                        subtitle: Text((shiftFactorySummery.cycleTime ?? 0).timeFromHours(), style: valSt, textScaleFactor: 1.2)),
+                                    ListTile(
+                                        title: Text("Efficiency", style: nameSt, textScaleFactor: 0.8),
+                                        subtitle: Text("${(shiftFactorySummery.efficiency ?? 0).toStringAsFixed(2)}%", style: valSt, textScaleFactor: 1.2)),
+                                    ListTile(
+                                        title: Text("Defects", style: nameSt, textScaleFactor: 0.8),
+                                        subtitle: Text("${shiftFactorySummery.defects ?? 0}", style: valSt, textScaleFactor: 1.2)),
+                                    ListTile(
+                                        title: Text("Defects Rate", style: nameSt, textScaleFactor: 0.8),
+                                        subtitle: Text("${(shiftFactorySummery.defectsRate ?? 0).toStringAsFixed(2)}%", style: valSt, textScaleFactor: 1.2)),
+                                    ListTile(
+                                        title: Text("Backlog", style: nameSt, textScaleFactor: 0.8),
+                                        subtitle: Text("${shiftFactorySummery.backLog ?? 0}", style: valSt, textScaleFactor: 1.2)),
+                                    ListTile(
+                                        title: Text("WIP", style: nameSt, textScaleFactor: 0.8),
+                                        subtitle: Text("${shiftFactorySummery.wip ?? 0}", style: valSt, textScaleFactor: 1.2)),
+                                  ])
+                                ],
+                              ),
+                              // subtitle: Text(progressSummeryByShiftName[shiftName][0]['startAt'] + "-" + progressSummeryByShiftName[shiftName][0]['endAt'])
+                            );
+                          },
+                        ),
                     ],
-                  )
+                  ),
+                ],
+              )
+          ],
+        ),
       ],
     );
   }
@@ -537,5 +557,30 @@ class _CountCardsState extends State<CountCards> {
       default:
         return 'th';
     }
+  }
+
+  getSettingsMenu() {
+    return [
+      const SizedBox(width: 24),
+      Container(width: 1, color: Colors.red, height: 24),
+      const SizedBox(width: 24),
+      PopupMenuButton<int>(
+          tooltip: 'Settings',
+          offset: const Offset(0, 0),
+          padding: const EdgeInsets.all(16.0),
+          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+          child: const Icon(Icons.settings, color: Colors.redAccent),
+          onSelected: (result) {},
+          itemBuilder: (BuildContext context) {
+            return <PopupMenuEntry<int>>[
+              PopupMenuItem(value: 0, enabled: true, child: const Text("Add Employee Counts"), onTap: () => const AddEmployeeCounts().show(context)),
+              PopupMenuItem(value: 0, enabled: true, child: const Text("Set default Employee Counts"), onTap: () => const AddDefaultEmployeeCounts().show(context)),
+              PopupMenuItem(value: 0, enabled: true, child: const Text("Set Default shifts"), onTap: () => const AddDefaultShifts().show(context)),
+              PopupMenuItem(value: 0, enabled: true, child: const Text("Change Shift Time"), onTap: () => const ChangeShifts().show(context)),
+              PopupMenuItem(value: 0, enabled: true, child: const Text("Set Average Sail Times"), onTap: () => const AddAverageSailTimes().show(context))
+            ];
+          }),
+      const SizedBox(width: 36)
+    ];
   }
 }

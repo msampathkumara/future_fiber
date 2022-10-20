@@ -1,7 +1,7 @@
 part of 'webUserManager.dart';
 
 class WebUserManagerTable extends StatefulWidget {
-  final Null Function(DessertDataSource dataSource) onInit;
+  final Null Function(UserManagerDataSource dataSource) onInit;
   final Null Function(NsUser nsUser) onTap;
 
   const WebUserManagerTable({Key? key, required this.onInit, required this.onTap}) : super(key: key);
@@ -14,7 +14,7 @@ class _WebUserManagerTableState extends State<WebUserManagerTable> {
   int _rowsPerPage = 20;
   bool _sortAscending = true;
   int? _sortColumnIndex;
-  late DessertDataSource _dessertsDataSource;
+  late UserManagerDataSource _dessertsDataSource;
   bool _initialized = false;
   PaginatorController? _controller;
 
@@ -29,7 +29,7 @@ class _WebUserManagerTableState extends State<WebUserManagerTable> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_initialized) {
-      _dessertsDataSource = DessertDataSource(context, (NsUser nsUser) {
+      _dessertsDataSource = UserManagerDataSource(context, (NsUser nsUser) {
         return true;
       }, onTap: (NsUser nsUser) {
         widget.onTap(nsUser);
@@ -64,11 +64,7 @@ class _WebUserManagerTableState extends State<WebUserManagerTable> {
           size: ColumnSize.S,
           label: const Tooltip(message: "Photo", child: Text('Photo', overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.bold))),
           onSort: (columnIndex, ascending) => sort<String>((d) => (d.name), columnIndex, ascending)),
-      DataColumn2(
-        size: ColumnSize.L,
-        label: const Text('Name'),
-        onSort: (columnIndex, ascending) => sort<String>((d) => (d.name), columnIndex, ascending),
-      ),
+      DataColumn2(size: ColumnSize.L, label: const Text('Name'), onSort: (columnIndex, ascending) => sort<String>((d) => (d.name), columnIndex, ascending)),
       DataColumn2(
         size: ColumnSize.M,
         label: const Text('NIC'),
@@ -127,18 +123,23 @@ class _WebUserManagerTableState extends State<WebUserManagerTable> {
   }
 }
 
-class DessertDataSource extends DataTableSource {
+class UserManagerDataSource extends DataTableSource {
   bool Function(NsUser nsUser) filter;
   Function(NsUser nsUser) onTap;
 
-  DessertDataSource(this.context, this.filter, {required this.onTap}) {
-    nsUsers = _nsUsers;
+  UserManagerDataSource(this.context, this.filter, {required this.onTap}) {
+    nsUsers = HiveBox.usersBox.values.where((element) => element.isNotDeactivated).toList();
+    // sort(sortField, _ascending);
   }
 
   final BuildContext context;
   late List<NsUser> nsUsers;
+
   late bool hasRowTaps = true;
   late bool hasRowHeightOverrides;
+
+  Comparable Function(NsUser d) sortField = ((d) => (d.name));
+  var _ascending = false;
 
   void sort<T>(Comparable<T> Function(NsUser d) getField, bool ascending) {
     nsUsers.sort((a, b) {
@@ -156,10 +157,6 @@ class DessertDataSource extends DataTableSource {
 
   @override
   DataRow getRow(int index) {
-    // final format = NumberFormat.decimalPercentPattern(
-    //   locale: 'en',
-    //   decimalDigits: 0,
-    // );
     assert(index >= 0);
     if (index >= nsUsers.length) throw 'index > _nsUsers.length';
     final nsUser = nsUsers[index];
@@ -168,11 +165,6 @@ class DessertDataSource extends DataTableSource {
       selected: false,
       onTap: () {
         onTap(nsUser);
-
-        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        //   duration: Duration(seconds: 1),
-        //   content: Text('Tapped on ${nsUser.name}'),
-        // ));
       },
       onDoubleTap: hasRowTaps
           ? () => ScaffoldMessenger.of(context)
@@ -185,18 +177,9 @@ class DessertDataSource extends DataTableSource {
       // specificRowHeight: this.hasRowHeightOverrides && nsUser.fat >= 25 ? 100 : null,
       cells: [
         DataCell(UserImage(nsUser: nsUser, radius: 22, padding: 2)),
-        DataCell(Wrap(
-          direction: Axis.vertical,
-          children: [
-            Text((nsUser.name)),
-            Text((nsUser.uname), style: const TextStyle(color: Colors.red, fontSize: 12)),
-          ],
-        )),
+        DataCell(Wrap(direction: Axis.vertical, children: [Text((nsUser.name)), Text((nsUser.uname), style: const TextStyle(color: Colors.red, fontSize: 12))])),
         DataCell(Text('${nsUser.nic ?? '-'} ')),
-        DataCell(Wrap(
-          direction: Axis.vertical,
-          children: [Text('${nsUser.epf ?? ''} ')],
-        )),
+        DataCell(Wrap(direction: Axis.vertical, children: [Text('${nsUser.epf ?? ''} ')])),
         DataCell(nsUser.id == 0
             ? const Text("")
             : IconButton(
@@ -222,16 +205,9 @@ class DessertDataSource extends DataTableSource {
   @override
   int get selectedRowCount => _selectedCount;
 
-  search(String text) {
-    nsUsers = HiveBox.usersBox.values.where((element) => (element.name).toLowerCase().contains(text.toLowerCase())).toList();
-    print(nsUsers.length);
-    notifyListeners();
-  }
-
-  void setData(List<NsUser> nsUsers) {
-    nsUsers = nsUsers;
-    notifyListeners();
+  void setData(List<NsUser> _nsUsers) {
+    nsUsers = _nsUsers;
+    sort(sortField, _ascending);
+    print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
   }
 }
-
-List<NsUser> _nsUsers = HiveBox.usersBox.values.toList();

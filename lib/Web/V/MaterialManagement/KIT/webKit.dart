@@ -117,7 +117,7 @@ class _WebKitState extends State<WebKit> {
                     onChildBuild: (Production item) {
                       return Text(item.getValue());
                     }),
-                const SizedBox(width: 20),
+                const SizedBox(width: 24),
                 MyDropDown<String>(
                     items: _status,
                     elevation: 4,
@@ -138,20 +138,8 @@ class _WebKitState extends State<WebKit> {
 
                 //-------------------------------------------------------------------------------------------------
 
-                const SizedBox(width: 20),
-                Material(
-                    elevation: 4,
-                    borderRadius: BorderRadius.circular(8),
-                    child: SizedBox(
-                        height: 40,
-                        width: 200,
-                        child: SearchBar(
-                            searchController: _controller,
-                            onSearchTextChanged: (text) {
-                              searchText = text;
-                              loadData();
-                            }))),
-                const VerticalDivider(color: Colors.red),
+                const SizedBox(width: 24),
+
                 ElevatedButton.icon(
                     onPressed: () async {
                       await const ScanReadyKits().show(context);
@@ -175,13 +163,18 @@ class _WebKitState extends State<WebKit> {
                       ),
                       icon: const Icon(Icons.send)),
                 ),
+                const SizedBox(width: 20),
+                Material(
+                    elevation: 4,
+                    borderRadius: BorderRadius.circular(8),
+                    child: SizedBox(height: 40, width: 250, child: SearchBar(searchController: _controller, onSearchTextChanged: (text) => {searchText = text, loadData()}))),
               ])
             ],
           ),
           backgroundColor: Colors.transparent,
           elevation: 0),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(bottom: 16.0, right: 16),
         child: Material(
             elevation: 4,
             borderRadius: BorderRadius.circular(8),
@@ -191,39 +184,6 @@ class _WebKitState extends State<WebKit> {
               return getData(page, startingAt, count, sortedBy, sortedAsc);
             })),
       ),
-      // bottomNavigationBar: BottomAppBar(
-      //     shape: const CircularNotchedRectangle(),
-      //     color: Colors.green,
-      //     child: IconTheme(
-      //       data: const IconThemeData(color: Colors.white),
-      //       child: Row(
-      //         children: [
-      //           InkWell(
-      //             onTap: () {},
-      //             splashColor: Colors.red,
-      //             child: Ink(
-      //               child: IconButton(
-      //                 icon: const Icon(Icons.refresh),
-      //                 onPressed: () {
-      //                   _dataSource.refreshDatasource();
-      //                 },
-      //               ),
-      //             ),
-      //           ),
-      //           const Spacer(),
-      //           const Padding(
-      //             padding: EdgeInsets.all(8.0),
-      //             child: Text(
-      //               "${0}",
-      //               textScaleFactor: 1.1,
-      //               style: TextStyle(color: Colors.white),
-      //             ),
-      //           ),
-      //           const Spacer(),
-      //           const SizedBox(width: 36)
-      //         ],
-      //       ),
-      //     ))
     );
   }
 

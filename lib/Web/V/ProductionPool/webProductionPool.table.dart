@@ -82,7 +82,7 @@ class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
           label: const Text('Production', style: TextStyle(fontWeight: FontWeight.bold)),
           onSort: (columnIndex, ascending) => sort<String>((d) => d.production ?? "", columnIndex, ascending)),
       DataColumn2(
-          size: ColumnSize.M,
+          size: ColumnSize.S,
           label: const Text('Progress', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
           onSort: (columnIndex, ascending) => sort<num>((d) => d.progress, columnIndex, ascending)),
