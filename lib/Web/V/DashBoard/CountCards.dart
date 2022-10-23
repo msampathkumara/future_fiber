@@ -229,14 +229,9 @@ class _CountCardsState extends State<CountCards> {
                                               Container(alignment: Alignment.centerRight, child: Text("${(e.efficiency ?? 0).toStringAsFixed(1)}%")),
                                               Container(alignment: Alignment.centerRight, child: Text("${e.defects ?? 0}")),
                                               Container(alignment: Alignment.centerRight, child: Text("${(e.defectsRate ?? 0).toStringAsFixed(2)}%")),
-                                              // Container(alignment: Alignment.centerRight, child: const Text("")),
                                               Container(
                                                   alignment: Alignment.centerRight,
-                                                  child: InkWell(
-                                                      onTap: () {
-                                                        WipTicketList(e.sectionId).show(context);
-                                                      },
-                                                      child: Text("${e.wip ?? 0}")))
+                                                  child: InkWell(onTap: () => WipTicketList(e.sectionId).show(context), child: Text("${e.wip ?? 0}")))
                                             ].map((e) => Padding(padding: const EdgeInsets.all(8.0), child: e)).toList()))
                                         .toList()
                                   ],

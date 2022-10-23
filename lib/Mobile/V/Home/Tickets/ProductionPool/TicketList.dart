@@ -162,7 +162,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                 flagIcon(Filters.isHold, NsIcons.stop),
                 flagIcon(Filters.isSk, NsIcons.sk),
                 flagIcon(Filters.isGr, NsIcons.gr),
-                flagIcon(Filters.isSort, NsIcons.short),
+                flagIcon(Filters.haveCpr, NsIcons.short),
                 flagIcon(Filters.isQc, NsIcons.short, text: "QC"),
                 flagIcon(Filters.isQa, NsIcons.short, text: "QA"),
               ]),
@@ -456,12 +456,8 @@ class TicketTile extends StatelessWidget {
           onLongPress();
         },
         onTap: () async {
-          var ticketInfo = TicketInfo(ticket);
-          ticketInfo.show(context);
+          TicketInfo(ticket).show(context);
         },
-        // onDoubleTap: () async {
-        //   // ticket.open(context);
-        // },
         child: Ink(
             decoration: BoxDecoration(
                 color: ticket.isHold == 1 ? Colors.black12 : Colors.white,
@@ -509,18 +505,18 @@ class TicketTile extends StatelessWidget {
                                 width: 200));
                           })
                       : const IconButton(icon: Icon(Icons.view_in_ar_rounded, color: Colors.grey), onPressed: null),
-                  // ticket.haveCpr == 1
-                  //     ? IconButton(
-                  //         icon: const Icon(Icons.local_mall_rounded, color: Colors.red),
-                  //         onPressed: () {
-                  //           snackBarKey.currentState?.hideCurrentSnackBar();
-                  //           snackBarKey.currentState?.showSnackBar(SnackBar(
-                  //               content: Wrap(children: ticket.getCprReport().map((e) => Row(children: [Text("${e.status}"), const Spacer(), Text("${e.count}")])).toList()),
-                  //               behavior: SnackBarBehavior.floating,
-                  //               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-                  //               width: 200));
-                  //         })
-                  //     : const IconButton(icon: Icon(Icons.local_mall_rounded, color: Colors.grey), onPressed: null),
+                  if (ticket.haveCpr == 1)
+                    IconButton(
+                        icon: const Icon(Icons.local_mall_rounded, color: Colors.red),
+                        onPressed: () {
+                          snackBarKey.currentState?.hideCurrentSnackBar();
+                          snackBarKey.currentState?.showSnackBar(SnackBar(
+                              content: Wrap(children: ticket.getCprReport().map((e) => Row(children: [Text("${e.status}"), const Spacer(), Text("${e.count}")])).toList()),
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                              width: 200));
+                        }),
+                  // : const IconButton(icon: Icon(Icons.local_mall_rounded, color: Colors.grey), onPressed: null),
 
                   //********************************************************************************************************************************************
                   if (ticket.isHold == 1)

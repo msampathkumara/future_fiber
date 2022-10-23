@@ -33,13 +33,15 @@ class _info_ProgressState extends State<info_Progress> {
             try {
               DateTime d = DateTime.parse(prevDate);
               DateTime d1 = DateTime.parse(nDate);
+              var difference = d1.difference(d);
               int timeInMinutes = d1.difference(d).inMinutes;
               if (timeInMinutes == 0) {
                 progressList[i].timeToFinish = "";
               } else {
                 final minutes = (timeInMinutes % 60).toInt();
                 final hours = (((timeInMinutes - minutes) / 60) % 24).toInt();
-                progressList[i].timeToFinish = "${hours}h ${minutes}m";
+                final days = difference.inDays;
+                progressList[i].timeToFinish = days > 0 ? "${days}d ${hours}h ${minutes}m" : "${hours}h ${minutes}m";
               }
             } catch (e) {
               progressList[i].timeToFinish = "";

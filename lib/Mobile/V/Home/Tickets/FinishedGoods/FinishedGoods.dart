@@ -101,7 +101,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                   flagIcon(Filters.isHold, NsIcons.stop),
                   flagIcon(Filters.isSk, NsIcons.sk),
                   flagIcon(Filters.isGr, NsIcons.gr),
-                  flagIcon(Filters.isSort, NsIcons.short),
+                  flagIcon(Filters.haveCpr, NsIcons.short),
                   flagIcon(Filters.isQc, NsIcons.short, text: "QC"),
                   flagIcon(Filters.isQa, NsIcons.short, text: "QA")
                 ]),

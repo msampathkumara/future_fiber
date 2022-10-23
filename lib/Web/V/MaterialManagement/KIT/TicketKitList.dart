@@ -3,12 +3,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/Ticket.dart';
-import 'package:smartwind/Web/V/MaterialManagement/CPR/webCpr.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/Web/Widgets/IfWeb.dart';
 
 import '../../../../C/Api.dart';
 import '../../../../M/CPR/CPR.dart';
+import '../orderOprions.dart';
 
 class TicketKitList extends StatefulWidget {
   final Ticket ticket;
@@ -65,7 +65,7 @@ class _TicketKitListState extends State<TicketKitList> {
               .map((cpr) => DataRow2(
                       specificRowHeight: 60,
                       onTap: () {
-                        showOrderOptions(cpr, cpr.ticket, context, context, () {
+                        showOrderOptions(CprType.kit, cpr, cpr.ticket, context, context, () {
                           Navigator.of(context).pop();
                         });
                       },

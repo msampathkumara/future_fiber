@@ -204,6 +204,8 @@ class Ticket extends DataObject {
 
   bool get error => isError == 1;
 
+  get isNotHold => isHold == 0;
+
   static stringToList(string) => (string == null || string.toString().isEmpty) ? [] : json.decode(string);
 
   static List<CprReport> stringToCprReportList(string) => (string == null || string.toString().isEmpty) ? [] : CprReport.fromJsonArray(json.decode(string));

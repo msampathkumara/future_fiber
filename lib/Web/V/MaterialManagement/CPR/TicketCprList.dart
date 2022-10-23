@@ -3,13 +3,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/Ticket.dart';
-import 'package:smartwind/Web/V/MaterialManagement/CPR/webCpr.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/Web/Widgets/IfWeb.dart';
 
 import '../../../../C/Api.dart';
 import '../../../../M/CPR/CPR.dart';
 import '../../../../Mobile/V/Widgets/UserImage.dart';
+import '../orderOprions.dart';
 
 class TicketCprList extends StatefulWidget {
   final Ticket ticket;
@@ -66,7 +66,7 @@ class _TicketCprListState extends State<TicketCprList> {
               .map((cpr) => DataRow2(
                       specificRowHeight: 60,
                       onTap: () {
-                        showOrderOptions(cpr, cpr.ticket, context, context, () {
+                        showOrderOptions(CprType.cpr, cpr, cpr.ticket, context, context, () {
                           Navigator.of(context).pop();
                         });
                       },
@@ -97,7 +97,7 @@ class _TicketCprListState extends State<TicketCprList> {
                 margin: const EdgeInsets.all(4.0),
                 child: InkWell(
                   onTap: () {
-                    showOrderOptions(cpr, cpr.ticket, context, context, () {
+                    showOrderOptions(CprType.cpr, cpr, cpr.ticket, context, context, () {
                       Navigator.of(context).pop();
                     });
                   },

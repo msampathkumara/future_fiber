@@ -58,7 +58,7 @@ class _WebFinishedGoodsState extends State<WebFinishedGoods> {
                   flagIcon(Filters.isHold, NsIcons.stop, "Filter by stop"),
                   flagIcon(Filters.isSk, NsIcons.sk, "Filter by SK"),
                   flagIcon(Filters.isGr, NsIcons.gr, "Filter by GR"),
-                  flagIcon(Filters.isSort, NsIcons.short, "Filter by CPR"),
+                  flagIcon(Filters.haveCpr, NsIcons.short, "Filter by CPR"),
                   const SizedBox(width: 50),
                   Material(
                     elevation: 4,

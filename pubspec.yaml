@@ -4,7 +4,7 @@ description: NorthSails Smart Wind
 
 publish_to: 'none'
 
-version: 1.2.16+156
+version: 1.2.18+158
 
 environment:
   sdk: ">=2.17.0 <3.0.0"
@@ -16,12 +16,12 @@ dependencies:
     sdk: flutter
 
   #  firebase------------------------------------------
-  firebase_core: ^2.0.0
-  firebase_crashlytics: ^3.0.1
-  firebase_auth: ^4.0.1
-  firebase_messaging: ^14.0.1
-  firebase_database: ^10.0.1
-  firebase_auth_platform_interface: ^6.10.3
+  firebase_core: ^2.1.0
+  firebase_crashlytics: ^3.0.2
+  firebase_auth: ^4.0.2
+  firebase_messaging: ^14.0.2
+  firebase_database: ^10.0.2
+  firebase_auth_platform_interface: ^6.10.4
   firebase_core_web: ^2.0.0
 
   #  --------------------------------------------------
@@ -29,7 +29,7 @@ dependencies:
   flutter_share: 2.0.0
   flutter_barcode_scanner: ^2.0.0
   flutter_pdfview: ^1.2.5
-  flutter_inappwebview: ^5.5.0+3
+  flutter_inappwebview: ^5.7.0
   flutter_dropzone: ^3.0.5
 
   #  --------------------------------------------------
@@ -44,7 +44,7 @@ dependencies:
   permission_handler: ^10.2.0
   path_provider: ^2.0.11
   hex: ^0.2.0
-  package_info_plus: ^3.0.0
+  package_info_plus: ^3.0.1
   dropdown_search: ^5.0.3
   measured_size: ^1.0.0
   device_information: ^0.0.4
@@ -71,9 +71,9 @@ dependencies:
 
   dotted_border: ^2.0.0+2
   socket_io_client: ^2.0.0
-  file_picker: ^5.2.1
+  file_picker: ^5.2.2
   universal_html: ^2.0.8
-  dropdown_button2: ^1.8.5
+  dropdown_button2: ^1.8.8
   pdfx: ^2.3.0
   textfield_search: ^0.10.0
   searchfield: ^0.7.1

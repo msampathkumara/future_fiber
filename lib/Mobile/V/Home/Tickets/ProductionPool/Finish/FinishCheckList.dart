@@ -68,7 +68,7 @@ class _FinishCheckListState extends State<FinishCheckList> {
                           style: ElevatedButton.styleFrom(backgroundColor: Colors.green, textStyle: const TextStyle(fontWeight: FontWeight.bold)),
                           onPressed: () async {
                             await finish("Excellent").then((value) {
-                              Navigator.of(context).pop();
+                              Navigator.of(context).pop(true);
                             });
                           },
                           child: const Text("Excellent")),
@@ -76,7 +76,7 @@ class _FinishCheckListState extends State<FinishCheckList> {
                           style: ElevatedButton.styleFrom(backgroundColor: Colors.lightGreen, textStyle: const TextStyle(fontWeight: FontWeight.bold)),
                           onPressed: () async {
                             await finish("Good").then((value) {
-                              Navigator.of(context).pop();
+                              Navigator.of(context).pop(true);
                             });
                           },
                           child: const Text("Good")),
@@ -100,7 +100,7 @@ class _FinishCheckListState extends State<FinishCheckList> {
                               'ticket': {'id': ticket.id, "qc": isQc}.toString()
                             });
                             if (mounted) {
-                              Navigator.pop(context);
+                              Navigator.pop(context, true);
                             }
                           },
                           child: const Text("Quality Reject"))
@@ -149,52 +149,6 @@ class _FinishCheckListState extends State<FinishCheckList> {
         }
       }
     }
-
-    // await showDialog(
-    //     context: context,
-    //     builder: (BuildContext context1) {
-    //       Api.get("users/getRfCredentials", {}).then((response) async {
-    //         Map data = response.data;
-    //         UserRFCredentials? userRFCredentials;
-    //         if (mounted) Navigator.of(context1).pop();
-    //         if (data["userRFCredentials"] == null && (!erpNotWorking)) {
-    //           userRFCredentials = await const AddRFCredentials().show(context);
-    //         } else {
-    //           userRFCredentials = UserRFCredentials.fromJson(data["userRFCredentials"]);
-    //         }
-    //
-    //         if (userRFCredentials == null) {
-    //           return;
-    //         }
-    //
-    //         var r = await Api.get("tickets/finish/getProgress", {'ticket': ticket.id.toString()});
-    //         ServerResponseMap res1 = ServerResponseMap.fromJson((r.data));
-    //
-    //         if (mounted) await Ticket.getFile(ticket, context);
-    //         if (res1.done != null) {
-    //           if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(backgroundColor: Colors.red, content: Text('Already Completed')));
-    //         } else if (ticket.ticketFile != null) {
-    //           if (mounted) {
-    //             var x = await Navigator.push(context, MaterialPageRoute(builder: (context) => RF(ticket, userRFCredentials!, res1.operationMinMax!, res1.progressList)));
-    //             if (x != null || x == true) {
-    //               await LoadingDialog(Api.post("tickets/qc/uploadEdits", {'quality': quality, 'ticketId': ticket.id, 'type': isQc, "sectionId": selectedSection}).then((res) {
-    //                 Map data = res.data;
-    //               }));
-    //             }
-    //           }
-    //         }
-    //
-    //         if (mounted) Navigator.pop(context);
-    //       });
-    //
-    //
-    //
-    //       return AlertDialog(
-    //           shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
-    //           content: Builder(builder: (context) {
-    //             return const SizedBox(height: 150, width: 50, child: Center(child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator())));
-    //           }));
-    //     });
   }
 
   Future LoadingDialog(Future future) async {
@@ -202,7 +156,7 @@ class _FinishCheckListState extends State<FinishCheckList> {
         context: context,
         builder: (BuildContext context1) {
           future.then((value) {
-            Navigator.of(context1).pop();
+            Navigator.of(context1).pop(true);
           });
 
           return AlertDialog(

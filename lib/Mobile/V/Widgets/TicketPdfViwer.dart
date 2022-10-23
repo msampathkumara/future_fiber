@@ -80,12 +80,12 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
                   } else if (s == ActionMenuItems.Share) {
                     await Ticket.sharePdf(context, widget.ticket);
                   } else if (s == ActionMenuItems.Finish) {
-                    await showDialog(
+                    var done = await showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return FinishCheckList(widget.ticket);
                         });
-                    if (mounted) {
+                    if (done != null && mounted) {
                       int count = 0;
                       Navigator.popUntil(context, (route) {
                         return count++ == 2;
@@ -101,6 +101,7 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
                     {'action': ActionMenuItems.ShippingSystem, 'icon': Icons.directions_boat_rounded, 'text': "Shipping System", "color": Colors.brown},
                     {'action': ActionMenuItems.CS, 'icon': Icons.pivot_table_chart_rounded, 'text': "CS", "color": Colors.green},
                     if (widget.ticket.isStarted &&
+                        widget.ticket.isNotHold &&
                         (widget.ticket.nowAt == AppUser.getSelectedSection()?.id) &&
                         AppUser.havePermissionFor(NsPermissions.TICKET_FINISH_TICKET) &&
                         (!kIsWeb))
