@@ -254,27 +254,19 @@ class DessertDataSource extends DataTableSource {
                   TicketChatView(ticket).show(context);
                 }),
             if (ticket.file == 1) IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.picture_as_pdf, color: Colors.red)), onPressed: () {}),
-            const Spacer(),
-            if (ticket.isQc == 1)
-              IconButton(
-                icon: const CircleAvatar(backgroundColor: Colors.red, radius: 8, child: Text('QC', style: TextStyle(fontSize: 8, color: Colors.white))),
-                onPressed: () {
-                  WebTicketQView(ticket, true).show(context);
-                },
-              ),
             if (ticket.isQa == 1)
               IconButton(
                   icon: const CircleAvatar(backgroundColor: Colors.deepOrangeAccent, radius: 8, child: Text('QA', style: TextStyle(fontSize: 8, color: Colors.white))),
-                  onPressed: () {
-                    WebTicketQView(ticket, false).show(context);
-                  }),
+                  onPressed: () => {WebTicketQView(ticket, false).show(context)}),
+            if (ticket.isQc == 1)
+              IconButton(
+                  icon: const CircleAvatar(backgroundColor: Colors.red, radius: 8, child: Text('QC', style: TextStyle(fontSize: 8, color: Colors.white))),
+                  onPressed: () => {WebTicketQView(ticket, true).show(context)}),
+            const Spacer(),
             if (ticket.isHold == 1)
               IconButton(
                 icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.stop, color: Colors.black)),
-                onPressed: () {
-                  // FlagDialog().showFlagView(context, ticket, TicketFlagTypes.HOLD);
-                  FlagDialogNew(ticket, TicketFlagTypes.HOLD, editable: false).show(context);
-                },
+                onPressed: () => {FlagDialogNew(ticket, TicketFlagTypes.HOLD, editable: false).show(context)},
               ),
             if (ticket.isGr == 1)
               IconButton(
@@ -291,12 +283,6 @@ class DessertDataSource extends DataTableSource {
               ),
             if (ticket.isError == 1)
               IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.report_problem_rounded, color: Colors.red)), onPressed: () {}),
-            // if (ticket.isSort == 1)
-            //   IconButton(
-            //       icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.local_mall_rounded, color: Colors.green)),
-            //       onPressed: () {
-            //         TicketSortMaterials(ticket).show(context);
-            //       }),
             if (ticket.isRush == 1)
               IconButton(
                   icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent)),

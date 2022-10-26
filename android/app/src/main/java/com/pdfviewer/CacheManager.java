@@ -15,6 +15,9 @@
  */
 package com.pdfviewer;
 
+import static com.pdfviewer.util.Constants.Cache.CACHE_SIZE;
+import static com.pdfviewer.util.Constants.Cache.THUMBNAILS_CACHE_SIZE;
+
 import android.graphics.RectF;
 
 import androidx.annotation.Nullable;
@@ -27,9 +30,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
 
-import static com.pdfviewer.util.Constants.Cache.CACHE_SIZE;
-import static com.pdfviewer.util.Constants.Cache.THUMBNAILS_CACHE_SIZE;
-
 class CacheManager {
 
     private final PriorityQueue<PagePart> passiveCache;
@@ -40,9 +40,8 @@ class CacheManager {
 
     private final Object passiveActiveLock = new Object();
 
-    private final PagePartComparator orderComparator = new PagePartComparator();
-
     public CacheManager() {
+        PagePartComparator orderComparator = new PagePartComparator();
         activeCache = new PriorityQueue<>(CACHE_SIZE, orderComparator);
         passiveCache = new PriorityQueue<>(CACHE_SIZE, orderComparator);
         thumbnails = new ArrayList<>();

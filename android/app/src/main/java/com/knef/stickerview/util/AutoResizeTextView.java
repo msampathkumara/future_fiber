@@ -1,10 +1,8 @@
 package com.knef.stickerview.util;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.RectF;
-import android.os.Build;
 import android.text.Layout.Alignment;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -35,7 +33,6 @@ public class AutoResizeTextView extends androidx.appcompat.widget.AppCompatTextV
     private int mWidthLimit;
     private int mMaxLines;
     private final SizeTester mSizeTester = new SizeTester() {
-        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
         @Override
         public int onTestSize(int suggestedSize, @NonNull RectF availableSPace) {
             mPaint.setTextSize(suggestedSize);

@@ -33,7 +33,7 @@
             android:layout_marginStart="20dp"
             android:adjustViewBounds="true"
             android:background="@android:color/transparent"
-            android:contentDescription="TODO"
+            android:contentDescription="@string/todo"
             android:scaleType="fitCenter"
             app:layout_constraintBottom_toBottomOf="@+id/gal"
             app:layout_constraintEnd_toStartOf="@+id/gal"

@@ -25,7 +25,7 @@ CPR _$CPRFromJson(Map<String, dynamic> json) => CPR()
   ..addedUserId = json['addedUserId'] as int? ?? 0
   ..addedOn = json['addedOn'] as String? ?? ''
   ..isExpanded = json['isExpanded'] as bool? ?? false
-  ..cprs = (json['cprs'] as List<dynamic>?)?.map((e) => CprActivity.fromJson(e as Map<String, dynamic>)).toList() ?? []
+  ..cprActivities = (json['cprActivities'] as List<dynamic>?)?.map((e) => CprActivity.fromJson(e as Map<String, dynamic>)).toList() ?? []
   ..shipDate = json['shipDate'] as String? ?? ''
   ..formType = json['formType'] as String? ?? ''
   ..orderType = json['orderType'] as String?
@@ -51,7 +51,7 @@ Map<String, dynamic> _$CPRToJson(CPR instance) => <String, dynamic>{
       'addedUserId': instance.addedUserId,
       'addedOn': instance.addedOn,
       'isExpanded': instance.isExpanded,
-      'cprs': instance.cprs.map((e) => e.toJson()).toList(),
+      'cprActivities': instance.cprActivities.map((e) => e.toJson()).toList(),
       'shipDate': instance.shipDate,
       'formType': instance.formType,
       'orderType': instance.orderType,

@@ -29,7 +29,7 @@ Future<void> showCprOptions(CPR cpr, BuildContext context1, BuildContext context
                       Navigator.of(context).pop();
                       await showDeleteDialog(context1, cpr, reload);
                     }),
-              if (AppUser.havePermissionFor(NsPermissions.CPR_OREDR_CPR))
+              if (AppUser.havePermissionFor(NsPermissions.CPR_OREDR_CPR) && (!cpr.isSent))
                 ListTile(
                     title: const Text("Order"),
                     leading: const Icon(Icons.access_alarm),

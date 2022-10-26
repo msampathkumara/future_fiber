@@ -389,14 +389,6 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                                     (ticket.completedOn ?? '-').replaceAll(' ', '\n'),
                                     textAlign: TextAlign.end,
                                   )
-                                  // Padding(
-                                  //     padding: const EdgeInsets.only(top: 4),
-                                  //     child: CircularPercentIndicator(
-                                  //         radius: 18.0,
-                                  //         lineWidth: 5.0,
-                                  //         percent: ticket.progress / 100,
-                                  //         center: Text("${ticket.progress}%", style: const TextStyle(fontSize: 12)),
-                                  //         progressColor: themeColor))
                                 ],
                               ),
                             ),

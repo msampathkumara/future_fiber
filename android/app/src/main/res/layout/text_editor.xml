@@ -21,9 +21,10 @@
             android:background="#00ffffff"
             android:baselineAligned="false"
             android:ems="10"
+            android:hint="@string/text"
+            android:importantForAutofill="no"
             android:inputType="textMultiLine"
-            android:paddingTop="10dp"
-            android:importantForAutofill="no" />
+            android:paddingTop="10dp" />
     </LinearLayout>
 
 </RelativeLayout>

@@ -30,7 +30,6 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.HandlerThread;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -110,7 +109,6 @@ public class PDFView extends RelativeLayout {
     private float minZoom = DEFAULT_MIN_SCALE;
     private float midZoom = DEFAULT_MID_SCALE;
     private float maxZoom = DEFAULT_MAX_SCALE;
-    private ScrollDir scrollDir = ScrollDir.NONE;
     /**
      * Animation manager manage all offset and zoom animation
      */
@@ -465,11 +463,7 @@ public class PDFView extends RelativeLayout {
     protected void onDetachedFromWindow() {
         recycle();
         if (renderingHandlerThread != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                renderingHandlerThread.quitSafely();
-            } else {
-                renderingHandlerThread.quit();
-            }
+            renderingHandlerThread.quitSafely();
             renderingHandlerThread = null;
         }
         super.onDetachedFromWindow();
@@ -815,6 +809,7 @@ public class PDFView extends RelativeLayout {
      * @param moveHandle whether to move scroll handle or not
      */
     public void moveTo(float offsetX, float offsetY, boolean moveHandle) {
+        ScrollDir scrollDir = ScrollDir.NONE;
         if (swipeVertical) {
             // Check X offset
             float scaledPageWidth = toCurrentScale(pdfFile.getMaxPageWidth());

@@ -9,6 +9,8 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import androidx.core.content.ContextCompat;
+
 public class DragRectView extends View {
 
     private Paint mRectPaint;
@@ -41,12 +43,12 @@ public class DragRectView extends View {
      */
     private void init() {
         mRectPaint = new Paint();
-        mRectPaint.setColor(getContext().getResources().getColor(android.R.color.holo_green_light));
+        mRectPaint.setColor(ContextCompat.getColor(getContext(), android.R.color.holo_green_light));
         mRectPaint.setStyle(Paint.Style.STROKE);
         mRectPaint.setStrokeWidth(5); // TODO: should take from resources
 
         TextPaint mTextPaint = new TextPaint();
-        mTextPaint.setColor(getContext().getResources().getColor(android.R.color.holo_green_light));
+        mTextPaint.setColor(ContextCompat.getColor(getContext(), android.R.color.holo_green_light));
         mTextPaint.setTextSize(20);
     }
 
@@ -110,8 +112,6 @@ public class DragRectView extends View {
 //           }
             canvas.drawRect(Math.min(mStartX, mEndX), Math.min(mStartY, mEndY),
                     Math.max(mEndX, mStartX), Math.max(mEndY, mStartY), mRectPaint);
-//            canvas.drawText("  (" + Math.abs(mStartX - mEndX) + ", " + Math.abs(mStartY - mEndY) + ")",
-//                    Math.max(mEndX, mStartX), Math.max(mEndY, mStartY), mTextPaint);
         }
     }
 

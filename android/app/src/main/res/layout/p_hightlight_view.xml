@@ -29,8 +29,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="center|right|center_horizontal|center_vertical"
-                android:gravity="right|center_vertical"
+                android:layout_gravity="center|end|center_horizontal|center_vertical"
+                android:gravity="end|center_vertical"
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -51,7 +51,7 @@
 
                         android:scaleType="fitCenter"
                         android:src="@drawable/colors"
-                        android:text="Color"
+                        android:text="@string/color"
                         android:textAllCaps="false"
                         android:textSize="11sp"
                         android:contentDescription="@string/todo" />
@@ -66,7 +66,7 @@
                         android:backgroundTint="#E91E63"
 
                         android:src="@drawable/ring"
-                        android:contentDescription="TODO" />
+                        android:contentDescription="@string/todo" />
 
                     <ImageButton
                         android:id="@+id/b_color_blue"
@@ -75,7 +75,7 @@
                         android:layout_marginEnd="15dp"
                         android:background="@drawable/color_ball"
                         android:backgroundTint="#03A9F4"
-                        android:contentDescription="TODO" />
+                        android:contentDescription="@string/todo" />
 
                     <ImageButton
                         android:id="@+id/b_color_orange"
@@ -84,7 +84,7 @@
                         android:layout_marginEnd="15dp"
                         android:background="@drawable/color_ball"
                         android:backgroundTint="#FF5722"
-                        android:contentDescription="TODO" />
+                        android:contentDescription="@string/todo" />
 
                     <ImageButton
                         android:id="@+id/b_color_green"
@@ -93,7 +93,7 @@
                         android:layout_marginEnd="15dp"
                         android:background="@drawable/color_ball"
                         android:backgroundTint="#4CAF50"
-                        android:contentDescription="TODO" />
+                        android:contentDescription="@string/todo" />
 
                     <ImageButton
                         android:id="@+id/b_color_yellow"
@@ -102,7 +102,7 @@
                         android:layout_marginEnd="15dp"
                         android:background="@drawable/color_ball"
                         android:backgroundTint="#FFC107"
-                        android:contentDescription="TODO" />
+                        android:contentDescription="@string/todo" />
                 </LinearLayout>
 
                 <View
@@ -127,7 +127,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="00"
+                    android:text="@string/_00"
                     android:textColor="@android:color/background_dark" />
 
             </LinearLayout>

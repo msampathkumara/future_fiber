@@ -12,19 +12,19 @@
         android:id="@+id/tools_highlighter_1"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_highlight_24"
-        android:title="Highlighter"
+        android:title="@string/highlighter"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/tools_add_picture_1"
         android:enabled="true"
         android:icon="@android:drawable/ic_input_add"
-        android:title="Add"
+        android:title="@string/add"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/tools_undo_1"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_replay_24"
-        android:title="undo"
+        android:title="@string/undo"
         app:showAsAction="ifRoom" />
 
 <!--    <item-->

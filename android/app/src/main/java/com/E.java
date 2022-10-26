@@ -21,7 +21,8 @@ public abstract class E extends Fragment {
                 new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "IMG_" + timeStamp + "_";
         File storageDir =
-                getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                null;
+        storageDir = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
 
         return File.createTempFile(
@@ -33,7 +34,6 @@ public abstract class E extends Fragment {
 
     public abstract void openCameraIntent(Context context);
 
-    public abstract void browsImages(final Context context);
 
     public interface runAfterLoad {
         void run(E editor);

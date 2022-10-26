@@ -59,6 +59,8 @@ class _WebFinishedGoodsState extends State<WebFinishedGoods> {
                   flagIcon(Filters.isSk, NsIcons.sk, "Filter by SK"),
                   flagIcon(Filters.isGr, NsIcons.gr, "Filter by GR"),
                   flagIcon(Filters.haveCpr, NsIcons.short, "Filter by CPR"),
+                  flagIcon(Filters.isQc, NsIcons.short, "Filter by QC", text: "QC"),
+                  flagIcon(Filters.isQa, NsIcons.short, "Filter by QA", text: "QA"),
                   const SizedBox(width: 50),
                   Material(
                     elevation: 4,
@@ -146,9 +148,14 @@ class _WebFinishedGoodsState extends State<WebFinishedGoods> {
 
   Filters dataFilter = Filters.none;
 
-  flagIcon(Filters filter, IconData icon, tooltip) {
+  flagIcon(Filters filter, IconData icon, tooltip, {String? text}) {
     return IconButton(
-      icon: CircleAvatar(backgroundColor: Colors.white, radius: 16, child: Icon(icon, color: dataFilter == filter ? Colors.red : Colors.black, size: 20)),
+      icon: CircleAvatar(
+          backgroundColor: Colors.white,
+          radius: 16,
+          child: (text != null)
+              ? Text(text, style: TextStyle(color: dataFilter == filter ? Colors.red : Colors.black, fontWeight: FontWeight.bold))
+              : Icon(icon, color: dataFilter == filter ? Colors.red : Colors.black, size: 20)),
       tooltip: tooltip,
       onPressed: () async {
         dataFilter = dataFilter == filter ? Filters.none : filter;

@@ -148,9 +148,6 @@ public class TextEditor extends RelativeLayout {
         paint.setTextSize(textFld.getTextSize() / zoom);
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, getTypeFace()));
 
-//        float translateX = Math.abs(pdfView.getCurrentXOffset() / zoom);
-//        float translateY = Math.abs((pdfView.getCurrentYOffset() / zoom)) - (Yposition);
-
         float translateX = (pdfView.getCurrentXOffset() / zoom) * -1;
         float translateY = ((pdfView.getCurrentYOffset() / zoom) * -1) - (Yposition);
 

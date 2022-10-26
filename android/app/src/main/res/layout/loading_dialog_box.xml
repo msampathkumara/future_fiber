@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:gravity="center_horizontal"
-            android:text="Error"
+            android:text="@string/error"
             android:textColor="#F44336"
             android:textSize="30sp" />
 
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
-            android:text="Retry" />
+            android:text="@string/retry" />
     </LinearLayout>
 
     <LinearLayout
@@ -89,7 +89,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginBottom="30dp"
-            android:text="Please Wait"
+            android:text="@string/please_wait"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
@@ -102,7 +102,7 @@
             android:backgroundTint="#2196F3"
             android:drawableTint="#2196F3"
             android:foregroundTint="#03A9F4"
-            android:text="Cancel"
+            android:text="@string/cancel"
             android:textAllCaps="false"
             android:textColor="#FFFFFF" />
     </LinearLayout>

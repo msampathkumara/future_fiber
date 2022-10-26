@@ -17,9 +17,6 @@ import com.pdfviewer.util.Util;
 import com.sampathkumara.northsails.smartwind.R;
 
 
-//import android.support.v4.content.ContextCompat;
-//import com.pdfviewer.R;
-
 public class DefaultScrollHandle extends RelativeLayout implements ScrollHandle {
 
     private final static int HANDLE_LONG = 65;

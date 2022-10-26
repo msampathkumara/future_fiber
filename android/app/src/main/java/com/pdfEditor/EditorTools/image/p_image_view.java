@@ -26,7 +26,6 @@ public class p_image_view extends RelativeLayout {
     private static float Yposition;
     private static Bitmap mBitmap;
     private static Canvas mCanvas;
-    private final ImageButton done;
     private final Editor editor;
     private final Rect rectf = new Rect();
     private final PDFView pdfView;
@@ -50,7 +49,7 @@ public class p_image_view extends RelativeLayout {
 
         pane = findViewById(R.id.pane);
 //        ImageButton b_new = view.findViewById(R.id.b_new);
-        done = view.findViewById(R.id.done);
+        ImageButton done = view.findViewById(R.id.done);
         ImageButton b_cancel = view.findViewById(R.id.b_cancel);
         b_cancel.setOnClickListener(new OnClickListener() {
             @Override
@@ -83,17 +82,6 @@ public class p_image_view extends RelativeLayout {
                 shapeC.RotateBitmap(90);
             }
         });
-
-
-//        b_new.setOnClickListener(new OnClickListener() {
-//            @RequiresApi(api = Build.VERSION_CODES.O)
-//            @Override
-//            public void onClick(View view) {
-//                done.callOnClick();
-//                editor.browsImages(context);
-//
-//            }
-//        });
 
 
     }
@@ -140,38 +128,35 @@ public class p_image_view extends RelativeLayout {
         shapeC = new image_container(getContext());
         pane.addView(shapeC);
         shapeC.setVisibility(GONE);
-        shapeC.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, @NonNull MotionEvent event) {
+        shapeC.setOnTouchListener((view, event) -> {
 
-                getGlobalVisibleRect(rectf);
+            getGlobalVisibleRect(rectf);
 //                view.getGlobalVisibleRect(rectf1);
-                final int X = (int) event.getRawX() - rectf.left;
-                final int Y = (int) event.getRawY() - rectf.top;
-                LayoutParams lParams = (LayoutParams) shapeC.getLayoutParams();
-                System.out.println(X + "_____" + Y);
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        deltaX_ = (int) event.getX();
-                        deltaY_ = (int) event.getY();
-                        System.out.println("_____________________________________" + deltaX_ + "__" + deltaY_);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_POINTER_UP:
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        lParams.leftMargin = X - deltaX_;
-                        lParams.topMargin = Y - deltaY_;
-                        TEXT_X = X - deltaX_;
-                        TEXT_Y = Y - deltaY_;
+            final int X = (int) event.getRawX() - rectf.left;
+            final int Y = (int) event.getRawY() - rectf.top;
+            LayoutParams lParams = (LayoutParams) shapeC.getLayoutParams();
+            System.out.println(X + "_____" + Y);
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    deltaX_ = (int) event.getX();
+                    deltaY_ = (int) event.getY();
+                    System.out.println("_____________________________________" + deltaX_ + "__" + deltaY_);
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_POINTER_UP:
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    lParams.leftMargin = X - deltaX_;
+                    lParams.topMargin = Y - deltaY_;
+                    TEXT_X = X - deltaX_;
+                    TEXT_Y = Y - deltaY_;
 //                    System.out.println(deltaX_ + "   " + deltaY_);
-                        shapeC.setLayoutParams(lParams);
-                        break;
-                }
-
-
-                return true;
+                    shapeC.setLayoutParams(lParams);
+                    break;
             }
+
+
+            return true;
         });
     }
 

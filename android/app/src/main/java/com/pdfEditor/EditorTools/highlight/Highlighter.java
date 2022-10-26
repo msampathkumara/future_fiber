@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.widget.FrameLayout;
@@ -146,7 +145,7 @@ public class Highlighter extends FrameLayout {
         canvas.drawPath(path, p);
         canvas.drawPath(circlePath, circlePaint);
         //        Bitmap bitmap;
-        Rect clipBounds = canvas.getClipBounds();
+//        Rect clipBounds = canvas.getClipBounds();
 
     }
 

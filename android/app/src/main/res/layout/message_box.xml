@@ -34,7 +34,7 @@
                 android:layout_height="128dp"
                 android:layout_gravity="center"
                 app:srcCompat="@drawable/ic_baseline_sentiment_very_dissatisfied_24"
-                android:contentDescription="TODO" />
+                android:contentDescription="@string/todo" />
         </FrameLayout>
 
         <TextView
@@ -42,7 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
-            android:text="OOPS !"
+            android:text="@string/oops"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
@@ -54,7 +54,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginBottom="30dp"
-            android:text="Worng username or password enterd.."
+            android:text="@string/worng_username_or_password_enterd"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
     </LinearLayout>

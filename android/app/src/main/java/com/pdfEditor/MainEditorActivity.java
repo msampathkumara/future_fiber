@@ -1,17 +1,13 @@
 package com.pdfEditor;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
@@ -21,7 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.BitmapCompat;
 
 import com.Dialogs.LoadingDialog;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -29,25 +24,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
 import com.pdfEditor.EditorTools.data;
-import com.pdfviewer.util.SizeF;
 import com.sampathkumara.northsails.smartwind.R;
-import com.tom_roush.pdfbox.pdmodel.PDDocument;
-import com.tom_roush.pdfbox.pdmodel.PDPage;
-import com.tom_roush.pdfbox.pdmodel.PDPageContentStream;
-import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 
 public class MainEditorActivity extends AppCompatActivity {
@@ -411,154 +396,4 @@ public class MainEditorActivity extends AppCompatActivity {
     }
 
 
-    class x extends AsyncTask<Boolean, Boolean, Void> {
-        final String folder;
-        ProgressDialog savingDialog;
-        final boolean ERR = false;
-        String fileName;
-        boolean EDITED = false;
-        final RunAfterUpload runAfterUpload;
-
-        x(String folder, String fileName, RunAfterUpload runAfterUpload) {
-            this.folder = folder;
-            this.fileName = fileName;
-            this.runAfterUpload = runAfterUpload;
-        }
-
-        @Nullable
-        @Override
-        protected Void doInBackground(Boolean... b) {
-            System.out.println("started");
-
-            savePDF(b[0]);
-
-            return null;
-        }
-
-        @Override
-        protected void onPreExecute() {
-
-//            runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-            savingDialog = new ProgressDialog(MainEditorActivity.this);
-            savingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            savingDialog.setMessage("Saving.. Please wait...");
-            savingDialog.setIndeterminate(true);
-            savingDialog.setCanceledOnTouchOutside(false);
-            savingDialog.show();
-//                }
-//            });
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-            savingDialog.dismiss();
-
-            if (ERR) {
-                showDialog();
-            }
-        }
-
-        private void savePDF(boolean temp) {
-            final long x = System.currentTimeMillis();
-
-            try {
-                final File FILE = pdfEditor.getFile();
-                File outFile;
-                if (!fileName.toLowerCase().endsWith(".pdf")) {
-                    fileName += ".pdf";
-                }
-                new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS) + "/Edits").mkdirs();
-                outFile = new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS) + "/Edits", fileName);
-
-                System.out.println("FILE NAME = " + outFile);
-                System.out.println("FILE NAME = " + folder + fileName);
-                PDDocument doc = null;
-                try {
-                    doc = PDDocument.load(FILE);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-
-                ExecutorService es = Executors.newCachedThreadPool();
-                for (int i = 0; i < pdfEditor.pdfView.getPageCount(); ++i) {
-
-                    final PDDocument finalDoc = doc;
-                    final int finalI = i;
-                    final int finalI1 = i;
-                    es.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                File imageFile = new File(Environment.getExternalStorageDirectory()
-                                        .getAbsolutePath() + "/" + FILE.getName(), finalI1 + ".png");
-                                PAGE page = pdfEditor.getPages().get(finalI);
-                                if (page.hasBitmap()) {
-                                    EDITED = true;
-                                    System.out.println("Page " + finalI + " saving...\n page position = " + page.position);
-                                    SizeF pageSize = pdfEditor.pdfView.getPageSize(finalI);
-
-                                    PDPage p = finalDoc.getPage(finalI);
-                                    System.out.println("PAGE ROTATION = " + p.getRotation());
-                                    try {
-                                        page.getBitmap().compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(imageFile));
-                                        System.out.println("image saved " + (System.currentTimeMillis() - x));
-                                        PDImageXObject pdImage = PDImageXObject.createFromFile(String.valueOf(imageFile), finalDoc);
-                                        System.out.println("image PDImageXObject " + (System.currentTimeMillis() - x));
-                                        PDPageContentStream contentStream = new PDPageContentStream(finalDoc, p, true, true, true);
-                                        contentStream.drawImage(pdImage, 0, 0, p.getMediaBox().getWidth(), p.getMediaBox().getHeight());
-                                        System.out.println("drowing  " + (System.currentTimeMillis() - x));
-                                        contentStream.close();
-                                        System.out.println("close " + (System.currentTimeMillis() - x));
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                    System.out.println("Image size = " + BitmapCompat.getAllocationByteCount(page.getBitmap()) / 8);
-                                    System.out.println("Page " + finalI + " savied...");
-                                    page.setBitmap(null);
-                                } else {
-                                    System.out.println("Skiped page " + finalI);
-                                }
-                                System.out.println("FILE PATH === " + imageFile.getAbsolutePath());
-//                                imageFile.delete();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            System.out.println("TASK " + finalI + " Added");
-                        }
-                    });
-
-                }
-                System.out.println("_________________________________________shutdoun");
-                es.shutdown();
-                boolean finshed = es.awaitTermination(1, TimeUnit.MINUTES);
-                if (EDITED) {
-                    doc.save(outFile);
-                    long y = System.currentTimeMillis();
-                    System.out.println("saved to local............." + (y - x));
-                    doc.close();
-//                    in.close();
-                    if (outFile.exists()) {
-//                        FileManager.uploadFile(outFile, folder, temp, runAfterUpload);
-                    }
-//                    outFile.delete();
-
-                    System.out.println("saved to server............." + (System.currentTimeMillis() - y));
-                    System.out.println("total time............." + (System.currentTimeMillis() - x));
-//                    dialog.dismiss();
-                }
-
-            } catch (InterruptedException | IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-
-    }
 }

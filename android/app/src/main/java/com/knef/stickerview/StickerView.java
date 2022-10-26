@@ -122,8 +122,6 @@ public abstract class StickerView extends FrameLayout {
                             StickerView.this.getLayoutParams().width += offset;
                             StickerView.this.getLayoutParams().height += offset;
                             onScaling(true);
-                            //DraggableViewGroup.this.setX((float) (getX() - offset / 2));
-                            //DraggableViewGroup.this.setY((float) (getY() - offset / 2));
                         } else if (length2 < length1
                                 && (angle_diff < 25 || Math.abs(angle_diff - 180) < 25)
                                 && StickerView.this.getLayoutParams().width > size / 2
@@ -234,21 +232,21 @@ public abstract class StickerView extends FrameLayout {
                         convertDpToPixel(BUTTON_SIZE_DP, getContext()),
                         convertDpToPixel(BUTTON_SIZE_DP, getContext())
                 );
-        iv_scale_params.gravity = Gravity.BOTTOM | Gravity.RIGHT;
+        iv_scale_params.gravity = Gravity.BOTTOM | Gravity.END;
 
         FrameLayout.LayoutParams iv_delete_params =
                 new FrameLayout.LayoutParams(
                         convertDpToPixel(BUTTON_SIZE_DP, getContext()),
                         convertDpToPixel(BUTTON_SIZE_DP, getContext())
                 );
-        iv_delete_params.gravity = Gravity.TOP | Gravity.RIGHT;
+        iv_delete_params.gravity = Gravity.TOP | Gravity.END;
 
         FrameLayout.LayoutParams iv_flip_params =
                 new FrameLayout.LayoutParams(
                         convertDpToPixel(BUTTON_SIZE_DP, getContext()),
                         convertDpToPixel(BUTTON_SIZE_DP, getContext())
                 );
-        iv_flip_params.gravity = Gravity.TOP | Gravity.LEFT;
+        iv_flip_params.gravity = Gravity.TOP | Gravity.START;
 
         this.setLayoutParams(this_params);
         this.addView(getMainView(), iv_main_params);
@@ -386,8 +384,6 @@ public abstract class StickerView extends FrameLayout {
             border.top = this.getTop() - params.topMargin - 1;
             border.right = this.getRight() - params.rightMargin + 1;
             border.bottom = this.getBottom() - params.bottomMargin + 1;
-//            Paint borderPaint1 = new Paint();
-//            borderPaint.setStrokeWidth(6);
             borderPaint.setColor(Color.BLACK);
 //            borderPaint.setStyle(Paint.Style.STROKE);
             canvas.drawRect(border, borderPaint);

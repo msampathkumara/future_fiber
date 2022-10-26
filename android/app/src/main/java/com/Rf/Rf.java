@@ -100,9 +100,7 @@ public class Rf extends AppCompatActivity {
         ImageButton openFile = findViewById(R.id.openFile);
         finishBtn = findViewById(R.id.finishBtn);
         txt_mo = findViewById(R.id.txt_mo);
-//        selectBtn.setVisibility(View.GONE);
 
-//        SELECTED_FILE = Ticket.formJsonString(getIntent().getExtras().getString("ticket")) ;
         SELECTED_FILE = new Ticket();
         CURRENT_SECTION = getIntent().getStringExtra("CURRENT_SECTION");
         try {
@@ -117,7 +115,7 @@ public class Rf extends AppCompatActivity {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
         JavaScriptInterface jsInterface = new JavaScriptInterface(this);
-        webView.getSettings().setJavaScriptEnabled(true);
+
         webView.addJavascriptInterface(jsInterface, "java");
 
 
@@ -190,6 +188,8 @@ public class Rf extends AppCompatActivity {
         }
 
         webView.setWebViewClient(new WebViewClient() {
+
+
             @Override
             public boolean shouldOverrideUrlLoading(final WebView view, final String url) {
                 webView.loadUrl(url);
@@ -199,32 +199,6 @@ public class Rf extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 System.out.println("PAGE LOAD FINISHED");
-//                String javaScript = "javascript: (function () {\n" +
-//                        "\n" +
-//                        "        if (document.getElementById('txtUser')) {\n" +
-//                        "            document.getElementById('txtUser').value = '" + rf_user + "';\n" +
-//                        "        }\n" +
-//                        "        if (document.getElementById('txtPass')) {\n" +
-//                        "            document.getElementById('txtPass').value = '" + rf_user + "';\n" +
-//                        "        }\n" +
-//                        "        if (document.getElementById('SL Production')) {\n" +
-//                        "            document.getElementById('SL Production').click();\n" +
-//                        "        }\n" +
-//                        "        if (document.getElementById('NorthSailsReportAsFinished02_SL')) {\n" +
-//                        "            document.getElementById('NorthSailsReportAsFinished02_SL').click();\n" +
-//                        "        }\n" +
-//                        "\n" +
-//                        "        if (document.getElementById('l_lbl5@SYS75853_DT1')) {\n" +
-//                        "            document.getElementById('txt').value = '" + OP_MIN + "';\n" + // min mumber
-//                        "        }\n" +
-//                        "        if (document.getElementById('l_lbl4@SYS75853_DT1')) {\n" +
-//                        "            document.getElementById('txt').value = '" + OP_MAX + "';\n" + // max number
-//                        "        } else if (document.getElementById('l_lbl2@SYS89639_DT1')) {\n" +
-//                        "            document.getElementById('txt').value = '" + SELECTED_FILE.getOnlyName() + "';\n" + //Mo number
-//                        "        }\n" +
-//                        "\n" +
-//                        "    }\n" +
-//                        ")();;";
                 String javaScript = "javascript:" + setupData(LoadData("js1.txt"));
 
 
@@ -248,14 +222,9 @@ public class Rf extends AppCompatActivity {
             loadFile(SELECTED_FILE);
             getCurrentOp(SELECTED_FILE);
         } else {
-//            Intent intent = new Intent(Rf.this, folderList.class);
-//            intent.putExtra(FileBrowser.TYPE, FileBrowser.OPEN);
-//            startActivityForResult(intent, fileOpener);
         }
 
         webView.loadUrl("http://10.200.4.31/webclient/");
-//        webView.loadUrl("http://sampathkumara.com/RFsmart/");
-//        webView.loadUrl("file:///android_asset/page/RF-SMART.html");
 
         onConfigurationChanged(getResources().getConfiguration());
     }

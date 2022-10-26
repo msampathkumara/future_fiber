@@ -41,8 +41,7 @@ class _CprViewState extends State<CprView> {
 
   late CPR _cpr;
 
-
-  List<CprActivity> cprs = [];
+  List<CprActivity> cprActivities = [];
 
   Map<String, bool> cprsExpanded = {};
 
@@ -51,6 +50,8 @@ class _CprViewState extends State<CprView> {
   TextEditingController commentController = TextEditingController();
 
   final ScrollController _scrollController = ScrollController();
+
+  bool isAllChecked = false;
 
   bool get haveMoreToCheck => _cpr.items.where((element) => (element.isChecked())).length < _cpr.items.length;
 
@@ -77,8 +78,7 @@ class _CprViewState extends State<CprView> {
         body: _loading
             ? const Center(child: CircularProgressIndicator())
             : Builder(builder: (context) {
-                List<CprActivity> cprActivities = getCprActivities(cprs);
-                List<CprActivity?> cprActivitiesNoNull = cprs;
+          List<CprActivity?> cprActivitiesNoNull = cprActivities;
 
                 return Row(children: [
                   Flexible(
@@ -148,20 +148,14 @@ class _CprViewState extends State<CprView> {
                             const Divider(color: Colors.red),
                             Table(children: [
                               TableRow(
-                                  children: (cprActivities)
+                                  children: (cprActivitiesWithNull)
                                       .map((e) => e.id == 0
                                           ? Container()
                                           : (e.status != 'Sent'
                                               ? Padding(
                                                   padding: const EdgeInsets.all(8.0),
                                                   child: ElevatedButton(
-                                                      onPressed: (cprActivitiesNoNull.last == e && haveMoreToCheck)
-                                                          ? null
-                                                          : () {
-                                                              sendCpr(e.id);
-                                                            },
-                                                      child: Text("${e.supplier} Send")),
-                                                )
+                                                      onPressed: (unSentCount == 1 && haveMoreToCheck) ? null : () => {sendCpr(e.id)}, child: Text("${e.supplier} Send")))
                                               : ListTile(
                                                   leading: UserImage(nsUser: e.sentBy, radius: 16),
                                                   title: Text(e.sentBy?.name ?? '', style: valTheme),
@@ -219,12 +213,19 @@ class _CprViewState extends State<CprView> {
               }));
   }
 
+  int unSentCount = 0;
+  List<CprActivity> cprActivitiesWithNull = [];
+
   Future apiGetData() {
     return Api.get(EndPoints.materialManagement_cpr_getCpr, {'id': widget.cpr.id}).then((res) {
       Map data = res.data;
 
       _cpr = CPR.fromJson(res.data);
-      cprs = _cpr.cprs;
+      isAllChecked = _cpr.items.where((element) => element.checked == 0).isEmpty;
+      unSentCount = _cpr.cprActivities.where((element) => element.status.toLowerCase() != 'sent').length;
+      cprActivities = _cpr.cprActivities;
+      cprActivitiesWithNull = getCprActivities(cprActivities);
+
       setSupplierPermissions();
       print(data);
       setState(() {
@@ -287,10 +288,6 @@ class _CprViewState extends State<CprView> {
                   child: const Text('Send'))
               : null;
         }
-      // case 'sent':
-      //   {
-      //     return FloatingActionButton.extended(onPressed: () {}, label: const Text('Receive'), icon: const Icon(Icons.thumb_up), backgroundColor: Colors.deepOrangeAccent);
-      //   }
     }
     return null;
   }
@@ -324,13 +321,7 @@ class _CprViewState extends State<CprView> {
     }).whenComplete(() {
       setState(() {});
     }).catchError((err) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(err.toString()),
-          action: SnackBarAction(
-              label: 'Retry',
-              onPressed: () {
-                apiGetData();
-              })));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.toString()), action: SnackBarAction(label: 'Retry', onPressed: () => {getComments()})));
       setState(() {
         // _dataLoadingError = true;
       });
@@ -339,26 +330,27 @@ class _CprViewState extends State<CprView> {
 
   DataRow getMatRow(CprItem material) {
     NsUser? user = (material.user);
-    print(material.toJson());
+    var dnt = material.dnt.split(" ");
+
     return DataRow(cells: [
       DataCell(checkingMaterials.contains(material.id)
           ? const Padding(padding: EdgeInsets.all(8.0), child: Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 1.5))))
           : Checkbox(
               value: material.isChecked(),
-              onChanged: (checked) {
-                material.setChecked(checked!);
-                setState(() {});
-                checkMaterial(material, checked);
-              })),
+              onChanged: _cpr.isSent
+                  ? null
+                  : (checked) {
+                      material.setChecked(checked!);
+                      setState(() {});
+                      checkMaterial(material, checked);
+                    })),
       DataCell(Text(material.item)),
       DataCell(Text(material.qty)),
-      DataCell(Text(material.dnt.replaceAll(" ", "\n"))),
-      DataCell(user != null
-          ? ListTile(
-        leading: UserImage(nsUser: user, radius: 12),
-              title: Text(user.uname),
-            )
-          : const Text('-')),
+      DataCell(Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [Text(dnt[0]), Text(dnt[1] ?? '', textAlign: TextAlign.end, style: const TextStyle(fontSize: 12, color: Colors.grey))])),
+      DataCell(user != null ? ListTile(leading: UserImage(nsUser: user, radius: 12), title: Text(user.uname)) : const Text('-'))
     ]);
   }
 

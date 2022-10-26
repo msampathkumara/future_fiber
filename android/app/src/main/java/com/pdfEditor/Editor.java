@@ -19,7 +19,6 @@ import android.graphics.Color;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
@@ -45,7 +44,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.PopupMenu;
@@ -76,7 +74,6 @@ import com.pdfviewer.util.FitPolicy;
 import com.pdfviewer.util.SizeF;
 import com.sampathkumara.northsails.smartwind.R;
 import com.sampathkumara.northsails.smartwind.R.id;
-import com.tom_roush.pdfbox.multipdf.PDFMergerUtility;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
 import com.tom_roush.pdfbox.pdmodel.PDPage;
 
@@ -116,7 +113,6 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
     public File CurrentFile;
     private Intent pictureIntent;
-    private boolean FragmentLoaded = false;
     private runAfterLoad runAfterLoad;
     private runAfterLoad runAfterFileLoad;
     OnViewCreatedListner onViewCreatedListner;
@@ -132,7 +128,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     private p_image_view imageView;
     private String imageFilePath;
     //    private final boolean button_arrow_clicked = false;
-    private File file;
+    File file;
     @Nullable
     private p_drawing_view drawingView;
     @Nullable
@@ -630,44 +626,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     }
 
     private void marge(final File fileToMarge) {
-        new AsyncTask<Void, Void, File>() {
-            ProgressDialog pDialog;
-
-            @Override
-            protected File doInBackground(Void... voids) {
-                File file = null;
-                try {
-                    PDFMergerUtility mergePdf = new PDFMergerUtility();
-
-                    mergePdf.addSource(CurrentFile);
-                    mergePdf.addSource(fileToMarge);
-//                    file = FileManager.createFile(CurrentFile.getName(), getContext(), Environment.DIRECTORY_DOCUMENTS);
-                    file = SELECTED_Ticket.ticketFile;
-                    mergePdf.setDestinationFileName(file.getAbsolutePath());
-//                    mergePdf.mergeDocuments(new MemoryUsageSetting(false,false,-1,-1));
-                    pDialog.dismiss();
-                    Editor.this.file = file;
-                    Editor.this.reloadFile();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return file;
-            }
-
-            @Override
-            protected void onPreExecute() {
-                pDialog = ProgressDialog.show(getContext(), "Please wait...", "Merging Files..", true);
-
-                super.onPreExecute();
-            }
-
-            @Override
-            protected void onPostExecute(File file) {
-
-                pDialog.dismiss();
-//                   finish();
-            }
-        }.execute();
+        new margeTask(this, SELECTED_Ticket, CurrentFile, fileToMarge, getContext()).execute();
     }
 
     public void reloadFile() {
@@ -823,22 +782,25 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         bottomNavigationView.getMenu().getItem(2).setCheckable(false);
         bottomNavigationView.getMenu().getItem(3).setCheckable(false);
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(
+        bottomNavigationView.setOnItemSelectedListener(
                 item -> {
 
 
                     switch (item.getItemId()) {
                         case id.tools_pen_1:
+                            assert drawingView != null;
                             item.setCheckable(drawingView.getVisibility() != View.VISIBLE);
                             visibleOnly(drawingView, drawingView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
                             return drawingView.getVisibility() == View.VISIBLE;
 
                         case id.tools_highlighter_1:
+                            assert highlighterView != null;
                             item.setCheckable(highlighterView.getVisibility() != View.VISIBLE);
                             visibleOnly(highlighterView, highlighterView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
                             return highlighterView.getVisibility() == View.VISIBLE;
 
                         case id.add_btn_text:
+                            assert textEditorView != null;
                             item.setCheckable(textEditorView.getVisibility() != View.VISIBLE);
                             visibleOnly(textEditorView, textEditorView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
                             return textEditorView.getVisibility() == View.VISIBLE;
@@ -852,7 +814,6 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
                             MenuInflater inflater = popup.getMenuInflater();
                             inflater.inflate(R.menu.add_menu, popup.getMenu());
                             popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                                @RequiresApi(api = Build.VERSION_CODES.O)
                                 @Override
                                 public boolean onMenuItemClick(MenuItem item) {
                                     switch (item.getItemId()) {
@@ -902,7 +863,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         if (runAfterLoad != null) {
             runAfterLoad.run(Editor.this);
         }
-        FragmentLoaded = true;
+        boolean fragmentLoaded = true;
 
         if (onViewCreatedListner != null) {
             onViewCreatedListner.run(Editor.this);
@@ -1119,7 +1080,6 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public void browsImages(final Context context) {
 
         View gallerySelect = getLayoutInflater().inflate(R.layout.dialog_media_select, null);

@@ -52,7 +52,7 @@ class CPR {
   var isExpanded = false;
 
   @JsonKey(defaultValue: [], includeIfNull: true)
-  List<CprActivity> cprs = [];
+  List<CprActivity> cprActivities = [];
 
   @JsonKey(defaultValue: '', includeIfNull: true)
   String shipDate = '';
@@ -80,6 +80,8 @@ class CPR {
   NsUser? get receivedUser {
     return HiveBox.usersBox.get(receivedUserId);
   }
+
+  bool get isSent => status.toLowerCase() == 'sent';
 
   CPR();
 

@@ -12,4 +12,23 @@
     <string name="todo">TODO</string>
     <string name="color">Color</string>
     <string name="_00">00</string>
+    <string name="mo">MO</string>
+    <string name="finish">Finish</string>
+    <string name="oops">OOPS !</string>
+    <string name="text">Text</string>
+    <string name="size">Size</string>
+    <string name="saving_user_credentials">Saving User Credentials</string>
+    <string name="looking_for_user_credentials">Looking For User Credentials</string>
+    <string name="rf_user_credentials">RF User Credentials</string>
+    <string name="user_name">User Name</string>
+    <string name="password">Password</string>
+    <string name="save">save</string>
+    <string name="retry">Retry</string>
+    <string name="error">Error</string>
+    <string name="please_wait">Please Wait</string>
+    <string name="cancel">Cancel</string>
+    <string name="worng_username_or_password_enterd">Worng username or password enterd..</string>
+    <string name="highlighter">Highlighter</string>
+    <string name="add">Add</string>
+    <string name="undo">undo</string>
 </resources>

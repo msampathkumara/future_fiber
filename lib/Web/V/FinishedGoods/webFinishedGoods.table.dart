@@ -11,6 +11,7 @@ import '../../../Mobile/V/Home/Tickets/TicketInfo/TicketInfo.dart';
 import '../../../Mobile/V/Widgets/NoResultFoundMsg.dart';
 import '../../../ns_icons_icons.dart';
 import '../ProductionPool/copy.dart';
+import '../QC/webTicketQView.dart';
 
 class AsyncPaginatedDataTable2Demo extends StatefulWidget {
   final Null Function(DessertDataSourceAsync dataSource) onInit;
@@ -206,15 +207,6 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
     print('DessertDataSourceAsync created');
   }
 
-  // DessertDataSourceAsync.empty() {
-  //   _empty = true;
-  //   print('DessertDataSourceAsync.empty created');
-  // }
-  //
-  // DessertDataSourceAsync.error() {
-  //   _errorCounter = 0;
-  //   print('DessertDataSourceAsync.error created');
-  // }
   final BuildContext context;
   final bool _empty = false;
   int? _errorCounter;
@@ -238,10 +230,6 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
     _sortAscending = ascending;
     refreshDatasource();
   }
-
-  // Future<int> getTotalRecords() {
-  //   return Future<int>.delayed(Duration(milliseconds: 0), () => _empty ? 0 : _dessertsX3.length);
-  // }
 
   @override
   Future<AsyncRowsResponse> getRows(int start, int end) async {
@@ -308,12 +296,15 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                       onPressed: () {
                         TicketChatView(ticket).show(context);
                       }),
+                  if (ticket.isQa == 1)
+                    IconButton(
+                        icon: const CircleAvatar(backgroundColor: Colors.deepOrangeAccent, radius: 8, child: Text('QA', style: TextStyle(fontSize: 8, color: Colors.white))),
+                        onPressed: () => {WebTicketQView(ticket, false).show(context)}),
+                  if (ticket.isQc == 1)
+                    IconButton(
+                        icon: const CircleAvatar(backgroundColor: Colors.red, radius: 8, child: Text('QC', style: TextStyle(fontSize: 8, color: Colors.white))),
+                        onPressed: () => {WebTicketQView(ticket, true).show(context)}),
                   const Spacer(),
-                  // if (ticket.inPrint == 1)
-                  //   IconButton(
-                  //     icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)),
-                  //     onPressed: () {},
-                  //   ),
                   if (ticket.isHold == 1)
                     IconButton(
                       icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.stop, color: Colors.black)),

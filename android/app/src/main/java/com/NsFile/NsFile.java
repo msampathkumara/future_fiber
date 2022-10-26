@@ -56,50 +56,6 @@ public class NsFile extends Super implements Serializable {
     public NsFile() {
     }
 
-//    public static NsFile fromPath(String pathToFile) throws FileNotFoundException {
-//
-////        super(pathToFile);
-//        System.out.println(pathToFile);
-//        if (pathToFile.endsWith("/")) {
-//            pathToFile = pathToFile.substring(0, pathToFile.length() - 1);
-//        }
-//        if (!pathToFile.trim().startsWith(".")) {
-//            pathToFile = "." + pathToFile;
-//        }
-//        System.out.println(pathToFile);
-//        System.out.println("SELECT * FROM files where `path`='" + pathToFile + "'");
-//        Cursor c = LiteDb.getDB().rawQuery("SELECT * FROM files where `path`='" + pathToFile + "'", null);
-////        Cursor c = LiteDb.getDB().rawQuery("SELECT * FROM files ", null);
-//        System.out.println("C =" + c);
-//        boolean b = c.moveToFirst();
-//        if (c.getCount() > 0) {
-//
-//            return loadNsFile(c);
-//
-//        } else {
-//
-//            throw new FileNotFoundException();
-//        }
-//
-//    }
-
-//    public static NsFile fromId(int fileId) throws FileNotFoundException {
-//        System.out.println(fileId);
-//        Cursor c = LiteDb.getDB().rawQuery("SELECT * FROM files where `fileID`='" + fileId + "'", null);
-//        System.out.println("C =" + c);
-//        boolean b = c.moveToFirst();
-//        if (c.getCount() > 0) {
-//            return loadNsFile(c);
-//        } else {
-//            throw new FileNotFoundException();
-//        }
-//    }
-//
-//    private static NsFile loadNsFile(Cursor c) {
-//
-//        return LiteDb.getClass(c, NsFile.class);
-//    }
-
     public String getGrComment() {
         return grComment;
     }
@@ -124,31 +80,6 @@ public class NsFile extends Super implements Serializable {
         return errOut == 1;
     }
 
-//    public NsFile[] listFiles(boolean ALL_FILES, NsFileNameFilter nsFilenameFilter) {
-//        ArrayList<NsFile> nsFiles = new ArrayList<>();
-//        List<NsFile> nsFiles1 = listFiles(ALL_FILES);
-//        for (NsFile file : nsFiles1) {
-//            if (nsFilenameFilter.accept(file, file.getName())) {
-//                nsFiles.add(file);
-//            }
-//        }
-//
-//        return nsFiles.toArray(new NsFile[0]);
-//    }
-
-//    public List<NsFile> listFiles(boolean ALL_FILES) {
-//        String af = "";
-//        if (!ALL_FILES) {
-//            af = " and `canopen`='1' ";
-//        }
-//        List<NsFile> nsFiles;
-//        System.out.println(getPath());
-//        Cursor c = LiteDb.getDB().rawQuery("SELECT * FROM files where `path` like '" + getPath() + "/%'  " + af + "  ORDER BY `isdir` DESC", null);
-//        System.out.println("____________________________________________________ COUNT __ " + c.getCount());
-//        nsFiles = getFileList(c);
-//        return nsFiles;
-//    }
-
     public String getName() {
         return name;
     }
@@ -165,10 +96,6 @@ public class NsFile extends Super implements Serializable {
         this.path = path;
     }
 
-//    public List<NsFile> getFileList(Cursor c) {
-//        return LiteDb.getList(c, NsFile[].class);
-//    }
-
     public boolean isFile() {
         return !isDirectory();
     }
@@ -177,31 +104,9 @@ public class NsFile extends Super implements Serializable {
         return isdir == 1;
     }
 
-//    public InputStream getInputStream() {
-//        return null;
-//    }
-//
-//    public boolean exists() {
-//        return false;
-//    }
-//
-//    public boolean mkdirs() {
-//
-//        return false;
-//    }
-//
-//    public boolean delete() {
-//
-//        return false;
-//    }
-
     public String getLastModified() {
         return uptime;
     }
-
-//    public long length() {
-//        return 0;
-//    }
 
     public int getMimeType() {
         return isDirectory() ? FILE_TYPE_FOLDR : FILE_TYPE_PDF;
@@ -211,10 +116,6 @@ public class NsFile extends Super implements Serializable {
         return red == 1;
     }
 
-//    public String getDownloadUrl() {
-//        return URLS.TicketDownloadPath + "?file=" + getFileId();
-//    }
-
     public int getFileId() {
         return fileId;
     }
@@ -222,23 +123,6 @@ public class NsFile extends Super implements Serializable {
     public void setFileId(int file_id) {
         fileId = file_id;
     }
-
-//    public File getFile(Context context) {
-//        if (file == null) {
-//            file = new File(String.valueOf(App.getAppContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS + "/" + getParent())), getName());
-////            file = new File(String.valueOf(App.getAppContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS + "/Tickets")), getFileId() + "");
-//
-//        }
-//        return file;
-//    }
-
-//    public File getFile() {
-//        if (file == null) {
-//            file = new File(String.valueOf(App.getAppContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS + "/" + getParent())), getName());
-////            file = new File(String.valueOf(App.getAppContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS + "/Tickets")), getFileId() + "");
-//        }
-//        return file;
-//    }
 
     public String getFilePath() {
         return Environment.DIRECTORY_DOCUMENTS + "/" + getParent();
@@ -265,40 +149,6 @@ public class NsFile extends Super implements Serializable {
         this.file = file;
     }
 
-
-//    public ArrayList<NsFile> listFiles(boolean ALL_FILES, int sortBy, int orderBy, NsFileNameFilter nsFilenameFilter) {
-//        ArrayList<NsFile> nsFiles = new ArrayList<>();
-//        List<NsFile> nsFiles1 = listFiles(ALL_FILES, sortBy, orderBy);
-//        for (NsFile file : nsFiles1) {
-//            if (nsFilenameFilter.accept(file, file.getName())) {
-//                nsFiles.add(file);
-//            }
-//        }
-//
-//        return nsFiles;
-//    }
-
-//    public List<NsFile> listFiles(boolean ALL_FILES, int sortBy, int Order) {
-//        String af = "";
-//        if (!ALL_FILES) {
-//            af = " and `canopen`='1' ";
-//        }
-//        String sb = sort_by_list[sortBy];
-//        String b = "";
-//        if (Order == DESC) {
-//            b = "DESC";
-//        } else if (Order == ASC) {
-//            b = "ASC";
-//        }
-//
-//
-//        System.out.println(sb + "_______");
-//        Cursor c = LiteDb.getDB().rawQuery("SELECT * FROM files where `path` like '" + getPath() + "/%'   " + af + " ORDER BY `isdir`  DESC , `" + sb + "` " + b, null);
-//        System.out.println("____________________________________________________ COUNT __ " + c.getCount());
-////        nsFiles = getFileList(c);
-//
-//        return getFileList(c);
-//    }
 
     public boolean isHold() {
         return hold == 1;
