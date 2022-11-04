@@ -63,9 +63,6 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
 
                 _refreshIndicatorKey.currentState?.show();
 
-                // loadData(0).then((value) {
-                //   setState(() {});
-                // });
               },
               onSubmitted: (text) {}),
           centerTitle: true,

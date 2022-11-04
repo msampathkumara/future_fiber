@@ -7,7 +7,9 @@ import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/Mobile/V/Widgets/SearchBar.dart';
 
 import '../../../../../C/Api.dart';
+import '../../../../../M/AppUser.dart';
 import '../../../../../M/Enums.dart';
+import '../../../../../M/PermissionsEnum.dart';
 import '../../../../../M/Ticket.dart';
 import '../../../../../globals.dart';
 import '../../../Widgets/NoResultFoundMsg.dart';
@@ -268,8 +270,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
                               setState(() {});
                             },
                             onTap: () {
-                              var ticketInfo = StandardTicketInfo(ticket);
-                              ticketInfo.show(context);
+                              StandardTicketInfo(ticket).show(context);
                             },
                             onDoubleTap: () async {
                               Ticket.open(context, ticket);
@@ -392,48 +393,50 @@ Future<void> showStandardTicketOptions(StandardTicket ticket, BuildContext conte
             Expanded(
                 child: SingleChildScrollView(
                     child: Column(children: [
-              ListTile(
-                  title: const Text("Change Factory"),
-                  leading: const Icon(Icons.send_outlined, color: Colors.lightBlue),
-                  onTap: () async {
-                    Navigator.of(context).pop();
-                    showFactories(ticket, context1);
-                    // await Navigator.push(context1, MaterialPageRoute(builder: (context) => changeFactory(ticket)));
-                    // Navigator.of(context).pop();
-                  }),
-              ListTile(
-                  title: const Text("Delete"),
-                  leading: const Icon(Icons.delete_forever, color: Colors.red),
-                  onTap: () async {
-                    snackBarKey.currentState?.showSnackBar(SnackBar(
-                        behavior: SnackBarBehavior.floating,
-                        width: 500,
-                        backgroundColor: Colors.red,
-                        content: Row(
-                          children: [
-                            const Text("Do You really want to delete this standard ticket ?"),
-                            const Spacer(),
-                            TextButton(
-                                onPressed: () {
-                                  snackBarKey.currentState?.showSnackBar(const SnackBar(behavior: SnackBarBehavior.floating, width: 200, content: Text('Deleting')));
-                                  Api.post(EndPoints.tickets_standard_delete, {'id': ticket.id.toString()}).then((response) async {
-                                    print(response.data);
-                                    snackBarKey.currentState?.showSnackBar(
-                                        const SnackBar(behavior: SnackBarBehavior.floating, width: 200, backgroundColor: Colors.green, content: Text('Delete Successfully')));
-                                  });
-                                },
-                                child: const Text("Yes"))
-                          ],
-                        ),
-                        action: SnackBarAction(
-                            label: 'No',
-                            textColor: Colors.white,
-                            onPressed: () {
-                              snackBarKey.currentState?.removeCurrentSnackBar();
-                            })));
+              if (AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_CHANGE_FACTORY))
+                ListTile(
+                    title: const Text("Change Factory"),
+                    leading: const Icon(Icons.send_outlined, color: Colors.lightBlue),
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                      showFactories(ticket, context1);
+                      // await Navigator.push(context1, MaterialPageRoute(builder: (context) => changeFactory(ticket)));
+                      // Navigator.of(context).pop();
+                    }),
+              if (AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_DELETE_STANDARD_FILES))
+                ListTile(
+                    title: const Text("Delete"),
+                    leading: const Icon(Icons.delete_forever, color: Colors.red),
+                    onTap: () async {
+                      snackBarKey.currentState?.showSnackBar(SnackBar(
+                          behavior: SnackBarBehavior.floating,
+                          width: 500,
+                          backgroundColor: Colors.red,
+                          content: Row(
+                            children: [
+                              const Text("Do You really want to delete this standard ticket ?"),
+                              const Spacer(),
+                              TextButton(
+                                  onPressed: () {
+                                    snackBarKey.currentState?.showSnackBar(const SnackBar(behavior: SnackBarBehavior.floating, width: 200, content: Text('Deleting')));
+                                    Api.post(EndPoints.tickets_standard_delete, {'id': ticket.id.toString()}).then((response) async {
+                                      print(response.data);
+                                      snackBarKey.currentState?.showSnackBar(
+                                          const SnackBar(behavior: SnackBarBehavior.floating, width: 200, backgroundColor: Colors.green, content: Text('Delete Successfully')));
+                                    });
+                                  },
+                                  child: const Text("Yes"))
+                            ],
+                          ),
+                          action: SnackBarAction(
+                              label: 'No',
+                              textColor: Colors.white,
+                              onPressed: () {
+                                snackBarKey.currentState?.removeCurrentSnackBar();
+                              })));
 
-                    Navigator.of(context).pop();
-                  }),
+                      Navigator.of(context).pop();
+                    }),
             ])))
           ],
         ),

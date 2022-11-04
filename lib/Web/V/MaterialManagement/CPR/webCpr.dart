@@ -62,19 +62,21 @@ class _WebCprState extends State<WebCpr> {
   Widget build(BuildContext context) {
     return Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.miniStartFloat,
-        floatingActionButton: FloatingActionButton.small(
-            onPressed: () async {
-              await const TicketSelector().show(context).then((ticket) async {
-                if (ticket != null) {
-                  await AddCpr(ticket).show(context).then((v) {
-                    if (v == true) {
-                      loadData();
+        floatingActionButton: (AppUser.havePermissionFor(NsPermissions.CPR_ADD_CPR))
+            ? FloatingActionButton.small(
+                onPressed: () async {
+                  await const TicketSelector().show(context).then((ticket) async {
+                    if (ticket != null) {
+                      await AddCpr(ticket).show(context).then((v) {
+                        if (v == true) {
+                          loadData();
+                        }
+                      });
                     }
                   });
-                }
-              });
-            },
-            child: const Icon(Icons.add)),
+                },
+                child: const Icon(Icons.add))
+            : null,
         backgroundColor: Colors.transparent,
         appBar: AppBar(
             title: Row(

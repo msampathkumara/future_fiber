@@ -9,6 +9,7 @@ import 'package:smartwind/Mobile/V/Home/BlueBook/BlueBook.dart';
 import '../../../M/AppUser.dart';
 import '../../../M/PermissionsEnum.dart';
 import '../Home/Tickets/ProductionPool/Finish/FinishCheckList.dart';
+import '../Home/Tickets/TicketInfo/TicketInfo.dart';
 
 class TicketPdfViewer extends StatefulWidget {
   final Ticket ticket;
@@ -32,8 +33,6 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
   bool _loading = false;
 
   String pageString = '';
-
-  PDFViewController? _controller;
 
   @override
   void initState() {
@@ -92,6 +91,8 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
                       });
                       //   await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const ProductionPool()), (Route<dynamic> route) => route.isFirst);
                     }
+                  } else if (s == ActionMenuItems.Info) {
+                    TicketInfo(widget.ticket).show(context);
                   }
                 },
                 itemBuilder: (BuildContext context) {
@@ -100,12 +101,9 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
                     {'action': ActionMenuItems.BlueBook, 'icon': Icons.menu_book_rounded, 'text': "Blue Book", "color": Colors.blueAccent},
                     {'action': ActionMenuItems.ShippingSystem, 'icon': Icons.directions_boat_rounded, 'text': "Shipping System", "color": Colors.brown},
                     {'action': ActionMenuItems.CS, 'icon': Icons.pivot_table_chart_rounded, 'text': "CS", "color": Colors.green},
-                    if (widget.ticket.isStarted &&
-                        widget.ticket.isNotHold &&
-                        (widget.ticket.nowAt == AppUser.getSelectedSection()?.id) &&
-                        AppUser.havePermissionFor(NsPermissions.TICKET_FINISH_TICKET) &&
-                        (!kIsWeb))
-                      {'action': ActionMenuItems.Finish, 'icon': Icons.check_circle_outline_outlined, 'text': "Finish", "color": Colors.green}
+                    if (widget.ticket.isStarted && widget.ticket.isNotHold && (widget.ticket.nowAt == AppUser.getSelectedSection()?.id) && (!kIsWeb))
+                      {'action': ActionMenuItems.Finish, 'icon': Icons.check_circle_outline_outlined, 'text': "Finish", "color": Colors.green},
+                    {'action': ActionMenuItems.Info, 'icon': Icons.info_rounded, 'text': "Product Report", "color": Colors.deepOrange}
                   }.map((choice) {
                     return PopupMenuItem<ActionMenuItems>(
                       value: (choice["action"] as ActionMenuItems),
@@ -145,9 +143,7 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
             onPageError: (page, error) {
               print('$page: ${error.toString()}');
             },
-            onViewCreated: (PDFViewController pdfViewController) {
-              _controller = pdfViewController;
-            },
+            onViewCreated: (PDFViewController pdfViewController) {},
             onPageChanged: (int? page, int? total) {
               print('page change: $page/$total');
               pageString = '${((page ?? 0) + 1)}/$total';
@@ -158,7 +154,8 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
           if (_loading) const Center(child: CircularProgressIndicator()),
           errorMessage.isEmpty ? ((!isReady) ? Container() : Container()) : Center(child: Text(errorMessage, style: const TextStyle(color: Colors.red)))
         ]),
-        floatingActionButton: (widget.ticket.isNotCompleted && (AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_ANY_PDF)) && (widget.ticket.isStarted))
+        floatingActionButton: ((widget.ticket.isNotCompleted && (AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_ANY_PDF))) ||
+                (widget.ticket.isStarted && AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_EDIT_STANDARD_FILES)))
             ? FloatingActionButton.extended(
                 icon: const Icon(Icons.edit_outlined),
                 label: const Text("Edit"),

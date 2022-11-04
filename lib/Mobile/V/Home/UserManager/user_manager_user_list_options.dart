@@ -40,7 +40,7 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
                           }
                         },
                       ),
-                    if ((kIsWeb) && AppUser.havePermissionFor(NsPermissions.USERS_UPDATE_USER))
+                    if ((kIsWeb))
                       ListTile(
                         title: const Text("Edit"),
                         subtitle: const Text("Update user details"),
@@ -53,33 +53,31 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
                           UpdateUserDetails(nsUser).show(context);
                         },
                       ),
-                    if (AppUser.havePermissionFor(NsPermissions.USERS_EDIT_PERMISSIONS))
-                      ListTile(
-                        title: const Text("Permissions"),
-                        subtitle: const Text("Update,Add or Remove Permissions"),
-                        leading: const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Icon(Icons.gpp_good_outlined),
-                        ),
-                        onTap: () async {
-                          Navigator.of(context).pop();
-                          UserPermissions(nsUser).show(context);
-                        },
+                    ListTile(
+                      title: const Text("Permissions"),
+                      subtitle: const Text("Update,Add or Remove Permissions"),
+                      leading: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Icon(Icons.gpp_good_outlined),
                       ),
-                    if (AppUser.havePermissionFor(NsPermissions.USERS_DEACTIVATE_USERS))
-                      ListTile(
-                        title: Text(nsUser.isDeactivated ? "Activate User" : "Deactivate User"),
-                        subtitle: Text(nsUser.isDeactivated ? "Activate all activities on system for this user" : "Deactivate all activities on system for this user"),
-                        leading: const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Icon(Icons.person_off_rounded),
-                        ),
-                        onTap: () async {
-                          Navigator.of(context).pop();
-                          deactivateUser(nsUser);
-                        },
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                        UserPermissions(nsUser).show(context);
+                      },
+                    ),
+                    ListTile(
+                      title: Text(nsUser.isDeactivated ? "Activate User" : "Deactivate User"),
+                      subtitle: Text(nsUser.isDeactivated ? "Activate all activities on system for this user" : "Deactivate all activities on system for this user"),
+                      leading: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Icon(Icons.person_off_rounded),
                       ),
-                    if (nsUser.isLocked && AppUser.havePermissionFor(NsPermissions.USER_UNLOCK_USER))
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                        deactivateUser(nsUser);
+                      },
+                    ),
+                    if (nsUser.isLocked)
                       ListTile(
                         title: const Text("Unlock User"),
                         subtitle: const Text(" "),
@@ -97,32 +95,30 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
                           });
                         },
                       ),
-                    if (AppUser.havePermissionFor(NsPermissions.USERS_RESET_PASSWORD))
-                      ListTile(
-                        title: const Text("Reset Password"),
-                        subtitle: const Text("Generate OTP to reset Password"),
-                        leading: const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Icon(Icons.password_rounded),
-                        ),
-                        onTap: () async {
-                          Navigator.of(context).pop();
-                          GenerateOTP(nsUser).show(context);
-                        },
+                    ListTile(
+                      title: const Text("Reset Password"),
+                      subtitle: const Text("Generate OTP to reset Password"),
+                      leading: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Icon(Icons.password_rounded),
                       ),
-                    if (AppUser.havePermissionFor(NsPermissions.USERS_RESET_PASSWORD))
-                      ListTile(
-                        title: const Text("Generate Password"),
-                        subtitle: const Text("Generate   Password"),
-                        leading: const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Icon(Icons.password_rounded),
-                        ),
-                        onTap: () async {
-                          Navigator.of(context).pop();
-                          GeneratePassword(nsUser).show(context);
-                        },
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                        GenerateOTP(nsUser).show(context);
+                      },
+                    ),
+                    ListTile(
+                      title: const Text("Generate Password"),
+                      subtitle: const Text("Generate   Password"),
+                      leading: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Icon(Icons.password_rounded),
                       ),
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                        GeneratePassword(nsUser).show(context);
+                      },
+                    ),
                   ],
                 ),
               )

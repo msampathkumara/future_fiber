@@ -75,7 +75,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                       FlagDialogNew(ticket, TicketFlagTypes.RED).show(context);
                     },
                   ),
-                        if (AppUser.havePermissionFor(NsPermissions.TICKET_ALERT_MANAGER))
+                if (AppUser.havePermissionFor(NsPermissions.TICKET_ALERT_MANAGER))
                   ListTile(
                     title: Text(ticket.isHold == 1 ? "Restart Production" : "Stop Production"),
                     leading: const Icon(Icons.pan_tool_rounded, color: Colors.red),
@@ -110,11 +110,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                         var u = ticket.isRush == 1 ? "removeFlag" : "setFlag";
                         Api.post("tickets/flags/$u", {"ticket": ticket.id.toString(), "comment": "", "type": "rush"}).then((response) async {});
                       }),
-                if (ticket.isStarted &&
-                    ticket.isNotHold &&
-                    (ticket.nowAt == AppUser.getSelectedSection()?.id) &&
-                    AppUser.havePermissionFor(NsPermissions.TICKET_FINISH_TICKET) &&
-                    (!kIsWeb))
+                        if (ticket.isStarted && ticket.isNotHold && (ticket.nowAt == AppUser.getSelectedSection()?.id) && (!kIsWeb))
                   ListTile(
                       title: const Text("Finish"),
                       leading: const Icon(Icons.check_circle_outline_outlined, color: Colors.green),
@@ -153,7 +149,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                           Navigator.of(context).pop();
                         });
                       }),
-                if (AppUser.havePermissionFor(NsPermissions.BLUE_BOOK_BLUE_BOOK) && (!kIsWeb))
+                        if ((!kIsWeb))
                   ListTile(
                       title: const Text("Blue Book"),
                       leading: const Icon(Icons.menu_book_rounded, color: Colors.lightBlue),
@@ -163,7 +159,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                         }
                         Navigator.of(context).pop();
                       }),
-                        if (AppUser.havePermissionFor(NsPermissions.QC_SHIPPING_SYSTEM) && (!kIsWeb))
+                        if ((!kIsWeb))
                   ListTile(
                       title: const Text("Shipping"),
                       leading: const Icon(NsIcons.shipping, color: Colors.brown),
@@ -172,7 +168,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                           Navigator.of(context).pop();
                         });
                       }),
-                        if (AppUser.havePermissionFor(NsPermissions.QC_CS) && (!kIsWeb))
+                        if ((!kIsWeb))
                   ListTile(
                       title: const Text("CS"),
                       leading: const Icon(Icons.pivot_table_chart_rounded, color: Colors.green),

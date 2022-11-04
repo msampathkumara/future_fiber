@@ -25,8 +25,8 @@ class PaginatedDataTable2Demo extends StatefulWidget {
 
 class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
   int _rowsPerPage = 20;
-  bool _sortAscending = false;
-  int _sortColumnIndex = 3;
+  bool _sortAscending = true;
+  int _sortColumnIndex = 4;
   late DessertDataSource _dessertsDataSource;
   bool _initialized = false;
   PaginatorController? _controller;
@@ -49,8 +49,6 @@ class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
       });
 
       _controller = PaginatorController();
-
-      _sortColumnIndex = 2;
 
       _initialized = true;
       widget.onInit(_dessertsDataSource);

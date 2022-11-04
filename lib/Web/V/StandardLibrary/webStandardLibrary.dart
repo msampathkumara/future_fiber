@@ -4,7 +4,9 @@ import 'package:smartwind/M/StandardTicket.dart';
 
 import '../../../C/Api.dart';
 import '../../../C/DB/DB.dart';
+import '../../../M/AppUser.dart';
 import '../../../M/Enums.dart';
+import '../../../M/PermissionsEnum.dart';
 import '../../../M/Ticket.dart';
 import '../../../Mobile/V/Widgets/SearchBar.dart';
 import '../../Styles/styles.dart';
@@ -60,12 +62,14 @@ class _WebStandardLibraryState extends State<WebStandardLibrary> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.miniStartFloat,
-      floatingActionButton: FloatingActionButton.small(
-          onPressed: () async {
-            addItemsBottomSheetMenu(context);
-          },
-          // backgroundColor: Colors.green,
-          child: const Icon(Icons.add)),
+      floatingActionButton: (AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_UPLOAD_STANDARD_FILES))
+          ? FloatingActionButton.small(
+              onPressed: () async {
+                addItemsBottomSheetMenu(context);
+              },
+              // backgroundColor: Colors.green,
+              child: const Icon(Icons.add))
+          : null,
       backgroundColor: Colors.transparent,
       appBar: AppBar(
           title: Row(

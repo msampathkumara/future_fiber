@@ -129,7 +129,8 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                 height: ((!_showAllTickets) && nsUser != null && nsUser!.section != null) ? 50 : 30,
                 child: Column(children: [
                   const Text("Production Pool", textScaleFactor: 1.2),
-                  if ((!_showAllTickets) && nsUser != null && nsUser!.section != null) Text("${nsUser!.section!.sectionTitle} @ ${nsUser!.section!.factory}")
+                  if ((!_showAllTickets) && nsUser != null && nsUser!.section != null)
+                    InkWell(onTap: () => {}, child: Text("${nsUser!.section!.sectionTitle} @ ${nsUser!.section!.factory}"))
                 ])),
             bottom: SearchBar(
                 searchController: searchController,

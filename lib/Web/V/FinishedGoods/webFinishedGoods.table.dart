@@ -26,7 +26,7 @@ class AsyncPaginatedDataTable2Demo extends StatefulWidget {
 class _AsyncPaginatedDataTable2DemoState extends State<AsyncPaginatedDataTable2Demo> {
   int _rowsPerPage = 20;
   bool _sortAscending = true;
-  int? _sortColumnIndex;
+  int _sortColumnIndex = 5;
   DessertDataSourceAsync? _dessertsDataSource;
   final PaginatorController _controller = PaginatorController();
 
@@ -155,13 +155,7 @@ class _ErrorAndRetry extends StatelessWidget {
               Text('Oops! $errorMessage', style: const TextStyle(color: Colors.white)),
               TextButton(
                   onPressed: retry,
-                  child: Row(mainAxisSize: MainAxisSize.min, children: const [
-                    Icon(
-                      Icons.refresh,
-                      color: Colors.white,
-                    ),
-                    Text('Retry', style: TextStyle(color: Colors.white))
-                  ]))
+                  child: Row(mainAxisSize: MainAxisSize.min, children: const [Icon(Icons.refresh, color: Colors.white), Text('Retry', style: TextStyle(color: Colors.white))]))
             ])),
       );
 }

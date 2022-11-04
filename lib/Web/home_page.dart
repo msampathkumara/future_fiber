@@ -12,12 +12,12 @@ import '../Mobile/V/Widgets/UserImage.dart';
 import '../globals.dart';
 import 'V/Admin/webAdmin.dart';
 import 'V/DashBoard/dashBoard.dart';
+import 'V/DeviceManager/web_tabs.dart';
 import 'V/FinishedGoods/webFinishedGoods.dart';
 import 'V/ProductionPool/webProductionPool.dart';
 import 'V/QC/web_qc.dart';
 import 'V/SheetData/webSheetData.dart';
 import 'V/StandardLibrary/webStandardLibrary.dart';
-import 'V/Tabs/web_tabs.dart';
 import 'V/UserManager/webUserManager.dart';
 import 'Widgets/login_change.dart';
 
@@ -38,12 +38,12 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
   bool loading = true;
 
   List<Widget?> get routeWidgets => [
-        const DashBoard(),
+        if (AppUser.havePermissionFor(NsPermissions.DASHBOARD_DASHBOARD)) const DashBoard(),
         if (AppUser.havePermissionFor(NsPermissions.TICKET_PRODUCTION_POOL)) const WebProductionPool(),
-        if (AppUser.havePermissionFor(NsPermissions.TICKET_FINISH_TICKET)) const WebFinishedGoods(),
+        const WebFinishedGoods(),
         if (AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_STANDARD_FILES)) const WebStandardLibrary(),
         if (AppUser.havePermissionFor(NsPermissions.USERS_USER_MANAGER)) const WebUserManager(),
-        if (AppUser.havePermissionFor(NsPermissions.QC_QC)) const WebQc(),
+        const WebQc(),
         if (AppUser.havePermissionFor(NsPermissions.MATERIAL_MANAGEMENT_MATERIAL_MANAGEMENT)) null,
         if (AppUser.havePermissionFor(NsPermissions.SHEET_ADD_DATA_SHEET)) const WebSheetData(),
         if (AppUser.havePermissionFor(NsPermissions.TAB_TAB)) const WebTabs(),
@@ -136,22 +136,22 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                                                   },
                                                   labelType: NavigationRailLabelType.all,
                                                   destinations: [
-                                                    NavigationRailDestination(
-                                                        padding: const EdgeInsets.all(0),
-                                                        icon: const Icon(Icons.favorite_border),
-                                                        selectedIcon: const Icon(Icons.favorite),
-                                                        label: Text('Dash Board', style: TextStyle(fontSize: size))),
+                                                    if (AppUser.havePermissionFor(NsPermissions.DASHBOARD_DASHBOARD))
+                                                      NavigationRailDestination(
+                                                          padding: const EdgeInsets.all(0),
+                                                          icon: const Icon(Icons.favorite_border),
+                                                          selectedIcon: const Icon(Icons.favorite),
+                                                          label: Text('Dash Board', style: TextStyle(fontSize: size))),
                                                     if (AppUser.havePermissionFor(NsPermissions.TICKET_PRODUCTION_POOL))
                                                       NavigationRailDestination(
                                                           padding: const EdgeInsets.all(0),
                                                           icon: const Icon(Icons.precision_manufacturing_outlined),
                                                           selectedIcon: const Icon(Icons.precision_manufacturing_rounded),
                                                           label: Text('Production Pool', style: TextStyle(fontSize: size))),
-                                                    if (AppUser.havePermissionFor(NsPermissions.TICKET_FINISH_TICKET))
-                                                      NavigationRailDestination(
-                                                          icon: const Icon(Icons.inventory_2_outlined),
-                                                          selectedIcon: const Icon(Icons.inventory_2_rounded),
-                                                          label: Text('Finished Goods', style: TextStyle(fontSize: size))),
+                                                    NavigationRailDestination(
+                                                        icon: const Icon(Icons.inventory_2_outlined),
+                                                        selectedIcon: const Icon(Icons.inventory_2_rounded),
+                                                        label: Text('Finished Goods', style: TextStyle(fontSize: size))),
                                                     if (AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_STANDARD_FILES))
                                                       NavigationRailDestination(
                                                           icon: const Icon(Icons.collections_bookmark_outlined),
@@ -162,11 +162,10 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                                                           icon: const Icon(Icons.people_outline_outlined),
                                                           selectedIcon: const Icon(Icons.people_outline_rounded),
                                                           label: Text('User Manager', style: TextStyle(fontSize: size))),
-                                                    if (AppUser.havePermissionFor(NsPermissions.QC_QC))
-                                                      NavigationRailDestination(
-                                                          icon: const Icon(Icons.verified_outlined),
-                                                          selectedIcon: const Icon(Icons.verified_rounded),
-                                                          label: Text('QA & QC', style: TextStyle(fontSize: size))),
+                                                    NavigationRailDestination(
+                                                        icon: const Icon(Icons.verified_outlined),
+                                                        selectedIcon: const Icon(Icons.verified_rounded),
+                                                        label: Text('QA & QC', style: TextStyle(fontSize: size))),
                                                     if (AppUser.havePermissionFor(NsPermissions.MATERIAL_MANAGEMENT_MATERIAL_MANAGEMENT))
                                                       NavigationRailDestination(
                                                           icon: const Icon(Icons.widgets_outlined),

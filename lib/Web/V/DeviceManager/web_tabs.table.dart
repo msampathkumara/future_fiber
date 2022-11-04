@@ -276,17 +276,20 @@ class DeviceSourceAsync extends AsyncDataTableSource {
                 // ));
               },
               onSecondaryTap: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                duration: const Duration(seconds: 1),
+                    duration: const Duration(seconds: 1),
                     backgroundColor: Theme.of(context).errorColor,
                     content: Text('Right clicked on ${device.name}'),
                   )),
               // specificRowHeight: this.hasRowHeightOverrides && device.fat >= 25 ? 100 : null,
               cells: [
                 DataCell(Text("$i")),
-                DataCell(Text((device.name)), onDoubleTap: () async {
-                  await DeviceRenameDialog(device).show(context);
-                  refreshDatasource();
-                }, onTap: () {
+                DataCell(Text((device.name)),
+                    onDoubleTap: (AppUser.havePermissionFor(NsPermissions.DEVICE_MANAGER_RENAME_DEVICE))
+                        ? () async {
+                            await DeviceRenameDialog(device).show(context);
+                            refreshDatasource();
+                          }
+                        : null, onTap: () {
                   // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   //   duration: const Duration(seconds: 1),
                   //   content: Text('Tapped on $device'),

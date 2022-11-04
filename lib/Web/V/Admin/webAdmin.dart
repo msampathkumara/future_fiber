@@ -4,6 +4,8 @@ import 'package:smartwind/M/EndPoints.dart';
 
 import '../../../C/Api.dart';
 import '../../../C/Validations.dart';
+import '../../../M/AppUser.dart';
+import '../../../M/PermissionsEnum.dart';
 
 class WebAdmin extends StatefulWidget {
   const WebAdmin({Key? key}) : super(key: key);
@@ -50,32 +52,35 @@ class _WebAdminState extends State<WebAdmin> {
                               Card(
                                   child: Column(
                                 children: [
-                                  ListTile(
-                                      title: const Text("Update Files"),
-                                      subtitle: const Text("Update Files on server with production pool tickets "),
-                                      trailing: ElevatedButton.icon(
-                                          onPressed: () {
-                                            Api.get("tickets/updateFiles", {}).then((response) async {
-                                              print(response.data);
-                                            });
-                                          },
-                                          label: const Text("Update"),
-                                          icon: const Icon(Icons.system_update))),
-                                  ListTile(
-                                      title: const Text("Delete Temp PDFs"),
-                                      subtitle: const Text("Delete temp pdfs create for production pool"),
-                                      trailing: ElevatedButton.icon(onPressed: () {}, label: const Text("Delete"), icon: const Icon(Icons.delete_rounded))),
-                                  ListTile(
-                                      title: const Text("Update Standard Library Usage"),
-                                      subtitle: const Text(""),
-                                      trailing: ElevatedButton.icon(
-                                          onPressed: () {
-                                            Api.get("admin/updateStandardLibUsage", {}).then((response) async {
-                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Update Standard Library Usage success")));
-                                            });
-                                          },
-                                          label: const Text("Update"),
-                                          icon: const Icon(Icons.update))),
+                                  if (AppUser.havePermissionFor(NsPermissions.ADMIN_UPDATE_FILES))
+                                    ListTile(
+                                        title: const Text("Update Files"),
+                                        subtitle: const Text("Update Files on server with production pool tickets "),
+                                        trailing: ElevatedButton.icon(
+                                            onPressed: () {
+                                              Api.get("tickets/updateFiles", {}).then((response) async {
+                                                print(response.data);
+                                              });
+                                            },
+                                            label: const Text("Update"),
+                                            icon: const Icon(Icons.system_update))),
+                                  if (AppUser.havePermissionFor(NsPermissions.ADMIN_DELETE_TEMP_PDFS))
+                                    ListTile(
+                                        title: const Text("Delete Temp PDFs"),
+                                        subtitle: const Text("Delete temp pdfs create for production pool"),
+                                        trailing: ElevatedButton.icon(onPressed: () {}, label: const Text("Delete"), icon: const Icon(Icons.delete_rounded))),
+                                  if (AppUser.havePermissionFor(NsPermissions.ADMIN_UPDATE_STANDARD_LIBRARY_USAGE))
+                                    ListTile(
+                                        title: const Text("Update Standard Library Usage"),
+                                        subtitle: const Text(""),
+                                        trailing: ElevatedButton.icon(
+                                            onPressed: () {
+                                              Api.get("admin/updateStandardLibUsage", {}).then((response) async {
+                                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Update Standard Library Usage success")));
+                                              });
+                                            },
+                                            label: const Text("Update"),
+                                            icon: const Icon(Icons.update))),
                                 ],
                               )),
                               const SizedBox(height: 20),
@@ -83,28 +88,29 @@ class _WebAdminState extends State<WebAdmin> {
                               Card(
                                   child: Column(
                                 children: [
-                                  ListTile(
-                                      title: const Text("Reload In memory Database"),
-                                      subtitle: const Text("in case of missing data or not update properly "),
-                                      trailing: isLoading("reloadInMemoryDB")
-                                          ? const CircularProgressIndicator()
-                                          : ElevatedButton.icon(
-                                              onPressed: () {
-                                                setLoading("reloadInMemoryDB");
+                                  if (AppUser.havePermissionFor(NsPermissions.ADMIN_RELOAD_IN_MEMORY_DATABASE))
+                                    ListTile(
+                                        title: const Text("Reload In memory Database"),
+                                        subtitle: const Text("in case of missing data or not update properly "),
+                                        trailing: isLoading("reloadInMemoryDB")
+                                            ? const CircularProgressIndicator()
+                                            : ElevatedButton.icon(
+                                                onPressed: () {
+                                                  setLoading("reloadInMemoryDB");
 
-                                                Api.get("admin/reloadInMemoryDB", {}).then((res) {
-                                                  Map data = res.data;
-                                                  removeLoading("reloadInMemoryDB");
-                                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Reload In memory Database done")));
-                                                  setState(() {
-                                                    // _dataLoadingError = true;
-                                                  });
-                                                }).whenComplete(() {
-                                                  setState(() {});
-                                                }).catchError((err) {});
-                                              },
-                                              label: const Text("Reload"),
-                                              icon: const Icon(Icons.memory_rounded)))
+                                                  Api.get("admin/reloadInMemoryDB", {}).then((res) {
+                                                    Map data = res.data;
+                                                    removeLoading("reloadInMemoryDB");
+                                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Reload In memory Database done")));
+                                                    setState(() {
+                                                      // _dataLoadingError = true;
+                                                    });
+                                                  }).whenComplete(() {
+                                                    setState(() {});
+                                                  }).catchError((err) {});
+                                                },
+                                                label: const Text("Reload"),
+                                                icon: const Icon(Icons.memory_rounded)))
                                 ],
                               )),
                               const SizedBox(height: 20),
@@ -112,27 +118,28 @@ class _WebAdminState extends State<WebAdmin> {
                               Card(
                                   child: Column(
                                 children: [
-                                  ListTile(
-                                      title: const Text("Clean  Reload Devices "),
-                                      subtitle: const Text("in case of missing data or not update properly this will clean and update all device database when online"),
-                                      trailing: isLoading("cleanReloadDevices")
-                                          ? const CircularProgressIndicator()
-                                          : ElevatedButton.icon(
-                                              onPressed: () {
-                                                setLoading("cleanReloadDevices");
-                                                Api.get("admin/cleanReloadDevices", {}).then((res) {
-                                                  Map data = res.data;
-                                                  removeLoading("cleanReloadDevices");
-                                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Reload In memory Database done")));
-                                                  setState(() {
-                                                    // _dataLoadingError = true;
-                                                  });
-                                                }).whenComplete(() {
-                                                  setState(() {});
-                                                }).catchError((err) {});
-                                              },
-                                              label: const Text("Reload"),
-                                              icon: const Icon(Icons.cleaning_services))),
+                                  if (AppUser.havePermissionFor(NsPermissions.ADMIN_CLEAN_RELOAD_DEVICES))
+                                    ListTile(
+                                        title: const Text("Clean  Reload Devices "),
+                                        subtitle: const Text("in case of missing data or not update properly this will clean and update all device database when online"),
+                                        trailing: isLoading("cleanReloadDevices")
+                                            ? const CircularProgressIndicator()
+                                            : ElevatedButton.icon(
+                                                onPressed: () {
+                                                  setLoading("cleanReloadDevices");
+                                                  Api.get("admin/cleanReloadDevices", {}).then((res) {
+                                                    Map data = res.data;
+                                                    removeLoading("cleanReloadDevices");
+                                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Reload In memory Database done")));
+                                                    setState(() {
+                                                      // _dataLoadingError = true;
+                                                    });
+                                                  }).whenComplete(() {
+                                                    setState(() {});
+                                                  }).catchError((err) {});
+                                                },
+                                                label: const Text("Reload"),
+                                                icon: const Icon(Icons.cleaning_services))),
                                 ],
                               )),
                               const SizedBox(height: 20),
@@ -140,16 +147,17 @@ class _WebAdminState extends State<WebAdmin> {
                               Card(
                                   child: Column(
                                 children: [
-                                  ListTile(
-                                      title: const Text("ERP Server is not working"),
-                                      subtitle: const Text("check if erp server is not working"),
-                                      trailing: Checkbox(
-                                          value: _settings.isErpNotWorking,
-                                          onChanged: (x) {
-                                            if (x != null) {
-                                              saveSettings('erpNotWorking', x ? 1 : 0);
-                                            }
-                                          })),
+                                  if (AppUser.havePermissionFor(NsPermissions.ADMIN_ERP_SERVER_IS_NOT_WORKING))
+                                    ListTile(
+                                        title: const Text("ERP Server is not working"),
+                                        subtitle: const Text("check if erp server is not working"),
+                                        trailing: Checkbox(
+                                            value: _settings.isErpNotWorking,
+                                            onChanged: (x) {
+                                              if (x != null) {
+                                                saveSettings('erpNotWorking', x ? 1 : 0);
+                                              }
+                                            })),
                                 ],
                               )),
                               const SizedBox(height: 20),
@@ -161,41 +169,43 @@ class _WebAdminState extends State<WebAdmin> {
                                           itemCount: _settings.otpAdminEmails.length + 1,
                                           itemBuilder: (BuildContext context, int index) {
                                             if (index == _settings.otpAdminEmails.length) {
-                                              return ListTile(
-                                                  title: Container(
-                                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(24), color: Colors.grey.shade200),
-                                                child: SizedBox(
-                                                  height: 50,
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.only(left: 0.0),
-                                                    child: TextFormField(
-                                                      decoration: InputDecoration(
-                                                          fillColor: Colors.transparent,
-                                                          focusColor: Colors.transparent,
-                                                          border: InputBorder.none,
-                                                          focusedBorder: OutlineInputBorder(
-                                                            borderRadius: BorderRadius.circular(24.0),
+                                              return (AppUser.havePermissionFor(NsPermissions.ADMIN_OTP_EMAILS))
+                                                  ? ListTile(
+                                                      title: Container(
+                                                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(24), color: Colors.grey.shade200),
+                                                      child: SizedBox(
+                                                        height: 50,
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.only(left: 0.0),
+                                                          child: TextFormField(
+                                                            decoration: InputDecoration(
+                                                                fillColor: Colors.transparent,
+                                                                focusColor: Colors.transparent,
+                                                                border: InputBorder.none,
+                                                                focusedBorder: OutlineInputBorder(
+                                                                  borderRadius: BorderRadius.circular(24.0),
+                                                                ),
+                                                                enabledBorder: InputBorder.none,
+                                                                hintText: 'Email',
+                                                                hintStyle: const TextStyle(color: Colors.grey),
+                                                                prefixIcon: const Icon(Icons.email_rounded)),
+                                                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                                                            controller: _otpAdminEmailController,
+                                                            onChanged: (email) {},
+                                                            onFieldSubmitted: (email) {
+                                                              if (Validations.isValidEmail(email)) {
+                                                                _settings.otpAdminEmails.add(email);
+                                                                saveSettings('otpAdminEmails', _settings.otpAdminEmails.join(','));
+                                                                _otpAdminEmailController.clear();
+                                                                setState(() {});
+                                                              }
+                                                            },
+                                                            validator: (input) => Validations.isValidEmail(input) ? null : "Check your email",
                                                           ),
-                                                          enabledBorder: InputBorder.none,
-                                                          hintText: 'Email',
-                                                          hintStyle: const TextStyle(color: Colors.grey),
-                                                          prefixIcon: const Icon(Icons.email_rounded)),
-                                                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                                                      controller: _otpAdminEmailController,
-                                                      onChanged: (email) {},
-                                                      onFieldSubmitted: (email) {
-                                                        if (Validations.isValidEmail(email)) {
-                                                          _settings.otpAdminEmails.add(email);
-                                                          saveSettings('otpAdminEmails', _settings.otpAdminEmails.join(','));
-                                                          _otpAdminEmailController.clear();
-                                                          setState(() {});
-                                                        }
-                                                      },
-                                                      validator: (input) => Validations.isValidEmail(input) ? null : "Check your email",
-                                                    ),
-                                                  ),
-                                                ),
-                                              ));
+                                                        ),
+                                                      ),
+                                                    ))
+                                                  : Container();
                                             }
 
                                             String e = _settings.otpAdminEmails[index];

@@ -160,13 +160,12 @@ class _HomeState extends State<Home> {
                                   },
                                   openWidget: const ProductionPool(),
                                   onClosed: _showMarkedAsDoneSnackBar),
-                            if (AppUser.havePermissionFor(NsPermissions.TICKET_FINISH_TICKET))
-                              _OpenContainerWrapper(
-                                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                    return _menuButton(openContainer, Icon(Icons.inventory_2_rounded, color: Colors.deepOrange, size: iconSize), "Finished Goods");
-                                  },
-                                  openWidget: const FinishedGoods(),
-                                  onClosed: _showMarkedAsDoneSnackBar),
+                            _OpenContainerWrapper(
+                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                  return _menuButton(openContainer, Icon(Icons.inventory_2_rounded, color: Colors.deepOrange, size: iconSize), "Finished Goods");
+                                },
+                                openWidget: const FinishedGoods(),
+                                onClosed: _showMarkedAsDoneSnackBar),
                             if (AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_STANDARD_FILES))
                               _OpenContainerWrapper(
                                 closedBuilder: (BuildContext _, VoidCallback openContainer) {
@@ -182,27 +181,24 @@ class _HomeState extends State<Home> {
                                   },
                                   openWidget: const UserManager(),
                                   onClosed: _showMarkedAsDoneSnackBar),
-                            if (AppUser.havePermissionFor(NsPermissions.QC_QC))
-                              _OpenContainerWrapper(
-                                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                    return _menuButton(openContainer, Icon(Icons.verified_rounded, size: iconSize, color: Colors.green), "QA & QC");
-                                  },
-                                  openWidget: const QCList(),
-                                  onClosed: _showMarkedAsDoneSnackBar),
-                            if (AppUser.havePermissionFor(NsPermissions.BLUE_BOOK_BLUE_BOOK))
-                              _OpenContainerWrapper(
-                                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                    return _menuButton(openContainer, Icon(Icons.menu_book_rounded, size: iconSize, color: Colors.blueAccent), "Blue Book");
-                                  },
-                                  openWidget: const BlueBook(),
-                                  onClosed: _showMarkedAsDoneSnackBar),
-                            if (AppUser.havePermissionFor(NsPermissions.HR_HR))
-                              _OpenContainerWrapper(
-                                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                    return _menuButton(openContainer, Icon(Icons.groups_rounded, size: iconSize, color: Colors.orange), "HR System");
-                                  },
-                                  openWidget: HRSystem(),
-                                  onClosed: _showMarkedAsDoneSnackBar),
+                            _OpenContainerWrapper(
+                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                  return _menuButton(openContainer, Icon(Icons.verified_rounded, size: iconSize, color: Colors.green), "QA & QC");
+                                },
+                                openWidget: const QCList(),
+                                onClosed: _showMarkedAsDoneSnackBar),
+                            _OpenContainerWrapper(
+                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                  return _menuButton(openContainer, Icon(Icons.menu_book_rounded, size: iconSize, color: Colors.blueAccent), "Blue Book");
+                                },
+                                openWidget: const BlueBook(),
+                                onClosed: _showMarkedAsDoneSnackBar),
+                            _OpenContainerWrapper(
+                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                  return _menuButton(openContainer, Icon(Icons.groups_rounded, size: iconSize, color: Colors.orange), "HR System");
+                                },
+                                openWidget: HRSystem(),
+                                onClosed: _showMarkedAsDoneSnackBar),
                             if (AppUser.havePermissionFor(NsPermissions.MATERIAL_MANAGEMENT_MATERIAL_MANAGEMENT))
                               _OpenContainerWrapper(
                                   closedBuilder: (BuildContext _, VoidCallback openContainer) {

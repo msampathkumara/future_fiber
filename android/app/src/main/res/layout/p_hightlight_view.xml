@@ -115,7 +115,7 @@
 
                 <SeekBar
                     android:id="@+id/size"
-                    android:layout_width="200dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
@@ -124,10 +124,12 @@
 
                 <TextView
                     android:id="@+id/t_size"
-                    android:layout_width="wrap_content"
+                    android:layout_width="48dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="0"
+                    android:maxWidth="48dp"
                     android:text="@string/_00"
+                    android:textAlignment="center"
                     android:textColor="@android:color/background_dark" />
 
             </LinearLayout>

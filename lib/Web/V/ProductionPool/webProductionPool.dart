@@ -7,7 +7,9 @@ import 'package:smartwind/Web/V/AddSheet/add_sheet.dart';
 import 'package:smartwind/Web/V/AddTicket/add_ticket.dart';
 import 'package:smartwind/Web/V/ProductionPool/webProductionPool.table.dart';
 
+import '../../../M/AppUser.dart';
 import '../../../M/Enums.dart';
+import '../../../M/PermissionsEnum.dart';
 import '../../../M/hive.dart';
 import '../../../Mobile/V/Home/Tickets/ProductionPool/TicketListOptions.dart';
 import '../../../ns_icons_icons.dart';
@@ -235,24 +237,26 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                       padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
                       child: ListView(
                         children: [
-                          ListTile(
-                            title: const Text("Add Tickets"),
-                            selectedTileColor: Colors.black12,
-                            leading: const Icon(Icons.picture_as_pdf),
-                            onTap: () {
-                              Navigator.pop(context);
-                              const AddTicket().show(context);
-                            },
-                          ),
-                          ListTile(
-                            title: const Text("Add Data Sheet"),
-                            selectedTileColor: Colors.black12,
-                            leading: const Icon(Icons.list_alt_rounded),
-                            onTap: () {
-                              Navigator.pop(context);
-                              const AddSheet().show(context);
-                            },
-                          )
+                          if (AppUser.havePermissionFor(NsPermissions.TICKET_UPLOAD_TICKET))
+                            ListTile(
+                              title: const Text("Add Tickets"),
+                              selectedTileColor: Colors.black12,
+                              leading: const Icon(Icons.picture_as_pdf),
+                              onTap: () {
+                                Navigator.pop(context);
+                                const AddTicket().show(context);
+                              },
+                            ),
+                          if (AppUser.havePermissionFor(NsPermissions.SHEET_ADD_DATA_SHEET))
+                            ListTile(
+                              title: const Text("Add Data Sheet"),
+                              selectedTileColor: Colors.black12,
+                              leading: const Icon(Icons.list_alt_rounded),
+                              onTap: () {
+                                Navigator.pop(context);
+                                const AddSheet().show(context);
+                              },
+                            )
                         ],
                       )),
                 ),

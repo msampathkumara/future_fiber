@@ -14,6 +14,7 @@ import 'package:universal_html/html.dart' as html;
 
 import '../../../../M/CPR/cprActivity.dart';
 import '../../../../M/NsUser.dart';
+import '../../../../M/PermissionsEnum.dart';
 import '../../../../Mobile/V/Widgets/UserImage.dart';
 import '../../../Widgets/IfWeb.dart';
 import '../../ProductionPool/copy.dart';
@@ -337,13 +338,15 @@ class _CprViewState extends State<CprView> {
           ? const Padding(padding: EdgeInsets.all(8.0), child: Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 1.5))))
           : Checkbox(
               value: material.isChecked(),
-              onChanged: _cpr.isSent
-                  ? null
-                  : (checked) {
-                      material.setChecked(checked!);
-                      setState(() {});
-                      checkMaterial(material, checked);
-                    })),
+              onChanged: (AppUser.havePermissionFor(NsPermissions.CPR_CHECK_CPR_ITEMS))
+                  ? _cpr.isSent
+                      ? null
+                      : (checked) {
+                          material.setChecked(checked!);
+                          setState(() {});
+                          checkMaterial(material, checked);
+                        }
+                  : null)),
       DataCell(Text(material.item)),
       DataCell(Text(material.qty)),
       DataCell(Column(

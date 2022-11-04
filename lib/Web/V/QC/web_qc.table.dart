@@ -12,8 +12,8 @@ class WebQcTable extends StatefulWidget {
 
 class _WebQcTableState extends State<WebQcTable> {
   int _rowsPerPage = 20;
-  bool _sortAscending = true;
-  int? _sortColumnIndex;
+  bool _sortAscending = false;
+  int? _sortColumnIndex = 2;
   QcDataSourceAsync? _dessertsDataSource;
   final PaginatorController _controller = PaginatorController();
 

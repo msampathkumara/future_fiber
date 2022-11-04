@@ -103,8 +103,8 @@
 
                 <Button
                     android:id="@+id/b_italic"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_marginStart="8dp"
                     android:background="@drawable/ic_baseline_format_italic_24"
                     android:backgroundTint="@color/gray"
@@ -117,13 +117,12 @@
 
                 <Button
                     android:id="@+id/b_bold"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_marginStart="8dp"
                     android:background="@drawable/ic_baseline_format_bold_24"
                     android:backgroundTint="@color/gray"
                     android:textColor="@android:color/background_light"
-                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/divider"
                     app:layout_constraintTop_toTopOf="parent"
@@ -138,7 +137,7 @@
 
                 <com.pdfEditor.EditorTools.ColorSelector
                     android:id="@+id/colorSelector"
-                    android:layout_width="250dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="45dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

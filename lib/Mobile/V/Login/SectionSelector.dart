@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/AppUser.dart';
+import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Section.dart';
 
@@ -28,6 +29,7 @@ class _UserSectionSelectorState extends State<UserSectionSelector> {
 
   final _controller = TextEditingController();
   List<Section> _filterdSections = [];
+  List<String> factories = [];
 
   @override
   void initState() {
@@ -35,7 +37,11 @@ class _UserSectionSelectorState extends State<UserSectionSelector> {
     print('-------------------------------------SectionSelector');
     print(widget.nsUser.toJson());
     widget.nsUser.sections.sort((a, b) => a.factory.compareTo(b.factory));
-    _filterdSections = widget.nsUser.sections;
+    // _filterdSections = widget.nsUser.sections;
+
+    factories = widget.nsUser.sections.map((e) => e.factory).toSet().toList();
+
+    loadData();
   }
 
   @override
@@ -50,17 +56,32 @@ class _UserSectionSelectorState extends State<UserSectionSelector> {
         appBar: AppBar(
             title: const Text("Select Section"),
             toolbarHeight: 100,
-            bottom: SearchBar(
-                onSearchTextChanged: (String text) {
-                  var searchText = text.toLowerCase();
-                  // loadData();
-                  _filterdSections = widget.nsUser.sections
-                      .where((element) => element.sectionTitle.toLowerCase().contains(searchText) || element.factory.toLowerCase().contains(searchText))
-                      .toList();
-                  if (mounted) setState(() {});
-                },
-                delay: 300,
-                searchController: _controller)),
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(100),
+              child: Column(
+                children: [
+                  SearchBar(
+                      onSearchTextChanged: (String text) {
+                        searchText = text.toLowerCase();
+                        loadData();
+                      },
+                      delay: 300,
+                      searchController: _controller),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        ChoiceChip(label: const Text("All"), selected: selectedFactory == null, onSelected: (v) => {selectedFactory = null, loadData()}),
+                        ...factories.map((e) => Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: ChoiceChip(label: Text(e), selected: selectedFactory == e, onSelected: (v) => {selectedFactory = e, loadData()}),
+                            ))
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            )),
         body: Stack(
           children: [
             ListView.builder(
@@ -83,5 +104,16 @@ class _UserSectionSelectorState extends State<UserSectionSelector> {
             if (_loading) Container(color: Colors.white, child: const Center(child: CircularProgressIndicator()))
           ],
         ));
+  }
+
+  String? selectedFactory;
+  var searchText = '';
+
+  void loadData() {
+    print(selectedFactory);
+    _filterdSections = widget.nsUser.sections
+        .where((element) => element.sectionTitle.toLowerCase().contains(searchText) && element.factory.toLowerCase().equalIgnoreCase((selectedFactory ?? '')))
+        .toList();
+    if (mounted) setState(() {});
   }
 }

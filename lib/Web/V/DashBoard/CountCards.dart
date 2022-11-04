@@ -9,7 +9,9 @@ import 'package:smartwind/Web/V/DashBoard/WipTicketList.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../C/Api.dart';
+import '../../../M/AppUser.dart';
 import '../../../M/Enums.dart';
+import '../../../M/PermissionsEnum.dart';
 import '../../../Mobile/V/Widgets/NoResultFoundMsg.dart';
 import 'LineChart.dart';
 import 'M/MonthPicker.dart';
@@ -568,11 +570,16 @@ class _CountCardsState extends State<CountCards> {
           onSelected: (result) {},
           itemBuilder: (BuildContext context) {
             return <PopupMenuEntry<int>>[
-              PopupMenuItem(value: 0, enabled: true, child: const Text("Add Employee Counts"), onTap: () => const AddEmployeeCounts().show(context)),
-              PopupMenuItem(value: 0, enabled: true, child: const Text("Set default Employee Counts"), onTap: () => const AddDefaultEmployeeCounts().show(context)),
-              PopupMenuItem(value: 0, enabled: true, child: const Text("Set Default shifts"), onTap: () => const AddDefaultShifts().show(context)),
-              PopupMenuItem(value: 0, enabled: true, child: const Text("Change Shift Time"), onTap: () => const ChangeShifts().show(context)),
-              PopupMenuItem(value: 0, enabled: true, child: const Text("Set Average Sail Times"), onTap: () => const AddAverageSailTimes().show(context))
+              if (AppUser.havePermissionFor(NsPermissions.DASHBOARD_ADD_EMPLOYEE_COUNT))
+                PopupMenuItem(value: 0, enabled: true, child: const Text("Add Employee Counts"), onTap: () => const AddEmployeeCounts().show(context)),
+              if (AppUser.havePermissionFor(NsPermissions.DASHBOARD_SET_DEFAULT_EMPLOYEE_COUNT))
+                PopupMenuItem(value: 0, enabled: true, child: const Text("Set default Employee Counts"), onTap: () => const AddDefaultEmployeeCounts().show(context)),
+              if (AppUser.havePermissionFor(NsPermissions.DASHBOARD_SET_DEFAULT_SHIFTS))
+                PopupMenuItem(value: 0, enabled: true, child: const Text("Set Default shifts"), onTap: () => const AddDefaultShifts().show(context)),
+              if (AppUser.havePermissionFor(NsPermissions.DASHBOARD_CHANGE_SHIFT_TIME))
+                PopupMenuItem(value: 0, enabled: true, child: const Text("Change Shift Time"), onTap: () => const ChangeShifts().show(context)),
+              if (AppUser.havePermissionFor(NsPermissions.DASHBOARD_SET_AVERAGE_SAIL_TIME))
+                PopupMenuItem(value: 0, enabled: true, child: const Text("Set Average Sail Times"), onTap: () => const AddAverageSailTimes().show(context))
             ];
           }),
       const SizedBox(width: 36)

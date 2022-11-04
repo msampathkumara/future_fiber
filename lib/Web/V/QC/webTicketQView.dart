@@ -141,7 +141,11 @@ class _WebTicketQViewState extends State<WebTicketQView> {
                           title: Row(children: [
                             const SizedBox(width: 4),
                             Wrap(
-                                direction: Axis.vertical, children: [Text("${qc.user?.name}"), Text("${qc.user?.uname}", style: const TextStyle(color: Colors.blue, fontSize: 12))])
+                                direction: Axis.vertical,
+                                children: [Text("${qc.user?.name}"), Text("${qc.user?.uname}", style: const TextStyle(color: Colors.blue, fontSize: 12))]),
+                            const Spacer(),
+                            Text(qc.isQc() ? 'QC' : 'QA'),
+                            const Spacer()
                           ]),
                           subtitle: Text(qc.getDateTime(), style: const TextStyle(fontSize: 12)));
                     },

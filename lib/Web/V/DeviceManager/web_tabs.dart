@@ -1,16 +1,18 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/NsUser.dart';
-import 'package:smartwind/Web/V/Tabs/TabLog/TabLog.dart';
-import 'package:smartwind/Web/V/Tabs/deviceRenameDialog.dart';
 
 import '../../../C/Api.dart';
+import '../../../M/AppUser.dart';
 import '../../../M/Device.dart';
 import '../../../M/Enums.dart';
+import '../../../M/PermissionsEnum.dart';
 import '../../../Mobile/V/Widgets/NoResultFoundMsg.dart';
 import '../../../Mobile/V/Widgets/SearchBar.dart';
 import '../../../Mobile/V/Widgets/UserImage.dart';
 import '../../Styles/styles.dart';
+import 'TabLog/TabLog.dart';
+import 'deviceRenameDialog.dart';
 
 part 'web_tabs.table.dart';
 

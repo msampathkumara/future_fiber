@@ -139,30 +139,31 @@ class _WebKitState extends State<WebKit> {
                 //-------------------------------------------------------------------------------------------------
 
                 const SizedBox(width: 24),
-
-                ElevatedButton.icon(
-                    onPressed: () async {
-                      await const ScanReadyKits().show(context);
-                      loadData();
-                    },
-                    label: const Padding(
-                      padding: EdgeInsets.all(12.0),
-                      child: Text("Scan Ready Kits"),
-                    ),
-                    icon: const Icon(Icons.settings_overscan)),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: ElevatedButton.icon(
+                if (AppUser.havePermissionFor(NsPermissions.KIT_SCAN_READY_KITS))
+                  ElevatedButton.icon(
                       onPressed: () async {
-                        await const SendKits().show(context);
+                        await const ScanReadyKits().show(context);
                         loadData();
                       },
                       label: const Padding(
                         padding: EdgeInsets.all(12.0),
-                        child: Text("Send"),
+                        child: Text("Scan Ready Kits"),
                       ),
-                      icon: const Icon(Icons.send)),
-                ),
+                      icon: const Icon(Icons.settings_overscan)),
+                if (AppUser.havePermissionFor(NsPermissions.KIT_SEND_KITS))
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: ElevatedButton.icon(
+                        onPressed: () async {
+                          await const SendKits().show(context);
+                          loadData();
+                        },
+                        label: const Padding(
+                          padding: EdgeInsets.all(12.0),
+                          child: Text("Send"),
+                        ),
+                        icon: const Icon(Icons.send)),
+                  ),
                 const SizedBox(width: 20),
                 Material(
                     elevation: 4,

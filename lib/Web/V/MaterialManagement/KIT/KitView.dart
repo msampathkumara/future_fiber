@@ -14,7 +14,9 @@ import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/Web/Widgets/IfWeb.dart';
 import 'package:smartwind/Web/Widgets/chatBubble.dart';
 
+import '../../../../M/AppUser.dart';
 import '../../../../M/NsUser.dart';
+import '../../../../M/PermissionsEnum.dart';
 
 class KitView extends StatefulWidget {
   final KIT kit;
@@ -135,7 +137,7 @@ class _KitViewState extends State<KitView> {
                                       DataColumn2(label: Text('User'), size: ColumnSize.L)
                                     ], rows: [
                                       for (var material in _kit.items) getMatRow(material),
-                                   if (kIsWeb)
+                                      if (kIsWeb)
                                         DataRow2(cells: [
                                           DataCell.empty,
                                           DataCell.empty,
@@ -354,14 +356,16 @@ class _KitViewState extends State<KitView> {
           ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 1.5))
           : Checkbox(
               value: material.isChecked(),
-              onChanged: (checked) {
-                if (checked != null) {
-                  checkMaterial(material, checked);
-                }
-                setState(() {
-                  material.setChecked(checked!);
-                });
-              })),
+              onChanged: (AppUser.havePermissionFor(NsPermissions.KIT_CHECK_MATERIALS))
+                  ? (checked) {
+                      if (checked != null) {
+                        checkMaterial(material, checked);
+                      }
+                      setState(() {
+                        material.setChecked(checked!);
+                      });
+                    }
+                  : null)),
       DataCell(Text(material.item)),
       DataCell(Text(material.qty)),
       DataCell(Text(material.dnt.replaceAll(" ", "\n"))),

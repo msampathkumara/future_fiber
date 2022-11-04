@@ -70,7 +70,7 @@ extension TicketFlagTypesToString on TicketFlagTypes {
   }
 }
 
-enum ActionMenuItems { Share, Edit, BlueBook, ShippingSystem, CS, Finish }
+enum ActionMenuItems { Share, Edit, BlueBook, ShippingSystem, CS, Finish, Info }
 
 extension ActionMenuItemExtension on ActionMenuItems {
   String getValue() {
