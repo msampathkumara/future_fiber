@@ -67,7 +67,7 @@ public class p_eraser_view extends FrameLayout {
         drawingView.setPage(page);
     }
 
-    public void setEdited(boolean edited) {
-        drawingView.setEdited(edited);
+    public void setEdited() {
+        drawingView.setEdited();
     }
 }

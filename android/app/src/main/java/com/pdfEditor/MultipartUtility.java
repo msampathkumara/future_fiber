@@ -106,7 +106,7 @@ public class MultipartUtility {
 
         FileInputStream inputStream = new FileInputStream(uploadFile);
         byte[] buffer = new byte[4096];
-        int bytesRead = -1;
+        int bytesRead;
         while ((bytesRead = inputStream.read(buffer)) != -1) {
             outputStream.write(buffer, 0, bytesRead);
         }
@@ -146,7 +146,7 @@ public class MultipartUtility {
         if (status == HttpURLConnection.HTTP_OK) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                     httpConn.getInputStream()));
-            String line = null;
+            String line;
             while ((line = reader.readLine()) != null) {
                 response.add(line);
             }

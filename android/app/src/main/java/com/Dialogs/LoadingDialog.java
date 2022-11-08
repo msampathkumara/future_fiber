@@ -20,6 +20,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.sampathkumara.northsails.smartwind.R;
 
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -60,7 +61,7 @@ public class LoadingDialog extends BottomSheetDialogFragment {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.setOnShowListener(dialogInterface -> {
             BottomSheetDialog bottomSheetDialog = (BottomSheetDialog) dialogInterface;
-            setupFullHeight(bottomSheetDialog, getActivity(), 0);
+            setupFullHeight(bottomSheetDialog, requireActivity(), 0);
         });
         return dialog;
     }
@@ -85,8 +86,8 @@ public class LoadingDialog extends BottomSheetDialogFragment {
 
             @Override
             public void run() {
-                getActivity().runOnUiThread(() -> {
-                    timerTv.setText("" + count);
+                requireActivity().runOnUiThread(() -> {
+                    timerTv.setText(count + "");
                     count++;
                 });
             }
@@ -100,7 +101,7 @@ public class LoadingDialog extends BottomSheetDialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.loading_dialog_box, container, false);
-        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        Objects.requireNonNull(getDialog()).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         timerTv = view.findViewById(R.id.timerV);
         startTimer();
 
@@ -114,19 +115,13 @@ public class LoadingDialog extends BottomSheetDialogFragment {
 
 
         if (showButton) {
-            view.findViewById(R.id.btn_cancel).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    onCancelClick.onClick();
-                }
-            });
+            view.findViewById(R.id.btn_cancel).setOnClickListener(v -> onCancelClick.onClick());
         } else {
             view.findViewById(R.id.btn_cancel).setVisibility(View.GONE);
         }
 
 
-        text.setText("" + this.text);
+        text.setText(this.text);
 
         view.setOnKeyListener((v, keyCode, event) -> {
             if (keyCode == KeyEvent.KEYCODE_BACK) {

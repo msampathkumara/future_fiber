@@ -28,6 +28,7 @@ import java.util.ArrayList;
 public class DrawingView extends FrameLayout {
 
 
+
     private static final float TOUCH_TOLERANCE = 1;
     private final Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
     @NonNull
@@ -108,7 +109,7 @@ public class DrawingView extends FrameLayout {
         x = event.getX();
         y = event.getY();
 
-        float sp = (((pdfView.pdfFile.getPageSpacing(pdfView.getCurrentPage(), zoom) / 2) * (2*(pdfView.getCurrentPage()+1)-1 )) / pdfView.pdfFile.getMaxPageHeight());
+        float sp = (((pdfView.pdfFile.getPageSpacing(pdfView.getCurrentPage(), zoom) / 2) * (2 * (pdfView.getCurrentPage() + 1) - 1)) / getCurrentPageHeight());
 
 
         switch (event.getAction()) {
@@ -151,13 +152,12 @@ public class DrawingView extends FrameLayout {
 //        canvas.drawPath(circlePath, circlePaint);
         clipBounds = canvas.getClipBounds();
 
-        System.out.println(canvas.getDensity() + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>" + mCanvas.getDensity() + " >>>> " + DisplayMetrics.DENSITY_DEFAULT);
+//        System.out.println(canvas.getDensity() + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>" + mCanvas.getDensity() + " >>>> " + DisplayMetrics.DENSITY_DEFAULT);
         mCanvas.setDensity(DisplayMetrics.DENSITY_DEFAULT);
     }
 
 
     private void touch_start(float x, float y) {
-        float zoom = pdfView.getZoom();
 
         mPath.reset();
         mPath.moveTo(x, y);
@@ -176,7 +176,7 @@ public class DrawingView extends FrameLayout {
         mY1 = y;
 
 
-        points.add(new editPoint(((x / zoom) / pdfView.pdfFile.getMaxPageWidth()), (((y / zoom) / pdfView.pdfFile.getMaxPageHeight())), false, sp));
+        points.add(new editPoint(((x / zoom) / getCurrentPageWidth()), (((y / zoom) / getCurrentPageHeight())), false, sp));
 
     }
 
@@ -189,7 +189,7 @@ public class DrawingView extends FrameLayout {
             mPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
 
 
-            points.add(new editPoint(((x / zoom) / pdfView.pdfFile.getMaxPageWidth()), (((y / zoom) / pdfView.pdfFile.getMaxPageHeight())), true, sp));
+            points.add(new editPoint(((x / zoom) / getCurrentPageWidth()), (((y / zoom) / getCurrentPageHeight())), true, sp));
 
             mX = x;
             mY = y;
@@ -229,7 +229,7 @@ public class DrawingView extends FrameLayout {
         mPath.lineTo(mX, mY);
 
 
-        points.add(new editPoint(((x / zoom) / pdfView.pdfFile.getMaxPageWidth()), ((((y) / zoom) / pdfView.pdfFile.getMaxPageHeight())), false, sp));
+        points.add(new editPoint(((x / zoom) / getCurrentPageWidth()), ((((y) / zoom) / getCurrentPageHeight())), false, sp));
 
 
         circlePath.reset();
@@ -242,26 +242,29 @@ public class DrawingView extends FrameLayout {
 
 
 //        float translateX = Math.abs(pdfView.getCurrentXOffset() / zoom);
-        float translateX =  (pdfView.getCurrentXOffset() / zoom)*-1;
+        float translateX = (pdfView.getCurrentXOffset() / zoom) * -1;
         float translateY = Math.abs((pdfView.getCurrentYOffset() / zoom)) - (Yposition);
-        for (int i = 0; i < points.size(); i++) {
-            editPoint editPoint = points.get(i);
-            System.out.println("88888888888888888888888888888888 ==== " + editPoint.getY() + "    ____   " + ((translateY) + " --- " + (pdfView.pdfFile.getMaxPageHeight())) + "   **-**   " + editPoint.sp);
-
-
-            editPoint.setX(editPoint.getX() + ((translateX) / (pdfView.pdfFile.getMaxPageWidth())));
-            editPoint.setY(editPoint.getY() + ((translateY) / (pdfView.pdfFile.getMaxPageHeight())) - (editPoint.sp));
-        }
+//        float translateY = Math.abs((pdfView.getCurrentYOffset() / zoom));
 
         float dheight = (((getHeight() - pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight())) / 2);
-//
-//
-        page.dheight = dheight;
+        float h = (pdfView.getHeight() - (page.getPageSize().getHeight())) / 2;
+        float w = (pdfView.getWidth() - (page.getPageSize().getWidth())) / 2;
 
-        System.out.println(nthOdd(pageNo) + "------------------dheight-------------------------" + dheight);
+        for (int i = 0; i < points.size(); i++) {
+            editPoint editPoint = points.get(i);
+//            System.out.println("88888888888888888888888888888888__" + Yposition + " ==== " + editPoint.getY() + "    ____   " + ((translateY) + " --- " + (getCurrentPageHeight())) + "   **-**   " + editPoint.sp);
+
+            System.out.println("xxxxxxxxxxxx == " + translateX + " === " + editPoint.getX() + " **** " + getCurrentPageWidth());
+
+            editPoint.setX(editPoint.getX() + ((translateX - w) / (getCurrentPageWidth())));
+//            editPoint.setY(editPoint.getY() + ((translateY) / (getCurrentPageHeight())) - (editPoint.sp));
+            editPoint.setY(editPoint.getY() + ((translateY) / (getCurrentPageHeight())));
+
+        }
 
 
-        final xPath xpath = new xPath(new Path(mPath), p, translateX, translateY - (dheight), pageNo, pdfView.pdfFile.getMaxPageWidth(), pdfView.pdfFile.getMaxPageHeight(), zoom);
+        final xPath xpath = new xPath(new Path(mPath), p, translateX - w, (translateY - dheight), pageNo, getCurrentPageWidth(), getCurrentPageHeight(), zoom);
+//        final xPath xpath = new xPath(new Path(mPath), p, translateX, 0, pageNo, getCurrentPageWidth(), getCurrentPageHeight(), zoom);
         editor.editsList.add(xpath);
         mPath.reset();
         editor.reDraw(pageNo);
@@ -280,15 +283,26 @@ public class DrawingView extends FrameLayout {
 
         points = new ArrayList<>();
 
-        System.out.println("page.getMatrix().getTranslateX()");
-        System.out.println(pdfView.getCurrentXOffset());
-        System.out.println(translateX);
+//        System.out.println("page.getMatrix().getTranslateX()");
+//        System.out.println(pdfView.getCurrentXOffset());
+//        System.out.println(pdfView.getCurrentYOffset());
+//        System.out.println(pdfView.getSpacingPx());
+//        System.out.println(translateX);
+//        System.out.println(translateY);
 
     }
 
-    static int nthOdd(int n) {
-        return (2 * n - 1);
+    private float getCurrentPageHeight() {
+        return pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight();
     }
+
+    private float getCurrentPageWidth() {
+        return pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getWidth();
+    }
+
+//    static int nthOdd(int n) {
+//        return (2 * n - 1);
+//    }
 
     private void touch_up1() {
         path.lineTo(mX1, mY1);
@@ -300,7 +314,9 @@ public class DrawingView extends FrameLayout {
     public Bitmap getBitmap() {
         if (mBitmap == null) {
 
-            mBitmap = Bitmap.createBitmap((int) pdfView.pdfFile.getMaxPageWidth(), (int) pdfView.pdfFile.getMaxPageHeight(), Bitmap.Config.ARGB_8888);
+            mBitmap = Bitmap.createBitmap((int) getCurrentPageWidth(), (int) getCurrentPageHeight(), Bitmap.Config.ARGB_8888);
+            System.out.println("getCurrentPageWidth()");
+            System.out.println(getCurrentPageWidth());
             mCanvas = new Canvas(mBitmap);
         }
         return mBitmap;
@@ -322,8 +338,6 @@ public class DrawingView extends FrameLayout {
         pageNo = page.id;
 
 
-
-
     }
 
     public void setStroke(int position) {
@@ -334,7 +348,7 @@ public class DrawingView extends FrameLayout {
         this.isErasing = eraser;
     }
 
-    public void setEdited(boolean edited) {
+    public void setEdited() {
         invalidate();
     }
 
@@ -345,8 +359,8 @@ public class DrawingView extends FrameLayout {
         mCanvas.save();
 
 
-        float x1 = (pdfView.pdfFile.getMaxPageWidth() / (k.getPageWidth()));
-        float y1 = (pdfView.pdfFile.getMaxPageHeight() / k.getPageHeight());
+        float x1 = (getCurrentPageWidth() / (k.getPageWidth()));
+        float y1 = (getCurrentPageHeight() / k.getPageHeight());
 
 
         float x = x1 * (pdfView.getZoom() / k.getZoom());
@@ -360,11 +374,17 @@ public class DrawingView extends FrameLayout {
         scaleMatrix.setScale(x / pdfView.getZoom(), y / pdfView.getZoom(), 0, 0);
         path.transform(scaleMatrix);
 
-        float xp = (k.translateX() / k.getPageWidth()) * pdfView.pdfFile.getMaxPageWidth();
-        float yp = ((k.translateY() / k.getPageHeight()) * pdfView.pdfFile.getMaxPageHeight());
+        float xp = (k.translateX() / k.getPageWidth()) * getCurrentPageWidth();
+        float yp = ((k.translateY() / k.getPageHeight()) * getCurrentPageHeight());
 
+        float h = (getHeight() - k.getPageHeight());
 
-        mCanvas.translate(xp, yp - Yposition + (page.dy * pdfView.getCurrentPage()));
+//        System.out.println("------------------------------------------------------------------");
+//        System.out.println(" redraw --|" + k.translateY() + " ==== " + k.getPageHeight() + " === " + getCurrentPageHeight());
+//        System.out.println(" redraw --|" + xp + "----|" + yp + "---|" + Yposition + "-----|" + page.dy + "----|" + pdfView.getCurrentPage());
+//        System.out.println("------------------------------------------------------------------");
+//        mCanvas.translate(xp, yp - Yposition + (page.dy * pdfView.getCurrentPage()));
+        mCanvas.translate(xp, yp + (h / 2));
 
         Paint p = new Paint(k.getPaint());
         p.setStrokeWidth(p.getStrokeWidth());

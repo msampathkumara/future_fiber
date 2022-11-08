@@ -29,7 +29,7 @@ public class Zip {
 
 
     public void addFile(File file, String folderName) {
-        FileInputStream fi = null;
+        FileInputStream fi;
         try {
             fi = new FileInputStream(file.getPath());
             BufferedInputStream origin = new BufferedInputStream(fi, BUFFER);
@@ -47,7 +47,7 @@ public class Zip {
     }
 
     public void addFile(File file) {
-        FileInputStream fi = null;
+        FileInputStream fi;
         try {
             fi = new FileInputStream(file.getPath());
             BufferedInputStream origin = new BufferedInputStream(fi, BUFFER);

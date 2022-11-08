@@ -32,11 +32,8 @@ public class p_Text_Editor_view extends FrameLayout {
     private boolean isbold = false;
     private int STROKE;
     private boolean isItalic;
-    Editor.RunAfterDone runAfterDone = new Editor.RunAfterDone() {
-        @Override
-        public void run() {
+    Editor.RunAfterDone runAfterDone = () -> {
 
-        }
     };
 
     public p_Text_Editor_view(@NonNull Context context, PDFView pdfView, Editor editor, Editor.RunAfterDone runAfterDone) {
@@ -50,12 +47,7 @@ public class p_Text_Editor_view extends FrameLayout {
 
         ColorSelector colorSelector = view.findViewById(R.id.colorSelector);
 
-        colorSelector.setOnColorSelect(new ColorSelector.OnColorSelectListener() {
-            @Override
-            public void OnColorSelect(int color) {
-                textEditor.setColor(color);
-            }
-        });
+        colorSelector.setOnColorSelect(color -> textEditor.setColor(color));
 
 
         SeekBar seekBar = view.findViewById(R.id.size);
@@ -86,41 +78,29 @@ public class p_Text_Editor_view extends FrameLayout {
 
 
         b_bold = findViewById(R.id.b_bold);
-        b_bold.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                isbold = !isbold;
-                textEditor.setBold(isbold);
-                b_bold.setTextColor(isbold ? Color.BLACK : Color.GRAY);
-                setBackgroundTint(b_bold, isbold ? Color.BLACK : Color.GRAY);
-            }
+        b_bold.setOnClickListener(view12 -> {
+            isbold = !isbold;
+            textEditor.setBold(isbold);
+            b_bold.setTextColor(isbold ? Color.BLACK : Color.GRAY);
+            setBackgroundTint(b_bold, isbold ? Color.BLACK : Color.GRAY);
         });
 
         b_italic = findViewById(R.id.b_italic);
-        b_italic.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                isItalic = !isItalic;
-                textEditor.setItalic(isItalic);
-                b_italic.setTextColor(isItalic ? Color.BLACK : Color.GRAY);
-                setBackgroundTint(b_italic, isItalic ? Color.BLACK : Color.GRAY);
-            }
+        b_italic.setOnClickListener(view1 -> {
+            isItalic = !isItalic;
+            textEditor.setItalic(isItalic);
+            b_italic.setTextColor(isItalic ? Color.BLACK : Color.GRAY);
+            setBackgroundTint(b_italic, isItalic ? Color.BLACK : Color.GRAY);
         });
 
-        findViewById(R.id.done).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                runAfterDone.run();
-                saveText();
-                textEditor.reset();
-            }
+        findViewById(R.id.done).setOnClickListener(v -> {
+            runAfterDone.run();
+            saveText();
+            textEditor.reset();
         });
-        findViewById(R.id.b_cancel).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                runAfterDone.run();
-                textEditor.reset();
-            }
+        findViewById(R.id.b_cancel).setOnClickListener(v -> {
+            runAfterDone.run();
+            textEditor.reset();
         });
 
     }

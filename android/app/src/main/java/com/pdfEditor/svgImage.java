@@ -22,7 +22,7 @@ class svgImage {
 
         this.imageId = id;
         imageFile = new File(direct, id + ".png");
-        OutputStream os = null;
+        OutputStream os;
         try {
             os = new BufferedOutputStream(new FileOutputStream(imageFile));
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);

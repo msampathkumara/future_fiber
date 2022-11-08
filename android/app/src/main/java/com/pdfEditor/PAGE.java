@@ -8,6 +8,7 @@ import com.pdfEditor.EditorTools.freehand.xPath;
 import com.pdfEditor.EditorTools.image.xImage;
 import com.pdfEditor.EditorTools.textEditor.xText;
 import com.pdfviewer.PdfFile;
+import com.pdfviewer.util.SizeF;
 import com.tom_roush.pdfbox.pdmodel.PDPage;
 
 import java.util.ArrayList;
@@ -24,10 +25,15 @@ public class PAGE extends PDPage {
     public final List<xPath> paths;
     @NonNull
     final List<xText> textMap;
-    public float dheight;
+    //    public float dheight;
     public float pageSpacingTot;
     public float dy;
-    //    private   SizeF pageSize;
+    private final SizeF pageSize;
+
+    public SizeF getPageSize() {
+        return pageSize;
+    }
+
     float maxPageWidth;
     float maxPageHeight;
     final PdfFile pdfFile;
@@ -37,13 +43,13 @@ public class PAGE extends PDPage {
     private xImage image;
 
 
-    public PAGE(PdfFile pdfFile, float pageYposition, int id) {
+    public PAGE(PdfFile pdfFile, float pageYposition, int id, SizeF pageSize) {
         this.position = pageYposition;
 //            bitmap = Bitmap.createBitmap((int) pdfView.pdfFile.getMaxPageWidth(), (int) pdfView.pdfFile.getMaxPageHeight(), Bitmap.Config.ARGB_8888);
         this.id = id;
         paths = new ArrayList<>();
         textMap = new ArrayList<>();
-
+        this.pageSize = pageSize;
         this.pdfFile = pdfFile;
     }
 
@@ -53,12 +59,17 @@ public class PAGE extends PDPage {
     }
 
     public Bitmap getBitmap() {
+//        SizeF pagesize = pdfFile.getPageSize(id);
         if (bitmap == null) {
 
-             bitmap = Bitmap.createBitmap((int) pdfFile.getMaxPageWidth(), (int) pdfFile.getMaxPageHeight(), Bitmap.Config.ARGB_8888);
+//             bitmap = Bitmap.createBitmap((int) pdfFile.getMaxPageWidth(), (int) pdfFile.getMaxPageHeight(), Bitmap.Config.ARGB_8888);
+
+            bitmap = Bitmap.createBitmap((int) pageSize.getWidth(), (int) pageSize.getHeight(), Bitmap.Config.ARGB_8888);
 
         }
-//        System.out.println("__________________________________________GET BITMAP____________________");
+        System.out.println("__________________________________________GET BITMAP____________________");
+        System.out.println(pageSize);
+        System.out.println(pdfFile.getPageSize(id));
         return bitmap;
     }
 

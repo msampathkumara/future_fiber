@@ -1,20 +1,22 @@
 package com.pdfEditor;
 
-import android.app.ProgressDialog;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.sampathkumara.northsails.smartwind.R;
 import com.tom_roush.pdfbox.multipdf.PDFMergerUtility;
 
 import java.io.File;
 
 public class margeTask extends AsyncTask<Void, Void, File> {
-    ProgressDialog pDialog;
-    private Editor editor;
-    Ticket selected_ticket;
-    File currentFile;
-    File fileToMarge;
-    Context context;
+
+    private final Editor editor;
+    final Ticket selected_ticket;
+    final File currentFile;
+    final File fileToMarge;
+    final Context context;
+    private AlertDialog pDialog;
 
     public margeTask(Editor editor, Ticket selected_ticket, File currentFile, File fileToMarge, Context context) {
         this.editor = editor;
@@ -22,10 +24,6 @@ public class margeTask extends AsyncTask<Void, Void, File> {
         this.currentFile = currentFile;
         this.fileToMarge = fileToMarge;
         this.context = context;
-    }
-
-    public margeTask(Editor editor) {
-        this.editor = editor;
     }
 
 
@@ -53,7 +51,12 @@ public class margeTask extends AsyncTask<Void, Void, File> {
 
     @Override
     protected void onPreExecute() {
-        pDialog = ProgressDialog.show(context, "Please wait...", "Merging Files..", true);
+//        pDialog = ProgressDialog.show(context, "Please wait...", "Merging Files..", true);
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
+        builder.setCancelable(false);
+        builder.setView(R.layout.layout_loading_dialog);
+        pDialog = builder.create();
+        pDialog.show();
 
         super.onPreExecute();
     }

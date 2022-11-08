@@ -475,9 +475,7 @@ class Ticket extends DataObject {
         await showDialog(
             context: context,
             builder: (_) {
-              HiveBox.getDataFromServer(afterLoad: () {
-                Navigator.of(context, rootNavigator: true).pop();
-              });
+              HiveBox.getDataFromServer(afterLoad: () => {Navigator.of(context, rootNavigator: true).pop()});
               return AlertDialog(
                   shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
                   content: Builder(builder: (context) {

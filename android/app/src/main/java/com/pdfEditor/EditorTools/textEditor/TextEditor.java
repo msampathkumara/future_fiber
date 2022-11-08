@@ -62,66 +62,60 @@ public class TextEditor extends RelativeLayout {
         window = view.findViewById(R.id.window);
 
         //                    if (!textFld.getText().toString().trim().isEmpty()) {
-        OnTouchListener mTouchListener = new OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent event) {
-                getGlobalVisibleRect(rectf);
-                final int X = (int) event.getRawX() - rectf.left;
-                final int Y = (int) event.getRawY() - rectf.top;
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        LayoutParams lParams = (LayoutParams) window.getLayoutParams();
-                        TEXT_X = lParams.leftMargin + 5;
-                        TEXT_Y = lParams.topMargin + window.getHeight();
-                        invalidate();
+        OnTouchListener mTouchListener = (view12, event) -> {
+            getGlobalVisibleRect(rectf);
+            final int X = (int) event.getRawX() - rectf.left;
+            final int Y = (int) event.getRawY() - rectf.top;
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    LayoutParams lParams = (LayoutParams) window.getLayoutParams();
+                    TEXT_X = lParams.leftMargin + 5;
+                    TEXT_Y = lParams.topMargin + window.getHeight();
+                    invalidate();
 //                    if (!textFld.getText().toString().trim().isEmpty()) {
-                        save();
-                        lParams.leftMargin = X - 5;
-                        lParams.topMargin = Y - window.getHeight() - 10;
-                        System.out.println(deltaX_ + "   " + deltaY_);
-                        window.setLayoutParams(lParams);
-                        textFld.requestFocus();
-                        textFld.setText("");
+                    save();
+                    lParams.leftMargin = X - 5;
+                    lParams.topMargin = Y - window.getHeight() - 10;
+                    System.out.println(deltaX_ + "   " + deltaY_);
+                    window.setLayoutParams(lParams);
+                    textFld.requestFocus();
+                    textFld.setText("");
 
 
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                    case MotionEvent.ACTION_UP:
-                        break;
-                }
-
-                return true;
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                case MotionEvent.ACTION_UP:
+                    break;
             }
+
+            return true;
         };
         setOnTouchListener(mTouchListener);
         //                    System.out.println(deltaX_ + "   " + deltaY_);
-        OnTouchListener mTouchListener1 = new OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent event) {
+        OnTouchListener mTouchListener1 = (view1, event) -> {
 
-                getGlobalVisibleRect(rectf);
-                final int X = (int) event.getRawX() - rectf.left;
-                final int Y = (int) event.getRawY() - rectf.top;
-                LayoutParams lParams = (LayoutParams) view.getLayoutParams();
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        deltaX_ = (int) event.getX();
-                        deltaY_ = (int) event.getY();
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_POINTER_UP:
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        lParams.leftMargin = X - deltaX_;
-                        lParams.topMargin = Y - deltaY_;
-                        TEXT_X = X - deltaX_ + 5;
-                        TEXT_Y = Y - deltaY_ - 10;
+            getGlobalVisibleRect(rectf);
+            final int X = (int) event.getRawX() - rectf.left;
+            final int Y = (int) event.getRawY() - rectf.top;
+            LayoutParams lParams = (LayoutParams) view1.getLayoutParams();
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    deltaX_ = (int) event.getX();
+                    deltaY_ = (int) event.getY();
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_POINTER_UP:
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    lParams.leftMargin = X - deltaX_;
+                    lParams.topMargin = Y - deltaY_;
+                    TEXT_X = X - deltaX_ + 5;
+                    TEXT_Y = Y - deltaY_ - 10;
 //                    System.out.println(deltaX_ + "   " + deltaY_);
-                        view.setLayoutParams(lParams);
-                        break;
-                }
-                return true;
+                    view1.setLayoutParams(lParams);
+                    break;
             }
+            return true;
         };
         window.setOnTouchListener(mTouchListener1);
         textFld.setTextColor(color);
@@ -217,7 +211,10 @@ public class TextEditor extends RelativeLayout {
         float yp = (kk.translateY() / kk.getPageHeight()) * pdfView.pdfFile.getMaxPageHeight();
 
 
-        mCanvas.translate(xp, yp - Yposition + (page.dy * pdfView.getCurrentPage()));
+//        mCanvas.translate(xp, yp - Yposition + (page.dy * pdfView.getCurrentPage()));
+
+        float h = (getHeight() - kk.getPageHeight()) / 2;
+        mCanvas.translate(xp, (yp + h));
 
         String[] lines = kk.getText().split("\n");
 

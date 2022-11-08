@@ -37,53 +37,49 @@ public class image_container extends RelativeLayout {
         image_container = this;
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.image_container, this);
-        
-       
-        
+
+
         setLayoutParams(new LayoutParams(100, 100));
         View b_resize = view.findViewById(R.id.resize);
         wc = this;
 
-        b_resize.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(@NonNull View view, @NonNull MotionEvent event) {
+        b_resize.setOnTouchListener((view1, event) -> {
 
-                getGlobalVisibleRect(rectf);
-                view.getGlobalVisibleRect(rectf1);
-                final int X = (int) event.getRawX();
-                final int Y = (int) event.getRawY();
-                LayoutParams lParams = (LayoutParams) getLayoutParams();
+            getGlobalVisibleRect(rectf);
+            view1.getGlobalVisibleRect(rectf1);
+            final int X = (int) event.getRawX();
+            final int Y = (int) event.getRawY();
+            LayoutParams lParams = (LayoutParams) getLayoutParams();
 //                System.out.println(X + "_____" + Y);
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        getGlobalVisibleRect(rectf);
-                        firstWidth = lParams.width;
-                        firstHeigrt = lParams.height;
-                        deltaX_ = X;
-                        deltaY_ = Y;
-                        System.out.println(X + "__" + Y + "___(" + lParams.width + "______________" + lParams.height + "_)_________________" + deltaX_ + "__" + deltaY_);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_POINTER_UP:
-                        break;
-                    case MotionEvent.ACTION_MOVE:
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    getGlobalVisibleRect(rectf);
+                    firstWidth = lParams.width;
+                    firstHeigrt = lParams.height;
+                    deltaX_ = X;
+                    deltaY_ = Y;
+                    System.out.println(X + "__" + Y + "___(" + lParams.width + "______________" + lParams.height + "_)_________________" + deltaX_ + "__" + deltaY_);
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_POINTER_UP:
+                    break;
+                case MotionEvent.ACTION_MOVE:
 
-                        int w = firstWidth - (deltaX_ - X);
-                        int h = firstHeigrt - (deltaY_ - Y);
-                        if (h > 50 && w > 50) {
+                    int w = firstWidth - (deltaX_ - X);
+                    int h = firstHeigrt - (deltaY_ - Y);
+                    if (h > 50 && w > 50) {
 
-                            lParams.height = h;
-                            lParams.width = w;
-                            setLayoutParams(lParams);
-                            invalidate();
+                        lParams.height = h;
+                        lParams.width = w;
+                        setLayoutParams(lParams);
+                        invalidate();
 
-                        }
-                        break;
-                }
-
-
-                return true;
+                    }
+                    break;
             }
+
+
+            return true;
         });
         setBackgroundColor(Color.WHITE);
         getBackground().setAlpha(10);
@@ -119,7 +115,7 @@ public class image_container extends RelativeLayout {
         System.out.println("DRRRRRRRR");
         try {
             setVisibility(VISIBLE);
-            canvas.drawBitmap(bitmap, null, new RectF(0, 0, canvas.getWidth(), canvas.getHeight()), null);
+            canvas.drawBitmap(bitmap, null, new RectF(0, 0, getWidth(), getHeight()), null);
         } catch (Exception e) {
             e.printStackTrace();
 //setVisibility(GONE);
@@ -139,5 +135,10 @@ public class image_container extends RelativeLayout {
         image_container.invalidate();
     }
 
+    @Override
+    public boolean performClick() {
+        super.performClick();
+        return true;
+    }
 
 }

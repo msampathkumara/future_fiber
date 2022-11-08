@@ -3,6 +3,7 @@ package com.pdfEditor.uploadEdits;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class EditsList {
 
@@ -14,7 +15,7 @@ public class EditsList {
     }
 
     public void removeEdit(int page, long id) {
-        pageList.get(page).getEdits().remove(id);
+        Objects.requireNonNull(pageList.get(page)).getEdits().remove(id);
     }
 
     public void addEdit(int pageNo, long id, PdfEdit pdfEdit) {
@@ -31,6 +32,7 @@ public class EditsList {
     public PdfEdit getEditById(long id) {
         for (int i : pageList.keySet()) {
             PdfPage pdfPage = pageList.get(i);
+            assert pdfPage != null;
             PdfEdit pdfEdit = pdfPage.getEdits().get(id);
             if (pdfEdit != null) {
                 return pdfEdit;

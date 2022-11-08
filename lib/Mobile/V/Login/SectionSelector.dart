@@ -111,9 +111,14 @@ class _UserSectionSelectorState extends State<UserSectionSelector> {
 
   void loadData() {
     print(selectedFactory);
-    _filterdSections = widget.nsUser.sections
-        .where((element) => element.sectionTitle.toLowerCase().contains(searchText) && element.factory.toLowerCase().equalIgnoreCase((selectedFactory ?? '')))
-        .toList();
+    if (selectedFactory == null) {
+      _filterdSections = widget.nsUser.sections;
+    } else {
+      _filterdSections = widget.nsUser.sections
+          .where((element) => element.sectionTitle.toLowerCase().contains(searchText) && element.factory.toLowerCase().equalIgnoreCase((selectedFactory ?? '')))
+          .toList();
+    }
+
     if (mounted) setState(() {});
   }
 }

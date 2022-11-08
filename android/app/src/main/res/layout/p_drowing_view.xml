@@ -138,6 +138,7 @@
             android:id="@+id/pane"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:backgroundTint="#75FF5722"
             app:layout_constraintBottom_toTopOf="@+id/linearLayout5"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -11,6 +11,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.azeesoft.lib.colorpicker.ColorPickerDialog;
 import com.pdfEditor.Editor;
@@ -27,11 +28,19 @@ public class p_drawing_view extends FrameLayout {
     private int STROKE;
     private boolean edited;
 
+
+    public void setPaneSize(int width, int height) {
+
+        pane.setLayoutParams(new ConstraintLayout.LayoutParams(width, height));
+    }
+
+    final FrameLayout pane;
+
     public p_drawing_view(@NonNull Context context, PDFView pdfView, Editor editor) {
         super(context);
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.p_drowing_view, this);
-        FrameLayout pane = findViewById(R.id.pane);
+        pane = findViewById(R.id.pane);
         drawingView = new DrawingView(context, pdfView, editor);
 
         pane.addView(drawingView);
@@ -61,32 +70,26 @@ public class p_drawing_view extends FrameLayout {
             }
         });
 
-        OnClickListener onColorSelect = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int[] x = new int[]{R.id.b_color_blue, R.id.b_color_green, R.id.b_color_orange, R.id.b_color_red, R.id.b_color_yellow};
+        OnClickListener onColorSelect = v -> {
+            int[] x = new int[]{R.id.b_color_blue, R.id.b_color_green, R.id.b_color_orange, R.id.b_color_red, R.id.b_color_yellow};
 
-                for (int xx : x) {
-                    ImageButton btn = findViewById(xx);
-                    btn.setImageResource(R.drawable.transparent);
-                    if (xx == v.getId()) {
-                        btn.setImageResource(R.drawable.ring);
-                        drawingView.setColor(btn.getBackgroundTintList().getDefaultColor());
-                    }
+            for (int xx : x) {
+                ImageButton btn = findViewById(xx);
+                btn.setImageResource(R.drawable.transparent);
+                if (xx == v.getId()) {
+                    btn.setImageResource(R.drawable.ring);
+                    drawingView.setColor(btn.getBackgroundTintList().getDefaultColor());
                 }
-                if (v.getId() == R.id.color) {
-                    ColorPickerDialog colorPickerDialog = ColorPickerDialog.createColorPickerDialog(getContext(), R.style.CustomColorPicker);
-                    colorPickerDialog.setOnColorPickedListener(new ColorPickerDialog.OnColorPickedListener() {
-                        @Override
-                        public void onColorPicked(int color, String hexVal) {
-                            System.out.println("Got color: " + color);
-                            System.out.println("Got color in hex form: " + hexVal);
-                            drawingView.setColor(color);
-                        }
-                    });
-                    colorPickerDialog.show();
-                    colorPickerDialog.findViewById(R.id.hexVal).setVisibility(GONE);
-                }
+            }
+            if (v.getId() == R.id.color) {
+                ColorPickerDialog colorPickerDialog = ColorPickerDialog.createColorPickerDialog(getContext(), R.style.CustomColorPicker);
+                colorPickerDialog.setOnColorPickedListener((color, hexVal) -> {
+                    System.out.println("Got color: " + color);
+                    System.out.println("Got color in hex form: " + hexVal);
+                    drawingView.setColor(color);
+                });
+                colorPickerDialog.show();
+                colorPickerDialog.findViewById(R.id.hexVal).setVisibility(GONE);
             }
         };
 
@@ -111,13 +114,13 @@ public class p_drawing_view extends FrameLayout {
         return drawingView.getBitmap();
     }
 
-    public void setPage(  PAGE page) {
+    public void setPage(PAGE page) {
         drawingView.setPage(page);
     }
 
     public void setEdited(boolean edited) {
 //        drawingView.Editad=edited;
-        drawingView.setEdited(edited);
+        drawingView.setEdited();
     }
 
     @Override

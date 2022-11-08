@@ -5,10 +5,8 @@ import static android.app.Activity.RESULT_OK;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -26,16 +24,12 @@ import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -66,9 +60,6 @@ import com.pdfEditor.uploadEdits.EditsList;
 import com.pdfEditor.uploadEdits.WebViewInterface;
 import com.pdfviewer.PDFView;
 import com.pdfviewer.listener.OnDrawListener;
-import com.pdfviewer.listener.OnErrorListener;
-import com.pdfviewer.listener.OnLoadCompleteListener;
-import com.pdfviewer.listener.OnLongPressListener;
 import com.pdfviewer.listener.OnPageChangeListener;
 import com.pdfviewer.util.FitPolicy;
 import com.pdfviewer.util.SizeF;
@@ -100,6 +91,11 @@ import java.util.Objects;
 
 public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
+    private ImageButton btnNextPage;
+    private ImageButton btnPrevPage;
+    private android.app.AlertDialog dialog;
+
+
     public interface RunAfterDone {
         void run();
     }
@@ -113,7 +109,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
     public File CurrentFile;
     private Intent pictureIntent;
-    private runAfterLoad runAfterLoad;
+
     private runAfterLoad runAfterFileLoad;
     OnViewCreatedListner onViewCreatedListner;
     boolean XS = true;
@@ -122,8 +118,6 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     runAfterFileLoad runAfterNsFileLoad;
     private HashMap<Long, File> images = new HashMap<>();
     private WebView webView;
-    @Nullable
-    private OnFragmentInteractionListener mListener;
     public static List<PAGE> pages;
     private p_image_view imageView;
     private String imageFilePath;
@@ -140,17 +134,14 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
     private boolean is_text_editor_clicked;
     private boolean image_editor;
-    private ProgressDialog dialog;
+
     private FrameLayout pdfViewPerant;
 
-    private LinearLayout toolset;
-    private LinearLayout extraTools;
+
     private boolean RELOAD;
-    private OnPrint onPrint;
     private Ticket SELECTED_Ticket;
     private EditsList pdfEditsList;
     private RunAfterSave runAfterSave;
-    private BottomNavigationView bottomNavigationView;
 
     public Editor() {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -196,6 +187,17 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         System.out.println(pdfView.pdfFile.getMaxPageHeight());
 
         currentPage = pages.get(page);
+        System.out.println(pdfView.getPageSize(page));
+        System.out.println(pdfView.getX() + "__" + pdfView.getY());
+
+
+//        SizeF s = pdfView.getPageSize(page);
+        SizeF s = currentPage.getPageSize();
+        System.out.println("---------------------------------pdfView.getHeight() " + pdfView.getHeight() + " --- " + s.getHeight());
+        System.out.println("---------------------------------pdfView.getWidth() " + pdfView.getWidth() + " --- " + s.getWidth());
+//        pdfView.setLayoutParams(new FrameLayout.LayoutParams((int) s.getWidth(), (int) s.getHeight()));
+//        drawingView.setLayoutParams(new FrameLayout.LayoutParams((int) s.getWidth(), (int) s.getHeight()));
+//        drawingView.setPaneSize((int) s.getWidth(), (int) s.getHeight());
 
 
         assert drawingView != null;
@@ -253,45 +255,51 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
             System.out.println("_______ 1 ________");
             _set_pdfview_options(configurator).load();
         } else {
-            runAfterFileLoad = new runAfterLoad() {
-                @Override
-                public void run(Editor editor) {
-                    PDFView.Configurator configurator = pdfView.fromFile(file);
-                    System.out.println("RUN AFTER LOAD 1");
-                    _set_pdfview_options(configurator).load();
+            runAfterFileLoad = editor -> {
+                PDFView.Configurator configurator = pdfView.fromFile(file);
+                System.out.println("RUN AFTER LOAD 1");
+                _set_pdfview_options(configurator).load();
 //                    pdfView.findViewById(R.id.mb_freehand).performClick();
-                }
+
             };
         }
 
+
     }
+
+    int page = 0;
 
     private PDFView.Configurator _set_pdfview_options(PDFView.Configurator pv) {
 
 
         System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++_set_pdfview_options");
         DisplayMetrics displayMetrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
 
         if (!RELOAD) {
 //            editsList = new ArrayList();
 
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        dialog = new ProgressDialog(getActivity());
-                        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                        dialog.setMessage("Loading. Please wait...");
-                        System.out.println("Loading. Please wait...");
-                        dialog.setIndeterminate(true);
-                        dialog.setCanceledOnTouchOutside(false);
-                        getActivity().isFinishing();//                            dialog.show();
+            getActivity().runOnUiThread(() -> {
+                try {
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
+                    builder.setCancelable(false);
+                    builder.setView(R.layout.layout_loading_dialog);
+                    dialog = builder.create();
+                    dialog.show();
+
+
+//                    dialog = new ProgressDialog(getActivity());
+//                    dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+//                    dialog.setMessage("Loading. Please wait...");
+//                    System.out.println("Loading. Please wait...");
+//                    dialog.setIndeterminate(true);
+//                    dialog.setCanceledOnTouchOutside(false);
+                    getActivity().isFinishing();//                            dialog.show();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             });
 
@@ -299,183 +307,174 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
             unClickAllButtons();
         }
 
-
-        pv.onError(new OnErrorListener() {
-            @Override
-            public void onError(@NonNull Throwable t) {
-                System.out.println("ERR");
-                t.printStackTrace();
-                AlertDialog.Builder builder = new AlertDialog.Builder(Editor.this.requireContext());
-
-                builder.setTitle("Error");
-
-                String message = t.getMessage() + "\n\n" + "Try to reopen file";
-
-                if (t instanceof FileNotFoundException) {
-                    message = "Ticket Not Found";
-                }
-
-                builder.setMessage(message)
-                        .setCancelable(false)
-                        .setNegativeButton("ok", new DialogInterface.OnClickListener() {
-                            public void onClick(@NonNull DialogInterface dialog, int id) {
-                                dialog.cancel();
-
-                                CurrentFile.deleteOnExit();
-                                new File(CurrentFile.getPath()).delete();
-                                getActivity().finish();
-                            }
-                        });
-
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
-                dialog.dismiss();
+        btnNextPage.setOnClickListener(v -> {
+            if (page >= pdfView.getPageCount()) {
+                return;
             }
+            page++;
+            pdfView.jumpTo(page);
+
+
+        });
+        btnPrevPage.setOnClickListener(v -> {
+//                if (page < 1) {
+//                    return;
+//                }
+//                page--;
+//                pdfView.jumpTo(page);
+
+
+        });
+
+//        pv.pages(1, 3);
+        pv.onError(t -> {
+            System.out.println("ERR");
+            t.printStackTrace();
+            AlertDialog.Builder builder = new AlertDialog.Builder(Editor.this.requireContext());
+
+            builder.setTitle("Error");
+
+            String message = t.getMessage() + "\n\n" + "Try to reopen file";
+
+            if (t instanceof FileNotFoundException) {
+                message = "Ticket Not Found";
+            }
+
+            builder.setMessage(message)
+                    .setCancelable(false)
+                    .setNegativeButton("ok", (dialog, id) -> {
+                        dialog.cancel();
+
+                        assert CurrentFile != null;
+                        CurrentFile.deleteOnExit();
+                        new File(CurrentFile.getPath()).delete();
+                        getActivity().finish();
+                    });
+
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+            dialog.dismiss();
         });
         pv.onDraw(this);
-        pv.pageFitPolicy(FitPolicy.BOTH);
+        pv.pageFitPolicy(FitPolicy.WIDTH);
 
 
         pv.pageSnap(true);
         pv.pageFling(true);
 
-        pv.fitEachPage(true);
-        pv.autoSpacing(true);
+        pv.fitEachPage(false);
+        pv.autoSpacing(false);
+        pv.spacing(50);
 //        pv.pages(1);
 
 
         pv.onPageChange(this);
-        pv.onLongPress(new OnLongPressListener() {
-            @Override
-            public void onLongPress(MotionEvent e) {
-                System.out.println("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
-            }
-        });
-//        pv.spacing(20);
-
-        pv.onLoad(new OnLoadCompleteListener() {
+        pv.onLongPress(e -> System.out.println("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL"));
 
 
-            @Override
-            public void loadComplete(int nbPages) {
-                System.out.println("ON______LOAD");
-                if (RELOAD) {
-                    RELOAD = false;
+        pv.onLoad(nbPages -> {
+            System.out.println("ON______LOAD");
+            if (RELOAD) {
+                RELOAD = false;
 //                return;
-                }
-                if (drawingView == null) {
+            }
+            if (drawingView == null) {
 
-                    drawingView = new p_drawing_view(Editor.this.getContext(), pdfView, Editor.this);
+                drawingView = new p_drawing_view(Editor.this.requireContext(), pdfView, Editor.this);
 
-                    textEditorView = new p_Text_Editor_view(Editor.this.getContext(), pdfView, Editor.this, new RunAfterDone() {
-                        @Override
-                        public void run() {
-                            visibleOnly(null, 0);
-                        }
-                    });
+                textEditorView = new p_Text_Editor_view(Editor.this.requireContext(), pdfView, Editor.this, () -> visibleOnly(null, 0));
 
 
-                    highlighterView = new p_hightlight_view(Editor.this.getContext(), pdfView, Editor.this);
-                    erasingView = new p_eraser_view(Editor.this.getContext(), pdfView, Editor.this);
-                    imageView = new p_image_view(Editor.this.getContext(), pdfView, Editor.this, new RunAfterDone() {
-                        @Override
-                        public void run() {
-                            visibleOnly(null, 0);
-                        }
-                    });
+                highlighterView = new p_hightlight_view(Editor.this.requireContext(), pdfView, Editor.this);
+                erasingView = new p_eraser_view(Editor.this.requireContext(), pdfView, Editor.this);
+                imageView = new p_image_view(Editor.this.getContext(), pdfView, Editor.this, () -> visibleOnly(null, 0));
 
-                    pdfViewPerant.addView(drawingView);
-                    pdfViewPerant.addView(textEditorView);
-                    pdfViewPerant.addView(highlighterView);
-                    pdfViewPerant.addView(erasingView);
+                pdfViewPerant.addView(drawingView);
+                pdfViewPerant.addView(textEditorView);
+                pdfViewPerant.addView(highlighterView);
+                pdfViewPerant.addView(erasingView);
 
 
-                    pdfViewPerant.addView(imageView);
+                pdfViewPerant.addView(imageView);
 
-                }
-                drawingView.setVisibility(View.GONE);
-                Objects.requireNonNull(textEditorView).setVisibility(View.GONE);
+            }
+            drawingView.setVisibility(View.GONE);
+            Objects.requireNonNull(textEditorView).setVisibility(View.GONE);
 
 
-                assert highlighterView != null;
-                highlighterView.setVisibility(View.GONE);
-                assert erasingView != null;
-                erasingView.setVisibility(View.GONE);
+            assert highlighterView != null;
+            highlighterView.setVisibility(View.GONE);
+            assert erasingView != null;
+            erasingView.setVisibility(View.GONE);
 
-                imageView.setVisibility(View.GONE);
+            imageView.setVisibility(View.GONE);
 
-                drawingView.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
-                drawingView.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
-                drawingView.setTop(0);
+            drawingView.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
+            drawingView.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
+            drawingView.setTop(0);
 
-                drawingView.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
-                drawingView.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
-                drawingView.setTop(0);
-                drawingView.setLeft(0);
+            drawingView.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
+            drawingView.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
+            drawingView.setTop(0);
+            drawingView.setLeft(0);
 
-                System.out.println("PAGE COUNT  " + pdfView.getPageCount());
-                float pageYposition = 0;
-                float pageSpacingTot = 0;
-                float lastPageSp = 0;
-                for (int i = 0; i < pdfView.getPageCount(); ++i) {
-                    SizeF pageSize = pdfView.getPageSize(i);
-                    PAGE pp = new PAGE(pdfView.pdfFile, pageYposition, i);
+            System.out.println("PAGE COUNT  " + pdfView.getPageCount());
+            float pageYposition = 0;
+            float pageSpacingTot = 0;
+            float lastPageSp = 0;
+            for (int i = 0; i < pdfView.getPageCount(); ++i) {
+                SizeF pageSize = pdfView.getPageSize(i);
+                PAGE pp = new PAGE(pdfView.pdfFile, pageYposition, i, pageSize);
 
-                    pageSpacingTot = ((pdfView.pdfFile.getPageSpacing(i, 1) / 2) * ((2 * i) - 1));
+//                    pageSpacingTot = ((pdfView.pdfFile.getPageSpacing(i, 1) / 2) * ((2 * i) - 1));
+//
+//                    pp.pageSpacingTot = pageSpacingTot;
 
-                    pp.pageSpacingTot = pageSpacingTot;
+//                    pp.dy = (pageYposition - pageSpacingTot) - lastPageSp;
+                pp.dy = lastPageSp;
+//                    lastPageSp = (pageYposition - pageSpacingTot);
+                lastPageSp = pdfView.pdfFile.getPageSpacing(i, 1);
+                System.out.println(pp.dy + "*****" + (pdfView.pdfFile.getPageSpacing(i, 1) / 2) + "=====" + ((2 * i) - 1) + "-----" + i + " pageSpacingTot " + pageSpacingTot);
 
-                    pp.dy = (pageYposition - pageSpacingTot) - lastPageSp;
-                    lastPageSp = (pageYposition - pageSpacingTot);
-                    System.out.println(pp.dy + "*****" + (pdfView.pdfFile.getPageSpacing(i, 1) / 2) + "=====" + ((2 * i) - 1) + "-----" + i + " pageSpacingTot " + pageSpacingTot);
-
-                    pages.add(pp);
-                    pageYposition += (pageSize.getHeight() + (pdfView.getSpacingPx()));
+                pages.add(pp);
+                pageYposition += (pageSize.getHeight() + (pdfView.getSpacingPx()));
 
 
 //                    System.out.println(pageSize.getHeight() + "________HHHHHHHHHHHHHH_______________" + pdfView.pdfFile.getMaxPageHeight());
 
-                    getPdfEditsList().getPage(i).setHeight(pageSize.getHeight());
-                    getPdfEditsList().getPage(i).setWidth(pageSize.getWidth());
-                }
-
-
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        pdfView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-
-                    }
-                });
-
-                if (runAfterNsFileLoad != null) {
-                    runAfterNsFileLoad.run(Editor.this);
-                }
-            }
-        });
-//      pv.autoSpacing(true);
-
-
-        pv.onDrawAll(new OnDrawListener() {
-            @Override
-            public void onLayerDrawn(Canvas canvas, float pageWidth, float pageHeight, int displayedPage) {
-                if (dialog != null && dialog.isShowing()) {
-                    dialog.dismiss();
-                }
+                getPdfEditsList().getPage(i).setHeight(pageSize.getHeight());
+                getPdfEditsList().getPage(i).setWidth(pageSize.getWidth());
             }
 
-        });
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
+
+            requireActivity().runOnUiThread(() -> pdfView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)));
+
+            if (runAfterNsFileLoad != null) {
+                runAfterNsFileLoad.run(Editor.this);
             }
         });
+
+
+        pv.onDrawAll((canvas, pageWidth, pageHeight, displayedPage) -> {
+            if (dialog != null && dialog.isShowing()) {
+                dialog.dismiss();
+            }
+        });
+        getActivity().runOnUiThread(() -> {
+        });
+
+//        pv.enableSwipe(false).swipeHorizontal(false)
+//                .pageSnap(true)
+//                .autoSpacing(true)
+//                .pageFling(true).enableAnnotationRendering(false);
+
         return pv;
     }
 
 
     public void unClickAllButtons() {
         if (is_text_editor_clicked) {
+            assert textEditorView != null;
             textEditorView.saveText();
         }
 
@@ -484,9 +483,13 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
             imageView.save();
         }
 
+        assert drawingView != null;
         drawingView.setVisibility(View.GONE);
+        assert textEditorView != null;
         textEditorView.setVisibility(View.GONE);
+        assert highlighterView != null;
         highlighterView.setVisibility(View.GONE);
+        assert erasingView != null;
         erasingView.setVisibility(View.GONE);
 
 
@@ -494,11 +497,6 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
 
         is_text_editor_clicked = false;
-        boolean writebox_editor = Boolean.FALSE;
-        boolean shape_editor = false;
-        boolean button_drawingView_clicked = false;
-        boolean button_erasingView_clicked = false;
-        boolean button_highlighter_clicked = false;
         image_editor = false;
 
 
@@ -520,7 +518,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     }
 
     //    public void loadFile(@NonNull final NsFile file, final boolean editable) {
-    public void loadFile(@NonNull final Ticket file, final boolean editable) {
+    public void loadFile(@NonNull final Ticket file) {
 
         SELECTED_Ticket = file;
 //        CurrentFile = file.getFile(getContext());
@@ -534,20 +532,19 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 //                pdfView.findViewById(R.id.mb_freehand).performClick();
 
         } else {
-            runAfterFileLoad = new runAfterLoad() {
-                @Override
-                public void run(Editor editor) {
-                    System.out.println("run after load");
-                    PDFView.Configurator configurator = pdfView.fromFile(CurrentFile);
-                    System.out.println("_______ 4 ________");
-                    System.out.println(CurrentFile.getPath());
-                    System.out.println(CurrentFile.exists());
-                    _set_pdfview_options(configurator).load();
-                }
+            runAfterFileLoad = editor -> {
+                System.out.println("run after load");
+                PDFView.Configurator configurator = pdfView.fromFile(CurrentFile);
+                System.out.println("_______ 4 ________");
+                assert CurrentFile != null;
+                System.out.println(CurrentFile.getPath());
+                System.out.println(CurrentFile.exists());
+                _set_pdfview_options(configurator).load();
             };
         }
 
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
@@ -558,18 +555,18 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         if (requestCode == OPEN_FILE_TO_MERGE && resultCode == RESULT_OK && null != data) {
 
             Uri uri = data.getData();
-            new File(getContext().getFilesDir() + "/pdf.pdf").delete();
+            new File(requireContext().getFilesDir() + "/pdf.pdf").delete();
             try {
                 Files.copy(getInputStreamForVirtualFile(uri),
-                        Paths.get(getContext().getFilesDir() + "/pdf.pdf"));
+                        Paths.get(requireContext().getFilesDir() + "/pdf.pdf"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
             System.out.println("Path  = " + uri.getPath());
-            File pdf = new File(getContext().getFilesDir(), "/pdf.pdf");
+            File pdf = new File(requireContext().getFilesDir(), "/pdf.pdf");
 
-            Toast.makeText(getContext(), pdf.exists() + "", Toast.LENGTH_LONG).show();
+            Toast.makeText(requireContext(), pdf.exists() + "", Toast.LENGTH_LONG).show();
 
 
             marge(pdf);
@@ -582,7 +579,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
             System.out.println(selectedImage);
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
-            Cursor cursor = getActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+            Cursor cursor = requireActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
             cursor.moveToFirst();
 
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
@@ -615,7 +612,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     private InputStream getInputStreamForVirtualFile(Uri uri)
             throws IOException {
 
-        ContentResolver resolver = getContext().getContentResolver();
+        ContentResolver resolver = requireContext().getContentResolver();
 
         String[] openableMimeTypes = resolver.getStreamTypes(uri, "application/pdf");
 
@@ -665,9 +662,6 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        }
         webView = new WebView(context);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl("file:///android_asset/path_maker/pathmaker.html");
@@ -693,15 +687,6 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         return inflater.inflate(R.layout.pdf_editor, container, false);
     }
 
-    private void updateNavigationBarState(int actionId) {
-        Menu menu = bottomNavigationView.getMenu();
-
-        for (int i = 0, size = menu.size(); i < size; i++) {
-            MenuItem item = menu.getItem(i);
-            item.setChecked(item.getItemId() == actionId);
-
-        }
-    }
 
     private final ActivityResultLauncher<String> imageChooserActivityStoragePermissions = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(),
@@ -736,12 +721,13 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
                 public void onActivityResult(ActivityResult result) {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
+                        assert data != null;
                         Uri selectedImage = data.getData();
                         System.out.println("________________________________________________________________");
                         System.out.println(selectedImage);
                         String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
-                        Cursor cursor = getActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                        Cursor cursor = requireActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
                         cursor.moveToFirst();
 
                         int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
@@ -761,9 +747,12 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
     private void visibleOnly(View view, int i) {
 
+        assert drawingView != null;
         drawingView.setVisibility(View.GONE);
+        assert highlighterView != null;
         highlighterView.setVisibility(View.GONE);
         imageView.setVisibility(View.GONE);
+        assert textEditorView != null;
         textEditorView.setVisibility(View.GONE);
         if (view == null) {
             return;
@@ -776,7 +765,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
 
-        bottomNavigationView = view.findViewById(R.id.bottomNavigationView);
+        BottomNavigationView bottomNavigationView = view.findViewById(R.id.bottomNavigationView);
         bottomNavigationView.getMenu().getItem(0).setCheckable(false);
         bottomNavigationView.getMenu().getItem(1).setCheckable(false);
         bottomNavigationView.getMenu().getItem(2).setCheckable(false);
@@ -813,31 +802,28 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
                             menuBuilder.setOptionalIconsVisible(true);
                             MenuInflater inflater = popup.getMenuInflater();
                             inflater.inflate(R.menu.add_menu, popup.getMenu());
-                            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                                @Override
-                                public boolean onMenuItemClick(MenuItem item) {
-                                    switch (item.getItemId()) {
-                                        case id.add_btn_photo_gallery:
-                                            imageChooserActivityStoragePermissions.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
-                                            return true;
+                            popup.setOnMenuItemClickListener(item1 -> {
+                                switch (item1.getItemId()) {
+                                    case id.add_btn_photo_gallery:
+                                        imageChooserActivityStoragePermissions.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+                                        return true;
 
-                                        case id.add_btn_photo_camera:
-                                            cmeraActivityStoragePermissions.launch(Manifest.permission.CAMERA);
-                                            return true;
+                                    case id.add_btn_photo_camera:
+                                        cmeraActivityStoragePermissions.launch(Manifest.permission.CAMERA);
+                                        return true;
 
-                                        case id.add_btn_text:
-                                            visibleOnly(textEditorView, View.VISIBLE);
-                                            return true;
+                                    case id.add_btn_text:
+                                        visibleOnly(textEditorView, View.VISIBLE);
+                                        return true;
 
-                                        case id.add_btn_page:
-                                            addNewPage();
-                                            return true;
+                                    case id.add_btn_page:
+                                        addNewPage();
+                                        return true;
 
-                                    }
-
-
-                                    return false;
                                 }
+
+
+                                return false;
                             });
                             popup.show();
                             return false;
@@ -853,17 +839,14 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
         bottomNavigationView.setElevation(5);
 
-        pdfView = getActivity().findViewById(R.id.pdfView);
-
-        pdfViewPerant = getActivity().findViewById(R.id.pdfViewPerant);
+        pdfView = requireActivity().findViewById(R.id.pdfView);
+        btnNextPage = requireActivity().findViewById(R.id.btnNextPage);
+        btnPrevPage = requireActivity().findViewById(R.id.btnPrevPage);
+        pdfViewPerant = requireActivity().findViewById(R.id.pdfViewPerant);
 
 
         pdfViewPerant.bringToFront();
 
-        if (runAfterLoad != null) {
-            runAfterLoad.run(Editor.this);
-        }
-        boolean fragmentLoaded = true;
 
         if (onViewCreatedListner != null) {
             onViewCreatedListner.run(Editor.this);
@@ -892,15 +875,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
                     doc.close();
                     System.out.println("FILE SAVED");
 
-                    getActivity().runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-
-                            Editor.this.reloadFile();
-
-                        }
-                    });
+                    requireActivity().runOnUiThread(Editor.this::reloadFile);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -910,13 +885,20 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                dialog = new ProgressDialog(getContext());
-                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                dialog.setMessage("Adding New Page... ");
-                dialog.setTitle("Please wait...");
-                dialog.setIndeterminate(true);
-                dialog.setCanceledOnTouchOutside(false);
+
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
+                builder.setCancelable(false);
+                builder.setView(R.layout.layout_loading_dialog);
+                dialog = builder.create();
                 dialog.show();
+
+//                dialog = new ProgressDialog(getContext());
+//                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+//                dialog.setMessage("Adding New Page... ");
+//                dialog.setTitle("Please wait...");
+//                dialog.setIndeterminate(true);
+//                dialog.setCanceledOnTouchOutside(false);
+//                dialog.show();
             }
         }.execute();
 
@@ -934,6 +916,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
             reDraw(x.page);
 
 
+            assert drawingView != null;
             int visibility = drawingView.getVisibility();
             drawingView.setVisibility(View.VISIBLE);
             drawingView.invalidate();
@@ -988,19 +971,13 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         // This bundle will be passed to onCreate if the process is
         // killed and restarted.
 
-        savedInstanceState.putParcelable("x", new data(editsList, images, pdfEditsList, 1));
+        savedInstanceState.putParcelable("x", new data(editsList, images, pdfEditsList));
         System.out.println("_____________________________________________________onSaveInstanceState 1");
 
         // etc.
 
 
         savedInstanceState.putString("xx", "Welcome back to Android");
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
 
@@ -1030,7 +1007,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
                 new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "IMG_" + timeStamp + "_";
         File storageDir =
-                getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
 
         return File.createTempFile(
@@ -1045,7 +1022,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         System.out.println("openCameraIntent---------------------------");
         pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-        if (pictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+        if (pictureIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
             File photoFile = null;
             try {
                 photoFile = createImageFile();
@@ -1055,17 +1032,17 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
             }
             if (photoFile != null) {
                 System.out.println("-------------------3-----------------");
-                Uri photoURI = FileProvider.getUriForFile(getContext(), context.getApplicationContext().getPackageName() + ".provider", photoFile);
+                Uri photoURI = FileProvider.getUriForFile(requireContext(), context.getApplicationContext().getPackageName() + ".provider", photoFile);
                 pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
 
 
-                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     System.out.println("-------------------4-----------------");
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(Editor.this.getActivity(), Manifest.permission.CAMERA)) {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(Editor.this.requireActivity(), Manifest.permission.CAMERA)) {
                         System.out.println("-------------------6-----------------");
                     } else {
                         System.out.println("-------------------7-----------------");
-                        ActivityCompat.requestPermissions(Editor.this.getActivity(), new String[]{Manifest.permission.CAMERA}, 11);
+                        ActivityCompat.requestPermissions(Editor.this.requireActivity(), new String[]{Manifest.permission.CAMERA}, 11);
 
                     }
                 } else {
@@ -1078,72 +1055,6 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         } else {
             System.out.println("-------------------1-----------------");
         }
-    }
-
-    public void browsImages(final Context context) {
-
-        View gallerySelect = getLayoutInflater().inflate(R.layout.dialog_media_select, null);
-
-        final AlertDialog.Builder adb = new AlertDialog.Builder(Editor.this.getContext(), R.style.MyDialogTheme);
-
-        adb.setView(gallerySelect);
-
-
-        adb.setNegativeButton("Cancel", null);
-        adb.setTitle("Which one?");
-        final AlertDialog ad = adb.show();
-        Button nbutton = ad.getButton(DialogInterface.BUTTON_NEGATIVE);
-//        nbutton.setBackgroundColor(getResources().getColor(R.color.btn1));
-        nbutton.setBackgroundColor(ContextCompat.getColor(context, R.color.btn1));
-
-        gallerySelect.findViewById(R.id.cam).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openCameraIntent(context);
-                ad.dismiss();
-            }
-        });
-
-        gallerySelect.findViewById(R.id.gal).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                Editor.this.startActivityForResult(pickPhoto, RESULT_LOAD_IMAGE);
-
-                registerForActivityResult(
-                        new ActivityResultContracts.StartActivityForResult(),
-                        new ActivityResultCallback<ActivityResult>() {
-                            @Override
-                            public void onActivityResult(ActivityResult result) {
-                                if (result.getResultCode() == Activity.RESULT_OK) {
-                                    Intent data = result.getData();
-                                    Uri selectedImage = data.getData();
-                                    System.out.println("________________________________________________________________");
-                                    System.out.println(selectedImage);
-                                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
-
-                                    Cursor cursor = getActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-                                    cursor.moveToFirst();
-
-                                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                                    String picturePath = cursor.getString(columnIndex);
-                                    cursor.close();
-
-                                    BitmapFactory.Options options = new BitmapFactory.Options();
-                                    options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-                                    Bitmap bitmap1 = BitmapFactory.decodeFile(picturePath, options);
-                                    imageView.resetImageBox();
-                                    image_container.setBitmap(bitmap1);
-                                }
-                            }
-                        }).launch(pickPhoto);
-
-
-                ad.dismiss();
-            }
-        });
-
     }
 
 
@@ -1160,39 +1071,45 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     }
 
 
-    private void DrawBitmap(Canvas canvas) {
+    private void DrawBitmap(Canvas canvas, int pageId) {
 
 
-//        float dheight = (((canvas.getHeight() - pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight()))/2) * nthOdd(pdfView.getCurrentPage() + 1);
-        float dheight = (((canvas.getHeight() - pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight()))) * pdfView.getCurrentPage() * pdfView.getZoom();
-        dheight = pdfView.getCurrentPage() == 0 ? 0 : dheight;
+//        Paint paint = new Paint();
+//        paint.setColorFilter(new PorterDuffColorFilter(Color.argb(100, 255, 0, 0), PorterDuff.Mode.SRC_IN));
 
+        PAGE page = pages.get(pageId);
+        float w = (pdfView.getWidth() - page.getPageSize().getWidth()) / 2;
+        assert drawingView != null;
+        Bitmap bitMap = drawingView.getBitmap();
+        canvas.drawBitmap(bitMap, null, new RectF(w * pdfView.getZoom(), 0,
+                ((bitMap.getWidth() + w) * pdfView.getZoom()),
+                bitMap.getHeight() * pdfView.getZoom()), null);
 
-        canvas.drawBitmap(drawingView.getBitmap(), null, new RectF(0, 0,
-                drawingView.getBitmap().getWidth() * pdfView.getZoom(),
+//        canvas.drawBitmap(drawingView.getBitmap(), null, new RectF(0 , 0,
+//                ((drawingView.getBitmap().getWidth()  ) * pdfView.getZoom()),
+//                drawingView.getBitmap().getHeight() * pdfView.getZoom()), null);
+
+        canvas.drawBitmap(drawingView.getBitmap(), null, new RectF(w * pdfView.getZoom(), 0,
+                (drawingView.getBitmap().getWidth() + w) * pdfView.getZoom(),
                 drawingView.getBitmap().getHeight() * pdfView.getZoom()), null);
 
 //        System.out.println(pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight() + "___________________________________________");
     }
 
-    public void setOnViewCreated(OnViewCreatedListner onViewCreatedListner) {
-        this.onViewCreatedListner = onViewCreatedListner;
-    }
-
 
     public void addImage(long id, Bitmap b1) {
-        getImagesList().put(id, bitmapToFile(id, b1, String.valueOf(SELECTED_Ticket.id)));
+        getImagesList().put(id, bitmapToFile(id, b1));
     }
 
-    private File bitmapToFile(long id, Bitmap bitmap, String fileId) {
+    private File bitmapToFile(long id, Bitmap bitmap) {
 
 //        File direct = new File(Environment.getExternalStorageDirectory() + "/Documents/PdfEdits/" + fileId);
-        File dir = new File(getContext().getExternalFilesDir(null) + "/" + SELECTED_Ticket.id + "/images");
+        File dir = new File(requireContext().getExternalFilesDir(null) + "/" + SELECTED_Ticket.id + "/images");
         if (!dir.exists()) {
             dir.mkdirs();
         }
         File imageFile = new File(dir, id + ".png");
-        OutputStream os = null;
+        OutputStream os;
         try {
             os = new BufferedOutputStream(new FileOutputStream(imageFile));
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
@@ -1238,7 +1155,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
     @Override
     public void onLayerDrawn(Canvas canvas, float pageWidth, float pageHeight, int displayedPage) {
-        DrawBitmap(canvas);
+        DrawBitmap(canvas, displayedPage);
         reDraw(displayedPage);
     }
 
@@ -1246,12 +1163,6 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     public interface AfterSaveToServer {
         void run();
 
-        void onError(Exception e);
-    }
-
-    private interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 
     public interface runAfterLoad {
@@ -1267,15 +1178,10 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     }
 
     public interface OnPrint {
-        void run(Editor editor);
     }
 
     public interface runAfterFileLoad {
         void run(Editor editor);
-    }
-
-    public interface RunAfterEditorLoad {
-        void run();
     }
 
 

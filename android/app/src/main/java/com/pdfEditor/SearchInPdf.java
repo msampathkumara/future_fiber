@@ -39,10 +39,7 @@ class SearchInPdf {
 //        text = text.replaceAll(" ", "").toLowerCase();
         System.out.println(text);
         String data = text.substring(0, Math.min(text.length(), 4));// Get first 4 chars in text
-        if (data.equals("Type")) {// test if it's egal to the word I want
 
-//                break;
-        }
         y -= 10;
         System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzz____" + (System.currentTimeMillis() - x));
 //        }

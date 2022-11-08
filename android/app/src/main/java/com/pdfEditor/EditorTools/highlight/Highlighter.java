@@ -102,7 +102,7 @@ public class Highlighter extends FrameLayout {
         float x1 = event.getX();
         float y1 = event.getY();
         float zoom = pdfView.getZoom();
-        float sp = (((pdfView.pdfFile.getPageSpacing(pdfView.getCurrentPage(), zoom) / 2) * (2 * (pdfView.getCurrentPage() + 1) - 1)) / pdfView.pdfFile.getMaxPageHeight());
+        float sp = (((pdfView.pdfFile.getPageSpacing(pdfView.getCurrentPage(), zoom) / 2) * (2 * (pdfView.getCurrentPage() + 1) - 1)) / getCurrentPageHeight());
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -173,7 +173,7 @@ public class Highlighter extends FrameLayout {
         System.out.println("YYYYYYYY -- " + y + "**");
 
 
-        points.add(new editPoint(((x / zoom) / pdfView.pdfFile.getMaxPageWidth()), (((y / zoom) / pdfView.pdfFile.getMaxPageHeight())), false, startSp));
+        points.add(new editPoint(((x / zoom) / getCurrentPageWidth()), (((y / zoom) / getCurrentPageHeight())), false, startSp));
         firstY = y;
     }
 
@@ -225,7 +225,7 @@ public class Highlighter extends FrameLayout {
         mPath.lineTo(mX, mY);
         System.out.println("startSp = " + startSp + " sp =" + sp);
 
-        points.add(new editPoint(((x / zoom) / pdfView.pdfFile.getMaxPageWidth()), (((firstY / zoom) / pdfView.pdfFile.getMaxPageHeight())), false, startSp));
+        points.add(new editPoint(((x / zoom) / getCurrentPageWidth()), (((firstY / zoom) / getCurrentPageHeight())), false, startSp));
 
 
         circlePath.reset();
@@ -243,12 +243,16 @@ public class Highlighter extends FrameLayout {
 
         for (int i = 0; i < points.size(); i++) {
             editPoint editPoint = points.get(i);
-            editPoint.setX(editPoint.getX() + ((translateX) / (pdfView.pdfFile.getMaxPageWidth())));
-            editPoint.setY(editPoint.getY() + ((translateY) / (pdfView.pdfFile.getMaxPageHeight())) - (editPoint.sp));
+            editPoint.setX(editPoint.getX() + ((translateX) / (getCurrentPageWidth())));
+//            editPoint.setY(editPoint.getY() + ((translateY) / (getCurrentPageHeight())) - (editPoint.sp));
+            editPoint.setY(editPoint.getY() + ((translateY) / (getCurrentPageHeight())));
         }
 
-        float dheight = (getHeight() - pdfView.pdfFile.getMaxPageHeight()) / 2;
-        final xPath xpath = new xPath(new Path(mPath), p, translateX, translateY - dheight, pageNo, pdfView.pdfFile.getMaxPageWidth(), pdfView.pdfFile.getMaxPageHeight(), zoom);
+//        float dheight = (getHeight() - getCurrentPageHeight()) / 2;
+
+        float dheight = (((getHeight() - pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight())) / 2);
+
+        final xPath xpath = new xPath(new Path(mPath), p, translateX, translateY - dheight, pageNo, getCurrentPageWidth(), getCurrentPageHeight(), zoom);
 
         editor.editsList.add(xpath);
         mPath.reset();
@@ -276,7 +280,7 @@ public class Highlighter extends FrameLayout {
 
     public Bitmap getBitmap() {
         if (mBitmap == null) {
-            mBitmap = Bitmap.createBitmap((int) pdfView.pdfFile.getMaxPageWidth(), (int) pdfView.pdfFile.getMaxPageHeight(), Bitmap.Config.ARGB_8888);
+            mBitmap = Bitmap.createBitmap((int) getCurrentPageWidth(), (int) getCurrentPageHeight(), Bitmap.Config.ARGB_8888);
             mCanvas = new Canvas(mBitmap);
         }
         return mBitmap;
@@ -311,5 +315,13 @@ public class Highlighter extends FrameLayout {
             System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxx__ " + mScaleFactor);
             return false;
         }
+    }
+
+    private float getCurrentPageHeight() {
+        return pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight();
+    }
+
+    private float getCurrentPageWidth() {
+        return pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getWidth();
     }
 }

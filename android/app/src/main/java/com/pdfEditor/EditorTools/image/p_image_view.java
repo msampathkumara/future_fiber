@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Rect;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,15 +23,23 @@ import com.sampathkumara.northsails.smartwind.R;
 public class p_image_view extends RelativeLayout {
 
 
+    public p_image_view(Context context) {
+        super(context);
+    }
+
+    public p_image_view(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
     public static image_container shapeC;
     private static float Yposition;
     private static Bitmap mBitmap;
     private static Canvas mCanvas;
-    private final Editor editor;
+    private Editor editor;
     private final Rect rectf = new Rect();
-    private final PDFView pdfView;
+    private PDFView pdfView;
 
-    final RelativeLayout pane;
+    RelativeLayout pane;
 
     private int TEXT_X;
     private int TEXT_Y;
@@ -51,37 +60,21 @@ public class p_image_view extends RelativeLayout {
 //        ImageButton b_new = view.findViewById(R.id.b_new);
         ImageButton done = view.findViewById(R.id.done);
         ImageButton b_cancel = view.findViewById(R.id.b_cancel);
-        b_cancel.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                resetImageBox();
-                runAfterDone.run();
-            }
+        b_cancel.setOnClickListener(view1 -> {
+            resetImageBox();
+            runAfterDone.run();
         });
-        done.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                save();
-                runAfterDone.run();
-            }
+        done.setOnClickListener(view12 -> {
+            save();
+            runAfterDone.run();
         });
 
         resetImageBox();
 
         ImageButton b_rotate_left = findViewById(R.id.b_rotate_left);
-        b_rotate_left.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                shapeC.RotateBitmap(-90);
-            }
-        });
+        b_rotate_left.setOnClickListener(v -> shapeC.RotateBitmap(-90));
         ImageButton b_rotate_right = findViewById(R.id.b_rotate_right);
-        b_rotate_right.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                shapeC.RotateBitmap(90);
-            }
-        });
+        b_rotate_right.setOnClickListener(v -> shapeC.RotateBitmap(90));
 
 
     }
@@ -93,7 +86,7 @@ public class p_image_view extends RelativeLayout {
         mCanvas = new Canvas(mBitmap);
         float zoom = pdfView.getZoom();
         final float translateX = Math.abs(pdfView.getCurrentXOffset() / zoom);
-        final float translateY = Math.abs((pdfView.getCurrentYOffset() / zoom)) - (Yposition) + 34;
+        final float translateY = Math.abs((pdfView.getCurrentYOffset() / zoom)) - (Yposition);
 
         mCanvas.save();
 //        mCanvas.translate(translateX, translateY);
@@ -104,7 +97,7 @@ public class p_image_view extends RelativeLayout {
 
         float dheight = (((getHeight() - pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight())) / 2);
         final xImage xImage = new xImage(b, translateX, translateY - dheight, (TEXT_X / zoom), (TEXT_Y / zoom),
-                pageNo, pdfView.pdfFile.getMaxPageWidth(), pdfView.pdfFile.getMaxPageHeight(), zoom);
+                pageNo, getCurrentPageWidth(), getCurrentPageHeight(), zoom);
         editor.editsList.add(xImage);
 //        mCanvas.restore();
         shapeC.setVisibility(GONE);
@@ -113,11 +106,11 @@ public class p_image_view extends RelativeLayout {
 
         PdfEdit pdfEdit = new PdfEdit(PdfEdit.TYPE_IMAGE);
 //        pdfEdit.setImageBytes(ImageUtil.convert(b1));
-        pdfEdit.setRect_width((shapeC.getWidth() / zoom) / pdfView.pdfFile.getMaxPageWidth());
-        pdfEdit.setRect_height((shapeC.getHeight() / zoom) / pdfView.pdfFile.getMaxPageHeight());
+        pdfEdit.setRect_width((shapeC.getWidth() / zoom) / getCurrentPageWidth());
+        pdfEdit.setRect_height((shapeC.getHeight() / zoom) / getCurrentPageHeight());
 
-        pdfEdit.setPositionX((translateX + (TEXT_X / zoom)) / pdfView.pdfFile.getMaxPageWidth());
-        pdfEdit.setPositionY((translateY + (TEXT_Y / zoom) - sp) / pdfView.pdfFile.getMaxPageHeight());
+        pdfEdit.setPositionX((translateX + (TEXT_X / zoom)) / getCurrentPageWidth());
+        pdfEdit.setPositionY((translateY + (TEXT_Y / zoom) - sp) / getCurrentPageHeight());
         editor.getPdfEditsList().addEdit(pageNo, xImage.getId(), pdfEdit);
 
         editor.addImage(xImage.getId(), b1);
@@ -141,7 +134,9 @@ public class p_image_view extends RelativeLayout {
                     deltaX_ = (int) event.getX();
                     deltaY_ = (int) event.getY();
                     System.out.println("_____________________________________" + deltaX_ + "__" + deltaY_);
+                    view.performClick();
                     break;
+
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_POINTER_UP:
                     break;
@@ -178,16 +173,16 @@ public class p_image_view extends RelativeLayout {
 
     }
 
-    public void setEdited(boolean edited) {
-        editor.reDraw(pageNo);
-        invalidate();
-    }
+//    public void setEdited(boolean edited) {
+//        editor.reDraw(pageNo);
+//        invalidate();
+//    }
 
     public void reDraw(xImage kk) {
 
         mCanvas.save();
-        float x = pdfView.pdfFile.getMaxPageWidth() / (kk.getPageWidth());
-        float y = pdfView.pdfFile.getMaxPageHeight() / kk.getPageHeight();
+        float x = getCurrentPageWidth() / (kk.getPageWidth());
+        float y = getCurrentPageHeight() / kk.getPageHeight();
         x = x * (pdfView.getZoom() / kk.getZoom());
         y = y * (pdfView.getZoom() / kk.getZoom());
 
@@ -196,10 +191,16 @@ public class p_image_view extends RelativeLayout {
         scaleMatrix.setScale(x / pdfView.getZoom(), y / pdfView.getZoom(), 0, 0);
         scaleMatrix.postTranslate(kk.getCanvasX(), kk.getCanvasY());
 
-        float xp = (kk.translateX() / kk.getPageWidth()) * pdfView.pdfFile.getMaxPageWidth();
-        float yp = (kk.translateY() / kk.getPageHeight()) * pdfView.pdfFile.getMaxPageHeight();
+//        float xp = (kk.translateX() / kk.getPageWidth()) * getCurrentPageWidth();
+//        float yp = (kk.translateY() / kk.getPageHeight()) * getCurrentPageHeight();
 
-        mCanvas.translate(xp, (yp - Yposition + (page.dy * pdfView.getCurrentPage())));
+        float xp = (kk.translateX() / kk.getPageWidth()) * getCurrentPageWidth();
+        float yp = ((kk.translateY() / kk.getPageHeight()) * getCurrentPageHeight());
+
+        float h = (getHeight() - kk.getPageHeight()) / 2;
+
+//        mCanvas.translate(xp, (yp - Yposition + (page.dy * pdfView.getCurrentPage())));
+        mCanvas.translate(xp, (yp + h));
 
         mCanvas.drawBitmap(kk.getBitmap(), scaleMatrix, null);
 
@@ -207,6 +208,13 @@ public class p_image_view extends RelativeLayout {
         invalidate();
     }
 
+    private float getCurrentPageWidth() {
+        return pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getWidth();
+    }
+
+    private float getCurrentPageHeight() {
+        return pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight();
+    }
 
 }
  

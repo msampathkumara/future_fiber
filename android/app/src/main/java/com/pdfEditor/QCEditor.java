@@ -8,17 +8,14 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.Dialogs.LoadingDialog;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GetTokenResult;
 import com.pdfEditor.EditorTools.data;
 import com.sampathkumara.northsails.smartwind.R;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
@@ -32,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 
 public class QCEditor extends AppCompatActivity {
@@ -57,18 +55,8 @@ public class QCEditor extends AppCompatActivity {
         setContentView(R.layout.activity_main_editor);
 
 
-        findViewById(R.id.doneButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
-        findViewById(R.id.closeButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+        findViewById(R.id.doneButton).setOnClickListener(view -> onBackPressed());
+        findViewById(R.id.closeButton).setOnClickListener(view -> finish());
 
 
         FILE_PATH = createNewPDFFile();
@@ -89,6 +77,7 @@ public class QCEditor extends AppCompatActivity {
         }
 
 
+        assert SELECTED_FILE != null;
         SELECTED_FILE.ticketFile = new File(FILE_PATH);
         loadEditor();
         loadFile(SELECTED_FILE.ticketFile);
@@ -118,19 +107,13 @@ public class QCEditor extends AppCompatActivity {
         pdfEditor = new Editor();
 
         getSupportFragmentManager().beginTransaction().replace(R.id.editorPerant, pdfEditor).commit();
-        pdfEditor.loadFile(SELECTED_FILE, true);
+        pdfEditor.loadFile(SELECTED_FILE);
 
     }
 
     private void loadFile(File file) {
         FILE_NAME = file.getName();
-        pdfEditor.setRunAfterNsFileLoad(new Editor.runAfterFileLoad() {
-            @Override
-            public void run(Editor editor) {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-
-            }
-        });
+        pdfEditor.setRunAfterNsFileLoad(editor -> setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR));
 
 
         pdfEditor.loadFile(file);
@@ -139,7 +122,7 @@ public class QCEditor extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putParcelable("x", new data(pdfEditor.editsList, pdfEditor.getImagesList(), pdfEditor.getPdfEditsList(), 1));
+        savedInstanceState.putParcelable("x", new data(pdfEditor.editsList, pdfEditor.getImagesList(), pdfEditor.getPdfEditsList()));
         System.out.println("_____________________________________________________onSaveInstanceState 3");
         savedInstanceState.putString("xx", "Welcome back to Android");
     }
@@ -274,34 +257,14 @@ public class QCEditor extends AppCompatActivity {
                     @Override
                     public void onError(Exception exception) {
                         exception.printStackTrace();
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                loadingDialog.showRetry(exception.getLocalizedMessage(), new LoadingDialog.OnReteyClickCallBack() {
-                                    @Override
-                                    public void onClick() {
-                                        uploadPdfEdits(runAfterUpload, context);
-                                    }
-                                });
-                            }
-                        });
+                        runOnUiThread(() -> loadingDialog.showRetry(exception.getLocalizedMessage(), () -> uploadPdfEdits(runAfterUpload, context)));
                     }
                 });
             }
 
             @Override
             public void error(Exception exception) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadingDialog.showRetry(exception.getLocalizedMessage(), new LoadingDialog.OnReteyClickCallBack() {
-                            @Override
-                            public void onClick() {
-                                uploadPdfEdits(runAfterUpload, context);
-                            }
-                        });
-                    }
-                });
+                runOnUiThread(() -> loadingDialog.showRetry(exception.getLocalizedMessage(), () -> uploadPdfEdits(runAfterUpload, context)));
             }
 
 
@@ -313,47 +276,44 @@ public class QCEditor extends AppCompatActivity {
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
-        user.getIdToken(true).addOnSuccessListener(new OnSuccessListener<GetTokenResult>() {
-            @Override
-            public void onSuccess(@NonNull GetTokenResult getTokenResult) {
-                System.out.println("getTokenResult.getToken()");
-                System.out.println(getTokenResult.getToken());
+        assert user != null;
+        user.getIdToken(true).addOnSuccessListener(getTokenResult -> {
+            System.out.println("getTokenResult.getToken()");
+            System.out.println(getTokenResult.getToken());
 
-                try {
+            try {
 
-                    String charset = "UTF-8";
+                String charset = "UTF-8";
 
 
-                    MultipartUtility multipart = new MultipartUtility(requestURL, charset, context, getTokenResult.getToken());
+                MultipartUtility multipart = new MultipartUtility(requestURL, charset, context, getTokenResult.getToken());
 
-                    int xx = 0;
-                    for (String key : sourceFiles.keySet()) {
-                        for (File f : sourceFiles.get(key)) {
-                            multipart.addFilePart("image" + xx++, f);
-                        }
+                int xx = 0;
+                for (String key : sourceFiles.keySet()) {
+                    for (File f : Objects.requireNonNull(sourceFiles.get(key))) {
+                        multipart.addFilePart("image" + xx++, f);
                     }
-
-                    for (String key : keyvalues.keySet()) {
-                        multipart.addFormField(key, keyvalues.get(key));
-                    }
-
-                    List<String> response = multipart.finish();
-
-                    Log.v("rht", "SERVER REPLIED:");
-
-                    for (String line : response) {
-//                Log.v("rht", "Line : " + line);
-                        System.out.println("____" + line);
-                    }
-
-
-                    runAfterUpload.run();
-
-                } catch (Exception e) {
-                    runAfterUpload.onError(e);
                 }
-            }
 
+                for (String key : keyvalues.keySet()) {
+                    multipart.addFormField(key, keyvalues.get(key));
+                }
+
+                List<String> response = multipart.finish();
+
+                Log.v("rht", "SERVER REPLIED:");
+
+                for (String line : response) {
+//                Log.v("rht", "Line : " + line);
+                    System.out.println("____" + line);
+                }
+
+
+                runAfterUpload.run();
+
+            } catch (Exception e) {
+                runAfterUpload.onError(e);
+            }
         });
 
 

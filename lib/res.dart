@@ -21,4 +21,5 @@ class Res {
   static const String user = "assets/images/user.png";
   static const String userPlaceholder = "assets/images/userPlaceholder.jpg";
   static const String x = "assets/x.pdf";
+  static const String pdf = "assets/pdf.pdf";
 }

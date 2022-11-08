@@ -2,7 +2,6 @@ package com.pdfEditor.EditorTools;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
@@ -28,36 +27,28 @@ public class ColorSelector extends LinearLayout {
 
     public ColorSelector(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init(context, attrs);
+        init(context);
     }
 
-    private void init(Context context, AttributeSet attrs) {
-        inflate(context, R.layout.color_selector, this);  
+    private void init(Context context) {
+        inflate(context, R.layout.color_selector, this);
 
-        OnClickListener onColorSelect = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int[] x = new int[]{R.id.b_color_blue, R.id.b_color_green, R.id.b_color_orange, R.id.b_color_red, R.id.b_color_yellow};
+        OnClickListener onColorSelect = v -> {
+            int[] x = new int[]{R.id.b_color_blue, R.id.b_color_green, R.id.b_color_orange, R.id.b_color_red, R.id.b_color_yellow};
 
-                for (int xx : x) {
-                    ImageButton btn = findViewById(xx);
-                    btn.setImageResource(R.drawable.transparent);
-                    if (xx == v.getId()) {
-                        btn.setImageResource(R.drawable.ring);
-                        onColorSelectListener.OnColorSelect(btn.getBackgroundTintList().getDefaultColor());
-                    }
+            for (int xx : x) {
+                ImageButton btn = findViewById(xx);
+                btn.setImageResource(R.drawable.transparent);
+                if (xx == v.getId()) {
+                    btn.setImageResource(R.drawable.ring);
+                    onColorSelectListener.OnColorSelect(btn.getBackgroundTintList().getDefaultColor());
                 }
-                if (v.getId() == R.id.color) {
-                    ColorPickerDialog colorPickerDialog = ColorPickerDialog.createColorPickerDialog(getContext(), R.style.CustomColorPicker);
-                    colorPickerDialog.setOnColorPickedListener(new ColorPickerDialog.OnColorPickedListener() {
-                        @Override
-                        public void onColorPicked(int color, String hexVal) {
-                            onColorSelectListener.OnColorSelect(color);
-                        }
-                    });
-                    colorPickerDialog.show();
-                    colorPickerDialog.findViewById(R.id.hexVal).setVisibility(GONE);
-                }
+            }
+            if (v.getId() == R.id.color) {
+                ColorPickerDialog colorPickerDialog = ColorPickerDialog.createColorPickerDialog(getContext(), R.style.CustomColorPicker);
+                colorPickerDialog.setOnColorPickedListener((color, hexVal) -> onColorSelectListener.OnColorSelect(color));
+                colorPickerDialog.show();
+                colorPickerDialog.findViewById(R.id.hexVal).setVisibility(GONE);
             }
         };
 

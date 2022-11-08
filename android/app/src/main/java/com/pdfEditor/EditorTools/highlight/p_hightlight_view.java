@@ -56,32 +56,26 @@ public class p_hightlight_view extends FrameLayout {
         });
         seekBar.setProgress(15);
 
-        OnClickListener onColorSelect = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int[] x = new int[]{R.id.b_color_blue, R.id.b_color_green, R.id.b_color_orange, R.id.b_color_red, R.id.b_color_yellow};
+        OnClickListener onColorSelect = v -> {
+            int[] x = new int[]{R.id.b_color_blue, R.id.b_color_green, R.id.b_color_orange, R.id.b_color_red, R.id.b_color_yellow};
 
-                for (int xx : x) {
-                    ImageButton btn = findViewById(xx);
-                    btn.setImageResource(R.drawable.transparent);
-                    if (xx == v.getId()) {
-                        btn.setImageResource(R.drawable.ring);
-                        highlighter.setColor(getTransparentColor(btn.getBackgroundTintList().getDefaultColor()));
-                    }
+            for (int xx : x) {
+                ImageButton btn = findViewById(xx);
+                btn.setImageResource(R.drawable.transparent);
+                if (xx == v.getId()) {
+                    btn.setImageResource(R.drawable.ring);
+                    highlighter.setColor(getTransparentColor(btn.getBackgroundTintList().getDefaultColor()));
                 }
-                if (v.getId() == R.id.color) {
-                    ColorPickerDialog colorPickerDialog = ColorPickerDialog.createColorPickerDialog(getContext(), R.style.CustomColorPicker);
-                    colorPickerDialog.setOnColorPickedListener(new ColorPickerDialog.OnColorPickedListener() {
-                        @Override
-                        public void onColorPicked(int color, String hexVal) {
-                            System.out.println("Got color: " + color);
-                            System.out.println("Got color in hex form: " + hexVal);
-                            highlighter.setColor(color);
-                        }
-                    });
-                    colorPickerDialog.show();
-                    colorPickerDialog.findViewById(R.id.hexVal).setVisibility(GONE);
-                }
+            }
+            if (v.getId() == R.id.color) {
+                ColorPickerDialog colorPickerDialog = ColorPickerDialog.createColorPickerDialog(getContext(), R.style.CustomColorPicker);
+                colorPickerDialog.setOnColorPickedListener((color, hexVal) -> {
+                    System.out.println("Got color: " + color);
+                    System.out.println("Got color in hex form: " + hexVal);
+                    highlighter.setColor(color);
+                });
+                colorPickerDialog.show();
+                colorPickerDialog.findViewById(R.id.hexVal).setVisibility(GONE);
             }
         };
 
@@ -131,9 +125,7 @@ public class p_hightlight_view extends FrameLayout {
         highlighter.setPage(page);
     }
 
-    public void setEdited(boolean edited) {
 
-    }
 
 
 }

@@ -5,7 +5,7 @@ public class editPoint {
 
     float x;
     float y;
-    boolean curve = false;
+    boolean curve;
     public float sp = 0;
 
     public editPoint(float x, float y, boolean curve) {
