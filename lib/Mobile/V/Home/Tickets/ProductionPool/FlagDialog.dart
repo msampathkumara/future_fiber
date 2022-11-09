@@ -73,7 +73,8 @@ class _FlagDialogNewState extends State<FlagDialogNew> {
                           toolbarHeight: 100,
                           title: ListTile(
                               leading: CircleAvatar(backgroundColor: Colors.white, child: icon),
-                              title: Text(isFlaged ? removeTitle : addTitle, textScaleFactor: 1, style: const TextStyle(color: Colors.white)))
+                              title: Text(widget.editable ? (isFlaged ? removeTitle : addTitle) : addTitle.replaceAll("Set", ""),
+                                  textScaleFactor: 1, style: const TextStyle(color: Colors.white)))
                           // actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.info))]
                           ),
                       body: ListView.separated(

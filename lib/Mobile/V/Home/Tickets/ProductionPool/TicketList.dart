@@ -7,7 +7,6 @@ import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/hive.dart';
-import 'package:smartwind/Mobile/V/Widgets/FlagDialog.dart';
 import 'package:smartwind/Mobile/V/Widgets/SearchBar.dart';
 import 'package:smartwind/ns_icons_icons.dart';
 
@@ -18,6 +17,7 @@ import '../../../../../globals.dart';
 import '../../../Widgets/NoResultFoundMsg.dart';
 import '../TicketInfo/TicketChatView.dart';
 import '../TicketInfo/TicketInfo.dart';
+import 'FlagDialog.dart';
 import 'TicketListOptions.dart';
 
 class TicketList extends StatefulWidget {
@@ -524,14 +524,16 @@ class TicketTile extends StatelessWidget {
                     IconButton(
                       icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.stop, color: Colors.black)),
                       onPressed: () {
-                        FlagDialog().showFlagView(context, ticket, TicketFlagTypes.HOLD);
+                        // FlagDialog().showFlagView(context, ticket, TicketFlagTypes.HOLD);
+                        FlagDialogNew(ticket, TicketFlagTypes.HOLD, editable: false).show(context);
                       },
                     ),
                   if (ticket.isGr == 1)
                     IconButton(
                       icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)),
                       onPressed: () {
-                        FlagDialog().showFlagView(context, ticket, TicketFlagTypes.GR);
+                        // FlagDialog().showFlagView(context, ticket, TicketFlagTypes.GR);
+                        FlagDialogNew(ticket, TicketFlagTypes.GR, editable: false).show(context);
                       },
                     ),
                   if (ticket.isSk == 1)
@@ -547,13 +549,15 @@ class TicketTile extends StatelessWidget {
                     IconButton(
                         icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent)),
                         onPressed: () {
-                          FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RUSH);
+                          // FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RUSH);
+                          FlagDialogNew(ticket, TicketFlagTypes.RUSH, editable: false).show(context);
                         }),
                   if (ticket.isRed == 1)
                     IconButton(
                       icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)),
                       onPressed: () {
-                        FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RED);
+                        // FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RED);
+                        FlagDialogNew(ticket, TicketFlagTypes.RED, editable: false).show(context);
                       },
                     ),
                   if (ticket.isQa == 1)

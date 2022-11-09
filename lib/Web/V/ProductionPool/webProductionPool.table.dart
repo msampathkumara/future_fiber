@@ -206,10 +206,7 @@ class DessertDataSource extends DataTableSource {
           direction: Axis.vertical,
           children: [TextMenu(child: Text((ticket.mo ?? ticket.oe) ?? "")), TextMenu(child: Text((ticket.oe) ?? "", style: const TextStyle(color: Colors.red, fontSize: 12)))],
         )),
-        DataCell(Wrap(
-          direction: Axis.vertical,
-          children: [Text(ticket.production ?? '-'), Text(ticket.atSection, style: const TextStyle(color: Colors.red, fontSize: 12))],
-        )),
+        DataCell(Wrap(direction: Axis.vertical, children: [Text(ticket.production ?? '-'), Text(ticket.atSection, style: const TextStyle(color: Colors.red, fontSize: 12))])),
         DataCell(Text("${ticket.progress}%")),
         DataCell(Wrap(
           direction: Axis.vertical,

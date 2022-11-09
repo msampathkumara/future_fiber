@@ -98,7 +98,6 @@ class MainActivity : FlutterActivity() {
 
 
                     val i = Intent(this, QCEditor::class.java)
-//                    i.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                     i.putExtra("ticket", ticket)
                     i.putExtra("qc", qc)
                     i.putExtra("serverUrl", serverUrl)

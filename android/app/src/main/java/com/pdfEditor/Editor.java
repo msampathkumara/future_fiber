@@ -463,10 +463,6 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         getActivity().runOnUiThread(() -> {
         });
 
-//        pv.enableSwipe(false).swipeHorizontal(false)
-//                .pageSnap(true)
-//                .autoSpacing(true)
-//                .pageFling(true).enableAnnotationRendering(false);
 
         return pv;
     }

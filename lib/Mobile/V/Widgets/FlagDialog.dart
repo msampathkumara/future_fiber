@@ -58,7 +58,7 @@ class _FlagDialogState extends State<FlagDialog> {
         break;
     }
 
-    TicketFlag ticketFlag = TicketFlag.fromJson({});
+    TicketFlag? ticketFlag;
     double w = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -71,20 +71,17 @@ class _FlagDialogState extends State<FlagDialog> {
                 alignment: Alignment.topLeft,
                 child: Padding(
                     padding: const EdgeInsets.only(bottom: 8.0, top: 8),
-                    child: Text(ticketFlag.flaged == 1 ? "Flag Added" : "Flag Removed", style: const TextStyle(fontWeight: FontWeight.bold)))),
-            Text(ticketFlag.comment),
+                    child: Text(ticketFlag?.flaged == 1 ? "Flag Added" : "Flag Removed", style: const TextStyle(fontWeight: FontWeight.bold)))),
+            Text(ticketFlag?.comment ?? ''),
             const Divider(),
           ]),
           subtitle: SizedBox(
             width: double.infinity,
             child: Row(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 4.0),
-                  child: UserButton(nsUserId: ticketFlag.user, imageRadius: 16),
-                ),
+                Padding(padding: const EdgeInsets.only(bottom: 4.0), child: UserButton(nsUserId: ticketFlag?.user, imageRadius: 16)),
                 const Spacer(),
-                Text(ticketFlag.getDateTime(), style: const TextStyle(color: Colors.blue)),
+                Text(ticketFlag?.getDateTime(), style: const TextStyle(color: Colors.blue)),
               ],
             ),
           ),
@@ -114,9 +111,7 @@ class FlagDialog1 {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          content: SingleChildScrollView(
-            child: ListBody(children: [Text(text, textScaleFactor: 1.2)]),
-          ),
+          content: SingleChildScrollView(child: ListBody(children: [Text(text, textScaleFactor: 1.2)])),
           actions: <Widget>[
             TextButton(
               child: const Text('Cancel'),
@@ -200,20 +195,6 @@ class FlagDialog1 {
                           itemBuilder: (context, i) {
                             TicketFlag ticketFlag = list[i];
                             return Card(
-                              // child: ListTile(
-                              //   title: Text(tf.isFlaged ? "Flag Added" : "Flag Removed"),
-                              //   subtitle: Column(
-                              //     crossAxisAlignment: CrossAxisAlignment.start,
-                              //     children: [
-                              //       Padding(padding: const EdgeInsets.all(8.0), child: Text(tf.comment, textScaleFactor: 1.2, style: TextStyle(color: Colors.black))),
-                              //       Align(alignment: Alignment.bottomRight, child: Text(tf.getDateTime()))
-                              //     ],
-                              //   ),
-                              //   leading: UserImage(nsUserId: tf.user),
-                              //   // leading: CircleAvatar(
-                              //   //     radius: 24.0, backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/60012991?v=4"), backgroundColor: Colors.transparent),
-                              // ),
-
                               child: ListTile(
                                 title: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
                                   Align(

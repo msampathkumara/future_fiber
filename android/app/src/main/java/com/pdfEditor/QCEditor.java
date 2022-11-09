@@ -21,6 +21,7 @@ import com.sampathkumara.northsails.smartwind.R;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
 import com.tom_roush.pdfbox.pdmodel.PDPage;
 import com.tom_roush.pdfbox.pdmodel.PDPageContentStream;
+import com.tom_roush.pdfbox.pdmodel.common.PDRectangle;
 
 import org.json.JSONObject;
 
@@ -86,7 +87,7 @@ public class QCEditor extends AppCompatActivity {
 
     private String createNewPDFFile() {
         PDDocument doc = new PDDocument();
-        PDPage page = new PDPage();
+        PDPage page = new PDPage(PDRectangle.A4);
         doc.addPage(page);
         PDPageContentStream contentStream;
         String path = "";
