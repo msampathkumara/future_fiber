@@ -50,8 +50,7 @@ class _TicketPrintListState extends State<TicketPrintList> {
               children: [Text(ticket.mo ?? ''), Text(ticket.oe ?? '')],
             )),
         body: TicketPrintListTable(
-            onInit: (TicketPrintDataSourceAsync dataSource) {
-            },
+            onInit: (TicketPrintDataSourceAsync dataSource) {},
             onRequestData: (int page, int startingAt, int count, String sortedBy, bool sortedAsc) {
               return getData();
             },

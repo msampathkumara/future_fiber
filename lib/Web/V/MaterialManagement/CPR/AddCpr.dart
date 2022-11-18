@@ -61,22 +61,6 @@ class _AddCprState extends State<AddCpr> {
   @override
   Widget build(BuildContext context) {
     return IfWeb(elseIf: getUi(), child: DialogView(child: getWebUi()));
-    // return MaterialApp(
-    //     theme: ThemeData(
-    //         textTheme: Theme.of(context).textTheme.apply(),
-    //         inputDecorationTheme: InputDecorationTheme(
-    //             border: const OutlineInputBorder(),
-    //             contentPadding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-    //             labelStyle: const TextStyle(fontSize: 12, decorationColor: Colors.red),
-    //             focusedBorder: OutlineInputBorder(
-    //               borderSide: const BorderSide(),
-    //               borderRadius: BorderRadius.circular(2.0),
-    //             ),
-    //             enabledBorder: OutlineInputBorder(
-    //               borderSide: BorderSide(color: Colors.blueGrey.shade50, width: 1.0),
-    //               borderRadius: BorderRadius.circular(4.0),
-    //             ))),
-    //     home: IfWeb(elseIf: getUi(), child: DialogView(child: getWebUi())));
   }
 
   var titleTheme = const TextStyle(fontSize: 12, color: Colors.grey);

@@ -6,21 +6,21 @@ import 'package:smartwind/C/Api.dart';
 import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/Enums.dart';
 
-class AddTicket extends StatefulWidget {
+class AddTickets extends StatefulWidget {
   final bool standard;
   final Production? production;
 
-  const AddTicket({Key? key, this.standard = false, this.production}) : super(key: key);
+  const AddTickets({Key? key, this.standard = false, this.production}) : super(key: key);
 
   @override
-  State<AddTicket> createState() => _AddTicketState();
+  State<AddTickets> createState() => _AddTicketsState();
 
-  void show(context) {
-    kIsWeb ? showDialog(context: context, builder: (_) => this) : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
+  Future show(context) {
+    return kIsWeb ? showDialog(context: context, builder: (_) => this) : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
   }
 }
 
-class _AddTicketState extends State<AddTicket> {
+class _AddTicketsState extends State<AddTickets> {
   late DropzoneViewController controller1;
   late DropzoneViewController controller2;
   String message1 = 'Drop something here';

@@ -245,19 +245,19 @@ class NsUser extends HiveClass {
   Future removeNfcCard(context, {required onDone}) async {
     return await Api.post(EndPoints.users_removeNfcCard, {'userId': id})
         .then((res) {
-      hasNfc = 0;
-      save();
-      onDone();
-    })
+          hasNfc = 0;
+          save();
+          onDone();
+        })
         .whenComplete(() {})
         .catchError((err) async {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(err.toString()),
-          action: SnackBarAction(
-              label: 'Retry',
-              onPressed: () async {
-                return await removeNfcCard(context, onDone: onDone);
-              })));
-    });
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(err.toString()),
+              action: SnackBarAction(
+                  label: 'Retry',
+                  onPressed: () async {
+                    return await removeNfcCard(context, onDone: onDone);
+                  })));
+        });
   }
 }

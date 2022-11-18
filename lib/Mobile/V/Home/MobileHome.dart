@@ -23,6 +23,7 @@ import 'package:smartwind/Mobile/V/Home/MaterialManagement/MaterialManagement.da
 import 'package:smartwind/Mobile/V/Home/Tickets/ProductionPool/ProductionPool.dart';
 import 'package:smartwind/Mobile/V/Login/SectionSelector.dart';
 import 'package:smartwind/Mobile/V/Widgets/ErrorMessageView.dart';
+import 'package:smartwind/V/PermissionMessage.dart';
 import 'package:smartwind/res.dart';
 
 import '../../../C/Api.dart';
@@ -37,18 +38,18 @@ import 'Tickets/QC/QCList.dart';
 import 'Tickets/StandardFiles/StandardFiles.dart';
 import 'UserManager/UserManager.dart';
 
-class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+class MobileHome extends StatefulWidget {
+  const MobileHome({Key? key}) : super(key: key);
 
   @override
-  _HomeState createState() {
-    return _HomeState();
+  _MobileHomeState createState() {
+    return _MobileHomeState();
   }
 }
 
 enum MenuItems { logout, dbReload, changeSection, cpanel, deleteDownloadedFiles }
 
-class _HomeState extends State<Home> {
+class _MobileHomeState extends State<MobileHome> {
   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   NsUser? nsUser;
@@ -114,18 +115,18 @@ class _HomeState extends State<Home> {
             mainAxisSize: MainAxisSize.min,
             children: const [CircularProgressIndicator(), Padding(padding: EdgeInsets.all(16.0), child: Text("Loading", textScaleFactor: 1))],
           ))
-        : Scaffold(
-            appBar: AppBar(
-                backgroundColor: Colors.white,
-                elevation: 0,
-                toolbarHeight: 100,
-                title: Padding(
-                  padding: const EdgeInsets.only(top: 24.0),
-                  child: ListTile(
-                    leading: UserImage(nsUser: nsUser, radius: 24),
-                    title: Text(nsUser!.name, textScaleFactor: 1.2),
-                    subtitle:
-                        AppUser.getSelectedSection() != null ? Text("${AppUser.getSelectedSection()?.sectionTitle} @ ${AppUser.getSelectedSection()?.factory}") : const Text(""),
+        : (AppUser.havePermissionFor(NsPermissions.MAIN_TAB))
+            ? Scaffold(
+                appBar: AppBar(
+                    backgroundColor: Colors.white,
+                    elevation: 0,
+                    toolbarHeight: 100,
+                    title: Padding(
+                      padding: const EdgeInsets.only(top: 24.0),
+                      child: ListTile(
+                        leading: UserImage(nsUser: nsUser, radius: 24),
+                        title: Text(nsUser!.name, textScaleFactor: 1.2),
+                        subtitle: AppUser.getSelectedSection() != null ? Text("${AppUser.getSelectedSection()?.sectionTitle} @ ${AppUser.getSelectedSection()?.factory}") : const Text(""),
                     trailing: _currentUserOperionMenu(),
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => CurrentUserDetails(nsUser!)));
@@ -220,17 +221,18 @@ class _HomeState extends State<Home> {
                           child: Center(
                               child: OpenContainer(
                                   closedElevation: 0,
-                                  closedColor: Colors.transparent,
-                                  transitionDuration: const Duration(milliseconds: 500),
-                                  openBuilder: (BuildContext context, void Function({Object? returnValue}) action) {
-                                    return const About();
-                                  },
-                                  closedBuilder: (BuildContext context, void Function() action) {
-                                    return Chip(
-                                        avatar: CircleAvatar(backgroundColor: Colors.grey.shade800, child: Image.asset(Res.north_sails_logox50, width: 50)),
-                                        label: Text('NS Smart Wind $appVersion ${Server.local ? " | Local Server" : " |  Online"}'));
-                                  }))))
-                ])));
+                                      closedColor: Colors.transparent,
+                                      transitionDuration: const Duration(milliseconds: 500),
+                                      openBuilder: (BuildContext context, void Function({Object? returnValue}) action) {
+                                        return const About();
+                                      },
+                                      closedBuilder: (BuildContext context, void Function() action) {
+                                        return Chip(
+                                            avatar: CircleAvatar(backgroundColor: Colors.grey.shade800, child: Image.asset(Res.north_sails_logox50, width: 50)),
+                                            label: Text('NS Smart Wind $appVersion ${Server.local ? " | Local Server" : " |  Online"}'));
+                                      }))))
+                    ])))
+            : const PermissionMessage();
   }
 
   void show(Widget window) {
@@ -273,7 +275,7 @@ class _HomeState extends State<Home> {
               context,
               MaterialPageRoute(
                   builder: (context) => UserSectionSelector(nsUser!, (Section section) {
-                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const Home()), (Route<dynamic> route) => false);
+                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MobileHome()), (Route<dynamic> route) => false);
                       })));
         } else if (result == MenuItems.cpanel) {
           Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminCpanel()));

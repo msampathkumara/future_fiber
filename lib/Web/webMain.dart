@@ -20,6 +20,7 @@ class WebApp extends StatelessWidget {
     return MaterialApp(
       title: 'Smart Wind',
       scaffoldMessengerKey: snackBarKey,
+      navigatorKey: navigatorKey,
       theme: ThemeData(
         iconTheme: const IconThemeData(size: 16.0),
         primarySwatch: Colors.green,

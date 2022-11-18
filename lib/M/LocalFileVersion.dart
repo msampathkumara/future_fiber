@@ -23,7 +23,7 @@ class LocalFileVersion extends HiveClass {
 
   Map<String, dynamic> toJson() => _$LocalFileVersionToJson(this);
 
-  LocalFileVersion(  this.ticketId, this.version, this.type) ;
+  LocalFileVersion(this.ticketId, this.version, this.type);
 }
 
 enum TicketTypes { Standard, Completed, Ticket }

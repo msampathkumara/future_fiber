@@ -58,7 +58,7 @@ class _UserPermissionsState extends State<UserPermissions> {
     return isLoading
         ? const Scaffold(body: Center(child: CircularProgressIndicator()))
         : Scaffold(
-      appBar: AppBar(
+            appBar: AppBar(
                 title: const Text("Set User Permissions"),
                 actions: [
                   if (AppUser.getUser()?.id == 1)

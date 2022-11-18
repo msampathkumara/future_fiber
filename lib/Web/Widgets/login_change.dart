@@ -50,7 +50,7 @@ class _LoginChangeWidgetState extends State<LoginChangeWidget> {
     return loading
         ? const Center(child: CircularProgressIndicator(color: Colors.redAccent))
         : ((FirebaseAuth.instance.currentUser != null && App.currentUser != null))
-        ? widget.child
-        : widget.loginChild;
+            ? widget.child
+            : widget.loginChild;
   }
 }

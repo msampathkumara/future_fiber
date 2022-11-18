@@ -63,19 +63,22 @@ class _WebCprState extends State<WebCpr> {
     return Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.miniStartFloat,
         floatingActionButton: (AppUser.havePermissionFor(NsPermissions.CPR_ADD_CPR))
-            ? FloatingActionButton.small(
-                onPressed: () async {
-                  await const TicketSelector().show(context).then((ticket) async {
-                    if (ticket != null) {
-                      await AddCpr(ticket).show(context).then((v) {
-                        if (v == true) {
-                          loadData();
+            ? Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: FloatingActionButton.small(
+                    onPressed: () async {
+                      await const TicketSelector().show(context).then((ticket) async {
+                        if (ticket != null) {
+                          await AddCpr(ticket).show(context).then((v) {
+                            if (v == true) {
+                              loadData();
+                            }
+                          });
                         }
                       });
-                    }
-                  });
-                },
-                child: const Icon(Icons.add))
+                    },
+                    child: const Icon(Icons.add)),
+              )
             : null,
         backgroundColor: Colors.transparent,
         appBar: AppBar(

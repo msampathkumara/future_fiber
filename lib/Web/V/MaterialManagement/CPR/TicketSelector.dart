@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/Mobile/V/Widgets/SearchBar.dart';
+import 'package:smartwind/Web/V/MaterialManagement/CPR/AddTicket.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/Web/Widgets/IfWeb.dart';
 
@@ -35,6 +36,7 @@ class _TicketSelectorState extends State<TicketSelector> {
   }
 
   List<Ticket> ticketList = [];
+  String searchText = '';
 
   getWebUi() {
     return Scaffold(
@@ -42,46 +44,68 @@ class _TicketSelectorState extends State<TicketSelector> {
         body: Column(
           children: [
             SizedBox(
-              width: double.infinity,
-              child: SearchBar(
-                  delay: 300,
-                  onSearchTextChanged: (text) {
-                    setState(() {
-                      if (text.trim().isEmpty) {
-                        ticketList = [];
-                      } else {
-                        ticketList = HiveBox.ticketBox.values.where((element) => (text.containsInArrayIgnoreCase([(element.mo ?? ""), (element.oe ?? "")]))).toList();
-                      }
-                    });
-                  },
-                  searchController: searchController),
-            ),
+                width: double.infinity,
+                child: SearchBar(
+                    delay: 300,
+                    onSearchTextChanged: (text) {
+                      searchText = text;
+                      load();
+                    },
+                    searchController: searchController)),
             Expanded(
-              child: ListView.separated(
-                itemBuilder: (context, index) {
-                  var ticket = ticketList[index];
-                  return ListTile(
-                      onTap: () {
-                        Navigator.pop(context, ticket);
+              child: (ticketList.isEmpty && searchText.isNotEmpty)
+                  ? Center(
+                      child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevatedButton(
+                              onPressed: () async {
+                                await AddTicket(searchText).show(context).then((Ticket? ticket) {
+                                  if (ticket != null) {
+                                    HiveBox.ticketBox.putMany([ticket]);
+
+                                    searchText = (ticket.mo!.isNotEmpty ? ticket.mo : ticket.oe) ?? searchText;
+                                    searchController.text = searchText;
+
+                                    load();
+                                  }
+                                });
+                              },
+                              child: const Text("Add MO"))))
+                  : ListView.separated(
+                      itemBuilder: (context, index) {
+                        var ticket = ticketList[index];
+                        return ListTile(
+                            onTap: () {
+                              Navigator.pop(context, ticket);
+                            },
+                            visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
+                            title: Text((ticket.mo ?? ticket.oe) ?? ""),
+                            subtitle: Text((ticket.oe) ?? "", style: const TextStyle(color: Colors.red, fontSize: 12)),
+                            trailing: Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.end,
+                              direction: Axis.vertical,
+                              children: [Text((ticket.production) ?? ""), Text((ticket.atSection ?? ''), style: const TextStyle(color: Colors.red, fontSize: 12))],
+                            ));
                       },
-                      visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
-                      title: Text((ticket.mo ?? ticket.oe) ?? ""),
-                      subtitle: Text((ticket.oe) ?? "", style: const TextStyle(color: Colors.red, fontSize: 12)),
-                      trailing: Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.end,
-                        direction: Axis.vertical,
-                        children: [Text((ticket.production) ?? ""), Text((ticket.atSection), style: const TextStyle(color: Colors.red, fontSize: 12))],
-                      ));
-                },
-                itemCount: ticketList.length,
-                separatorBuilder: (BuildContext context, int index) {
-                  return const Divider(height: 0);
-                },
-              ),
+                      itemCount: ticketList.length,
+                      separatorBuilder: (BuildContext context, int index) {
+                        return const Divider(height: 0);
+                      },
+                    ),
             )
           ],
         ));
   }
 
   getUi() {}
+
+  void load() {
+    setState(() {
+      if (searchText.trim().isEmpty) {
+        ticketList = [];
+      } else {
+        ticketList = HiveBox.ticketBox.values.where((element) => (searchText.containsInArrayIgnoreCase([(element.mo ?? ""), (element.oe ?? "")]))).toList();
+      }
+    });
+  }
 }

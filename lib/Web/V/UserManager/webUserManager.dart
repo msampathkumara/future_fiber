@@ -91,36 +91,39 @@ class _WebUserManagerState extends State<WebUserManager> {
           child: Row(
             children: [
               Expanded(
-                child: Material(
-                    elevation: 4,
-                    borderRadius: BorderRadius.circular(8),
-                    child: WebUserManagerTable(
-                      onInit: (UserManagerDataSource dataSource) {
-                        _dataSource = dataSource;
-                      },
-                      onTap: (NsUser nsUser) {
-                        _selectedUser = nsUser;
-                        setState(() {});
-                      },
-                    )),
-              ),
+                  child: Material(
+                      elevation: 4,
+                      borderRadius: BorderRadius.circular(8),
+                      child: WebUserManagerTable(
+                        onInit: (UserManagerDataSource dataSource) {
+                          _dataSource = dataSource;
+                        },
+                        onTap: (NsUser nsUser) {
+                          _selectedUser = nsUser;
+                          setState(() {});
+                        },
+                      ))),
               const SizedBox(width: 8),
               if (_selectedUser != null) getUserDetailsUi(_selectedUser!)
             ],
           ),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
-        floatingActionButton: FloatingActionButton(
-            onPressed: () async {
-              UpdateUserDetails(NsUser()).show(context).then((NsUser? nsUser) async {
-                if (nsUser != null) {
-                  await GeneratePassword(nsUser).show(context);
-                }
-                HiveBox.getDataFromServer();
-              });
-            },
-            backgroundColor: Colors.green,
-            child: const Icon(Icons.add)));
+        floatingActionButtonLocation: FloatingActionButtonLocation.miniStartFloat,
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: FloatingActionButton(
+              mini: true,
+              onPressed: () async {
+                UpdateUserDetails(NsUser()).show(context).then((NsUser? nsUser) async {
+                  if (nsUser != null) {
+                    await GeneratePassword(nsUser).show(context);
+                  }
+                  HiveBox.getDataFromServer();
+                });
+              },
+              backgroundColor: Colors.green,
+              child: const Icon(Icons.add)),
+        ));
   }
 
   void loadData() {

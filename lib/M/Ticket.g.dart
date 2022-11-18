@@ -51,13 +51,14 @@ class TicketAdapter extends TypeAdapter<Ticket> {
       ..cpr = fields[35] == null ? 0 : fields[35] as int
       ..haveKit = fields[36] == null ? 0 : fields[36] as int
       ..haveCpr = fields[37] == null ? 0 : fields[37] as int
-      ..cprReport = fields[38] == null ? [] : (fields[38] as List).cast<CprReport>();
+      ..cprReport = fields[38] == null ? [] : (fields[38] as List).cast<CprReport>()
+      ..pool = fields[39] as String?;
   }
 
   @override
   void write(BinaryWriter writer, Ticket obj) {
     writer
-      ..writeByte(35)
+      ..writeByte(36)
       ..writeByte(0)
       ..write(obj.mo)
       ..writeByte(1)
@@ -127,7 +128,9 @@ class TicketAdapter extends TypeAdapter<Ticket> {
       ..writeByte(37)
       ..write(obj.haveCpr)
       ..writeByte(38)
-      ..write(obj.cprReport);
+      ..write(obj.cprReport)
+      ..writeByte(39)
+      ..write(obj.pool);
   }
 
   @override
@@ -181,6 +184,7 @@ Ticket _$TicketFromJson(Map<String, dynamic> json) => Ticket()
   ..haveKit = json['haveKit'] as int? ?? 0
   ..haveCpr = json['haveCpr'] as int? ?? 0
   ..cprReport = json['cprReport'] == null ? [] : Ticket.stringToCprReportList(json['cprReport'])
+  ..pool = json['pool'] as String?
   ..loading = json['loading'] as bool? ?? false;
 
 Map<String, dynamic> _$TicketToJson(Ticket instance) => <String, dynamic>{
@@ -219,5 +223,6 @@ Map<String, dynamic> _$TicketToJson(Ticket instance) => <String, dynamic>{
       'haveKit': instance.haveKit,
       'haveCpr': instance.haveCpr,
       'cprReport': instance.cprReport.map((e) => e.toJson()).toList(),
+      'pool': instance.pool,
       'loading': instance.loading,
     };

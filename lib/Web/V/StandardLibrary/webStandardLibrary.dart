@@ -63,12 +63,15 @@ class _WebStandardLibraryState extends State<WebStandardLibrary> {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.miniStartFloat,
       floatingActionButton: (AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_UPLOAD_STANDARD_FILES))
-          ? FloatingActionButton.small(
-              onPressed: () async {
-                addItemsBottomSheetMenu(context);
-              },
-              // backgroundColor: Colors.green,
-              child: const Icon(Icons.add))
+          ? Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: FloatingActionButton.small(
+                  onPressed: () async {
+                    addItemsBottomSheetMenu(context);
+                  },
+                  // backgroundColor: Colors.green,
+                  child: const Icon(Icons.add)),
+            )
           : null,
       backgroundColor: Colors.transparent,
       appBar: AppBar(
@@ -265,7 +268,7 @@ class _WebStandardLibraryState extends State<WebStandardLibrary> {
                                     leading: const Icon(Icons.picture_as_pdf),
                                     onTap: () {
                                       Navigator.pop(context);
-                                      AddTicket(standard: true, production: e).show(context);
+                                      AddTickets(standard: true, production: e).show(context);
                                     }))
                                 .toList())))
               ]));

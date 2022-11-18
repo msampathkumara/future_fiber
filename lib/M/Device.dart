@@ -75,8 +75,6 @@ class Device {
 
   factory Device.fromJson(Map<String, dynamic> json) => _$DeviceFromJson(json);
 
-
-
   Map<String, dynamic> toJson() => _$DeviceToJson(this);
 
   static List<Device> fromJsonArray(tabList) {

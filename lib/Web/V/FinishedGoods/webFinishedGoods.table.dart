@@ -216,8 +216,8 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
 
   // final DesertsFakeWebService _repo = DesertsFakeWebService();
 
-  String _sortColumn = "name";
-  bool _sortAscending = true;
+  String _sortColumn = "completedOn";
+  bool _sortAscending = false;
 
   void sort(String columnName, bool ascending) {
     _sortColumn = columnName;
@@ -278,7 +278,7 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                 direction: Axis.vertical,
                 children: [
                   Text(ticket.production ?? '-'),
-                  Text(ticket.atSection, style: const TextStyle(color: Colors.red, fontSize: 12)),
+                  if (ticket.atSection != null) Text(ticket.atSection ?? '', style: const TextStyle(color: Colors.red, fontSize: 12)),
                 ],
               )),
               DataCell(Text("${ticket.progress}%")),

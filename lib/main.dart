@@ -14,7 +14,7 @@ import 'package:smartwind/Mobile/V/Home/Tickets/ProductionPool/ProductionPool.da
 
 import 'C/App.dart';
 import 'M/AppUser.dart';
-import 'Mobile/V/Home/Home.dart';
+import 'Mobile/V/Home/MobileHome.dart';
 import 'Mobile/V/Login/CheckTabStatus.dart';
 import 'Mobile/V/Login/Login.dart';
 import 'Web/webMain.dart';
@@ -125,6 +125,7 @@ class MobileApp extends StatelessWidget {
     return MaterialApp(
       title: 'Smart Wind',
       scaffoldMessengerKey: snackBarKey,
+      navigatorKey: navigatorKey,
       theme: ThemeData(
           primarySwatch: Colors.green,
           bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.black.withOpacity(0)),
@@ -228,7 +229,7 @@ class _MyHomePageState extends State<MyHomePage> {
         if (snapshot.data['tabChecked'] == false) {
           return CheckTabStatus(App.currentUser!);
         }
-        return const Home();
+        return const MobileHome();
       }
 
       return const Login();

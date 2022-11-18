@@ -229,7 +229,7 @@ class QcDataSourceAsync extends AsyncDataTableSource {
   }
 
   String _sortColumn = "dnt";
-  bool _sortAscending = true;
+  bool _sortAscending = false;
 
   void sort(String columnName, bool ascending) {
     _sortColumn = columnName;

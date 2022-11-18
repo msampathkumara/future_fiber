@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/AppUser.dart';
+import 'package:smartwind/V/PermissionMessage.dart';
 import 'package:smartwind/Web/V/MaterialManagement/CPR/webCpr.dart';
 import 'package:smartwind/Web/V/MaterialManagement/KIT/webKit.dart';
-import 'package:smartwind/generated/assets.dart';
 
 import '../../../M/PermissionsEnum.dart';
 import '../../../Mobile/V/Widgets/UserImage.dart';
@@ -81,16 +81,15 @@ class _MaterialManagementHomePageState extends State<MaterialManagementHomePage>
                                               // selectedIconTheme: const IconThemeData(color: Colors.deepOrange),
                                               // selectedLabelTextStyle: const TextStyle(color: Colors.deepOrange),
                                               destinations: [
-                                                if (AppUser.havePermissionFor(NsPermissions.CPR_CPR))
-                                                  NavigationRailDestination(
-                                                      icon: const Icon(Icons.local_mall_outlined),
-                                                      selectedIcon: const Icon(Icons.local_mall_rounded),
-                                                      label: Text('CPR', style: TextStyle(fontSize: size))),
-                                                if (AppUser.havePermissionFor(NsPermissions.KIT_KIT))
-                                                  NavigationRailDestination(
-                                                      icon: const Icon(Icons.view_in_ar_outlined),
-                                                      selectedIcon: const Icon(Icons.view_in_ar_rounded),
-                                                      label: Text('KIT', style: TextStyle(fontSize: size))),
+                                                NavigationRailDestination(
+                                                    icon: const Icon(Icons.local_mall_outlined),
+                                                    selectedIcon: const Icon(Icons.local_mall_rounded),
+                                                    label: Text('CPR', style: TextStyle(fontSize: size))),
+
+                                                NavigationRailDestination(
+                                                    icon: const Icon(Icons.view_in_ar_outlined),
+                                                    selectedIcon: const Icon(Icons.view_in_ar_rounded),
+                                                    label: Text('KIT', style: TextStyle(fontSize: size))),
                                                 // NavigationRailDestination(
                                                 //     icon: const Icon(Icons.star_border),
                                                 //     selectedIcon: const Icon(Icons.star),
@@ -129,23 +128,13 @@ class _MaterialManagementHomePageState extends State<MaterialManagementHomePage>
                   Expanded(
                       child: Center(
                           child: [
-                    if (AppUser.havePermissionFor(NsPermissions.CPR_CPR)) const WebCpr(),
-                    if (AppUser.havePermissionFor(NsPermissions.KIT_KIT)) const WebKit(),
+                    const WebCpr(),
+                    const WebKit(),
                     // const WebBatten()
                   ].elementAt(_selectedIndex)))
                 ],
               )
-            : Center(
-                child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(width: 256, child: Image.asset(Assets.assetsNoPermissions)),
-                  const Text('You don\'t have permissions ', textScaleFactor: 1.2, style: TextStyle(color: Colors.red)),
-                  const SizedBox(height: 36),
-                  ElevatedButton(onPressed: () => {AppUser.logout(context)}, child: const Text("Logout"))
-                ],
-              )),
+            : const PermissionMessage(),
       ),
     );
   }

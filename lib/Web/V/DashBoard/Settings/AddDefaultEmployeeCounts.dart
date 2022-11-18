@@ -104,11 +104,7 @@ class _AddDefaultEmployeeCountsState extends State<AddDefaultEmployeeCounts> {
                       )
                     : Center(child: getFactorySector()),
         bottomNavigationBar: (isFactorySelected && !loading && !error)
-            ? BottomAppBar(
-                child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                        onPressed: save, child: const Text("Save as Defaults"))))
+            ? BottomAppBar(child: Padding(padding: const EdgeInsets.all(8.0), child: ElevatedButton(onPressed: save, child: const Text("Save as Defaults"))))
             : null);
   }
 

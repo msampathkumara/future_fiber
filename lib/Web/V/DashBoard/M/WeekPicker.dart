@@ -16,7 +16,6 @@ class WeekPicker extends StatefulWidget {
 class _WeekPickerState extends State<WeekPicker> {
   int _currentYear = 0;
 
-
   @override
   void initState() {
     _currentYear = widget.selectedDate.year;

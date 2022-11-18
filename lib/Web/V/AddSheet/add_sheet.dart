@@ -117,7 +117,7 @@ class _AddSheetState extends State<AddSheet> {
                               : sheetUploading
                                   ? Center(
                                       child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
                                         const Padding(

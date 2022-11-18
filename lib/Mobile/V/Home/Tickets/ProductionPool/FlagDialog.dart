@@ -163,7 +163,7 @@ class _FlagDialogNewState extends State<FlagDialogNew> {
                                                 }),
                                           )
                                         : SizedBox(
-                                      width: double.infinity,
+                                            width: double.infinity,
                                             height: 36,
                                             child: ElevatedButton(
                                                 child: const Text('Remove Flag'),

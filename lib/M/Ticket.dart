@@ -183,10 +183,14 @@ class Ticket extends DataObject {
   @JsonKey(defaultValue: [], includeIfNull: true, fromJson: stringToCprReportList)
   List<CprReport> cprReport = [];
 
-  String get atSection {
+  @HiveField(39, defaultValue: null)
+  @JsonKey(defaultValue: null, includeIfNull: true)
+  String? pool;
+
+  String? get atSection {
     var x = HiveBox.sectionsBox.get(nowAt)?.sectionTitle;
 
-    return x ?? '';
+    return x;
   }
 
   @JsonKey(defaultValue: false, includeIfNull: true)
@@ -493,8 +497,8 @@ class Ticket extends DataObject {
     return await ticketPdfViwer.show(context);
   }
 
-  var _kitReport;
-  var _cprReport;
+  List<CprReport>? _kitReport;
+  List<CprReport>? _cprReport;
 
   List<CprReport> getKitReport() {
     print(_kitReport == null);

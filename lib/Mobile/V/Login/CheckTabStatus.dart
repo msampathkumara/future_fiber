@@ -7,11 +7,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Section.dart';
-import 'package:smartwind/Mobile/V/Home/Home.dart';
 import 'package:smartwind/Mobile/V/Widgets/ErrorMessageView.dart';
 
 import '../../../C/Api.dart';
 import '../../../M/AppUser.dart';
+import '../Home/MobileHome.dart';
 import '../Widgets/UserImage.dart';
 import 'SectionSelector.dart';
 
@@ -174,11 +174,11 @@ class _CheckTabStatusState extends State<CheckTabStatus> {
                 MaterialPageRoute(
                     builder: (context) => UserSectionSelector(widget.nsUser, (Section section) {
                           AppUser.setSelectedSection(section);
-                          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const Home()), (Route<dynamic> route) => false);
+                          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MobileHome()), (Route<dynamic> route) => false);
                         })),
                 (Route<dynamic> route) => false);
           }
-          await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const Home()), (Route<dynamic> route) => false);
+          await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MobileHome()), (Route<dynamic> route) => false);
         });
       } else {
         ErrorMessageView(errorMessage: response.data).show(context);

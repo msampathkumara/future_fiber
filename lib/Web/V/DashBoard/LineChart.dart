@@ -94,8 +94,6 @@ class _LineChartState extends State<LineChart> {
 
   var sc = ScrollController();
 
-
-
   @override
   void initState() {
     controller = widget.controller;
@@ -208,7 +206,6 @@ class _LineChartState extends State<LineChart> {
   void refresh() {
     if (mounted) setState(() {});
   }
-
 
   getDate(ProgressSummery s) {
     switch (controller.filter) {

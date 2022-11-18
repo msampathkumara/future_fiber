@@ -24,22 +24,18 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
                   children: [
                     if (nfcIsAvailable)
                       ListTile(
-                        title: Text(nsUser.userHasNfc() ? "Remove ID Card" : "Add ID Card"),
-                        leading: const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Icon(Icons.nfc_outlined),
-                        ),
-                        onTap: () async {
-                          Navigator.of(context).pop();
-                          if (nsUser.userHasNfc()) {
-                            // todo add remove id card code
+                          title: Text(nsUser.userHasNfc() ? "Remove ID Card" : "Add ID Card"),
+                          leading: const Padding(padding: EdgeInsets.all(8.0), child: Icon(Icons.nfc_outlined)),
+                          onTap: () async {
+                            Navigator.of(context).pop();
+                            if (nsUser.userHasNfc()) {
+                              // todo add remove id card code
 
-                            showRemoveCardAlertDialog(context1, onRemoveNfcCard);
-                          } else {
-                            showAddNfcDialog(nsUser, context1);
-                          }
-                        },
-                      ),
+                              showRemoveCardAlertDialog(context, onRemoveNfcCard);
+                            } else {
+                              showAddNfcDialog(nsUser, context);
+                            }
+                          }),
                     if ((kIsWeb))
                       ListTile(
                         title: const Text("Edit"),
@@ -149,36 +145,29 @@ void deactivateUser(nsUser) {
   });
 }
 
-showRemoveCardAlertDialog(BuildContext context, onRemoveNfcCard) {
-  // set up the buttons
-  Widget cancelButton = TextButton(
-    child: const Text("Cancel"),
-    onPressed: () {
-      Navigator.of(context).pop();
-    },
-  );
-  Widget continueButton = TextButton(
-      child: const Text("Continue"),
-      onPressed: () {
-        Navigator.of(context).pop();
-        onRemoveNfcCard();
-      });
-
-  // set up the AlertDialog
-  AlertDialog alert = AlertDialog(
-    title: const Text("Remove ID card ?"),
-    content: const Text("this will remove id card from user "),
-    actions: [
-      cancelButton,
-      continueButton,
-    ],
-  );
-
+showRemoveCardAlertDialog(context, onRemoveNfcCard) {
   // show the dialog
   showDialog(
     context: context,
     builder: (BuildContext context) {
-      return alert;
+      return AlertDialog(
+        title: const Text("Remove ID card ?"),
+        content: const Text("this will remove id card from user "),
+        actions: [
+          TextButton(
+            child: const Text("Cancel"),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+              child: const Text("Continue"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                onRemoveNfcCard();
+              }),
+        ],
+      );
     },
   );
 }

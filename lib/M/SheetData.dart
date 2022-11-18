@@ -4,6 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 @JsonSerializable(explicitToJson: true)
 @HiveType(typeId: 16)
 part 'SheetData.g.dart';
+
 @JsonSerializable(explicitToJson: true)
 class SheetData {
   @HiveField(1, defaultValue: null)

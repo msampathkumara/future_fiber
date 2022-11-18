@@ -267,7 +267,6 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
     return loadData;
   }
 
-
   Future LoadingDialog(Future future) async {
     return await showDialog(
         context: context,

@@ -68,7 +68,7 @@ class QC {
     }));
   }
 
- Future getFile(context, {onReceiveProgress}) async {
+  Future getFile(context, {onReceiveProgress}) async {
     var path = 'tickets/qc/qcImageView?';
     // if (kIsWeb) {
     // var loadingWidget = Loading(loadingText: "Downloading Ticket");

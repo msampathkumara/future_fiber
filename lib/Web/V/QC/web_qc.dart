@@ -39,6 +39,8 @@ class _WebQcState extends State<WebQc> {
 
   Production selectedProduction = Production.All;
 
+  String selectedQuality = 'All';
+
   @override
   void initState() {
     // getData(0);
@@ -62,32 +64,78 @@ class _WebQcState extends State<WebQc> {
                     children: [_typeChip(Type.All), _typeChip(Type.QC), _typeChip(Type.QA)],
                   ),
                 ),
-                const SizedBox(width: 16),
-                Material(
-                  elevation: 4,
-                  borderRadius: BorderRadius.circular(8),
-                  child: SizedBox(
-                    height: 40,
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<Production>(
-                        value: selectedProduction,
-                        selectedItemBuilder: (_) {
-                          return Production.values.where((element) => element.getValue().toLowerCase() != 'none').map<Widget>((Production item) {
-                            return Center(child: Padding(padding: const EdgeInsets.all(8.0), child: Text(item.getValue())));
+                Padding(padding: const EdgeInsets.all(8.0), child: Container(width: 1, color: Colors.red, height: 24)),
+                Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: PopupMenuButton<Production>(
+                        offset: const Offset(0, 30),
+                        padding: const EdgeInsets.all(16.0),
+                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                        child: Chip(
+                            avatar: const Icon(Icons.factory, color: Colors.black),
+                            label: Row(children: [Text(selectedProduction.getValue()), const Icon(Icons.arrow_drop_down_rounded, color: Colors.black)])),
+                        onSelected: (result) {},
+                        itemBuilder: (BuildContext context) {
+                          return Production.values.map((Production value) {
+                            return PopupMenuItem<Production>(
+                                value: value,
+                                onTap: () {
+                                  selectedProduction = value;
+                                  setState(() {});
+                                  loadData();
+                                },
+                                child: Text(value.getValue()));
                           }).toList();
-                        },
-                        items: Production.values.where((element) => element.getValue().toLowerCase() != 'none').map((Production value) {
-                          return DropdownMenuItem<Production>(value: value, child: Text(value.getValue()));
-                        }).toList(),
-                        onChanged: (_) {
-                          selectedProduction = _ ?? Production.All;
-                          setState(() {});
-                          loadData();
-                        },
-                      ),
-                    ),
-                  ),
-                ),
+                        })),
+
+                Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: PopupMenuButton<String>(
+                        offset: const Offset(0, 30),
+                        padding: const EdgeInsets.all(16.0),
+                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                        child: Chip(
+                            avatar: const Icon(Icons.star_rate_rounded, color: Colors.black),
+                            label: Row(children: [Text(selectedQuality), const Icon(Icons.arrow_drop_down_rounded, color: Colors.black)])),
+                        onSelected: (result) {},
+                        itemBuilder: (BuildContext context) {
+                          return ["All", "Excellent", "Good", "Reject"].map((String value) {
+                            return PopupMenuItem<String>(
+                                value: value,
+                                onTap: () {
+                                  selectedQuality = value;
+                                  setState(() {});
+                                  loadData();
+                                },
+                                child: Text(value));
+                          }).toList();
+                        })),
+                const SizedBox(width: 16),
+                // Material(
+                //   elevation: 4,
+                //   borderRadius: BorderRadius.circular(8),
+                //   child: SizedBox(
+                //     height: 40,
+                //     child: DropdownButtonHideUnderline(
+                //       child: DropdownButton<Production>(
+                //         value: selectedProduction,
+                //         selectedItemBuilder: (_) {
+                //           return Production.values.where((element) => element.getValue().toLowerCase() != 'none').map<Widget>((Production item) {
+                //             return Center(child: Padding(padding: const EdgeInsets.all(8.0), child: Text(item.getValue())));
+                //           }).toList();
+                //         },
+                //         items: Production.values.where((element) => element.getValue().toLowerCase() != 'none').map((Production value) {
+                //           return DropdownMenuItem<Production>(value: value, child: Text(value.getValue()));
+                //         }).toList(),
+                //         onChanged: (_) {
+                //           selectedProduction = _ ?? Production.All;
+                //           setState(() {});
+                //           loadData();
+                //         },
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 const SizedBox(width: 16),
                 SearchBar(
                     onSearchTextChanged: (text) {
@@ -168,13 +216,13 @@ class _WebQcState extends State<WebQc> {
       'pageIndex': page,
       'pageSize': count,
       'searchText': searchText,
+      'quality': selectedQuality
     }).then((res) {
       print(res.data);
       List qcs = res.data["qcs"];
       dataCount = res.data["count"] ?? 0;
       print('--------------------dddd----------- ');
       print('--------------------dddd-----------${QC.fromJsonArray(qcs)}');
-
 
       setState(() {});
       return DataResponse(dataCount, QC.fromJsonArray(qcs));
@@ -190,8 +238,7 @@ class _WebQcState extends State<WebQc> {
               onPressed: () {
                 getData(page, startingAt, count, sortedBy, sortedAsc);
               })));
-      setState(() {
-      });
+      setState(() {});
     });
   }
 

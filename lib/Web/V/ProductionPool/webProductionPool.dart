@@ -119,31 +119,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                                   child: Text(value.getValue()));
                             }).toList();
                           })),
-                  // Material(
-                  //   elevation: 4,
-                  //   borderRadius: BorderRadius.circular(8),
-                  //   child: SizedBox(
-                  //     height: 40,
-                  //     child: DropdownButtonHideUnderline(
-                  //       child: DropdownButton<Production>(
-                  //         value: selectedProduction,
-                  //         selectedItemBuilder: (_) {
-                  //           return Production.values.map<Widget>((Production item) {
-                  //             return Center(child: Padding(padding: const EdgeInsets.all(8.0), child: Text(item.getValue())));
-                  //           }).toList();
-                  //         },
-                  //         items: Production.values.map((Production value) {
-                  //           return DropdownMenuItem<Production>(value: value, child: Text(value.getValue()));
-                  //         }).toList(),
-                  //         onChanged: (_) {
-                  //           selectedProduction = _ ?? Production.All;
-                  //           setState(() {});
-                  //           loadData();
-                  //         },
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
+
                   const SizedBox(width: 20),
                   Material(
                       elevation: 4,
@@ -166,12 +142,15 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                   _dataSource = dataSource;
                 }))),
         floatingActionButtonLocation: FloatingActionButtonLocation.miniStartFloat,
-        floatingActionButton: FloatingActionButton.small(
-            onPressed: () async {
-              addItemsBottomSheetMenu(context);
-            },
-            // backgroundColor: Colors.green,
-            child: const Icon(Icons.add)));
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: FloatingActionButton.small(
+              onPressed: () async {
+                addItemsBottomSheetMenu(context);
+              },
+              // backgroundColor: Colors.green,
+              child: const Icon(Icons.add)),
+        ));
   }
 
   Filters dataFilter = Filters.none;
@@ -244,7 +223,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                               leading: const Icon(Icons.picture_as_pdf),
                               onTap: () {
                                 Navigator.pop(context);
-                                const AddTicket().show(context);
+                                const AddTickets().show(context);
                               },
                             ),
                           if (AppUser.havePermissionFor(NsPermissions.SHEET_ADD_DATA_SHEET))

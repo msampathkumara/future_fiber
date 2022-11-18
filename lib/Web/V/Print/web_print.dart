@@ -30,8 +30,6 @@ class _WebPrintState extends State<WebPrint> {
 
   int dataCount = 0;
 
-
-
   late PrintDataSourceAsync _dataSource;
 
   @override
@@ -43,21 +41,21 @@ class _WebPrintState extends State<WebPrint> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-            title: Row(
-              children: [
-                Text("Print", style: mainWidgetsTitleTextStyle),
-                const Spacer(),
-                Wrap(children: [
-                  Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Wrap(spacing: 8, children: [_statusChip(Status.All), _statusChip(Status.Done), _statusChip(Status.Sent), _statusChip(Status.Cancel)])),
-                  const SizedBox(width: 20),
-                  Material(
-                    elevation: 4,
-                    borderRadius: BorderRadius.circular(8),
-                    child: SizedBox(
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+          title: Row(
+            children: [
+              Text("Print", style: mainWidgetsTitleTextStyle),
+              const Spacer(),
+              Wrap(children: [
+                Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Wrap(spacing: 8, children: [_statusChip(Status.All), _statusChip(Status.Done), _statusChip(Status.Sent), _statusChip(Status.Cancel)])),
+                const SizedBox(width: 20),
+                Material(
+                  elevation: 4,
+                  borderRadius: BorderRadius.circular(8),
+                  child: SizedBox(
                     height: 40,
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<Production>(
@@ -69,40 +67,40 @@ class _WebPrintState extends State<WebPrint> {
                               padding: const EdgeInsets.all(8.0),
                               child: Text(item.getValue()),
                             ));
-                            }).toList();
-                          },
-                          items: Production.values.map((Production value) {
-                            return DropdownMenuItem<Production>(
-                              value: value,
-                              child: Text(value.getValue()),
-                            );
-                          }).toList(),
-                          onChanged: (_) {
-                            _selectedProduction = _ ?? Production.All;
-                            setState(() {});
-                            loadData();
-                          },
-                        ),
+                          }).toList();
+                        },
+                        items: Production.values.map((Production value) {
+                          return DropdownMenuItem<Production>(
+                            value: value,
+                            child: Text(value.getValue()),
+                          );
+                        }).toList(),
+                        onChanged: (_) {
+                          _selectedProduction = _ ?? Production.All;
+                          setState(() {});
+                          loadData();
+                        },
                       ),
                     ),
                   ),
-                  const SizedBox(width: 20),
-                  SearchBar(
-                      onSearchTextChanged: (text) {
-                        searchText = text;
-                        loadData();
-                      },
-                      searchController: _controller)
-                ])
-              ],
-            ),
-            backgroundColor: Colors.transparent,
-            elevation: 0),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Material(
-              elevation: 4,
-              borderRadius: BorderRadius.circular(8),
+                ),
+                const SizedBox(width: 20),
+                SearchBar(
+                    onSearchTextChanged: (text) {
+                      searchText = text;
+                      loadData();
+                    },
+                    searchController: _controller)
+              ])
+            ],
+          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Material(
+            elevation: 4,
+            borderRadius: BorderRadius.circular(8),
             child: WebPrintTable(onInit: (PrintDataSourceAsync dataSource) {
               _dataSource = dataSource;
             }, onRequestData: (int page, int startingAt, int count, String sortedBy, bool sortedAsc) {
@@ -176,7 +174,6 @@ class _WebPrintState extends State<WebPrint> {
       List ticketPrint = res.data["prints"];
       dataCount = res.data["count"];
 
-
       setState(() {});
       return DataResponse(dataCount, TicketPrint.fromJsonArray(ticketPrint));
     }).whenComplete(() {
@@ -191,8 +188,7 @@ class _WebPrintState extends State<WebPrint> {
               onPressed: () {
                 getData(page, startingAt, count, sortedBy, sortedAsc);
               })));
-      setState(() {
-      });
+      setState(() {});
     });
   }
 

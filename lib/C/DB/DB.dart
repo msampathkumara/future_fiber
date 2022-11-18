@@ -4,7 +4,6 @@ import 'package:sqflite/sqflite.dart';
 class DB {
   static Database? db;
 
-
   static List<DbChangeCallBack> onDBChangeCallBacks = [];
 
   static DbChangeCallBack setOnDBChangeListener(callBack, context, {collection = DataTables.none}) {

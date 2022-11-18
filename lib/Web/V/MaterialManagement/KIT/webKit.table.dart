@@ -221,7 +221,7 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
 
   // final DesertsFakeWebService _repo = DesertsFakeWebService();
 
-  String _sortColumn = "name";
+  String _sortColumn = "shipDate";
   bool _sortAscending = true;
 
   void sort(String columnName, bool ascending) {

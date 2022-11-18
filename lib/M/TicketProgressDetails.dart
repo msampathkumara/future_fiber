@@ -19,8 +19,7 @@ class TicketProgressDetails {
   int erpDone = 0;
   int erpLater = 0;
 
-
-  Ticket? ticket ;
+  Ticket? ticket;
 
   TicketProgressDetails();
 

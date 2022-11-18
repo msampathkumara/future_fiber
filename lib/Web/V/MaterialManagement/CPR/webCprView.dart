@@ -79,7 +79,7 @@ class _CprViewState extends State<CprView> {
         body: _loading
             ? const Center(child: CircularProgressIndicator())
             : Builder(builder: (context) {
-          List<CprActivity?> cprActivitiesNoNull = cprActivities;
+                List<CprActivity?> cprActivitiesNoNull = cprActivities;
 
                 return Row(children: [
                   Flexible(
@@ -132,12 +132,13 @@ class _CprViewState extends State<CprView> {
                                   child: Column(children: [
                                     SizedBox(
                                       width: double.infinity,
-                                      child: DataTable(columns: const [
-                                        DataColumn(label: Text('')),
-                                        DataColumn(label: Text('Item')),
-                                        DataColumn(label: Text('Qty')),
-                                        DataColumn(label: Text('Date')),
-                                        DataColumn(label: Text('User')),
+                                      child: DataTable(columns: [
+                                        const DataColumn(label: Text('')),
+                                        const DataColumn(label: Text('Item')),
+                                        const DataColumn(label: Text('Qty')),
+                                        const DataColumn(label: Text('Date')),
+                                        const DataColumn(label: Text('User')),
+                                        if (AppUser.havePermissionFor(NsPermissions.CPR_DELETE_CPR_MATERIALS)) const DataColumn(label: Text(''))
                                       ], rows: [
                                         for (var material in _cpr.items) getMatRow(material)
                                       ]),
@@ -195,17 +196,16 @@ class _CprViewState extends State<CprView> {
                                   ),
                                 ),
                                 ListTile(
-                                  title: TextFormField(
-                                      controller: commentController,
-                                      onFieldSubmitted: (r) {
-                                        saveComment();
-                                      }),
-                                  trailing: IconButton(
-                                      onPressed: () {
-                                        saveComment();
-                                      },
-                                      icon: const Icon(Icons.send, color: Colors.green, size: 24)),
-                                )
+                                    title: TextFormField(
+                                        controller: commentController,
+                                        onFieldSubmitted: (r) {
+                                          saveComment();
+                                        }),
+                                    trailing: IconButton(
+                                        onPressed: () {
+                                          saveComment();
+                                        },
+                                        icon: const Icon(Icons.send, color: Colors.green, size: 24)))
                               ],
                             ),
                           ),
@@ -353,7 +353,16 @@ class _CprViewState extends State<CprView> {
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [Text(dnt[0]), Text(dnt[1] ?? '', textAlign: TextAlign.end, style: const TextStyle(fontSize: 12, color: Colors.grey))])),
-      DataCell(user != null ? ListTile(leading: UserImage(nsUser: user, radius: 12), title: Text(user.uname)) : const Text('-'))
+      DataCell(user != null ? ListTile(leading: UserImage(nsUser: user, radius: 12), title: Text(user.uname)) : const Text('-')),
+      if (AppUser.havePermissionFor(NsPermissions.CPR_DELETE_CPR_MATERIALS))
+        DataCell(IconButton(
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  backgroundColor: Colors.red,
+                  content: const Text('Are you sure you want to delete this material ?'),
+                  action: SnackBarAction(textColor: Colors.white, label: 'Yes', onPressed: () => {deleteMaterial(material)})));
+            },
+            icon: const Icon(Icons.close, color: Colors.red)))
     ]);
   }
 
@@ -380,5 +389,19 @@ class _CprViewState extends State<CprView> {
       cprs.add(CprActivity());
     }
     return cprs;
+  }
+
+  deleteMaterial(CprItem material) {
+    setState(() {
+      _loading = true;
+    });
+    return Api.post(EndPoints.materialManagement_deleteMaterial, {'itemId': material.id, 'id': widget.cpr.id}).then((res) {}).whenComplete(() {
+      apiGetData();
+    }).catchError((err) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.toString()), action: SnackBarAction(label: 'Retry', onPressed: () => {deleteMaterial(material)})));
+      setState(() {
+        // _dataLoadingError = true;
+      });
+    });
   }
 }

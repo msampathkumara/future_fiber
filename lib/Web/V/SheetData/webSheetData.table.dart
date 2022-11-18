@@ -79,7 +79,7 @@ class _WebPrintTableState extends State<WebSheetDataTable> {
     return [
       const DataColumn2(size: ColumnSize.S, label: Text('#', style: TextStyle(fontWeight: FontWeight.bold))),
       DataColumn2(size: ColumnSize.L, label: const Text('MO', style: TextStyle(fontWeight: FontWeight.bold)), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
-      DataColumn2(size: ColumnSize.M, label: const Text('OE', style: TextStyle(fontWeight: FontWeight.bold)), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.L, label: const Text('OE', style: TextStyle(fontWeight: FontWeight.bold)), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(
           size: ColumnSize.M,
           label: const Tooltip(message: "Operation NO", child: Text('Operation NO', overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.bold))),
@@ -91,7 +91,7 @@ class _WebPrintTableState extends State<WebSheetDataTable> {
           numeric: true,
           onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(
-          size: ColumnSize.M,
+          size: ColumnSize.L,
           label: const Text('Operation', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: false,
           onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
@@ -124,8 +124,8 @@ class _WebPrintTableState extends State<WebSheetDataTable> {
       AsyncPaginatedDataTable2(
           scrollController: _scrollController,
           showFirstLastButtons: true,
-          smRatio: 0.4,
-          lmRatio: 3,
+          smRatio: 0.5,
+          lmRatio: 1.91,
           horizontalMargin: 20,
           checkboxHorizontalMargin: 12,
           columnSpacing: 16,

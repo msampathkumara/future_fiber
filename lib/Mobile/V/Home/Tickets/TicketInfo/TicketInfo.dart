@@ -18,6 +18,7 @@ import '../../../../../C/DB/DB.dart';
 import '../../../../../C/ServerResponse/Progress.dart';
 import '../../../../../C/ServerResponse/ServerResponceMap.dart';
 import '../../../../../M/CPR/CPR.dart';
+import '../../../../../M/PermissionsEnum.dart';
 import '../../../../../M/hive.dart';
 import '../../../../../Web/V/ProductionPool/copy.dart';
 import '../ProductionPool/TicketListOptions.dart';
@@ -129,8 +130,7 @@ class _TicketInfoState extends State<TicketInfo> {
                         child: const Icon(Icons.import_contacts),
                         onPressed: () async {
                           openFile();
-                        }),
-          );
+                        }));
   }
 
   var ts = const TextStyle(color: Colors.white, fontSize: 24);
@@ -201,7 +201,7 @@ class _TicketInfoState extends State<TicketInfo> {
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       Text(_ticket.production ?? '', textScaleFactor: 1, style: const TextStyle(color: Colors.white)),
-                      Text(_ticket.atSection, textScaleFactor: 1, style: const TextStyle(color: Colors.white)),
+                      Text(_ticket.atSection ?? '', textScaleFactor: 1, style: const TextStyle(color: Colors.white)),
                       const SizedBox(height: 16),
                       if (_ticket.isStarted)
                         CircularPercentIndicator(
@@ -284,7 +284,8 @@ class _TicketInfoState extends State<TicketInfo> {
                         ListTile(
                             visualDensity: visualDensity,
                             title: Text(_ticket.production ?? "_", style: ts.merge(smallText)),
-                            subtitle: Text(_ticket.atSection, style: ts.merge(smallText))),
+                            subtitle: Text(_ticket.atSection ?? '', style: ts.merge(smallText))),
+                        ListTile(visualDensity: visualDensity, title: Text("Pool : ", style: ts.merge(xSmallText)), subtitle: Text(_ticket.pool ?? '', style: ts.merge(smallText))),
                         ListTile(
                             visualDensity: visualDensity,
                             title: Text("Update on : ", style: ts.merge(xSmallText)),
@@ -410,7 +411,7 @@ class _TicketInfoState extends State<TicketInfo> {
       // ErrorMessageView(errorMessage: value.body).show(context);
     }).onError((error, stackTrace) {
       print(stackTrace.toString());
-      ErrorMessageView(errorMessage: error.toString()).show(context);
+      // ErrorMessageView(errorMessage: error.toString()).show(context);
       ErrorMessageView(errorMessage: stackTrace.toString()).show(context);
     }).whenComplete(() {
       if (mounted) {
@@ -428,11 +429,20 @@ class _TicketInfoState extends State<TicketInfo> {
       return (p.status == 0) ? true : false;
     }).toList();
 
-    if ((_ticket.completed == 0) &&
+    print('------------------------------ ${(!AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_ANY_PDF))}');
+
+    if ((AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_ANY_PDF))) {
+      if (_ticket.isStarted) {
+        return Ticket.open(context, _ticket);
+      } else {
+        return showOpenActions(_ticket, context, () {});
+      }
+    }
+    if (((_ticket.completed == 0) &&
         (!_ticket.openAny) &&
         progressList.where((p) {
           return (p.status == 1 || p.section?.id == _ticket.nowAt) && (userSectionId == (p.section?.id)) ? true : false;
-        }).isEmpty) {
+        }).isEmpty)) {
       final ids = pendingList.map((e) => e.section?.id).toSet();
       pendingList.retainWhere((x) => ids.remove(x.section?.id));
 
@@ -477,9 +487,9 @@ class _TicketInfoState extends State<TicketInfo> {
     }
 
     if (_ticket.isStarted) {
-      Ticket.open(context, _ticket);
+      return Ticket.open(context, _ticket);
     } else {
-      await showOpenActions(_ticket, context, () {});
+      return showOpenActions(_ticket, context, () {});
     }
   }
 }

@@ -12,7 +12,7 @@ class WebUserManagerTable extends StatefulWidget {
 
 class _WebUserManagerTableState extends State<WebUserManagerTable> {
   int _rowsPerPage = 20;
-  bool _sortAscending = true;
+  bool _sortAscending = false;
   int? _sortColumnIndex;
   late UserManagerDataSource _dessertsDataSource;
   bool _initialized = false;
@@ -65,11 +65,7 @@ class _WebUserManagerTableState extends State<WebUserManagerTable> {
           label: const Tooltip(message: "Photo", child: Text('Photo', overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.bold))),
           onSort: (columnIndex, ascending) => sort<String>((d) => (d.name), columnIndex, ascending)),
       DataColumn2(size: ColumnSize.L, label: const Text('Name'), onSort: (columnIndex, ascending) => sort<String>((d) => (d.name), columnIndex, ascending)),
-      DataColumn2(
-        size: ColumnSize.M,
-        label: const Text('NIC'),
-        onSort: (columnIndex, ascending) => sort<String>((d) => d.nic ?? '', columnIndex, ascending),
-      ),
+      DataColumn2(size: ColumnSize.M, label: const Text('NIC'), onSort: (columnIndex, ascending) => sort<String>((d) => d.nic ?? '', columnIndex, ascending)),
       DataColumn2(size: ColumnSize.M, label: const Text('EPF'), onSort: (columnIndex, ascending) => sort((d) => d.getEpf() ?? 0, columnIndex, ascending)),
       const DataColumn2(numeric: true, size: ColumnSize.S, tooltip: "Options", label: Text('Options'))
     ];
@@ -129,7 +125,7 @@ class UserManagerDataSource extends DataTableSource {
 
   UserManagerDataSource(this.context, this.filter, {required this.onTap}) {
     nsUsers = HiveBox.usersBox.values.where((element) => element.isNotDeactivated).toList();
-    // sort(sortField, _ascending);
+    sort(sortField, _ascending);
   }
 
   final BuildContext context;
@@ -139,7 +135,7 @@ class UserManagerDataSource extends DataTableSource {
   late bool hasRowHeightOverrides;
 
   Comparable Function(NsUser d) sortField = ((d) => (d.name));
-  var _ascending = false;
+  var _ascending = true;
 
   void sort<T>(Comparable<T> Function(NsUser d) getField, bool ascending) {
     nsUsers.sort((a, b) {

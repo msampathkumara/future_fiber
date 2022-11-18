@@ -214,7 +214,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                           getListItem("Shipping Date", Icons.date_range_rounded, "shipDate"),
                           getListItem("Modification Date", Icons.date_range_rounded, "uptime"),
                           getListItem("Name", Icons.sort_by_alpha_rounded, "mo"),
-                          getListItem("Shipping Date", Icons.date_range_rounded, "deliveryDate")
+                          getListItem("Delivery Date", Icons.date_range_rounded, "deliveryDate")
                         ],
                       )),
                 ),

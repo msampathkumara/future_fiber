@@ -250,18 +250,18 @@ class _LoginState extends State<Login> {
                                       SizedBox(
                                           width: double.infinity,
                                           child: TextButton(
-                                    onPressed: () async {
-                                      await const PasswordRecovery().show(context);
-                                    },
-                                    child: const Text('forgot my password'))),
-                            if (nfcIsAvailable) const SizedBox(height: 84),
-                            if (nfcIsAvailable) const Center(child: Text("  Or ", style: TextStyle(color: Colors.grey, fontSize: 20), textAlign: TextAlign.center)),
-                            if (nfcIsAvailable) const SizedBox(height: 32),
-                            if (nfcIsAvailable) const Center(child: Text("Use NFC card to login ", style: TextStyle(color: Colors.black, fontSize: 25)))
-                          ])),
-                    ))),
-          ],
-        ));
+                                              onPressed: () async {
+                                                await const PasswordRecovery().show(context);
+                                              },
+                                              child: const Text('forgot my password'))),
+                                      if (nfcIsAvailable) const SizedBox(height: 84),
+                                      if (nfcIsAvailable) const Center(child: Text("  Or ", style: TextStyle(color: Colors.grey, fontSize: 20), textAlign: TextAlign.center)),
+                                      if (nfcIsAvailable) const SizedBox(height: 32),
+                                      if (nfcIsAvailable) const Center(child: Text("Use NFC card to login ", style: TextStyle(color: Colors.black, fontSize: 25)))
+                                    ])),
+                              ))),
+                    ],
+                  ));
   }
 
   _login() {
@@ -305,7 +305,6 @@ class _LoginState extends State<Login> {
         if (!kIsWeb) {
           NfcManager.instance.stopSession();
         } else {
-
           if (userPermissionsUponListener != null) {
             userPermissionsUponListener?.cancel();
           }

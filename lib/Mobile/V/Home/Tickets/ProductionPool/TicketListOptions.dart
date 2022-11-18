@@ -88,7 +88,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                       }
                     },
                   ),
-                        if (AppUser.havePermissionFor(NsPermissions.TICKET_ALERT_MANAGER))
+                if (AppUser.havePermissionFor(NsPermissions.TICKET_ALERT_MANAGER))
                   ListTile(
                     onTap: () async {
                       Navigator.of(context).pop();

@@ -15,13 +15,11 @@ class Assets {
   static const String assetsNorthSailsLogo = 'assets/north_sails_logo.png';
   static const String assetsNorthSailsLogoTr = 'assets/north_sails_logo_tr.png';
   static const String assetsNorthSailsLogox50 = 'assets/north_sails_logox50.png';
-  static const String assetsPdf = 'assets/pdf.pdf';
   static const String assetsQACheckList = 'assets/QACheckList.json';
   static const String assetsSplash = 'assets/splash.png';
   static const String assetsSplash1 = 'assets/splash1.png';
   static const String assetsUc = 'assets/uc.png';
   static const String assetsUc1 = 'assets/uc1.png';
-  static const String assetsX = 'assets/x.pdf';
   static const String fontsNsIcons = 'assets/fonts/NsIcons.ttf';
   static const String imagesBackground = 'assets/images/background.jpg';
   static const String imagesDarkBackground = 'assets/images/dark_background.jpg';

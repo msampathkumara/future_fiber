@@ -405,8 +405,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
   Future<void> openTicketByBarcode(barcode) async {
     try {
       Ticket ticket = HiveBox.ticketBox.values.singleWhere((t) => [(t.mo ?? "").toLowerCase(), (t.oe ?? "").toLowerCase()].contains(barcode.toString().toLowerCase()));
-      var ticketInfo = TicketInfo(ticket);
-      ticketInfo.show(context);
+      TicketInfo(ticket).show(context);
     } catch (e) {
       print('Ticket not found');
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Ticket not found", style: TextStyle(color: Colors.white)), backgroundColor: Colors.red));

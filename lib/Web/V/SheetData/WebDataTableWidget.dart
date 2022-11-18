@@ -190,7 +190,7 @@ class __LoadingState extends State<_Loading> {
                   ? const SizedBox()
                   : Center(
                       child: Container(
-                        color: Colors.yellow,
+                      color: Colors.yellow,
                       padding: const EdgeInsets.all(7),
                       width: 150,
                       height: 50,
