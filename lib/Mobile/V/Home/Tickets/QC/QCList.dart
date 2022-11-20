@@ -1,5 +1,5 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/QC.dart';
 import 'package:smartwind/M/Section.dart';
@@ -340,29 +340,25 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
   List<QC> _ticketQcList = [];
   bool _dataLoadingError = false;
 
-  var cancelToken = CancelToken();
+  // var cancelToken = CancelToken();
 
   Future loadData(int page) {
-    if (!cancelToken.isCancelled) {
-      cancelToken.cancel();
-    }
-    cancelToken = CancelToken();
+    // if (!cancelToken.isCancelled) {
+    //    cancelToken.cancel();
+    // }
+    // cancelToken = CancelToken();
 
     requested = true;
     requestFinished = false;
-    return Api.get(
-            "tickets/qc/getList",
-            {
-              'type': _selectedType.getValue(),
-              'production': _selectedProduction.getValue(),
-              'sortDirection': "desc",
-              'sortBy': listSortBy,
-              'pageIndex': page,
-              'pageSize': 20,
-              'searchText': searchText
-            },
-            cancelToken: cancelToken)
-        .then((res) {
+    return Api.get(EndPoints.tickets_qc_getList, {
+      'type': _selectedType.getValue(),
+      'production': _selectedProduction.getValue(),
+      'sortDirection': "desc",
+      'sortBy': listSortBy,
+      'pageIndex': page,
+      'pageSize': 20,
+      'searchText': searchText
+    }).then((res) {
       print(res.data);
       List qcs = res.data["qcs"];
       dataCount = res.data["count"];
@@ -411,6 +407,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
           _selectedType = p;
           _ticketQcList = [];
           loadData(0);
+
           setState(() {});
         });
   }

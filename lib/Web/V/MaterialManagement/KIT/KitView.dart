@@ -121,37 +121,37 @@ class _KitViewState extends State<KitView> {
                                       TextButton(
                                           onPressed: () async {
                                             await AddMaterials(_kit.id).show(context);
+                                            setState(() => {_loading = true});
+                                            apiGetData();
                                           },
                                           child: const Text("Add Materials"))
                                   ],
                                 ))),
                               if (_kit.items.isNotEmpty)
                                 Expanded(
-                                  child: SizedBox(
-                                    width: double.infinity,
-                                    child: DataTable2(smRatio: 0.2, columns: const [
-                                      DataColumn2(label: Text(''), size: ColumnSize.S),
-                                      DataColumn2(label: Text('Item'), size: ColumnSize.L),
-                                      DataColumn2(label: Text('Qty'), size: ColumnSize.M),
-                                      DataColumn2(label: Text('Date'), size: ColumnSize.M),
-                                      DataColumn2(label: Text('User'), size: ColumnSize.L)
-                                    ], rows: [
-                                      for (var material in _kit.items) getMatRow(material),
-                                      if (kIsWeb)
-                                        DataRow2(cells: [
-                                          DataCell.empty,
-                                          DataCell.empty,
-                                          DataCell.empty,
-                                          DataCell.empty,
-                                          DataCell(TextButton(
-                                              onPressed: () async {
-                                                await AddMaterials(_kit.id).show(context) == true ? apiGetData() : null;
-                                              },
-                                              child: const Text("Add Materials")))
-                                        ])
-                                    ]),
-                                  ),
-                                ),
+                                    child: SizedBox(
+                                        width: double.infinity,
+                                        child: DataTable2(smRatio: 0.2, columns: const [
+                                          DataColumn2(label: Text(''), size: ColumnSize.S),
+                                          DataColumn2(label: Text('Item'), size: ColumnSize.L),
+                                          DataColumn2(label: Text('Qty'), size: ColumnSize.M),
+                                          DataColumn2(label: Text('Date'), size: ColumnSize.M),
+                                          DataColumn2(label: Text('User'), size: ColumnSize.L)
+                                        ], rows: [
+                                          for (var material in _kit.items) getMatRow(material),
+                                          if (kIsWeb)
+                                            DataRow2(cells: [
+                                              DataCell.empty,
+                                              DataCell.empty,
+                                              DataCell.empty,
+                                              DataCell.empty,
+                                              DataCell(TextButton(
+                                                  onPressed: () async {
+                                                    await AddMaterials(_kit.id).show(context) == true ? apiGetData() : null;
+                                                  },
+                                                  child: const Text("Add Materials")))
+                                            ])
+                                        ]))),
                               const Divider(color: Colors.red),
                               Table(
                                 children: [

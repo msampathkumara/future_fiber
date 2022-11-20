@@ -4,7 +4,7 @@ description: NorthSails Smart Wind
 
 publish_to: 'none'
 
-version: 1.2.28+168
+version: 1.2.31+171
 
 environment:
   sdk: ">=2.17.0 <3.0.0"
@@ -29,7 +29,7 @@ dependencies:
   flutter_share: 2.0.0
   flutter_barcode_scanner: ^2.0.0
   flutter_pdfview: ^1.2.5
-  flutter_inappwebview: ^5.7.1+1
+  flutter_inappwebview: ^5.7.1+2
   flutter_dropzone: ^3.0.5
 
   #  --------------------------------------------------
@@ -73,7 +73,7 @@ dependencies:
   socket_io_client: ^2.0.0
   file_picker: ^5.2.2
   universal_html: ^2.0.8
-  dropdown_button2: ^1.8.9
+  dropdown_button2: ^1.9.0
   pdfx: ^2.3.0
   textfield_search: ^0.10.0
   searchfield: ^0.7.2
