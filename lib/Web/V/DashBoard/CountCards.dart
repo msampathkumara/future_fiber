@@ -115,6 +115,20 @@ class _CountCardsState extends State<CountCards> {
                             "${formatDate(rangeStartDate, dateOnly: rangeEndDate == null)} ${rangeEndDate == null ? "" : " to ${formatDate(rangeEndDate!.subtract(const Duration(seconds: 1)))}"}")),
                   ),
                   const Spacer(),
+                  // ElevatedButton(
+                  //   child: const Text("Request permission"),
+                  //   onPressed: () async {
+                  //     final perm = await html.window.navigator.permissions?.query({"name": "pop-ups"});
+                  //     if (perm?.state == "denied") {
+                  //       snackBarKey.currentState?.showSnackBar(const SnackBar(
+                  //         content: Text("Oops! Camera access denied!"),
+                  //         backgroundColor: Colors.orangeAccent,
+                  //       ));
+                  //       return;
+                  //     }
+                  //     // final stream = await html.window.navigator.getUserMedia(video: true);
+                  //   },
+                  // ),
                   Padding(
                       padding: const EdgeInsets.only(left: 8.0),
                       child: PopupMenuButton<Production>(

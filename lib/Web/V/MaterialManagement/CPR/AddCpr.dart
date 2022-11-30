@@ -77,11 +77,11 @@ class _AddCprState extends State<AddCpr> {
   getWebUi() {
     List<CprItem> _selectedItems = List.from(selectedItems);
     return Scaffold(
-        floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
-        bottomNavigationBar: BottomAppBar(
-            color: errMsg.isEmpty ? Colors.white : Colors.red,
-            shape: const CircularNotchedRectangle(),
-            child: SizedBox(height: 50, child: Padding(padding: const EdgeInsets.all(8.0), child: Text(errMsg, style: const TextStyle(color: Colors.white))))),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        // bottomNavigationBar: BottomAppBar(
+        // color: errMsg.isEmpty ? Colors.white : Colors.red,
+        // shape: const CircularNotchedRectangle(),
+        // child: SizedBox(height: 50, child: Padding(padding: const EdgeInsets.all(8.0), child: Text(errMsg, style: const TextStyle(color: Colors.white))))),
         appBar: AppBar(title: Text(cpr.ticket?.mo ?? ''), actions: [
           IconButton(
               onPressed: () {
@@ -117,101 +117,182 @@ class _AddCprState extends State<AddCpr> {
                                     ),
                                   )),
                               ListTile(
+                                  dense: true,
                                   title: Text("Sail Type", style: titleTheme),
                                   subtitle: Padding(
                                     padding: const EdgeInsets.only(left: 8.0),
                                     child: Text("${cpr.sailType}", style: const TextStyle(color: Colors.red)),
                                   )),
                               ListTile(
+                                  dense: true,
                                   title: Text("Client", style: titleTheme),
                                   isThreeLine: true,
+                                  // subtitle: Padding(
+                                  //     padding: const EdgeInsets.only(left: 8.0),
+                                  //     child: DropdownButtonHideUnderline(
+                                  //         child: Container(
+                                  //             padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                  //             decoration: BoxDecoration(
+                                  //                 border: Border.all(color: Colors.grey.shade400, width: 1, style: BorderStyle.solid), borderRadius: BorderRadius.circular(4)),
+                                  //             child: DropdownButton<String>(
+                                  //                 hint: const Text("Client"),
+                                  //                 value: cpr.client,
+                                  //                 icon: const Icon(Icons.arrow_downward),
+                                  //                 elevation: 16,
+                                  //                 style: const TextStyle(color: Colors.deepPurple),
+                                  //                 onChanged: (String? newValue) {
+                                  //                   setState(() {
+                                  //                     cpr.client = newValue!;
+                                  //                   });
+                                  //                 },
+                                  //                 items: _clients.map<DropdownMenuItem<String>>((String value) {
+                                  //                   return DropdownMenuItem<String>(
+                                  //                     value: value,
+                                  //                     child: Padding(
+                                  //                       padding: const EdgeInsets.only(left: 8.0),
+                                  //                       child: Text(value),
+                                  //                     ),
+                                  //                   );
+                                  //                 }).toList()))))
                                   subtitle: Padding(
-                                      padding: const EdgeInsets.only(left: 8.0),
-                                      child: DropdownButtonHideUnderline(
-                                          child: Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                              decoration: BoxDecoration(
-                                                  border: Border.all(color: Colors.grey.shade400, width: 1, style: BorderStyle.solid), borderRadius: BorderRadius.circular(4)),
-                                              child: DropdownButton<String>(
-                                                  hint: const Text("Client"),
-                                                  value: cpr.client,
-                                                  icon: const Icon(Icons.arrow_downward),
-                                                  elevation: 16,
-                                                  style: const TextStyle(color: Colors.deepPurple),
-                                                  onChanged: (String? newValue) {
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: PopupMenuButton<String>(
+                                          offset: const Offset(0, 30),
+                                          padding: const EdgeInsets.all(16.0),
+                                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                                          child: Chip(
+                                              avatar: const Icon(Icons.person_rounded, color: Colors.black),
+                                              label: Row(
+                                                  children: [Text(cpr.client ?? 'Select Client'), const Spacer(), const Icon(Icons.arrow_drop_down_rounded, color: Colors.black)])),
+                                          onSelected: (result) {},
+                                          itemBuilder: (BuildContext context) {
+                                            return _clients.map((String value) {
+                                              return PopupMenuItem<String>(
+                                                  value: value,
+                                                  onTap: () {
                                                     setState(() {
-                                                      cpr.client = newValue!;
+                                                      cpr.client = value;
                                                     });
                                                   },
-                                                  items: _clients.map<DropdownMenuItem<String>>((String value) {
-                                                    return DropdownMenuItem<String>(
-                                                      value: value,
-                                                      child: Padding(
-                                                        padding: const EdgeInsets.only(left: 8.0),
-                                                        child: Text(value),
-                                                      ),
-                                                    );
-                                                  }).toList()))))),
+                                                  child: Text(value));
+                                            }).toList();
+                                          }))),
                               ListTile(
-                                  title: Text("Shortage Type", style: titleTheme),
-                                  isThreeLine: true,
-                                  subtitle: Padding(
-                                      padding: const EdgeInsets.only(left: 8.0),
-                                      child: DropdownButtonHideUnderline(
-                                          child: Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                              decoration: BoxDecoration(
-                                                  border: Border.all(color: Colors.grey.shade400, width: 1, style: BorderStyle.solid), borderRadius: BorderRadius.circular(4)),
-                                              child: DropdownButton<String>(
-                                                  hint: const Text("Select Shortage Type"),
-                                                  value: cpr.shortageType,
-                                                  icon: const Icon(Icons.arrow_downward),
-                                                  elevation: 16,
-                                                  style: const TextStyle(color: Colors.deepPurple),
-                                                  onChanged: (String? newValue) {
-                                                    setState(() {
-                                                      cpr.shortageType = newValue!;
-                                                    });
-                                                  },
-                                                  items: _shortageTypes.map<DropdownMenuItem<String>>((String value) {
-                                                    return DropdownMenuItem<String>(
-                                                      value: value,
-                                                      child: Padding(
-                                                        padding: const EdgeInsets.only(left: 8.0),
-                                                        child: Text(value),
-                                                      ),
-                                                    );
-                                                  }).toList()))))),
+                                dense: true,
+                                title: Text("Shortage Type", style: titleTheme),
+                                isThreeLine: true,
+                                // subtitle: Padding(
+                                //     padding: const EdgeInsets.only(left: 8.0),
+                                //     child: DropdownButtonHideUnderline(
+                                //         child: Container(
+                                //             padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                //             decoration: BoxDecoration(
+                                //                 border: Border.all(color: Colors.grey.shade400, width: 1, style: BorderStyle.solid), borderRadius: BorderRadius.circular(4)),
+                                //             child: DropdownButton<String>(
+                                //                 hint: const Text("Select Shortage Type"),
+                                //                 value: cpr.shortageType,
+                                //                 icon: const Icon(Icons.arrow_downward),
+                                //                 elevation: 16,
+                                //                 style: const TextStyle(color: Colors.deepPurple),
+                                //                 onChanged: (String? newValue) {
+                                //                   setState(() {
+                                //                     cpr.shortageType = newValue!;
+                                //                   });
+                                //                 },
+                                //                 items: _shortageTypes.map<DropdownMenuItem<String>>((String value) {
+                                //                   return DropdownMenuItem<String>(
+                                //                     value: value,
+                                //                     child: Padding(
+                                //                       padding: const EdgeInsets.only(left: 8.0),
+                                //                       child: Text(value),
+                                //                     ),
+                                //                   );
+                                //                 }).toList()))))
+                                subtitle: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: PopupMenuButton<String>(
+                                        offset: const Offset(0, 30),
+                                        padding: const EdgeInsets.all(16.0),
+                                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                                        child: Chip(
+                                            avatar: const Icon(Icons.menu_open, color: Colors.black),
+                                            label: Row(children: [
+                                              Text(cpr.cprType ?? 'Select Shortage type'),
+                                              const Spacer(),
+                                              const Icon(Icons.arrow_drop_down_rounded, color: Colors.black)
+                                            ])),
+                                        onSelected: (result) {},
+                                        itemBuilder: (BuildContext context) {
+                                          return _shortageTypes.map((String value) {
+                                            return PopupMenuItem<String>(
+                                                value: value,
+                                                onTap: () {
+                                                  setState(() {
+                                                    cpr.shortageType = value;
+                                                  });
+                                                },
+                                                child: Text(value));
+                                          }).toList();
+                                        })),
+                              ),
                               ListTile(
-                                  title: Text("CPR Type", style: titleTheme),
-                                  isThreeLine: true,
-                                  subtitle: Padding(
-                                      padding: const EdgeInsets.only(left: 8.0),
-                                      child: DropdownButtonHideUnderline(
-                                          child: Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                              decoration: BoxDecoration(
-                                                  border: Border.all(color: Colors.grey.shade400, width: 1, style: BorderStyle.solid), borderRadius: BorderRadius.circular(4)),
-                                              child: DropdownButton<String>(
-                                                  hint: const Text("Select CPR Type"),
-                                                  value: cpr.cprType,
-                                                  icon: const Icon(Icons.arrow_downward),
-                                                  elevation: 16,
-                                                  style: const TextStyle(color: Colors.deepPurple),
-                                                  onChanged: (String? newValue) {
-                                                    setState(() {
-                                                      cpr.cprType = newValue!;
-                                                    });
-                                                  },
-                                                  items: _cprTypes.map<DropdownMenuItem<String>>((String value) {
-                                                    return DropdownMenuItem<String>(
-                                                      value: value,
-                                                      child: Padding(
-                                                        padding: const EdgeInsets.only(left: 8.0),
-                                                        child: Text(value),
-                                                      ),
-                                                    );
-                                                  }).toList()))))),
+                                dense: true,
+                                title: Text("CPR Type", style: titleTheme),
+                                isThreeLine: true,
+                                // subtitle: Padding(
+                                //     padding: const EdgeInsets.only(left: 8.0),
+                                //     child: DropdownButtonHideUnderline(
+                                //         child: Container(
+                                //             padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                //             decoration: BoxDecoration(
+                                //                 border: Border.all(color: Colors.grey.shade400, width: 1, style: BorderStyle.solid), borderRadius: BorderRadius.circular(4)),
+                                //             child: DropdownButton<String>(
+                                //                 hint: const Text("Select CPR Type"),
+                                //                 value: cpr.cprType,
+                                //                 icon: const Icon(Icons.arrow_downward),
+                                //                 elevation: 16,
+                                //                 style: const TextStyle(color: Colors.deepPurple),
+                                //                 onChanged: (String? newValue) {
+                                //                   setState(() {
+                                //                     cpr.cprType = newValue!;
+                                //                   });
+                                //                 },
+                                //                 items: _cprTypes.map<DropdownMenuItem<String>>((String value) {
+                                //                   return DropdownMenuItem<String>(
+                                //                     value: value,
+                                //                     child: Padding(
+                                //                       padding: const EdgeInsets.only(left: 8.0),
+                                //                       child: Text(value),
+                                //                     ),
+                                //                   );
+                                //                 }).toList()))))
+                                subtitle: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: PopupMenuButton<String>(
+                                        offset: const Offset(0, 30),
+                                        padding: const EdgeInsets.all(16.0),
+                                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                                        child: Chip(
+                                            avatar: const Icon(Icons.local_mall_rounded, color: Colors.black),
+                                            label: Row(children: [
+                                              Text(cpr.cprType ?? 'Select Cpr type'),
+                                              const Spacer(),
+                                              const Icon(Icons.arrow_drop_down_rounded, color: Colors.black)
+                                            ])),
+                                        onSelected: (result) {},
+                                        itemBuilder: (BuildContext context) {
+                                          return _cprTypes.map((String value) {
+                                            return PopupMenuItem<String>(
+                                                value: value,
+                                                onTap: () {
+                                                  setState(() {
+                                                    cpr.cprType = value;
+                                                  });
+                                                },
+                                                child: Text(value));
+                                          }).toList();
+                                        })),
+                              ),
                               // if (cpr.ticket!.production == null)
                               //   ListTile(
                               //     title: Text("Client", style: titleTheme),
@@ -230,11 +311,11 @@ class _AddCprState extends State<AddCpr> {
                               //               })),
                               //     ),
                               //   ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 12.0),
-                                child: Text("Suppliers", style: titleTheme),
-                              ),
-                              getSuppliers(),
+                              // Padding(
+                              //   padding: const EdgeInsets.only(left: 12.0),
+                              //   child: Text("Suppliers", style: titleTheme),
+                              // ),
+                              ListTile(dense: false, title: Text("Suppliers", style: titleTheme), subtitle: getSuppliers()),
                               ListTile(
                                   title: Text("Comment", style: titleTheme),
                                   subtitle: Padding(
@@ -355,7 +436,7 @@ class _AddCprState extends State<AddCpr> {
                 getOptions(_selectedItems),
                 Expanded(
                     child: Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
+                      padding: const EdgeInsets.only(bottom: 64.0),
                   child: SizedBox(
                       width: double.infinity,
                       child: Card(
@@ -402,7 +483,7 @@ class _AddCprState extends State<AddCpr> {
                 )),
               ]))
             ]),
-            if (saving) Container(color: Colors.white, child: const Center(child: CircularProgressIndicator()))
+            if (saving) Container(color: Colors.white, child: const Center(child: CircularProgressIndicator())),
           ],
         ),
         floatingActionButton: saving
@@ -444,7 +525,7 @@ class _AddCprState extends State<AddCpr> {
   getSuppliers() {
     _supplier2 = _supplier1 == _supplier2 ? null : _supplier2;
     _supplier3 = _supplier2 == _supplier3 ? null : _supplier3;
-    // cpr.suppliers = [_supplier1, _supplier2, _supplier3];
+
     cpr.suppliers.removeWhere((value) => value == 'None');
     cpr.suppliers = cpr.suppliers.toSet().toList();
     print(cpr.suppliers);
@@ -454,88 +535,180 @@ class _AddCprState extends State<AddCpr> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ListTile(
-            title: Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: DropdownButtonHideUnderline(
-                    child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade400, width: 1, style: BorderStyle.solid), borderRadius: BorderRadius.circular(4)),
-                        child: DropdownButton<String>(
-                            hint: const Text("Select Supplier"),
-                            value: cpr.suppliers.isNotEmpty ? cpr.suppliers[0] : null,
-                            icon: const Icon(Icons.arrow_downward),
-                            elevation: 16,
-                            style: const TextStyle(color: Colors.deepPurple),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                if (newValue != null) {
-                                  try {
-                                    cpr.suppliers.removeAt(0);
-                                  } catch (e) {}
-                                  cpr.suppliers.insert(0, newValue);
-                                  print(cpr.suppliers);
-                                }
-                              });
-                            },
-                            items: __suppliers.map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(value: value, child: Padding(padding: const EdgeInsets.only(left: 8.0), child: Text(value)));
-                            }).toList()))))),
+        Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: PopupMenuButton<String>(
+                offset: const Offset(0, 30),
+                padding: const EdgeInsets.all(16.0),
+                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                child: Chip(
+                    avatar: const Icon(Icons.airport_shuttle, color: Colors.black),
+                    label: Row(children: [
+                      Text(cpr.suppliers.isNotEmpty ? cpr.suppliers[0] : 'Select Supplier'),
+                      const Spacer(),
+                      const Icon(Icons.arrow_drop_down_rounded, color: Colors.black)
+                    ])),
+                onSelected: (result) {},
+                itemBuilder: (BuildContext context) {
+                  return __suppliers.map((String value) {
+                    return PopupMenuItem<String>(
+                        value: value,
+                        onTap: () {
+                          try {
+                            cpr.suppliers.removeAt(0);
+                          } catch (e) {}
+                          setState(() {
+                            cpr.suppliers.insert(0, value);
+                            print(cpr.suppliers);
+                          });
+                        },
+                        child: Text(value));
+                  }).toList();
+                })),
+        // ListTile(
+        //     title: Padding(
+        //         padding: const EdgeInsets.only(left: 8.0),
+        //         child: DropdownButtonHideUnderline(
+        //             child: Container(
+        //                 padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        //                 decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade400, width: 1, style: BorderStyle.solid), borderRadius: BorderRadius.circular(4)),
+        //                 child: DropdownButton<String>(
+        //                     hint: const Text("Select Supplier"),
+        //                     value: cpr.suppliers.isNotEmpty ? cpr.suppliers[0] : null,
+        //                     icon: const Icon(Icons.arrow_downward),
+        //                     elevation: 16,
+        //                     style: const TextStyle(color: Colors.deepPurple),
+        //                     onChanged: (String? newValue) {
+        //                       setState(() {
+        //                         if (newValue != null) {
+        //                           try {
+        //                             cpr.suppliers.removeAt(0);
+        //                           } catch (e) {}
+        //                           cpr.suppliers.insert(0, newValue);
+        //                           print(cpr.suppliers);
+        //                         }
+        //                       });
+        //                     },
+        //                     items: __suppliers.map<DropdownMenuItem<String>>((String value) {
+        //                       return DropdownMenuItem<String>(value: value, child: Padding(padding: const EdgeInsets.only(left: 8.0), child: Text(value)));
+        //                     }).toList()))))),
         if (cpr.suppliers.isNotEmpty)
-          ListTile(
-              title: Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: DropdownButtonHideUnderline(
-                      child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade400, width: 1, style: BorderStyle.solid), borderRadius: BorderRadius.circular(4)),
-                          child: DropdownButton<String>(
-                              hint: const Text("Select Supplier"),
-                              value: cpr.suppliers.length > 1 ? cpr.suppliers[1] : null,
-                              icon: const Icon(Icons.arrow_downward),
-                              elevation: 16,
-                              style: const TextStyle(color: Colors.deepPurple),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  if (newValue != null) {
-                                    try {
-                                      cpr.suppliers.removeAt(1);
-                                    } catch (e) {}
-                                    cpr.suppliers.insert(1, newValue);
-                                    print(cpr.suppliers);
-                                  }
-                                });
-                              },
-                              items: __suppliers.map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(value: value, child: Padding(padding: const EdgeInsets.only(left: 8.0), child: Text(value)));
-                              }).toList()))))),
+          Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: PopupMenuButton<String>(
+                  offset: const Offset(0, 30),
+                  padding: const EdgeInsets.all(16.0),
+                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                  child: Chip(
+                      avatar: const Icon(Icons.factory, color: Colors.black),
+                      label: Row(children: [
+                        Text(cpr.suppliers.length > 1 ? cpr.suppliers[1] : 'Select Supplier'),
+                        const Spacer(),
+                        const Icon(Icons.arrow_drop_down_rounded, color: Colors.black)
+                      ])),
+                  onSelected: (result) {},
+                  itemBuilder: (BuildContext context) {
+                    return __suppliers.map((String value) {
+                      return PopupMenuItem<String>(
+                          value: value,
+                          onTap: () {
+                            setState(() {
+                              if (value != null) {
+                                try {
+                                  cpr.suppliers.removeAt(1);
+                                } catch (e) {}
+                                cpr.suppliers.insert(1, value);
+                                print(cpr.suppliers);
+                              }
+                            });
+                          },
+                          child: Text(value));
+                    }).toList();
+                  })),
+        // ListTile(
+        //     title: Padding(
+        //         padding: const EdgeInsets.only(left: 8.0),
+        //         child: DropdownButtonHideUnderline(
+        //             child: Container(
+        //                 padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        //                 decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade400, width: 1, style: BorderStyle.solid), borderRadius: BorderRadius.circular(4)),
+        //                 child: DropdownButton<String>(
+        //                     hint: const Text("Select Supplier"),
+        //                     value: cpr.suppliers.length > 1 ? cpr.suppliers[1] : null,
+        //                     icon: const Icon(Icons.arrow_downward),
+        //                     elevation: 16,
+        //                     style: const TextStyle(color: Colors.deepPurple),
+        //                     onChanged: (String? newValue) {
+        //                       setState(() {
+        //                         if (newValue != null) {
+        //                           try {
+        //                             cpr.suppliers.removeAt(1);
+        //                           } catch (e) {}
+        //                           cpr.suppliers.insert(1, newValue);
+        //                           print(cpr.suppliers);
+        //                         }
+        //                       });
+        //                     },
+        //                     items: __suppliers.map<DropdownMenuItem<String>>((String value) {
+        //                       return DropdownMenuItem<String>(value: value, child: Padding(padding: const EdgeInsets.only(left: 8.0), child: Text(value)));
+        //                     }).toList()))))),
         if (cpr.suppliers.length > 1)
-          ListTile(
-              title: Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: DropdownButtonHideUnderline(
-                      child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade400, width: 1, style: BorderStyle.solid), borderRadius: BorderRadius.circular(4)),
-                          child: DropdownButton<String>(
-                              hint: const Text("Select Supplier"),
-                              value: cpr.suppliers.length > 2 ? cpr.suppliers[2] : null,
-                              icon: const Icon(Icons.arrow_downward),
-                              elevation: 16,
-                              style: const TextStyle(color: Colors.deepPurple),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  if (newValue != null) {
-                                    try {
-                                      cpr.suppliers.removeAt(2);
-                                    } catch (e) {}
-                                    cpr.suppliers.insert(2, newValue);
-                                  }
-                                });
-                              },
-                              items: __suppliers.map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(value: value, child: Padding(padding: const EdgeInsets.only(left: 8.0), child: Text(value)));
-                              }).toList()))))),
+          // ListTile(
+          //     title: Padding(
+          //         padding: const EdgeInsets.only(left: 8.0),
+          //         child: DropdownButtonHideUnderline(
+          //             child: Container(
+          //                 padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          //                 decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade400, width: 1, style: BorderStyle.solid), borderRadius: BorderRadius.circular(4)),
+          //                 child: DropdownButton<String>(
+          //                     hint: const Text("Select Supplier"),
+          //                     value: cpr.suppliers.length > 2 ? cpr.suppliers[2] : null,
+          //                     icon: const Icon(Icons.arrow_downward),
+          //                     elevation: 16,
+          //                     style: const TextStyle(color: Colors.deepPurple),
+          //                     onChanged: (String? newValue) {
+          //                       setState(() {
+          //                         if (newValue != null) {
+          //                           try {
+          //                             cpr.suppliers.removeAt(2);
+          //                           } catch (e) {}
+          //                           cpr.suppliers.insert(2, newValue);
+          //                         }
+          //                       });
+          //                     },
+          //                     items: __suppliers.map<DropdownMenuItem<String>>((String value) {
+          //                       return DropdownMenuItem<String>(value: value, child: Padding(padding: const EdgeInsets.only(left: 8.0), child: Text(value)));
+          //                     }).toList()))))),
+
+          Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: PopupMenuButton<String>(
+                  offset: const Offset(0, 30),
+                  padding: const EdgeInsets.all(16.0),
+                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                  child: Chip(
+                      avatar: const Icon(Icons.factory, color: Colors.black),
+                      label: Row(children: [
+                        Text(cpr.suppliers.length > 2 ? cpr.suppliers[2] : 'Select Supplier'),
+                        const Spacer(),
+                        const Icon(Icons.arrow_drop_down_rounded, color: Colors.black)
+                      ])),
+                  onSelected: (result) {},
+                  itemBuilder: (BuildContext context) {
+                    return __suppliers.map((String value) {
+                      return PopupMenuItem<String>(
+                          value: value,
+                          onTap: () {
+                            setState(() {
+                              try {
+                                cpr.suppliers.removeAt(2);
+                              } catch (e) {}
+                              cpr.suppliers.insert(2, value);
+                            });
+                          },
+                          child: Text(value));
+                    }).toList();
+                  })),
       ],
     );
   }
@@ -601,6 +774,9 @@ class _AddCprState extends State<AddCpr> {
       });
     }
     print(errMsg);
+    if (errMsg.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errMsg, style: const TextStyle(color: Colors.white)), backgroundColor: Colors.red));
+    }
     setState(() {});
   }
 

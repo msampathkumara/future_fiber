@@ -29,23 +29,17 @@ class MainActivity : FlutterActivity() {
         println("ccccccccccccccccccccccccccccccccccccccccccccccc")
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, _CHANNEL).setMethodCallHandler { call, result ->
 
-//            startActivityForResult( { result: ActivityResult ->
-//            if (result.resultCode == Activity.RESULT_OK) {
-//                val intent = result.intent
-//                // Handle the Intent
-//            }
-//        }
 
-            when (call.method) {
-                "editPdf" -> {
-                    editPdfResult = result
-                    val fileID = call.argument<Int>("fileID")
-                    val path = call.argument<String>("path")
-                    val ticket = call.argument<String>("ticket")
-                    val serverUrl = call.argument<String>("serverUrl")
-                    val userCurrentSection = call.argument<String>("userCurrentSection")
+        when (call.method) {
+            "editPdf" -> {
+                editPdfResult = result
+                val fileID = call.argument<Int>("fileID")
+                val path = call.argument<String>("path")
+                val ticket = call.argument<String>("ticket")
+                val serverUrl = call.argument<String>("serverUrl")
+                val userCurrentSection = call.argument<String>("userCurrentSection")
 
-                    println("$fileID _$path _$ticket")
+                println("$fileID _$path _$ticket")
 
 
                     val i = Intent(this, MainEditorActivity::class.java)

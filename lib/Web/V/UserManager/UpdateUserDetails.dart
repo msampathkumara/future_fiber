@@ -25,8 +25,8 @@ class UpdateUserDetails extends StatefulWidget {
   }
 
   @override
-  _UpdateUserDetailsState createState() {
-    return _UpdateUserDetailsState();
+  UpdateUserDetailsState createState() {
+    return UpdateUserDetailsState();
   }
 
   Future<NsUser?> show(context) {
@@ -34,7 +34,7 @@ class UpdateUserDetails extends StatefulWidget {
   }
 }
 
-class _UpdateUserDetailsState extends State<UpdateUserDetails> {
+class UpdateUserDetailsState extends State<UpdateUserDetails> {
   late NsUser nsUser;
   late NsUser orginalNsUser;
 

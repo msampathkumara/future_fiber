@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/Mobile/V/Widgets/SearchBar.dart';
-import 'package:smartwind/Web/V/AddSheet/add_sheet.dart';
 import 'package:smartwind/Web/V/AddTicket/add_ticket.dart';
 import 'package:smartwind/Web/V/ProductionPool/webProductionPool.table.dart';
+import 'package:smartwind/Web/V/SheetData/add_sheet.dart';
 
 import '../../../M/AppUser.dart';
 import '../../../M/Enums.dart';
@@ -234,6 +234,16 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                               onTap: () {
                                 Navigator.pop(context);
                                 const AddSheet().show(context);
+                              },
+                            ),
+                          if (AppUser.havePermissionFor(NsPermissions.SHEET_ADD_DATA_SHEET))
+                            ListTile(
+                              title: const Text("Add Updated Data Sheet", style: TextStyle(color: Colors.red)),
+                              selectedTileColor: Colors.black12,
+                              leading: const Icon(Icons.list_alt_rounded),
+                              onTap: () {
+                                Navigator.pop(context);
+                                const AddSheet(isUpdate: true).show(context);
                               },
                             )
                         ],

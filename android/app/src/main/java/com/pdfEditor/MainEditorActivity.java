@@ -181,7 +181,7 @@ public class MainEditorActivity extends AppCompatActivity {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
             }
 
-//            pdfEditor.saveEdits();
+
             uploadPdfEdits(
                     new RunAfterUpload() {
 

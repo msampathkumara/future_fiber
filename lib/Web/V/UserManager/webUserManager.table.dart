@@ -135,7 +135,7 @@ class UserManagerDataSource extends DataTableSource {
   late bool hasRowHeightOverrides;
 
   Comparable Function(NsUser d) sortField = ((d) => (d.name));
-  var _ascending = true;
+  final _ascending = true;
 
   void sort<T>(Comparable<T> Function(NsUser d) getField, bool ascending) {
     nsUsers.sort((a, b) {

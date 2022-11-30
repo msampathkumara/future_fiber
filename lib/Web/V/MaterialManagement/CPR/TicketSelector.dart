@@ -62,15 +62,15 @@ class _TicketSelectorState extends State<TicketSelector> {
                                 await AddTicket(searchText).show(context).then((Ticket? ticket) {
                                   if (ticket != null) {
                                     HiveBox.ticketBox.putMany([ticket]);
-
-                                    searchText = (ticket.mo!.isNotEmpty ? ticket.mo : ticket.oe) ?? searchText;
-                                    searchController.text = searchText;
-
-                                    load();
+                                    Navigator.pop(context, ticket);
+                                    // searchText = (ticket.mo!.isNotEmpty ? ticket.mo : ticket.oe) ?? searchText;
+                                    // searchController.text = searchText;
+                                    //
+                                    // load();
                                   }
                                 });
                               },
-                              child: const Text("Add MO"))))
+                              child: const Text("Add Ticket"))))
                   : ListView.separated(
                       itemBuilder: (context, index) {
                         var ticket = ticketList[index];

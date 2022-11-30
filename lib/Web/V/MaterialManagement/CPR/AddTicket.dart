@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/Web/Widgets/IfWeb.dart';
@@ -51,13 +52,12 @@ class _AddTicketState extends State<AddTicket> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextFormField(
+                inputFormatters: [UpperCaseTextFormatter()],
                 textCapitalization: TextCapitalization.characters,
                 focusNode: focusNode,
                 autofocus: true,
                 controller: searchController,
-                onChanged: (text) {
-                  searchController.text = searchController.text.toUpperCase();
-                },
+                onChanged: (text) {},
                 cursorColor: Colors.black,
                 decoration: const InputDecoration(
                     prefixIcon: Icon(Icons.search_rounded),
@@ -117,5 +117,15 @@ class _AddTicketState extends State<AddTicket> {
                 });
               });
             })));
+  }
+}
+
+class UpperCaseTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    return TextEditingValue(
+      text: newValue.text.toUpperCase(),
+      selection: newValue.selection,
+    );
   }
 }

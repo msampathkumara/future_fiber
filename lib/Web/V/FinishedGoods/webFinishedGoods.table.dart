@@ -322,7 +322,7 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                     ),
                   if (ticket.isError == 1)
                     IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.report_problem_rounded, color: Colors.red)), onPressed: () {}),
-                  if (ticket.isSort == 1)
+                  if (ticket.haveCpr == 1)
                     IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.local_mall_rounded, color: Colors.green)), onPressed: () {}),
                   if (ticket.isRush == 1)
                     IconButton(

@@ -143,13 +143,13 @@ class _TicketInfoState extends State<TicketInfo> {
 
       elevation: 10,
       // toolbarHeight: (bottomNavigationBarSelectedIndex == 0) ? (height - kBottomNavigationBarHeight) : 230,
-      toolbarHeight: 230,
+      toolbarHeight: 250,
       bottom: PreferredSize(
           preferredSize: const Size.fromHeight(4.0),
           child: Container(
             // color: Colors.orange,
             color: Theme.of(context).primaryColor,
-            height: (kDebugMode) ? 220.0 : 200,
+            height: (kDebugMode) ? 250.0 : 230,
             child: Row(
               children: [
                 Padding(
@@ -161,6 +161,7 @@ class _TicketInfoState extends State<TicketInfo> {
                       TextMenu(child: Text(_ticket.mo ?? "_", style: ts)),
                       TextMenu(child: Text(_ticket.oe ?? "_", style: ts)),
                       Text(_ticket.production ?? "_", style: ts.merge(smallText)),
+                      Text(_ticket.pool ?? "_", style: ts.merge(smallText)),
                       Text("update on : ${_ticket.getUpdateDateTime()}", style: ts.merge(smallText)),
                       Text("Ship Date : ${_ticket.shipDate}", style: ts.merge(smallText)),
                       Text("Delivery Date : ${_ticket.deliveryDate}", style: ts.merge(smallText)),

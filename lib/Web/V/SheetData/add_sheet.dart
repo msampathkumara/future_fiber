@@ -11,7 +11,9 @@ import 'package:uuid/uuid.dart';
 import '../../../C/Api.dart';
 
 class AddSheet extends StatefulWidget {
-  const AddSheet({Key? key}) : super(key: key);
+  final bool isUpdate;
+
+  const AddSheet({Key? key, this.isUpdate = false}) : super(key: key);
 
   @override
   State<AddSheet> createState() => _AddSheetState();
@@ -56,13 +58,14 @@ class _AddSheetState extends State<AddSheet> {
             child: Scaffold(
               appBar: AppBar(
                   automaticallyImplyLeading: false,
+                  backgroundColor: widget.isUpdate ? Colors.red : null,
                   actions: <Widget>[
                     IconButton(
                       icon: const Icon(Icons.close, color: Colors.white),
                       onPressed: () => Navigator.of(context).pop(),
                     )
                   ],
-                  title: const Text("Upload Data Sheet"),
+                  title: widget.isUpdate ? const Text("Upload Updated Data Sheet") : const Text("Upload Data Sheet"),
                   centerTitle: true),
               backgroundColor: Colors.white,
               body: Row(
@@ -224,7 +227,7 @@ class _AddSheetState extends State<AddSheet> {
     });
 
     final bytes = await controller1.getFileData(ev);
-    FormData formData = FormData.fromMap({"sheet": MultipartFile.fromBytes(bytes, filename: ev.name), 'id': id});
+    FormData formData = FormData.fromMap({"sheet": MultipartFile.fromBytes(bytes, filename: ev.name), 'id': id, 'isUpdate': widget.isUpdate});
 
     Api.post((EndPoints.sheet_upload), {}, formData: formData, onSendProgress: (int sent, int total) {}).then((value) {
       print('done');

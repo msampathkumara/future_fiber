@@ -44,7 +44,13 @@ class _info_short_itemsState extends State<info_short_items> {
                       ]),
                       TableRow(children: [
                         ListTile(dense: true, title: Text("Shortage Type", style: _title), subtitle: Text("${cpr.shortageType}", style: _value)),
-                        ListTile(dense: true, title: Text("Date & Time", style: _title), subtitle: Text("${cpr.date}", style: _value)),
+                        ListTile(
+                            dense: true,
+                            title: Text("Date & Time", style: _title),
+                            subtitle: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [Text("${cpr.date}", style: _value), Text("${cpr.time}", style: _value.copyWith(fontSize: 12))])),
                         Container()
                       ])
                     ],

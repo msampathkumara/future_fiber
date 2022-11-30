@@ -79,8 +79,6 @@ class _CprViewState extends State<CprView> {
         body: _loading
             ? const Center(child: CircularProgressIndicator())
             : Builder(builder: (context) {
-                List<CprActivity?> cprActivitiesNoNull = cprActivities;
-
                 return Row(children: [
                   Flexible(
                     child: Padding(
@@ -332,6 +330,8 @@ class _CprViewState extends State<CprView> {
   DataRow getMatRow(CprItem material) {
     NsUser? user = (material.user);
     var dnt = material.dnt.split(" ");
+    var date = dnt.asMap().containsKey(0) ? dnt[0] : '-';
+    var time = dnt.asMap().containsKey(1) ? dnt[1] : '-';
 
     return DataRow(cells: [
       DataCell(checkingMaterials.contains(material.id)
@@ -343,16 +343,16 @@ class _CprViewState extends State<CprView> {
                       ? null
                       : (checked) {
                           material.setChecked(checked!);
-                          setState(() {});
-                          checkMaterial(material, checked);
-                        }
-                  : null)),
+            setState(() {});
+            checkMaterial(material, checked);
+          }
+              : null)),
       DataCell(Text(material.item)),
       DataCell(Text(material.qty)),
       DataCell(Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [Text(dnt[0]), Text(dnt[1] ?? '', textAlign: TextAlign.end, style: const TextStyle(fontSize: 12, color: Colors.grey))])),
+          children: [Text(date), Text(time, textAlign: TextAlign.end, style: const TextStyle(fontSize: 12, color: Colors.grey))])),
       DataCell(user != null ? ListTile(leading: UserImage(nsUser: user, radius: 12), title: Text(user.uname)) : const Text('-')),
       if (AppUser.havePermissionFor(NsPermissions.CPR_DELETE_CPR_MATERIALS))
         DataCell(IconButton(

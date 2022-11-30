@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pdf_render/pdf_render_widgets.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/QC.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/Web/V/QC/QFileView.dart';
@@ -113,7 +114,7 @@ class _WebTicketQViewState extends State<WebTicketQView> {
                     const VerticalDivider(),
                     Expanded(
                         child: selectedQc == null
-                            ? const Center(child: Text('Select Qc'))
+                            ? Center(child: Text(widget.isQc ? 'Select QC' : 'Select QA'))
                             : _pdfLoading
                                 ? const Center(child: CircularProgressIndicator())
                                 : getView())
@@ -160,7 +161,7 @@ class _WebTicketQViewState extends State<WebTicketQView> {
   String? err_msg;
 
   Future apiGetData() {
-    return Api.get("tickets/qc/getTicketQcList", {'ticketId': ticket.id}).then((res) {
+    return Api.get(EndPoints.tickets_qc_getTicketQcList, {'ticketId': ticket.id}).then((res) {
       err_msg = null;
       Map data = res.data;
       print(data);
