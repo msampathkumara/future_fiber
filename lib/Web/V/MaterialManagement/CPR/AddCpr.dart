@@ -217,7 +217,7 @@ class _AddCprState extends State<AddCpr> {
                                         child: Chip(
                                             avatar: const Icon(Icons.menu_open, color: Colors.black),
                                             label: Row(children: [
-                                              Text(cpr.cprType ?? 'Select Shortage type'),
+                                              Text(cpr.shortageType ?? 'Select Shortage type'),
                                               const Spacer(),
                                               const Icon(Icons.arrow_drop_down_rounded, color: Colors.black)
                                             ])),
@@ -518,9 +518,9 @@ class _AddCprState extends State<AddCpr> {
 
   getUi() {}
 
-  var _supplier1;
-  var _supplier2;
-  var _supplier3;
+  String? _supplier1;
+  String? _supplier2;
+  String? _supplier3;
 
   getSuppliers() {
     _supplier2 = _supplier1 == _supplier2 ? null : _supplier2;
@@ -613,13 +613,11 @@ class _AddCprState extends State<AddCpr> {
                           value: value,
                           onTap: () {
                             setState(() {
-                              if (value != null) {
-                                try {
-                                  cpr.suppliers.removeAt(1);
-                                } catch (e) {}
-                                cpr.suppliers.insert(1, value);
-                                print(cpr.suppliers);
-                              }
+                              try {
+                                cpr.suppliers.removeAt(1);
+                              } catch (e) {}
+                              cpr.suppliers.insert(1, value);
+                              print(cpr.suppliers);
                             });
                           },
                           child: Text(value));

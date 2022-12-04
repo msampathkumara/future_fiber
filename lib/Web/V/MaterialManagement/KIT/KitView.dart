@@ -15,6 +15,7 @@ import 'package:smartwind/Web/Widgets/IfWeb.dart';
 import 'package:smartwind/Web/Widgets/chatBubble.dart';
 
 import '../../../../M/AppUser.dart';
+import '../../../../M/CPR/CprItem.dart';
 import '../../../../M/NsUser.dart';
 import '../../../../M/PermissionsEnum.dart';
 
@@ -44,6 +45,8 @@ class _KitViewState extends State<KitView> {
   late List<KIT> kits;
 
   List<Message> kitComments = [];
+
+  final _canDeleted = AppUser.havePermissionFor(NsPermissions.KIT_DELETE_MATERIALS);
 
   @override
   void initState() {
@@ -131,27 +134,35 @@ class _KitViewState extends State<KitView> {
                                 Expanded(
                                     child: SizedBox(
                                         width: double.infinity,
-                                        child: DataTable2(smRatio: 0.2, columns: const [
-                                          DataColumn2(label: Text(''), size: ColumnSize.S),
-                                          DataColumn2(label: Text('Item'), size: ColumnSize.L),
-                                          DataColumn2(label: Text('Qty'), size: ColumnSize.M),
-                                          DataColumn2(label: Text('Date'), size: ColumnSize.M),
-                                          DataColumn2(label: Text('User'), size: ColumnSize.L)
+                                        child: DataTable2(smRatio: 0.2, columns: [
+                                          const DataColumn2(label: Text(''), size: ColumnSize.S),
+                                          const DataColumn2(label: Text('Item'), size: ColumnSize.L),
+                                          const DataColumn2(label: Text('Qty'), size: ColumnSize.M),
+                                          const DataColumn2(label: Text('Date'), size: ColumnSize.M),
+                                          const DataColumn2(label: Text('User'), size: ColumnSize.L),
+                                          if (_canDeleted) const DataColumn(label: Text(''))
                                         ], rows: [
                                           for (var material in _kit.items) getMatRow(material),
-                                          if (kIsWeb)
-                                            DataRow2(cells: [
-                                              DataCell.empty,
-                                              DataCell.empty,
-                                              DataCell.empty,
-                                              DataCell.empty,
-                                              DataCell(TextButton(
-                                                  onPressed: () async {
-                                                    await AddMaterials(_kit.id).show(context) == true ? apiGetData() : null;
-                                                  },
-                                                  child: const Text("Add Materials")))
-                                            ])
+                                          // if (kIsWeb)
+                                          //   DataRow2(cells: [
+                                          //     DataCell.empty,
+                                          //     DataCell.empty,
+                                          //     DataCell.empty,
+                                          //     DataCell.empty,
+                                          //     if (_canDeleted) DataCell.empty,
+                                          //     DataCell(TextButton(
+                                          //         onPressed: () async {
+                                          //           await AddMaterials(_kit.id).show(context) == true ? apiGetData() : null;
+                                          //         },
+                                          //         child: const Text("Add Materials"))),
+                                          //   ])
                                         ]))),
+                              if (_kit.items.isNotEmpty)
+                                TextButton(
+                                    onPressed: () async {
+                                      await AddMaterials(_kit.id).show(context) == true ? apiGetData() : null;
+                                    },
+                                    child: const Text("Add Materials")),
                               const Divider(color: Colors.red),
                               Table(
                                 children: [
@@ -375,7 +386,30 @@ class _KitViewState extends State<KitView> {
               title: Text(user.uname, style: const TextStyle(fontSize: 12)),
             )
           : const Text('-')),
+      if (_canDeleted)
+        DataCell(IconButton(
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  backgroundColor: Colors.red,
+                  content: const Text('Are you sure you want to delete this material ?'),
+                  action: SnackBarAction(textColor: Colors.white, label: 'Yes', onPressed: () => {deleteMaterial(material)})));
+            },
+            icon: const Icon(Icons.close, color: Colors.red)))
     ]);
+  }
+
+  deleteMaterial(CprItem material) {
+    setState(() {
+      _loading = true;
+    });
+    return Api.post(EndPoints.materialManagement_deleteMaterial, {'itemId': material.id, 'id': widget.kit.id}).then((res) {}).whenComplete(() {
+      apiGetData();
+    }).catchError((err) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.toString()), action: SnackBarAction(label: 'Retry', onPressed: () => {deleteMaterial(material)})));
+      setState(() {
+        // _dataLoadingError = true;
+      });
+    });
   }
 
   Future getComments() {

@@ -19,6 +19,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
@@ -150,7 +151,9 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
         getActivity();
 
+
     }
+
 
 
     public PDFView getPdfView() {
@@ -193,8 +196,8 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
 //        SizeF s = pdfView.getPageSize(page);
         SizeF s = currentPage.getPageSize();
-        System.out.println("---------------------------------pdfView.getHeight() " + pdfView.getHeight() + " --- " + s.getHeight());
-        System.out.println("---------------------------------pdfView.getWidth() " + pdfView.getWidth() + " --- " + s.getWidth());
+//        System.out.println("---------------------------------pdfView.getHeight() " + pdfView.getHeight() + " --- " + s.getHeight());
+//        System.out.println("---------------------------------pdfView.getWidth() " + pdfView.getWidth() + " --- " + s.getWidth());
 //        pdfView.setLayoutParams(new FrameLayout.LayoutParams((int) s.getWidth(), (int) s.getHeight()));
 //        drawingView.setLayoutParams(new FrameLayout.LayoutParams((int) s.getWidth(), (int) s.getHeight()));
 //        drawingView.setPaneSize((int) s.getWidth(), (int) s.getHeight());
@@ -209,6 +212,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         assert erasingView != null;
         erasingView.setPage(pages.get(page));
         imageView.setPage(pages.get(page));
+
 
         reDraw(page);
 
@@ -418,6 +422,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
             drawingView.setTop(0);
             drawingView.setLeft(0);
 
+
             System.out.println("PAGE COUNT  " + pdfView.getPageCount());
             float pageYposition = 0;
             float pageSpacingTot = 0;
@@ -426,22 +431,12 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
                 SizeF pageSize = pdfView.getPageSize(i);
                 PAGE pp = new PAGE(pdfView.pdfFile, pageYposition, i, pageSize);
 
-//                    pageSpacingTot = ((pdfView.pdfFile.getPageSpacing(i, 1) / 2) * ((2 * i) - 1));
-//
-//                    pp.pageSpacingTot = pageSpacingTot;
-
-//                    pp.dy = (pageYposition - pageSpacingTot) - lastPageSp;
                 pp.dy = lastPageSp;
-//                    lastPageSp = (pageYposition - pageSpacingTot);
                 lastPageSp = pdfView.pdfFile.getPageSpacing(i, 1);
                 System.out.println(pp.dy + "*****" + (pdfView.pdfFile.getPageSpacing(i, 1) / 2) + "=====" + ((2 * i) - 1) + "-----" + i + " pageSpacingTot " + pageSpacingTot);
 
                 pages.add(pp);
                 pageYposition += (pageSize.getHeight() + (pdfView.getSpacingPx()));
-
-
-//                    System.out.println(pageSize.getHeight() + "________HHHHHHHHHHHHHH_______________" + pdfView.pdfFile.getMaxPageHeight());
-
                 getPdfEditsList().getPage(i).setHeight(pageSize.getHeight());
                 getPdfEditsList().getPage(i).setWidth(pageSize.getWidth());
             }
@@ -452,6 +447,9 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
             if (runAfterNsFileLoad != null) {
                 runAfterNsFileLoad.run(Editor.this);
             }
+            visibleOnly(drawingView, View.VISIBLE);
+            new Handler().postDelayed(() -> visibleOnly(drawingView, View.GONE), 100);
+
         });
 
 
@@ -848,6 +846,8 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
             onViewCreatedListner.run(Editor.this);
         }
         System.out.println("created >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 3");
+
+
         super.onViewCreated(view, savedInstanceState);
     }
 
@@ -1099,7 +1099,6 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
     private File bitmapToFile(long id, Bitmap bitmap) {
 
-//        File direct = new File(Environment.getExternalStorageDirectory() + "/Documents/PdfEdits/" + fileId);
         File dir = new File(requireContext().getExternalFilesDir(null) + "/" + SELECTED_Ticket.id + "/images");
         if (!dir.exists()) {
             dir.mkdirs();
@@ -1120,16 +1119,10 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     }
 
     public void saveEdits() {
-//        if (is_text_editor_clicked) {
+
         assert textEditorView != null;
         textEditorView.saveText();
-//        }
-
-
-//        if (image_editor) {
         imageView.save();
-//        }
-
         System.out.println("saveEdits saveEdits saveEdits saveEditssaveEditssaveEditssaveEditssaveEdits");
 
     }
@@ -1156,24 +1149,12 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     }
 
 
-    public interface AfterSaveToServer {
-        void run();
-
-    }
-
     public interface runAfterLoad {
-        void run(Editor editor);
-    }
-
-    public interface OnSaveListener {
         void run(Editor editor);
     }
 
     public interface OnViewCreatedListner {
         void run(Editor editor);
-    }
-
-    public interface OnPrint {
     }
 
     public interface runAfterFileLoad {

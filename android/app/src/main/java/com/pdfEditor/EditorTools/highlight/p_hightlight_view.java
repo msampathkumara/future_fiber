@@ -119,6 +119,7 @@ public class p_hightlight_view extends FrameLayout {
 
     public Bitmap getBitmap() {
         return highlighter.getBitmap();
+
     }
 
     public void setPage(@NonNull PAGE page) {

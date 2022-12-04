@@ -239,8 +239,8 @@ public class Highlighter extends FrameLayout {
 //        float translateX = Math.abs(pdfView.getCurrentXOffset() / zoom);
         float translateX = (pdfView.getCurrentXOffset() / zoom) * -1;
 //        float translateY = Math.abs((pdfView.getCurrentYOffset() / zoom)) - (Yposition);
-        float translateY = ((pdfView.getCurrentYOffset() / zoom) * -1) - (Yposition);
-
+//        float translateY = ((pdfView.getCurrentYOffset() / zoom) * -1) - (Yposition);
+        float translateY = Math.abs((pdfView.getCurrentYOffset() / zoom)) - (Yposition);
         for (int i = 0; i < points.size(); i++) {
             editPoint editPoint = points.get(i);
             editPoint.setX(editPoint.getX() + ((translateX) / (getCurrentPageWidth())));
@@ -270,6 +270,14 @@ public class Highlighter extends FrameLayout {
         editor.getPdfEditsList().addEdit(pageNo, xpath.getId(), pdfEdit);
         points = new ArrayList<>();
 
+    }
+
+    private float getCurrentPageHeight() {
+        return pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight();
+    }
+
+    private float getCurrentPageWidth() {
+        return pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getWidth();
     }
 
     private void touch_up1() {
@@ -317,11 +325,5 @@ public class Highlighter extends FrameLayout {
         }
     }
 
-    private float getCurrentPageHeight() {
-        return pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight();
-    }
 
-    private float getCurrentPageWidth() {
-        return pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getWidth();
-    }
 }

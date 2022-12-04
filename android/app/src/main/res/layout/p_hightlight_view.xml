@@ -49,12 +49,12 @@
                         android:layout_weight="1"
                         android:background="@drawable/transparent"
 
+                        android:contentDescription="@string/todo"
                         android:scaleType="fitCenter"
                         android:src="@drawable/colors"
                         android:text="@string/color"
                         android:textAllCaps="false"
-                        android:textSize="11sp"
-                        android:contentDescription="@string/todo" />
+                        android:textSize="11sp" />
 
 
                     <ImageButton
@@ -65,8 +65,8 @@
                         android:background="@drawable/color_ball"
                         android:backgroundTint="#E91E63"
 
-                        android:src="@drawable/ring"
-                        android:contentDescription="@string/todo" />
+                        android:contentDescription="@string/todo"
+                        android:src="@drawable/ring" />
 
                     <ImageButton
                         android:id="@+id/b_color_blue"
@@ -115,7 +115,7 @@
 
                 <SeekBar
                     android:id="@+id/size"
-                    android:layout_width="0dp"
+                    android:layout_width="200dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
@@ -124,12 +124,10 @@
 
                 <TextView
                     android:id="@+id/t_size"
-                    android:layout_width="48dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0"
-                    android:maxWidth="48dp"
+                    android:layout_weight="1"
                     android:text="@string/_00"
-                    android:textAlignment="center"
                     android:textColor="@android:color/background_dark" />
 
             </LinearLayout>
@@ -140,6 +138,7 @@
             android:id="@+id/pane"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:backgroundTint="#75FF5722"
             app:layout_constraintBottom_toTopOf="@+id/linearLayout5"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
