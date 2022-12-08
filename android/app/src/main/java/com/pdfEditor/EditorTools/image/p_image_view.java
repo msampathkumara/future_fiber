@@ -86,8 +86,8 @@ public class p_image_view extends RelativeLayout {
         mCanvas = new Canvas(mBitmap);
         float zoom = pdfView.getZoom();
         final float translateX = Math.abs(pdfView.getCurrentXOffset() / zoom);
-        final float translateY = Math.abs((pdfView.getCurrentYOffset() / zoom)) - (Yposition);
-
+//        final float translateY = Math.abs((pdfView.getCurrentYOffset() / zoom)) - (Yposition);
+        float translateY = ((pdfView.getCurrentYOffset() / zoom) * -1) - (Yposition);
         mCanvas.save();
 //        mCanvas.translate(translateX, translateY);
         final Bitmap b = Bitmap.createScaledBitmap(shapeC.getImage(), (shapeC.getWidth()), (shapeC.getHeight()), false);

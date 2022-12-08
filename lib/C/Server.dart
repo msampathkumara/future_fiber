@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import '../M/AppUser.dart';
 
 class Server {
-  static bool local = false;
+  static bool local = true;
   static String devServerIp = '192.168.0.100';
 
   static String getServerAddress({onlineServer = false}) {

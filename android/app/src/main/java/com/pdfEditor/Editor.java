@@ -155,7 +155,6 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     }
 
 
-
     public PDFView getPdfView() {
         return pdfView;
     }
@@ -185,22 +184,8 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
     @Override
     public void onPageChanged(final int page, int pageCount) {
-        System.out.println("PAGE CHANGED");
-        System.out.println(pdfView.getCurrentYOffset());
-        System.out.println(pdfView.pdfFile.getMaxPageHeight());
 
         currentPage = pages.get(page);
-        System.out.println(pdfView.getPageSize(page));
-        System.out.println(pdfView.getX() + "__" + pdfView.getY());
-
-
-//        SizeF s = pdfView.getPageSize(page);
-        SizeF s = currentPage.getPageSize();
-//        System.out.println("---------------------------------pdfView.getHeight() " + pdfView.getHeight() + " --- " + s.getHeight());
-//        System.out.println("---------------------------------pdfView.getWidth() " + pdfView.getWidth() + " --- " + s.getWidth());
-//        pdfView.setLayoutParams(new FrameLayout.LayoutParams((int) s.getWidth(), (int) s.getHeight()));
-//        drawingView.setLayoutParams(new FrameLayout.LayoutParams((int) s.getWidth(), (int) s.getHeight()));
-//        drawingView.setPaneSize((int) s.getWidth(), (int) s.getHeight());
 
 
         assert drawingView != null;

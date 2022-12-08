@@ -11,7 +11,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.azeesoft.lib.colorpicker.ColorPickerDialog;
 import com.pdfEditor.Editor;
@@ -29,10 +28,7 @@ public class p_drawing_view extends FrameLayout {
     private boolean edited;
 
 
-    public void setPaneSize(int width, int height) {
 
-        pane.setLayoutParams(new ConstraintLayout.LayoutParams(width, height));
-    }
 
     final FrameLayout pane;
 

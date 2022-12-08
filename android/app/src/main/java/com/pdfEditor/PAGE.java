@@ -54,15 +54,10 @@ public class PAGE extends PDPage {
     }
 
 
-    public float getPosition() {
-        return position;
-    }
-
     public Bitmap getBitmap() {
-//        SizeF pagesize = pdfFile.getPageSize(id);
+
         if (bitmap == null) {
 
-//             bitmap = Bitmap.createBitmap((int) pdfFile.getMaxPageWidth(), (int) pdfFile.getMaxPageHeight(), Bitmap.Config.ARGB_8888);
 
             bitmap = Bitmap.createBitmap((int) pageSize.getWidth(), (int) pageSize.getHeight(), Bitmap.Config.ARGB_8888);
 
@@ -77,31 +72,9 @@ public class PAGE extends PDPage {
         this.bitmap = bitmap;
     }
 
-    public void setLargeBitMap() {
-        bitmap = Bitmap.createBitmap((int) pdfFile.getMaxPageWidth(), (int) pdfFile.getMaxPageHeight(), Bitmap.Config.ARGB_8888);
-    }
-
-    public boolean hasBitmap() {
-        if (bitmap == null) {
-            return false;
-        }
-        Bitmap emptyBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
-        return !bitmap.sameAs(emptyBitmap);
-    }
-
-    public boolean isEdited() {
-        return edited;
-    }
 
     public void setEdited(boolean edited) {
         this.edited = edited;
     }
 
-    public xImage getImage() {
-        return image;
-    }
-
-    public void setImage(xImage image) {
-        this.image = image;
-    }
 }
