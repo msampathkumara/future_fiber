@@ -146,7 +146,9 @@ public class TextEditor extends RelativeLayout {
         float translateY = ((pdfView.getCurrentYOffset() / zoom) * -1) - (Yposition);
 
         float dheight = (getHeight() - pdfView.pdfFile.getMaxPageHeight()) / 2;
-        xText xText = new xText(textFld.getText().toString(), paint, translateX, translateY - dheight, (TEXT_X) / zoom, (TEXT_Y) / zoom, pageNo, pdfView.pdfFile.getMaxPageWidth(), pdfView.pdfFile.getMaxPageHeight(), zoom);
+        float w = (pdfView.getWidth() - (page.getPageSize().getWidth()));
+
+        xText xText = new xText(textFld.getText().toString(), paint, translateX  , translateY - dheight, (TEXT_X) / zoom, (TEXT_Y) / zoom, pageNo, pdfView.pdfFile.getMaxPageWidth(), pdfView.pdfFile.getMaxPageHeight(), zoom);
         editor.editsList.add(xText);
 
         reDraw();

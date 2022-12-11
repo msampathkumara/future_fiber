@@ -15,6 +15,7 @@ import android.view.ScaleGestureDetector;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import com.pdfEditor.Editor;
 import com.pdfEditor.PAGE;
@@ -22,6 +23,7 @@ import com.pdfEditor.uploadEdits.PdfEdit;
 import com.pdfEditor.uploadEdits.editPoint;
 import com.pdfEditor.uploadEdits.editsPaint;
 import com.pdfviewer.PDFView;
+import com.sampathkumara.northsails.smartwind.R;
 
 import java.util.ArrayList;
 
@@ -145,13 +147,16 @@ public class DrawingView extends FrameLayout {
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
+//
+//        canvas.drawColor(ContextCompat.getColor(getContext(), R.color.cccc));
+//
         p.setStrokeWidth(STROKE * pdfView.getZoom());
         p.setColor(mcolor);
         canvas.drawPath(path, p);
 //        canvas.drawPath(circlePath, circlePaint);
         clipBounds = canvas.getClipBounds();
-
-//        System.out.println(canvas.getDensity() + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>" + mCanvas.getDensity() + " >>>> " + DisplayMetrics.DENSITY_DEFAULT);
+//
+////        System.out.println(canvas.getDensity() + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>" + mCanvas.getDensity() + " >>>> " + DisplayMetrics.DENSITY_DEFAULT);
         mCanvas.setDensity(DisplayMetrics.DENSITY_DEFAULT);
     }
 
@@ -249,25 +254,20 @@ public class DrawingView extends FrameLayout {
 //        float translateY = Math.abs((pdfView.getCurrentYOffset() / zoom));
 
         float dheight = (((getHeight() - pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight())) / 2);
-        float h = (pdfView.getHeight() - (page.getPageSize().getHeight())) / 2;
+//        float h = (pdfView.getHeight() - (page.getPageSize().getHeight())) / 2;
         float w = (pdfView.getWidth() - (page.getPageSize().getWidth())) / 2;
 
-        System.out.println("------------------------Yposition----__" + Yposition + "___" + h + "___________" + pdfView.getCurrentYOffset());
+
 
         for (int i = 0; i < points.size(); i++) {
             editPoint editPoint = points.get(i);
-//            System.out.println("88888888888888888888888888888888__" + Yposition + " ==== " + editPoint.getY() + "    ____   " + ((translateY) + " --- " + (getCurrentPageHeight())) + "   **-**   " + editPoint.sp);
-
-            System.out.println("xxxxxxxxxxxx == " + translateX + " === " + editPoint.getX() + " **** " + getCurrentPageWidth());
-
             editPoint.setX(editPoint.getX() + ((translateX - w) / (getCurrentPageWidth())));
-//            editPoint.setY(editPoint.getY() + ((translateY) / (getCurrentPageHeight())) - (editPoint.sp));
             editPoint.setY((editPoint.getY()) + ((translateY) / (getCurrentPageHeight())));
 
         }
 
 
-        final xPath xpath = new xPath(new Path(mPath), p, translateX - w, (translateY - dheight), pageNo, getCurrentPageWidth(), getCurrentPageHeight(), zoom);
+        final xPath xpath = new xPath(new Path(mPath), p, translateX  , (translateY - dheight), pageNo, getCurrentPageWidth(), getCurrentPageHeight(), zoom);
         editor.editsList.add(xpath);
         mPath.reset();
         editor.reDraw(pageNo);
@@ -321,6 +321,7 @@ public class DrawingView extends FrameLayout {
             System.out.println("getCurrentPageWidth()");
             System.out.println(getCurrentPageWidth());
             mCanvas = new Canvas(mBitmap);
+
         }
         return mBitmap;
 
@@ -361,6 +362,9 @@ public class DrawingView extends FrameLayout {
 
         mCanvas.save();
 
+//        mCanvas.drawColor(ContextCompat.getColor(getContext(), R.color.cccc));
+
+
 
         float x1 = (getCurrentPageWidth() / (k.getPageWidth()));
         float y1 = (getCurrentPageHeight() / k.getPageHeight());
@@ -381,13 +385,15 @@ public class DrawingView extends FrameLayout {
         float yp = ((k.translateY() / k.getPageHeight()) * getCurrentPageHeight());
 
         float h = (getHeight() - k.getPageHeight());
+        float w = (getWidth() - k.getPageWidth());
 
 //        System.out.println("------------------------------------------------------------------");
 //        System.out.println(" redraw --|" + k.translateY() + " ==== " + k.getPageHeight() + " === " + getCurrentPageHeight());
 //        System.out.println(" redraw --|" + xp + "----|" + yp + "---|" + Yposition + "-----|" + page.dy + "----|" + pdfView.getCurrentPage());
 //        System.out.println("------------------------------------------------------------------");
 //        mCanvas.translate(xp, yp - Yposition + (page.dy * pdfView.getCurrentPage()));
-        mCanvas.translate(xp, yp + (h / 2));
+        mCanvas.translate(xp , yp + (h / 2));
+
 
 
         Paint p = new Paint(k.getPaint());

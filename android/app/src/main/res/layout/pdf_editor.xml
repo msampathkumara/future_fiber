@@ -40,7 +40,7 @@
                 android:id="@+id/pdfView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#00B3B3B3"
+                android:background="#3E03A9F4"
                 android:visibility="visible" />
         </FrameLayout>
 

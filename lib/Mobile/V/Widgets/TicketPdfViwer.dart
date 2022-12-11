@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+
 // import 'package:native_pdf_view/native_pdf_view.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/Ticket.dart';
@@ -156,7 +157,7 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
         ]),
         floatingActionButton: ((!widget.ticket.isStandard) &&
                     (widget.ticket.isNotCompleted &&
-                        (AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_ANY_PDF) || (widget.ticket.nowAt == AppUser.getSelectedSection()?.id)))) ||
+                        (AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_ANY_PDF) || (widget.ticket.isStarted && widget.ticket.nowAt == AppUser.getSelectedSection()?.id)))) ||
                 (widget.ticket.isStandard && AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_EDIT_STANDARD_FILES))
             ? FloatingActionButton.extended(
                 icon: const Icon(Icons.edit_outlined),

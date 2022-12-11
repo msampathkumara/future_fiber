@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -18,15 +19,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.pdfEditor.EditorTools.data;
 import com.sampathkumara.northsails.smartwind.R;
-import com.tom_roush.pdfbox.pdmodel.PDDocument;
-import com.tom_roush.pdfbox.pdmodel.PDPage;
-import com.tom_roush.pdfbox.pdmodel.PDPageContentStream;
-import com.tom_roush.pdfbox.pdmodel.common.PDRectangle;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,7 +59,11 @@ public class QCEditor extends AppCompatActivity {
         findViewById(R.id.closeButton).setOnClickListener(view -> finish());
 
 
-        FILE_PATH = createNewPDFFile();
+        try {
+            FILE_PATH = createNewPDFFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         if (getIntent().getExtras() != null) {
             System.out.println("--------------------------------------------------------- getExtras");
@@ -85,22 +88,47 @@ public class QCEditor extends AppCompatActivity {
 
     }
 
-    private String createNewPDFFile() {
-        PDDocument doc = new PDDocument();
-        PDPage page = new PDPage(PDRectangle.A4);
-        doc.addPage(page);
-        PDPageContentStream contentStream;
-        String path = "";
-        try {
-            contentStream = new PDPageContentStream(doc, page);
-            contentStream.close();
-            path = this.getExternalFilesDir("Files").getPath() + "/QAtemplate.pdf";
-            doc.save(path);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println(path);
-        System.out.println(new File(path).exists());
+    private String createNewPDFFile() throws IOException {
+
+        AssetManager am = getAssets();
+        InputStream input = am.open("blank.pdf");
+
+
+        String path = this.getExternalFilesDir("Files").getPath() + "/QAtemplate.pdf";
+        FileUtils.copyToFile(input, new File(path));
+
+//        String path;
+//        path = this.getExternalFilesDir("Files").getPath() + "/QAtemplate.pdf";
+//        try {
+//            File file = new File(path);
+//            try (OutputStream output = new FileOutputStream(file)) {
+//                byte[] buffer = new byte[4 * 1024]; // or other buffer size
+//                int read;
+//                while ((read = input.read(buffer)) != -1) {
+//                    output.write(buffer, 0, read);
+//                }
+//                output.flush();
+//            }
+//        } finally {
+//            input.close();
+//        }
+
+
+//        PDDocument doc = new PDDocument();
+//        PDPage page = new PDPage(PDRectangle.A4);
+//        doc.addPage(page);
+//        PDPageContentStream contentStream;
+//        path = "";
+//        try {
+//            contentStream = new PDPageContentStream(doc, page);
+//            contentStream.close();
+//            path = this.getExternalFilesDir("Files").getPath() + "/QAtemplate.pdf";
+//            doc.save(path);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        System.out.println(path);
+//        System.out.println(new File(path).exists());
         return path;
     }
 

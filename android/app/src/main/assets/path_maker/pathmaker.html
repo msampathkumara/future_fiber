@@ -4,7 +4,7 @@ To change this license header, choose License Headers in Project Properties.
 To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
-<html>
+<html lang="en">
 
 <head>
     <script src="svg.js"></script>
@@ -17,7 +17,7 @@ and open the template in the editor.
         function getSvg(page) {
 
 
-            var ctx = new C2S(page.width, page.height);
+            const ctx = new C2S(page.width, page.height);
 //                ctx.save();
 
             $.each(page.edits, function (i, v) {
@@ -52,8 +52,7 @@ and open the template in the editor.
                 }
             });
 
-            svg = ctx.getSerializedSvg(true);
-            return svg;
+            return ctx.getSerializedSvg(true);
 
         }
 
@@ -75,7 +74,7 @@ and open the template in the editor.
 
         function drawImage(path, ctx, $maxWidth, $maxHeight, id) {
 
-            var image = new Image();
+            const image = new Image();
 
             image.src = "../images/" + id + ".png";
 
@@ -274,6 +273,7 @@ and open the template in the editor.
     <style>
 
     </style>
+    <title></title>
 </head>
 <body>
 

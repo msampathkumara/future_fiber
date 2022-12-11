@@ -345,15 +345,15 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
             dialog.dismiss();
         });
         pv.onDraw(this);
-        pv.pageFitPolicy(FitPolicy.WIDTH);
+        pv.pageFitPolicy(FitPolicy.BOTH);
 
 
         pv.pageSnap(true);
         pv.pageFling(true);
 
-        pv.fitEachPage(false);
+        pv.fitEachPage(true);
         pv.autoSpacing(false);
-        pv.spacing(50);
+        pv.spacing(500);
 //        pv.pages(1);
 
 
@@ -1062,16 +1062,20 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         float w = (pdfView.getWidth() - page.getPageSize().getWidth()) / 2;
         assert drawingView != null;
         Bitmap bitMap = drawingView.getBitmap();
-        canvas.drawBitmap(bitMap, null, new RectF(w * pdfView.getZoom(), 0,
-                ((bitMap.getWidth() + w) * pdfView.getZoom()),
-                bitMap.getHeight() * pdfView.getZoom()), null);
+//        canvas.drawBitmap(bitMap, null, new RectF(w * pdfView.getZoom(), 0,
+//                ((bitMap.getWidth() + w) * pdfView.getZoom()),
+//                bitMap.getHeight() * pdfView.getZoom()), null);
 
 //        canvas.drawBitmap(drawingView.getBitmap(), null, new RectF(0 , 0,
 //                ((drawingView.getBitmap().getWidth()  ) * pdfView.getZoom()),
 //                drawingView.getBitmap().getHeight() * pdfView.getZoom()), null);
 
-        canvas.drawBitmap(drawingView.getBitmap(), null, new RectF(w * pdfView.getZoom(), 0,
-                (drawingView.getBitmap().getWidth() + w) * pdfView.getZoom(),
+//        canvas.drawBitmap(drawingView.getBitmap(), null, new RectF(0, 0,
+//                (drawingView.getBitmap().getWidth() + w) * pdfView.getZoom(),
+//                drawingView.getBitmap().getHeight() * pdfView.getZoom()), null);
+
+        canvas.drawBitmap(drawingView.getBitmap(), null, new RectF(0, 0,
+                (drawingView.getBitmap().getWidth()  ) * pdfView.getZoom(),
                 drawingView.getBitmap().getHeight() * pdfView.getZoom()), null);
 
 //        System.out.println(pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight() + "___________________________________________");

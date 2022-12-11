@@ -62,6 +62,7 @@ public class Highlighter extends FrameLayout {
     private float mY1;
     private int stroke = 15;
     private int pageNo;
+    private PAGE page;
 
 
     public Highlighter(@NonNull Context c, PDFView pdfView, Editor editor) {
@@ -254,8 +255,9 @@ public class Highlighter extends FrameLayout {
 //        float dheight = (getHeight() - getCurrentPageHeight()) / 2;
 
         float dheight = (((getHeight() - pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight())) / 2);
+        float w = (pdfView.getWidth() - (page.getPageSize().getWidth())) / 2;
 
-        final xPath xpath = new xPath(new Path(mPath), p, translateX, translateY - dheight, pageNo, getCurrentPageWidth(), getCurrentPageHeight(), zoom);
+        final xPath xpath = new xPath(new Path(mPath), p, translateX  , translateY - dheight, pageNo, getCurrentPageWidth(), getCurrentPageHeight(), zoom);
 
         editor.editsList.add(xpath);
         mPath.reset();
@@ -298,6 +300,7 @@ public class Highlighter extends FrameLayout {
     }
 
     public void setPage(@NonNull PAGE page) {
+        this.page = page;
         System.out.println(page.id + "____" + page.position);
         Yposition = page.position;
         mBitmap = page.getBitmap();

@@ -85,32 +85,28 @@ public class p_image_view extends RelativeLayout {
         }
         mCanvas = new Canvas(mBitmap);
         float zoom = pdfView.getZoom();
-        final float translateX = Math.abs(pdfView.getCurrentXOffset() / zoom);
-//        final float translateY = Math.abs((pdfView.getCurrentYOffset() / zoom)) - (Yposition);
+
+        float translateX = (pdfView.getCurrentXOffset() / zoom) * -1;
         float translateY = ((pdfView.getCurrentYOffset() / zoom) * -1) - (Yposition);
         mCanvas.save();
-//        mCanvas.translate(translateX, translateY);
         final Bitmap b = Bitmap.createScaledBitmap(shapeC.getImage(), (shapeC.getWidth()), (shapeC.getHeight()), false);
         final Bitmap b1 = Bitmap.createScaledBitmap(shapeC.getImage(), (shapeC.getWidth()), (shapeC.getHeight()), false);
 
-        float sp = ((((pdfView.pdfFile.getPageSpacing(pdfView.getCurrentPage(), zoom) / 2) / zoom) * (2 * (pdfView.getCurrentPage() + 1) - 1)));
 
         float dheight = (((getHeight() - pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight())) / 2);
-        final xImage xImage = new xImage(b, translateX, translateY - dheight, (TEXT_X / zoom), (TEXT_Y / zoom),
-                pageNo, getCurrentPageWidth(), getCurrentPageHeight(), zoom);
+
+        final xImage xImage = new xImage(b, translateX, translateY - dheight, (TEXT_X / zoom), ((TEXT_Y) / zoom), pageNo, getCurrentPageWidth(), getCurrentPageHeight(), zoom);
         editor.editsList.add(xImage);
-//        mCanvas.restore();
         shapeC.setVisibility(GONE);
         editor.reDraw(pageNo);
 
 
         PdfEdit pdfEdit = new PdfEdit(PdfEdit.TYPE_IMAGE);
-//        pdfEdit.setImageBytes(ImageUtil.convert(b1));
         pdfEdit.setRect_width((shapeC.getWidth() / zoom) / getCurrentPageWidth());
         pdfEdit.setRect_height((shapeC.getHeight() / zoom) / getCurrentPageHeight());
 
         pdfEdit.setPositionX((translateX + (TEXT_X / zoom)) / getCurrentPageWidth());
-        pdfEdit.setPositionY((translateY + (TEXT_Y / zoom) - sp) / getCurrentPageHeight());
+        pdfEdit.setPositionY((translateY + (TEXT_Y / zoom)) / getCurrentPageHeight());
         editor.getPdfEditsList().addEdit(pageNo, xImage.getId(), pdfEdit);
 
         editor.addImage(xImage.getId(), b1);
@@ -124,7 +120,6 @@ public class p_image_view extends RelativeLayout {
         shapeC.setOnTouchListener((view, event) -> {
 
             getGlobalVisibleRect(rectf);
-//                view.getGlobalVisibleRect(rectf1);
             final int X = (int) event.getRawX() - rectf.left;
             final int Y = (int) event.getRawY() - rectf.top;
             LayoutParams lParams = (LayoutParams) shapeC.getLayoutParams();
@@ -133,7 +128,6 @@ public class p_image_view extends RelativeLayout {
                 case MotionEvent.ACTION_DOWN:
                     deltaX_ = (int) event.getX();
                     deltaY_ = (int) event.getY();
-                    System.out.println("_____________________________________" + deltaX_ + "__" + deltaY_);
                     view.performClick();
                     break;
 
@@ -145,7 +139,6 @@ public class p_image_view extends RelativeLayout {
                     lParams.topMargin = Y - deltaY_;
                     TEXT_X = X - deltaX_;
                     TEXT_Y = Y - deltaY_;
-//                    System.out.println(deltaX_ + "   " + deltaY_);
                     shapeC.setLayoutParams(lParams);
                     break;
             }
@@ -173,10 +166,6 @@ public class p_image_view extends RelativeLayout {
 
     }
 
-//    public void setEdited(boolean edited) {
-//        editor.reDraw(pageNo);
-//        invalidate();
-//    }
 
     public void reDraw(xImage kk) {
 
@@ -191,15 +180,12 @@ public class p_image_view extends RelativeLayout {
         scaleMatrix.setScale(x / pdfView.getZoom(), y / pdfView.getZoom(), 0, 0);
         scaleMatrix.postTranslate(kk.getCanvasX(), kk.getCanvasY());
 
-//        float xp = (kk.translateX() / kk.getPageWidth()) * getCurrentPageWidth();
-//        float yp = (kk.translateY() / kk.getPageHeight()) * getCurrentPageHeight();
 
         float xp = (kk.translateX() / kk.getPageWidth()) * getCurrentPageWidth();
         float yp = ((kk.translateY() / kk.getPageHeight()) * getCurrentPageHeight());
 
         float h = (getHeight() - kk.getPageHeight()) / 2;
 
-//        mCanvas.translate(xp, (yp - Yposition + (page.dy * pdfView.getCurrentPage())));
         mCanvas.translate(xp, (yp + h));
 
         mCanvas.drawBitmap(kk.getBitmap(), scaleMatrix, null);
