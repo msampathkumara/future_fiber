@@ -45,12 +45,11 @@ class _WebUserManagerState extends State<WebUserManager> {
   void initState() {
     _dbChangeCallBack = DB.setOnDBChangeListener(() {
       print('on update user');
-      if (mounted) {
-        loadData();
-      }
+      if (mounted) {}
     }, context, collection: DataTables.users);
 
     HiveBox.getDataFromServer();
+    loadData();
     super.initState();
   }
 
@@ -86,18 +85,20 @@ class _WebUserManagerState extends State<WebUserManager> {
             ),
             backgroundColor: Colors.transparent,
             elevation: 0),
-        body: Padding(
-          padding: const EdgeInsets.only(bottom: 16.0, right: 16),
-          child: Row(
-            children: [
-              Expanded(
-                  child: Material(
-                      elevation: 4,
-                      borderRadius: BorderRadius.circular(8),
-                      child: WebUserManagerTable(
-                        onInit: (UserManagerDataSource dataSource) {
-                          _dataSource = dataSource;
-                        },
+        body: loading
+            ? const Center(child: CircularProgressIndicator())
+            : Padding(
+                padding: const EdgeInsets.only(bottom: 16.0, right: 16),
+                child: Row(
+                  children: [
+                    Expanded(
+                        child: Material(
+                            elevation: 4,
+                            borderRadius: BorderRadius.circular(8),
+                            child: WebUserManagerTable(
+                              onInit: (UserManagerDataSource dataSource) {
+                                _dataSource = dataSource;
+                              },
                         onTap: (NsUser nsUser) {
                           _selectedUser = nsUser;
                           setState(() {});

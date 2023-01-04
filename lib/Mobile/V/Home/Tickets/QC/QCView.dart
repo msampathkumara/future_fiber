@@ -36,12 +36,30 @@ class _QCViewState extends State<QCView> {
           title: Text("${widget.qc.ticket!.getName()}"),
         ),
         body: idToken != null
-            ? WebView(
-                onWebViewCreated: (WebViewController webViewController) {
-                  Map<String, String> headers = {"authorization": "$idToken"};
-                  webViewController.loadUrl(uRL, headers: headers);
-                },
-              )
+            // ? WebView(
+            //     onWebViewCreated: (WebViewController webViewController) {
+            //       Map<String, String> headers = {"authorization": "$idToken"};
+            //       webViewController.loadUrl(uRL, headers: headers);
+            //     },
+            //   )
+
+            ? WebViewWidget(
+                controller: WebViewController()
+                  ..setJavaScriptMode(JavaScriptMode.unrestricted)
+                  ..setNavigationDelegate(
+                    NavigationDelegate(
+                      onProgress: (int progress) {
+                        // Update loading bar.
+                      },
+                      onPageStarted: (String url) {},
+                      onPageFinished: (String url) {},
+                      onWebResourceError: (WebResourceError error) {},
+                      onNavigationRequest: (NavigationRequest request) {
+                        return NavigationDecision.navigate;
+                      },
+                    ),
+                  )
+                  ..loadRequest(Uri.parse(uRL), headers: {"authorization": "$idToken"}))
             : const Center(child: CircularProgressIndicator()));
   }
 }

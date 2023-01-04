@@ -244,6 +244,15 @@ extension StringContainsInArrayExtension on String {
 
       case 'urgent':
         return Colors.red;
+
+      case 'good':
+        return Colors.green;
+
+      case 'excellent':
+        return Colors.blue;
+
+      case 'reject':
+        return Colors.red;
     }
 
     return Colors.red;

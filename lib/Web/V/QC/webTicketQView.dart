@@ -36,10 +36,16 @@ class _WebTicketQViewState extends State<WebTicketQView> {
 
   var _data;
 
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+
   @override
   void initState() {
     ticket = widget.ticket;
-    apiGetData();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _refreshIndicatorKey.currentState?.show();
+    });
+
     super.initState();
   }
 
@@ -73,42 +79,48 @@ class _WebTicketQViewState extends State<WebTicketQView> {
                 ? Row(children: [
                     SizedBox(
                       width: 300,
-                      child: ListView.separated(
-                        itemBuilder: (BuildContext context, int index) {
-                          QC qc = qcList[index];
-                          return ListTile(
-                              onTap: () async {
-                                if (!kIsWeb) {
-                                  QFileView(qc).show(context);
-                                  return;
-                                }
-                                _pdfLoading = true;
-                                selectedQc = qc;
-                                setState(() {});
-                                qc.getFile(context).then((value) async {
-                                  _pdfLoading = false;
+                      child: RefreshIndicator(
+                        key: _refreshIndicatorKey,
+                        onRefresh: () async {
+                          return await apiGetData();
+                        },
+                        child: ListView.separated(
+                          itemBuilder: (BuildContext context, int index) {
+                            QC qc = qcList[index];
+                            return ListTile(
+                                onTap: () async {
+                                  if (!kIsWeb) {
+                                    QFileView(qc).show(context);
+                                    return;
+                                  }
+                                  _pdfLoading = true;
+                                  selectedQc = qc;
                                   setState(() {});
-                                  _data = value;
-                                });
-                              },
-                              leading: UserImage(nsUser: qc.user, radius: 16, padding: 2),
-                              title: Row(children: [
-                                const SizedBox(width: 4),
-                                Wrap(direction: Axis.vertical, children: [
-                                  Text("${qc.user?.name}"),
-                                  Text("${qc.user?.uname}", style: const TextStyle(color: Colors.blue, fontSize: 12)),
-                                  Text(
-                                    "${qc.getSection()?.sectionTitle}@${qc.getSection()?.factory}",
-                                    style: const TextStyle(fontSize: 12, color: Colors.redAccent),
-                                  )
-                                ])
-                              ]),
-                              subtitle: Text(qc.getDateTime(), style: const TextStyle(fontSize: 12)));
-                        },
-                        itemCount: qcList.length,
-                        separatorBuilder: (BuildContext context, int index) {
-                          return const Divider();
-                        },
+                                  qc.getFile(context).then((value) async {
+                                    _pdfLoading = false;
+                                    setState(() {});
+                                    _data = value;
+                                  });
+                                },
+                                leading: UserImage(nsUser: qc.user, radius: 16, padding: 2),
+                                title: Row(children: [
+                                  const SizedBox(width: 4),
+                                  Wrap(direction: Axis.vertical, children: [
+                                    Text("${qc.user?.name}"),
+                                    Text("${qc.user?.uname}", style: const TextStyle(color: Colors.blue, fontSize: 12)),
+                                    Text(
+                                      "${qc.getSection()?.sectionTitle}@${qc.getSection()?.factory}",
+                                      style: const TextStyle(fontSize: 12, color: Colors.redAccent),
+                                    )
+                                  ])
+                                ]),
+                                subtitle: Text(qc.getDateTime(), style: const TextStyle(fontSize: 12)));
+                          },
+                          itemCount: qcList.length,
+                          separatorBuilder: (BuildContext context, int index) {
+                            return const Divider();
+                          },
+                        ),
                       ),
                     ),
                     const VerticalDivider(),
@@ -119,41 +131,47 @@ class _WebTicketQViewState extends State<WebTicketQView> {
                                 ? const Center(child: CircularProgressIndicator())
                                 : getView())
                   ])
-                : ListView.separated(
-                    itemBuilder: (BuildContext context, int index) {
-                      QC qc = qcList[index];
-                      return ListTile(
-                          onTap: () async {
-                            if (!kIsWeb) {
-                              QFileView(qc).show(context);
-                              return;
-                            }
-                            _pdfLoading = true;
-                            selectedQc = qc;
-                            setState(() {});
-                            qc.getFile(context).then((value) async {
-                              _pdfLoading = false;
+                : RefreshIndicator(
+                    key: _refreshIndicatorKey,
+                    onRefresh: () async {
+                      return await apiGetData();
+                    },
+                    child: ListView.separated(
+                      itemBuilder: (BuildContext context, int index) {
+                        QC qc = qcList[index];
+                        return ListTile(
+                            onTap: () async {
+                              if (!kIsWeb) {
+                                QFileView(qc).show(context);
+                                return;
+                              }
+                              _pdfLoading = true;
+                              selectedQc = qc;
                               setState(() {});
-                              _data = value;
-                            });
-                          },
-                          trailing: Text("${qc.getSection()?.sectionTitle} @ ${qc.getSection()?.factory}", style: const TextStyle(color: Colors.redAccent)),
-                          leading: UserImage(nsUser: qc.user, radius: 16, padding: 2),
-                          title: Row(children: [
-                            const SizedBox(width: 4),
-                            Wrap(
-                                direction: Axis.vertical,
-                                children: [Text("${qc.user?.name}"), Text("${qc.user?.uname}", style: const TextStyle(color: Colors.blue, fontSize: 12))]),
-                            const Spacer(),
-                            Text(qc.isQc() ? 'QC' : 'QA'),
-                            const Spacer()
-                          ]),
-                          subtitle: Text(qc.getDateTime(), style: const TextStyle(fontSize: 12)));
-                    },
-                    itemCount: qcList.length,
-                    separatorBuilder: (BuildContext context, int index) {
-                      return const Divider();
-                    },
+                              qc.getFile(context).then((value) async {
+                                _pdfLoading = false;
+                                setState(() {});
+                                _data = value;
+                              });
+                            },
+                            trailing: Text("${qc.getSection()?.sectionTitle} @ ${qc.getSection()?.factory}", style: const TextStyle(color: Colors.redAccent)),
+                            leading: UserImage(nsUser: qc.user, radius: 16, padding: 2),
+                            title: Row(children: [
+                              const SizedBox(width: 4),
+                              Wrap(
+                                  direction: Axis.vertical,
+                                  children: [Text("${qc.user?.name}"), Text("${qc.user?.uname}", style: const TextStyle(color: Colors.blue, fontSize: 12))]),
+                              const Spacer(),
+                              Text(qc.isQc() ? 'QC' : 'QA'),
+                              const Spacer()
+                            ]),
+                            subtitle: Text(qc.getDateTime(), style: const TextStyle(fontSize: 12)));
+                      },
+                      itemCount: qcList.length,
+                      separatorBuilder: (BuildContext context, int index) {
+                        return const Divider();
+                      },
+                    ),
                   ));
   }
 
@@ -161,7 +179,7 @@ class _WebTicketQViewState extends State<WebTicketQView> {
   String? err_msg;
 
   Future apiGetData() {
-    return Api.get(EndPoints.tickets_qc_getTicketQcList, {'ticketId': ticket.id}).then((res) {
+    return Api.get(EndPoints.tickets_qc_getTicketQcList, {'ticketId': ticket.id, 'isQc': widget.isQc ? 1 : 0}).then((res) {
       err_msg = null;
       Map data = res.data;
       print(data);

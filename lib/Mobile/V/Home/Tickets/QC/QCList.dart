@@ -249,42 +249,45 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
                 QC _ticketQc = (_ticketQcList[index]);
                 var tc = _ticketQc.isQc() ? Colors.redAccent : Colors.black;
                 Section? section = _ticketQc.getSection();
+
+                print(_ticketQc.quality);
+
                 return GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onLongPress: () async {
                       // await showTicketOptions(ticketPrint, context);
                       // setState(() {});
                     },
-                    onTap: () async {
-                      // await Navigator.push(context, MaterialPageRoute(builder: (context) => QCView(_ticketQc)));
-                      WebTicketQView(_ticketQc.ticket ?? Ticket(), true).show(context);
-                    },
+                    onTap: (_ticketQc.quality ?? '').toLowerCase() != 'reject'
+                        ? null
+                        : () async {
+                            // await Navigator.push(context, MaterialPageRoute(builder: (context) => QCView(_ticketQc)));
+                            WebTicketQView(_ticketQc.ticket ?? Ticket(), true).show(context);
+                          },
                     onDoubleTap: () async {
                       // print(await ticket.getLocalFileVersion());
                       // ticket.open(context);
                     },
                     child: Ink(
-                        decoration: BoxDecoration(
-                            border: Border(
-                                left: BorderSide(
-                          color: _ticketQc.isQc() ? Colors.redAccent : Colors.white,
-                          width: 3.0,
-                        ))),
+                        decoration: BoxDecoration(border: Border(left: BorderSide(color: _ticketQc.isQc() ? Colors.redAccent : Colors.white, width: 3.0))),
                         child: ListTile(
                             leading: Container(width: 50, alignment: Alignment.center, height: double.infinity, child: Text("${index + 1}", textAlign: TextAlign.center)),
-                            title: Text(_ticketQc.ticket!.getName(), style: TextStyle(fontWeight: FontWeight.bold, color: tc)),
+                            title: Row(children: [
+                              Text(_ticketQc.ticket!.getName(), style: TextStyle(fontWeight: FontWeight.bold, color: tc)),
+                              const Spacer(),
+                              Text(_ticketQc.quality ?? '', style: TextStyle(color: (_ticketQc.quality ?? '').getColor())),
+                              const SizedBox(width: 50)
+                            ]),
                             subtitle: Wrap(
                                 direction: Axis.vertical,
                                 children: [if ((_ticketQc.ticket!.mo ?? "").trim().isNotEmpty) Text((_ticketQc.ticket!.oe ?? "")), Text("${_ticketQc.getDateTime()}")]),
-                            trailing:
-                                Wrap(alignment: WrapAlignment.center, direction: Axis.vertical, children: [Text(section?.factory ?? ''), Text(section?.sectionTitle ?? '')]))));
+                            trailing: SizedBox(
+                                width: 100,
+                                child: Wrap(
+                                    alignment: WrapAlignment.center, direction: Axis.vertical, children: [Text(section?.factory ?? ''), Text(section?.sectionTitle ?? '')])))));
               },
               separatorBuilder: (BuildContext context, int index) {
-                return const Divider(
-                  height: 5,
-                  endIndent: 0.5,
-                  color: Colors.black12,
-                );
+                return const Divider(height: 5, endIndent: 0.5, color: Colors.black12);
               },
             ),
           ),

@@ -16,7 +16,9 @@ class TicketPdfViewer extends StatefulWidget {
   final Ticket ticket;
   final Function onClickEdit;
 
-  const TicketPdfViewer(this.ticket, {Key? key, required this.onClickEdit}) : super(key: key);
+  final bool isPreCompleted;
+
+  const TicketPdfViewer(this.ticket, {Key? key, required this.onClickEdit, this.isPreCompleted = false}) : super(key: key);
 
   @override
   TicketPdfViewerState createState() {
@@ -68,7 +70,7 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
             ],
           ),
           actions: <Widget>[
-            if (!widget.ticket.isStandard)
+            if (!widget.ticket.isStandardFile)
               PopupMenuButton<ActionMenuItems>(
                 onSelected: (ActionMenuItems s) async {
                   if (s == ActionMenuItems.CS) {
@@ -155,17 +157,7 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
           if (_loading) const Center(child: CircularProgressIndicator()),
           errorMessage.isEmpty ? ((!isReady) ? Container() : Container()) : Center(child: Text(errorMessage, style: const TextStyle(color: Colors.red)))
         ]),
-        floatingActionButton: ((!widget.ticket.isStandard) &&
-                    (widget.ticket.isNotCompleted &&
-                        (AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_ANY_PDF) || (widget.ticket.isStarted && widget.ticket.nowAt == AppUser.getSelectedSection()?.id)))) ||
-                (widget.ticket.isStandard && AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_EDIT_STANDARD_FILES))
-            ? FloatingActionButton.extended(
-                icon: const Icon(Icons.edit_outlined),
-                label: const Text("Edit"),
-                onPressed: () async {
-                  widget.onClickEdit();
-                })
-            : null);
+        floatingActionButton: getEditButton());
   }
 
   void setLoading(bool bool) {
@@ -185,4 +177,50 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
   void close() {
     Navigator.of(context).pop();
   }
+
+  Widget? getEditButton() {
+    print('widget. isPreCompleted ===== ${widget.isPreCompleted}');
+
+    if (widget.ticket.isStandardFile) {
+      if ((widget.ticket.isStandardFile && AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_EDIT_STANDARD_FILES))) {
+        return _editButton;
+      }
+      return null;
+    } else {
+      if (widget.ticket.isCompleted) {
+        return null;
+      }
+      if (AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_ANY_PDF)) {
+        return _editButton;
+      }
+
+      if (widget.ticket.isStarted && widget.ticket.nowAt == AppUser.getSelectedSection()?.id) {
+        return _editButton;
+      }
+      if (widget.isPreCompleted) {
+        return _editButton;
+      }
+      return null;
+    }
+
+    // return ((!widget.ticket.isStandardFile) &&
+    //     (widget.ticket.isNotCompleted &&
+    //         (AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_ANY_PDF) ||
+    //             (widget.ticket.isStarted && widget.ticket.nowAt == AppUser
+    //                 .getSelectedSection()
+    //                 ?.id) ||
+    //             widget.isPreCompleted)))
+    // ||
+    //
+    // ?
+    // :
+    // null;
+  }
+
+  get _editButton => FloatingActionButton.extended(
+      icon: const Icon(Icons.edit_outlined),
+      label: const Text("Edit"),
+      onPressed: () async {
+        widget.onClickEdit();
+      });
 }

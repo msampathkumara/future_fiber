@@ -29,7 +29,9 @@ import 'info_Progress.dart';
 class TicketInfo extends StatefulWidget {
   final Ticket ticket;
 
-  const TicketInfo(this.ticket, {Key? key}) : super(key: key);
+  final bool fromBarcode;
+
+  const TicketInfo(this.ticket, {Key? key, this.fromBarcode = false}) : super(key: key);
 
   @override
   _TicketInfoState createState() {
@@ -122,15 +124,7 @@ class _TicketInfoState extends State<TicketInfo> {
                   ),
                 )),
             floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-            floatingActionButton: (!_ticket.hasFile || _loading)
-                ? null
-                : (_ticket.isHold == 1)
-                    ? null
-                    : FloatingActionButton(
-                        child: const Icon(Icons.import_contacts),
-                        onPressed: () async {
-                          openFile();
-                        }));
+            floatingActionButton: getViewFileButton());
   }
 
   var ts = const TextStyle(color: Colors.white, fontSize: 24);
@@ -375,15 +369,7 @@ class _TicketInfoState extends State<TicketInfo> {
                       ),
                     )),
                 floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-                floatingActionButton: (!_ticket.hasFile)
-                    ? null
-                    : _ticket.isHold == 1
-                        ? null
-                        : FloatingActionButton(
-                            child: const Icon(Icons.import_contacts),
-                            onPressed: () {
-                              Ticket.open(context, _ticket);
-                            })))
+                floatingActionButton: getViewFileButton()))
       ]),
     );
   }
@@ -407,6 +393,8 @@ class _TicketInfoState extends State<TicketInfo> {
         ticketHistory = res.ticketHistory;
         ticketComments = res.ticketComments;
         cprs = res.cprs;
+
+        print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx == ${isPreCompleted(progressList)}');
       });
 
       // ErrorMessageView(errorMessage: value.body).show(context);
@@ -434,9 +422,9 @@ class _TicketInfoState extends State<TicketInfo> {
 
     if ((AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_ANY_PDF))) {
       if (_ticket.isStarted) {
-        return Ticket.open(context, _ticket);
+        return Ticket.open(context, _ticket, isPreCompleted: isPreCompleted(progressList));
       } else {
-        return showOpenActions(_ticket, context, () {});
+        return showOpenActions(_ticket, context, () {}, isPreCompleted: isPreCompleted(progressList));
       }
     }
     if (((_ticket.completed == 0) &&
@@ -488,9 +476,60 @@ class _TicketInfoState extends State<TicketInfo> {
     }
 
     if (_ticket.isStarted) {
-      return Ticket.open(context, _ticket);
+      return Ticket.open(context, _ticket, isPreCompleted: isPreCompleted(progressList));
     } else {
-      return showOpenActions(_ticket, context, () {});
+      return showOpenActions(_ticket, context, () {}, isPreCompleted: isPreCompleted(progressList));
     }
+  }
+
+  // getFloatingButton() {
+  //   print('_ticket.isStandard == ${_ticket.isStandard}');
+  //
+  //   var _button = FloatingActionButton(
+  //       child: const Icon(Icons.import_contacts),
+  //       onPressed: () async {
+  //         openFile();
+  //       });
+  //
+  //   // if (_ticket.isStandard) {
+  //   //   if (widget.fromBarcode) {
+  //   //     return _button;
+  //   //   }
+  //   //   return null;
+  //   // }
+  //
+  //   print('isPreCompleted === ${isPreCompleted(progressList)}');
+  //
+  //   return (!_ticket.hasFile || _loading)
+  //       ? null
+  //       : (_ticket.isHold == 1)
+  //           ? null
+  //           : _button;
+  // }
+
+  bool isPreCompleted(List<Progress> progressList) {
+    return progressList
+        .where((element) => ((element.doAt == (AppUser.getSelectedSection()!.id) && element.status == 1) && _ticket.nowAt != (AppUser.getSelectedSection()!.id)))
+        .isNotEmpty;
+  }
+
+  FloatingActionButton? getViewFileButton() {
+    if ((!_ticket.hasFile)) {
+      return null;
+    }
+    if ((_ticket.isHold == 1)) {
+      return null;
+    }
+
+    return FloatingActionButton(
+        child: const Icon(Icons.import_contacts),
+        onPressed: () {
+          print('isPreCompleted ===== 0 ${isPreCompleted(progressList)}');
+          if (kIsWeb) {
+            Ticket.open(context, _ticket, isPreCompleted: isPreCompleted(progressList));
+          } else {
+            openFile();
+          }
+        });
   }
 }

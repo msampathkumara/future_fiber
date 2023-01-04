@@ -143,12 +143,13 @@ public class TextEditor extends RelativeLayout {
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, getTypeFace()));
 
         float translateX = (pdfView.getCurrentXOffset() / zoom) * -1;
+        float translateX_ = (translateX + Editor.offset);
         float translateY = ((pdfView.getCurrentYOffset() / zoom) * -1) - (Yposition);
 
-        float dheight = (getHeight() - pdfView.pdfFile.getMaxPageHeight()) / 2;
-        float w = (pdfView.getWidth() - (page.getPageSize().getWidth()));
+        float dheight = (getHeight() - getCurrentPageHeight()) / 2;
+        float w = (pdfView.getWidth() - (page.getPageSize().getWidth())) / 2;
 
-        xText xText = new xText(textFld.getText().toString(), paint, translateX  , translateY - dheight, (TEXT_X) / zoom, (TEXT_Y) / zoom, pageNo, pdfView.pdfFile.getMaxPageWidth(), pdfView.pdfFile.getMaxPageHeight(), zoom);
+        xText xText = new xText(textFld.getText().toString(), paint, translateX, translateY - dheight, (TEXT_X) / zoom, (TEXT_Y) / zoom, pageNo, getCurrentPageWidth(), getCurrentPageHeight(), zoom);
         editor.editsList.add(xText);
 
         reDraw();
@@ -164,14 +165,25 @@ public class TextEditor extends RelativeLayout {
 
         pdfEdit.setText(text);
         pdfEdit.setEditsPaint(editsPaint);
-        float sp = ((((pdfView.pdfFile.getPageSpacing(pdfView.getCurrentPage(), zoom) / 2) / zoom) * (2 * (pdfView.getCurrentPage() + 1) - 1)));
-        pdfEdit.setPositionX((translateX + ((TEXT_X) / zoom)) / (pdfView.pdfFile.getMaxPageWidth()));
-        pdfEdit.setPositionY((translateY + ((TEXT_Y) / zoom) - sp) / (pdfView.pdfFile.getMaxPageHeight()));
+//        float sp = ((((pdfView.pdfFile.getPageSpacing(pdfView.getCurrentPage(), zoom) / 2) / zoom) * (2 * (pdfView.getCurrentPage() + 1) - 1)));
+//        pdfEdit.setPositionX((translateX + ((TEXT_X) / zoom)) / (pdfView.pdfFile.getMaxPageWidth()));
+//        pdfEdit.setPositionY((translateY + ((TEXT_Y) / zoom)) / (pdfView.pdfFile.getMaxPageHeight()));
+
+        pdfEdit.setPositionX(((translateX_ - w) + (TEXT_X / zoom)) / getCurrentPageWidth());
+        pdfEdit.setPositionY((translateY + (TEXT_Y / zoom)) / getCurrentPageHeight());
         pdfEdit.setTextBold(bold);
         pdfEdit.setTextItelic(italic);
         pdfEdit.setTextSize(size);
         editor.getPdfEditsList().addEdit(pageNo, xText.getId(), pdfEdit);
 
+    }
+
+    private float getCurrentPageWidth() {
+        return pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getWidth();
+    }
+
+    private float getCurrentPageHeight() {
+        return pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight();
     }
 
     private int getTypeFace() {

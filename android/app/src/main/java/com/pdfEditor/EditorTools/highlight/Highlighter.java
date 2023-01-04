@@ -237,27 +237,21 @@ public class Highlighter extends FrameLayout {
             p.setXfermode(null);
 
 
-//        float translateX = Math.abs(pdfView.getCurrentXOffset() / zoom);
         float translateX = (pdfView.getCurrentXOffset() / zoom) * -1;
-//        float translateY = Math.abs((pdfView.getCurrentYOffset() / zoom)) - (Yposition);
-//        float translateY = ((pdfView.getCurrentYOffset() / zoom) * -1) - (Yposition);
-//        float translateY = Math.abs((pdfView.getCurrentYOffset() / zoom)) - (Yposition);
-
+        float translateX_ = (translateX + Editor.offset);
         float translateY = ((pdfView.getCurrentYOffset() / zoom) * -1) - (Yposition);
-
-        for (int i = 0; i < points.size(); i++) {
-            editPoint editPoint = points.get(i);
-            editPoint.setX(editPoint.getX() + ((translateX) / (getCurrentPageWidth())));
-//            editPoint.setY(editPoint.getY() + ((translateY) / (getCurrentPageHeight())) - (editPoint.sp));
-            editPoint.setY(editPoint.getY() + ((translateY) / (getCurrentPageHeight())));
-        }
-
-//        float dheight = (getHeight() - getCurrentPageHeight()) / 2;
 
         float dheight = (((getHeight() - pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight())) / 2);
         float w = (pdfView.getWidth() - (page.getPageSize().getWidth())) / 2;
 
-        final xPath xpath = new xPath(new Path(mPath), p, translateX  , translateY - dheight, pageNo, getCurrentPageWidth(), getCurrentPageHeight(), zoom);
+        for (int i = 0; i < points.size(); i++) {
+            editPoint editPoint = points.get(i);
+            editPoint.setX(editPoint.getX() + ((translateX_ - w) / (getCurrentPageWidth())));
+            editPoint.setY(editPoint.getY() + ((translateY) / (getCurrentPageHeight())));
+        }
+
+
+        final xPath xpath = new xPath(new Path(mPath), p, translateX, translateY - dheight, pageNo, getCurrentPageWidth(), getCurrentPageHeight(), zoom);
 
         editor.editsList.add(xpath);
         mPath.reset();

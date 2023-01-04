@@ -96,6 +96,25 @@
     <!--    <link rel="stylesheet" type="text/css" href="splash/style.css">-->
     <script src="flutter.js" defer></script>
 
+    <script>
+        window.addEventListener('load', function (ev) {
+            const loading = document.querySelector('#loading');
+            loading.textContent = "Loading entrypoints..";
+            _flutter.loader.loadEntrypoint({serviceWorker: {serviceWorkerVersion: serviceWorkerVersion}}).then(function (engineInitializer) {
+                loading.textContent = "Initializing engine...";
+                return engineInitializer.initializeEngine();
+            }).then(function (appRunner) {
+                loading.textContent = "Running app...";
+                return appRunner.runApp();
+            });
+        });
+
+
+
+
+    </script>
+
+
 </head>
 <body oncontextmenu="return false;">
 <!-- This script installs service_worker.js to provide PWA functionality to
@@ -170,22 +189,6 @@
 </script>
 
 
-<script>
-    window.addEventListener('load', function (ev) {
-        const loading = document.querySelector('#loading');
-        loading.textContent = "Loading entrypoint...";
-        _flutter.loader.loadEntrypoint({serviceWorker: {serviceWorkerVersion: serviceWorkerVersion}}).then(function (engineInitializer) {
-            loading.textContent = "Initializing engine...";
-            return engineInitializer.initializeEngine();
-        }).then(function (appRunner) {
-            loading.textContent = "Running app...";
-            return appRunner.runApp();
-        });
-    });
-
-
-
-</script>
 </body>
 </html>
 

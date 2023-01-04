@@ -95,6 +95,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     private ImageButton btnNextPage;
     private ImageButton btnPrevPage;
     private android.app.AlertDialog dialog;
+    public static float offset = 0;
 
 
     public interface RunAfterDone {
@@ -345,7 +346,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
             dialog.dismiss();
         });
         pv.onDraw(this);
-        pv.pageFitPolicy(FitPolicy.BOTH);
+        pv.pageFitPolicy(FitPolicy.WIDTH);
 
 
         pv.pageSnap(true);
@@ -385,6 +386,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
 
                 pdfViewPerant.addView(imageView);
+                offset = pdfView.getCurrentXOffset();
 
             }
             drawingView.setVisibility(View.GONE);
@@ -434,6 +436,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
             }
             visibleOnly(drawingView, View.VISIBLE);
             new Handler().postDelayed(() -> visibleOnly(drawingView, View.GONE), 100);
+
 
         });
 

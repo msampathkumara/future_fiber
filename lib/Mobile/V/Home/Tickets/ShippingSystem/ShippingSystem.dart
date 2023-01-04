@@ -17,7 +17,7 @@ class _ShippingSystemState extends State<ShippingSystem> with TickerProviderStat
   TabController? _tabBarController;
   late Ticket ticket;
 
-  WebView? _webView;
+  WebViewWidget? _webView;
 
   late WebViewController _webViewController;
 
@@ -32,32 +32,51 @@ class _ShippingSystemState extends State<ShippingSystem> with TickerProviderStat
       });
     });
 
-    _webView = WebView(
-      // initialUrl: "https://smartwind.nsslsupportservices.com",
-      initialUrl: "https://dev.nsgshipping.com/userHome",
-      javascriptMode: JavascriptMode.unrestricted,
-      onWebViewCreated: (WebViewController webViewController) async {
-        // _controller.complete(webViewController);
-        _webViewController = webViewController;
-        _webViewController.runJavascriptReturningResult("document.getElementById(\"userName\").value = \"My value\";");
-      },
-      onProgress: (int progress) {
-        print("WebView is loading (progress : $progress%)");
-      },
-      javascriptChannels: const <JavascriptChannel>{
-        // _toasterJavascriptChannel(context),
-      },
-      navigationDelegate: (NavigationRequest request) {
-        return NavigationDecision.navigate;
-      },
-      onPageStarted: (String url) {
-        print('Page started loading: $url');
-      },
-      onPageFinished: (String url) {
-        print('Page finished loading: $url');
-      },
-      gestureNavigationEnabled: true,
-    );
+    // _webView = WebView(
+    //   // initialUrl: "https://smartwind.nsslsupportservices.com",
+    //   initialUrl: "https://dev.nsgshipping.com/userHome",
+    //   javascriptMode: JavascriptMode.unrestricted,
+    //   onWebViewCreated: (WebViewController webViewController) async {
+    //     // _controller.complete(webViewController);
+    //     _webViewController = webViewController;
+    //     _webViewController.runJavascriptReturningResult("document.getElementById(\"userName\").value = \"My value\";");
+    //   },
+    //   onProgress: (int progress) {
+    //     print("WebView is loading (progress : $progress%)");
+    //   },
+    //   javascriptChannels: const <JavascriptChannel>{
+    //     // _toasterJavascriptChannel(context),
+    //   },
+    //   navigationDelegate: (NavigationRequest request) {
+    //     return NavigationDecision.navigate;
+    //   },
+    //   onPageStarted: (String url) {
+    //     print('Page started loading: $url');
+    //   },
+    //   onPageFinished: (String url) {
+    //     print('Page finished loading: $url');
+    //   },
+    //   gestureNavigationEnabled: true,
+    // );
+
+    _webView = WebViewWidget(
+        controller: WebViewController()
+          ..setJavaScriptMode(JavaScriptMode.unrestricted)
+          ..setBackgroundColor(const Color(0x00000000))
+          ..setNavigationDelegate(
+            NavigationDelegate(
+              onProgress: (int progress) {
+                // Update loading bar.
+              },
+              onPageStarted: (String url) {},
+              onPageFinished: (String url) {},
+              onWebResourceError: (WebResourceError error) {},
+              onNavigationRequest: (NavigationRequest request) {
+                return NavigationDecision.navigate;
+              },
+            ),
+          )
+          ..loadRequest(Uri.parse("https://dev.nsgshipping.com/userHome")));
   }
 
   @override

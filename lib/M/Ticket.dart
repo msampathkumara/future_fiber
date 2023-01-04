@@ -33,6 +33,7 @@ import 'Ticket/CprReport.dart';
 import 'hive.dart';
 
 part 'Ticket.g.dart';
+
 part 'Ticket.options.dart';
 
 @JsonSerializable(explicitToJson: true)
@@ -187,6 +188,14 @@ class Ticket extends DataObject {
   @JsonKey(defaultValue: null, includeIfNull: true)
   String? pool;
 
+  @HiveField(40, defaultValue: null)
+  @JsonKey(defaultValue: null, includeIfNull: true)
+  int? custom;
+
+  bool get isCustom => custom == 1;
+
+  bool get isStandard => custom == 0;
+
   String? get atSection {
     var x = HiveBox.sectionsBox.get(nowAt)?.sectionTitle;
 
@@ -240,7 +249,7 @@ class Ticket extends DataObject {
     return ticket.ticketFile;
   }
 
-  static Future<void> open(context, Ticket ticket, {onReceiveProgress}) async {
+  static Future<void> open(context, Ticket ticket, {onReceiveProgress, isPreCompleted = false}) async {
     if (ticket.isHold == 1) {
       return;
     }
@@ -248,7 +257,7 @@ class Ticket extends DataObject {
       var loadingWidget = const Loading(loadingText: "Downloading Ticket");
       loadingWidget.show(context);
 
-      var path = ticket.isStandard ? "tickets/standard/getPdf?" : 'tickets/getTicketFile?';
+      var path = ticket.isStandardFile ? "tickets/standard/getPdf?" : 'tickets/getTicketFile?';
       String queryString = Uri(queryParameters: {"id": ticket.id.toString()}).query;
       final idToken = await AppUser.getIdToken(false);
       Dio dio = Dio();
@@ -291,12 +300,12 @@ class Ticket extends DataObject {
 
     if (isNew && file.existsSync()) {
       print("File exists ");
-      view(ticket, context);
+      viewTicket(ticket, context, isPreCompleted: isPreCompleted);
     } else {
       print("File not exists or old ");
       _getFile(ticket, context).then((file) async {
         if (file != null) {
-          view(ticket, context);
+          viewTicket(ticket, context, isPreCompleted: isPreCompleted);
         }
       });
     }
@@ -324,7 +333,7 @@ class Ticket extends DataObject {
     t.keys.where((k) => (t[k] ?? "").toString().isEmpty).toList().forEach(t.remove);
     print("____________________________________________________________________________________________________________________________*****");
     print(t.toString());
-    var serverUrl = Server.getServerApiPath(ticket.isStandard ? "tickets/standard/uploadEdits" : "tickets/uploadEdits");
+    var serverUrl = Server.getServerApiPath(ticket.isStandardFile ? "tickets/standard/uploadEdits" : "tickets/uploadEdits");
     var userCurrentSection = (AppUser.getSelectedSection()?.id ?? 0).toString();
     return await platform.invokeMethod(
         'editPdf', {'path': ticket.ticketFile!.path, 'userCurrentSection': userCurrentSection.toString(), 'fileID': ticket.id, 'ticket': t.toString(), "serverUrl": serverUrl});
@@ -333,7 +342,7 @@ class Ticket extends DataObject {
   static const platform = MethodChannel('editPdf');
 
   static isFileNew(Ticket ticket) async {
-    var ticket1 = ticket.isStandard ? HiveBox.standardTicketsBox.get(ticket.id) : HiveBox.ticketBox.get(ticket.id);
+    var ticket1 = ticket.isStandardFile ? HiveBox.standardTicketsBox.get(ticket.id) : HiveBox.ticketBox.get(ticket.id);
     var f = HiveBox.localFileVersionsBox.values.where((element) => element.type == ticket.getTicketType().getValue() && element.ticketId == ticket.id);
     if (f.isNotEmpty) {
       LocalFileVersion fileVersion = f.first;
@@ -441,10 +450,10 @@ class Ticket extends DataObject {
     return List<Ticket>.from(tickets.map((model) => Ticket.fromJson(model)));
   }
 
-  get isStandard => this is StandardTicket;
+  get isStandardFile => this is StandardTicket;
 
   TicketTypes getTicketType() {
-    return isStandard ? TicketTypes.Standard : TicketTypes.Ticket;
+    return isStandardFile ? TicketTypes.Standard : TicketTypes.Ticket;
   }
 
   static bool boolFromInt(int done) => done == 1;
@@ -470,9 +479,12 @@ class Ticket extends DataObject {
     });
   }
 
-  static Future view(Ticket ticket, context) async {
+  static Future viewTicket(Ticket ticket, context, {isPreCompleted = false}) async {
     TicketPdfViewer ticketPdfViwer;
     GlobalKey<TicketPdfViewerState> myKey = GlobalKey();
+
+    print('widget. isPreCompleted ===== 1 $isPreCompleted');
+
     ticketPdfViwer = TicketPdfViewer(ticket, onClickEdit: () async {
       var x = await Ticket.openEditor(ticket);
       if (x == true) {
@@ -491,9 +503,9 @@ class Ticket extends DataObject {
         await file.delete(recursive: true);
         await Ticket.getFile(ticket, context);
         myKey.currentState?.close();
-        view(ticket, context);
+        viewTicket(ticket, context, isPreCompleted: isPreCompleted);
       }
-    }, key: myKey);
+    }, isPreCompleted: isPreCompleted, key: myKey);
     return await ticketPdfViwer.show(context);
   }
 

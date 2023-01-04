@@ -110,7 +110,29 @@ class _WebAdminState extends State<WebAdmin> {
                                                   }).catchError((err) {});
                                                 },
                                                 label: const Text("Reload"),
-                                                icon: const Icon(Icons.memory_rounded)))
+                                                icon: const Icon(Icons.memory_rounded))),
+                                  ListTile(
+                                      title: const Text("Update Ticket Production"),
+                                      subtitle: const Text("in case of missing or incorrect Production On Ticket "),
+                                      trailing: isLoading("updateTicketProduction")
+                                          ? const CircularProgressIndicator()
+                                          : ElevatedButton.icon(
+                                              onPressed: () {
+                                                setLoading("updateTicketProduction");
+
+                                                Api.get(EndPoints.admin_updateTicketProduction, {}).then((res) {
+                                                  Map data = res.data;
+                                                  removeLoading("updateTicketProduction");
+                                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Update Ticket Production done")));
+                                                  setState(() {
+                                                    // _dataLoadingError = true;
+                                                  });
+                                                }).whenComplete(() {
+                                                  setState(() {});
+                                                }).catchError((err) {});
+                                              },
+                                              label: const Text("Update"),
+                                              icon: const Icon(Icons.factory)))
                                 ],
                               )),
                               const SizedBox(height: 20),

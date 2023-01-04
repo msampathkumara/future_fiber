@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -20,10 +18,30 @@ class LinkViewer extends StatefulWidget {
 }
 
 class _State extends State<LinkViewer> {
+  late WebViewController webViewWidgetController;
+
   @override
   void initState() {
     // TODO: implement initState
-    if (Platform.isAndroid) WebView.platform = AndroidWebView();
+    // if (Platform.isAndroid) webViewController.platform = AndroidWebView();
+    webViewWidgetController = WebViewController()
+      ..enableZoom(true)
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(const Color(0x00000000))
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onProgress: (int progress) {
+            // Update loading bar.
+          },
+          onPageStarted: (String url) {},
+          onPageFinished: (String url) {},
+          onWebResourceError: (WebResourceError error) {},
+          onNavigationRequest: (NavigationRequest request) {
+            return NavigationDecision.navigate;
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse(widget.url));
     super.initState();
   }
 
@@ -37,24 +55,25 @@ class _State extends State<LinkViewer> {
   getWebUi() {
     return Scaffold(
         appBar: AppBar(title: Text(widget.title)),
-        body: WebView(
-          gestureNavigationEnabled: true,
-          initialUrl: widget.url,
-          javascriptMode: JavascriptMode.unrestricted,
-          onWebViewCreated: (WebViewController webViewController) {
-            this.webViewController = webViewController;
-          },
-          zoomEnabled: false,
+        body: WebViewWidget(
+          // gestureNavigationEnabled: true,
+          // initialUrl: widget.url,
+          // javascriptMode: JavascriptMode.unrestricted,
+          // onWebViewCreated: (WebViewController webViewController) {
+          //   this.webViewController = webViewController;
+          // },
+
           gestureRecognizers: {}..add(
               Factory<VerticalDragGestureRecognizer>(() => VerticalDragGestureRecognizer()
                 ..onDown = (DragDownDetails dragDownDetails) {
-                  webViewController.getScrollY().then((value) {
-                    if (value == 0 && dragDownDetails.globalPosition.direction < 1) {
+                  webViewController.getScrollPosition().then((value) {
+                    if (value.dx == 0 && dragDownDetails.globalPosition.direction < 1) {
                       webViewController.reload();
                     }
                   });
                 }),
             ),
+          controller: webViewWidgetController,
         ));
   }
 }

@@ -34,12 +34,13 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
 
   // var subscription;
   bool _showAllTickets = false;
+  bool _showAllMyProduction = false;
   bool _filterByPdf = false;
   bool _filterByNoPdf = false;
 
   NsUser? nsUser;
 
-  Key? _refreshIndicatorKey;
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   late DbChangeCallBack _dbChangeCallBack;
 
@@ -93,6 +94,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                 onSelected: (s) {
                   if (s == 'Show All Tickets') {
                     _showAllTickets = !_showAllTickets;
+                    _showAllMyProduction = false;
                     if (_showAllTickets) {
                       tabs = Production.values.map<String>((e) => e.getValue()).toList();
                     } else {
@@ -100,6 +102,10 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                     }
                     _tabBarController = TabController(length: tabs.length, vsync: this);
                     updateTabControler();
+                    loadData();
+                  } else if (s == '_showAllMyProduction') {
+                    _showAllMyProduction = !_showAllMyProduction;
+                    _showAllTickets = false;
                     loadData();
                   } else if (s == 'Pdf') {
                     _filterByPdf = !_filterByPdf;
@@ -115,6 +121,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                 itemBuilder: (BuildContext context) {
                   return [
                     CheckedPopupMenuItem<String>(value: 'Show All Tickets', checked: _showAllTickets, child: const Text("Show All Tickets")),
+                    CheckedPopupMenuItem<String>(value: '_showAllMyProduction', checked: _showAllMyProduction, child: const Text("Show All My Production")),
                     CheckedPopupMenuItem<String>(value: "Pdf", checked: _filterByPdf, child: const Text("Filter By Pdf")),
                     CheckedPopupMenuItem<String>(value: 'noPdf', checked: _filterByNoPdf, child: const Text('Tickets don\'t have Pdf'))
                   ];
@@ -130,7 +137,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                 child: Column(children: [
                   const Text("Production Pool", textScaleFactor: 1.2),
                   if ((!_showAllTickets) && nsUser != null && nsUser!.section != null)
-                    InkWell(onTap: () => {}, child: Text("${nsUser!.section!.sectionTitle} @ ${nsUser!.section!.factory}"))
+                    InkWell(onTap: () => {}, child: Text(_showAllMyProduction ? nsUser!.section!.factory : "${nsUser!.section!.sectionTitle} @ ${nsUser!.section!.factory}"))
                 ])),
             bottom: SearchBar(
                 searchController: searchController,
@@ -280,7 +287,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     ]);
   }
 
-  List<Ticket> _load(selectedProduction, section, showAllTickets, String searchText, {bySection = false}) {
+  List<Ticket> _load(selectedProduction, section, showAllTickets, String searchText, {bySection = false, byProduction = false}) {
     // var tickets = HiveBox.ticketBox.values.where((ticket) {
     //   if (ticket.isStarted) {
     //     wipCountMap[selectedProduction]++;
@@ -309,6 +316,9 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
       }
 
       if (bySection && t.nowAt != nsUser?.section?.id) {
+        return false;
+      }
+      if (byProduction && t.production != nsUser?.section?.factory) {
         return false;
       }
 
@@ -355,6 +365,9 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
         wipCountMap[element] = 0;
         listsMap[element] = _load(element, 0, true, searchText);
       }
+    } else if (_showAllMyProduction) {
+      wipCountMap[Production.All] = 0;
+      listsMap[Production.All] = _load(Production.All, 0, false, searchText, byProduction: true);
     } else {
       wipCountMap[Production.All] = 0;
       listsMap[Production.All] = _load(Production.All, 0, false, searchText, bySection: true);
@@ -405,7 +418,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
   Future<void> openTicketByBarcode(barcode) async {
     try {
       Ticket ticket = HiveBox.ticketBox.values.singleWhere((t) => [(t.mo ?? "").toLowerCase(), (t.oe ?? "").toLowerCase()].contains(barcode.toString().toLowerCase()));
-      TicketInfo(ticket).show(context);
+      TicketInfo(ticket, fromBarcode: true).show(context);
     } catch (e) {
       print('Ticket not found');
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Ticket not found", style: TextStyle(color: Colors.white)), backgroundColor: Colors.red));

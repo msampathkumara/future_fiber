@@ -110,7 +110,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                         var u = ticket.isRush == 1 ? "removeFlag" : "setFlag";
                         Api.post("tickets/flags/$u", {"ticket": ticket.id.toString(), "comment": "", "type": "rush"}).then((response) async {});
                       }),
-                        if (ticket.isStarted && ticket.isNotHold && (ticket.nowAt == AppUser.getSelectedSection()?.id) && (!kIsWeb))
+                if (ticket.isStarted && ticket.isNotHold && (ticket.nowAt == AppUser.getSelectedSection()?.id) && (!kIsWeb))
                   ListTile(
                       title: const Text("Finish"),
                       leading: const Icon(Icons.check_circle_outline_outlined, color: Colors.green),
@@ -297,7 +297,7 @@ bool searchByFilters(Ticket t, Filters dataFilter) {
   return true;
 }
 
-Future<void> showOpenActions(Ticket ticket, BuildContext context1, reLoad) async {
+Future<void> showOpenActions(Ticket ticket, BuildContext context1, reLoad, {required bool isPreCompleted}) async {
   await showModalBottomSheet<void>(
     constraints: kIsWeb ? const BoxConstraints(maxWidth: 600, maxHeight: 200) : null,
     context: context1,
@@ -316,7 +316,7 @@ Future<void> showOpenActions(Ticket ticket, BuildContext context1, reLoad) async
                   onTap: () async {
                     Navigator.of(context).pop();
                     if (await TicketStartDialog(ticket).show(context) == true) {
-                      Ticket.open(context1, ticket);
+                      Ticket.open(context1, ticket, isPreCompleted: isPreCompleted);
                     }
                   }),
             ListTile(

@@ -9,40 +9,60 @@ class J109 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("J109"),
-          actions: [
-            if (_webViewController != null)
-              IconButton(
-                  icon: const Icon(Icons.autorenew_outlined),
-                  onPressed: () {
-                    _webViewController!.reload();
-                  })
-          ],
-        ),
-        body: WebView(
-          initialUrl: 'https://j109.org/register-sails',
-          // initialUrl: "http://10.200.4.31/webclient/",
-          javascriptMode: JavascriptMode.unrestricted,
-          onWebViewCreated: (WebViewController webViewController) {
-            _webViewController = webViewController;
-            // _controller.complete(webViewController);
-          },
-          onProgress: (int progress) {
-            print("WebView is loading (progress : $progress%)");
-          },
-          javascriptChannels: const <JavascriptChannel>{},
-          navigationDelegate: (NavigationRequest request) {
-            return NavigationDecision.navigate;
-          },
-          onPageStarted: (String url) {
-            print('Page started loading: $url');
-          },
-          onPageFinished: (String url) {
-            print('Page finished loading: $url');
-            // _controller!.evaluateJavascript(jsString);
-          },
-          gestureNavigationEnabled: true,
-        ));
+      appBar: AppBar(
+        title: const Text("J109"),
+        actions: [
+          if (_webViewController != null)
+            IconButton(
+                icon: const Icon(Icons.autorenew_outlined),
+                onPressed: () {
+                  _webViewController!.reload();
+                })
+        ],
+      ),
+      // body: WebView(
+      //   initialUrl: 'https://j109.org/register-sails',
+      //   // initialUrl: "http://10.200.4.31/webclient/",
+      //   javascriptMode: JavascriptMode.unrestricted,
+      //   onWebViewCreated: (WebViewController webViewController) {
+      //     _webViewController = webViewController;
+      //     // _controller.complete(webViewController);
+      //   },
+      //   onProgress: (int progress) {
+      //     print("WebView is loading (progress : $progress%)");
+      //   },
+      //   javascriptChannels: const <JavascriptChannel>{},
+      //   navigationDelegate: (NavigationRequest request) {
+      //     return NavigationDecision.navigate;
+      //   },
+      //   onPageStarted: (String url) {
+      //     print('Page started loading: $url');
+      //   },
+      //   onPageFinished: (String url) {
+      //     print('Page finished loading: $url');
+      //     // _controller!.evaluateJavascript(jsString);
+      //   },
+      //   gestureNavigationEnabled: true,
+      // )
+
+      body: WebViewWidget(
+          controller: WebViewController()
+            ..setJavaScriptMode(JavaScriptMode.unrestricted)
+            ..setBackgroundColor(const Color(0x00000000))
+            ..setNavigationDelegate(
+              NavigationDelegate(
+                onProgress: (int progress) {
+                  // Update loading bar.
+                },
+                onPageStarted: (String url) {},
+                onPageFinished: (String url) {},
+                onWebResourceError: (WebResourceError error) {},
+                onNavigationRequest: (NavigationRequest request) {
+                  return NavigationDecision.navigate;
+                },
+              ),
+            )
+            ..loadRequest(Uri.parse('https://j109.org/register-sails'))),
+    );
   }
 }

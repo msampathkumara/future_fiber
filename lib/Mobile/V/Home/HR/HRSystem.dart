@@ -20,29 +20,46 @@ class HRSystem extends StatelessWidget {
                   })
           ],
         ),
-        body: WebView(
-          initialUrl: 'https://northsails.cemex.cloud/Security/Login',
-          // initialUrl: "http://10.200.4.31/webclient/",
-          javascriptMode: JavascriptMode.unrestricted,
-          onWebViewCreated: (WebViewController webViewController) {
-            _webViewController = webViewController;
-            // _controller.complete(webViewController);
-          },
-          onProgress: (int progress) {
-            print("WebView is loading (progress : $progress%)");
-          },
-          javascriptChannels: const <JavascriptChannel>{},
-          navigationDelegate: (NavigationRequest request) {
-            return NavigationDecision.navigate;
-          },
-          onPageStarted: (String url) {
-            print('Page started loading: $url');
-          },
-          onPageFinished: (String url) {
-            print('Page finished loading: $url');
-            // _controller!.evaluateJavascript(jsString);
-          },
-          gestureNavigationEnabled: true,
-        ));
+        // body: WebView(
+        //   initialUrl: 'https://northsails.cemex.cloud/Security/Login',
+        //   // initialUrl: "http://10.200.4.31/webclient/",
+        //   javascriptMode: JavascriptMode.unrestricted,
+        //   onWebViewCreated: (WebViewController webViewController) {
+        //     _webViewController = webViewController;
+        //     // _controller.complete(webViewController);
+        //   },
+        //   onProgress: (int progress) {
+        //     print("WebView is loading (progress : $progress%)");
+        //   },
+        //   javascriptChannels: const <JavascriptChannel>{},
+        //   navigationDelegate: (NavigationRequest request) {
+        //     return NavigationDecision.navigate;
+        //   },
+        //   onPageStarted: (String url) {
+        //     print('Page started loading: $url');
+        //   },
+        //   onPageFinished: (String url) {
+        //     print('Page finished loading: $url');
+        //     // _controller!.evaluateJavascript(jsString);
+        //   },
+        //   gestureNavigationEnabled: true,
+        // )
+        body: WebViewWidget(
+            controller: WebViewController()
+              ..setJavaScriptMode(JavaScriptMode.unrestricted)
+              ..setNavigationDelegate(
+                NavigationDelegate(
+                  onProgress: (int progress) {
+                    // Update loading bar.
+                  },
+                  onPageStarted: (String url) {},
+                  onPageFinished: (String url) {},
+                  onWebResourceError: (WebResourceError error) {},
+                  onNavigationRequest: (NavigationRequest request) {
+                    return NavigationDecision.navigate;
+                  },
+                ),
+              )
+              ..loadRequest(Uri.parse('https://northsails.cemex.cloud/Security/Login'))));
   }
 }

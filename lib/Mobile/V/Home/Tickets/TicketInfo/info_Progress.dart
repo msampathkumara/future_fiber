@@ -88,7 +88,7 @@ class _info_ProgressState extends State<info_Progress> {
                               IconButton(
                                 icon: const CircleAvatar(backgroundColor: Colors.red, radius: 8, child: Text('QC', style: TextStyle(fontSize: 8, color: Colors.white))),
                                 onPressed: () {
-                                  // WebTicketQView(ticket, true).show(context);
+                                  WebTicketQView(widget.ticket, true).show(context);
                                 },
                               ),
                             if (progress.isQa)

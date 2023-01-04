@@ -9,10 +9,10 @@ Future<File?> _getFile(Ticket ticket, context, {onReceiveProgress}) async {
   var dio = Dio();
   String filePath;
   if (kIsWeb) {
-    filePath = ticket.isStandard ? '/st${ticket.id}.pdf' : '/${ticket.id}.pdf';
+    filePath = ticket.isStandardFile ? '/st${ticket.id}.pdf' : '/${ticket.id}.pdf';
   } else {
     var ed = await getExternalStorageDirectory();
-    filePath = ticket.isStandard ? '${ed!.path}/st${ticket.id}.pdf' : '${ed!.path}/${ticket.id}.pdf';
+    filePath = ticket.isStandardFile ? '${ed!.path}/st${ticket.id}.pdf' : '${ed!.path}/${ticket.id}.pdf';
   }
 
   final user = FirebaseAuth.instance.currentUser;
@@ -23,9 +23,12 @@ Future<File?> _getFile(Ticket ticket, context, {onReceiveProgress}) async {
 
   Response response;
   try {
-    var path = ticket.isStandard ? "tickets/standard/getPdf?" : 'tickets/getTicketFile?';
+    var path = ticket.isStandardFile ? "tickets/standard/getPdf?" : 'tickets/getTicketFile?';
 
-    await dio.download(Server.getServerApiPath(path + queryString), filePath, deleteOnError: true, onReceiveProgress: (received, total) {
+    await dio.download(Server.getServerApiPath(path + queryString), filePath, deleteOnError: true, onReceiveProgress: (
+      received,
+      total,
+    ) {
       // print("${received}/${total}");
       int percentage = ((received / total) * 100).floor();
       key.currentState?.onProgressChange(percentage);
