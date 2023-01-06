@@ -99,7 +99,6 @@ class _WebAdminState extends State<WebAdmin> {
                                                   setLoading("reloadInMemoryDB");
 
                                                   Api.get("admin/reloadInMemoryDB", {}).then((res) {
-                                                    Map data = res.data;
                                                     removeLoading("reloadInMemoryDB");
                                                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Reload In memory Database done")));
                                                     setState(() {
@@ -121,7 +120,6 @@ class _WebAdminState extends State<WebAdmin> {
                                                 setLoading("updateTicketProduction");
 
                                                 Api.get(EndPoints.admin_updateTicketProduction, {}).then((res) {
-                                                  Map data = res.data;
                                                   removeLoading("updateTicketProduction");
                                                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Update Ticket Production done")));
                                                   setState(() {
@@ -150,7 +148,6 @@ class _WebAdminState extends State<WebAdmin> {
                                                 onPressed: () {
                                                   setLoading("cleanReloadDevices");
                                                   Api.get("admin/cleanReloadDevices", {}).then((res) {
-                                                    Map data = res.data;
                                                     removeLoading("cleanReloadDevices");
                                                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Reload In memory Database done")));
                                                     setState(() {
@@ -162,6 +159,33 @@ class _WebAdminState extends State<WebAdmin> {
                                                 },
                                                 label: const Text("Reload"),
                                                 icon: const Icon(Icons.cleaning_services))),
+                                ],
+                              )),
+                              const Text("Production build", textScaleFactor: 2),
+                              Card(
+                                  child: Column(
+                                children: [
+                                  if (AppUser.havePermissionFor(NsPermissions.ADMIN_CLEAN_RELOAD_DEVICES))
+                                    ListTile(
+                                        title: const Text("Update Production build"),
+                                        subtitle: const Text("After update"),
+                                        trailing: isLoading("cleanReloadDevices")
+                                            ? const CircularProgressIndicator()
+                                            : ElevatedButton.icon(
+                                                onPressed: () {
+                                                  setLoading("UpdateProduction");
+                                                  Api.get(EndPoints.admin_updateProductionBuild, {}).then((res) {
+                                                    removeLoading("UpdateProduction");
+                                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Update Production done")));
+                                                    setState(() {
+                                                      // _dataLoadingError = true;
+                                                    });
+                                                  }).whenComplete(() {
+                                                    setState(() {});
+                                                  }).catchError((err) {});
+                                                },
+                                                label: const Text("Update"),
+                                                icon: const Icon(Icons.update))),
                                 ],
                               )),
                               const SizedBox(height: 20),
@@ -270,7 +294,6 @@ class _WebAdminState extends State<WebAdmin> {
 
   void saveSettings(String settingName, value) {
     Api.post(EndPoints.admin_settings_setSetting, {'setting': settingName, 'value': value}).then((res) {
-      Map data = res.data;
       loadSettings();
     }).whenComplete(() {
       setState(() {});

@@ -343,10 +343,10 @@ class _CprViewState extends State<CprView> {
                       ? null
                       : (checked) {
                           material.setChecked(checked!);
-            setState(() {});
-            checkMaterial(material, checked);
-          }
-              : null)),
+                          setState(() {});
+                          checkMaterial(material, checked);
+                        }
+                  : null)),
       DataCell(Text(material.item)),
       DataCell(Text(material.qty)),
       DataCell(Column(

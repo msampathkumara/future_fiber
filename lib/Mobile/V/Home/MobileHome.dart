@@ -126,101 +126,103 @@ class _MobileHomeState extends State<MobileHome> {
                       child: ListTile(
                         leading: UserImage(nsUser: nsUser, radius: 24),
                         title: Text(nsUser!.name, textScaleFactor: 1.2),
-                        subtitle: AppUser.getSelectedSection() != null ? Text("${AppUser.getSelectedSection()?.sectionTitle} @ ${AppUser.getSelectedSection()?.factory}") : const Text(""),
-                    trailing: _currentUserOperionMenu(),
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => CurrentUserDetails(nsUser!)));
-                    },
-                  ),
-                )),
-            body: SizedBox(
-                height: double.maxFinite,
-                width: double.maxFinite,
-                child: Stack(children: [
-                  Positioned(
-                    bottom: 10,
-                    right: 0,
-                    child: ColorFiltered(
-                      colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.1), BlendMode.dstATop),
-                      child: Image.asset(Res.north_sails_logo, width: 350),
-                    ),
-                  ),
-                  SingleChildScrollView(
-                    child: Align(
-                      alignment: FractionalOffset.center,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 48.0),
-                        child: Wrap(
-                          direction: Axis.horizontal,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            if (AppUser.havePermissionFor(NsPermissions.TICKET_PRODUCTION_POOL))
-                              _OpenContainerWrapper(
-                                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                    return _menuButton(openContainer, Icon(Icons.precision_manufacturing_outlined, size: iconSize), "Production Pool");
-                                  },
-                                  openWidget: const ProductionPool(),
-                                  onClosed: _showMarkedAsDoneSnackBar),
-                            _OpenContainerWrapper(
-                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                  return _menuButton(openContainer, Icon(Icons.inventory_2_rounded, color: Colors.deepOrange, size: iconSize), "Finished Goods");
-                                },
-                                openWidget: const FinishedGoods(),
-                                onClosed: _showMarkedAsDoneSnackBar),
-                            if (AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_STANDARD_FILES))
-                              _OpenContainerWrapper(
-                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                  return _menuButton(openContainer, Icon(Icons.collections_bookmark_outlined, size: iconSize), "Standard Library");
-                                },
-                                openWidget: const StandardFiles(),
-                                onClosed: _showMarkedAsDoneSnackBar,
-                              ),
-                            if (AppUser.havePermissionFor(NsPermissions.USERS_USER_MANAGER))
-                              _OpenContainerWrapper(
-                                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                    return _menuButton(openContainer, Icon(Icons.people_outline_outlined, color: Colors.lightGreen, size: iconSize), "User Manager");
-                                  },
-                                  openWidget: const UserManager(),
-                                  onClosed: _showMarkedAsDoneSnackBar),
-                            _OpenContainerWrapper(
-                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                  return _menuButton(openContainer, Icon(Icons.verified_rounded, size: iconSize, color: Colors.green), "QA & QC");
-                                },
-                                openWidget: const QCList(),
-                                onClosed: _showMarkedAsDoneSnackBar),
-                            _OpenContainerWrapper(
-                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                  return _menuButton(openContainer, Icon(Icons.menu_book_rounded, size: iconSize, color: Colors.blueAccent), "Blue Book");
-                                },
-                                openWidget: const BlueBook(),
-                                onClosed: _showMarkedAsDoneSnackBar),
-                            _OpenContainerWrapper(
-                                closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                  return _menuButton(openContainer, Icon(Icons.groups_rounded, size: iconSize, color: Colors.orange), "HR System");
-                                },
-                                openWidget: HRSystem(),
-                                onClosed: _showMarkedAsDoneSnackBar),
-                            if (AppUser.havePermissionFor(NsPermissions.MATERIAL_MANAGEMENT_MATERIAL_MANAGEMENT))
-                              _OpenContainerWrapper(
-                                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                                    return _menuButton(openContainer, Icon(Icons.widgets, size: iconSize, color: Colors.purple), "Material Management");
-                                  },
-                                  openWidget: const MaterialManagement(),
-                                  onClosed: _showMarkedAsDoneSnackBar),
-                          ],
+                        subtitle: AppUser.getSelectedSection() != null
+                            ? Text("${AppUser.getSelectedSection()?.sectionTitle} @ ${AppUser.getSelectedSection()?.factory}")
+                            : const Text(""),
+                        trailing: _currentUserOperionMenu(),
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => CurrentUserDetails(nsUser!)));
+                        },
+                      ),
+                    )),
+                body: SizedBox(
+                    height: double.maxFinite,
+                    width: double.maxFinite,
+                    child: Stack(children: [
+                      Positioned(
+                        bottom: 10,
+                        right: 0,
+                        child: ColorFiltered(
+                          colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.1), BlendMode.dstATop),
+                          child: Image.asset(Res.north_sails_logo, width: 350),
                         ),
                       ),
-                    ),
-                  ),
-                  Positioned(
-                      bottom: 10,
-                      left: 0,
-                      right: 0,
-                      child: Align(
-                          alignment: FractionalOffset.bottomCenter,
-                          child: Center(
-                              child: OpenContainer(
-                                  closedElevation: 0,
+                      SingleChildScrollView(
+                        child: Align(
+                          alignment: FractionalOffset.center,
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 48.0),
+                            child: Wrap(
+                              direction: Axis.horizontal,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                if (AppUser.havePermissionFor(NsPermissions.TICKET_PRODUCTION_POOL))
+                                  _OpenContainerWrapper(
+                                      closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                        return _menuButton(openContainer, Icon(Icons.precision_manufacturing_outlined, size: iconSize), "Production Pool");
+                                      },
+                                      openWidget: const ProductionPool(),
+                                      onClosed: _showMarkedAsDoneSnackBar),
+                                _OpenContainerWrapper(
+                                    closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                      return _menuButton(openContainer, Icon(Icons.inventory_2_rounded, color: Colors.deepOrange, size: iconSize), "Finished Goods");
+                                    },
+                                    openWidget: const FinishedGoods(),
+                                    onClosed: _showMarkedAsDoneSnackBar),
+                                if (AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_STANDARD_FILES))
+                                  _OpenContainerWrapper(
+                                    closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                      return _menuButton(openContainer, Icon(Icons.collections_bookmark_outlined, size: iconSize), "Standard Library");
+                                    },
+                                    openWidget: const StandardFiles(),
+                                    onClosed: _showMarkedAsDoneSnackBar,
+                                  ),
+                                if (AppUser.havePermissionFor(NsPermissions.USERS_USER_MANAGER))
+                                  _OpenContainerWrapper(
+                                      closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                        return _menuButton(openContainer, Icon(Icons.people_outline_outlined, color: Colors.lightGreen, size: iconSize), "User Manager");
+                                      },
+                                      openWidget: const UserManager(),
+                                      onClosed: _showMarkedAsDoneSnackBar),
+                                _OpenContainerWrapper(
+                                    closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                      return _menuButton(openContainer, Icon(Icons.verified_rounded, size: iconSize, color: Colors.green), "QA & QC");
+                                    },
+                                    openWidget: const QCList(),
+                                    onClosed: _showMarkedAsDoneSnackBar),
+                                _OpenContainerWrapper(
+                                    closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                      return _menuButton(openContainer, Icon(Icons.menu_book_rounded, size: iconSize, color: Colors.blueAccent), "Blue Book");
+                                    },
+                                    openWidget: const BlueBook(),
+                                    onClosed: _showMarkedAsDoneSnackBar),
+                                _OpenContainerWrapper(
+                                    closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                      return _menuButton(openContainer, Icon(Icons.groups_rounded, size: iconSize, color: Colors.orange), "HR System");
+                                    },
+                                    openWidget: HRSystem(),
+                                    onClosed: _showMarkedAsDoneSnackBar),
+                                if (AppUser.havePermissionFor(NsPermissions.MATERIAL_MANAGEMENT_MATERIAL_MANAGEMENT))
+                                  _OpenContainerWrapper(
+                                      closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                                        return _menuButton(openContainer, Icon(Icons.widgets, size: iconSize, color: Colors.purple), "Material Management");
+                                      },
+                                      openWidget: const MaterialManagement(),
+                                      onClosed: _showMarkedAsDoneSnackBar),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                          bottom: 10,
+                          left: 0,
+                          right: 0,
+                          child: Align(
+                              alignment: FractionalOffset.bottomCenter,
+                              child: Center(
+                                  child: OpenContainer(
+                                      closedElevation: 0,
                                       closedColor: Colors.transparent,
                                       transitionDuration: const Duration(milliseconds: 500),
                                       openBuilder: (BuildContext context, void Function({Object? returnValue}) action) {

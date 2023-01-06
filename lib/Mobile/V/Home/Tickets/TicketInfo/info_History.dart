@@ -61,7 +61,7 @@ class _InfoHistoryState extends State<InfoHistory> {
                     TextSpan(text: " ${(ticketHistory.action ?? "").toLowerCase().replaceUnderscore.capitalizeFirstofEach}")
                   ])),
 
-                  if (ticketHistory.action == 'ADD_FLAG' || ticketHistory.action == 'REMOVE_FLAG')
+                  if ((ticketHistory.action == 'ADD_FLAG' || ticketHistory.action == 'REMOVE_FLAG') && ticketHistory.data is Map)
                     Text("${((ticketHistory.data!["type"] ?? "").toString().capitalizeFirstofEach)} Flag"),
 
                   if (ticketHistory.section != null)

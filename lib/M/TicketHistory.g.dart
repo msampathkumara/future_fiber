@@ -10,7 +10,7 @@ TicketHistory _$TicketHistoryFromJson(Map<String, dynamic> json) => TicketHistor
   ..id = json['id'] as int?
   ..action = json['action'] as String?
   ..uptime = json['uptime'] as String?
-  ..data = json['data'] as Map<String, dynamic>?
+  ..data = json['data']
   ..doneBy = json['doneBy'] as int?
   ..section = json['section'] == null ? null : Section.fromJson(json['section'] as Map<String, dynamic>);
 

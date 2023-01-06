@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:smartwind/M/AppUser.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/TicketComment.dart';
 import 'package:smartwind/M/TicketFlag.dart';
@@ -374,12 +375,12 @@ class _TicketInfoState extends State<TicketInfo> {
     );
   }
 
-  void getData(Ticket _ticket) {
+  void getData(Ticket __ticket) {
     setState(() {
       _loading = true;
     });
     print('requesting data---------------');
-    Api.get(("tickets/info/getTicketInfo"), {'ticket': _ticket.id.toString()}).then((value) {
+    Api.get((EndPoints.tickets_info_getTicketInfo1), {'ticket': __ticket.id.toString()}).then((value) {
       if (kDebugMode) {
         print(' data recived---------------');
       }
@@ -387,10 +388,16 @@ class _TicketInfoState extends State<TicketInfo> {
 
       setState(() {
         ServerResponseMap res = ServerResponseMap.fromJson((value.data));
-        progressList = res.progressList;
+        var nowAt = _ticket.nowAt;
+        _ticket = Ticket.fromJson((value.data));
+        _ticket.nowAt = nowAt;
+        // print(t.toJson());
+        progressList = res.ticketProgressDetails;
+        progressList.sort((a, b) => (a.operationNo ?? 0).compareTo(b.operationNo ?? 0));
+
         flags = res.flags;
 
-        ticketHistory = res.ticketHistory;
+        ticketHistory = TicketHistory.fromJsonArray(value.data['ticketHistories']);
         ticketComments = res.ticketComments;
         cprs = res.cprs;
 
@@ -418,15 +425,23 @@ class _TicketInfoState extends State<TicketInfo> {
       return (p.status == 0) ? true : false;
     }).toList();
 
-    print('------------------------------ ${(!AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_ANY_PDF))}');
+    print('------------------------------ ${(AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_ANY_PDF))}');
+    print('userSectionId = ${userSectionId}');
+    print('_ticket.nowAt = ${_ticket.nowAt}');
+    print('isPreCompleted(progressList) = ${isPreCompleted(progressList)}');
 
-    if ((AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_ANY_PDF))) {
+    if (_ticket.isCompleted) {
+      return Ticket.open(context, _ticket, isPreCompleted: false);
+    }
+
+    if (userSectionId == _ticket.nowAt || isPreCompleted(progressList) || (AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_ANY_PDF))) {
       if (_ticket.isStarted) {
-        return Ticket.open(context, _ticket, isPreCompleted: isPreCompleted(progressList));
+        return Ticket.open(context, _ticket, isPreCompleted: true);
       } else {
         return showOpenActions(_ticket, context, () {}, isPreCompleted: isPreCompleted(progressList));
       }
     }
+
     if (((_ticket.completed == 0) &&
         (!_ticket.openAny) &&
         progressList.where((p) {
@@ -508,12 +523,27 @@ class _TicketInfoState extends State<TicketInfo> {
   // }
 
   bool isPreCompleted(List<Progress> progressList) {
-    return progressList
-        .where((element) => ((element.doAt == (AppUser.getSelectedSection()!.id) && element.status == 1) && _ticket.nowAt != (AppUser.getSelectedSection()!.id)))
-        .isNotEmpty;
+    var userSectionId = (AppUser.getSelectedSection()!.id);
+    print("-------------------------------------------------zz1");
+    progressList.forEach((element) {
+      print("${element.doAt} ------------${element.status}----------  ${AppUser.getSelectedSection()!.id}");
+      // print(element.toJson());
+    });
+
+    return progressList.where((element) => ((element.doAt == userSectionId && element.status == 1))).isNotEmpty;
   }
 
   FloatingActionButton? getViewFileButton() {
+    var _button = FloatingActionButton(
+        child: const Icon(Icons.import_contacts), onPressed: () => kIsWeb ? Ticket.open(context, _ticket, isPreCompleted: isPreCompleted(progressList)) : openFile());
+
+    if (_ticket.isStandard) {
+      if (kIsWeb || widget.fromBarcode) {
+        return _button;
+      }
+      return null;
+    }
+
     if ((!_ticket.hasFile)) {
       return null;
     }
@@ -521,15 +551,6 @@ class _TicketInfoState extends State<TicketInfo> {
       return null;
     }
 
-    return FloatingActionButton(
-        child: const Icon(Icons.import_contacts),
-        onPressed: () {
-          print('isPreCompleted ===== 0 ${isPreCompleted(progressList)}');
-          if (kIsWeb) {
-            Ticket.open(context, _ticket, isPreCompleted: isPreCompleted(progressList));
-          } else {
-            openFile();
-          }
-        });
+    return _button;
   }
 }

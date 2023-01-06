@@ -74,7 +74,7 @@ class _SelectSectionBottomSheetState extends State<SelectSectionBottomSheet> {
   void loadData() {
     Api.get("tickets/getTicketProgress", {"ticketId": widget.ticketId}, cancelToken: cancelToken).then((response) {
       ServerResponseMap res = ServerResponseMap.fromJson((response.data));
-      var progressList = res.progressList;
+      var progressList = res.ticketProgressDetails;
 
       pendingList = progressList;
 

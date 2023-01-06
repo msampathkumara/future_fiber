@@ -196,13 +196,8 @@ class __LoadingState extends State<_Loading> {
                       padding: const EdgeInsets.all(7),
                       width: 150,
                       height: 50,
-                      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: const [
-                        CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.black,
-                        ),
-                        Text('Loading..')
-                      ]),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround, children: const [CircularProgressIndicator(strokeWidth: 2, color: Colors.black), Text('Loading..')]),
                     ));
             }));
   }
@@ -279,11 +274,8 @@ class QcDataSourceAsync extends AsyncDataTableSource {
               // ));
             },
 
-            onSecondaryTap: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              duration: const Duration(seconds: 1),
-              backgroundColor: Theme.of(context).errorColor,
-              content: Text('Right clicked on ${qc.ticket?.id}'),
-            )),
+            onSecondaryTap: () => ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(duration: const Duration(seconds: 1), backgroundColor: Theme.of(context).errorColor, content: Text('Right clicked on ${qc.ticket?.id}'))),
             // specificRowHeight: this.hasRowHeightOverrides && qc.fat >= 25 ? 100 : null,
             cells: [
               DataCell(InkWell(

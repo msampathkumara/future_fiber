@@ -99,16 +99,16 @@ class _WebUserManagerState extends State<WebUserManager> {
                               onInit: (UserManagerDataSource dataSource) {
                                 _dataSource = dataSource;
                               },
-                        onTap: (NsUser nsUser) {
-                          _selectedUser = nsUser;
-                          setState(() {});
-                        },
-                      ))),
-              const SizedBox(width: 8),
-              if (_selectedUser != null) getUserDetailsUi(_selectedUser!)
-            ],
-          ),
-        ),
+                              onTap: (NsUser nsUser) {
+                                _selectedUser = nsUser;
+                                setState(() {});
+                              },
+                            ))),
+                    const SizedBox(width: 8),
+                    if (_selectedUser != null) getUserDetailsUi(_selectedUser!)
+                  ],
+                ),
+              ),
         floatingActionButtonLocation: FloatingActionButtonLocation.miniStartFloat,
         floatingActionButton: Padding(
           padding: const EdgeInsets.all(8.0),

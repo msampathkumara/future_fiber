@@ -141,7 +141,7 @@ class _FinishCheckListState extends State<FinishCheckList> {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(backgroundColor: Colors.red, content: Text('Already Completed')));
     } else if (ticket.ticketFile != null) {
       if (mounted) {
-        var x = await Navigator.push(context, MaterialPageRoute(builder: (context) => RF(ticket, res1.operationMinMax!, res1.progressList)));
+        var x = await Navigator.push(context, MaterialPageRoute(builder: (context) => RF(ticket, res1.operationMinMax!, res1.ticketProgressDetails)));
         if (x != null || x == true) {
           await LoadingDialog(Api.post(EndPoints.tickets_qc_uploadEdits, {'quality': quality, 'ticketId': ticket.id, 'type': isQc, "sectionId": selectedSection}).then((res) {
             Map data = res.data;

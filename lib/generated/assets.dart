@@ -21,8 +21,16 @@ class Assets {
   static const String assetsUc = 'assets/uc.png';
   static const String assetsUc1 = 'assets/uc1.png';
   static const String fontsNsIcons = 'assets/fonts/NsIcons.ttf';
+  static const String generatedAssets = 'lib/generated/assets.dart';
   static const String imagesBackground = 'assets/images/background.jpg';
   static const String imagesDarkBackground = 'assets/images/dark_background.jpg';
   static const String imagesUser = 'assets/images/user.png';
   static const String imagesUserPlaceholder = 'assets/images/userPlaceholder.jpg';
+  static const String libFirebaseOptions = 'lib/firebase_options.dart';
+  static const String libGlobals = 'lib/globals.dart';
+  static const String libMain = 'lib/main.dart';
+  static const String libMainFuncs = 'lib/mainFuncs.dart';
+  static const String libNsIconsIcons = 'lib/ns_icons_icons.dart';
+  static const String libRes = 'lib/res.dart';
+  static const String smartwindLibNsIconsIcons = 'lib/_ns_icons_icons.dart';
 }

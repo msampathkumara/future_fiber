@@ -33,7 +33,6 @@ import 'Ticket/CprReport.dart';
 import 'hive.dart';
 
 part 'Ticket.g.dart';
-
 part 'Ticket.options.dart';
 
 @JsonSerializable(explicitToJson: true)

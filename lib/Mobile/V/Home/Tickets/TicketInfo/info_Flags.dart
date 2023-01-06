@@ -176,6 +176,8 @@ class _info_FlagsState extends State<info_Flags> {
 
   getChatElement(TicketComment ticketComment) {
     NsUser? nsUser = NsUser.fromId(ticketComment.userId);
+    print('ticketComment.toJson()');
+    print(ticketComment.toJson());
 
     // if (chatEntry.chatEntryTypes == ChatEntryTypes.comment) {
     return Card(

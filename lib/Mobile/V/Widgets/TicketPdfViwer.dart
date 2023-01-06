@@ -202,19 +202,6 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
       }
       return null;
     }
-
-    // return ((!widget.ticket.isStandardFile) &&
-    //     (widget.ticket.isNotCompleted &&
-    //         (AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_ANY_PDF) ||
-    //             (widget.ticket.isStarted && widget.ticket.nowAt == AppUser
-    //                 .getSelectedSection()
-    //                 ?.id) ||
-    //             widget.isPreCompleted)))
-    // ||
-    //
-    // ?
-    // :
-    // null;
   }
 
   get _editButton => FloatingActionButton.extended(

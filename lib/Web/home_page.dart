@@ -38,8 +38,7 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
 
   bool loading = true;
 
-  List<Widget?> get routeWidgets =>
-      [
+  List<Widget?> get routeWidgets => [
         if (AppUser.havePermissionFor(NsPermissions.DASHBOARD_DASHBOARD)) const DashBoard(),
         if (AppUser.havePermissionFor(NsPermissions.TICKET_PRODUCTION_POOL)) const WebProductionPool(),
         const WebFinishedGoods(),

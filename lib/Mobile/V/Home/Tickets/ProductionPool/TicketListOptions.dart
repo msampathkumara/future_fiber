@@ -149,7 +149,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                           Navigator.of(context).pop();
                         });
                       }),
-                        if ((!kIsWeb))
+                if ((!kIsWeb))
                   ListTile(
                       title: const Text("Blue Book"),
                       leading: const Icon(Icons.menu_book_rounded, color: Colors.lightBlue),

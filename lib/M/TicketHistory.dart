@@ -10,7 +10,7 @@ class TicketHistory {
 
   String? action;
   String? uptime;
-  Map? data;
+  var data;
   int? doneBy;
   Section? section;
 

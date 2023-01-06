@@ -276,7 +276,7 @@ class PrintDataSourceAsync extends AsyncDataTableSource {
                 ));
               },
               onSecondaryTap: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                duration: const Duration(seconds: 1),
+                    duration: const Duration(seconds: 1),
                     backgroundColor: Theme.of(context).errorColor,
                     content: Text('Right clicked on ${ticketPrint.ticket?.id}'),
                   )),
