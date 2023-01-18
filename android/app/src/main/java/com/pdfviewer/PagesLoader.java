@@ -15,6 +15,9 @@
  */
 package com.pdfviewer;
 
+import static com.pdfviewer.util.Constants.Cache.CACHE_SIZE;
+import static com.pdfviewer.util.Constants.PRELOAD_OFFSET;
+
 import android.graphics.RectF;
 
 import com.pdfviewer.util.Constants;
@@ -24,9 +27,6 @@ import com.pdfviewer.util.Util;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import static com.pdfviewer.util.Constants.Cache.CACHE_SIZE;
-import static com.pdfviewer.util.Constants.PRELOAD_OFFSET;
 
 class PagesLoader {
 

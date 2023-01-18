@@ -1,14 +1,11 @@
 package com.pdfEditor;
 
-import static android.app.Activity.RESULT_OK;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -43,8 +40,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.PopupMenu;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import com.E;
@@ -75,12 +70,9 @@ import org.json.JSONObject;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -103,8 +95,8 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         void run();
     }
 
-    private static final int RESULT_LOAD_IMAGE = 12345;
-    private static final int RESULT_CAMERA_LOAD_IMAGE = 123;
+    //    private static final int RESULT_LOAD_IMAGE = 12345;
+//    private static final int RESULT_CAMERA_LOAD_IMAGE = 123;
     static int x = 0;
     public ArrayList<xEdits> editsList = new ArrayList<>();
     public PDFView pdfView;
@@ -271,7 +263,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         if (!RELOAD) {
 //            editsList = new ArrayList();
 
-            getActivity().runOnUiThread(() -> {
+            requireActivity().runOnUiThread(() -> {
                 try {
 
                     android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
@@ -287,7 +279,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 //                    System.out.println("Loading. Please wait...");
 //                    dialog.setIndeterminate(true);
 //                    dialog.setCanceledOnTouchOutside(false);
-                    getActivity().isFinishing();//                            dialog.show();
+//                    getActivity().isFinishing();//                            dialog.show();
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -338,8 +330,10 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
                         assert CurrentFile != null;
                         CurrentFile.deleteOnExit();
-                        new File(CurrentFile.getPath()).delete();
-                        getActivity().finish();
+                        if (new File(CurrentFile.getPath()).getAbsoluteFile().delete()) {
+                            System.out.println("file deleted -- > " + CurrentFile.getPath());
+                        }
+                        requireActivity().finish();
                     });
 
             AlertDialog alertDialog = builder.create();
@@ -447,7 +441,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
                 dialog.dismiss();
             }
         });
-        getActivity().runOnUiThread(() -> {
+        requireActivity().runOnUiThread(() -> {
         });
 
 
@@ -528,86 +522,109 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
     }
 
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, final Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-
-        int OPEN_FILE_TO_MERGE = 111;
-        if (requestCode == OPEN_FILE_TO_MERGE && resultCode == RESULT_OK && null != data) {
-
-            Uri uri = data.getData();
-            new File(requireContext().getFilesDir() + "/pdf.pdf").delete();
-            try {
-                Files.copy(getInputStreamForVirtualFile(uri),
-                        Paths.get(requireContext().getFilesDir() + "/pdf.pdf"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            System.out.println("Path  = " + uri.getPath());
-            File pdf = new File(requireContext().getFilesDir(), "/pdf.pdf");
-
-            Toast.makeText(requireContext(), pdf.exists() + "", Toast.LENGTH_LONG).show();
+    ActivityResultLauncher<Intent> cameraImageActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        // There are no request codes
+                        Intent data = result.getData();
 
 
-            marge(pdf);
-        }
-        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+                        System.out.println("DATA======= " + new File(imageFilePath).exists());
+                        System.out.println(data);
+
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                        Bitmap bitmap1 = BitmapFactory.decodeFile(imageFilePath, options);
+                        imageView.resetImageBox();
+                        image_container.setBitmap(bitmap1);
 
 
-            Uri selectedImage = data.getData();
-            System.out.println("________________________________________________________________");
-            System.out.println(selectedImage);
-            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                    }
+                }
+            });
 
-            Cursor cursor = requireActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-            cursor.moveToFirst();
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, final Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//
+//        int OPEN_FILE_TO_MERGE = 111;
+//        if (requestCode == OPEN_FILE_TO_MERGE && resultCode == RESULT_OK && null != data) {
+//
+//            Uri uri = data.getData();
+//            new File(requireContext().getFilesDir() + "/pdf.pdf").delete();
+//            try {
+//                Files.copy(getInputStreamForVirtualFile(uri),
+//                        Paths.get(requireContext().getFilesDir() + "/pdf.pdf"));
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//            System.out.println("Path  = " + uri.getPath());
+//            File pdf = new File(requireContext().getFilesDir(), "/pdf.pdf");
+//
+//            Toast.makeText(requireContext(), pdf.exists() + "", Toast.LENGTH_LONG).show();
+//
+//
+//            marge(pdf);
+//        }
+////        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+////
+////
+////            Uri selectedImage = data.getData();
+////            System.out.println("________________________________________________________________");
+////            System.out.println(selectedImage);
+////            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+////
+////            Cursor cursor = requireActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+////            cursor.moveToFirst();
+////
+////            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+////            String picturePath = cursor.getString(columnIndex);
+////            cursor.close();
+////
+////            BitmapFactory.Options options = new BitmapFactory.Options();
+////            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+////            Bitmap bitmap1 = BitmapFactory.decodeFile(picturePath, options);
+////            imageView.resetImageBox();
+////            image_container.setBitmap(bitmap1);
+////
+////
+////        }
+////        if (requestCode == RESULT_CAMERA_LOAD_IMAGE && resultCode == RESULT_OK) {
+////
+////            System.out.println("DATA======= " + new File(imageFilePath).exists());
+////            System.out.println(data);
+////
+////            BitmapFactory.Options options = new BitmapFactory.Options();
+////            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+////            Bitmap bitmap1 = BitmapFactory.decodeFile(imageFilePath, options);
+////            imageView.resetImageBox();
+////            image_container.setBitmap(bitmap1);
+////
+////
+////        }
+//    }
 
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String picturePath = cursor.getString(columnIndex);
-            cursor.close();
+//    private InputStream getInputStreamForVirtualFile(Uri uri)
+//            throws IOException {
+//
+//        ContentResolver resolver = requireContext().getContentResolver();
+//
+//        String[] openableMimeTypes = resolver.getStreamTypes(uri, "application/pdf");
+//
+//
+//        return resolver
+//                .openTypedAssetFileDescriptor(uri, openableMimeTypes[0], null)
+//                .createInputStream();
+//    }
 
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            Bitmap bitmap1 = BitmapFactory.decodeFile(picturePath, options);
-            imageView.resetImageBox();
-            image_container.setBitmap(bitmap1);
-
-
-        }
-        if (requestCode == RESULT_CAMERA_LOAD_IMAGE && resultCode == RESULT_OK) {
-
-            System.out.println("DATA======= " + new File(imageFilePath).exists());
-            System.out.println(data);
-
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            Bitmap bitmap1 = BitmapFactory.decodeFile(imageFilePath, options);
-            imageView.resetImageBox();
-            image_container.setBitmap(bitmap1);
-
-
-        }
-    }
-
-    private InputStream getInputStreamForVirtualFile(Uri uri)
-            throws IOException {
-
-        ContentResolver resolver = requireContext().getContentResolver();
-
-        String[] openableMimeTypes = resolver.getStreamTypes(uri, "application/pdf");
-
-
-        return resolver
-                .openTypedAssetFileDescriptor(uri, openableMimeTypes[0], null)
-                .createInputStream();
-    }
-
-    private void marge(final File fileToMarge) {
-        new margeTask(this, SELECTED_Ticket, CurrentFile, fileToMarge, getContext()).execute();
-    }
+//    private void marge(final File fileToMarge) {
+//        new margeTask(this, SELECTED_Ticket, CurrentFile, fileToMarge, getContext()).execute();
+//    }
 
     public void reloadFile() {
 
@@ -624,22 +641,27 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 11) {// If request is cancelled, the result arrays are empty.
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                Editor.this.startActivityForResult(pictureIntent, RESULT_CAMERA_LOAD_IMAGE);
-            } else {
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        if (requestCode == 11) {// If request is cancelled, the result arrays are empty.
+//            if (grantResults.length > 0
+//                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//
+////                Editor.this.startActivityForResult(pictureIntent, RESULT_CAMERA_LOAD_IMAGE);
+//
+//                cameraImageActivityResultLauncher.launch(pictureIntent);
+//            }
+//
+//        } else {
+//
+//            // permission denied, boo! Disable the
+//            // functionality that depends on this permission.
+//            Toast.makeText(Editor.this.getContext(), "Permission denied to Open Camera", Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
-                // permission denied, boo! Disable the
-                // functionality that depends on this permission.
-                Toast.makeText(Editor.this.getContext(), "Permission denied to Open Camera", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -900,7 +922,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
             pdfEditsList.removeEdit(x.getPage(), x.getId());
             getImagesList().remove(x.getId());
             pages.get(x.page).getBitmap().eraseColor(Color.TRANSPARENT);
-            Canvas c = new Canvas(pages.get(x.page).getBitmap());
+            new Canvas(pages.get(x.page).getBitmap());
             System.out.println(x);
             reDraw(x.page);
 
@@ -1006,6 +1028,21 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         );
     }
 
+    private final ActivityResultLauncher<String> requestCameraPermissionLauncher = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            new ActivityResultCallback<Boolean>() {
+                @Override
+                public void onActivityResult(Boolean result) {
+                    if (result) {
+                        // PERMISSION GRANTED
+                        cameraImageActivityResultLauncher.launch(pictureIntent);
+                    } else {
+                        // PERMISSION NOT GRANTED
+                        Toast.makeText(Editor.this.getContext(), "Permission denied to Open Camera", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+    );
 
     public void openCameraIntent(Context context) {
         System.out.println("openCameraIntent---------------------------");
@@ -1025,19 +1062,22 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
                 pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
 
 
-                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    System.out.println("-------------------4-----------------");
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(Editor.this.requireActivity(), Manifest.permission.CAMERA)) {
-                        System.out.println("-------------------6-----------------");
-                    } else {
-                        System.out.println("-------------------7-----------------");
-                        ActivityCompat.requestPermissions(Editor.this.requireActivity(), new String[]{Manifest.permission.CAMERA}, 11);
+                requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA);
 
-                    }
-                } else {
-                    System.out.println("-------------------5-----------------");
-                    Editor.this.startActivityForResult(pictureIntent, RESULT_CAMERA_LOAD_IMAGE);
-                }
+
+//                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+//                    System.out.println("-------------------4-----------------");
+//                    if (ActivityCompat.shouldShowRequestPermissionRationale(Editor.this.requireActivity(), Manifest.permission.CAMERA)) {
+//                        System.out.println("-------------------6-----------------");
+//                    } else {
+//                        System.out.println("-------------------7-----------------");
+////                        ActivityCompat.requestPermissions(Editor.this.requireActivity(), new String[]{Manifest.permission.CAMERA}, 11);
+//                        requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA);
+//                    }
+//                } else {
+//                    System.out.println("-------------------5-----------------");
+//                    Editor.this.startActivityForResult(pictureIntent, RESULT_CAMERA_LOAD_IMAGE);
+//                }
             } else {
                 System.out.println("-------------------2-----------------");
             }
@@ -1066,10 +1106,10 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 //        Paint paint = new Paint();
 //        paint.setColorFilter(new PorterDuffColorFilter(Color.argb(100, 255, 0, 0), PorterDuff.Mode.SRC_IN));
 
-        PAGE page = pages.get(pageId);
-        float w = (pdfView.getWidth() - page.getPageSize().getWidth()) / 2;
+//        PAGE page = pages.get(pageId);
+//        float w = (pdfView.getWidth() - page.getPageSize().getWidth()) / 2;
         assert drawingView != null;
-        Bitmap bitMap = drawingView.getBitmap();
+//        Bitmap bitMap = drawingView.getBitmap();
 //        canvas.drawBitmap(bitMap, null, new RectF(w * pdfView.getZoom(), 0,
 //                ((bitMap.getWidth() + w) * pdfView.getZoom()),
 //                bitMap.getHeight() * pdfView.getZoom()), null);
@@ -1097,8 +1137,8 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
     private File bitmapToFile(long id, Bitmap bitmap) {
 
         File dir = new File(requireContext().getExternalFilesDir(null) + "/" + SELECTED_Ticket.id + "/images");
-        if (!dir.exists()) {
-            dir.mkdirs();
+        if (!dir.exists() && dir.mkdirs()) {
+            System.out.println("Dir created -> " + dir.getAbsolutePath());
         }
         File imageFile = new File(dir, id + ".png");
         OutputStream os;

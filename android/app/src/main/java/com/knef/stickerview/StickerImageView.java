@@ -36,5 +36,4 @@ public class StickerImageView extends StickerView {
     }
 
 
-
 }

@@ -1,18 +1,28 @@
 package com.pdfEditor.EditorTools.freehand;
 
 import android.content.Context;
-import android.graphics.*;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.widget.FrameLayout;
+
 import androidx.annotation.NonNull;
+
 import com.pdfEditor.Editor;
 import com.pdfEditor.PAGE;
 import com.pdfEditor.uploadEdits.PdfEdit;
 import com.pdfEditor.uploadEdits.editPoint;
 import com.pdfEditor.uploadEdits.editsPaint;
 import com.pdfviewer.PDFView;
+
 import java.util.ArrayList;
 
 public class DrawingView extends FrameLayout {
@@ -87,8 +97,8 @@ public class DrawingView extends FrameLayout {
     public boolean onTouchEvent(@NonNull MotionEvent event) {
         mScaleDetector.onTouchEvent(event);
         float zoom = pdfView.getZoom();
-        float x  ;
-        float y  ;
+        float x;
+        float y;
 
         System.out.println(clipBounds.left + "====" + zoom);
 

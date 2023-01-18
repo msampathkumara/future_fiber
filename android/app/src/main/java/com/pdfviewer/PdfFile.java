@@ -122,7 +122,7 @@ public class PdfFile {
         }
 
         for (int i = 0; i < pagesCount; i++) {
-          Size pageSize =  pdfiumCore.getPageSize(pdfDocument, documentPage(i));
+            Size pageSize = pdfiumCore.getPageSize(pdfDocument, documentPage(i));
             if (pageSize.getWidth() > originalMaxWidthPageSize.getWidth()) {
                 originalMaxWidthPageSize = pageSize;
             }

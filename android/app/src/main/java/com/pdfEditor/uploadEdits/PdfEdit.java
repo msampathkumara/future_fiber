@@ -30,13 +30,9 @@ public class PdfEdit {
     }
 
 
-
-
-
     public void setRect_width(float rect_width) {
         this.rect_width = rect_width;
     }
-
 
 
     public void setRect_height(float rect_height) {
@@ -44,11 +40,9 @@ public class PdfEdit {
     }
 
 
-
     public void setTextSize(float textSize) {
         this.textSize = textSize;
     }
-
 
 
     public void setTextBold(boolean textBold) {
@@ -56,17 +50,14 @@ public class PdfEdit {
     }
 
 
-
     public void setTextItelic(boolean textItelic) {
         this.textItelic = textItelic;
     }
 
 
-
     public void setPositionX(float positionX) {
         this.positionX = positionX;
     }
-
 
 
     public void setPositionY(float positionY) {
@@ -90,18 +81,14 @@ public class PdfEdit {
     }
 
 
-
     public void setPathPoints(ArrayList<editPoint> pathPoints) {
         this.pathPoints = pathPoints;
     }
 
 
-
     public void setEditsPaint(com.pdfEditor.uploadEdits.editsPaint editsPaint) {
         this.editsPaint = editsPaint;
     }
-
-
 
 
 }

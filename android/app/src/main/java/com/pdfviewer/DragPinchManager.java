@@ -15,6 +15,9 @@
  */
 package com.pdfviewer;
 
+import static com.pdfviewer.util.Constants.Pinch.MAXIMUM_ZOOM;
+import static com.pdfviewer.util.Constants.Pinch.MINIMUM_ZOOM;
+
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.view.GestureDetector;
@@ -27,9 +30,6 @@ import com.pdfviewer.scroll.ScrollHandle;
 import com.pdfviewer.util.SizeF;
 import com.pdfviewer.util.SnapEdge;
 import com.shockwave.pdfium.PdfDocument;
-
-import static com.pdfviewer.util.Constants.Pinch.MAXIMUM_ZOOM;
-import static com.pdfviewer.util.Constants.Pinch.MINIMUM_ZOOM;
 
 //import com.pdfviewer.PdfDocument;
 

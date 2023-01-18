@@ -207,7 +207,6 @@ public class NsFile extends Super implements Serializable {
     }
 
 
-
     public File getFile(Context context) {
         return file;
     }

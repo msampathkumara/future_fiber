@@ -217,7 +217,7 @@ public class Rf extends AppCompatActivity {
 
         if (getIntent().getExtras() != null) {
 
-            SELECTED_FILE = Ticket.formJsonString(getIntent().getExtras().getString("ticket")) ;
+            SELECTED_FILE = Ticket.formJsonString(getIntent().getExtras().getString("ticket"));
 
             loadFile(SELECTED_FILE);
             getCurrentOp(SELECTED_FILE);
@@ -391,7 +391,7 @@ public class Rf extends AppCompatActivity {
         int fileOpener = 1;
         if (requestCode == fileOpener) {
             if (resultCode == Activity.RESULT_OK) {
-                SELECTED_FILE = Ticket.formJsonString(getIntent().getExtras().getString("ticket")) ;
+                SELECTED_FILE = Ticket.formJsonString(getIntent().getExtras().getString("ticket"));
                 loadFile(SELECTED_FILE);
                 getCurrentOp(SELECTED_FILE);
             }

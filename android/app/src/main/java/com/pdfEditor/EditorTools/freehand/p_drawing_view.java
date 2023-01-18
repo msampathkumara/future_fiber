@@ -28,8 +28,6 @@ public class p_drawing_view extends FrameLayout {
     private boolean edited;
 
 
-
-
     final FrameLayout pane;
 
     public p_drawing_view(@NonNull Context context, PDFView pdfView, Editor editor) {

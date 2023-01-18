@@ -127,6 +127,4 @@ public class p_hightlight_view extends FrameLayout {
     }
 
 
-
-
 }

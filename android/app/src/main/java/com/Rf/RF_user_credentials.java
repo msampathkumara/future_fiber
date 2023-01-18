@@ -55,7 +55,7 @@ public class RF_user_credentials extends AppCompatActivity {
 
 
                 }
-            }).execute(  "/RF/getCredentials.php");
+            }).execute("/RF/getCredentials.php");
 
 
         } else {
@@ -80,7 +80,7 @@ public class RF_user_credentials extends AppCompatActivity {
 
 
                 }
-            }).execute(  "/RF/getCredentials.php");
+            }).execute("/RF/getCredentials.php");
         }
 
         findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
@@ -119,7 +119,7 @@ public class RF_user_credentials extends AppCompatActivity {
 
 
                     }
-                }).execute(  "/RF/putCredentials.php", "un=" + un + "&pw=" + pw);
+                }).execute("/RF/putCredentials.php", "un=" + un + "&pw=" + pw);
 
             }
         });

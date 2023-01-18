@@ -13,8 +13,8 @@ import java.io.File;
 
 @Keep
 public class Ticket {
-    String  mo;
-    String  oe;
+    String mo;
+    String oe;
     int finished = 0;
     long uptime = 0;
     int file = 0;
@@ -31,9 +31,9 @@ public class Ticket {
     int isSort = 0;
     int isHold = 0;
     long fileVersion = 0;
-    String  production;
+    String production;
     double progress = 0.0;
-    File  ticketFile;
+    File ticketFile;
 
     public File getTicketFile() {
         return ticketFile;

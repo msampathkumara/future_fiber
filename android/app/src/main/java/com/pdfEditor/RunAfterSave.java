@@ -4,7 +4,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 
-public abstract   class RunAfterSave {
+public abstract class RunAfterSave {
 
 
     public abstract void run(File sourceFile);

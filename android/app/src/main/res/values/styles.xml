@@ -60,7 +60,7 @@
 
     </style>
 
-    <style name="popupOverflowMenu" >
+    <style name="popupOverflowMenu">
         <item name="android:popupBackground">@drawable/xx</item>
     </style>
 

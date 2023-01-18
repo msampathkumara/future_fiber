@@ -27,11 +27,11 @@
         android:title="@string/undo"
         app:showAsAction="ifRoom" />
 
-<!--    <item-->
-<!--        android:id="@+id/tools_new_page_1"-->
-<!--        android:enabled="true"-->
-<!--        android:icon="@drawable/tools_new_page"-->
-<!--        android:title="New Page"-->
-<!--        app:showAsAction="ifRoom" />-->
+    <!--    <item-->
+    <!--        android:id="@+id/tools_new_page_1"-->
+    <!--        android:enabled="true"-->
+    <!--        android:icon="@drawable/tools_new_page"-->
+    <!--        android:title="New Page"-->
+    <!--        app:showAsAction="ifRoom" />-->
 
 </menu>
