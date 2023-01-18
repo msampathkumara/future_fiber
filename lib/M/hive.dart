@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:dio/dio.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
@@ -8,6 +10,7 @@ import 'package:hive/hive.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:smartwind/C/DB/DB.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/StandardTicket.dart';
 import 'package:smartwind/M/Ticket.dart';
@@ -85,28 +88,41 @@ class HiveBox {
           standardLibraryListener?.cancel();
           resetDbListener?.cancel();
 
-          userUpdatesListener = FirebaseDatabase.instance.ref('userUpdates').onValue.listen((DatabaseEvent event) {
+          Map<String, bool> listeningStarted = {};
+
+          userUpdatesListener = FirebaseDatabase.instance.ref('userUpdates').onValue.listen((DatabaseEvent event) async {
             print('authStateChanges -> userUpdates');
-            HiveBox.getDataFromServer();
+            if (listeningStarted['userUpdates'] == true) {
+              await HiveBox.getDataFromServer();
+            }
+            listeningStarted['db_upon'] = true;
           });
 
-          db_uponListener = FirebaseDatabase.instance.ref('db_upon').onValue.listen((DatabaseEvent event) {
+          db_uponListener = FirebaseDatabase.instance.ref('db_upon').onValue.listen((DatabaseEvent event) async {
             print('authStateChanges -> db_upon');
-            HiveBox.getDataFromServer();
+            if (listeningStarted['db_upon'] == true) {
+              await HiveBox.getDataFromServer();
+            }
+            listeningStarted['db_upon'] = true;
           });
           ticketCompleteListener = FirebaseDatabase.instance.ref('db_upon').child("ticketComplete").onValue.listen((DatabaseEvent event) {
             print('authStateChanges -> ticketComplete');
-            HiveBox.updateCompletedTickets();
+            // HiveBox.updateCompletedTickets();
           });
           standardLibraryListener = FirebaseDatabase.instance.ref('db_upon').child("standardLibrary").onValue.listen((DatabaseEvent event) async {
             print('authStateChanges -> standardLibrary');
-            await HiveBox.cleanStandardLibrary();
-            await HiveBox.getDataFromServer();
-            DB.callChangesCallBack(DataTables.standardTickets);
+            if (listeningStarted['standardLibrary'] == true) {
+              await HiveBox.cleanStandardLibrary();
+              await HiveBox.getDataFromServer();
+              DB.callChangesCallBack(DataTables.standardTickets);
+            }
+            listeningStarted['standardLibrary'] = true;
           });
           resetDbListener = FirebaseDatabase.instance.ref('resetDb').onValue.listen((DatabaseEvent event) {
             print('authStateChanges -> resetDb');
-            HiveBox.getDataFromServer(clean: true);
+            if (listeningStarted['resetDb'] == true) {
+              HiveBox.getDataFromServer(clean: true);
+            }
           });
         }
       });
@@ -129,8 +145,13 @@ class HiveBox {
     }
   }
 
+  static bool pendingGetDataFromServer = false;
+  static bool pendingNextGetDataFromServer = false;
+  static CancelToken cancelToken = CancelToken();
+
   static Future getDataFromServer({clean = false, afterLoad, cleanUsers = false}) async {
     print('__________________________________________________________________________________________________________getDataFromServer');
+
     if (clean) {
       await userConfigBox.delete('upons');
     }
@@ -142,8 +163,14 @@ class HiveBox {
     d["z"] = DateTime.now().millisecondsSinceEpoch;
     print(uptimes.toJson());
 
-    return Api.get(("data/getData"), d).then((Response response) async {
-      print('__________________________________________________________________________________________________________getDataFromServer');
+    if (AppUser.isNotLogged) {
+      print('user not logged in not calling to server ');
+      return null;
+    }
+    cancelToken.cancel();
+    cancelToken = CancelToken();
+    return Api.get((EndPoints.data_getData), d, cancelToken: cancelToken).then((Response response) async {
+      print('__________________________________________________________________________________________________________Api ->> getDataFromServer');
       if (clean) {
         await usersBox.clear();
         await ticketBox.clear();
@@ -166,14 +193,30 @@ class HiveBox {
 
       List<Ticket> deletedTicketsIdsList = Ticket.fromJsonArray(res["deletedTicketsIds"] ?? []);
       List<Ticket> completedTicketsIdsList = Ticket.fromJsonArray(res["completedTickets"] ?? []);
+      Stopwatch stopwatch = Stopwatch()..start();
+      await usersBox.putMany(usersList);
+      print('usersBox.putMany executed in ${stopwatch.elapsed}');
+      stopwatch.reset();
 
-      usersBox.putMany(usersList);
-
+      print('usersBox length == ${usersList.length}');
       print('ticketsList length == ${ticketsList.length}');
       print('standardTicketsList length == ${standardTicketsList.length}');
-      ticketBox.putMany(ticketsList);
-      sectionsBox.putMany(factorySectionsList);
-      standardTicketsBox.putMany(standardTicketsList);
+
+      ticketBox.putMany(ticketsList, onItemAdded: (index, object) {}).then((List<HiveClass> list) {
+        print('tickets saved');
+        int maxValue = ticketBox.values.map((e) => e.uptime).reduce(max);
+        print('$maxValue __uptimes max');
+        setUptimes({'tickets': maxValue});
+      });
+
+      await sectionsBox.putMany(factorySectionsList);
+      print('sectionsBox.putMany executed in ${stopwatch.elapsed}');
+      stopwatch.reset();
+      await standardTicketsBox.putMany(standardTicketsList);
+      print('standardTicketsBox.putMany executed in ${stopwatch.elapsed}');
+      stopwatch.reset();
+
+      print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> done putting');
 
       for (var element in deletedTicketsIdsList) {
         ticketBox.delete(element.id);
@@ -227,6 +270,7 @@ class HiveBox {
       if (afterLoad != null) {
         afterLoad();
       }
+      pendingGetDataFromServer = false;
     }).onError((error, stackTrace) {
       print('__________________________________________________________________________________________________________');
       print(error.toString());
@@ -234,6 +278,7 @@ class HiveBox {
       if (afterLoad != null) {
         afterLoad();
       }
+      pendingGetDataFromServer = false;
       // ErrorMessageView(errorMessage: error.toString()).show(context);
     });
   }

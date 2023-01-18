@@ -7,7 +7,9 @@ class ErrorMessageView extends StatefulWidget {
   final String errorMessage;
   final IconData? icon;
 
-  const ErrorMessageView({Key? key, required this.errorMessage, this.icon}) : super(key: key);
+  final String errorDescription;
+
+  const ErrorMessageView({Key? key, required this.errorMessage, this.icon, this.errorDescription = ''}) : super(key: key);
 
   @override
   _ErrorMessageViewState createState() {
@@ -45,24 +47,16 @@ class _ErrorMessageViewState extends State<ErrorMessageView> with TickerProvider
     return Scaffold(
       appBar: AppBar(),
       body: Center(
-          child: Wrap(
-        alignment: WrapAlignment.center,
-        direction: Axis.horizontal,
+          child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Center(
-            child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Icon(
-                  widget.icon ?? Icons.error,
-                  color: Colors.pink,
-                  size: 100.0,
-                  semanticLabel: 'Text to announce in accessibility modes',
-                )),
-          ),
-          Text(
-            widget.errorMessage,
-            textScaleFactor: 1.2,
-          ),
+              child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(widget.icon ?? Icons.error, color: Colors.pink, size: 100.0, semanticLabel: 'Text to announce in accessibility modes'))),
+          Text(widget.errorMessage, textScaleFactor: 1.2),
+          Padding(padding: const EdgeInsets.all(8.0), child: Text(widget.errorDescription, textScaleFactor: 0.8, style: const TextStyle(color: Colors.red)))
         ],
       )),
     );

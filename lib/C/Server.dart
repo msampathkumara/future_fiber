@@ -8,11 +8,14 @@ class Server {
   static String devServerIp = '192.168.0.100';
 
   static String getServerAddress({onlineServer = false}) {
-    local = true;
+    local = false;
     if (kDebugMode && local && (!onlineServer)) {
       print(devServerIp);
       return "http://$devServerIp:3000";
     } else {
+      if (kIsWeb) {
+        return "";
+      }
       return "https://smartwind.nsslsupportservices.com";
     }
   }

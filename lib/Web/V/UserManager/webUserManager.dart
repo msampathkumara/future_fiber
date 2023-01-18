@@ -115,12 +115,14 @@ class _WebUserManagerState extends State<WebUserManager> {
           child: FloatingActionButton(
               mini: true,
               onPressed: () async {
-                UpdateUserDetails(NsUser()).show(context).then((NsUser? nsUser) async {
-                  if (nsUser != null) {
-                    await GeneratePassword(nsUser).show(context);
-                  }
-                  HiveBox.getDataFromServer();
-                });
+                // UpdateUserDetails(NsUser()).show(context).then((NsUser? nsUser) async {
+                //   if (nsUser != null) {
+                //     await GeneratePassword(nsUser).show(context);
+                //   }
+                //   HiveBox.getDataFromServer();
+                // });
+
+                HiveBox.getDataFromServer(cleanUsers: true);
               },
               backgroundColor: Colors.green,
               child: const Icon(Icons.add)),
@@ -128,17 +130,21 @@ class _WebUserManagerState extends State<WebUserManager> {
   }
 
   void loadData() {
-    print('*************************************************************$dataFilter');
+    print('${HiveBox.usersBox.values.length}*************************************************************$dataFilter');
     var nsUser = HiveBox.usersBox.values.where((nsUser) {
+      // return true;
+
       if (dataFilter != UserFilters.none) {
         if ((dataFilter == UserFilters.deactivated && nsUser.isNotDeactivated)) {
           return false;
         } else if (dataFilter == UserFilters.locked && nsUser.isNotLocked) {
           return false;
         }
-      }
-      if (dataFilter == UserFilters.none && nsUser.isDeactivated) {
+      } else if (dataFilter == UserFilters.none && nsUser.isDeactivated) {
         return false;
+      }
+      if (searchText.isEmpty) {
+        return true;
       }
 
       return (searchText.containsInArrayIgnoreCase([nsUser.name, nsUser.uname, nsUser.nic, nsUser.getEpf().toString()]));

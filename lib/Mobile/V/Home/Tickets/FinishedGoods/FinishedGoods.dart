@@ -164,7 +164,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
     );
   }
 
-  String listSortBy = "uptime";
+  String listSortBy = "completedOn";
   String sortedBy = "Date";
   String searchText = "";
 

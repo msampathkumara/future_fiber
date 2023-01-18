@@ -32,7 +32,7 @@ class _LoginChangeWidgetState extends State<LoginChangeWidget> {
       print('User is currently signed out!__${FirebaseAuth.instance.currentUser}');
       if (user == null) {
         print('User is currently signed out!__${FirebaseAuth.instance.currentUser}');
-        Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+        if (mounted) Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
       } else {
         print('User is signed in!');
         // Navigator.pushNamed(context, '/');

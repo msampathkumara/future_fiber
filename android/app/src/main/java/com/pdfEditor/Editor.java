@@ -17,6 +17,7 @@ import android.graphics.Color;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -787,6 +788,10 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
                             popup.setOnMenuItemClickListener(item1 -> {
                                 switch (item1.getItemId()) {
                                     case id.add_btn_photo_gallery:
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                            imageChooserActivityStoragePermissions.launch(Manifest.permission.READ_MEDIA_IMAGES);
+                                            return true;
+                                        }
                                         imageChooserActivityStoragePermissions.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
                                         return true;
 
@@ -1078,7 +1083,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 //                drawingView.getBitmap().getHeight() * pdfView.getZoom()), null);
 
         canvas.drawBitmap(drawingView.getBitmap(), null, new RectF(0, 0,
-                (drawingView.getBitmap().getWidth()  ) * pdfView.getZoom(),
+                (drawingView.getBitmap().getWidth()) * pdfView.getZoom(),
                 drawingView.getBitmap().getHeight() * pdfView.getZoom()), null);
 
 //        System.out.println(pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getHeight() + "___________________________________________");
@@ -1098,7 +1103,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
         File imageFile = new File(dir, id + ".png");
         OutputStream os;
         try {
-            os = new BufferedOutputStream(new FileOutputStream(imageFile));
+            os = new BufferedOutputStream(Files.newOutputStream(imageFile.toPath()));
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
             os.flush();
             os.close();

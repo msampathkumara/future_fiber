@@ -51,9 +51,9 @@ class WebApp extends StatelessWidget {
         return MaterialPageRoute<void>(settings: settings, builder: (BuildContext context) => const Scaffold(body: Center(child: Text('Not Found'))));
       },
       routes: <String, WidgetBuilder>{
+        '/': (BuildContext context) => (isMaterialManagement ? const MaterialManagementHomePage() : const WebHomePage()),
         '/login': (BuildContext context) => const Login(),
         '/materialManagement': (BuildContext context) => const MaterialManagementHomePage(),
-        '/': (BuildContext context) => (isMaterialManagement ? const MaterialManagementHomePage() : const WebHomePage()),
       },
     );
   }

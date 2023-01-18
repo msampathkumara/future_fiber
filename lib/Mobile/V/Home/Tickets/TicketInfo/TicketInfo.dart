@@ -400,8 +400,6 @@ class _TicketInfoState extends State<TicketInfo> {
         ticketHistory = TicketHistory.fromJsonArray(value.data['ticketHistories']);
         ticketComments = res.ticketComments;
         cprs = res.cprs;
-
-        print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx == ${isPreCompleted(progressList)}');
       });
 
       // ErrorMessageView(errorMessage: value.body).show(context);
@@ -523,7 +521,11 @@ class _TicketInfoState extends State<TicketInfo> {
   // }
 
   bool isPreCompleted(List<Progress> progressList) {
-    var userSectionId = (AppUser.getSelectedSection()!.id);
+    if (kIsWeb) {
+      return true;
+    }
+
+    int? userSectionId = (AppUser.getSelectedSection()?.id);
     print("-------------------------------------------------zz1");
     progressList.forEach((element) {
       print("${element.doAt} ------------${element.status}----------  ${AppUser.getSelectedSection()!.id}");
@@ -537,17 +539,22 @@ class _TicketInfoState extends State<TicketInfo> {
     var _button = FloatingActionButton(
         child: const Icon(Icons.import_contacts), onPressed: () => kIsWeb ? Ticket.open(context, _ticket, isPreCompleted: isPreCompleted(progressList)) : openFile());
 
+    if ((!_ticket.hasFile)) {
+      return null;
+    }
+
+    if (AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_ANY_PDF)) {
+      return _button;
+    }
+
+    if ((_ticket.isHold == 1)) {
+      return null;
+    }
+
     if (_ticket.isStandard) {
       if (kIsWeb || widget.fromBarcode) {
         return _button;
       }
-      return null;
-    }
-
-    if ((!_ticket.hasFile)) {
-      return null;
-    }
-    if ((_ticket.isHold == 1)) {
       return null;
     }
 

@@ -54,18 +54,7 @@ class _LoginState extends State<Login> {
   @override
   initState() {
     super.initState();
-    print('-----------------------------------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx__login');
-    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
-      String version = packageInfo.version;
-      String buildNumber = packageInfo.buildNumber;
-      setState(() {
-        appVersion = "$version.$buildNumber";
-      });
-    });
-    // if (kDebugMode) {
-    //   nfcCode = "04f68ad2355e80";
-    //   _login();
-    // }
+
     if (!kIsWeb) {
       NfcManager.instance.isAvailable().then((value) {
         nfcIsAvailable = value;
@@ -93,6 +82,14 @@ class _LoginState extends State<Login> {
       }
       // });
     }
+    print('-----------------------------------------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx__login');
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+      String version = packageInfo.version;
+      String buildNumber = packageInfo.buildNumber;
+      setState(() {
+        appVersion = "$version.$buildNumber";
+      });
+    });
   }
 
   @override
@@ -331,8 +328,24 @@ class _LoginState extends State<Login> {
       }
     }).onError((error, stackTrace) {
       nfcCode = "";
-      print(stackTrace.toString());
-      ErrorMessageView(errorMessage: error.toString()).show(context);
+      var e = error as DioError;
+      var errmsg = '';
+      if (e.type == DioErrorType.response) {
+        print('catched');
+      } else if (e.type == DioErrorType.connectTimeout) {
+        print('check your connection');
+        errmsg = 'check your connection';
+      } else if (e.type == DioErrorType.receiveTimeout) {
+        print('unable to connect to the server');
+        errmsg = 'unable to connect to the server';
+      } else if (e.type == DioErrorType.other) {
+        print('Something went wrong');
+        errmsg = 'Something went wrong';
+      }
+      print(e);
+
+      // print(stackTrace.toString());
+      ErrorMessageView(errorMessage: errmsg, errorDescription: e.message).show(context);
       setLoading(false);
     });
   }

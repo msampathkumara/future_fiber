@@ -87,16 +87,20 @@ extension FiltersExtension on Filters {
 var uuid = const Uuid();
 
 extension F on Box {
-  putObject(HiveClass value) {
+  putObject(HiveClass value) async {
     Object id = value.id != -1 ? value.id : uuid.v4();
     // print(id);
-    put(id, value);
+    await put(id, value);
   }
 
-  putMany(List<HiveClass> list) {
-    for (var element in list) {
-      putObject(element);
+  Future<List<HiveClass>> putMany(List<HiveClass> list, {Null Function(int, HiveClass)? onItemAdded}) async {
+    for (var element in list.asMap().entries) {
+      await putObject(element.value);
+      if (onItemAdded != null) {
+        onItemAdded(element.key, element.value);
+      }
     }
+    return Future(() => list);
   }
 
   Iterable getAll() {

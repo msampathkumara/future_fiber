@@ -13,6 +13,7 @@ import '../../../M/AppUser.dart';
 import '../../../M/Enums.dart';
 import '../../../M/PermissionsEnum.dart';
 import '../../../Mobile/V/Widgets/NoResultFoundMsg.dart';
+import '../../../globals.dart';
 import 'LineChart.dart';
 import 'M/MonthPicker.dart';
 import 'M/ProgressSummery.dart';
@@ -382,15 +383,17 @@ class _CountCardsState extends State<CountCards> {
 
       // print(data);
     }).whenComplete(() {
-      setState(() {
-        loading = false;
-      });
+      if (mounted) {
+        setState(() => {loading = false});
+      }
     }).catchError((err) {
       print(err);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.toString()), action: SnackBarAction(label: 'Retry', onPressed: loadData)));
-      setState(() {
-        // _dataLoadingError = true;
-      });
+      snackBarKey.currentState?.showSnackBar(SnackBar(content: Text(err.toString()), action: SnackBarAction(label: 'Retry', onPressed: loadData)));
+      if (mounted) {
+        setState(() => {
+              // _dataLoadingError = true;
+            });
+      }
     });
   }
 

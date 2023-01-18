@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../../../../C/Api.dart';
 import '../../../../../../C/ServerResponse/Progress.dart';
 import '../../../../../../C/ServerResponse/ServerResponceMap.dart';
+import '../../../../../../M/EndPoints.dart';
 import '../../../../../../globals.dart';
 
 class SelectSectionBottomSheet extends StatefulWidget {
@@ -72,7 +73,7 @@ class _SelectSectionBottomSheetState extends State<SelectSectionBottomSheet> {
   }
 
   void loadData() {
-    Api.get("tickets/getTicketProgress", {"ticketId": widget.ticketId}, cancelToken: cancelToken).then((response) {
+    Api.get(EndPoints.tickets_getTicketProgress, {"ticketId": widget.ticketId}, cancelToken: cancelToken).then((response) {
       ServerResponseMap res = ServerResponseMap.fromJson((response.data));
       var progressList = res.ticketProgressDetails;
 

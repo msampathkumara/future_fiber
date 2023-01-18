@@ -1,3 +1,4 @@
+import 'package:device_info/device_info.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -55,12 +56,26 @@ class MainFuncs {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool tabChecked = prefs.getBool("tabCheck") ?? false;
 
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+
     PermissionStatus ps = await Permission.phone.request();
-    PermissionStatus storage = await Permission.storage.request();
+    PermissionStatus storage = androidInfo.version.sdkInt >= 33 ? await Permission.photos.request() : await Permission.storage.request();
     PermissionStatus camera = await Permission.camera.request();
+
+    bool storageIsGranted = false;
+    bool storageIsPermanentlyDenied = false;
+    if (androidInfo.version.sdkInt >= 33) {
+      storageIsGranted = true;
+      storageIsPermanentlyDenied = false;
+    } else {
+      storageIsGranted = storage.isGranted;
+      storageIsPermanentlyDenied = storage.isPermanentlyDenied;
+    }
+
     return {
       'permission': ps.isGranted && storage.isGranted && camera.isGranted,
-      'isPermanentlyDenied': ps.isPermanentlyDenied || storage.isPermanentlyDenied || camera.isPermanentlyDenied,
+      'isPermanentlyDenied': ps.isPermanentlyDenied || storageIsPermanentlyDenied || camera.isPermanentlyDenied,
       'permissions': {'phone': ps, 'camera': camera, 'storage': storage},
       'tabChecked': tabChecked
     };

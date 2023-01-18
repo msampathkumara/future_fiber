@@ -161,21 +161,21 @@ class _WebAdminState extends State<WebAdmin> {
                                                 icon: const Icon(Icons.cleaning_services))),
                                 ],
                               )),
-                              const Text("Production build", textScaleFactor: 2),
+                              const Text("convert tickets", textScaleFactor: 2),
                               Card(
                                   child: Column(
                                 children: [
                                   if (AppUser.havePermissionFor(NsPermissions.ADMIN_CLEAN_RELOAD_DEVICES))
                                     ListTile(
-                                        title: const Text("Update Production build"),
+                                        title: const Text("convert tickets"),
                                         subtitle: const Text("After update"),
-                                        trailing: isLoading("cleanReloadDevices")
+                                        trailing: isLoading("convertTickets")
                                             ? const CircularProgressIndicator()
                                             : ElevatedButton.icon(
                                                 onPressed: () {
-                                                  setLoading("UpdateProduction");
-                                                  Api.get(EndPoints.admin_updateProductionBuild, {}).then((res) {
-                                                    removeLoading("UpdateProduction");
+                                                  setLoading("convertTickets");
+                                                  Api.get(EndPoints.admin_convertTickets, {}).then((res) {
+                                                    removeLoading("convertTickets");
                                                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Update Production done")));
                                                     setState(() {
                                                       // _dataLoadingError = true;

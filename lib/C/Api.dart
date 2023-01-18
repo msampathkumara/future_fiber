@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:universal_html/html.dart' as html;
 
 import '../M/AppUser.dart';
+import '../globals.dart';
 import 'Server.dart';
 
 class Api {
@@ -28,6 +31,8 @@ class Api {
   }
 
   static Future<Response> get(String url, Map<String, dynamic> data, {onlineServer = false, bool reFreshToken = false, cancelToken}) async {
+    print('url == $url');
+
     try {
       final idToken = await AppUser.getIdToken(reFreshToken);
       Dio dio = Dio();
@@ -43,6 +48,10 @@ class Api {
         print(e.response?.statusCode);
         return get(url, data, onlineServer: onlineServer, reFreshToken: true);
       }
+      if (e.type == DioErrorType.cancel) {
+        printError('Request Cancel for --> $url');
+      }
+
       throw Exception(e.message);
     }
   }
