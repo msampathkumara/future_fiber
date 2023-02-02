@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/QC.dart';
@@ -11,6 +12,10 @@ class QCView extends StatefulWidget {
 
   @override
   _QCViewState createState() => _QCViewState();
+
+  Future? show(context) async {
+    return kIsWeb ? await showDialog(context: context, builder: (_) => this) : await Navigator.push(context, MaterialPageRoute(builder: (context) => this));
+  }
 }
 
 class _QCViewState extends State<QCView> {

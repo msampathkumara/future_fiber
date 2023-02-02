@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import 'HiveClass.dart';
+import '../C/DB/HiveClass.dart';
 
 part 'Section.g.dart';
 

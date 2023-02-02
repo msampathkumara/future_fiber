@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class data implements Parcelable {
-    public static Creator<data> CREATOR = new Creator<data>() {
+    public static Creator<data> CREATOR = new Creator<>() {
 
         @Override
         public data createFromParcel(Parcel source) {

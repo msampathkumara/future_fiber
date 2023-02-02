@@ -1,9 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
 
 import '../ns_icons_icons.dart';
-import 'HiveClass.dart';
+import '../C/DB/HiveClass.dart';
 import 'PermissionsEnum.dart';
 
 enum Production { All, Upwind, OD, Nylon_Standard, Nylon_Custom, OEM, _38_Upwind, _38_Nylon_Standard, _38_OEM, _38_OD, _38_Nylon_Custom, None }
@@ -93,12 +95,15 @@ extension F on Box {
     await put(id, value);
   }
 
-  Future<List<HiveClass>> putMany(List<HiveClass> list, {Null Function(int, HiveClass)? onItemAdded}) async {
+  Future<List<HiveClass>> putMany(List<HiveClass> list, {Null Function(int, HiveClass)? onItemAdded, Null Function(List list)? afterAdd}) async {
     for (var element in list.asMap().entries) {
       await putObject(element.value);
       if (onItemAdded != null) {
         onItemAdded(element.key, element.value);
       }
+    }
+    if (afterAdd != null) {
+      afterAdd(list);
     }
     return Future(() => list);
   }

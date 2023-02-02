@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pdf_render/pdf_render_widgets.dart';
@@ -73,8 +72,8 @@ class _WebTicketQViewState extends State<WebTicketQView> {
                 },
                 icon: const Icon(Icons.open_in_new))
         ]),
-        body: err_msg != null
-            ? Text(err_msg!)
+        body: errMsg != null
+            ? Text(errMsg!)
             : kIsWeb
                 ? Row(children: [
                     SizedBox(
@@ -176,17 +175,18 @@ class _WebTicketQViewState extends State<WebTicketQView> {
   }
 
   // PdfControllerPinch pdfPinchController = PdfControllerPinch(document: PdfDocument.openAsset('x.pdf'));
-  String? err_msg;
+  String? errMsg;
 
   Future apiGetData() {
+    print('ticketId ${ticket.id}');
     return Api.get(EndPoints.tickets_qc_getTicketQcList, {'ticketId': ticket.id, 'isQc': widget.isQc ? 1 : 0}).then((res) {
-      err_msg = null;
+      errMsg = null;
       Map data = res.data;
       print(data);
 
       if (data["error"] == true) {
         if (data["msg"] != null) {
-          err_msg = "No Data Found";
+          errMsg = "No Data Found";
         }
       } else {
         qcList = QC.fromJsonArray(data['qcs']);

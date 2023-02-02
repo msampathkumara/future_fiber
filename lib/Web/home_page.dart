@@ -6,8 +6,8 @@ import 'package:smartwind/Mobile/V/Home/UserManager/UserDetails.dart';
 import 'package:smartwind/V/PermissionMessage.dart';
 import 'package:universal_html/html.dart' as html;
 
+import '../C/DB/hive.dart';
 import '../M/PermissionsEnum.dart';
-import '../M/hive.dart';
 import '../Mobile/V/Home/AppInfo.dart';
 import '../Mobile/V/Widgets/UserImage.dart';
 import '../globals.dart';
@@ -131,7 +131,7 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                                                             onDestinationSelected: (int index) {
                                                               var indexOf = routeWidgets.indexOf(null);
                                                               if (index == indexOf) {
-                                                                if (AppUser.isDeveloper && kDebugMode) {
+                                                                if (isLocalServer || isTestServer) {
                                                                   Navigator.pushNamed(context, "/materialManagement");
                                                                 } else {
                                                                   html.window.open("https://mm.smartwind.nsslsupportservices.com", 'new tab');
@@ -252,14 +252,7 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                             ],
                           ),
                         ),
-                        Container(
-                          color: Colors.red,
-                          width: double.infinity,
-                          child: Text(
-                            "dsfdsfsdfsdfd",
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        )
+                        // Container(color: Colors.red, width: double.infinity, child:   StatusBar())
                       ],
                     )
                   : const PermissionMessage(),

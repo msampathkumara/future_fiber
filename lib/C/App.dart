@@ -1,4 +1,6 @@
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:restart_app/restart_app.dart';
+import 'package:smartwind/C/DB/hive.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/NsUser.dart';
 
@@ -31,6 +33,23 @@ class App {
     //   currentUser = NsUser.fromJson(json.decode(u));
     // }
     return AppUser.getUser();
+  }
+
+  static changeToProduction() async {
+    var x = HiveBox.getUserConfig();
+    x.isTest = false;
+    await x.save();
+    await HiveBox.cleanDb();
+    await HiveBox.getDataFromServer(clean: true);
+    Restart.restartApp(webOrigin: '/');
+  }
+
+  static changeToTestMode() async {
+    var x = HiveBox.getUserConfig();
+    x.isTest = true;
+    await x.save();
+    await HiveBox.getDataFromServer(clean: true);
+    Restart.restartApp(webOrigin: '/');
   }
 
 // static Future<void> tryOtaUpdate(Function(OtaEvent) onChange) async {

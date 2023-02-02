@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:smartwind/M/NsUser.dart';
-import 'package:smartwind/M/hive.dart';
+import 'package:smartwind/C/DB/hive.dart';
 
 import '../C/Server.dart';
 import '../Mobile/V/Widgets/ErrorMessageView.dart';

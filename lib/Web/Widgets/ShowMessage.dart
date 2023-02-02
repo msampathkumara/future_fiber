@@ -23,7 +23,7 @@ extension MessageTypesExtension on MessageTypes {
   }
 }
 
-ShowMessage(String message,
+showMessage(String message,
     {MessageTypes messageType = MessageTypes.message, IconData? icon, Color? iconColor, bool closeButton = false, Duration? duration, SnackBarAction? action}) {
   var s = _textSize(message, const TextStyle());
 

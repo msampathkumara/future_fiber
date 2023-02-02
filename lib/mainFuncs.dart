@@ -6,13 +6,13 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartwind/C/App.dart';
 
-class MainFuncs {
+class MainFunctions {
   final _kShouldTestAsyncErrorOnInit = false;
   final _kTestingCrashlytics = true;
 
   late Future initializeFlutterFireFuture = initializeFlutterFire();
 
-  MainFuncs();
+  MainFunctions();
 
   Future<bool> initializeFlutterFire() async {
     // await DB.getDB();
@@ -63,13 +63,10 @@ class MainFuncs {
     PermissionStatus storage = androidInfo.version.sdkInt >= 33 ? await Permission.photos.request() : await Permission.storage.request();
     PermissionStatus camera = await Permission.camera.request();
 
-    bool storageIsGranted = false;
     bool storageIsPermanentlyDenied = false;
     if (androidInfo.version.sdkInt >= 33) {
-      storageIsGranted = true;
       storageIsPermanentlyDenied = false;
     } else {
-      storageIsGranted = storage.isGranted;
       storageIsPermanentlyDenied = storage.isPermanentlyDenied;
     }
 

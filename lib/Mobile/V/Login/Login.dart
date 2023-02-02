@@ -13,11 +13,11 @@ import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/C/form_input_decoration.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/NsUser.dart';
-import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/Mobile/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/res.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../C/DB/hive.dart';
 import '../../../C/FCM.dart';
 import '../../../M/Section.dart';
 import 'CheckTabStatus.dart';

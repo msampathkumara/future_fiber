@@ -274,8 +274,8 @@ class QcDataSourceAsync extends AsyncDataTableSource {
               // ));
             },
 
-            onSecondaryTap: () => ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(duration: const Duration(seconds: 1), backgroundColor: Theme.of(context).errorColor, content: Text('Right clicked on ${qc.ticket?.id}'))),
+            onSecondaryTap: () => ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(duration: const Duration(seconds: 1), backgroundColor: Theme.of(context).colorScheme.error, content: Text('Right clicked on ${qc.ticket?.id}'))),
             // specificRowHeight: this.hasRowHeightOverrides && qc.fat >= 25 ? 100 : null,
             cells: [
               DataCell(InkWell(

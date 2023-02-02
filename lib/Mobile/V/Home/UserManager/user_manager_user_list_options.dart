@@ -83,11 +83,11 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
                         ),
                         onTap: () async {
                           Navigator.of(context).pop();
-                          ShowMessage("Unlocking user..");
+                          showMessage("Unlocking user..");
 
                           Api.post(EndPoints.users_unlock, {"userId": nsUser.id}).then((value) {
                             HiveBox.getDataFromServer();
-                            ShowMessage("User Unlocked");
+                            showMessage("User Unlocked");
                           });
                         },
                       ),
@@ -127,13 +127,13 @@ Future<void> showUserOptions(NsUser nsUser, BuildContext context1, context, nfcI
 }
 
 void deactivateUser(nsUser) {
-  ShowMessage(nsUser.isDeactivated ? "Activating" : "Deactivating..");
+  showMessage(nsUser.isDeactivated ? "Activating" : "Deactivating..");
   Api.post(EndPoints.users_deactivate, {"userId": nsUser.id, "deactivate": (!nsUser.isDeactivated)}).then((value) {
     print('cccccccccccccccccccccccccc');
-    ShowMessage(nsUser.isDeactivated ? "User Account Activating" : "User Account Deactivated..");
+    showMessage(nsUser.isDeactivated ? "User Account Activating" : "User Account Deactivated..");
     HiveBox.getDataFromServer();
   }).catchError((err) {
-    ShowMessage("Something went wrong.. please retry",
+    showMessage("Something went wrong.. please retry",
         duration: const Duration(seconds: 15),
         messageType: MessageTypes.error,
         action: SnackBarAction(

@@ -20,6 +20,9 @@ class UserConfigAdapter extends TypeAdapter<UserConfig> {
       ..user = fields[0] as NsUser?
       ..welcomeScreenShown = fields[1] == null ? false : fields[1] as bool
       ..selectedSection = fields[2] as Section?
+      ..upon = fields[3] as Upons
+      ..triggerEventTimes = fields[4] as TriggerEventTimes
+      ..isTest = fields[5] == null ? false : fields[5] as bool
       ..id = fields[100] == null ? -1 : fields[100] as int
       ..uptime = fields[101] == null ? 0 : fields[101] as int;
   }
@@ -27,13 +30,19 @@ class UserConfigAdapter extends TypeAdapter<UserConfig> {
   @override
   void write(BinaryWriter writer, UserConfig obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.user)
       ..writeByte(1)
       ..write(obj.welcomeScreenShown)
       ..writeByte(2)
       ..write(obj.selectedSection)
+      ..writeByte(3)
+      ..write(obj.upon)
+      ..writeByte(4)
+      ..write(obj.triggerEventTimes)
+      ..writeByte(5)
+      ..write(obj.isTest)
       ..writeByte(100)
       ..write(obj.id)
       ..writeByte(101)
@@ -56,7 +65,10 @@ UserConfig _$UserConfigFromJson(Map<String, dynamic> json) => UserConfig()
   ..uptime = json['uptime'] as int? ?? 0
   ..user = json['user'] == null ? null : NsUser.fromJson(json['user'] as Map<String, dynamic>)
   ..welcomeScreenShown = json['welcomeScreenShown'] as bool? ?? false
-  ..selectedSection = json['selectedSection'] == null ? null : Section.fromJson(json['selectedSection'] as Map<String, dynamic>);
+  ..selectedSection = json['selectedSection'] == null ? null : Section.fromJson(json['selectedSection'] as Map<String, dynamic>)
+  ..upon = Upons.fromJson(json['upon'] as Map<String, dynamic>)
+  ..triggerEventTimes = TriggerEventTimes.fromJson(json['triggerEventTimes'] as Map<String, dynamic>)
+  ..isTest = json['isTest'] as bool? ?? false;
 
 Map<String, dynamic> _$UserConfigToJson(UserConfig instance) => <String, dynamic>{
       'id': instance.id,
@@ -64,4 +76,7 @@ Map<String, dynamic> _$UserConfigToJson(UserConfig instance) => <String, dynamic
       'user': instance.user?.toJson(),
       'welcomeScreenShown': instance.welcomeScreenShown,
       'selectedSection': instance.selectedSection?.toJson(),
+      'upon': instance.upon.toJson(),
+      'triggerEventTimes': instance.triggerEventTimes.toJson(),
+      'isTest': instance.isTest,
     };

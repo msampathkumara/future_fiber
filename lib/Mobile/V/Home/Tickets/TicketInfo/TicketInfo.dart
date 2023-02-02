@@ -20,7 +20,7 @@ import '../../../../../C/ServerResponse/Progress.dart';
 import '../../../../../C/ServerResponse/ServerResponceMap.dart';
 import '../../../../../M/CPR/CPR.dart';
 import '../../../../../M/PermissionsEnum.dart';
-import '../../../../../M/hive.dart';
+import '../../../../../C/DB/hive.dart';
 import '../../../../../Web/V/ProductionPool/copy.dart';
 import '../ProductionPool/TicketListOptions.dart';
 import 'info_Flags.dart';
@@ -125,6 +125,7 @@ class _TicketInfoState extends State<TicketInfo> {
                   ),
                 )),
             floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+            // floatingActionButton: getViewFileButton()
             floatingActionButton: getViewFileButton());
   }
 
@@ -316,7 +317,7 @@ class _TicketInfoState extends State<TicketInfo> {
                             if (_ticket.isRed == 1)
                               IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)), onPressed: () {}),
                           ]),
-                        ),
+                        )
                       ],
                     ),
                   ),

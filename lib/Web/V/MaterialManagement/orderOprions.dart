@@ -132,17 +132,17 @@ extension CprTypeExt on CprType {
 }
 
 void orderByTicket(context, Ticket? ticket, int i, reload) {
-  ShowMessage('Saving', messageType: MessageTypes.message, icon: Icons.save);
+  showMessage('Saving', messageType: MessageTypes.message, icon: Icons.save);
 
   Api.post(EndPoints.materialManagement_orderKitByTicketId, {'ticketId': ticket?.id, 'type': i})
       .then((res) {
         Map data = res.data;
-        ShowMessage('Saved', messageType: MessageTypes.success, icon: Icons.save);
+        showMessage('Saved', messageType: MessageTypes.success, icon: Icons.save);
         reload();
       })
       .whenComplete(() {})
       .catchError((err) {
-        ShowMessage('Something went wrong',
+        showMessage('Something went wrong',
             duration: const Duration(seconds: 30),
             messageType: MessageTypes.error,
             icon: Icons.error,
@@ -157,16 +157,16 @@ void orderByTicket(context, Ticket? ticket, int i, reload) {
 }
 
 void order(context, CPR? cpr, int i, reload) {
-  ShowMessage('Saving', messageType: MessageTypes.message, icon: Icons.save);
+  showMessage('Saving', messageType: MessageTypes.message, icon: Icons.save);
 
   Api.post(EndPoints.materialManagement_order, {'cprId': cpr?.id, 'type': i})
       .then((res) {
-        ShowMessage('Saved', messageType: MessageTypes.success, icon: Icons.save);
+        showMessage('Saved', messageType: MessageTypes.success, icon: Icons.save);
         reload();
       })
       .whenComplete(() {})
       .catchError((err) {
-        ShowMessage('Something went wrong',
+        showMessage('Something went wrong',
             duration: const Duration(seconds: 30),
             messageType: MessageTypes.error,
             icon: Icons.error,

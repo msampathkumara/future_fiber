@@ -9,10 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smartwind/C/Server.dart';
-import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/Mobile/V/Home/Tickets/ProductionPool/ProductionPool.dart';
 
 import 'C/App.dart';
+import 'C/DB/hive.dart';
 import 'M/AppUser.dart';
 import 'Mobile/V/Home/MobileHome.dart';
 import 'Mobile/V/Login/CheckTabStatus.dart';
@@ -34,6 +34,7 @@ void runLoggedApp(Widget app) async {
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   bool x = Uri.base.host.contains('mm.');
   if (kDebugMode) {
     x = false;
@@ -41,22 +42,21 @@ main() async {
 
   isMaterialManagement = x;
 
-  // final themeStr = await rootBundle.loadString('assets/appainter_theme.json');
-  // final themeJson = jsonDecode(themeStr);
-  // var theme = ThemeDecoder.decodeThemeData(themeJson)!;
+  await HiveBox.create();
 
-  runLoggedApp(const MaterialApp(home: MainApp()));
+  runLoggedApp(MaterialApp(
+      home: (!kIsWeb && isTestServer)
+          ? Scaffold(
+              appBar: AppBar(title: const Text('Test'), backgroundColor: Colors.red, toolbarHeight: 50, centerTitle: true, actions: [
+                IconButton(onPressed: () async => {await App.changeToProduction()}, icon: const Icon(Icons.change_circle))
+              ]),
+              body: const MainApp())
+          : const MainApp()));
 }
 
 Future mainThings({viewIssMaterialManagement = false}) async {
   // isMaterialManagement = viewIssMaterialManagement;
   WidgetsFlutterBinding.ensureInitialized();
-
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform).catchError((e) {
-    if (kDebugMode) {
-      print(" Error : ${e.toString()}");
-    }
-  });
 
   if (kIsWeb) {
     await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
@@ -83,7 +83,6 @@ Future mainThings({viewIssMaterialManagement = false}) async {
     Server.devServerIp = event.snapshot.value.toString();
     // print('ip == ${Server.devServerIp}');
   });
-  await HiveBox.create();
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
 
@@ -113,7 +112,24 @@ class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     screenSize = MediaQuery.of(context).size;
-    return loading ? const Center(child: SizedBox(width: 200, height: 200, child: CircularProgressIndicator(color: Colors.red))) : (kIsWeb ? const WebApp() : const MobileApp());
+    return loading
+        ? const Center(child: SizedBox(width: 200, height: 200, child: CircularProgressIndicator(color: Colors.red)))
+        : MaterialApp(
+            home: Column(
+              children: [
+                if (kIsWeb && (isTestServer || isLocalServer))
+                  Container(
+                      height: 20,
+                      color: Colors.red,
+                      width: double.infinity,
+                      child: Center(child: Text(isTestServer ? 'Test server' : 'Local Server', style: const TextStyle(color: Colors.white, fontSize: 15)))),
+                Expanded(
+                    child: loading
+                        ? const Center(child: SizedBox(width: 200, height: 200, child: CircularProgressIndicator(color: Colors.red)))
+                        : (kIsWeb ? const WebApp() : const MobileApp())),
+              ],
+            ),
+          );
   }
 }
 
@@ -142,7 +158,7 @@ class MobileApp extends StatelessWidget {
                 borderRadius: BorderRadius.circular(4.0),
               ))),
       home: const MyHomePage(),
-      // home: const PdfEditor(),
+      // home: const CsTest(),
       navigatorObservers: const [
         // FirebaseAnalyticsObserver(analytics: analytics),
       ],
@@ -164,7 +180,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final MainFuncs _mainFuncs = MainFuncs();
+  final MainFunctions _mainFuncs = MainFunctions();
 
   @override
   void initState() {

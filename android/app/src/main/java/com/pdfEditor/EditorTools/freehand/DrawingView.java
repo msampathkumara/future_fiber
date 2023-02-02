@@ -288,12 +288,6 @@ public class DrawingView extends FrameLayout {
 
         points = new ArrayList<>();
 
-//        System.out.println("page.getMatrix().getTranslateX()");
-//        System.out.println(pdfView.getCurrentXOffset());
-//        System.out.println(pdfView.getCurrentYOffset());
-//        System.out.println(pdfView.getSpacingPx());
-//        System.out.println(translateX);
-//        System.out.println(translateY);
 
     }
 
@@ -305,9 +299,6 @@ public class DrawingView extends FrameLayout {
         return pdfView.pdfFile.getPageSize(pdfView.getCurrentPage()).getWidth();
     }
 
-//    static int nthOdd(int n) {
-//        return (2 * n - 1);
-//    }
 
     private void touch_up1() {
         path.lineTo(mX1, mY1);
@@ -388,11 +379,6 @@ public class DrawingView extends FrameLayout {
         float h = (getHeight() - k.getPageHeight());
 
 
-//        System.out.println("------------------------------------------------------------------");
-//        System.out.println(" redraw --|" + k.translateY() + " ==== " + k.getPageHeight() + " === " + getCurrentPageHeight());
-//        System.out.println(" redraw --|" + xp + "----|" + yp + "---|" + Yposition + "-----|" + page.dy + "----|" + pdfView.getCurrentPage());
-//        System.out.println("------------------------------------------------------------------");
-//        mCanvas.translate(xp, yp - Yposition + (page.dy * pdfView.getCurrentPage()));
         mCanvas.translate(xp, yp + (h / 2));
 
 

@@ -415,7 +415,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
                 pp.dy = lastPageSp;
                 lastPageSp = pdfView.pdfFile.getPageSpacing(i, 1);
-                System.out.println(pp.dy + "*****" + (pdfView.pdfFile.getPageSpacing(i, 1) / 2) + "=====" + ((2 * i) - 1) + "-----" + i + " pageSpacingTot " + pageSpacingTot);
+//                System.out.println(pp.dy + "*****" + (pdfView.pdfFile.getPageSpacing(i, 1) / 2) + "=====" + ((2 * i) - 1) + "-----" + i + " pageSpacingTot " + pageSpacingTot);
 
                 pages.add(pp);
                 pageYposition += (pageSize.getHeight() + (pdfView.getSpacingPx()));
@@ -524,7 +524,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
     ActivityResultLauncher<Intent> cameraImageActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
+            new ActivityResultCallback<>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
                     if (result.getResultCode() == Activity.RESULT_OK) {
@@ -695,7 +695,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
     private final ActivityResultLauncher<String> imageChooserActivityStoragePermissions = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(),
-            new ActivityResultCallback<Boolean>() {
+            new ActivityResultCallback<>() {
                 @Override
                 public void onActivityResult(Boolean result) {
                     if (result) {
@@ -708,7 +708,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
     private final ActivityResultLauncher<String> cmeraActivityStoragePermissions = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(),
-            new ActivityResultCallback<Boolean>() {
+            new ActivityResultCallback<>() {
                 @Override
                 public void onActivityResult(Boolean result) {
                     if (result) {
@@ -721,7 +721,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
     final ActivityResultLauncher<Intent> imageChooserActivity = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
+            new ActivityResultCallback<>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
                     if (result.getResultCode() == Activity.RESULT_OK) {
@@ -781,26 +781,25 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
 
                     switch (item.getItemId()) {
-                        case id.tools_pen_1:
+                        case id.tools_pen_1 -> {
                             assert drawingView != null;
                             item.setCheckable(drawingView.getVisibility() != View.VISIBLE);
                             visibleOnly(drawingView, drawingView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
                             return drawingView.getVisibility() == View.VISIBLE;
-
-                        case id.tools_highlighter_1:
+                        }
+                        case id.tools_highlighter_1 -> {
                             assert highlighterView != null;
                             item.setCheckable(highlighterView.getVisibility() != View.VISIBLE);
                             visibleOnly(highlighterView, highlighterView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
                             return highlighterView.getVisibility() == View.VISIBLE;
-
-                        case id.add_btn_text:
+                        }
+                        case id.add_btn_text -> {
                             assert textEditorView != null;
                             item.setCheckable(textEditorView.getVisibility() != View.VISIBLE);
                             visibleOnly(textEditorView, textEditorView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
                             return textEditorView.getVisibility() == View.VISIBLE;
-
-                        case id.tools_add_picture_1:
-
+                        }
+                        case id.tools_add_picture_1 -> {
                             Context wrapper = new ContextThemeWrapper(getContext(), R.style.popupOverflowMenu);
                             PopupMenu popup = new PopupMenu(wrapper, view.findViewById(id.tools_add_picture_1));
                             MenuBuilder menuBuilder = (MenuBuilder) popup.getMenu();
@@ -809,26 +808,26 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
                             inflater.inflate(R.menu.add_menu, popup.getMenu());
                             popup.setOnMenuItemClickListener(item1 -> {
                                 switch (item1.getItemId()) {
-                                    case id.add_btn_photo_gallery:
+                                    case id.add_btn_photo_gallery -> {
                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                             imageChooserActivityStoragePermissions.launch(Manifest.permission.READ_MEDIA_IMAGES);
                                             return true;
                                         }
                                         imageChooserActivityStoragePermissions.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
                                         return true;
-
-                                    case id.add_btn_photo_camera:
+                                    }
+                                    case id.add_btn_photo_camera -> {
                                         cmeraActivityStoragePermissions.launch(Manifest.permission.CAMERA);
                                         return true;
-
-                                    case id.add_btn_text:
+                                    }
+                                    case id.add_btn_text -> {
                                         visibleOnly(textEditorView, View.VISIBLE);
                                         return true;
-
-                                    case id.add_btn_page:
+                                    }
+                                    case id.add_btn_page -> {
                                         addNewPage();
                                         return true;
-
+                                    }
                                 }
 
 
@@ -836,12 +835,10 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
                             });
                             popup.show();
                             return false;
-
-                        case id.tools_undo_1:
-                            undo();
-                            break;
-                        default:
-                            break;
+                        }
+                        case id.tools_undo_1 -> undo();
+                        default -> {
+                        }
                     }
                     return false;
                 });
@@ -934,7 +931,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
             drawingView.setVisibility(visibility);
 
 
-            pages.get(x.page).setEdited(true);
+//            pages.get(x.page).setEdited(true);
 
         } catch (Exception ignored) {
 
@@ -1030,7 +1027,7 @@ public class Editor extends E implements OnDrawListener, OnPageChangeListener {
 
     private final ActivityResultLauncher<String> requestCameraPermissionLauncher = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(),
-            new ActivityResultCallback<Boolean>() {
+            new ActivityResultCallback<>() {
                 @Override
                 public void onActivityResult(Boolean result) {
                     if (result) {

@@ -1,8 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
 
+import '../../C/DB/hive.dart';
 import '../NsUser.dart';
 import '../Ticket.dart';
-import '../hive.dart';
 import 'KitItem.dart';
 
 part 'KIT.g.dart';

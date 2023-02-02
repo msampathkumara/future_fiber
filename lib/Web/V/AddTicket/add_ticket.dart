@@ -86,6 +86,7 @@ class _AddTicketsState extends State<AddTickets> {
                                         highlighted1 = false;
                                       });
                                       final bytes = await controller1.getFileData(file);
+                                      print('MBBBBB => ${bytes.lengthInBytes}');
 
                                       uploadFile.bytes = (bytes);
 
@@ -229,6 +230,8 @@ class _AddTicketsState extends State<AddTickets> {
     });
     final bytes = await controller1.getFileData(ev);
 
+    print('MBBBBB => ${bytes.lengthInBytes}');
+
     uploadFile.bytes = (bytes);
 
     uploadFile.upload(() {
@@ -255,9 +258,11 @@ class UploadFile {
 
   get haveError => error != null;
 
-  Uint8List? _bytes;
+  late Uint8List _bytes;
 
-  set bytes(Uint8List bytes) => _bytes = bytes;
+  set bytes(Uint8List bytes) {
+    _bytes = bytes;
+  }
 
   getProgress() {
     return (sent / total * 100).toStringAsFixed(0);
@@ -269,7 +274,13 @@ class UploadFile {
       print('------------------------------- null');
       return;
     }
-    FormData formData = FormData.fromMap({"ticket": MultipartFile.fromBytes(_bytes!, filename: name), "production": standard ? production?.getValue() : ''});
+    if (_bytes.lengthInBytes > 25000000) {
+      errorMessage = 'file is larger than 25MB';
+      callback();
+      return;
+    }
+
+    FormData formData = FormData.fromMap({"ticket": MultipartFile.fromBytes(_bytes, filename: name), "production": standard ? production?.getValue() : ''});
     print(standard ? ("tickets/standard/upload") : ("tickets/upload"));
     Api.post(standard ? (EndPoints.tickets_standard_upload) : ("tickets/upload"), {}, formData: formData, onSendProgress: (int sent, int total) {
       sent = sent;

@@ -277,7 +277,7 @@ class DeviceSourceAsync extends AsyncDataTableSource {
               },
               onSecondaryTap: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     duration: const Duration(seconds: 1),
-                    backgroundColor: Theme.of(context).errorColor,
+                    backgroundColor: Theme.of(context).colorScheme.error,
                     content: Text('Right clicked on ${device.name}'),
                   )),
               // specificRowHeight: this.hasRowHeightOverrides && device.fat >= 25 ? 100 : null,

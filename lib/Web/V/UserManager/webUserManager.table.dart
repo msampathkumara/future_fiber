@@ -168,7 +168,7 @@ class UserManagerDataSource extends DataTableSource {
           : null,
       onSecondaryTap: hasRowTaps
           ? () => ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(duration: const Duration(seconds: 1), backgroundColor: Theme.of(context).errorColor, content: Text('Right clicked on ${nsUser.name}')))
+              .showSnackBar(SnackBar(duration: const Duration(seconds: 1), backgroundColor: Theme.of(context).colorScheme.error, content: Text('Right clicked on ${nsUser.name}')))
           : null,
       // specificRowHeight: this.hasRowHeightOverrides && nsUser.fat >= 25 ? 100 : null,
       cells: [

@@ -269,8 +269,8 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                 refreshDatasource();
               }
             },
-            onSecondaryTap: () => ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(duration: const Duration(seconds: 1), backgroundColor: Theme.of(context).errorColor, content: Text('Right clicked on ${kit.ticket?.oe}'))),
+            onSecondaryTap: () => ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(duration: const Duration(seconds: 1), backgroundColor: Theme.of(context).colorScheme.error, content: Text('Right clicked on ${kit.ticket?.oe}'))),
             cells: [
               DataCell(ListTile(
                   visualDensity: const VisualDensity(horizontal: -4, vertical: -4),

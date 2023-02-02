@@ -591,6 +591,7 @@ class _PlatformCallbacksHandler implements CustomWebViewPlatformCallbacksHandler
     }
   }
 
+  @override
   void onWebResourceError(WebResourceError error) {
     if (_widget.onWebResourceError != null) {
       _widget.onWebResourceError!(error);

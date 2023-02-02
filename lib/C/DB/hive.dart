@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:math';
-
 import 'package:dio/dio.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
@@ -10,6 +8,7 @@ import 'package:hive/hive.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:smartwind/C/DB/DB.dart';
+import 'package:smartwind/C/DB/TriggerEventTimes.dart';
 import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/StandardTicket.dart';
@@ -17,17 +16,16 @@ import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/Ticket/CprReport.dart';
 import 'package:smartwind/M/TicketFlag.dart';
 import 'package:smartwind/M/User/Email.dart';
-import 'package:smartwind/M/user_config.dart';
-
-import '../C/Api.dart';
-import '../Mobile/V/Home/UserManager/UserPermissions.dart';
-import '../globals.dart';
-import 'AppUser.dart';
+import 'package:smartwind/C/DB/up_on.dart';
+import 'package:smartwind/C/DB/user_config.dart';
+import '../Api.dart';
+import '../../Mobile/V/Home/UserManager/UserPermissions.dart';
+import '../../globals.dart';
+import '../../M/AppUser.dart';
 import 'HiveClass.dart';
-import 'LocalFileVersion.dart';
-import 'NsUser.dart';
-import 'Section.dart';
-import 'up_on.dart';
+import '../../M/LocalFileVersion.dart';
+import '../../M/NsUser.dart';
+import '../../M/Section.dart';
 
 class HiveBox {
   static late final Box<NsUser> usersBox;
@@ -35,16 +33,12 @@ class HiveBox {
   static late final Box<Section> sectionsBox;
   static late final Box<StandardTicket> standardTicketsBox;
   static late final Box<LocalFileVersion> localFileVersionsBox;
-
-  // static late final Box<TicketFlag> ticketFlagBox;
-
-  static late final Box userConfigBox;
-
+  static late final Box<UserConfig> userConfigBox;
   static late final Box<UserPermissions> userPermissions;
 
   static StreamSubscription<DatabaseEvent>? userUpdatesListener;
   static StreamSubscription<DatabaseEvent>? resetDbListener;
-  static StreamSubscription<DatabaseEvent>? db_uponListener;
+  static StreamSubscription<DatabaseEvent>? dbUponListener;
   static StreamSubscription<DatabaseEvent>? ticketCompleteListener;
   static StreamSubscription<DatabaseEvent>? standardLibraryListener;
 
@@ -69,61 +63,78 @@ class HiveBox {
     Hive.registerAdapter(TicketFlagAdapter());
     Hive.registerAdapter(EmailAdapter());
     Hive.registerAdapter(CprReportAdapter());
+    Hive.registerAdapter(TriggerEventTimesAdapter());
 
     usersBox = await Hive.openBox<NsUser>('userBox');
     ticketBox = await Hive.openBox<Ticket>('ticketBox');
     sectionsBox = await Hive.openBox<Section>('sectionsBox');
-    userConfigBox = await Hive.openBox<HiveClass>('userConfigBox');
+    userConfigBox = await Hive.openBox<UserConfig>('userConfigBox');
     userPermissions = await Hive.openBox<UserPermissions>('userPermissionsBox');
     standardTicketsBox = await Hive.openBox<StandardTicket>('standardTicketsBox');
     localFileVersionsBox = await Hive.openBox<LocalFileVersion>('localFileVersionsBox');
-    // ticketFlagBox = await Hive.openBox<TicketFlag>('ticketFlagBox');
 
     if (kIsWeb) {
       FirebaseAuth.instance.authStateChanges().listen((User? user) async {
         if (user != null) {
           userUpdatesListener?.cancel();
-          db_uponListener?.cancel();
+          dbUponListener?.cancel();
           ticketCompleteListener?.cancel();
           standardLibraryListener?.cancel();
           resetDbListener?.cancel();
 
-          Map<String, bool> listeningStarted = {};
+          // Map<String, bool> listeningStarted = {};
 
-          userUpdatesListener = FirebaseDatabase.instance.ref('userUpdates').onValue.listen((DatabaseEvent event) async {
-            print('authStateChanges -> userUpdates');
-            if (listeningStarted['userUpdates'] == true) {
-              await HiveBox.getDataFromServer();
-            }
-            listeningStarted['db_upon'] = true;
-          });
+          UserConfig userConfig = getUserConfig();
 
-          db_uponListener = FirebaseDatabase.instance.ref('db_upon').onValue.listen((DatabaseEvent event) async {
+          dbUponListener = FirebaseDatabase.instance.ref('db_upon').onValue.listen((DatabaseEvent event) async {
             print('authStateChanges -> db_upon');
-            if (listeningStarted['db_upon'] == true) {
-              await HiveBox.getDataFromServer();
-            }
-            listeningStarted['db_upon'] = true;
-          });
-          ticketCompleteListener = FirebaseDatabase.instance.ref('db_upon').child("ticketComplete").onValue.listen((DatabaseEvent event) {
-            print('authStateChanges -> ticketComplete');
-            // HiveBox.updateCompletedTickets();
-          });
-          standardLibraryListener = FirebaseDatabase.instance.ref('db_upon').child("standardLibrary").onValue.listen((DatabaseEvent event) async {
-            print('authStateChanges -> standardLibrary');
-            if (listeningStarted['standardLibrary'] == true) {
+
+            Map upon = event.snapshot.value as Map;
+
+            if (userConfig.triggerEventTimes.standardLibrary != upon['standardLibrary']) {
               await HiveBox.cleanStandardLibrary();
-              await HiveBox.getDataFromServer();
-              DB.callChangesCallBack(DataTables.standardTickets);
+              userConfig.triggerEventTimes.standardLibrary = upon['standardLibrary'];
             }
-            listeningStarted['standardLibrary'] = true;
-          });
-          resetDbListener = FirebaseDatabase.instance.ref('resetDb').onValue.listen((DatabaseEvent event) {
-            print('authStateChanges -> resetDb');
-            if (listeningStarted['resetDb'] == true) {
-              HiveBox.getDataFromServer(clean: true);
+
+            if (!mapEquals(userConfig.triggerEventTimes.dbUpon, upon)) {
+              printWarning('db_upon updated');
+              if (userConfig.triggerEventTimes.resetDb != upon['resetDb']) {
+                printWarning('Reset Database');
+                HiveBox.getDataFromServer(clean: true);
+                userConfig.triggerEventTimes.resetDb = upon['resetDb'];
+                printWarning('Reset Database Done');
+              } else {
+                await HiveBox.getDataFromServer(clean: true);
+              }
             }
+            userConfig.triggerEventTimes.dbUpon = event.snapshot.value as Map<String, int>;
+
+            // printWarning('${userConfig.triggerEventTimes.dbUpon} event.snapshot.value == ${event.snapshot.value}');
+            userConfig.save();
           });
+          // ticketCompleteListener = FirebaseDatabase.instance.ref('db_upon').child("ticketComplete").onValue.listen((DatabaseEvent event) {
+          //   print('authStateChanges -> ticketComplete');
+          //   //
+          //   if (listeningStarted['ticketComplete'] == true) {
+          //     HiveBox.updateCompletedTickets();
+          //   }
+          //   listeningStarted['ticketComplete'] = true;
+          // });
+          // standardLibraryListener = FirebaseDatabase.instance.ref('db_upon').child("standardLibrary").onValue.listen((DatabaseEvent event) async {
+          //   print('authStateChanges -> standardLibrary');
+          //   if (listeningStarted['standardLibrary'] == true) {
+          //     await HiveBox.cleanStandardLibrary();
+          //     await HiveBox.getDataFromServer();
+          //     DB.callChangesCallBack(DataTables.standardTickets);
+          //   }
+          //   listeningStarted['standardLibrary'] = true;
+          // });
+          // resetDbListener = FirebaseDatabase.instance.ref('resetDb').onValue.listen((DatabaseEvent event) {
+          //   print('authStateChanges -> resetDb');
+          //   if (listeningStarted['resetDb'] == true) {
+          //     HiveBox.getDataFromServer(clean: true);
+          //   }
+          // });
         }
       });
     }
@@ -153,7 +164,7 @@ class HiveBox {
     print('__________________________________________________________________________________________________________getDataFromServer');
 
     if (clean) {
-      await userConfigBox.delete('upons');
+      await resetUptimes();
     }
     Upons uptimes = getUptimes();
     if (cleanUsers) {
@@ -194,7 +205,12 @@ class HiveBox {
       List<Ticket> deletedTicketsIdsList = Ticket.fromJsonArray(res["deletedTicketsIds"] ?? []);
       List<Ticket> completedTicketsIdsList = Ticket.fromJsonArray(res["completedTickets"] ?? []);
       Stopwatch stopwatch = Stopwatch()..start();
-      await usersBox.putMany(usersList);
+      await usersBox.putMany(usersList, afterAdd: (list) {
+        if (list.isNotEmpty) {
+          printError(' DB.callChangesCallBack(DataTables.users)');
+          DB.callChangesCallBack(DataTables.users);
+        }
+      });
       print('usersBox.putMany executed in ${stopwatch.elapsed}');
       stopwatch.reset();
 
@@ -207,12 +223,20 @@ class HiveBox {
         int maxValue = ticketBox.values.map((e) => e.uptime).reduce(max);
         print('$maxValue __uptimes max');
         setUptimes({'tickets': maxValue});
+
+        if (ticketsList.isNotEmpty || deletedTicketsIdsList.isNotEmpty || completedTicketsIdsList.isNotEmpty) {
+          DB.callChangesCallBack(DataTables.tickets);
+        }
       });
 
-      await sectionsBox.putMany(factorySectionsList);
+      await sectionsBox.putMany(factorySectionsList, afterAdd: (list) {
+        if (list.isNotEmpty) DB.callChangesCallBack(DataTables.sections);
+      });
       print('sectionsBox.putMany executed in ${stopwatch.elapsed}');
       stopwatch.reset();
-      await standardTicketsBox.putMany(standardTicketsList);
+      await standardTicketsBox.putMany(standardTicketsList, afterAdd: (list) {
+        if (list.isNotEmpty) DB.callChangesCallBack(DataTables.standardTickets);
+      });
       print('standardTicketsBox.putMany executed in ${stopwatch.elapsed}');
       stopwatch.reset();
 
@@ -232,26 +256,12 @@ class HiveBox {
         AppUser.refreshUserData();
       }
 
-      bool updated = false;
-
-      if (HiveBox.usersBox.length > 0) {
-        DB.callChangesCallBack(DataTables.users);
-        updated = true;
-      }
-      if (HiveBox.ticketBox.length > 0 || deletedTicketsIdsList.isNotEmpty || completedTicketsIdsList.isNotEmpty) {
-        DB.callChangesCallBack(DataTables.tickets);
-        updated = true;
-      }
-      if (HiveBox.sectionsBox.length > 0) {
-        DB.callChangesCallBack(DataTables.sections);
-        updated = true;
-      }
-      if (standardTicketsList.isNotEmpty) {
-        print('xxxxxxxccccccccccccccccccccccccccccccccccc');
-        DB.callChangesCallBack(DataTables.standardTickets);
-        updated = true;
-      }
-      if (updated) {
+      if (usersList.isNotEmpty ||
+          factorySectionsList.isNotEmpty ||
+          standardTicketsList.isNotEmpty ||
+          ticketsList.isNotEmpty ||
+          deletedTicketsIdsList.isNotEmpty ||
+          completedTicketsIdsList.isNotEmpty) {
         DB.callChangesCallBack(DataTables.any);
       }
 
@@ -290,22 +300,38 @@ class HiveBox {
   }
 
   static Upons getUptimes() {
-    return userConfigBox.get("upons", defaultValue: Upons());
+    return userConfigBox.get(0, defaultValue: UserConfig())?.upon ?? Upons();
+  }
+
+  static TriggerEventTimes getTriggerEventTimes() {
+    return userConfigBox.get(0, defaultValue: UserConfig())?.triggerEventTimes ?? TriggerEventTimes();
+  }
+
+  static UserConfig getUserConfig() {
+    return userConfigBox.get(0, defaultValue: UserConfig()) ?? UserConfig();
   }
 
   static setUptimes(upons) {
     var x = {...getUptimes().toJson(), ...upons};
     Map<String, dynamic> xx = Map<String, dynamic>.from(x);
     var upons2 = Upons.fromJson(xx);
-    userConfigBox.put("upons", upons2);
+    UserConfig userConfig = userConfigBox.get(0, defaultValue: UserConfig()) ?? UserConfig();
+    userConfig.upon = upons2;
+    userConfigBox.put(0, userConfig);
+  }
+
+  static resetUptimes() {
+    UserConfig userConfig = userConfigBox.get(0, defaultValue: UserConfig()) ?? UserConfig();
+    userConfig.upon = Upons();
+    userConfigBox.put(0, userConfig);
   }
 
   static cleanStandardLibrary() async {
+    print('cleaning standard library');
     await standardTicketsBox.clear();
     var i = getUptimes();
     i.standardTickets = 0;
     setUptimes(i.toJson());
-    getDataFromServer();
   }
 
   static deleteTicket(data) {
@@ -313,4 +339,12 @@ class HiveBox {
   }
 
   static void updateCompletedTickets() {}
+
+  static Future<void> cleanDb() async {
+    await usersBox.clear();
+    await ticketBox.clear();
+    await sectionsBox.clear();
+    await userPermissions.clear();
+    await standardTicketsBox.clear();
+  }
 }

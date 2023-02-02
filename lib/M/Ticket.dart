@@ -29,10 +29,12 @@ import 'AppUser.dart';
 import 'DataObject.dart';
 import 'EndPoints.dart';
 import 'LocalFileVersion.dart';
+import 'PermissionsEnum.dart';
 import 'Ticket/CprReport.dart';
-import 'hive.dart';
+import '../C/DB/hive.dart';
 
 part 'Ticket.g.dart';
+
 part 'Ticket.options.dart';
 
 @JsonSerializable(explicitToJson: true)
@@ -249,9 +251,10 @@ class Ticket extends DataObject {
   }
 
   static Future<void> open(context, Ticket ticket, {onReceiveProgress, isPreCompleted = false}) async {
-    if (ticket.isHold == 1) {
+    if ((!AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_ANY_PDF)) && ticket.isHold == 1) {
       return;
     }
+
     if (kIsWeb) {
       var loadingWidget = const Loading(loadingText: "Downloading Ticket");
       loadingWidget.show(context);
@@ -473,8 +476,27 @@ class Ticket extends DataObject {
       }
 
       return true;
-    }).catchError((onError) {
-      print(onError);
+    }).catchError((error, stackTrace) {
+      var e = error as DioError;
+      var errmsg = '';
+      if (e.type == DioErrorType.response) {
+        print('catched');
+      } else if (e.type == DioErrorType.connectTimeout) {
+        print('check your connection');
+        errmsg = 'check your connection';
+      } else if (e.type == DioErrorType.receiveTimeout) {
+        print('unable to connect to the server');
+        errmsg = 'unable to connect to the server';
+      } else if (e.type == DioErrorType.other) {
+        print('Something went wrong');
+        errmsg = 'Something went wrong';
+      }
+      print(e);
+
+      // print(stackTrace.toString());
+      ErrorMessageView(errorMessage: errmsg, errorDescription: e.message).show(context);
+
+      print(error);
     });
   }
 

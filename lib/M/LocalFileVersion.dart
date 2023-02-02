@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:smartwind/M/HiveClass.dart';
+import 'package:smartwind/C/DB/HiveClass.dart';
 
 part 'LocalFileVersion.g.dart';
 

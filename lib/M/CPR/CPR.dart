@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:smartwind/M/hive.dart';
+import 'package:smartwind/C/DB/hive.dart';
 
 import '../NsUser.dart';
 import '../Ticket.dart';

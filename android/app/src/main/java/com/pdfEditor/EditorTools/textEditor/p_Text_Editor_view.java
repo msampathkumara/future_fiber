@@ -47,7 +47,7 @@ public class p_Text_Editor_view extends FrameLayout {
 
         ColorSelector colorSelector = view.findViewById(R.id.colorSelector);
 
-        colorSelector.setOnColorSelect(color -> textEditor.setColor(color));
+        colorSelector.setOnColorSelect(textEditor::setColor);
 
 
         SeekBar seekBar = view.findViewById(R.id.size);

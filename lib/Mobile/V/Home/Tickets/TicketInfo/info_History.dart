@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/TicketHistory.dart';
-import 'package:smartwind/M/hive.dart';
+import 'package:smartwind/C/DB/hive.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
 import '../../../../../M/NsUser.dart';

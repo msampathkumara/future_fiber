@@ -1,6 +1,4 @@
 <!DOCTYPE html>
-
-
 <html lang="en">
 <head>
     <style>
@@ -20,25 +18,6 @@
             transform: translate(-50%, -50%);
         }
 
-        .contain {
-            display: block;
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .stretch {
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
-
-        .cover {
-            display: block;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
 
         @media (prefers-color-scheme: dark) {
             body {
@@ -76,11 +55,11 @@
     <script src="./js/pdf.min.js" async></script>
 
 
-    <base href="$FLUTTER_BASE_HREF">
+    <base href="/">
 
     <meta charset="UTF-8">
     <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-    <meta name="description" content="A new Flutter project.">
+    <meta name="description" content="Smartwind ticket management system for Northsails  ">
 
     <!-- iOS meta tags & icons -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -91,26 +70,10 @@
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="favicon.png"/>
 
-    <title>smartwind</title>
+    <title>smart-wind</title>
     <link rel="manifest" href="manifest.json">
     <!--    <link rel="stylesheet" type="text/css" href="splash/style.css">-->
     <script src="flutter.js" defer></script>
-
-    <script>
-        window.addEventListener('load', function (ev) {
-            const loading = document.querySelector('#loading');
-            loading.textContent = "Loading entrypoints..";
-            _flutter.loader.loadEntrypoint({serviceWorker: {serviceWorkerVersion: serviceWorkerVersion}}).then(function (engineInitializer) {
-                loading.textContent = "Initializing engine...";
-                return engineInitializer.initializeEngine();
-            }).then(function (appRunner) {
-                loading.textContent = "Running app...";
-                return appRunner.runApp();
-            });
-        });
-
-
-    </script>
 
 
 </head>
@@ -119,72 +82,127 @@
      application. For more information, see:
      https://developers.google.com/web/fundamentals/primers/service-workers -->
 <script>
-    const serviceWorkerVersion = null;
-    let scriptLoaded = false;
+    // const serviceWorkerVersion = null;
+    // let scriptLoaded = false;
+    //
+    // function loadMainDartJs() {
+    //     if (scriptLoaded) {
+    //         return;
+    //     }
+    //     scriptLoaded = true;
+    //     const scriptTag = document.createElement('script');
+    //     scriptTag.src = 'main.dart.js';
+    //     scriptTag.type = 'application/javascript';
+    //     document.body.append(scriptTag);
+    // }
+    //
+    // if ('serviceWorker' in navigator) {
+    //
+    //     // Service workers are supported. Use them.
+    //     window.addEventListener('load', function () {
+    //
+    //         const loading = document.querySelector('#loading');
+    //         loading.textContent = "Loading entrypoints..";
+    //
+    //         // Wait for registration to finish before dropping the <script> tag.
+    //         // Otherwise, the browser will load the script multiple times,
+    //         // potentially different versions.
+    //         const serviceWorkerUrl = 'flutter_service_worker.js?v=' + serviceWorkerVersion;
+    //         navigator.serviceWorker.register(serviceWorkerUrl)
+    //             .then((reg) => {
+    //                 function waitForActivation(serviceWorker) {
+    //                     serviceWorker.addEventListener('statechange', () => {
+    //                         if (serviceWorker.state === 'activated') {
+    //                             console.log('Installed new service worker.');
+    //                             loadMainDartJs();
+    //                         }
+    //                     });
+    //                 }
+    //
+    //                 if (!reg.active && (reg.installing || reg.waiting)) {
+    //                     // No active web worker and we have installed or are installing
+    //                     // one for the first time. Simply wait for it to activate.
+    //                     waitForActivation(reg.installing || reg.waiting);
+    //                 } else if (!reg.active.scriptURL.endsWith(serviceWorkerVersion)) {
+    //                     // When the app updates the serviceWorkerVersion changes, so we
+    //                     // need to ask the service worker to update.
+    //                     console.log('New service worker available.');
+    //                     reg.update();
+    //                     waitForActivation(reg.installing);
+    //                 } else {
+    //                     // Existing service worker is still good.
+    //                     console.log('Loading app from service worker.');
+    //                     loadMainDartJs();
+    //                 }
+    //             });
+    //
+    //
+    //         _flutter.loader.loadEntrypoint({serviceWorker: {serviceWorkerVersion: serviceWorkerVersion}}).then(function (engineInitializer) {
+    //             loading.textContent = "Initializing engine...";
+    //             return engineInitializer.initializeEngine();
+    //         }).then(function (appRunner) {
+    //             loading.textContent = "Running app...";
+    //             return appRunner.runApp();
+    //         });
+    //
+    //         // If service worker doesn't succeed in a reasonable amount of time,
+    //         // fallback to plaint <script> tag.
+    //         setTimeout(() => {
+    //             if (!scriptLoaded) {
+    //                 console.warn('Failed to load app from service worker. Falling back to plain <script> tag.');
+    //                 loadMainDartJs();
+    //             }
+    //         }, 4000);
+    //     });
+    // } else {
+    //     // Service workers not supported. Just drop the <script> tag.
+    //     loadMainDartJs();
+    // }
+    //
+    function deleteAllCookies() {
+        const cookies = document.cookie.split(";");
 
-    function loadMainDartJs() {
-        if (scriptLoaded) {
-            return;
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i];
+            const eqPos = cookie.indexOf("=");
+            const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
         }
-        scriptLoaded = true;
-        const scriptTag = document.createElement('script');
-        scriptTag.src = 'main.dart.js';
-        scriptTag.type = 'application/javascript';
-        document.body.append(scriptTag);
+        window.location.reload();
+
+        console.log('reload');
     }
 
-    if ('serviceWorker' in navigator) {
-        // Service workers are supported. Use them.
-        window.addEventListener('load', function () {
-            // Wait for registration to finish before dropping the <script> tag.
-            // Otherwise, the browser will load the script multiple times,
-            // potentially different versions.
-            const serviceWorkerUrl = 'flutter_service_worker.js?v=' + serviceWorkerVersion;
-            navigator.serviceWorker.register(serviceWorkerUrl)
-                .then((reg) => {
-                    function waitForActivation(serviceWorker) {
-                        serviceWorker.addEventListener('statechange', () => {
-                            if (serviceWorker.state === 'activated') {
-                                console.log('Installed new service worker.');
-                                loadMainDartJs();
-                            }
-                        });
-                    }
-
-                    if (!reg.active && (reg.installing || reg.waiting)) {
-                        // No active web worker and we have installed or are installing
-                        // one for the first time. Simply wait for it to activate.
-                        waitForActivation(reg.installing || reg.waiting);
-                    } else if (!reg.active.scriptURL.endsWith(serviceWorkerVersion)) {
-                        // When the app updates the serviceWorkerVersion changes, so we
-                        // need to ask the service worker to update.
-                        console.log('New service worker available.');
-                        reg.update();
-                        waitForActivation(reg.installing);
-                    } else {
-                        // Existing service worker is still good.
-                        console.log('Loading app from service worker.');
-                        loadMainDartJs();
-                    }
-                });
-
-            // If service worker doesn't succeed in a reasonable amount of time,
-            // fallback to plaint <script> tag.
-            setTimeout(() => {
-                if (!scriptLoaded) {
-                    console.warn('Failed to load app from service worker. Falling back to plain <script> tag.');
-                    loadMainDartJs();
-                }
-            }, 4000);
-        });
-    } else {
-        // Service workers not supported. Just drop the <script> tag.
-        loadMainDartJs();
-    }
 
 
 </script>
+<script>
 
+    const serviceWorkerVersion = null;
+
+    window.addEventListener('load', function (ev) {
+
+        const loading = document.querySelector('#loading');
+        loading.textContent = "Loading entrypoints..";
+
+        // Download main.dart.js
+        _flutter.loader.loadEntrypoint({
+            serviceWorker: {
+                serviceWorkerVersion: serviceWorkerVersion,
+            }
+        }).then(function (engineInitializer) {
+            loading.textContent = "Initializing engine...";
+            return engineInitializer.initializeEngine();
+        }).then(function (appRunner) {
+            loading.textContent = "Running app...";
+            return appRunner.runApp();
+        });
+    });
+
+</script>
+
+<a style="position:absolute;right: 50px; bottom: 50px;z-index: 0; color: white;" href="./reload"
+   onclick="deleteAllCookies(); return false;">Reload</a>
 
 </body>
 </html>
@@ -194,11 +212,10 @@
             media="(prefers-color-scheme: light) or (prefers-color-scheme: no-preference)">
     <source srcset="splash/img/dark-1x.png 1x, splash/img/dark-2x.png 2x, splash/img/dark-3x.png 3x" media="(prefers-color-scheme: dark)">
 
-    <div class="center" style="width: 300px; height: 300px;background-color: rgba(255, 255, 255, .15);
- backdrop-filter: blur(5px); border-radius: 24px">
+    <div class="center"
+         style="width: 300px; height: 300px;background-color: rgba(255, 255, 255, .15); backdrop-filter: blur(5px); border-radius: 24px">
         <img class="center" width="170" height="170" style=" " src="splash/img/light-1x.png" alt=""/>
-        <div style="padding-top: 220px;font-family: Arial,sans-serif;  color: black;"
-             class="center" id="loading"></div>
+        <div style="padding-top: 220px;font-family: Arial,sans-serif;  color: black;" class="center" id="loading"></div>
 
     </div>
 

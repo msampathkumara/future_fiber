@@ -2,18 +2,23 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 import '../M/AppUser.dart';
+import '../globals.dart';
 
 class Server {
   static bool local = true;
   static String devServerIp = '192.168.0.100';
 
   static String getServerAddress({onlineServer = false}) {
-    local = false;
+    local = true;
+
     if (kDebugMode && local && (!onlineServer)) {
       print(devServerIp);
       return "http://$devServerIp:3000";
+    }
+    if (isTestServer) {
+      return "https://smartwind.test.nsslsupportservices.com";
     } else {
-      if (kIsWeb) {
+      if (kIsWeb && (!isLocalServer)) {
         return "";
       }
       return "https://smartwind.nsslsupportservices.com";

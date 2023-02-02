@@ -90,7 +90,6 @@ public class MultipartUtility {
      *
      * @param fieldName  name attribute in <input type="file" name="..." />
      * @param uploadFile a File to be uploaded
-     * @throws IOException
      */
     public void addFilePart(String fieldName, File uploadFile)
             throws IOException {
@@ -132,7 +131,6 @@ public class MultipartUtility {
      *
      * @return a list of Strings as response in case the server returned
      * status OK, otherwise an exception is thrown.
-     * @throws IOException
      */
     public List<String> finish() throws IOException {
         List<String> response = new ArrayList<>();

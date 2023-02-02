@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:smartwind/C/Server.dart';
-import 'package:smartwind/M/hive.dart';
+import 'package:smartwind/C/DB/hive.dart';
 import 'package:smartwind/res.dart';
 
 import '../C/Api.dart';
 import '../Mobile/V/Widgets/UserImage.dart';
 import 'AppUser.dart';
 import 'EndPoints.dart';
-import 'HiveClass.dart';
+import '../C/DB/HiveClass.dart';
 import 'Section.dart';
 import 'User/Email.dart';
 

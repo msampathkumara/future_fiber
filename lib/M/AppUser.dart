@@ -1,16 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:restart_app/restart_app.dart';
 import 'package:smartwind/C/Api.dart';
 import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/PermissionsEnum.dart';
-import 'package:smartwind/M/user_config.dart';
+import 'package:smartwind/C/DB/user_config.dart';
 
 import '../C/DB/DB.dart';
 import 'Section.dart';
-import 'hive.dart';
+import '../C/DB/hive.dart';
 
 class AppUser extends NsUser {
   static get isDeveloper => getUser()?.id == 1;
@@ -35,10 +34,10 @@ class AppUser extends NsUser {
     return _idToken;
   }
 
-  static var configKey = "currentUser";
+  static var configKey = 0;
 
   static NsUser? getUser() {
-    return (HiveBox.userConfigBox.get(configKey, defaultValue: UserConfig()) ?? UserConfig()).user;
+    return ((HiveBox.userConfigBox.get(0, defaultValue: UserConfig())))?.user;
   }
 
   static Section? getSelectedSection() {
@@ -55,13 +54,12 @@ class AppUser extends NsUser {
 
   static Future refreshUserData() {
     _userIsAdmin = null;
-    return Api.get(EndPoints.user_getUserData, {}).then((value) {
+    return Api.get(EndPoints.user_getUserData, {}).then((value) async {
       Map res = value.data;
       // print(res);
       NsUser nsUser = NsUser.fromJson(res["user"]);
-      AppUser.setUser(nsUser);
+      await AppUser.setUser(nsUser);
       DB.callChangesCallBack(DataTables.appUser);
-      updateUserChangers();
       return nsUser;
     });
   }
@@ -72,10 +70,11 @@ class AppUser extends NsUser {
     return _userIsAdmin ?? AppUser.getUser()?.utype == 'admin';
   }
 
-  static void setUser(NsUser nsUser) {
+  static Future<void> setUser(NsUser nsUser) async {
     UserConfig userConfig = getUserConfig();
     userConfig.user = nsUser;
-    HiveBox.userConfigBox.put(configKey, userConfig);
+    await userConfig.save();
+    // HiveBox.userConfigBox.put(configKey, userConfig);
     // print(nsUser.toJson());
     updateUserChangers();
   }
@@ -111,12 +110,13 @@ class AppUser extends NsUser {
   static logout(context) async {
     _userIsAdmin = null;
     await FirebaseAuth.instance.signOut();
-    HiveBox.userConfigBox.clear();
+    await HiveBox.userConfigBox.clear();
+    Restart.restartApp(webOrigin: '/');
 
-    if (kIsWeb) {
-      Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
-    } else {
-      Navigator.pushNamedAndRemoveUntil(context, '/', (_) => false);
-    }
+    // if (kIsWeb) {
+    //   Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+    // } else {
+    //   Navigator.pushNamedAndRemoveUntil(context, '/', (_) => false);
+    // }
   }
 }

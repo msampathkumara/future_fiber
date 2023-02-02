@@ -23,7 +23,6 @@ import com.pdfEditor.uploadEdits.editsPaint;
 import com.pdfviewer.PDFView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Highlighter extends FrameLayout {
 
@@ -122,7 +121,7 @@ public class Highlighter extends FrameLayout {
                 break;
             case MotionEvent.ACTION_UP:
                 if (!scaling) {
-                    touch_up(x, y, sp, zoom);
+                    touch_up(x, sp, zoom);
                     touch_up1();
 
                     invalidate();
@@ -141,12 +140,9 @@ public class Highlighter extends FrameLayout {
 
 
         p.setStrokeWidth(stroke * pdfView.getZoom());
-//        p.setStrokeWidth(stroke);
         p.setColor(mcolor);
         canvas.drawPath(path, p);
         canvas.drawPath(circlePath, circlePaint);
-        //        Bitmap bitmap;
-//        Rect clipBounds = canvas.getClipBounds();
 
     }
 
@@ -188,8 +184,6 @@ public class Highlighter extends FrameLayout {
             mY = startY;
 
 
-            float zoom = pdfView.getZoom();
-
         }
 
     }
@@ -209,7 +203,7 @@ public class Highlighter extends FrameLayout {
         }
     }
 
-    private void touch_up(float x, float y, float sp, float zoom) {
+    private void touch_up(float x, float sp, float zoom) {
         System.out.println(mX + " " + mY);
         System.out.println(mX1 + " " + mY1);
         Paint p = new Paint(Paint.DITHER_FLAG);
@@ -298,7 +292,6 @@ public class Highlighter extends FrameLayout {
         System.out.println(page.id + "____" + page.position);
         Yposition = page.position;
         mBitmap = page.getBitmap();
-        List<xPath> pathMap = page.paths;
         this.pageNo = page.id;
         mCanvas = new Canvas(mBitmap);
 

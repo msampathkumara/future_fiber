@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
+import '../../../../../C/DB/hive.dart';
 import '../../../../../M/NsUser.dart';
 import '../../../../../M/TicketPrint.dart';
-import '../../../../../M/hive.dart';
 import '../../../Widgets/UserImage.dart';
 
 class info_Printing extends StatefulWidget {

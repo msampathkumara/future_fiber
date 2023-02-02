@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:pdf_render/pdf_render_widgets.dart';
 import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/QC.dart';
 import 'package:smartwind/M/Section.dart';
 import 'package:smartwind/M/Ticket.dart';
+import 'package:smartwind/Mobile/V/Home/Tickets/QC/QCView.dart';
 import 'package:smartwind/Mobile/V/Widgets/SearchBar.dart';
 import 'package:smartwind/Web/V/QC/webTicketQView.dart';
 
 import '../../../../../C/Api.dart';
 import '../../../Widgets/NoResultFoundMsg.dart';
+import 'MobileQView.dart';
 
 class QCList extends StatefulWidget {
   const QCList({super.key});
@@ -218,7 +221,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
                     loadData(x.toInt());
                   }
                   return SizedBox(
-                      height: 100,
+                      height: 86,
                       child: Center(
                           child: Padding(
                               padding: const EdgeInsets.all(8),
@@ -262,7 +265,9 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
                         ? null
                         : () async {
                             // await Navigator.push(context, MaterialPageRoute(builder: (context) => QCView(_ticketQc)));
-                            WebTicketQView(_ticketQc.ticket ?? Ticket(), true).show(context);
+                            // WebTicketQView(_ticketQc.ticket ?? Ticket(), true).show(context);
+
+                            MobileQView(_ticketQc).show(context);
                           },
                     onDoubleTap: () async {
                       // print(await ticket.getLocalFileVersion());

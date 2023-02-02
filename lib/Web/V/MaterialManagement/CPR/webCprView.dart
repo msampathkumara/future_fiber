@@ -74,6 +74,7 @@ class _CprViewState extends State<CprView> {
   bool _loading = true;
 
   getWebUi() {
+    // todo fix user permission
     bool sendAnyCpr = AppUser.havePermissionFor(NsPermissions.CPR_SEND_ANY_CPR);
 
     return Scaffold(
@@ -156,9 +157,11 @@ class _CprViewState extends State<CprView> {
                                           : (e.status != 'Sent'
                                               ? Padding(
                                                   padding: const EdgeInsets.all(8.0),
-                                                  child: ElevatedButton(
-                                                      onPressed: (unSentCount == 1 && haveMoreToCheck && sendAnyCpr) ? null : () => {sendCpr(e.id)},
-                                                      child: Text("${e.supplier} Send")))
+                                                  child: sendAnyCpr
+                                                      ? ElevatedButton(
+                                                          onPressed: (unSentCount == 1 && haveMoreToCheck && sendAnyCpr) ? null : () => {sendCpr(e.id)},
+                                                          child: Text("${e.supplier} Send"))
+                                                      : null)
                                               : ListTile(
                                                   leading: UserImage(nsUser: e.sentBy, radius: 16),
                                                   title: Text(e.sentBy?.name ?? '', style: valTheme),

@@ -4,7 +4,6 @@ import 'package:smartwind/M/CPR/CprItem.dart';
 import 'package:smartwind/M/TicketFlag.dart';
 
 import '../../M/TicketComment.dart';
-import '../../M/TicketHistory.dart';
 import '../../M/UserRFCredentials.dart';
 import 'OperationMinMax.dart';
 import 'Progress.dart';

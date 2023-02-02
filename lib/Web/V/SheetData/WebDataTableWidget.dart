@@ -267,7 +267,7 @@ class SheetDataSourceAsync<T extends Object> extends AsyncDataTableSource {
               },
               onSecondaryTap: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     duration: const Duration(seconds: 1),
-                    backgroundColor: Theme.of(context).errorColor,
+                    backgroundColor: Theme.of(context).colorScheme.error,
                     content: Text('Right clicked on $sheetData'),
                   )),
               // specificRowHeight: this.hasRowHeightOverrides && sheetData.fat >= 25 ? 100 : null,

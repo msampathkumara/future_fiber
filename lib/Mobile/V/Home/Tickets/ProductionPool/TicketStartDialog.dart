@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smartwind/C/DB/hive.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 
 import '../../../../../M/Ticket.dart';
@@ -64,9 +65,10 @@ class _TicketStartDialogState extends State<TicketStartDialog> {
                             loading = true;
                           });
                           await Ticket.start(ticket, context).then((value) {
-                            ticket.isStarted = true;
-                            ticket.save();
-                            Navigator.of(context).pop(true);
+                            var t = HiveBox.ticketBox.get(ticket.id);
+                            t?.isStarted = true;
+                            t?.save();
+                            Navigator.of(context).pop(t);
                           });
                         },
                         child: const Text("Start")))

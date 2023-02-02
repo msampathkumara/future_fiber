@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:smartwind/M/AppUser.dart';
-import 'package:smartwind/M/hive.dart';
+
+import 'DB/hive.dart';
 
 class FCM {
   static StreamSubscription<RemoteMessage>? subscription;
@@ -54,8 +55,6 @@ class FCM {
           if (message.data["delete"] != null) {
             print('--------------------------delete-----------------');
             await HiveBox.cleanStandardLibrary();
-
-            return;
           }
         }
         HiveBox.getDataFromServer();

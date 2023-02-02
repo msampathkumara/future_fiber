@@ -159,7 +159,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                         }
                         Navigator.of(context).pop();
                       }),
-                        if ((!kIsWeb))
+                if ((!kIsWeb))
                   ListTile(
                       title: const Text("Shipping"),
                       leading: const Icon(NsIcons.shipping, color: Colors.brown),
@@ -183,10 +183,11 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                       leading: const Icon(NsIcons.delete, color: Colors.red),
                       onTap: () async {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            behavior: SnackBarBehavior.floating,
                             backgroundColor: Colors.deepOrange,
                             content: const Text("🗑️ Are you sure want to delete this ticket's PDF", style: TextStyle(color: Colors.white)),
                             action: SnackBarAction(
-                                label: "Delete PDF ?",
+                                label: "Yes",
                                 textColor: Colors.white,
                                 onPressed: () {
                                   Api.post(EndPoints.tickets_deletePDF, {"id": ticket.id.toString()}).then((response) async {
@@ -315,9 +316,9 @@ Future<void> showOpenActions(Ticket ticket, BuildContext context1, reLoad, {requ
                   title: const Text('Start Production'),
                   onTap: () async {
                     Navigator.of(context).pop();
-                    if (await TicketStartDialog(ticket).show(context) == true) {
-                      Ticket.open(context1, ticket, isPreCompleted: isPreCompleted);
-                    }
+                    TicketStartDialog(ticket).show(context).then((t) => {
+                          if (t != null) {Ticket.open(context1, t, isPreCompleted: isPreCompleted)}
+                        });
                   }),
             ListTile(
                 leading: const Icon(Icons.open_in_new_outlined),

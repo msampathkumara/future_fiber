@@ -13,15 +13,12 @@ import java.util.Locale;
 
 public abstract class E extends Fragment {
 
-    private runAfterLoad runAfterLoad;
-
 
     public File createImageFile() throws IOException {
         String timeStamp =
                 new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "IMG_" + timeStamp + "_";
-        File storageDir =
-                null;
+        File storageDir;
         storageDir = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
 
@@ -33,11 +30,6 @@ public abstract class E extends Fragment {
     }
 
     public abstract void openCameraIntent(Context context);
-
-
-    public interface runAfterLoad {
-        void run(E editor);
-    }
 
 
 }

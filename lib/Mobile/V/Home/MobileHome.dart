@@ -16,7 +16,6 @@ import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/M/Section.dart';
-import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/Mobile/V/Home/CurrentUser/CurrentUserDetails.dart';
 import 'package:smartwind/Mobile/V/Home/HR/HRSystem.dart';
 import 'package:smartwind/Mobile/V/Home/MaterialManagement/MaterialManagement.dart';
@@ -24,11 +23,15 @@ import 'package:smartwind/Mobile/V/Home/Tickets/ProductionPool/ProductionPool.da
 import 'package:smartwind/Mobile/V/Login/SectionSelector.dart';
 import 'package:smartwind/Mobile/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind/V/PermissionMessage.dart';
+import 'package:smartwind/globals.dart';
 import 'package:smartwind/res.dart';
 
 import '../../../C/Api.dart';
+import '../../../C/DB/hive.dart';
 import '../../../M/EndPoints.dart';
 import '../../../M/PermissionsEnum.dart';
+import '../../../globals.dart';
+import '../../../globals.dart';
 import '../Widgets/UserImage.dart';
 import 'About.dart';
 import 'Admin/AdminCpanel.dart';
@@ -60,6 +63,8 @@ class _MobileHomeState extends State<MobileHome> {
 
   late SharedPreferences prefs;
 
+  var serverType = Server.local ? " | Local Server" : " |  Online";
+
   @override
   void initState() {
     super.initState();
@@ -88,6 +93,10 @@ class _MobileHomeState extends State<MobileHome> {
     };
     onUserUpdate();
     AppUser.onUpdate(onUserUpdate);
+
+    if (isTestServer) {
+      serverType = 'Test Server';
+    }
   }
 
   String? idToken;
@@ -231,7 +240,7 @@ class _MobileHomeState extends State<MobileHome> {
                                       closedBuilder: (BuildContext context, void Function() action) {
                                         return Chip(
                                             avatar: CircleAvatar(backgroundColor: Colors.grey.shade800, child: Image.asset(Res.north_sails_logox50, width: 50)),
-                                            label: Text('NS Smart Wind $appVersion ${Server.local ? " | Local Server" : " |  Online"}'));
+                                            label: Text('NS Smart Wind $appVersion $serverType}'));
                                       }))))
                     ])))
             : const PermissionMessage();
@@ -352,6 +361,8 @@ class _MobileHomeState extends State<MobileHome> {
               )
             ])));
   }
+
+  void changeToProduction() {}
 }
 
 class _OpenContainerWrapper extends StatelessWidget {

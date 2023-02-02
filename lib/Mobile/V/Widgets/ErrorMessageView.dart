@@ -34,11 +34,6 @@ class _ErrorMessageViewState extends State<ErrorMessageView> with TickerProvider
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return kIsWeb ? DialogView(child: _getUi(), width: 500, height: 300) : _getUi();
   }

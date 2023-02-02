@@ -3,12 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/DB/DB.dart';
 import 'package:smartwind/M/NsUser.dart';
-import 'package:smartwind/M/hive.dart';
 import 'package:smartwind/Mobile/V/Home/UserManager/user_manager_user_list.dart';
 import 'package:smartwind/Mobile/V/Widgets/SearchBar.dart';
-import 'package:smartwind/Web/V/UserManager/GenaratePassword.dart';
-import 'package:smartwind/Web/V/UserManager/UpdateUserDetails.dart';
 
+import '../../../C/DB/hive.dart';
 import '../../../M/Enums.dart';
 import '../../../Mobile/V/Widgets/NoResultFoundMsg.dart';
 import '../../../Mobile/V/Widgets/UserImage.dart';
@@ -45,7 +43,9 @@ class _WebUserManagerState extends State<WebUserManager> {
   void initState() {
     _dbChangeCallBack = DB.setOnDBChangeListener(() {
       print('on update user');
-      if (mounted) {}
+      if (mounted) {
+        loadData();
+      }
     }, context, collection: DataTables.users);
 
     HiveBox.getDataFromServer();
