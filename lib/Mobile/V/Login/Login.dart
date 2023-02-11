@@ -261,7 +261,7 @@ class _LoginState extends State<Login> {
                   ));
   }
 
-  _login() {
+  _login() async {
     errorMessage = "";
     if (nfcCode.isEmpty && (_user.uname.isEmpty || _user.pword.isEmpty)) {
       errorMessage = "Enter username and password";
@@ -273,7 +273,7 @@ class _LoginState extends State<Login> {
 
     Dio dio = Dio();
     dio.options.headers['content-Type'] = 'application/json';
-    dio.post(Server.getServerPath("user/login"), data: {"uname": _user.uname, "pword": _user.pword, "nfc": nfcCode}).then((response) async {
+    dio.post(await Server.getServerPath("user/login"), data: {"uname": _user.uname, "pword": _user.pword, "nfc": nfcCode}).then((response) async {
       Map res = response.data;
 
       if (res["locked"] == true) {
@@ -312,8 +312,12 @@ class _LoginState extends State<Login> {
           if (section != null) {
             AppUser.setSelectedSection(section);
           }
+          await HiveBox.getUserConfig();
+          print('login__________________________________________________________________________________________getDataFromServer before');
           // AppUser.setUser(nsUser);
-          HiveBox.getDataFromServer();
+          // await HiveBox.getDataFromServer();
+          print('login__________________________________________________________________________________________getDataFromServer');
+          await HiveBox.getUserConfig();
           print('login__________________________________________________________________________________________');
 
           if (kIsWeb) {

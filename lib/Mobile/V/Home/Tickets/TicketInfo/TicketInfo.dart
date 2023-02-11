@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/EndPoints.dart';
+import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/TicketComment.dart';
 import 'package:smartwind/M/TicketFlag.dart';
@@ -23,6 +25,7 @@ import '../../../../../M/PermissionsEnum.dart';
 import '../../../../../C/DB/hive.dart';
 import '../../../../../Web/V/ProductionPool/copy.dart';
 import '../ProductionPool/TicketListOptions.dart';
+import '../ProductionPool/TicketStartDialog.dart';
 import 'info_Flags.dart';
 import 'info_History.dart';
 import 'info_Progress.dart';
@@ -417,7 +420,7 @@ class _TicketInfoState extends State<TicketInfo> {
     });
   }
 
-  Future<void> openFile() async {
+  Future openFile() async {
     // List<int> ids = AppUser.getUser()?.sections.map((e) => e.id).toList() ?? [];
     int userSectionId = AppUser.getSelectedSection()?.id ?? 0;
     var pendingList = progressList.where((p) {
@@ -538,7 +541,25 @@ class _TicketInfoState extends State<TicketInfo> {
 
   FloatingActionButton? getViewFileButton() {
     var _button = FloatingActionButton(
-        child: const Icon(Icons.import_contacts), onPressed: () => kIsWeb ? Ticket.open(context, _ticket, isPreCompleted: isPreCompleted(progressList)) : openFile());
+        child: const Icon(Icons.import_contacts),
+        onPressed: () => kIsWeb
+            ? Ticket.open(context, _ticket, isPreCompleted: isPreCompleted(progressList))
+            : {
+                openFile().then((value) {
+                  if (value == TicketAction.startProduction) {
+                    TicketStartDialog(_ticket).show(context).then((t) async {
+                      print('TicketStartDialog');
+                      print(t);
+                      if (t != null) {
+                        await Ticket.open(context, t, isPreCompleted: isPreCompleted);
+                        setState(() {
+                          _ticket = t;
+                        });
+                      }
+                    });
+                  }
+                })
+              });
 
     if ((!_ticket.hasFile)) {
       return null;
@@ -553,7 +574,7 @@ class _TicketInfoState extends State<TicketInfo> {
     }
 
     if (_ticket.isStandard) {
-      if (kIsWeb || widget.fromBarcode) {
+      if (_ticket.isCompleted || kIsWeb || widget.fromBarcode) {
         return _button;
       }
       return null;

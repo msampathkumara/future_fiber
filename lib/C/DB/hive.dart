@@ -84,10 +84,9 @@ class HiveBox {
 
           // Map<String, bool> listeningStarted = {};
 
-          UserConfig userConfig = getUserConfig();
-
           dbUponListener = FirebaseDatabase.instance.ref('db_upon').onValue.listen((DatabaseEvent event) async {
             print('authStateChanges -> db_upon');
+            UserConfig userConfig = await getUserConfig();
 
             Map upon = event.snapshot.value as Map;
 
@@ -98,19 +97,23 @@ class HiveBox {
 
             if (!mapEquals(userConfig.triggerEventTimes.dbUpon, upon)) {
               printWarning('db_upon updated');
-              if (userConfig.triggerEventTimes.resetDb != upon['resetDb']) {
+              if (userConfig.triggerEventTimes.resetDb == upon['resetDb']) {
                 printWarning('Reset Database');
                 HiveBox.getDataFromServer(clean: true);
                 userConfig.triggerEventTimes.resetDb = upon['resetDb'];
                 printWarning('Reset Database Done');
               } else {
-                await HiveBox.getDataFromServer(clean: true);
+                await HiveBox.getDataFromServer(clean: false);
               }
             }
-            userConfig.triggerEventTimes.dbUpon = event.snapshot.value as Map<String, int>;
+            userConfig.triggerEventTimes.dbUpon = upon;
 
             // printWarning('${userConfig.triggerEventTimes.dbUpon} event.snapshot.value == ${event.snapshot.value}');
-            userConfig.save();
+            if (userConfig.isInBox) {
+              await userConfig.save();
+            } else {
+              await HiveBox.userConfigBox.put(0, userConfig);
+            }
           });
           // ticketCompleteListener = FirebaseDatabase.instance.ref('db_upon').child("ticketComplete").onValue.listen((DatabaseEvent event) {
           //   print('authStateChanges -> ticketComplete');
@@ -166,13 +169,19 @@ class HiveBox {
     if (clean) {
       await resetUptimes();
     }
-    Upons uptimes = getUptimes();
-    if (cleanUsers) {
-      uptimes.users = 0;
+    UserConfig userConfig = await getUserConfig();
+
+    if (userConfig.user == null) {
+      return;
     }
-    Map<String, dynamic> d = uptimes.toJson();
+
+    print('user == ${userConfig.user?.toJson()}');
+    if (cleanUsers) {
+      userConfig.upon.users = 0;
+    }
+    Map<String, dynamic> d = userConfig.upon.toJson();
     d["z"] = DateTime.now().millisecondsSinceEpoch;
-    print(uptimes.toJson());
+    print("clean: ${clean} ,, uptimes.toJson() : ${d}");
 
     if (AppUser.isNotLogged) {
       print('user not logged in not calling to server ');
@@ -182,6 +191,7 @@ class HiveBox {
     cancelToken = CancelToken();
     return Api.get((EndPoints.data_getData), d, cancelToken: cancelToken).then((Response response) async {
       print('__________________________________________________________________________________________________________Api ->> getDataFromServer');
+      await getUserConfig();
       if (clean) {
         await usersBox.clear();
         await ticketBox.clear();
@@ -218,11 +228,14 @@ class HiveBox {
       print('ticketsList length == ${ticketsList.length}');
       print('standardTicketsList length == ${standardTicketsList.length}');
 
-      ticketBox.putMany(ticketsList, onItemAdded: (index, object) {}).then((List<HiveClass> list) {
+      ticketBox.putMany(ticketsList, onItemAdded: (index, object) {}).then((List<HiveClass> list) async {
         print('tickets saved');
         int maxValue = ticketBox.values.map((e) => e.uptime).reduce(max);
         print('$maxValue __uptimes max');
-        setUptimes({'tickets': maxValue});
+        var upt = await getUserConfig();
+        upt.upon.tickets = maxValue;
+        await upt.save();
+        // await setUptimes({'tickets': maxValue});
 
         if (ticketsList.isNotEmpty || deletedTicketsIdsList.isNotEmpty || completedTicketsIdsList.isNotEmpty) {
           DB.callChangesCallBack(DataTables.tickets);
@@ -264,7 +277,7 @@ class HiveBox {
           completedTicketsIdsList.isNotEmpty) {
         DB.callChangesCallBack(DataTables.any);
       }
-
+      await getUserConfig();
       print('__________________________________________________________________________________________________________');
       print(HiveBox.usersBox.length);
       print(HiveBox.ticketBox.length);
@@ -276,7 +289,8 @@ class HiveBox {
       // callOnUpdates();
       print("data loaded from server ");
       print(res["uptimes"]);
-      setUptimes(res["uptimes"]);
+      await getUserConfig();
+      await setUptimes(res["uptimes"]);
       if (afterLoad != null) {
         afterLoad();
       }
@@ -299,39 +313,55 @@ class HiveBox {
     listeners.add(function);
   }
 
-  static Upons getUptimes() {
-    return userConfigBox.get(0, defaultValue: UserConfig())?.upon ?? Upons();
+  // static Future<Upons> getUptimes() async {
+  //   print('await getUserConfig()).upon.toJson() : ${(await getUserConfig()).upon.toJson()}');
+  //
+  //   return (await getUserConfig()).upon;
+  // }
+
+  // static TriggerEventTimes getTriggerEventTimes() {
+  //   return userConfigBox.get(0, defaultValue: UserConfig())?.triggerEventTimes ?? TriggerEventTimes();
+  // }
+
+  static Future<UserConfig> getUserConfig() async {
+    print('getUserConfig call');
+    UserConfig x = userConfigBox.get(0, defaultValue: UserConfig()) ?? UserConfig();
+    if (!x.isInBox) {
+      print('UserConfig not found, creating...');
+      await HiveBox.userConfigBox.put(0, x);
+    }
+
+    print('uuuuuuuuuuuuu == ${x.user}');
+
+    return x.isInBox ? x : userConfigBox.get(0, defaultValue: UserConfig()) ?? UserConfig();
   }
 
-  static TriggerEventTimes getTriggerEventTimes() {
-    return userConfigBox.get(0, defaultValue: UserConfig())?.triggerEventTimes ?? TriggerEventTimes();
-  }
+  static setUptimes(upons) async {
+    UserConfig userConfig = await HiveBox.getUserConfig();
 
-  static UserConfig getUserConfig() {
-    return userConfigBox.get(0, defaultValue: UserConfig()) ?? UserConfig();
-  }
-
-  static setUptimes(upons) {
-    var x = {...getUptimes().toJson(), ...upons};
+    var x = {...((await getUserConfig()).upon).toJson(), ...upons};
     Map<String, dynamic> xx = Map<String, dynamic>.from(x);
     var upons2 = Upons.fromJson(xx);
-    UserConfig userConfig = userConfigBox.get(0, defaultValue: UserConfig()) ?? UserConfig();
+    // UserConfig userConfig = userConfigBox.get(0, defaultValue: UserConfig()) ?? UserConfig();
     userConfig.upon = upons2;
-    userConfigBox.put(0, userConfig);
+    await userConfig.save();
+    // userConfigBox.put(0, userConfig);
+    print('xxFirebaseAuth.instance.currentUser == ${userConfig.user?.toJson()}');
   }
 
-  static resetUptimes() {
-    UserConfig userConfig = userConfigBox.get(0, defaultValue: UserConfig()) ?? UserConfig();
+  static resetUptimes() async {
+    UserConfig userConfig = await getUserConfig();
     userConfig.upon = Upons();
-    userConfigBox.put(0, userConfig);
+    userConfig.save();
+    // userConfigBox.put(0, userConfig);
   }
 
   static cleanStandardLibrary() async {
     print('cleaning standard library');
     await standardTicketsBox.clear();
-    var i = getUptimes();
-    i.standardTickets = 0;
-    setUptimes(i.toJson());
+    var i = await getUserConfig();
+    i.upon.standardTickets = 0;
+    i.save();
   }
 
   static deleteTicket(data) {

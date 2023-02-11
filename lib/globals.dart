@@ -9,10 +9,12 @@ Size screenSize = const Size(0, 0);
 Color getPrimaryColor(context) => Theme.of(context).primaryColor;
 bool isMaterialManagement = false;
 
-bool? _isTestServer = true;
+bool? _isTestServer;
+
 bool? _isLocalServer;
 
-bool get isTestServer => kIsWeb ? (_isTestServer ?? (_isTestServer = RegExp(r".\.test\.nsslsupportservices\.com").hasMatch(Uri.base.host))) : HiveBox.getUserConfig().isTest;
+Future<bool> get isTestServer async =>
+    kIsWeb ? (_isTestServer ?? (_isTestServer = RegExp(r".\.test\.nsslsupportservices\.com").hasMatch(Uri.base.host))) : (await HiveBox.getUserConfig()).isTest;
 
 bool get isLocalServer => _isLocalServer ?? (_isLocalServer = Uri.base.host == 'localhost');
 

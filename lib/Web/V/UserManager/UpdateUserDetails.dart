@@ -113,7 +113,7 @@ class UpdateUserDetailsState extends State<UpdateUserDetails> {
 
   @override
   Widget build(BuildContext context) {
-    return kIsWeb ? DialogView(child: getDialogUi(), width: 1000) : getUi();
+    return DialogView(child: getDialogUi(), width: 1000);
   }
 
   String? dropdownValue;
@@ -151,10 +151,16 @@ class UpdateUserDetailsState extends State<UpdateUserDetails> {
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Wrap(direction: Axis.vertical, crossAxisAlignment: WrapCrossAlignment.center, children: [
-                      CircleAvatar(
-                          radius: 150,
-                          foregroundImage: img ?? (nsUser.haveImage ? NetworkImage(nsUser.getImage()) : (img ?? placeholder)),
-                          backgroundImage: const AssetImage(Res.userPlaceholder)),
+                      FutureBuilder(
+                          future: nsUser.getImage(),
+                          builder: (context, AsyncSnapshot s) {
+                            return s.hasData
+                                ? CircleAvatar(
+                                    radius: 150,
+                                    foregroundImage: img ?? (nsUser.haveImage ? NetworkImage(s.data) : (img ?? placeholder)),
+                                    backgroundImage: const AssetImage(Res.userPlaceholder))
+                                : const CircularProgressIndicator();
+                          }),
                       Row(children: [
                         SizedBox(width: 170, child: TextButton(onPressed: getImage, child: Text(isNew ? "Add Profile Picture" : "Change Profile Picture"))),
                         if (_image != null) const SizedBox(height: 20, child: VerticalDivider(color: Colors.grey, thickness: 1)),
@@ -517,8 +523,4 @@ class UpdateUserDetailsState extends State<UpdateUserDetails> {
   }
 
   final _formKey = GlobalKey<FormState>();
-
-  getUi() {
-    return Form(child: getDialogUi(), key: _formKey);
-  }
 }

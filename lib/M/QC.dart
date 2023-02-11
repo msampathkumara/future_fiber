@@ -79,7 +79,7 @@ class QC {
     dio.options.headers["authorization"] = "$idToken";
     Response<List<int>>? rs;
     try {
-      rs = await dio.get<List<int>>(Server.getServerApiPath(path + queryString), options: Options(responseType: ResponseType.bytes));
+      rs = await dio.get<List<int>>(await Server.getServerApiPath(path + queryString), options: Options(responseType: ResponseType.bytes));
     } catch (e) {
       if (e is DioError) {
         print("------------------------------------------------------------------------${e.response?.statusCode}");

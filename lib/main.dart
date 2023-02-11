@@ -45,7 +45,7 @@ main() async {
   await HiveBox.create();
 
   runLoggedApp(MaterialApp(
-      home: (!kIsWeb && isTestServer)
+      home: (!kIsWeb && await isTestServer)
           ? Scaffold(
               appBar: AppBar(title: const Text('Test'), backgroundColor: Colors.red, toolbarHeight: 50, centerTitle: true, actions: [
                 IconButton(onPressed: () async => {await App.changeToProduction()}, icon: const Icon(Icons.change_circle))
@@ -115,20 +115,27 @@ class _MainAppState extends State<MainApp> {
     return loading
         ? const Center(child: SizedBox(width: 200, height: 200, child: CircularProgressIndicator(color: Colors.red)))
         : MaterialApp(
-            home: Column(
-              children: [
-                if (kIsWeb && (isTestServer || isLocalServer))
-                  Container(
-                      height: 20,
-                      color: Colors.red,
-                      width: double.infinity,
-                      child: Center(child: Text(isTestServer ? 'Test server' : 'Local Server', style: const TextStyle(color: Colors.white, fontSize: 15)))),
-                Expanded(
-                    child: loading
-                        ? const Center(child: SizedBox(width: 200, height: 200, child: CircularProgressIndicator(color: Colors.red)))
-                        : (kIsWeb ? const WebApp() : const MobileApp())),
-              ],
-            ),
+            home: FutureBuilder<bool>(
+                future: isTestServer,
+                builder: (context, AsyncSnapshot<bool> _isTestServer) {
+                  return _isTestServer.hasData
+                      ? Column(
+                          children: [
+                            if (kIsWeb && (_isTestServer.data ?? false || isLocalServer))
+                              Container(
+                                  height: 20,
+                                  color: Colors.red,
+                                  width: double.infinity,
+                                  child: Center(
+                                      child: Text((_isTestServer.data ?? false) ? 'Test server' : 'Local Server', style: const TextStyle(color: Colors.white, fontSize: 15)))),
+                            Expanded(
+                                child: loading
+                                    ? const Center(child: SizedBox(width: 200, height: 200, child: CircularProgressIndicator(color: Colors.red)))
+                                    : (kIsWeb ? const WebApp() : const MobileApp())),
+                          ],
+                        )
+                      : Container();
+                }),
           );
   }
 }
@@ -173,7 +180,7 @@ late ThemeData appTheme;
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
 
-  final String title = "NS Smart Wind";
+  final String title = "NS SmartWind";
 
   @override
   _MyHomePageState createState() => _MyHomePageState();

@@ -55,6 +55,7 @@ class FCM {
           if (message.data["delete"] != null) {
             print('--------------------------delete-----------------');
             await HiveBox.cleanStandardLibrary();
+            HiveBox.getDataFromServer();
           }
         }
         HiveBox.getDataFromServer();

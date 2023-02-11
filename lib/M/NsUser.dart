@@ -213,7 +213,7 @@ class NsUser extends HiveClass {
 
   getUserImage() async {
     var token = await AppUser.getIdToken();
-    var img = NetworkImage(Server.getServerApiPath("users/getImage?img=${this.img}&size=500"), headers: {"authorization": '$token'});
+    var img = NetworkImage(await Server.getServerApiPath("users/getImage?img=${this.img}&size=500"), headers: {"authorization": '$token'});
 
     return (this.img).isEmpty ? getDefaultImage() : img;
   }
@@ -234,7 +234,7 @@ class NsUser extends HiveClass {
     return sections;
   }
 
-  String getImage({double size = 300}) {
+  Future<String> getImage({double size = 300}) {
     return Server.getServerPath("images/profilePictures/${size.toInt()}/$img");
   }
 

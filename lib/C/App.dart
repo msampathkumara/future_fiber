@@ -27,27 +27,31 @@ class App {
   static NsUser? get currentUser => getCurrentUser();
 
   static NsUser? getCurrentUser() {
-    // var prefs = await SharedPreferences.getInstance();
-    // var u = prefs.getString("user");
-    // if (u != null) {
-    //   currentUser = NsUser.fromJson(json.decode(u));
-    // }
     return AppUser.getUser();
   }
 
   static changeToProduction() async {
-    var x = HiveBox.getUserConfig();
+    var x = await HiveBox.getUserConfig();
     x.isTest = false;
-    await x.save();
+    if (x.isInBox) {
+      await x.save();
+    } else {
+      await HiveBox.userConfigBox.put(0, x);
+    }
+
     await HiveBox.cleanDb();
     await HiveBox.getDataFromServer(clean: true);
     Restart.restartApp(webOrigin: '/');
   }
 
   static changeToTestMode() async {
-    var x = HiveBox.getUserConfig();
+    var x = await HiveBox.getUserConfig();
     x.isTest = true;
-    await x.save();
+    if (x.isInBox) {
+      await x.save();
+    } else {
+      await HiveBox.userConfigBox.put(0, x);
+    }
     await HiveBox.getDataFromServer(clean: true);
     Restart.restartApp(webOrigin: '/');
   }

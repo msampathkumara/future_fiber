@@ -22,6 +22,8 @@ enum Filters { isRed, isRush, inPrint, isError, isGr, isSk, isHold, none, isQc, 
 
 enum Collection { User, Ticket, Any }
 
+enum TicketAction { startProduction }
+
 extension ProductionExtension on Production {
   String getValue() {
     return (this).toString().split('.').last.replaceAll('_', " ").trim();

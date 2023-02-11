@@ -4,6 +4,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:smartwind/M/PermissionsEnum.dart';
 import 'package:smartwind/Mobile/V/Home/Tickets/ProductionPool/TicketStartDialog.dart';
 import 'package:smartwind/Web/V/MaterialManagement/CPR/TicketCprList.dart';
+import 'package:smartwind/Web/V/ProductionPool/TicketPageSelector.dart';
 
 import '../../../../../C/Api.dart';
 import '../../../../../M/AppUser.dart';
@@ -168,7 +169,7 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                           Navigator.of(context).pop();
                         });
                       }),
-                        if ((!kIsWeb))
+                if ((!kIsWeb))
                   ListTile(
                       title: const Text("CS"),
                       leading: const Icon(Icons.pivot_table_chart_rounded, color: Colors.green),
@@ -177,7 +178,14 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                           Navigator.of(context).pop();
                         });
                       }),
-                        if (ticket.hasFile && AppUser.havePermissionFor(NsPermissions.TICKET_DELETE_TICKET))
+                if (kIsWeb)
+                  ListTile(
+                      title: const Text("Download CS Page"),
+                      leading: const Icon(Icons.request_page_rounded),
+                      onTap: () async {
+                        TicketPageSelector(ticket).show(context).then((value) => Navigator.of(context).pop());
+                      }),
+                if (ticket.hasFile && AppUser.havePermissionFor(NsPermissions.TICKET_DELETE_TICKET))
                   ListTile(
                       title: const Text("Delete PDF"),
                       leading: const Icon(NsIcons.delete, color: Colors.red),
@@ -299,7 +307,7 @@ bool searchByFilters(Ticket t, Filters dataFilter) {
 }
 
 Future<void> showOpenActions(Ticket ticket, BuildContext context1, reLoad, {required bool isPreCompleted}) async {
-  await showModalBottomSheet<void>(
+  return await showModalBottomSheet<void>(
     constraints: kIsWeb ? const BoxConstraints(maxWidth: 600, maxHeight: 200) : null,
     context: context1,
     builder: (BuildContext context) {
@@ -315,10 +323,7 @@ Future<void> showOpenActions(Ticket ticket, BuildContext context1, reLoad, {requ
                   leading: const Icon(Icons.not_started_outlined),
                   title: const Text('Start Production'),
                   onTap: () async {
-                    Navigator.of(context).pop();
-                    TicketStartDialog(ticket).show(context).then((t) => {
-                          if (t != null) {Ticket.open(context1, t, isPreCompleted: isPreCompleted)}
-                        });
+                    Navigator.of(context).pop(TicketAction.startProduction);
                   }),
             ListTile(
                 leading: const Icon(Icons.open_in_new_outlined),

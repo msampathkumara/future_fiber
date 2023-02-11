@@ -11,6 +11,8 @@ import '../../../M/Enums.dart';
 import '../../../Mobile/V/Widgets/NoResultFoundMsg.dart';
 import '../../../Mobile/V/Widgets/UserImage.dart';
 import '../../Styles/styles.dart';
+import 'GenaratePassword.dart';
+import 'UpdateUserDetails.dart';
 
 part 'webUserManager.table.dart';
 
@@ -115,12 +117,12 @@ class _WebUserManagerState extends State<WebUserManager> {
           child: FloatingActionButton(
               mini: true,
               onPressed: () async {
-                // UpdateUserDetails(NsUser()).show(context).then((NsUser? nsUser) async {
-                //   if (nsUser != null) {
-                //     await GeneratePassword(nsUser).show(context);
-                //   }
-                //   HiveBox.getDataFromServer();
-                // });
+                UpdateUserDetails(NsUser()).show(context).then((NsUser? nsUser) async {
+                  if (nsUser != null) {
+                    await GeneratePassword(nsUser).show(context);
+                  }
+                  HiveBox.getDataFromServer();
+                });
 
                 HiveBox.getDataFromServer(cleanUsers: true);
               },

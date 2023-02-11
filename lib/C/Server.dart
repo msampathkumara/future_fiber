@@ -8,14 +8,16 @@ class Server {
   static bool local = true;
   static String devServerIp = '192.168.0.100';
 
-  static String getServerAddress({onlineServer = false}) {
+  static Future<String> getServerAddress({onlineServer = false}) async {
     local = true;
+
+    return "https://smartwind.test.nsslsupportservices.com";
 
     if (kDebugMode && local && (!onlineServer)) {
       print(devServerIp);
       return "http://$devServerIp:3000";
     }
-    if (isTestServer) {
+    if (await isTestServer) {
       return "https://smartwind.test.nsslsupportservices.com";
     } else {
       if (kIsWeb && (!isLocalServer)) {
@@ -25,14 +27,14 @@ class Server {
     }
   }
 
-  static String getServerPath(String path, {onlineServer = false}) {
-    print("${getServerAddress(onlineServer: onlineServer)}/$path");
-    return "${getServerAddress(onlineServer: onlineServer)}/$path";
+  static Future<String> getServerPath(String path, {onlineServer = false}) async {
+    print("${await getServerAddress(onlineServer: onlineServer)}/$path");
+    return "${await getServerAddress(onlineServer: onlineServer)}/$path";
   }
 
-  static String getServerApiPath(String url, {onlineServer = false}) {
-    print("${getServerAddress(onlineServer: onlineServer)}/api/$url");
-    return "${getServerAddress(onlineServer: onlineServer)}/api/$url";
+  static Future<String> getServerApiPath(String url, {onlineServer = false}) async {
+    print("${await getServerAddress(onlineServer: onlineServer)}/api/$url");
+    return "${await getServerAddress(onlineServer: onlineServer)}/api/$url";
   }
 
   ///   [url] must be after api part without /
@@ -42,8 +44,8 @@ class Server {
     Dio dio = Dio();
     dio.options.headers['content-Type'] = 'application/json';
     dio.options.headers["authorization"] = "$idToken";
-    print('apiPost - ${Server.getServerApiPath(url)}');
-    return dio.post(Server.getServerApiPath(url), data: formData ?? (data));
+    print('apiPost - ${await Server.getServerApiPath(url)}');
+    return dio.post(await Server.getServerApiPath(url), data: formData ?? (data));
   }
 
   static Future<Response> serverGet(String url, Map<String, dynamic> data, {onlineServer = false}) async {
@@ -52,7 +54,7 @@ class Server {
     dio.options.headers['content-Type'] = 'application/json';
     dio.options.headers["authorization"] = "$idToken";
 
-    return dio.get(Server.getServerPath(url, onlineServer: onlineServer), queryParameters: data);
+    return dio.get(await Server.getServerPath(url, onlineServer: onlineServer), queryParameters: data);
   }
 
   static Future<Response> serverPost(String url, Map<String, dynamic> data, {bool onlineServer = false}) async {
@@ -61,6 +63,6 @@ class Server {
     dio.options.headers['content-Type'] = 'application/json';
     dio.options.headers["authorization"] = "$idToken";
 
-    return dio.post(Server.getServerPath(url, onlineServer: onlineServer), data: data);
+    return dio.post(await Server.getServerPath(url, onlineServer: onlineServer), data: data);
   }
 }

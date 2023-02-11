@@ -1,4 +1,3 @@
-
 import 'package:dio/dio.dart';
 import 'package:universal_html/html.dart' as html;
 
@@ -15,11 +14,11 @@ class Api {
       Dio dio = Dio();
       dio.options.headers['content-Type'] = 'application/json';
       dio.options.headers["authorization"] = "$idToken";
-      print('apiPost - ${Server.getServerApiPath(url)}');
+      print('apiPost - ${await Server.getServerApiPath(url)}');
 
       data["userCurrentSection"] = (AppUser.getSelectedSection()?.id ?? 0).toString();
 
-      return dio.post(Server.getServerApiPath(url), data: formData ?? (data), onSendProgress: onSendProgress);
+      return dio.post(await Server.getServerApiPath(url), data: formData ?? (data), onSendProgress: onSendProgress);
     } on DioError catch (e) {
       if (e.response?.statusCode == 401) {
         print(e.response?.statusCode);
@@ -41,7 +40,7 @@ class Api {
       data["userCurrentSection"] = (AppUser.getSelectedSection()?.id ?? 0).toString();
       print('userCurrentSection ${data["userCurrentSection"]}');
 
-      return dio.get(Server.getServerApiPath(url, onlineServer: onlineServer), queryParameters: data, cancelToken: cancelToken);
+      return dio.get(await Server.getServerApiPath(url, onlineServer: onlineServer), queryParameters: data, cancelToken: cancelToken);
     } on DioError catch (e) {
       if (e.response?.statusCode == 401) {
         print(e.response?.statusCode);
@@ -65,7 +64,7 @@ class Api {
       data["userCurrentSection"] = (AppUser.getSelectedSection()?.id ?? 0).toString();
       print('userCurrentSection ${data["userCurrentSection"]}');
 
-      Response response = await dio.get<List<int>>(Server.getServerApiPath(url), options: Options(responseType: ResponseType.bytes));
+      Response response = await dio.get<List<int>>(await Server.getServerApiPath(url), options: Options(responseType: ResponseType.bytes));
 
       print(response.headers['content-type']);
 

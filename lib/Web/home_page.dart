@@ -54,6 +54,8 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
 
   @override
   initState() {
+    print('HOME PAGE INIT');
+    HiveBox.getUserConfig();
     PackageInfo.fromPlatform().then((appInfo) {
       print(appInfo);
       setState(() {
@@ -83,7 +85,7 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     return LoginChangeWidget(
-        loginChild: const Text(""),
+        loginChild: const Text("cccc"),
         child: Scaffold(
           backgroundColor: Colors.grey.shade200,
           body: loading
@@ -128,10 +130,10 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                                                             useIndicator: true,
                                                             extended: false,
                                                             selectedIndex: _selectedIndex,
-                                                            onDestinationSelected: (int index) {
+                                                                onDestinationSelected: (int index) async {
                                                               var indexOf = routeWidgets.indexOf(null);
                                                               if (index == indexOf) {
-                                                                if (isLocalServer || isTestServer) {
+                                                                if (isLocalServer || await isTestServer) {
                                                                   Navigator.pushNamed(context, "/materialManagement");
                                                                 } else {
                                                                   html.window.open("https://mm.smartwind.nsslsupportservices.com", 'new tab');

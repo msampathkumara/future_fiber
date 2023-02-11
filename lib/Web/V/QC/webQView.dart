@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pdf_render/pdf_render_widgets.dart';
-import 'package:pdfx/pdfx.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/Web/Widgets/IfWeb.dart';
 import 'package:universal_html/html.dart' as html;
@@ -23,7 +22,7 @@ class webQView extends StatefulWidget {
 
 class _webQViewState extends State<webQView> {
   bool _pdfLoading = true;
-  PdfControllerPinch pdfPinchController = PdfControllerPinch(document: PdfDocument.openAsset('x.pdf'));
+  // PdfControllerPinch pdfPinchController = PdfControllerPinch(document: PdfDocument.openAsset('x.pdf'));
   var _data;
 
   @override
@@ -32,8 +31,8 @@ class _webQViewState extends State<webQView> {
       _data = value;
       _pdfLoading = false;
       setState(() {});
-      final document = PdfDocument.openData(value);
-      pdfPinchController.loadDocument(document);
+      // final document = PdfDocument.openData(value);
+      // pdfPinchController.loadDocument(document);
     });
 
     super.initState();
@@ -44,26 +43,26 @@ class _webQViewState extends State<webQView> {
     return IfWeb(elseIf: getUi(), child: DialogView(child: getUi()));
   }
 
-  getWebUi() {
-    return Scaffold(
-        appBar: AppBar(),
-        body: PdfViewPinch(
-          controller: pdfPinchController,
-          onDocumentError: (err) {
-            print(err);
-          },
-          onDocumentLoaded: (document) {
-            setState(() {
-              // _allPagesCount = document.pagesCount;
-            });
-          },
-          onPageChanged: (page) {
-            setState(() {
-              // _actualPageNumber = page;
-            });
-          },
-        ));
-  }
+  // getWebUi() {
+  //   return Scaffold(
+  //       appBar: AppBar(),
+  //       body: PdfViewPinch(
+  //         controller: pdfPinchController,
+  //         onDocumentError: (err) {
+  //           print(err);
+  //         },
+  //         onDocumentLoaded: (document) {
+  //           setState(() {
+  //             // _allPagesCount = document.pagesCount;
+  //           });
+  //         },
+  //         onPageChanged: (page) {
+  //           setState(() {
+  //             // _actualPageNumber = page;
+  //           });
+  //         },
+  //       ));
+  // }
 
   getUi() {
     return Scaffold(

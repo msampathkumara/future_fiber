@@ -250,6 +250,34 @@ class Ticket extends DataObject {
     return ticket.ticketFile;
   }
 
+  static Future getFileAsData(ticket, context, {onReceiveProgress}) async {
+    var path = 'tickets/getTicketFile?';
+
+    String queryString = Uri(queryParameters: {"id": ticket.id.toString()}).query;
+    final idToken = await AppUser.getIdToken(false);
+
+    Dio dio = Dio();
+    dio.options.headers["authorization"] = "$idToken";
+    Response<List<int>>? rs;
+    try {
+      rs = await dio.get<List<int>>(await Server.getServerApiPath(path + queryString), options: Options(responseType: ResponseType.bytes));
+    } catch (e) {
+      if (e is DioError) {
+        print("------------------------------------------------------------------------${e.response?.statusCode}");
+        // print(e);
+        if (e.response?.statusCode == 404) {
+          print('404');
+          const ErrorMessageView(errorMessage: 'Ticket Not Found', icon: Icons.broken_image_rounded).show(context);
+        } else {
+          print(e.message);
+        }
+      } else {}
+      // loadingWidget.close(context);
+    }
+
+    return rs?.data;
+  }
+
   static Future<void> open(context, Ticket ticket, {onReceiveProgress, isPreCompleted = false}) async {
     if ((!AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_ANY_PDF)) && ticket.isHold == 1) {
       return;
@@ -266,7 +294,7 @@ class Ticket extends DataObject {
       dio.options.headers["authorization"] = "$idToken";
       Response<List<int>>? rs;
       try {
-        rs = await dio.get<List<int>>(Server.getServerApiPath(path + queryString), options: Options(responseType: ResponseType.bytes));
+        rs = await dio.get<List<int>>(await Server.getServerApiPath(path + queryString), options: Options(responseType: ResponseType.bytes));
       } catch (e) {
         loadingWidget.close(context);
         if (e is DioError) {

@@ -44,12 +44,18 @@ class _UserImageState extends State<UserImage> {
           child: Stack(
             children: [
               ClipOval(
-                child: ColorFiltered(
-                    colorFilter: const ColorFilter.mode(
-                      Colors.white,
-                      BlendMode.saturation,
-                    ),
-                    child: getImage()),
+                child: FutureBuilder(
+                    future: getImage(),
+                    builder: (context, AsyncSnapshot d) {
+                      return d.hasData
+                          ? ColorFiltered(
+                              colorFilter: const ColorFilter.mode(
+                                Colors.white,
+                                BlendMode.saturation,
+                              ),
+                              child: d.data)
+                          : const CircularProgressIndicator();
+                    }),
               ),
               Icon(Icons.no_accounts_rounded, color: Colors.red, size: widget.radius * 0.6),
               if (nsUser.isLocked) Positioned(right: 0, top: 0, child: Icon(Icons.lock, color: Colors.red, size: widget.radius * 0.6))
@@ -59,10 +65,15 @@ class _UserImageState extends State<UserImage> {
       );
     }
 
-    return SizedBox(width: widget.radius * 2, height: widget.radius * 2, child: Padding(padding: EdgeInsets.all(widget.padding), child: getImage()));
+    return SizedBox(
+        width: widget.radius * 2,
+        height: widget.radius * 2,
+        child: Padding(
+            padding: EdgeInsets.all(widget.padding),
+            child: FutureBuilder(future: getImage(), builder: (context, AsyncSnapshot d) => d.hasData ? d.data : const CircularProgressIndicator())));
   }
 
-  Widget getImage() {
+  Future<Widget> getImage() async {
     return CircleAvatar(
         backgroundColor: Colors.white,
         radius: widget.radius,
@@ -70,7 +81,7 @@ class _UserImageState extends State<UserImage> {
           children: [
             ClipOval(
                 child: CachedNetworkImage(
-                    imageUrl: nsUser.getImage(size: widget.radius * 3),
+                    imageUrl: await nsUser.getImage(size: widget.radius * 3),
                     httpHeaders: {"authorization": '${AppUser.getIdToken()}'},
                     width: widget.radius * 2,
                     height: widget.radius * 2,

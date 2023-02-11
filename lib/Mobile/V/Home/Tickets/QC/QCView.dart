@@ -19,52 +19,53 @@ class QCView extends StatefulWidget {
 }
 
 class _QCViewState extends State<QCView> {
-  String? idToken;
+  // String? idToken;
 
   @override
   void initState() {
     super.initState();
-    var user = FirebaseAuth.instance.currentUser;
-    user!.getIdToken().then((value) {
-      setState(() {
-        idToken = value;
-      });
-    });
+    // var user = FirebaseAuth.instance.currentUser;
+    // user!.getIdToken().then((value) {
+    //   setState(() {
+    //     idToken = value;
+    //   });
+    // });
   }
 
   @override
   Widget build(BuildContext context) {
-    var uRL = Server.getServerApiPath("tickets/qc/qcImageView?id=${widget.qc.id}");
-
     return Scaffold(
         appBar: AppBar(
           title: Text("${widget.qc.ticket!.getName()}"),
         ),
-        body: idToken != null
-            // ? WebView(
-            //     onWebViewCreated: (WebViewController webViewController) {
-            //       Map<String, String> headers = {"authorization": "$idToken"};
-            //       webViewController.loadUrl(uRL, headers: headers);
-            //     },
-            //   )
+        body: FutureBuilder(
+            future: f(),
+            builder: (context, AsyncSnapshot<Map> d) {
+              return d.hasData
+                  ? WebViewWidget(
+                      controller: WebViewController()
+                        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+                        ..setNavigationDelegate(
+                          NavigationDelegate(
+                            onProgress: (int progress) {
+                              // Update loading bar.
+                            },
+                            onPageStarted: (String url) {},
+                            onPageFinished: (String url) {},
+                            onWebResourceError: (WebResourceError error) {},
+                            onNavigationRequest: (NavigationRequest request) {
+                              return NavigationDecision.navigate;
+                            },
+                          ),
+                        )
+                        ..loadRequest(Uri.parse(d.data!["url"]), headers: {"authorization": "${d.data!["idToken"]}"}))
+                  : const Center(child: CircularProgressIndicator());
+            }));
+  }
 
-            ? WebViewWidget(
-                controller: WebViewController()
-                  ..setJavaScriptMode(JavaScriptMode.unrestricted)
-                  ..setNavigationDelegate(
-                    NavigationDelegate(
-                      onProgress: (int progress) {
-                        // Update loading bar.
-                      },
-                      onPageStarted: (String url) {},
-                      onPageFinished: (String url) {},
-                      onWebResourceError: (WebResourceError error) {},
-                      onNavigationRequest: (NavigationRequest request) {
-                        return NavigationDecision.navigate;
-                      },
-                    ),
-                  )
-                  ..loadRequest(Uri.parse(uRL), headers: {"authorization": "$idToken"}))
-            : const Center(child: CircularProgressIndicator()));
+  f() async {
+    var user = FirebaseAuth.instance.currentUser;
+    var uRL = Server.getServerApiPath("tickets/qc/qcImageView?id=${widget.qc.id}");
+    return {"url": await uRL, "idToken": await user!.getIdToken()};
   }
 }

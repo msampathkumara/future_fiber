@@ -290,7 +290,7 @@ class UploadFile {
       Map m = value.data;
 
       if (m['error'] == true) {
-        errorMessage = m['invalidFileName'] == true ? 'Invalid File Name' : null;
+        errorMessage = m['invalidFileName'] == true ? 'Invalid File Name' : m["errorMsg"];
       }
 
       uploaded = true;

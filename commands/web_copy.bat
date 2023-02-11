@@ -1,1 +1,1 @@
-xcopy /s .\build\web ..\smartwind-server\UI /Y
+xcopy /s .\build\web /exclude:commands\webExcludedFileslist.txt ..\smartwind-server\UI /Y

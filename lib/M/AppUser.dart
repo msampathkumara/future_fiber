@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:restart_app/restart_app.dart';
 import 'package:smartwind/C/Api.dart';
+import 'package:smartwind/C/App.dart';
 import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/Enums.dart';
 import 'package:smartwind/M/NsUser.dart';
@@ -37,16 +38,17 @@ class AppUser extends NsUser {
   static var configKey = 0;
 
   static NsUser? getUser() {
-    return ((HiveBox.userConfigBox.get(0, defaultValue: UserConfig())))?.user;
+    // return (await HiveBox. getUserConfig()).user;
+    return ((HiveBox.userConfigBox.get(configKey, defaultValue: UserConfig())))?.user;
   }
 
   static Section? getSelectedSection() {
-    return getUserConfig().selectedSection;
+    return ((HiveBox.userConfigBox.get(configKey, defaultValue: UserConfig())))?.selectedSection;
   }
 
   static Future setSelectedSection(Section section) {
-    return Api.post(EndPoints.user_setUserSection, {'sectionId': section.id}).then((value) {
-      UserConfig userConfig = getUserConfig();
+    return Api.post(EndPoints.user_setUserSection, {'sectionId': section.id}).then((value) async {
+      UserConfig userConfig = await HiveBox.getUserConfig();
       userConfig.selectedSection = section;
       userConfig.save();
     });
@@ -56,9 +58,13 @@ class AppUser extends NsUser {
     _userIsAdmin = null;
     return Api.get(EndPoints.user_getUserData, {}).then((value) async {
       Map res = value.data;
+      print("user data responce");
       // print(res);
       NsUser nsUser = NsUser.fromJson(res["user"]);
+      // print(nsUser.toJson());
       await AppUser.setUser(nsUser);
+      print(App.currentUser?.toJson());
+
       DB.callChangesCallBack(DataTables.appUser);
       return nsUser;
     });
@@ -71,17 +77,18 @@ class AppUser extends NsUser {
   }
 
   static Future<void> setUser(NsUser nsUser) async {
-    UserConfig userConfig = getUserConfig();
+    UserConfig userConfig = await HiveBox.getUserConfig();
+    // UserConfig userConfig = HiveBox.userConfigBox.get(configKey, defaultValue: UserConfig()) ?? UserConfig();
     userConfig.user = nsUser;
     await userConfig.save();
-    // HiveBox.userConfigBox.put(configKey, userConfig);
+    // await HiveBox.userConfigBox.put(configKey, userConfig);
     // print(nsUser.toJson());
     updateUserChangers();
   }
 
-  static UserConfig getUserConfig() {
-    return HiveBox.userConfigBox.get(configKey, defaultValue: UserConfig()) ?? UserConfig();
-  }
+  // static UserConfig getUserConfig() {
+  //   return HiveBox.userConfigBox.get(configKey, defaultValue: UserConfig()) ?? UserConfig();
+  // }
 
   static final List<Function> listeners = [];
 
