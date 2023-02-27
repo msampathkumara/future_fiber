@@ -334,22 +334,22 @@ class _LoginState extends State<Login> {
       nfcCode = "";
       var e = error as DioError;
       var errmsg = '';
-      if (e.type == DioErrorType.response) {
+      if (e.type == DioErrorType.receiveTimeout) {
         print('catched');
-      } else if (e.type == DioErrorType.connectTimeout) {
+      } else if (e.type == DioErrorType.connectionTimeout) {
         print('check your connection');
         errmsg = 'check your connection';
       } else if (e.type == DioErrorType.receiveTimeout) {
         print('unable to connect to the server');
         errmsg = 'unable to connect to the server';
-      } else if (e.type == DioErrorType.other) {
+      } else {
         print('Something went wrong');
         errmsg = 'Something went wrong';
       }
       print(e);
 
       // print(stackTrace.toString());
-      ErrorMessageView(errorMessage: errmsg, errorDescription: e.message).show(context);
+      ErrorMessageView(errorMessage: errmsg, errorDescription: e.message.toString()).show(context);
       setLoading(false);
     });
   }

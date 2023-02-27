@@ -384,7 +384,7 @@ class _TicketInfoState extends State<TicketInfo> {
       _loading = true;
     });
     print('requesting data---------------');
-    Api.get((EndPoints.tickets_info_getTicketInfo1), {'ticket': __ticket.id.toString()}).then((value) {
+    Api.get((EndPoints.tickets_info_getTicketInfo), {'ticket': __ticket.id.toString()}).then((value) {
       if (kDebugMode) {
         print(' data recived---------------');
       }
@@ -547,7 +547,7 @@ class _TicketInfoState extends State<TicketInfo> {
             : {
                 openFile().then((value) {
                   if (value == TicketAction.startProduction) {
-                    TicketStartDialog(_ticket).show(context).then((t) async {
+                    TicketStartDialog(_ticket).show(context).then((Ticket? t) async {
                       print('TicketStartDialog');
                       print(t);
                       if (t != null) {
@@ -555,6 +555,7 @@ class _TicketInfoState extends State<TicketInfo> {
                         setState(() {
                           _ticket = t;
                         });
+                        Ticket.open(context, _ticket, isPreCompleted: isPreCompleted(progressList));
                       }
                     });
                   }

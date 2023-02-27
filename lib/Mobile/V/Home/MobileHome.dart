@@ -66,7 +66,7 @@ class _MobileHomeState extends State<MobileHome> {
   var serverType = Server.local ? " | Local Server" : " |  Online";
 
   @override
-  Future<void> initState() async {
+  initState() {
     super.initState();
 
     SharedPreferences.getInstance().then((value) => prefs = value);
@@ -94,9 +94,13 @@ class _MobileHomeState extends State<MobileHome> {
     onUserUpdate();
     AppUser.onUpdate(onUserUpdate);
 
-    if (await isTestServer) {
-      serverType = 'Test Server';
-    }
+    isTestServer.then((value) {
+      if (value) {
+        setState(() {
+          serverType = 'Test Server';
+        });
+      }
+    });
   }
 
   String? idToken;

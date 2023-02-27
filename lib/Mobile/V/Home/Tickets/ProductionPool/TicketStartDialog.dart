@@ -12,7 +12,7 @@ class TicketStartDialog extends StatefulWidget {
   @override
   State<TicketStartDialog> createState() => _TicketStartDialogState();
 
-  Future show(context) {
+  Future<Ticket?> show(context) {
     return showDialog(context: context, builder: (_) => this);
   }
 }

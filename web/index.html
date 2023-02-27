@@ -44,7 +44,6 @@
         window.workaround_for_flutter_93615 = true;
 
 
-
     </script>
 
 
@@ -82,84 +81,53 @@
 <!-- This script installs service_worker.js to provide PWA functionality to
      application. For more information, see:
      https://developers.google.com/web/fundamentals/primers/service-workers -->
+
 <script>
-    // const serviceWorkerVersion = null;
-    // let scriptLoaded = false;
-    //
-    // function loadMainDartJs() {
-    //     if (scriptLoaded) {
-    //         return;
-    //     }
-    //     scriptLoaded = true;
-    //     const scriptTag = document.createElement('script');
-    //     scriptTag.src = 'main.dart.js';
-    //     scriptTag.type = 'application/javascript';
-    //     document.body.append(scriptTag);
-    // }
-    //
-    // if ('serviceWorker' in navigator) {
-    //
-    //     // Service workers are supported. Use them.
-    //     window.addEventListener('load', function () {
-    //
-    //         const loading = document.querySelector('#loading');
-    //         loading.textContent = "Loading entrypoints..";
-    //
-    //         // Wait for registration to finish before dropping the <script> tag.
-    //         // Otherwise, the browser will load the script multiple times,
-    //         // potentially different versions.
-    //         const serviceWorkerUrl = 'flutter_service_worker.js?v=' + serviceWorkerVersion;
-    //         navigator.serviceWorker.register(serviceWorkerUrl)
-    //             .then((reg) => {
-    //                 function waitForActivation(serviceWorker) {
-    //                     serviceWorker.addEventListener('statechange', () => {
-    //                         if (serviceWorker.state === 'activated') {
-    //                             console.log('Installed new service worker.');
-    //                             loadMainDartJs();
-    //                         }
-    //                     });
-    //                 }
-    //
-    //                 if (!reg.active && (reg.installing || reg.waiting)) {
-    //                     // No active web worker and we have installed or are installing
-    //                     // one for the first time. Simply wait for it to activate.
-    //                     waitForActivation(reg.installing || reg.waiting);
-    //                 } else if (!reg.active.scriptURL.endsWith(serviceWorkerVersion)) {
-    //                     // When the app updates the serviceWorkerVersion changes, so we
-    //                     // need to ask the service worker to update.
-    //                     console.log('New service worker available.');
-    //                     reg.update();
-    //                     waitForActivation(reg.installing);
-    //                 } else {
-    //                     // Existing service worker is still good.
-    //                     console.log('Loading app from service worker.');
-    //                     loadMainDartJs();
-    //                 }
-    //             });
-    //
-    //
-    //         _flutter.loader.loadEntrypoint({serviceWorker: {serviceWorkerVersion: serviceWorkerVersion}}).then(function (engineInitializer) {
-    //             loading.textContent = "Initializing engine...";
-    //             return engineInitializer.initializeEngine();
-    //         }).then(function (appRunner) {
-    //             loading.textContent = "Running app...";
-    //             return appRunner.runApp();
-    //         });
-    //
-    //         // If service worker doesn't succeed in a reasonable amount of time,
-    //         // fallback to plaint <script> tag.
-    //         setTimeout(() => {
-    //             if (!scriptLoaded) {
-    //                 console.warn('Failed to load app from service worker. Falling back to plain <script> tag.');
-    //                 loadMainDartJs();
-    //             }
-    //         }, 4000);
-    //     });
-    // } else {
-    //     // Service workers not supported. Just drop the <script> tag.
-    //     loadMainDartJs();
-    // }
-    //
+
+    function checkNewVersion() {
+
+        //getting rid of undesired cache before running the app
+        const seconds = new Date().getTime();
+        const xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("GET", '/version.json?v=' + seconds, true);
+        xmlhttp.onload = function () {
+            if (xmlhttp.status === 200) {
+                const buildNumber = xmlhttp.responseText;
+                const currentBuildNumber = window.localStorage.getItem('buildNumber');
+
+                if (currentBuildNumber && currentBuildNumber !== buildNumber) {
+                    // alert(buildNumber);
+                    caches.delete('flutter-app-manifest');
+                    caches.delete('flutter-temp-cache');
+                    caches.delete('flutter-app-cache');
+                    console.log("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn");
+                }
+
+                window.localStorage.setItem('buildNumber', buildNumber);
+            }
+            navigator.serviceWorker.register('flutter_service_worker.js');
+        }
+        xmlhttp.error = function () {
+            navigator.serviceWorker.register('flutter_service_worker.js');
+        }
+        xmlhttp.abort = function () {
+            navigator.serviceWorker.register('flutter_service_worker.js');
+        }
+        xmlhttp.timeout = function () {
+            navigator.serviceWorker.register('flutter_service_worker.js');
+        }
+        xmlhttp.send();
+    }
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+            checkNewVersion();
+        });
+    }
+    setInterval(function () {
+        checkNewVersion();
+    }, 60 * 1000 * 5);
+
 
     function deleteAllCookies() {
         const cookies = document.cookie.split(";");
@@ -170,13 +138,14 @@
             const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
             document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
         }
+        caches.delete('flutter-app-manifest');
+        caches.delete('flutter-temp-cache');
+        caches.delete('flutter-app-cache');
         window.location.reload();
 
         console.log('reload');
 
     }
-
-
 
 
 </script>
@@ -204,12 +173,11 @@
     });
 
 
-
 </script>
 <script>
     async function download() {
-        var pdfAsDataUri = "data:application/pdf;base64, " + pdfData;
-        var link = document.createElement('a');
+        const pdfAsDataUri = "data:application/pdf;base64, " + pdfData;
+        const link = document.createElement('a');
         link.download = filename;
         link.href = pdfAsDataUri;
         link.type = 'application/pdf';

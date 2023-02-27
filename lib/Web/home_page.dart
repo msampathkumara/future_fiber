@@ -85,7 +85,7 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     return LoginChangeWidget(
-        loginChild: const Text("cccc"),
+        loginChild: const Text(" "),
         child: Scaffold(
           backgroundColor: Colors.grey.shade200,
           body: loading

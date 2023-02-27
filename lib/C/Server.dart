@@ -11,8 +11,6 @@ class Server {
   static Future<String> getServerAddress({onlineServer = false}) async {
     local = true;
 
-    return "https://smartwind.test.nsslsupportservices.com";
-
     if (kDebugMode && local && (!onlineServer)) {
       print(devServerIp);
       return "http://$devServerIp:3000";

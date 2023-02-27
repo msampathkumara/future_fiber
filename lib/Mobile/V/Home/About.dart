@@ -48,7 +48,7 @@ class _AboutState extends State<About> {
             if (now - lastTap < 1000) {
               print("Consecutive tap");
               consecutiveTaps++;
-              print("taps = " + consecutiveTaps.toString());
+              print("taps = $consecutiveTaps");
               if (consecutiveTaps > 4) {
                 App.changeToTestMode();
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Activate Test Mode")));

@@ -40,7 +40,7 @@ class App {
     }
 
     await HiveBox.cleanDb();
-    await HiveBox.getDataFromServer(clean: true);
+    await HiveBox.getDataFromServer(clean: true, cleanUsers: true);
     Restart.restartApp(webOrigin: '/');
   }
 
@@ -52,7 +52,8 @@ class App {
     } else {
       await HiveBox.userConfigBox.put(0, x);
     }
-    await HiveBox.getDataFromServer(clean: true);
+    await HiveBox.cleanDb();
+    await HiveBox.getDataFromServer(clean: true, cleanUsers: true);
     Restart.restartApp(webOrigin: '/');
   }
 

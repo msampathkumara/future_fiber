@@ -134,12 +134,12 @@ class _KitViewState extends State<KitView> {
                                 Expanded(
                                     child: SizedBox(
                                         width: double.infinity,
-                                        child: DataTable2(smRatio: 0.2, columns: [
-                                          const DataColumn2(label: Text(''), size: ColumnSize.S),
-                                          const DataColumn2(label: Text('Item'), size: ColumnSize.L),
-                                          const DataColumn2(label: Text('Qty'), size: ColumnSize.M),
-                                          const DataColumn2(label: Text('Date'), size: ColumnSize.M),
-                                          const DataColumn2(label: Text('User'), size: ColumnSize.L),
+                                        child: DataTable(columns: [
+                                          const DataColumn(label: Text('')),
+                                          const DataColumn(label: Text('Item')),
+                                          const DataColumn(label: Text('Qty')),
+                                          const DataColumn(label: Text('Date')),
+                                          const DataColumn(label: Text('User')),
                                           if (_canDeleted) const DataColumn(label: Text(''))
                                         ], rows: [
                                           for (var material in _kit.items) getMatRow(material),
@@ -295,7 +295,7 @@ class _KitViewState extends State<KitView> {
 
   List<int> checkingMaterials = [];
 
-  checkMaterial(KitItem material, bool checked) {
+  Future checkMaterial(KitItem material, bool checked) {
     checkingMaterials.add(material.id);
     return Api.post(EndPoints.materialManagement_kit_checkItem, {'checked': checked, 'itemId': material.id, 'id': _kit.id}).then((res) {
       checkingMaterials.remove(material.id);
@@ -362,19 +362,17 @@ class _KitViewState extends State<KitView> {
 
   getMatRow(KitItem material) {
     NsUser? user = (material.user);
-    return DataRow2(cells: [
+    print('AppUser.havePermissionFor(NsPermissions.KIT_CHECK_MATERIALS) ${AppUser.havePermissionFor(NsPermissions.KIT_CHECK_MATERIALS)}');
+    return DataRow(cells: [
       DataCell(checkingMaterials.contains(material.id)
-          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 1.5))
+          ? const Padding(padding: EdgeInsets.all(8.0), child: Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 1.5))))
           : Checkbox(
               value: material.isChecked(),
-              onChanged: (AppUser.havePermissionFor(NsPermissions.KIT_CHECK_MATERIALS))
+              onChanged: (AppUser.havePermissionFor(NsPermissions.CPR_CHECK_CPR_ITEMS))
                   ? (checked) {
-                      if (checked != null) {
-                        checkMaterial(material, checked);
-                      }
-                      setState(() {
-                        material.setChecked(checked!);
-                      });
+                      material.setChecked(checked!);
+                      setState(() {});
+                      checkMaterial(material, checked);
                     }
                   : null)),
       DataCell(Text(material.item)),

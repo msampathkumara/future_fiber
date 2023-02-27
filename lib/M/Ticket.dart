@@ -363,7 +363,7 @@ class Ticket extends DataObject {
     t.keys.where((k) => (t[k] ?? "").toString().isEmpty).toList().forEach(t.remove);
     print("____________________________________________________________________________________________________________________________*****");
     print(t.toString());
-    var serverUrl = Server.getServerApiPath(ticket.isStandardFile ? "tickets/standard/uploadEdits" : "tickets/uploadEdits");
+    String serverUrl = await Server.getServerApiPath(ticket.isStandardFile ? "tickets/standard/uploadEdits" : "tickets/uploadEdits");
     var userCurrentSection = (AppUser.getSelectedSection()?.id ?? 0).toString();
     return await platform.invokeMethod(
         'editPdf', {'path': ticket.ticketFile!.path, 'userCurrentSection': userCurrentSection.toString(), 'fileID': ticket.id, 'ticket': t.toString(), "serverUrl": serverUrl});
@@ -507,22 +507,22 @@ class Ticket extends DataObject {
     }).catchError((error, stackTrace) {
       var e = error as DioError;
       var errmsg = '';
-      if (e.type == DioErrorType.response) {
+      if (e.type == DioErrorType.unknown) {
         print('catched');
-      } else if (e.type == DioErrorType.connectTimeout) {
+      } else if (e.type == DioErrorType.connectionTimeout) {
         print('check your connection');
         errmsg = 'check your connection';
       } else if (e.type == DioErrorType.receiveTimeout) {
         print('unable to connect to the server');
         errmsg = 'unable to connect to the server';
-      } else if (e.type == DioErrorType.other) {
+      } else {
         print('Something went wrong');
         errmsg = 'Something went wrong';
       }
       print(e);
 
       // print(stackTrace.toString());
-      ErrorMessageView(errorMessage: errmsg, errorDescription: e.message).show(context);
+      ErrorMessageView(errorMessage: errmsg, errorDescription: e.message ?? '').show(context);
 
       print(error);
     });

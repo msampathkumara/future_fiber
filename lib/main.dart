@@ -22,9 +22,17 @@ import 'firebase_options.dart';
 import 'globals.dart';
 import 'mainFuncs.dart';
 
-void runLoggedApp(Widget app) async {
-  runZoned(() {
-    runApp(app);
+void runLoggedApp() async {
+  runZoned(() async {
+    await HiveBox.create();
+    runApp(MaterialApp(
+        home: (!kIsWeb && await isTestServer)
+            ? Scaffold(
+                appBar: AppBar(title: const Text('Test'), backgroundColor: Colors.red, toolbarHeight: 50, centerTitle: true, actions: [
+                  IconButton(onPressed: () async => {await App.changeToProduction()}, icon: const Icon(Icons.change_circle))
+                ]),
+                body: const MainApp())
+            : const MainApp()));
   }, zoneSpecification: ZoneSpecification(print: (Zone self, ZoneDelegate parent, Zone zone, String line) {
     if (kDebugMode) {
       parent.print(zone, "out > $line");
@@ -42,16 +50,7 @@ main() async {
 
   isMaterialManagement = x;
 
-  await HiveBox.create();
-
-  runLoggedApp(MaterialApp(
-      home: (!kIsWeb && await isTestServer)
-          ? Scaffold(
-              appBar: AppBar(title: const Text('Test'), backgroundColor: Colors.red, toolbarHeight: 50, centerTitle: true, actions: [
-                IconButton(onPressed: () async => {await App.changeToProduction()}, icon: const Icon(Icons.change_circle))
-              ]),
-              body: const MainApp())
-          : const MainApp()));
+  runLoggedApp();
 }
 
 Future mainThings({viewIssMaterialManagement = false}) async {

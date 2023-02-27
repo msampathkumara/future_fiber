@@ -40,7 +40,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
 
   NsUser? nsUser;
 
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+  // final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   late DbChangeCallBack _dbChangeCallBack;
 
@@ -248,61 +248,49 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
   }
 
   getTicketListByCategory(List<Ticket> filesList) {
+    GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
     return Column(children: [
       Expanded(
           child: RefreshIndicator(
               key: _refreshIndicatorKey,
               onRefresh: () {
                 return HiveBox.getDataFromServer().then((value) {
-                  loadData();
+                  _refreshIndicatorKey.currentState?.show();
                 });
               },
               child: Padding(
                   padding: const EdgeInsets.only(top: 16),
                   child: filesList.isNotEmpty
                       ? ListView.separated(
-                          padding: const EdgeInsets.all(8),
-                          itemCount: filesList.length,
-                          itemBuilder: (BuildContext context1, int index) {
-                            // print(FilesList[index]);
-                            Ticket ticket = (filesList[index]);
-                            // print(ticket.toJson());
-                            return TicketTile(index, ticket, onLongPress: () async {
-                              print('Long pres');
-                              await showTicketOptions(ticket, context1, context, loadData: () {
-                                loadData();
+                    padding: const EdgeInsets.all(8),
+                    itemCount: filesList.length,
+                    itemBuilder: (BuildContext context1, int index) {
+                      // print(FilesList[index]);
+                      Ticket ticket = (filesList[index]);
+                      // print(ticket.toJson());
+                      return TicketTile(index, ticket, onLongPress: () async {
+                        print('Long pres');
+                        await showTicketOptions(ticket, context1, context, loadData: () {
+                          _refreshIndicatorKey.currentState?.show();
                               });
 
                               setState(() {});
                             }, onReload: () {
                               print('************************************************************************************************************');
-                              loadData();
+                              _refreshIndicatorKey.currentState?.show();
                             });
                           },
                           separatorBuilder: (BuildContext context, int index) {
                             return const Divider(height: 1, endIndent: 0.5, color: Colors.black12);
                           },
                         )
-                      : const Center(child: NoResultFoundMsg()))))
+                      : Center(child: NoResultFoundMsg(onRetry: () {
+                          _refreshIndicatorKey.currentState?.show();
+                        })))))
     ]);
   }
 
   List<Ticket> _load(selectedProduction, section, showAllTickets, String searchText, {bySection = false, byProduction = false}) {
-    // var tickets = HiveBox.ticketBox.values.where((ticket) {
-    //   if (ticket.isStarted) {
-    //     wipCountMap[selectedProduction]++;
-    //   }
-    //
-    //   return (filterByStart ? ticket.isStarted : true) &&
-    //       (_filterByPdf ? ticket.hasFile : true) &&
-    //       (_filterByNoPdf ? ticket.hasNoFile : true) &&
-    //       searchText.containsInArrayIgnoreCase([ticket.mo, ticket.oe]) &&
-    //       searchByFilters(ticket, dataFilter) &&
-    //       searchByProduction(ticket, selectedProduction);
-    // }).toList();
-    //
-    // return tickets;
-
     List<Ticket> l = HiveBox.ticketBox.values.where((t) {
       if ((_filterByPdf ? t.hasNoFile : false)) {
         return false;

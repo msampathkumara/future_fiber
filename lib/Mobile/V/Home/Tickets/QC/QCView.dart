@@ -24,12 +24,6 @@ class _QCViewState extends State<QCView> {
   @override
   void initState() {
     super.initState();
-    // var user = FirebaseAuth.instance.currentUser;
-    // user!.getIdToken().then((value) {
-    //   setState(() {
-    //     idToken = value;
-    //   });
-    // });
   }
 
   @override
@@ -45,8 +39,7 @@ class _QCViewState extends State<QCView> {
                   ? WebViewWidget(
                       controller: WebViewController()
                         ..setJavaScriptMode(JavaScriptMode.unrestricted)
-                        ..setNavigationDelegate(
-                          NavigationDelegate(
+                        ..setNavigationDelegate(NavigationDelegate(
                             onProgress: (int progress) {
                               // Update loading bar.
                             },
@@ -55,9 +48,7 @@ class _QCViewState extends State<QCView> {
                             onWebResourceError: (WebResourceError error) {},
                             onNavigationRequest: (NavigationRequest request) {
                               return NavigationDecision.navigate;
-                            },
-                          ),
-                        )
+                            }))
                         ..loadRequest(Uri.parse(d.data!["url"]), headers: {"authorization": "${d.data!["idToken"]}"}))
                   : const Center(child: CircularProgressIndicator());
             }));
@@ -65,7 +56,7 @@ class _QCViewState extends State<QCView> {
 
   f() async {
     var user = FirebaseAuth.instance.currentUser;
-    var uRL = Server.getServerApiPath("tickets/qc/qcImageView?id=${widget.qc.id}");
-    return {"url": await uRL, "idToken": await user!.getIdToken()};
+    var uRL = await Server.getServerApiPath("tickets/qc/qcImageView?id=${widget.qc.id}");
+    return {"url": uRL, "idToken": await user!.getIdToken()};
   }
 }

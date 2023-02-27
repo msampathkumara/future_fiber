@@ -76,75 +76,64 @@ class _AddMaterialsState extends State<AddMaterials> {
             child: const Icon(Icons.save_rounded)),
         appBar: AppBar(title: const Text('Add Materials')),
         body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  const Spacer(),
-                  TextButton(
-                      onPressed: () async {
-                        List<CprItem>? items = await const DropMaterialList().show(context);
-                        if (items != null) {
-                          for (var element in items) {
-                            _addMaterialToList(KitItem.fromJson(element.toJson()));
+            padding: const EdgeInsets.all(16.0),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    const Spacer(),
+                    TextButton(
+                        onPressed: () async {
+                          List<CprItem>? items = await const DropMaterialList().show(context);
+                          if (items != null) {
+                            for (var element in items) {
+                              _addMaterialToList(KitItem.fromJson(element.toJson()));
+                            }
+                            setState(() {});
                           }
-                          setState(() {});
-                        }
-                      },
-                      child: const Text("Add from csv")),
-                  TextButton(
-                      onPressed: () async {
-                        List? items = await const PastMaterialRow().show(context);
-                        if (items != null) {
-                          for (var element in items) {
-                            _addMaterialToList(KitItem.fromJson(element.toJson()));
+                        },
+                        child: const Text("Add from csv")),
+                    TextButton(
+                        onPressed: () async {
+                          List? items = await const PastMaterialRow().show(context);
+                          if (items != null) {
+                            for (var element in items) {
+                              _addMaterialToList(KitItem.fromJson(element.toJson()));
+                            }
+                            setState(() {});
                           }
-                          setState(() {});
-                        }
-                      },
-                      child: const Text("Past row from excel"))
-                ],
+                        },
+                        child: const Text("Past row from excel"))
+                  ],
+                ),
               ),
-            ),
-            Card(
-              child: Padding(
+              Card(
+                  child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(children: [
                   Flexible(
                       child: SearchField(
-                    controller: textEditingController,
-                    onSubmit: (v) {
-                      currentMaterial.item = v;
-                      setState(() {});
-                    },
-                    suggestions: _matList.map((e) => SearchFieldListItem(e)).toList(),
-                    suggestionState: Suggestion.expand,
-                    textInputAction: TextInputAction.next,
-                    hint: 'Material',
-                    hasOverlay: true,
-                    searchStyle: TextStyle(
-                      fontSize: 15,
-                      color: Colors.black.withOpacity(0.8),
-                    ),
-                    searchInputDecoration: InputDecoration(
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.black.withOpacity(0.8),
-                        ),
-                      ),
-                      border: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.red),
-                      ),
-                    ),
-                    maxSuggestionsInViewPort: 6,
-                    itemHeight: 50,
-                    onSuggestionTap: (v) {
-                      currentMaterial.item = v.searchKey;
-                      setState(() {});
-                    },
-                  )),
+                          controller: textEditingController,
+                          onSubmit: (v) {
+                            currentMaterial.item = v;
+                            setState(() {});
+                          },
+                          suggestions: _matList.map((e) => SearchFieldListItem(e)).toList(),
+                          suggestionState: Suggestion.expand,
+                          textInputAction: TextInputAction.next,
+                          hint: 'Material',
+                          hasOverlay: true,
+                          searchStyle: TextStyle(fontSize: 15, color: Colors.black.withOpacity(0.8)),
+                          searchInputDecoration: InputDecoration(
+                              focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black.withOpacity(0.8))),
+                              border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.red))),
+                          maxSuggestionsInViewPort: 6,
+                          itemHeight: 36,
+                          onSuggestionTap: (v) {
+                            currentMaterial.item = v.searchKey;
+                            setState(() {});
+                          })),
                   const SizedBox(width: 8),
                   SizedBox(
                       width: 100,
@@ -171,41 +160,36 @@ class _AddMaterialsState extends State<AddMaterials> {
                                 },
                           icon: const Icon(Icons.add_rounded)))
                 ]),
-              ),
-            ),
-            getOptions(_selectedItems),
-            Expanded(
-                child: Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: SizedBox(
-                  width: double.infinity,
-                  child: Card(
-                    elevation: 4,
-                    child: DataTable2(
-                      showCheckboxColumn: false,
-                      checkboxHorizontalMargin: 12,
-                      columns: const [
-                        DataColumn2(label: Text('Item', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)), size: ColumnSize.L),
-                        DataColumn2(label: Text('Qty', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)), size: ColumnSize.L),
-                      ],
-                      rows: kit.items
-                          .map<DataRow>((item) => DataRow2(
-                                  color: MaterialStateColor.resolveWith((states) => item.selected ? Colors.orange.shade100 : Colors.white),
-                                  onSelectChanged: (s) {
-                                    item.selected = s!;
-                                    setState(() {});
-                                  },
-                                  selected: item.selected,
-                                  cells: [
-                                    DataCell(Text(item.item)),
-                                    DataCell(Text(item.qty)),
-                                  ]))
-                          .toList(),
-                    ),
-                  )),
-            )),
-          ]),
-        ));
+              )),
+              getOptions(_selectedItems),
+              Expanded(
+                  child: Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: SizedBox(
+                          width: double.infinity,
+                          child: Card(
+                              elevation: 4,
+                              child: DataTable2(
+                                  showCheckboxColumn: false,
+                                  checkboxHorizontalMargin: 12,
+                                  columns: const [
+                                    DataColumn2(label: Text('Item', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)), size: ColumnSize.L),
+                                    DataColumn2(label: Text('Qty', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)), size: ColumnSize.L)
+                                  ],
+                                  rows: kit.items
+                                      .map<DataRow>((item) => DataRow2(
+                                              color: MaterialStateColor.resolveWith((states) => item.selected ? Colors.orange.shade100 : Colors.white),
+                                              onSelectChanged: (s) {
+                                                item.selected = s!;
+                                                setState(() {});
+                                              },
+                                              selected: item.selected,
+                                              cells: [
+                                                DataCell(Text(item.item)),
+                                                DataCell(Text(item.qty)),
+                                              ]))
+                                      .toList())))))
+            ])));
   }
 
   getUi() {}
