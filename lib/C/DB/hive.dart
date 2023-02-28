@@ -99,7 +99,7 @@ class HiveBox {
               printWarning('db_upon updated');
               if (userConfig.triggerEventTimes.resetDb == upon['resetDb']) {
                 printWarning('Reset Database');
-                HiveBox.getDataFromServer(clean: true);
+                HiveBox.getDataFromServer(clean: true, cancelable: false);
                 userConfig.triggerEventTimes.resetDb = upon['resetDb'];
                 printWarning('Reset Database Done');
               } else {
@@ -163,7 +163,7 @@ class HiveBox {
   static bool pendingNextGetDataFromServer = false;
   static CancelToken cancelToken = CancelToken();
 
-  static Future getDataFromServer({clean = false, afterLoad, cleanUsers = false}) async {
+  static Future getDataFromServer({clean = false, afterLoad, cleanUsers = false, cleanStandard = false, cancelable = true}) async {
     print('__________________________________________________________________________________________________________getDataFromServer');
 
     if (clean) {
@@ -187,8 +187,10 @@ class HiveBox {
       print('user not logged in not calling to server ');
       return null;
     }
-    cancelToken.cancel();
-    cancelToken = CancelToken();
+    if (cancelable) {
+      cancelToken.cancel();
+      cancelToken = CancelToken();
+    }
     return Api.get((EndPoints.data_getData), d, cancelToken: cancelToken).then((Response response) async {
       print('__________________________________________________________________________________________________________Api ->> getDataFromServer');
       await getUserConfig();
@@ -200,6 +202,9 @@ class HiveBox {
         await standardTicketsBox.clear();
       } else if (cleanUsers) {
         await usersBox.clear();
+      }
+      if (cleanStandard) {
+        await standardTicketsBox.clear();
       }
 
       // print('5');

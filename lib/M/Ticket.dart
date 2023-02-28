@@ -251,7 +251,7 @@ class Ticket extends DataObject {
   }
 
   static Future getFileAsData(ticket, context, {onReceiveProgress}) async {
-    var path = 'tickets/getTicketFile?';
+    var path = "${EndPoints.tickets_getTicketFile}?";
 
     String queryString = Uri(queryParameters: {"id": ticket.id.toString()}).query;
     final idToken = await AppUser.getIdToken(false);
@@ -287,7 +287,7 @@ class Ticket extends DataObject {
       var loadingWidget = const Loading(loadingText: "Downloading Ticket");
       loadingWidget.show(context);
 
-      var path = ticket.isStandardFile ? "tickets/standard/getPdf?" : 'tickets/getTicketFile?';
+      var path = ticket.isStandardFile ? "${EndPoints.tickets_standard_getPdf}?" : '${EndPoints.tickets_getTicketFile}?';
       String queryString = Uri(queryParameters: {"id": ticket.id.toString()}).query;
       final idToken = await AppUser.getIdToken(false);
       Dio dio = Dio();

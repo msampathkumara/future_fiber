@@ -312,7 +312,7 @@ class _WebAdminState extends State<WebAdmin> {
   }
 
   void loadSettings() {
-    Api.get("admin/settings/getSettings", {}).then((res) {
+    Api.get(EndPoints.admin_settings_getSettings, {}).then((res) {
       Map data = res.data;
       print(data);
       _settings = Settings.fromJson(data['settings']);

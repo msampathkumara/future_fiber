@@ -23,7 +23,7 @@ Future<File?> _getFile(Ticket ticket, context, {onReceiveProgress}) async {
 
   Response response;
   try {
-    var path = ticket.isStandardFile ? "tickets/standard/getPdf?" : 'tickets/getTicketFile?';
+    var path = ticket.isStandardFile ? "${EndPoints.tickets_standard_getPdf}?" : '${EndPoints.tickets_getTicketFile}?';
 
     await dio.download(await Server.getServerApiPath(path + queryString), filePath, deleteOnError: true, onReceiveProgress: (
       received,
