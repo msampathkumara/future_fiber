@@ -474,7 +474,7 @@ class UpdateUserDetailsState extends State<UpdateUserDetails> {
     String fileName = imagePath ?? "".split('/').last;
     FormData formData = FormData.fromMap({"file": MultipartFile.fromBytes(imageByte!, filename: fileName)});
 
-    var response = await Api.post(("users/saveImage"), {}, formData: formData);
+    var response = await Api.post((EndPoints.users_saveImage), {}, formData: formData);
     print(response.data);
     return response.data['id'];
   }

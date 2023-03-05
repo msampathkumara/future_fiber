@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/QC.dart';
 import 'package:smartwind/M/Section.dart';
 import 'package:smartwind/Mobile/V/Widgets/SearchBar.dart';
@@ -208,7 +209,7 @@ class _WebQcState extends State<WebQc> {
 
     // type=All&pageSize=100&sortBy=mo&pageIndex=0&searchText=&sortDirection=asc&production=all
 
-    return Api.get("tickets/qc/getList", {
+    return Api.get(EndPoints.tickets_qc_getList, {
       'production': selectedProduction.getValue(),
       "type": _selectedType.getValue(),
       'sortDirection': sortedAsc ? "asc" : "desc",

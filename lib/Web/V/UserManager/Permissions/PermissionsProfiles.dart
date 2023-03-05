@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/Web/Widgets/IfWeb.dart';
 
@@ -75,7 +76,7 @@ class _PermissionsProfilesState extends State<PermissionsProfiles> {
 
   loadProfiles() {
     setLoading(true);
-    Api.get("permissions/profilesList", {}).then((res) {
+    Api.get(EndPoints.permissions_profilesList, {}).then((res) {
       Map data = res.data;
       permissionProfileList = PermissionProfile.fromJsonArray(data['profiles']);
     }).whenComplete(() {

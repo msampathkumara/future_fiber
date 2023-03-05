@@ -15,13 +15,21 @@ class Server {
       print(devServerIp);
       return "http://$devServerIp:3000";
     }
+
+    if (isLocalServer) {
+      if (local) {
+        return "http://$devServerIp:3000";
+      }
+      return "https://smartwind.test.nsslsupportservices.com";
+    }
+
     if (await isTestServer) {
       return "https://smartwind.test.nsslsupportservices.com";
     } else {
       if (kIsWeb && (!isLocalServer)) {
-        return "";
+        return "_";
       }
-      return "https://smartwind.nsslsupportservices.com";
+      return "https://smartwind.nsslsupportservices.com_";
     }
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/StandardTicket.dart';
 
 import '../../../C/Api.dart';
@@ -208,7 +209,7 @@ class _WebStandardLibraryState extends State<WebStandardLibrary> {
     setState(() {
       requested = true;
     });
-    return Api.get("tickets/standard/getList", {
+    return Api.get(EndPoints.tickets_standard_getList, {
       'production': selectedProduction.getValue(),
       'sortDirection': sortedAsc ? "asc" : "desc",
       'sortBy': sortedBy,

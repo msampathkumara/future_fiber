@@ -259,7 +259,7 @@ class _MobileHomeState extends State<MobileHome> {
     PermissionStatus ps = await Permission.phone.request();
     if (ps.isGranted) {
       String imeiNo = await DeviceInformation.deviceIMEINumber;
-      await Api.post(EndPoints.tab_logout, {"imei": imeiNo}).then((response) async {
+      await Api.post(EndPoints.tabs_logout, {"imei": imeiNo}).then((response) async {
         if (response.data["saved"] == true) {
           print("----------------------------------------55555555555555555555");
         } else {
@@ -317,28 +317,13 @@ class _MobileHomeState extends State<MobileHome> {
         setState(() {});
         // print(result);
       },
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<MenuItems>>[
-        const PopupMenuItem<MenuItems>(
-          value: MenuItems.dbReload,
-          child: Text('Reload Database'),
-        ),
-        const PopupMenuItem<MenuItems>(
-          value: MenuItems.deleteDownloadedFiles,
-          child: Text('Delete Downloaded Files'),
-        ),
-        const PopupMenuItem<MenuItems>(
-          value: MenuItems.logout,
-          child: Text('Logout'),
-        ),
-        const PopupMenuItem<MenuItems>(
-          value: MenuItems.changeSection,
-          child: Text('Change Section'),
-        ),
-        if (nsUser!.utype == 'admin')
-          const PopupMenuItem<MenuItems>(
-            value: MenuItems.cpanel,
-            child: Text('Cpanel'),
-          )
+      itemBuilder: (BuildContext context) =>
+      <PopupMenuEntry<MenuItems>>[
+        const PopupMenuItem<MenuItems>(value: MenuItems.dbReload, child: Text('Reload Database')),
+        const PopupMenuItem<MenuItems>(value: MenuItems.deleteDownloadedFiles, child: Text('Delete Downloaded Files')),
+        const PopupMenuItem<MenuItems>(value: MenuItems.logout, child: Text('Logout')),
+        const PopupMenuItem<MenuItems>(value: MenuItems.changeSection, child: Text('Change Section')),
+        if (nsUser!.utype == 'admin') const PopupMenuItem<MenuItems>(value: MenuItems.cpanel, child: Text('Cpanel'))
       ],
     );
   }

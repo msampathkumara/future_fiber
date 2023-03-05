@@ -10,7 +10,6 @@ import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/Mobile/V/Home/Tickets/ProductionPool/ProductionPool.dart';
-
 import 'C/App.dart';
 import 'C/DB/hive.dart';
 import 'M/AppUser.dart';
@@ -54,7 +53,6 @@ main() async {
 }
 
 Future mainThings({viewIssMaterialManagement = false}) async {
-  // isMaterialManagement = viewIssMaterialManagement;
   WidgetsFlutterBinding.ensureInitialized();
 
   if (kIsWeb) {
@@ -126,7 +124,11 @@ class _MainAppState extends State<MainApp> {
                                   color: Colors.red,
                                   width: double.infinity,
                                   child: Center(
-                                      child: Text((_isTestServer.data ?? false) ? 'Test server' : 'Local Server', style: const TextStyle(color: Colors.white, fontSize: 15)))),
+                                      child: Wrap(
+                                    children: [
+                                      Text((_isTestServer.data ?? false) ? 'Test server' : 'Local Server', style: const TextStyle(color: Colors.white, fontSize: 15)),
+                                    ],
+                                  ))),
                             Expanded(
                                 child: loading
                                     ? const Center(child: SizedBox(width: 200, height: 200, child: CircularProgressIndicator(color: Colors.red)))

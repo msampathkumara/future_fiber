@@ -5,6 +5,8 @@ import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/QC.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import '../../../../../M/EndPoints.dart';
+
 class QCView extends StatefulWidget {
   final QC qc;
 
@@ -56,7 +58,7 @@ class _QCViewState extends State<QCView> {
 
   f() async {
     var user = FirebaseAuth.instance.currentUser;
-    var uRL = await Server.getServerApiPath("tickets/qc/qcImageView?id=${widget.qc.id}");
+    var uRL = await Server.getServerApiPath("${EndPoints.tickets_qc_qcImageView}?id=${widget.qc.id}");
     return {"url": uRL, "idToken": await user!.getIdToken()};
   }
 }

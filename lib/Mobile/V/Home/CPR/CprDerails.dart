@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/CPR/CPR.dart';
 import 'package:smartwind/M/CPR/CprItem.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/NsUser.dart';
 
 import '../../../../C/Api.dart';
@@ -42,7 +43,7 @@ class _CprDetailsState extends State<CprDetails> with TickerProviderStateMixin {
       setState(() {});
     });
 
-    Api.get("cpr/getCpr", {"id": _cpr.id}).then((res) async {
+    Api.get(EndPoints.materialManagement_cpr_getCpr, {"id": _cpr.id}).then((res) async {
       print("res.data ${res.data}");
       if (res.data["error"] == null) {
         _cpr = CPR.fromJson(res.data);

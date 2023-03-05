@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../C/Api.dart';
 import '../../../../M/CPR/KIT.dart';
+import '../../../../M/EndPoints.dart';
 import '../../../../M/Enums.dart';
 import '../../../../Web/V/MaterialManagement/KIT/KitView.dart';
 import '../../Widgets/NoResultFoundMsg.dart';
@@ -174,7 +175,7 @@ class _KitListState extends State<KitList> {
   Future getData(page, count, sortedBy, sortedAsc) {
     requested = true;
 
-    return Api.get("materialManagement/kit/search", {
+    return Api.get(EndPoints.materialManagement_kit_search, {
       'production': selectedProduction.getValue(),
       'status': selectedStatus,
       'sortDirection': sortedAsc ? "asc" : "desc",

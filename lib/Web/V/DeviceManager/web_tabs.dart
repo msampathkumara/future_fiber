@@ -1,5 +1,6 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/NsUser.dart';
 
 import '../../../C/Api.dart';
@@ -125,7 +126,7 @@ class _WebTabsState extends State<WebTabs> {
       requested = true;
     });
 
-    return Api.get("tabs/tabList", {
+    return Api.get(EndPoints.tabs_tabList, {
       'type': 'All',
       'status': _selectedStatus.getValue(),
       'sortDirection': sortedAsc ? "asc" : "desc",

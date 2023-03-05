@@ -85,16 +85,16 @@ public final class GeneratedPluginRegistrant {
     } catch(Exception e) {
       Log.e(TAG, "Error registering plugin flutter_pdfview, io.endigo.plugins.pdfviewflutter.PDFViewFlutterPlugin", e);
     }
-    try {
-      flutterEngine.getPlugins().add(new io.flutter.plugins.flutter_plugin_android_lifecycle.FlutterAndroidLifecyclePlugin());
-    } catch(Exception e) {
-      Log.e(TAG, "Error registering plugin flutter_plugin_android_lifecycle, io.flutter.plugins.flutter_plugin_android_lifecycle.FlutterAndroidLifecyclePlugin", e);
-    }
-    try {
-      flutterEngine.getPlugins().add(new com.example.fluttershare.FlutterSharePlugin());
-    } catch(Exception e) {
-      Log.e(TAG, "Error registering plugin flutter_share, com.example.fluttershare.FlutterSharePlugin", e);
-    }
+      try {
+          flutterEngine.getPlugins().add(new io.flutter.plugins.flutter_plugin_android_lifecycle.FlutterAndroidLifecyclePlugin());
+      } catch (Exception e) {
+          Log.e(TAG, "Error registering plugin flutter_plugin_android_lifecycle, io.flutter.plugins.flutter_plugin_android_lifecycle.FlutterAndroidLifecyclePlugin", e);
+      }
+      try {
+          flutterEngine.getPlugins().add(new com.example.fluttershare.FlutterSharePlugin());
+      } catch (Exception e) {
+          Log.e(TAG, "Error registering plugin flutter_share, com.example.fluttershare.FlutterSharePlugin", e);
+      }
       try {
           flutterEngine.getPlugins().add(new io.flutter.plugins.imagepicker.ImagePickerPlugin());
       } catch (Exception e) {

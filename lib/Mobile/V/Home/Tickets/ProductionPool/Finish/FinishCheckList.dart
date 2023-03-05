@@ -96,7 +96,7 @@ class _FinishCheckListState extends State<FinishCheckList> {
                               'userCurrentSection': userCurrentSection.toString(),
                               "qc": isQc,
                               "sectionId": "$selectedSection",
-                              "serverUrl": await Server.getServerApiPath("tickets/qc/uploadEdits"),
+                              "serverUrl": await Server.getServerApiPath(EndPoints.tickets_qc_uploadEdits),
                               'ticket': {'id': ticket.id, "qc": isQc}.toString()
                             });
                             if (mounted) {

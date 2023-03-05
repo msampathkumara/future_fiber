@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/C/DB/hive.dart';
 
@@ -68,10 +69,7 @@ class QC {
   }
 
   Future getFile(context, {onReceiveProgress}) async {
-    var path = 'tickets/qc/qcImageView?';
-    // if (kIsWeb) {
-    // var loadingWidget = Loading(loadingText: "Downloading Ticket");
-    // loadingWidget.show(context);
+    var path = '${EndPoints.tickets_qc_qcImageView}?';
     String queryString = Uri(queryParameters: {"id": id.toString()}).query;
     final idToken = await AppUser.getIdToken(false);
 

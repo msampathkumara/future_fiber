@@ -14,7 +14,9 @@ bool? _isTestServer;
 bool? _isLocalServer;
 
 Future<bool> get isTestServer async =>
-    kIsWeb ? (_isTestServer ?? (_isTestServer = RegExp(r".\.test\.nsslsupportservices\.com").hasMatch(Uri.base.host))) : (await HiveBox.getUserConfig()).isTest;
+    // kIsWeb ? (_isTestServer ?? (_isTestServer = RegExp(r".\.test\.nsslsupportservices\.com").hasMatch(Uri.base.host))) : (await HiveBox.getUserConfig()).isTest;
+// kIsWeb ? (_isTestServer ?? (_isTestServer = RegExp(r".\.test\.nsslsupportservices\.com").hasMatch(Uri.base.host))) : (true);
+    true;
 
 bool get isLocalServer => _isLocalServer ?? (_isLocalServer = Uri.base.host == 'localhost');
 

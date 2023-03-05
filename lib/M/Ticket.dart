@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,7 +17,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/M/StandardTicket.dart';
 import 'package:smartwind/M/TicketFlag.dart';
-import 'package:smartwind/Mobile/V/Home/CPR/AddCPR.dart';
+
 import 'package:smartwind/Mobile/V/Home/Tickets/CS/CS.dart';
 import 'package:smartwind/Mobile/V/Home/Tickets/ShippingSystem/ShippingSystem.dart';
 import 'package:smartwind/Mobile/V/Widgets/ErrorMessageView.dart';
@@ -279,6 +280,8 @@ class Ticket extends DataObject {
   }
 
   static Future<void> open(context, Ticket ticket, {onReceiveProgress, isPreCompleted = false}) async {
+    print('"Downloading Ticket"');
+
     if ((!AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_ANY_PDF)) && ticket.isHold == 1) {
       return;
     }
@@ -304,6 +307,7 @@ class Ticket extends DataObject {
             print('404');
             const ErrorMessageView(errorMessage: 'Ticket Not Found', icon: Icons.broken_image_rounded).show(context);
           } else {
+            const ErrorMessageView(errorMessage: 'Oops! Something went wrong. Try again or check internet connection.', icon: Icons.broken_image_rounded).show(context);
             print(e.message);
           }
         } else {}
@@ -363,7 +367,7 @@ class Ticket extends DataObject {
     t.keys.where((k) => (t[k] ?? "").toString().isEmpty).toList().forEach(t.remove);
     print("____________________________________________________________________________________________________________________________*****");
     print(t.toString());
-    String serverUrl = await Server.getServerApiPath(ticket.isStandardFile ? "tickets/standard/uploadEdits" : "tickets/uploadEdits");
+    String serverUrl = await Server.getServerApiPath(ticket.isStandardFile ? EndPoints.tickets_standard_uploadEdits : EndPoints.tickets_uploadEdits);
     var userCurrentSection = (AppUser.getSelectedSection()?.id ?? 0).toString();
     return await platform.invokeMethod(
         'editPdf', {'path': ticket.ticketFile!.path, 'userCurrentSection': userCurrentSection.toString(), 'fileID': ticket.id, 'ticket': t.toString(), "serverUrl": serverUrl});
@@ -372,7 +376,8 @@ class Ticket extends DataObject {
   static const platform = MethodChannel('editPdf');
 
   static isFileNew(Ticket ticket) async {
-    var ticket1 = ticket.isStandardFile ? HiveBox.standardTicketsBox.get(ticket.id) : HiveBox.ticketBox.get(ticket.id);
+    // var ticket1 = ticket.isStandardFile ? HiveBox.standardTicketsBox.get(ticket.id) : HiveBox.ticketBox.get(ticket.id);
+    var ticket1 = HiveBox.ticketBox.get(ticket.id);
     var f = HiveBox.localFileVersionsBox.values.where((element) => element.type == ticket.getTicketType().getValue() && element.ticketId == ticket.id);
     if (f.isNotEmpty) {
       LocalFileVersion fileVersion = f.first;
@@ -415,7 +420,7 @@ class Ticket extends DataObject {
 
   static Future<List<TicketFlag>> getFlagList(String flagType, Ticket ticket) async {
     print("tickets/flags/getList");
-    return Api.get("tickets/flags/getList", {"ticket": ticket.id.toString(), "type": flagType}).then((response) {
+    return Api.get(EndPoints.tickets_flags_getList, {"ticket": ticket.id.toString(), "type": flagType}).then((response) {
       print(response.data);
       print("-----------------vvvvvvvvvvv-----------------------");
       Map<String, dynamic> res = response.data;
@@ -451,10 +456,6 @@ class Ticket extends DataObject {
     } else {
       const ErrorMessageView(errorMessage: "File Not Found", icon: Icons.insert_drive_file_outlined).show(context);
     }
-  }
-
-  addCPR(BuildContext context) async {
-    await Navigator.push(context, MaterialPageRoute(builder: (context) => AddCPR(this)));
   }
 
   Future openInShippingSystem(BuildContext context) async {

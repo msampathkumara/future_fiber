@@ -164,7 +164,7 @@ class _CheckTabStatusState extends State<CheckTabStatus> {
     print(await DeviceInformation.deviceName);
     print(deviceInfo);
 
-    return Api.post(EndPoints.tab_check, {"deviceInfo": deviceInfo}).then((response) async {
+    return Api.post(EndPoints.tabs_check, {"deviceInfo": deviceInfo}).then((response) async {
       if (response.data["saved"] == true) {
         print("----------------------------------------");
         await prefs.setBool('tabCheck', true).then((value) async {

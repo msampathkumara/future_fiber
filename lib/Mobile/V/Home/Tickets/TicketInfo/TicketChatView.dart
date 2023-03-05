@@ -217,7 +217,7 @@ class _TicketChatViewState extends State<TicketChatView> {
   }
 
   void loadData(int id) {
-    Api.get("tickets/comments/list", {'ticketId': id})
+    Api.get(EndPoints.tickets_comments_list, {'ticketId': id})
         .then((res) {
           Map data = res.data;
 

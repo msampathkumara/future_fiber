@@ -42,7 +42,7 @@ class _AddMaterialsState extends State<AddMaterials> {
   }
 
   Future getAllMaterials() {
-    return Api.get("materialManagement/cpr/getAllMaterials", {}).then((res) {
+    return Api.get(EndPoints.materialManagement_cpr_getAllMaterials, {}).then((res) {
       Map data = res.data;
       _matList = List.from(data['materials']).map((e) => "${e["name"]}").toList();
     }).whenComplete(() {

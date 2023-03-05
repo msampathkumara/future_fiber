@@ -94,7 +94,7 @@ class _WebKitState extends State<WebKit> {
                         DateTime now = DateTime.now();
                         String lastMonth = DateFormat('yyyy-MM-dd').format(DateTime(now.year, now.month - 1, now.day));
                         String nextMonth = DateFormat('yyyy-MM-dd').format(DateTime(now.year, now.month + 1, now.day));
-                        Api.downloadFile("materialManagement/kit/getExcel", {}, "$lastMonth - $nextMonth.xlsx");
+                        Api.downloadFile(EndPoints.materialManagement_kit_getExcel, {}, "$lastMonth - $nextMonth.xlsx");
                       },
                       label: const Text("Download Exel"),
                       icon: const Icon(Icons.download))),

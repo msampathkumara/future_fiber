@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/Web/V/Admin/webAdmin.dart';
 
 import '../../../../C/Api.dart';
@@ -22,30 +23,37 @@ class _AdminCpanelState extends State<AdminCpanel> {
               direction: Axis.vertical,
               children: [
                 ElevatedButton(
+                    onPressed: () {
+                      Api.get(EndPoints.restart, {}).then((response) async {
+                        print(response.data);
+                      });
+                    },
+                    child: const Text("Restart server")),
+                ElevatedButton(
                     child: const Text("Update Files"),
                     onPressed: () {
-                      Api.get("tickets/updateFiles", {}).then((response) async {
+                      Api.get(EndPoints.tickets_updateFiles, {}).then((response) async {
                         print(response.data);
                       });
                     }),
                 ElevatedButton(
                     child: const Text("Convert Tickets"),
                     onPressed: () {
-                      Api.get("admin/convertTickets", {}).then((response) async {
+                      Api.get(EndPoints.admin_convertTickets, {}).then((response) async {
                         print(response.data);
                       });
                     }),
                 ElevatedButton(
                     child: const Text("Reload Ticket DB"),
                     onPressed: () {
-                      Api.get("admin/reloadTicketDB", {}).then((response) async {
+                      Api.get(EndPoints.admin_reloadTicketDB, {}).then((response) async {
                         print(response.data);
                       });
                     }),
                 ElevatedButton(
                     child: const Text("Update Ticket Availability (online Server)"),
                     onPressed: () {
-                      Api.get("admin/checkFile", {}, onlineServer: true).then((response) async {
+                      Api.get(EndPoints.admin_checkFile, {}, onlineServer: true).then((response) async {
                         print(response.data);
                       });
                     }),
@@ -54,7 +62,7 @@ class _AdminCpanelState extends State<AdminCpanel> {
                     subtitle: const Text(""),
                     trailing: ElevatedButton.icon(
                         onPressed: () {
-                          Api.get("admin/updateStandardLibUsage", {}).then((response) async {
+                          Api.get(EndPoints.admin_updateStandardLibUsage, {}).then((response) async {
                             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Update Standard Library Usage success")));
                           });
                         },

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:smartwind/C/Server.dart';
 import 'package:smartwind/C/Validations.dart';
 import 'package:smartwind/C/form_input_decoration.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/NsUser.dart';
 
 import '../../../M/User/Email.dart';
@@ -128,7 +129,7 @@ class _PasswordRecoveryState extends State<PasswordRecovery> {
   void checkNic() {
     print('-------------------------------------------------$userNic');
     setLoading(true);
-    Server.serverGet("user/recoverPassword/getUserByNic", {"nic": userNic}).then((value) {
+    Server.serverGet(EndPoints.user_recoverPassword_getUserByNic, {"nic": userNic}).then((value) {
       print('xxxxxxxxxxxxxxxx');
       nicChecked = true;
       Map map = value.data;
@@ -339,7 +340,7 @@ class _PasswordRecoveryState extends State<PasswordRecovery> {
 
     setLoading(true);
     print(_otp);
-    Server.serverPost("user/recoverPassword/validateOtp", {"userId": user?.id, "otp": _otp}).then((value) {
+    Server.serverPost(EndPoints.user_recoverPassword_validateOtp, {"userId": user?.id, "otp": _otp}).then((value) {
       Map data = value.data;
       if (data.containsKey("done")) {
         _enterPassword = true;
@@ -355,7 +356,7 @@ class _PasswordRecoveryState extends State<PasswordRecovery> {
 
   void requestOTP() {
     setLoading(true);
-    Server.serverPost("user/recoverPassword/sendOTPToAdmin", {"userId": user?.id}, onlineServer: true).then((value) async {
+    Server.serverPost(EndPoints.user_recoverPassword_sendOTPToAdmin, {"userId": user?.id}, onlineServer: true).then((value) async {
       print(value);
       await MessageBox.show(context, "", "OTP sent to Admin. please contact Admin.");
 
@@ -368,7 +369,7 @@ class _PasswordRecoveryState extends State<PasswordRecovery> {
 
   void sendOtp() {
     setLoading(true);
-    Server.serverPost("user/recoverPassword/sendOTP", {"userId": user?.id, 'emailId': selectedEmail?.id}, onlineServer: true).then((value) {
+    Server.serverPost(EndPoints.user_recoverPassword_sendOTP, {"userId": user?.id, 'emailId': selectedEmail?.id}, onlineServer: true).then((value) {
       _enterOTP = true;
       setLoading(false);
     }).onError((error, stackTrace) {

@@ -5,6 +5,7 @@ import 'package:smartwind/M/DeviceLog.dart';
 
 import '../../../../C/Api.dart';
 import '../../../../M/Device.dart';
+import '../../../../M/EndPoints.dart';
 import '../../../../M/NsUser.dart';
 import '../../../../Mobile/V/Widgets/UserImage.dart';
 import '../../../Widgets/DialogView.dart';
@@ -78,7 +79,7 @@ class _TabLogState extends State<TabLog> {
   }
 
   getData(int page, int startingAt, int count, String sortedBy, bool sortedAsc) {
-    return Api.get("tabs/logList", {'tab': device.id, 'type': 'All', 'sortedAsc': sortedAsc, 'sortBy': sortedBy, 'pageIndex': page, 'pageSize': count})
+    return Api.get(EndPoints.tabs_logList, {'tab': device.id, 'type': 'All', 'sortedAsc': sortedAsc, 'sortBy': sortedBy, 'pageIndex': page, 'pageSize': count})
         .then((res) {
           List log = res.data["tabLog"];
           var dataCount = res.data["count"];

@@ -1,5 +1,6 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
+import 'package:smartwind/M/EndPoints.dart';
 
 import '../../../C/Api.dart';
 import '../../../M/Enums.dart';
@@ -88,7 +89,7 @@ class _WebSheetDataState extends State<WebSheetData> {
       requested = true;
     });
 
-    return Api.get("sheet/getSheetData", {
+    return Api.get(EndPoints.sheet_getSheetData, {
       'type': 'All',
       'status': _selectedStatus.getValue(),
       'sortDirection': sortedAsc ? "asc" : "desc",

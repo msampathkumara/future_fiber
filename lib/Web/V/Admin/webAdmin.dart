@@ -48,6 +48,13 @@ class _WebAdminState extends State<WebAdmin> {
                         Expanded(
                           child: ListView(
                             children: [
+                              ElevatedButton(
+                                  onPressed: () {
+                                    Api.get(EndPoints.restart, {}).then((response) async {
+                                      print(response.data);
+                                    });
+                                  },
+                                  child: const Text("Restart server")),
                               const Text("Files", textScaleFactor: 2),
                               Card(
                                   child: Column(
@@ -58,7 +65,7 @@ class _WebAdminState extends State<WebAdmin> {
                                         subtitle: const Text("Update Files on server with production pool tickets "),
                                         trailing: ElevatedButton.icon(
                                             onPressed: () {
-                                              Api.get("tickets/updateFiles", {}).then((response) async {
+                                              Api.get(EndPoints.tickets_updateFiles, {}).then((response) async {
                                                 print(response.data);
                                               });
                                             },
@@ -75,7 +82,7 @@ class _WebAdminState extends State<WebAdmin> {
                                         subtitle: const Text(""),
                                         trailing: ElevatedButton.icon(
                                             onPressed: () {
-                                              Api.get("admin/updateStandardLibUsage", {}).then((response) async {
+                                              Api.get(EndPoints.admin_updateStandardLibUsage, {}).then((response) async {
                                                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Update Standard Library Usage success")));
                                               });
                                             },
@@ -98,7 +105,7 @@ class _WebAdminState extends State<WebAdmin> {
                                                 onPressed: () {
                                                   setLoading("reloadInMemoryDB");
 
-                                                  Api.get("admin/reloadInMemoryDB", {}).then((res) {
+                                                  Api.get(EndPoints.admin_reloadInMemoryDB, {}).then((res) {
                                                     removeLoading("reloadInMemoryDB");
                                                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Reload In memory Database done")));
                                                     setState(() {
@@ -147,7 +154,7 @@ class _WebAdminState extends State<WebAdmin> {
                                             : ElevatedButton.icon(
                                                 onPressed: () {
                                                   setLoading("cleanReloadDevices");
-                                                  Api.get("admin/cleanReloadDevices", {}).then((res) {
+                                                  Api.get(EndPoints.admin_cleanReloadDevices, {}).then((res) {
                                                     removeLoading("cleanReloadDevices");
                                                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Reload In memory Database done")));
                                                     setState(() {

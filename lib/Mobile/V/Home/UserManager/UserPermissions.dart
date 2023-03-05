@@ -144,7 +144,7 @@ class _UserPermissionsState extends State<UserPermissions> {
   late Map<String, List<UserPermission>> userPermissionsGrouped = {};
 
   void loadPermissions() {
-    Api.get("permissions/userPermissions", {'userId': widget.nsUser.id}).then((value) {
+    Api.get(EndPoints.permissions_userPermissions, {'userId': widget.nsUser.id}).then((value) {
       Map data = value.data;
       userPermissions = UserPermission.fromJsonArray(data['userPermissions']);
       userPermissionsGrouped = groupBy(userPermissions, (a) => a.category);

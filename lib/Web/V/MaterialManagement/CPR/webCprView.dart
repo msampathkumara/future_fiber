@@ -318,7 +318,7 @@ class _CprViewState extends State<CprView> {
   }
 
   Future getComments() {
-    return Api.get("materialManagement/getCprComments", {'id': widget.cpr.id}).then((res) {
+    return Api.get(EndPoints.materialManagement_getCprComments, {'id': widget.cpr.id}).then((res) {
       Map data = res.data;
 
       cprComments = Message.fromJsonArray(data["messages"]);

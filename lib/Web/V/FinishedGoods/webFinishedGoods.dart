@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/Api.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/Web/V/FinishedGoods/webFinishedGoods.table.dart';
 
 import '../../../M/Enums.dart';
@@ -173,7 +174,7 @@ class _WebFinishedGoodsState extends State<WebFinishedGoods> {
     setState(() {
       requested = true;
     });
-    return Api.get("tickets/completed/getList", {
+    return Api.get(EndPoints.tickets_completed_getList, {
       'production': selectedProduction.getValue(),
       "flag": dataFilter.getValue(),
       'sortDirection': sortedAsc ? 'asc' : "desc",

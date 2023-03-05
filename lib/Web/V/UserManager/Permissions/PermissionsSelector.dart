@@ -2,6 +2,7 @@ import "package:collection/collection.dart";
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:group_list_view/group_list_view.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/user_permission.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/Web/Widgets/IfWeb.dart';
@@ -37,7 +38,7 @@ class _PermissionsSelectorState extends State<PermissionsSelector> {
   late Map<String, List<UserPermission>> userPermissionsGrouped = {};
 
   void loadPermissions() {
-    Api.get("permissions/permissionsList", {}).then((value) {
+    Api.get(EndPoints.permissions_permissionsList, {}).then((value) {
       Map data = value.data;
       userPermissions = UserPermission.fromJsonArray(data['permissions']);
       userPermissionsGrouped = groupBy(userPermissions, (a) => a.category);

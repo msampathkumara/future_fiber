@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../C/Api.dart';
 import '../../../../M/CPR/CPR.dart';
+import '../../../../M/EndPoints.dart';
 import '../../../../M/Enums.dart';
 import '../../../../Web/V/MaterialManagement/CPR/webCpr.dart';
 import '../../../../Web/V/MaterialManagement/CPR/webCprView.dart';
@@ -191,7 +192,7 @@ class _CprListState extends State<CprList> {
   Future getData(page, count, sortedBy, sortedAsc) {
     requested = true;
 
-    return Api.get("materialManagement/cpr/search", {
+    return Api.get(EndPoints.materialManagement_cpr_search, {
       'production': selectedProduction.getValue(),
       'status': selectedStatus,
       'sortDirection': sortedAsc ? "asc" : "desc",

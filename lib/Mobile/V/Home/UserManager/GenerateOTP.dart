@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_share/flutter_share.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/NsUser.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
 import 'package:smartwind/Web/Widgets/IfWeb.dart';
@@ -93,7 +94,7 @@ class _GenerateOTPState extends State<GenerateOTP> {
   }
 
   void getOTP() {
-    Api.get("users/getOTP", {'userId': widget.nsUser.id}).then((res) {
+    Api.get(EndPoints.users_getOTP, {'userId': widget.nsUser.id}).then((res) {
       Map data = res.data;
       _otp = data['otp'];
       print(data);

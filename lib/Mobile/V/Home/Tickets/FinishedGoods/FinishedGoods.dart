@@ -463,23 +463,23 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
     );
   }
 
-  Future sendToPrint(Ticket ticket) async {
-    if (ticket.inPrint == 0) {
-      Api.post(EndPoints.tickets_print, {"ticket": ticket.id.toString(), "action": "sent"}).then((value) {
-        print('Send to print  ${value.data}');
-        ticket.inPrint = 1;
-        setState(() {});
-      }).onError((error, stackTrace) {
-        print(error);
-      });
-
-      return 1;
-    } else {
-      await Api.post(EndPoints.tickets_print, {"ticket": ticket.id.toString(), "action": "cancel"});
-      ticket.inPrint = 0;
-      return 0;
-    }
-  }
+  // Future sendToPrint(Ticket ticket) async {
+  //   if (ticket.inPrint == 0) {
+  //     Api.post(EndPoints.tickets_print, {"ticket": ticket.id.toString(), "action": "sent"}).then((value) {
+  //       print('Send to print  ${value.data}');
+  //       ticket.inPrint = 1;
+  //       setState(() {});
+  //     }).onError((error, stackTrace) {
+  //       print(error);
+  //     });
+  //
+  //     return 1;
+  //   } else {
+  //     await Api.post(EndPoints.tickets_print, {"ticket": ticket.id.toString(), "action": "cancel"});
+  //     ticket.inPrint = 0;
+  //     return 0;
+  //   }
+  // }
 
   bool requested = true;
   int dataCount = 0;
@@ -497,7 +497,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
     print('searchText== $searchText');
 
     return Api.get(
-            "tickets/completed/getList",
+        EndPoints.tickets_completed_getList,
             {
               'production': _selectedProduction.getValue(),
               "flag": dataFilter.getValue(),

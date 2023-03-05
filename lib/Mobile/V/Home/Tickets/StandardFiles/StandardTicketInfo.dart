@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/StandardTicket.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/M/TicketHistory.dart';
@@ -47,22 +48,22 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
   void initState() {
     standardTicket = widget.standardTicket;
     _ticket = standardTicket;
-    standardTicketUsageCount = HiveBox.standardTicketsBox.values.fold(0, (previousValue, element) => previousValue + element.usedCount);
-    _progress = standardTicketUsageCount == 0 ? 0 : (standardTicket.usedCount / standardTicketUsageCount) * 100;
+    // standardTicketUsageCount = HiveBox.standardTicketsBox.values.fold(0, (previousValue, element) => previousValue + element.usedCount);
+    _progress = _ticket.usedCount == 0 ? 0 : (standardTicket.usedCount / _ticket.usedCount) * 100;
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
       _refreshIndicatorKey.currentState?.show();
     });
-    _dbChangeCallBack = DB.setOnDBChangeListener(() {
-      print('on update tickets');
-      if (mounted) {
-        var standardTicket_ = HiveBox.standardTicketsBox.get(standardTicket.id);
-        if (standardTicket_ != null && standardTicket_.uptime != standardTicket.uptime) {
-          standardTicket = standardTicket_;
-          loadData();
-        }
-      }
-    }, context, collection: DataTables.standardTickets);
+    // _dbChangeCallBack = DB.setOnDBChangeListener(() {
+    //   print('on update tickets');
+    //   if (mounted) {
+    //     var standardTicket_ = HiveBox.standardTicketsBox.get(standardTicket.id);
+    //     if (standardTicket_ != null && standardTicket_.uptime != standardTicket.uptime) {
+    //       standardTicket = standardTicket_;
+    //       loadData();
+    //     }
+    //   }
+    // }, context, collection: DataTables.standardTickets);
 
     super.initState();
   }
@@ -92,35 +93,41 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
         onRefresh: () {
           return loadData();
         },
-        child: ListView.builder(
-            itemCount: historyList.length,
-            itemBuilder: (context, index) {
-              TicketHistory ticketHistory = historyList[index];
-              NsUser? user = HiveBox.usersBox.get(ticketHistory.doneBy);
-              return TimelineTile(
-                  beforeLineStyle: LineStyle(color: Colors.lightBlue.shade100),
-                  lineXY: 0.2,
-                  isLast: historyList.length == index + 1,
-                  alignment: TimelineAlign.start,
-                  endChild: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // const Text("1 MIN AGO", textAlign: TextAlign.start, style: TextStyle(color: Colors.grey)),
-                        RichText(
-                            text: TextSpan(style: defaultStyle, children: [
-                          TextSpan(text: user?.name ?? "", style: linkStyle),
-                          TextSpan(text: " ${(ticketHistory.action ?? "").toLowerCase().replaceUnderscore.capitalizeFirstofEach}")
-                        ])),
-                        Align(alignment: Alignment.bottomRight, child: Text("${ticketHistory.uptime}", textAlign: TextAlign.end, style: timeStyle)),
-                        const Divider(thickness: 1.5)
-                      ],
-                    ),
-                  ),
-                  indicatorStyle:
-                      IndicatorStyle(indicatorXY: 0.1, width: 40, height: 40, drawGap: true, padding: const EdgeInsets.all(8), indicator: UserImage(nsUser: user, radius: 24)));
-            }),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: ListView.builder(
+              itemCount: historyList.length,
+              itemBuilder: (context, index) {
+                TicketHistory ticketHistory = historyList[index];
+                NsUser? user = HiveBox.usersBox.get(ticketHistory.doneBy);
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TimelineTile(
+                      beforeLineStyle: LineStyle(color: Colors.lightBlue.shade100),
+                      lineXY: 0.2,
+                      isLast: historyList.length == index + 1,
+                      alignment: TimelineAlign.start,
+                      endChild: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // const Text("1 MIN AGO", textAlign: TextAlign.start, style: TextStyle(color: Colors.grey)),
+                            RichText(
+                                text: TextSpan(style: defaultStyle, children: [
+                              TextSpan(text: user?.name ?? "", style: linkStyle),
+                              TextSpan(text: " ${(ticketHistory.action ?? "").toLowerCase().replaceUnderscore.capitalizeFirstofEach}")
+                            ])),
+                            Align(alignment: Alignment.bottomRight, child: Text("${ticketHistory.uptime}", textAlign: TextAlign.end, style: timeStyle)),
+                            const Divider(thickness: 1.5)
+                          ],
+                        ),
+                      ),
+                      indicatorStyle:
+                          IndicatorStyle(indicatorXY: 0.1, width: 40, height: 40, drawGap: true, padding: const EdgeInsets.all(8), indicator: UserImage(nsUser: user, radius: 24))),
+                );
+              }),
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
@@ -140,12 +147,12 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
       backgroundColor: Colors.orange,
       elevation: 10,
       // toolbarHeight: (bottomNavigationBarSelectedIndex == 0) ? (height - kBottomNavigationBarHeight) : 230,
-      toolbarHeight: 230,
+      toolbarHeight: 150,
       bottom: PreferredSize(
           preferredSize: const Size.fromHeight(4.0),
           child: Container(
             color: Colors.orange,
-            height: 200.0,
+            height: 150.0,
             child: Row(
               children: [
                 Padding(
@@ -162,19 +169,19 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
                   ),
                 ),
                 const Spacer(),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: CircularPercentIndicator(
-                      radius: 50.0,
-                      lineWidth: 4.0,
-                      percent: (_progress / 100).toDouble(),
-                      center: Text("${_progress.toStringAsFixed(2)}%", style: ts),
-                      progressColor: Colors.white,
-                      animateFromLastPercent: true,
-                      animation: true,
-                      backgroundColor: Colors.white12,
-                      animationDuration: 500),
-                )
+                // Padding(
+                //   padding: const EdgeInsets.all(16.0),
+                //   child: CircularPercentIndicator(
+                //       radius: 50.0,
+                //       lineWidth: 4.0,
+                //       percent: (_progress / 100).toDouble(),
+                //       center: Text("${_progress.toStringAsFixed(2)}%", style: ts),
+                //       progressColor: Colors.white,
+                //       animateFromLastPercent: true,
+                //       animation: true,
+                //       backgroundColor: Colors.white12,
+                //       animationDuration: 500),
+                // )
               ],
             ),
           )),
@@ -183,7 +190,7 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
 
   Future<void> loadData() {
     print('xxxxxxxxxxxxxxxxxxxxxxx');
-    return Api.get("/tickets/standard/getInfo", {'id': standardTicket.id}).then((data) {
+    return Api.get(EndPoints.tickets_standard_getInfo, {'id': standardTicket.id}).then((data) {
       print(data.data["history"]);
 
       historyList = TicketHistory.fromJsonArray(data.data["history"]);

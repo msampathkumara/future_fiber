@@ -231,6 +231,6 @@ class _WebCprState extends State<WebCpr> {
     String lastMonth = DateFormat('yyyy-MM-dd').format(DateTime(now.year, now.month - 1, now.day));
     String nextMonth = DateFormat('yyyy-MM-dd').format(DateTime(now.year, now.month + 1, now.day));
 
-    Api.downloadFile("materialManagement/cpr/getExcel", {}, "cpr-$lastMonth - $nextMonth.xlsx");
+    Api.downloadFile(EndPoints.materialManagement_cpr_getExcel, {}, "cpr-$lastMonth - $nextMonth.xlsx");
   }
 }

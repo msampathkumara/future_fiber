@@ -20,6 +20,7 @@ import 'V/QC/web_qc.dart';
 import 'V/SheetData/webSheetData.dart';
 import 'V/StandardLibrary/webStandardLibrary.dart';
 import 'V/UserManager/webUserManager.dart';
+import 'Widgets/StatusBar.dart';
 import 'Widgets/login_change.dart';
 
 class WebHomePage extends StatefulWidget {
@@ -254,7 +255,7 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                             ],
                           ),
                         ),
-                        // Container(color: Colors.red, width: double.infinity, child:   StatusBar())
+                        Container(color: Colors.red, width: double.infinity, child: StatusBar())
                       ],
                     )
                   : const PermissionMessage(),

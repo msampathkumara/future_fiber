@@ -263,7 +263,7 @@ class _KitViewState extends State<KitView> {
   }
 
   Future apiGetData() {
-    return Api.get("materialManagement/kit/getKit", {'id': _kit.id}).then((res) {
+    return Api.get(EndPoints.materialManagement_kit_getKit, {'id': _kit.id}).then((res) {
       Map data = res.data;
 
       _kit = KIT.fromJson(res.data);
@@ -411,7 +411,7 @@ class _KitViewState extends State<KitView> {
   }
 
   Future getComments() {
-    return Api.get("materialManagement/getCprComments", {'id': _kit.id}).then((res) {
+    return Api.get(EndPoints.materialManagement_getCprComments, {'id': _kit.id}).then((res) {
       Map data = res.data;
 
       kitComments = Message.fromJsonArray(data["messages"]);

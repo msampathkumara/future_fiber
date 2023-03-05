@@ -452,7 +452,7 @@ class _CPRListState extends State<CPRList> {
   Future _reloadData(int page) {
     requested = true;
     // setState(() {});
-    return Api.get("cpr/search", {
+    return Api.get(EndPoints.materialManagement_cpr_search, {
       'shortageType': _selectedShortageType,
       'cprType': _selectedCprTypes,
       'client': _client,

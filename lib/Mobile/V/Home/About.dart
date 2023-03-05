@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:smartwind/res.dart';
 
+import '../../../C/Api.dart';
 import '../../../C/App.dart';
+import '../../../C/Server.dart';
+import '../../../M/EndPoints.dart';
 
 class About extends StatefulWidget {
   const About({Key? key}) : super(key: key);
@@ -16,6 +19,9 @@ class About extends StatefulWidget {
 class _AboutState extends State<About> {
   String? appVersion;
 
+  String serverUrl = "";
+  String? dbName;
+
   @override
   void initState() {
     super.initState();
@@ -23,6 +29,16 @@ class _AboutState extends State<About> {
       print(appInfo);
       appVersion = appInfo.version;
     });
+
+    Server.getServerAddress().then((value) => setState(() => {serverUrl = value}));
+    Api.get(EndPoints.getServerInfo, {}).then((res) {
+      var data = res.data;
+      setState(() {
+        dbName = data["dbName"];
+      });
+    }).whenComplete(() {
+      setState(() {});
+    }).catchError((err) {});
   }
 
   @override
@@ -38,9 +54,9 @@ class _AboutState extends State<About> {
     // TODO: implement build
     return Scaffold(
         body: Center(
-            child: Wrap(
-      crossAxisAlignment: WrapCrossAlignment.center,
-      direction: Axis.vertical,
+            child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         GestureDetector(
           onTap: () {
@@ -64,7 +80,9 @@ class _AboutState extends State<About> {
           ),
         ),
         const Text("NS Smart Wind", textScaleFactor: 1.5),
-        Text("$appVersion", textScaleFactor: 1)
+        Text("$appVersion", textScaleFactor: 1),
+        ListTile(title: const Text('server url'), trailing: Text(serverUrl)),
+        ListTile(title: const Text('db Name'), trailing: dbName == null ? const CircularProgressIndicator() : Text("$dbName")),
       ],
     )));
   }

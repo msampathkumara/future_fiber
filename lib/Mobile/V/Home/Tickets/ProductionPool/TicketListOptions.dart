@@ -216,22 +216,22 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
   );
 }
 
-Future sendToPrint(Ticket ticket) async {
-  if (ticket.inPrint == 0) {
-    await Api.post(EndPoints.tickets_print, {"ticket": ticket.id.toString(), "action": "sent"}).then((value) {
-      print('Send to print  ${value.data}');
-      ticket.inPrint = 1;
-    }).onError((error, stackTrace) {
-      print(error);
-    });
-
-    return 1;
-  } else {
-    await Api.post(EndPoints.tickets_print, {"ticket": ticket.id.toString(), "action": "cancel"});
-    ticket.inPrint = 0;
-    return 0;
-  }
-}
+// Future sendToPrint(Ticket ticket) async {
+//   if (ticket.inPrint == 0) {
+//     await Api.post(EndPoints.tickets_print, {"ticket": ticket.id.toString(), "action": "sent"}).then((value) {
+//       print('Send to print  ${value.data}');
+//       ticket.inPrint = 1;
+//     }).onError((error, stackTrace) {
+//       print(error);
+//     });
+//
+//     return 1;
+//   } else {
+//     await Api.post(EndPoints.tickets_print, {"ticket": ticket.id.toString(), "action": "cancel"});
+//     ticket.inPrint = 0;
+//     return 0;
+//   }
+// }
 
 String listSortBy = "shipDate";
 bool listSortDirectionIsDESC = false;

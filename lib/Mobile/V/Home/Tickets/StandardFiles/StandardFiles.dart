@@ -1,16 +1,17 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/C/DB/DB.dart';
-import 'package:smartwind/M/EndPoints.dart';
-import 'package:smartwind/M/StandardTicket.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:smartwind/C/Api.dart';
+import 'package:smartwind/M/Enums.dart';
+import 'package:smartwind/M/Ticket.dart';
+import 'package:smartwind/Mobile/V/Home/Tickets/TicketInfo/TicketInfo.dart';
 import 'package:smartwind/Mobile/V/Widgets/SearchBar.dart';
 
-import '../../../../../C/Api.dart';
-import '../../../../../C/DB/hive.dart';
 import '../../../../../M/AppUser.dart';
-import '../../../../../M/Enums.dart';
+import '../../../../../M/EndPoints.dart';
 import '../../../../../M/PermissionsEnum.dart';
-import '../../../../../M/Ticket.dart';
+import '../../../../../M/StandardTicket.dart';
 import '../../../../../globals.dart';
 import '../../../Widgets/NoResultFoundMsg.dart';
 import 'StandardTicketInfo.dart';
@@ -26,115 +27,110 @@ class StandardFiles extends StatefulWidget {
 }
 
 class _StandardFilesState extends State<StandardFiles> with TickerProviderStateMixin {
+  var themeColor = Colors.green;
+
+  List<Widget> factoryChipsList = [];
+
   bool loading = true;
-
-  late DbChangeCallBack _dbChangeCallBack;
-
-  List<Production> _productions = [];
-  List<StandardTicket> currentFileList = [];
 
   @override
   initState() {
     super.initState();
-    _productions = [Production.All, Production.Upwind, Production.OD, Production.Nylon_Standard, Production.OEM];
-    tabs = _productions.map<String>((e) => e.getValue()).toList();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _tabBarController = TabController(length: tabs.length, vsync: this);
-      _tabBarController!.addListener(() {
-        print("Selected Index: ${_tabBarController!.index}");
-        currentFileList = listsMap[_productions[_tabBarController!.index]];
-        setState(() {});
-      });
-
-      reloadData().then((value) {});
+      _refreshIndicatorKey.currentState?.show();
     });
-
-    _dbChangeCallBack = DB.setOnDBChangeListener(() {
-      print('on update tickets');
-      if (mounted) {
-        loadData();
-      }
-    }, context, collection: DataTables.standardTickets);
   }
+
+  late List listsArray;
 
   @override
   void dispose() {
-    _dbChangeCallBack.dispose();
+    if (!cancelToken.isCancelled) {
+      cancelToken.cancel();
+    }
     super.dispose();
   }
 
-  // late List listsArray;
-
-  // bool _showAllTickets = true;
   TextEditingController searchController = TextEditingController();
+  bool _isBarcodeScan = false;
 
   @override
   Widget build(BuildContext context) {
-    return _loading
-        ? Center(
-            child: Column(mainAxisSize: MainAxisSize.min, children: const [
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: CircularProgressIndicator(),
+    factoryChipsList = StandardProductions.values.map<Widget>((e) => _productionChip(e)).toList();
+    return Scaffold(
+        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+        floatingActionButton: FloatingActionButton(
+            onPressed: () async {
+              String barcode = await FlutterBarcodeScanner.scanBarcode("#ff6666", "Cancel", false, ScanMode.DEFAULT);
+              if (barcode == '-1') {
+                print('nothing return.');
+              } else {
+                searchController.value = TextEditingValue(text: barcode, selection: TextSelection.fromPosition(TextPosition(offset: barcode.length)));
+                _isBarcodeScan = true;
+              }
+            },
+            backgroundColor: themeColor,
+            child: const Icon(Icons.qr_code_rounded)),
+        appBar: AppBar(
+            actions: const <Widget>[],
+            elevation: 0.0,
+            toolbarHeight: 82,
+            backgroundColor: themeColor,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.pop(context),
             ),
-            Text("Loading")
-          ]))
-        : Scaffold(
-            appBar: AppBar(
-              elevation: 0.0,
-              toolbarHeight: 80,
-              backgroundColor: Colors.green,
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () => Navigator.pop(context),
-              ),
-              title: const Text("Standard Files", textScaleFactor: 1.2),
-              bottom: SearchBar(
-                searchController: searchController,
+            title: const Text("Standard Library", textScaleFactor: 1.2),
+            bottom: SearchBar(
                 delay: 300,
+                searchController: searchController,
                 onSearchTextChanged: (text) {
                   searchText = text;
-                  loadData();
-                },
-                onSubmitted: (text) {},
-              ),
-              centerTitle: true,
-            ),
-            body: getBody(),
-            bottomNavigationBar: BottomAppBar(
-                shape: const CircularNotchedRectangle(),
-                color: Colors.green,
-                child: IconTheme(
-                  data: const IconThemeData(color: Colors.white),
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text("${currentFileList.length}", textScaleFactor: 1.1, style: const TextStyle(color: Colors.white)),
+                  _ticketList = [];
+
+                  print("SEARCHING FOR $searchText");
+
+                  loadData(0);
+                }),
+            centerTitle: true),
+        body: getBody(),
+        bottomNavigationBar: BottomAppBar(
+            shape: const CircularNotchedRectangle(),
+            color: themeColor,
+            child: IconTheme(
+              data: const IconThemeData(color: Colors.white),
+              child: Row(
+                children: [
+                  InkWell(
+                    onTap: () {},
+                    splashColor: Colors.red,
+                    child: Ink(
+                      child: IconButton(
+                        icon: const Icon(Icons.sort_by_alpha_rounded),
+                        onPressed: () {
+                          _sortByBottomSheetMenu();
+                        },
                       ),
-                      const Spacer(),
-                      Text("Sorted by $sortedBy", style: const TextStyle(color: Colors.white)),
-                      InkWell(
-                        onTap: () {},
-                        splashColor: Colors.red,
-                        child: Ink(
-                          child: IconButton(
-                            icon: const Icon(Icons.sort_outlined),
-                            onPressed: () {
-                              _sortByBottomSheetMenu();
-                            },
-                          ),
-                        ),
-                      )
-                    ],
+                    ),
                   ),
-                )));
+                  const Spacer(),
+                  Padding(padding: const EdgeInsets.all(8.0), child: Text("$dataCount", textScaleFactor: 1.1, style: const TextStyle(color: Colors.white))),
+                  const Spacer(),
+                  // Text("Sorted by $sortedBy", style: TextStyle(color: Colors.white)),
+                  const SizedBox(width: 36)
+                ],
+              ),
+            )));
   }
 
-  String listSortBy = "uptime DESC";
+  Filters dataFilter = Filters.none;
+
+  String listSortBy = "completedOn";
   String sortedBy = "Date";
   String searchText = "";
-  bool isAsc = true;
+
+  List<Map> currentFileList = [];
 
   void _sortByBottomSheetMenu() {
     getListItem(String title, icon, key) {
@@ -143,18 +139,13 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
         selectedTileColor: Colors.black12,
         selected: listSortBy == key,
         leading: icon is IconData ? Icon(icon) : icon,
-        trailing: listSortBy == key
-            ? isAsc
-                ? const Icon(Icons.arrow_drop_up_outlined)
-                : const Icon(Icons.arrow_drop_down_outlined)
-            : null,
         onTap: () {
           listSortBy = key;
           sortedBy = title;
-          isAsc = !isAsc;
-          print('isAsc $isAsc');
           Navigator.pop(context);
-          loadData();
+          _ticketList = [];
+          loadData(0);
+          setState(() {});
         },
       );
     }
@@ -165,104 +156,103 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
         context: context,
         builder: (builder) {
           return Container(
-            color: Colors.transparent,
-            child: Column(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text("Sort By", textScaleFactor: 1.2),
-                ),
+              color: Colors.transparent,
+              child: Column(children: [
+                const Padding(padding: EdgeInsets.all(16.0), child: Text("Sort By", textScaleFactor: 1.2)),
                 Expanded(
-                  child: Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
-                      child: ListView(
-                        children: [
+                    child: Padding(
+                        padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
+                        child: ListView(children: [
                           getListItem("Date", Icons.date_range_rounded, "uptime"),
                           getListItem("Name", Icons.sort_by_alpha_rounded, "oe"),
                           getListItem("Usage", Icons.data_usage_outlined, "usedCount")
-                        ],
-                      )),
-                ),
-              ],
-            ),
-          );
+                        ])))
+              ]));
         });
   }
 
-  var tabs = [];
-  final tabsColors = [null, "Upwind", "OD", 'Nylon Standard', "OEM", "No Pool"];
-
-  TabController? _tabBarController;
-
   getBody() {
-    var l = tabs.length;
-    print('tab length = $l');
-    return _tabBarController == null
-        ? Container()
-        : DefaultTabController(
-            length: tabs.length,
-            child: Scaffold(
-                backgroundColor: Colors.white,
-                appBar: AppBar(
-                  toolbarHeight: 0,
-                  automaticallyImplyLeading: false,
-                  backgroundColor: Colors.green,
-                  elevation: 4.0,
-                  bottom: TabBar(
-                    controller: _tabBarController,
-                    indicatorWeight: 4.0,
-                    indicatorColor: Colors.white,
-                    isScrollable: true,
-                    tabs: [
-                      for (final tab in tabs)
-                        Tab(
-                          child: Wrap(alignment: WrapAlignment.center, children: [
-                            // Icon(
-                            //   Icons.fiber_manual_record_outlined,
-                            // ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 4, bottom: 4, left: 2),
-                              child: Text(tab),
-                            )
-                          ]),
-                        ),
-                    ],
-                  ),
-                ),
-                body: TabBarView(controller: _tabBarController, children: listsMap.values.map<Widget>((e) => getTicketListByCategory(e)).toList())));
+    return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+            toolbarHeight: 50,
+            automaticallyImplyLeading: false,
+            backgroundColor: themeColor,
+            elevation: 4,
+            actions: const [],
+            title: SingleChildScrollView(scrollDirection: Axis.horizontal, child: Wrap(spacing: 5, children: factoryChipsList))),
+        body: _getTicketsList());
   }
 
-  getTicketListByCategory(List<StandardTicket> _filesList) {
+  final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+
+  _getTicketsList() {
     return Column(
       children: [
         Expanded(
           child: RefreshIndicator(
+            key: _refreshIndicatorKey,
             onRefresh: () {
-              return reloadData();
+              setState(() {
+                loading = true;
+              });
+              return _loadData(0);
             },
-            child: _filesList.isEmpty
-                // ? Center(child: Text(searchText.isEmpty ? "No Tickets Found" : "⛔ Work Ticket not found.\n Please contact  Ticket Checking department", textScaleFactor: 1.5))
+            child: (_ticketList.isEmpty && (!requested))
                 ? Center(
-                    child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(padding: const EdgeInsets.all(20), child: const NoResultFoundMsg()),
-                      ElevatedButton(
-                          onPressed: () {
-                            reloadData();
-                          },
-                          child: const Text("Reload"))
-                    ],
-                  ))
+                    child: Container(
+                        padding: const EdgeInsets.all(20),
+                        child: loading
+                            ? Container()
+                            : NoResultFoundMsg(onRetry: () {
+                                _refreshIndicatorKey.currentState?.show();
+                              })))
                 : Padding(
                     padding: const EdgeInsets.only(top: 16),
                     child: ListView.separated(
-                      padding: const EdgeInsets.all(8),
-                      itemCount: _filesList.length,
+                padding: const EdgeInsets.all(8),
+                      itemCount: _ticketList.length < dataCount ? _ticketList.length + 1 : _ticketList.length,
                       itemBuilder: (BuildContext context, int index) {
-                        StandardTicket ticket = (_filesList[index]);
-                        // print("#####################################################################################################");
-                        // print(ticket.toJson());
+                        if (_ticketList.length == index) {
+                          if (!requested && (!_dataLoadingError)) {
+                            var x = ((_ticketList.length) / 20);
+
+                            _loadData(x.toInt());
+                          }
+                          return SizedBox(
+                              height: 100,
+                              child: Center(
+                                  child: Padding(
+                                      padding: const EdgeInsets.all(8),
+                                      child: SizedBox(
+                                          height: 48,
+                                          width: 48,
+                                          child: InkWell(
+                                            onTap: () {
+                                              if (_dataLoadingError) {
+                                                setState(() {
+                                                  _dataLoadingError = false;
+                                                });
+                                                var x = ((_ticketList.length) / 20);
+                                                _loadData(x.toInt());
+                                              }
+                                            },
+                                            child: Card(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(100.0),
+                                                ),
+                                                child: Padding(
+                                                    padding: const EdgeInsets.all(12.0),
+                                                    child: !_dataLoadingError
+                                                        ? const CircularProgressIndicator(color: Colors.red, strokeWidth: 2)
+                                                        : const Icon(
+                                                            Icons.refresh_rounded,
+                                                            size: 18,
+                                                          ))),
+                                          )))));
+                        }
+
+                        StandardTicket ticket = (_ticketList[index]);
                         return GestureDetector(
                             behavior: HitTestBehavior.opaque,
                             onLongPress: () async {
@@ -274,19 +264,19 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
                             },
                             onDoubleTap: () async {
                               Ticket.open(context, ticket);
-                            },
-                            child: Ink(
-                                decoration: BoxDecoration(
-                                    color: ticket.isHold == 1 ? Colors.black12 : Colors.white,
-                                    border: Border.all(color: Colors.white),
-                                    borderRadius: const BorderRadius.all(Radius.circular(20))),
-                                child: ListTile(
-                                    leading: Text("${index + 1}"),
-                                    title: Text((ticket.oe ?? ""), style: const TextStyle(fontWeight: FontWeight.bold)),
-                                    subtitle: Text(ticket.getUpdateDateTime()),
-                                    trailing: Text("${ticket.usedCount}"))));
                       },
-                      separatorBuilder: (BuildContext context, int index) {
+                      child: Ink(
+                          decoration: BoxDecoration(
+                              color: ticket.isHold == 1 ? Colors.black12 : Colors.white,
+                              border: Border.all(color: Colors.white),
+                              borderRadius: const BorderRadius.all(Radius.circular(20))),
+                          child: ListTile(
+                              leading: Text("${index + 1}"),
+                              title: Text((ticket.oe ?? ""), style: const TextStyle(fontWeight: FontWeight.bold)),
+                              subtitle: Text(ticket.getUpdateDateTime()),
+                              trailing: Text("${ticket.usedCount}"))));
+                },
+                separatorBuilder: (BuildContext context, int index) {
                         return const Divider(height: 1, endIndent: 0.5, color: Colors.black12);
                       },
                     ),
@@ -297,78 +287,103 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
     );
   }
 
-  List<StandardTicket> _load(Production selectedProduction, section, _showAllTickets, searchText) {
-    print('HiveBox.standardTicketsBox.values${HiveBox.standardTicketsBox.values.length}');
-    List<StandardTicket> l = HiveBox.standardTicketsBox.values.where((t) {
-      if (selectedProduction == Production.None) {
-        if ((t.production ?? "") != "") {
-          return false;
-        }
-      } else if (selectedProduction != Production.All) {
-        if (selectedProduction.getValue() != t.production) {
-          return false;
-        }
-      }
+  bool requested = true;
+  int dataCount = 0;
+  List<StandardTicket> _ticketList = [];
+  bool _dataLoadingError = false;
+  CancelToken cancelToken = CancelToken();
 
-      if (!searchByText(t, searchText)) {
-        return false;
-      }
-      return true;
-    }).toList();
-    if (isAsc) {
-      l.sort((a, b) => (a.toJson()[listSortBy] ?? "").compareTo((b.toJson()[listSortBy] ?? "")));
-    } else {
-      l.sort((b, a) => (a.toJson()[listSortBy] ?? "").compareTo((b.toJson()[listSortBy] ?? "")));
+  Future _loadData(int page) {
+    if (!cancelToken.isCancelled) {
+      cancelToken.cancel();
     }
-    return l;
-  }
+    cancelToken = CancelToken();
+    requested = true;
 
-  setLoading(l) {
-    setState(() {
-      _loading = l;
+    print('searchText== $searchText');
+
+    return Api.get(
+            EndPoints.tickets_standard_getList,
+            {
+              'production': _selectedProduction.getValue(),
+              "flag": dataFilter.getValue(),
+              'sortDirection': "desc",
+              'sortBy': listSortBy,
+              'pageIndex': page,
+              'pageSize': 20,
+              'searchText': searchText
+            },
+            cancelToken: cancelToken)
+        .then((res) {
+      print(res.data);
+      List tickets = res.data["tickets"];
+      dataCount = res.data["count"];
+
+      if (page == 0) {
+        _ticketList = [];
+      }
+
+      try {
+        _ticketList.addAll(StandardTicket.fromJsonArray(tickets));
+      } catch (e) {
+        print(e);
+      }
+
+      final ids = _ticketList.map((e) => e.id).toSet();
+      _ticketList.retainWhere((x) => ids.remove(x.id));
+      _dataLoadingError = false;
+
+      if (_isBarcodeScan && _ticketList.isNotEmpty) {
+        var ticketInfo = TicketInfo(_ticketList.first);
+        ticketInfo.show(context);
+        searchController.value = TextEditingValue(text: '', selection: TextSelection.fromPosition(const TextPosition(offset: 0)));
+      }
+      _isBarcodeScan = false;
+
+      setState(() {});
+    }).whenComplete(() {
+      setState(() {
+        requested = false;
+        loading = false;
+      });
+    }).catchError((err) {
+      print("--------------------------------------------err");
+      print(err);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(err.toString()),
+          action: SnackBarAction(
+              label: 'Retry',
+              onPressed: () {
+                loadData(page);
+              })));
+      setState(() {
+        _dataLoadingError = true;
+      });
     });
   }
 
-  bool _loading = true;
-  Map listsMap = {};
+  StandardProductions _selectedProduction = StandardProductions.All;
 
-  loadData() {
-    print('---------------------------------------------- Start loading');
-    String searchText = this.searchText.toLowerCase();
-
-    for (var element in _productions) {
-      listsMap[element] = _load(element, 0, true, searchText);
-    }
-    currentFileList = listsMap[_productions[0]];
-    print('---------------------------------------------- end loading');
-    setState(() {});
+  _productionChip(StandardProductions p) {
+    return FilterChip(
+        selectedColor: Colors.white,
+        checkmarkColor: themeColor,
+        label: Text(
+          p.getValue(),
+          style: TextStyle(color: _selectedProduction == p ? themeColor : Colors.black),
+        ),
+        selected: _selectedProduction == p,
+        onSelected: (bool value) {
+          _selectedProduction = p;
+          _ticketList = [];
+          loading = true;
+          loadData(0);
+          setState(() {});
+        });
   }
 
-  bool searchBySection(t, section) {
-    return (!t.openSections.contains(section.toString()));
-  }
-
-  searchByProduction(StandardTicket t, Production selectedProduction) {
-    if (selectedProduction == Production.All) {
-      return true;
-    }
-    if (selectedProduction == Production.None && ((t.production ?? '').trim().isEmpty)) {
-      return true;
-    }
-    return (t.production ?? '').toLowerCase() == selectedProduction.getValue().toLowerCase();
-  }
-
-  bool searchByText(t, String searchText) {
-    if (searchText.isNotEmpty) {
-      return searchText.containsInArrayIgnoreCase([t.oe]);
-    }
-    return true;
-  }
-
-  Future reloadData() async {
-    await HiveBox.getDataFromServer();
-    loadData();
-    setLoading(false);
+  loadData(int i) {
+    _refreshIndicatorKey.currentState?.show();
   }
 }
 
@@ -393,51 +408,51 @@ Future<void> showStandardTicketOptions(StandardTicket ticket, BuildContext conte
             Expanded(
                 child: SingleChildScrollView(
                     child: Column(children: [
-              if (AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_CHANGE_FACTORY))
-                ListTile(
-                    title: const Text("Change Factory"),
-                    leading: const Icon(Icons.send_outlined, color: Colors.lightBlue),
-                    onTap: () async {
-                      Navigator.of(context).pop();
-                      showFactories(ticket, context1);
-                      // await Navigator.push(context1, MaterialPageRoute(builder: (context) => changeFactory(ticket)));
-                      // Navigator.of(context).pop();
-                    }),
-              if (AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_DELETE_STANDARD_FILES))
-                ListTile(
-                    title: const Text("Delete"),
-                    leading: const Icon(Icons.delete_forever, color: Colors.red),
-                    onTap: () async {
-                      snackBarKey.currentState?.showSnackBar(SnackBar(
-                          behavior: SnackBarBehavior.floating,
-                          width: 500,
-                          backgroundColor: Colors.red,
-                          content: Row(
-                            children: [
-                              const Text("Do You really want to delete this standard ticket ?"),
-                              const Spacer(),
-                              TextButton(
-                                  onPressed: () {
-                                    snackBarKey.currentState?.showSnackBar(const SnackBar(behavior: SnackBarBehavior.floating, width: 200, content: Text('Deleting')));
-                                    Api.post(EndPoints.tickets_standard_delete, {'id': ticket.id.toString()}).then((response) async {
-                                      print(response.data);
-                                      snackBarKey.currentState?.showSnackBar(
-                                          const SnackBar(behavior: SnackBarBehavior.floating, width: 200, backgroundColor: Colors.green, content: Text('Delete Successfully')));
-                                    });
-                                  },
-                                  child: const Text("Yes"))
-                            ],
-                          ),
-                          action: SnackBarAction(
-                              label: 'No',
-                              textColor: Colors.white,
-                              onPressed: () {
-                                snackBarKey.currentState?.removeCurrentSnackBar();
-                              })));
+                      if (AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_CHANGE_FACTORY))
+                        ListTile(
+                            title: const Text("Change Factory"),
+                            leading: const Icon(Icons.send_outlined, color: Colors.lightBlue),
+                            onTap: () async {
+                              Navigator.of(context).pop();
+                              showFactories(ticket, context1);
+                              // await Navigator.push(context1, MaterialPageRoute(builder: (context) => changeFactory(ticket)));
+                              // Navigator.of(context).pop();
+                            }),
+                      if (AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_DELETE_STANDARD_FILES))
+                        ListTile(
+                            title: const Text("Delete"),
+                            leading: const Icon(Icons.delete_forever, color: Colors.red),
+                            onTap: () async {
+                              snackBarKey.currentState?.showSnackBar(SnackBar(
+                                  behavior: SnackBarBehavior.floating,
+                                  width: 500,
+                                  backgroundColor: Colors.red,
+                                  content: Row(
+                                    children: [
+                                      const Text("Do You really want to delete this standard ticket ?"),
+                                      const Spacer(),
+                                      TextButton(
+                                          onPressed: () {
+                                            snackBarKey.currentState?.showSnackBar(const SnackBar(behavior: SnackBarBehavior.floating, width: 200, content: Text('Deleting')));
+                                            Api.post(EndPoints.tickets_standard_delete, {'id': ticket.id.toString()}).then((response) async {
+                                              print(response.data);
+                                              snackBarKey.currentState?.showSnackBar(
+                                                  const SnackBar(behavior: SnackBarBehavior.floating, width: 200, backgroundColor: Colors.green, content: Text('Delete Successfully')));
+                                            });
+                                          },
+                                          child: const Text("Yes"))
+                                    ],
+                                  ),
+                                  action: SnackBarAction(
+                                      label: 'No',
+                                      textColor: Colors.white,
+                                      onPressed: () {
+                                        snackBarKey.currentState?.removeCurrentSnackBar();
+                                      })));
 
-                      Navigator.of(context).pop();
-                    }),
-            ])))
+                              Navigator.of(context).pop();
+                            }),
+                    ])))
           ],
         ),
       );
