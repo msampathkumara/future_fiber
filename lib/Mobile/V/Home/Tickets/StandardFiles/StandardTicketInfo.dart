@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/M/StandardTicket.dart';
 import 'package:smartwind/M/Ticket.dart';
@@ -10,7 +9,6 @@ import 'package:smartwind/Mobile/V/Home/Tickets/TicketInfo/info_History.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
 import '../../../../../C/Api.dart';
-import '../../../../../C/DB/DB.dart';
 import '../../../../../C/DB/hive.dart';
 import '../../../../../M/NsUser.dart';
 import '../../../../../Web/Widgets/DialogView.dart';
@@ -35,21 +33,17 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
 
   late StandardTicket _ticket;
 
-  double _progress = 10;
   int standardTicketUsageCount = 0;
 
   List<TicketHistory> historyList = [];
 
   final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
-  late DbChangeCallBack _dbChangeCallBack;
-
   @override
   void initState() {
     standardTicket = widget.standardTicket;
     _ticket = standardTicket;
     // standardTicketUsageCount = HiveBox.standardTicketsBox.values.fold(0, (previousValue, element) => previousValue + element.usedCount);
-    _progress = _ticket.usedCount == 0 ? 0 : (standardTicket.usedCount / _ticket.usedCount) * 100;
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
       _refreshIndicatorKey.currentState?.show();
@@ -70,7 +64,6 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
 
   @override
   void dispose() {
-    _dbChangeCallBack.dispose();
     super.dispose();
   }
 
@@ -144,10 +137,19 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
     var smallText = const TextStyle(fontSize: 16);
 
     return AppBar(
+      automaticallyImplyLeading: false,
       backgroundColor: Colors.orange,
       elevation: 10,
+      title: Row(children: [
+        const Spacer(),
+        IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.close, color: Colors.black))
+      ]),
       // toolbarHeight: (bottomNavigationBarSelectedIndex == 0) ? (height - kBottomNavigationBarHeight) : 230,
-      toolbarHeight: 150,
+      toolbarHeight: 200,
       bottom: PreferredSize(
           preferredSize: const Size.fromHeight(4.0),
           child: Container(

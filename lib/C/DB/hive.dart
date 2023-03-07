@@ -3,7 +3,9 @@ import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
@@ -18,6 +20,8 @@ import 'package:smartwind/M/TicketFlag.dart';
 import 'package:smartwind/M/User/Email.dart';
 import 'package:smartwind/C/DB/up_on.dart';
 import 'package:smartwind/C/DB/user_config.dart';
+import 'package:smartwind/Web/Widgets/StatusBar/StatusBar.dart';
+import '../../Web/Widgets/StatusBar/StatusBarProgressIndicator.dart';
 import '../Api.dart';
 import '../../Mobile/V/Home/UserManager/UserPermissions.dart';
 import '../../globals.dart';
@@ -75,8 +79,8 @@ class HiveBox {
     // standardTicketsBox = await Hive.openBox<StandardTicket>('standardTicketsBox');
     localFileVersionsBox = await Hive.openBox<LocalFileVersion>('localFileVersionsBox');
 
-    if (kIsWeb) {
-      FirebaseAuth.instance.authStateChanges().listen((User? user) async {
+    // if (kIsWeb) {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) async {
         if (user != null) {
           userUpdatesListener?.cancel();
           dbUponListener?.cancel();
@@ -139,7 +143,7 @@ class HiveBox {
           // });
         }
       });
-    }
+    // }
 
     if (isMaterialManagement) {
       FirebaseAuth.instance.authStateChanges().listen((User? user) async {
@@ -230,7 +234,13 @@ class HiveBox {
       print('ticketsList length == ${ticketsList.length}');
       print('standardTicketsList length == ${standardTicketsList.length}');
 
-      ticketBox.putMany(ticketsList, onItemAdded: (index, object) {}).then((List<HiveClass> list) async {
+      StatusBarProgressIndicatorController statusBarProgressIndicatorController = StatusBarProgressIndicatorController();
+      var _statusBarProgressIndicator = StatusBarProgressIndicator(trailing: const Icon(Icons.dns_rounded, color: Colors.red), controller: statusBarProgressIndicatorController);
+      StatusBar.getController().addWidget(_statusBarProgressIndicator);
+      ticketBox.putMany(ticketsList, onItemAdded: (index, object) async {
+        if (kIsWeb) double progress = statusBarProgressIndicatorController.setValue(index + 1.0, ticketsList.length);
+        // print('add $index');
+      }).then((List<HiveClass> list) async {
         print('tickets saved');
         int maxValue = ticketBox.values.map((e) => e.uptime).reduce(max);
         print('$maxValue __uptimes max');
@@ -242,6 +252,7 @@ class HiveBox {
         if (ticketsList.isNotEmpty || deletedTicketsIdsList.isNotEmpty || completedTicketsIdsList.isNotEmpty) {
           DB.callChangesCallBack(DataTables.tickets);
         }
+        StatusBar.getController().removeWidget(_statusBarProgressIndicator);
       });
 
       await sectionsBox.putMany(factorySectionsList, afterAdd: (list) {

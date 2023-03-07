@@ -20,7 +20,8 @@ import 'V/QC/web_qc.dart';
 import 'V/SheetData/webSheetData.dart';
 import 'V/StandardLibrary/webStandardLibrary.dart';
 import 'V/UserManager/webUserManager.dart';
-import 'Widgets/StatusBar.dart';
+import 'Widgets/StatusBar/StatusBar.dart';
+import 'Widgets/StatusBar/StatusBarProgressIndicator.dart';
 import 'Widgets/login_change.dart';
 
 class WebHomePage extends StatefulWidget {
@@ -39,6 +40,9 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
 
   bool loading = true;
 
+  StatusBarProgressIndicatorController statusBarProgressIndicatorController = StatusBarProgressIndicatorController();
+  late StatusBarProgressIndicator _statusBarProgressIndicator;
+
   List<Widget?> get routeWidgets => [
         if (AppUser.havePermissionFor(NsPermissions.DASHBOARD_DASHBOARD)) const DashBoard(),
         if (AppUser.havePermissionFor(NsPermissions.TICKET_PRODUCTION_POOL)) const WebProductionPool(),
@@ -55,6 +59,8 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
 
   @override
   initState() {
+    _statusBarProgressIndicator = StatusBarProgressIndicator(controller: statusBarProgressIndicatorController);
+
     print('HOME PAGE INIT');
     HiveBox.getUserConfig();
     PackageInfo.fromPlatform().then((appInfo) {
@@ -71,6 +77,11 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
         setState(() {});
       }
     });
+
+    // StatusBar.getController().addWidget(_statusBarProgressIndicator);
+    // runIndicator().then((value) {
+    //   // StatusBar.getController().removeWidget(_statusBarProgressIndicator);
+    // });
 
     super.initState();
   }
@@ -255,10 +266,18 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                             ],
                           ),
                         ),
-                        Container(color: Colors.red, width: double.infinity, child: StatusBar())
+                        Container(color: Colors.red, width: double.infinity, child: const StatusBar())
                       ],
                     )
                   : const PermissionMessage(),
         ));
+  }
+
+  Future<void> runIndicator() async {
+    for (var i = 0; i < 500; i++) {
+      await Future.delayed(const Duration(milliseconds: 200));
+      print('Writing another word $i');
+      statusBarProgressIndicatorController.setValue(i as double, 500);
+    }
   }
 }

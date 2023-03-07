@@ -41,7 +41,6 @@ class FCM {
         if (message.data["ticketId"] != null) {
           await HiveBox.deleteTicket(message.data["ticketId"]);
         }
-
         HiveBox.getDataFromServer();
       } else if (message.from == "/topics/resetDb") {
         HiveBox.getDataFromServer(clean: true);

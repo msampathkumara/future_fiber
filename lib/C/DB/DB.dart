@@ -41,7 +41,7 @@ class DB {
     Batch batch = db!.batch();
     for (var user in users) {
       insertUserSections(user["id"], user["sections"] ?? [], batch);
-      user.remove("sections");
+      user.removeWidget("sections");
       print(user);
       batch.insert('users', user, conflictAlgorithm: ConflictAlgorithm.replace);
     }

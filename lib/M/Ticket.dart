@@ -377,16 +377,19 @@ class Ticket extends DataObject {
 
   static isFileNew(Ticket ticket) async {
     // var ticket1 = ticket.isStandardFile ? HiveBox.standardTicketsBox.get(ticket.id) : HiveBox.ticketBox.get(ticket.id);
+    print('Ticket id == ${ticket.id}');
     var ticket1 = HiveBox.ticketBox.get(ticket.id);
+
     var f = HiveBox.localFileVersionsBox.values.where((element) => element.type == ticket.getTicketType().getValue() && element.ticketId == ticket.id);
     if (f.isNotEmpty) {
       LocalFileVersion fileVersion = f.first;
       print("---------------------------fileVersion.toJson()");
       print(fileVersion.toJson().toString());
+      print(ticket1?.toJson().toString());
       print(ticket1?.fileVersion.toString());
 
       if (ticket1 != null) {
-        if (ticket1.fileVersion > fileVersion.version) {
+        if (ticket1.fileVersion != fileVersion.version) {
           return false;
         }
         return true;

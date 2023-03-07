@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -91,10 +90,6 @@ class _TicketInfoState extends State<TicketInfo> {
       icon: Icon(Icons.flag),
       label: "Flags",
     ),
-    // const BottomNavigationBarItem(
-    //   icon: Icon(Icons.print),
-    //   label: "Printing",
-    // ),
     const BottomNavigationBarItem(
       icon: Icon(Icons.history),
       label: "History",
@@ -109,7 +104,6 @@ class _TicketInfoState extends State<TicketInfo> {
         : Scaffold(
             body: _loading ? const Center(child: CircularProgressIndicator()) : _body(bottomNavigationBarSelectedIndex),
             appBar: _appBar(),
-            // backgroundColor: Colors.white,
             bottomNavigationBar: BottomAppBar(
                 color: Theme.of(context).primaryColor,
                 shape: const CircularNotchedRectangle(),
@@ -128,7 +122,6 @@ class _TicketInfoState extends State<TicketInfo> {
                   ),
                 )),
             floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-            // floatingActionButton: getViewFileButton()
             floatingActionButton: getViewFileButton());
   }
 
@@ -427,10 +420,10 @@ class _TicketInfoState extends State<TicketInfo> {
       return (p.status == 0) ? true : false;
     }).toList();
 
-    print('------------------------------ ${(AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_ANY_PDF))}');
-    print('userSectionId = ${userSectionId}');
-    print('_ticket.nowAt = ${_ticket.nowAt}');
-    print('isPreCompleted(progressList) = ${isPreCompleted(progressList)}');
+    // print('------------------------------ ${(AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_ANY_PDF))}');
+    // print('userSectionId = ${userSectionId}');
+    // print('_ticket.nowAt = ${_ticket.nowAt}');
+    // print('isPreCompleted(progressList) = ${isPreCompleted(progressList)}');
 
     if (_ticket.isCompleted) {
       return Ticket.open(context, _ticket, isPreCompleted: false);
@@ -530,11 +523,11 @@ class _TicketInfoState extends State<TicketInfo> {
     }
 
     int? userSectionId = (AppUser.getSelectedSection()?.id);
-    print("-------------------------------------------------zz1");
-    progressList.forEach((element) {
-      print("${element.doAt} ------------${element.status}----------  ${AppUser.getSelectedSection()!.id}");
-      // print(element.toJson());
-    });
+    // print("-------------------------------------------------zz1");
+    // for (var element in progressList) {
+    //   print("${element.doAt} ------------${element.status}----------  ${AppUser.getSelectedSection()!.id}");
+    //   // print(element.toJson());
+    // }
 
     return progressList.where((element) => ((element.doAt == userSectionId && element.status == 1))).isNotEmpty;
   }
@@ -542,25 +535,30 @@ class _TicketInfoState extends State<TicketInfo> {
   FloatingActionButton? getViewFileButton() {
     var _button = FloatingActionButton(
         child: const Icon(Icons.import_contacts),
-        onPressed: () => kIsWeb
-            ? Ticket.open(context, _ticket, isPreCompleted: isPreCompleted(progressList))
-            : {
-                openFile().then((value) {
-                  if (value == TicketAction.startProduction) {
-                    TicketStartDialog(_ticket).show(context).then((Ticket? t) async {
-                      print('TicketStartDialog');
-                      print(t);
-                      if (t != null) {
-                        await Ticket.open(context, t, isPreCompleted: isPreCompleted);
-                        setState(() {
-                          _ticket = t;
-                        });
-                        Ticket.open(context, _ticket, isPreCompleted: isPreCompleted(progressList));
-                      }
-                    });
-                  }
-                })
+        onPressed: () {
+          if (kIsWeb) {
+            Ticket.open(context, _ticket, isPreCompleted: isPreCompleted(progressList));
+            return;
+          }
+
+          print('TicketStartDialog 0');
+
+          openFile().then((value) {
+            if (value == TicketAction.startProduction) {
+              TicketStartDialog(_ticket).show(context).then((Ticket? t) async {
+                print('TicketStartDialog');
+                print(t);
+                if (t != null) {
+                  await Ticket.open(context, t, isPreCompleted: isPreCompleted);
+                  setState(() {
+                    _ticket = t;
+                  });
+                  Ticket.open(context, _ticket, isPreCompleted: isPreCompleted(progressList));
+                }
               });
+            }
+          });
+        });
 
     if ((!_ticket.hasFile)) {
       return null;

@@ -109,11 +109,11 @@ extension F on Box {
     await put(id, value);
   }
 
-  Future<List<HiveClass>> putMany(List<HiveClass> list, {Null Function(int, HiveClass)? onItemAdded, Null Function(List list)? afterAdd}) async {
+  Future<List<HiveClass>> putMany(List<HiveClass> list, {Function(int, HiveClass)? onItemAdded, Null Function(List list)? afterAdd}) async {
     for (var element in list.asMap().entries) {
       await putObject(element.value);
       if (onItemAdded != null) {
-        onItemAdded(element.key, element.value);
+        await onItemAdded(element.key, element.value);
       }
     }
     if (afterAdd != null) {
