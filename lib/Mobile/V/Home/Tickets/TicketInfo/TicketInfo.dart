@@ -549,11 +549,12 @@ class _TicketInfoState extends State<TicketInfo> {
                 print('TicketStartDialog');
                 print(t);
                 if (t != null) {
-                  await Ticket.open(context, t, isPreCompleted: isPreCompleted);
-                  setState(() {
-                    _ticket = t;
+                  Ticket.open(context, t, isPreCompleted: isPreCompleted).then((value) async {
+                    setState(() {
+                      _ticket = t;
+                    });
+                    await Ticket.open(context, _ticket, isPreCompleted: isPreCompleted(progressList));
                   });
-                  Ticket.open(context, _ticket, isPreCompleted: isPreCompleted(progressList));
                 }
               });
             }

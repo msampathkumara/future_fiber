@@ -178,30 +178,60 @@ class TicketPdfViewerState extends State<TicketPdfViewer> {
     Navigator.of(context).pop();
   }
 
+  // Widget? getEditButton() {
+  //   print('widget. isPreCompleted ===== ${widget.isPreCompleted}');
+  //
+  //   if (widget.ticket.isStandardFile) {
+  //     if ((widget.ticket.isStandardFile && AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_EDIT_STANDARD_FILES))) {
+  //       return _editButton;
+  //     }
+  //     return null;
+  //   } else {
+  //     if (widget.ticket.isCompleted && (AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_FINISHED_TICKET))) {
+  //       return _editButton;
+  //     }
+  //     if (widget.ticket.isCompleted) {
+  //       return null;
+  //     }
+  //     if (AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_ANY_PDF)) {
+  //       return _editButton;
+  //     }
+  //
+  //     if (widget.ticket.isStarted && widget.ticket.nowAt == AppUser.getSelectedSection()?.id) {
+  //       return _editButton;
+  //     }
+  //     if (widget.isPreCompleted) {
+  //       return _editButton;
+  //     }
+  //     return null;
+  //   }
+  // }
+
   Widget? getEditButton() {
     print('widget. isPreCompleted ===== ${widget.isPreCompleted}');
 
-    if (widget.ticket.isStandardFile) {
-      if ((widget.ticket.isStandardFile && AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_EDIT_STANDARD_FILES))) {
-        return _editButton;
-      }
-      return null;
-    } else {
-      if (widget.ticket.isCompleted) {
-        return null;
-      }
-      if (AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_ANY_PDF)) {
-        return _editButton;
-      }
-
-      if (widget.ticket.isStarted && widget.ticket.nowAt == AppUser.getSelectedSection()?.id) {
-        return _editButton;
-      }
-      if (widget.isPreCompleted) {
-        return _editButton;
-      }
-      return null;
+    // Check if the ticket is a standard file and the user has permission to edit it
+    if (widget.ticket.isStandardFile && AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_EDIT_STANDARD_FILES)) {
+      return _editButton;
     }
+
+    // Check if the ticket is completed and the user has permission to edit it
+    if (widget.ticket.isCompleted && AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_FINISHED_TICKET)) {
+      return _editButton;
+    }
+
+    // Check if the user has permission to edit any PDF
+    if (AppUser.havePermissionFor(NsPermissions.TICKET_EDIT_ANY_PDF)) {
+      return _editButton;
+    }
+
+    // Check if the ticket is started and assigned to the user's section or pre-completed
+    if ((widget.ticket.isStarted && widget.ticket.nowAt == AppUser.getSelectedSection()?.id) || widget.isPreCompleted) {
+      return _editButton;
+    }
+
+    // Return null otherwise
+    return null;
   }
 
   get _editButton => FloatingActionButton.extended(

@@ -133,21 +133,19 @@ class _MobileHomeState extends State<MobileHome> {
                 appBar: AppBar(
                     backgroundColor: Colors.white,
                     elevation: 0,
-                    toolbarHeight: 100,
+                    toolbarHeight: 84,
                     title: Padding(
-                      padding: const EdgeInsets.only(top: 24.0),
-                      child: ListTile(
-                        leading: UserImage(nsUser: nsUser, radius: 24),
-                        title: Text(nsUser!.name, textScaleFactor: 1.2),
-                        subtitle: AppUser.getSelectedSection() != null
-                            ? Text("${AppUser.getSelectedSection()?.sectionTitle} @ ${AppUser.getSelectedSection()?.factory}")
-                            : const Text(""),
-                        trailing: _currentUserOperionMenu(),
-                        onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => CurrentUserDetails(nsUser!)));
-                        },
-                      ),
-                    )),
+                        padding: const EdgeInsets.only(top: 24.0),
+                        child: ListTile(
+                            leading: UserImage(nsUser: nsUser, radius: 24),
+                            title: Text(nsUser!.name, textScaleFactor: 1.2),
+                            subtitle: AppUser.getSelectedSection() != null
+                                ? Text("${AppUser.getSelectedSection()?.sectionTitle} @ ${AppUser.getSelectedSection()?.factory}")
+                                : const Text(""),
+                            trailing: _currentUserOperionMenu(),
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => CurrentUserDetails(nsUser!)));
+                            }))),
                 body: SizedBox(
                     height: double.maxFinite,
                     width: double.maxFinite,
@@ -307,18 +305,13 @@ class _MobileHomeState extends State<MobileHome> {
             }
 
             HiveBox.localFileVersionsBox.clear();
-
-            // DB.getDB().then((db) => db!.rawQuery("delete from files").then((data) {
-            //       print(data);
-            //     }));
           }
         }
 
         setState(() {});
         // print(result);
       },
-      itemBuilder: (BuildContext context) =>
-      <PopupMenuEntry<MenuItems>>[
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<MenuItems>>[
         const PopupMenuItem<MenuItems>(value: MenuItems.dbReload, child: Text('Reload Database')),
         const PopupMenuItem<MenuItems>(value: MenuItems.deleteDownloadedFiles, child: Text('Delete Downloaded Files')),
         const PopupMenuItem<MenuItems>(value: MenuItems.logout, child: Text('Logout')),

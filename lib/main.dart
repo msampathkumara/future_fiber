@@ -27,6 +27,7 @@ void runLoggedApp() async {
     runApp(MaterialApp(
         home: (!kIsWeb && await isTestServer)
             ? Scaffold(
+            resizeToAvoidBottomInset: false,
                 appBar: AppBar(title: const Text('Test'), backgroundColor: Colors.red, toolbarHeight: 50, centerTitle: true, actions: [
                   IconButton(onPressed: () async => {await App.changeToProduction()}, icon: const Icon(Icons.change_circle))
                 ]),

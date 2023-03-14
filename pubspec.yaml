@@ -16,13 +16,13 @@ dependencies:
     sdk: flutter
 
   #  firebase------------------------------------------
-  firebase_core: ^2.6.1
-  firebase_crashlytics: ^3.0.14
-  firebase_auth: ^4.2.8
-  firebase_messaging: ^14.2.4
-  firebase_database: ^10.0.13
-  firebase_auth_platform_interface: ^6.11.10
-  firebase_core_web: ^2.2.1
+  firebase_core: ^2.7.1
+  firebase_crashlytics: ^3.0.16
+  firebase_auth: ^4.2.10
+  firebase_messaging: ^14.2.6
+  firebase_database: ^10.0.15
+  firebase_auth_platform_interface: ^6.11.12
+  firebase_core_web: ^2.2.2
   #  --------------------------------------------------
 
 
@@ -45,14 +45,14 @@ dependencies:
   path_provider: ^2.0.12
   hex: ^0.2.0
   package_info_plus: ^3.0.3
-  dropdown_search: ^5.0.5
+  dropdown_search: ^5.0.6
   measured_size: ^1.0.0
   device_information: ^0.0.4
   device_info: ^2.0.3
   cached_network_image: ^3.2.3
-  video_player: ^2.5.1
+  video_player: ^2.5.3
   group_list_view: ^1.1.1
-  data_table_2: ^2.3.12
+  data_table_2: ^2.4.1
 
 
   custom_webview:
@@ -72,7 +72,7 @@ dependencies:
   dotted_border: ^2.0.0+3
   socket_io_client: ^2.0.1
   file_picker: ^5.2.5
-  universal_html: ^2.0.8
+  universal_html: ^2.0.9
   dropdown_button2: ^2.0.0
   pdfx: ^2.3.0
   textfield_search: ^0.10.0
