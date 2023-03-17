@@ -364,6 +364,7 @@ class Ticket extends DataObject {
     t["crossPro"] = "";
     t["loading"] = "";
     t["production"] = "";
+    t["completedOn"] = "";
     t.keys.where((k) => (t[k] ?? "").toString().isEmpty).toList().forEach(t.remove);
     print("____________________________________________________________________________________________________________________________*****");
     print(t.toString());
