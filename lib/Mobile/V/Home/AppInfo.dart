@@ -23,6 +23,8 @@ class _AppInfoState extends State<AppInfo> {
 
   String? dbName;
 
+  String env = "";
+
   @override
   void initState() {
     // TODO: implement initState
@@ -45,7 +47,7 @@ class _AppInfoState extends State<AppInfo> {
     }).whenComplete(() {
       setState(() {});
     }).catchError((err) {});
-
+    env = const String.fromEnvironment("flavor");
     super.initState();
   }
 
@@ -66,6 +68,7 @@ class _AppInfoState extends State<AppInfo> {
               ListTile(title: const Text('App Build Number'), trailing: Text('$buildNumber')),
               ListTile(title: const Text('server url'), trailing: Text(serverUrl)),
               ListTile(title: const Text('db Name'), trailing: dbName == null ? const CircularProgressIndicator() : Text("$dbName")),
+              ListTile(title: const Text('env'), trailing: Text(env))
             ]),
           ),
         ),

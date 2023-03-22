@@ -9,7 +9,11 @@ class Server {
   static String devServerIp = '192.168.0.100';
 
   static Future<String> getServerAddress({onlineServer = false}) async {
-    local = true;
+    local = false;
+
+    // if (await isV2) {
+    return "https://v2.smartwind.nsslsupportservices.com";
+    // }
 
     if (kDebugMode && local && (!onlineServer)) {
       print(devServerIp);
@@ -25,15 +29,19 @@ class Server {
 
     if (await isTestServer) {
       return "https://smartwind.test.nsslsupportservices.com";
+    } else if (await isV2) {
+      return "https://v2.smartwind.nsslsupportservices.com";
     } else {
       if (kIsWeb && (!isLocalServer)) {
-        return "_";
+        return "";
       }
       return "https://smartwind.nsslsupportservices.com_";
     }
   }
 
   static Future<String> getServerPath(String path, {onlineServer = false}) async {
+    print('path ==== $path');
+    print(await getServerAddress(onlineServer: onlineServer));
     print("${await getServerAddress(onlineServer: onlineServer)}/$path");
     return "${await getServerAddress(onlineServer: onlineServer)}/$path";
   }

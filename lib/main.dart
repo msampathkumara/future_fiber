@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:app_settings/app_settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -41,6 +42,9 @@ void runLoggedApp() async {
 }
 
 main() async {
+  var env = const String.fromEnvironment("flavor");
+  print('var env = String.fromEnvironment("flavor") =========== >>>$env');
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   bool x = Uri.base.host.contains('mm.');

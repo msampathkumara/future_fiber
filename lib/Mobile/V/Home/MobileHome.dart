@@ -6,6 +6,7 @@ import 'package:device_information/device_information.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -32,6 +33,7 @@ import '../../../M/EndPoints.dart';
 import '../../../M/PermissionsEnum.dart';
 import '../../../globals.dart';
 import '../../../globals.dart';
+import '../RF/RF.dart';
 import '../Widgets/UserImage.dart';
 import 'About.dart';
 import 'Admin/AdminCpanel.dart';
@@ -167,6 +169,9 @@ class _MobileHomeState extends State<MobileHome> {
                               direction: Axis.horizontal,
                               crossAxisAlignment: WrapCrossAlignment.center,
                               children: [
+                                // _menuButton(() {
+                                //   RF().show(context);
+                                // }, Icon(Icons.precision_manufacturing_outlined, size: iconSize), "RF"),
                                 if (AppUser.havePermissionFor(NsPermissions.TICKET_PRODUCTION_POOL))
                                   _OpenContainerWrapper(
                                       closedBuilder: (BuildContext _, VoidCallback openContainer) {

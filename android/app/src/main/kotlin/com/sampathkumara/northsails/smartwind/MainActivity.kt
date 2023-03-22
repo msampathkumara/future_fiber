@@ -4,6 +4,7 @@ import android.content.Intent
 import android.webkit.CookieManager
 import com.pdfEditor.MainEditorActivity
 import com.pdfEditor.QCEditor
+import com.Rf.Rf
 import com.tom_roush.pdfbox.multipdf.Splitter
 import com.tom_roush.pdfbox.pdmodel.PDDocument
 import io.flutter.embedding.android.FlutterActivity
@@ -19,6 +20,7 @@ class MainActivity : FlutterActivity() {
 
     private val editPdf: Int = 0
     private val qaEdit: Int = 1
+    private val rf: Int = 2
     private val _CHANNEL = "editPdf"
     private var editPdfResult: MethodChannel.Result? = null
 
@@ -98,6 +100,31 @@ class MainActivity : FlutterActivity() {
                     i.putExtra("sectionId", sectionId)
                     i.putExtra("userCurrentSection", userCurrentSection)
                     startActivityForResult(i, qaEdit)
+
+
+                }
+                "rf" -> {
+
+//                    editPdfResult = result
+//                    val ticket = call.argument<String>("ticket")
+//                    val qc = call.argument<Boolean>("qc")
+//                    val serverUrl = call.argument<String>("serverUrl")
+//                    val sectionId = call.argument<String>("sectionId")
+//                    val userCurrentSection = call.argument<String>("userCurrentSection")
+//
+//                    println(" $qc---------------------------------- _$ticket")
+//                    println("----sectionId------------------------------ _$sectionId")
+
+                    println("=========================================>> RF")
+
+                    val i = Intent(this, Rf::class.java)
+                    i.putExtra("rf_user", "{uname:'MalithG',pword:'abc@123'}")
+                    i.putExtra("ticket", "{id:1,mo:'mo-12345'}")
+//                    i.putExtra("qc", qc)
+//                    i.putExtra("serverUrl", serverUrl)
+//                    i.putExtra("sectionId", sectionId)
+//                    i.putExtra("userCurrentSection", userCurrentSection)
+                    startActivityForResult(i, rf)
 
 
                 }

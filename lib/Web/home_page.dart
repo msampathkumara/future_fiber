@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/Mobile/V/Home/UserManager/UserDetails.dart';
+import 'package:smartwind/Mobile/V/RF/RF.dart';
 import 'package:smartwind/V/PermissionMessage.dart';
+import 'package:smartwind/Web/Rf_test.dart';
 import 'package:universal_html/html.dart' as html;
 
 import '../C/DB/hive.dart';
@@ -226,8 +228,10 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                                             if (result == 1) {
                                               AppUser.logout(context);
                                             } else if (result == 2) {
-                                              isMaterialManagement = !isMaterialManagement;
-                                              Navigator.pushNamed(context, "/materialManagement");
+                                              RF().show(context);
+
+                                              // isMaterialManagement = !isMaterialManagement;
+                                              // Navigator.pushNamed(context, "/materialManagement");
                                             }
                                           },
                                           itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
@@ -252,6 +256,7 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                                                       ]),
                                                     ))),
                                             PopupMenuItem(value: 1, child: Row(children: const [Icon(Icons.logout_rounded), SizedBox(width: 36), Text('Logout')])),
+                                            // PopupMenuItem(value: 2, child: Row(children: const [Icon(Icons.logout_rounded), SizedBox(width: 36), Text('RF')])),
                                             // if (AppUser.getUser()?.id == 1)
                                             //   CheckedPopupMenuItem(value: 2, checked: isMaterialManagement, padding: const EdgeInsets.all(0.0), child: const Text("Material Management")),
                                           ],

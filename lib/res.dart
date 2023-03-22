@@ -2,10 +2,14 @@
 class Res {
   static const String accountBlocked = "assets/accountBlocked.jpg";
   static const String appainter_theme = "assets/appainter_theme.json";
+  static const String assets_rf_RF_SMARTLogin_files_global = "assets/rf/RF-SMARTLogin_files/global.css";
+  static const String assets_rf_RF_SMARTLogin_files_jq1 = "assets/rf/RF-SMARTLogin_files/jq1.download";
   static const String background = "assets/images/background.jpg";
   static const String dark_background = "assets/images/dark_background.jpg";
   static const String fileNotFound = "assets/fileNotFound.png";
   static const String find = "assets/find.jpg";
+  static const String global = "assets/rf/RF-SMARTLogin1_files/global.css";
+  static const String jq1 = "assets/rf/RF-SMARTLogin1_files/jq1.download";
   static const String js = "assets/js.js";
   static const String js1 = "assets/js1.txt";
   static const String loginVideo = "assets/android/loginVideo.mp4";
@@ -17,6 +21,8 @@ class Res {
   static const String north_sails_logox50 = "assets/north_sails_logox50.png";
   static const String NsIcons = "assets/fonts/NsIcons.ttf";
   static const String QACheckList = "assets/QACheckList.json";
+  static const String RF_SMARTLogin = "assets/rf/RF-SMARTLogin.html";
+  static const String RF_SMARTLogin1 = "assets/rf/RF-SMARTLogin1.html";
   static const String sample = "assets/sample.pdf";
   static const String splash = "assets/splash.png";
   static const String splash1 = "assets/splash1.png";

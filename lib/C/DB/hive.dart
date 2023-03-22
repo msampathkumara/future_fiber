@@ -81,68 +81,68 @@ class HiveBox {
 
     // if (kIsWeb) {
     FirebaseAuth.instance.authStateChanges().listen((User? user) async {
-        if (user != null) {
-          userUpdatesListener?.cancel();
-          dbUponListener?.cancel();
-          ticketCompleteListener?.cancel();
-          // standardLibraryListener?.cancel();
-          resetDbListener?.cancel();
+      if (user != null) {
+        userUpdatesListener?.cancel();
+        dbUponListener?.cancel();
+        ticketCompleteListener?.cancel();
+        // standardLibraryListener?.cancel();
+        resetDbListener?.cancel();
 
-          // Map<String, bool> listeningStarted = {};
+        // Map<String, bool> listeningStarted = {};
 
-          dbUponListener = FirebaseDatabase.instance.ref('db_upon').onValue.listen((DatabaseEvent event) async {
-            print('authStateChanges -> db_upon');
-            UserConfig userConfig = await getUserConfig();
+        dbUponListener = FirebaseDatabase.instance.ref('db_upon').onValue.listen((DatabaseEvent event) async {
+          print('authStateChanges -> db_upon');
+          UserConfig userConfig = await getUserConfig();
 
-            Map upon = event.snapshot.value as Map;
+          Map upon = event.snapshot.value as Map;
 
-            print('upon[resetDb]== ${upon['resetDb']}==${userConfig.triggerEventTimes.resetDb}');
+          print('upon[resetDb]== ${upon['resetDb']}==${userConfig.triggerEventTimes.resetDb}');
 
-            if (!mapEquals(userConfig.triggerEventTimes.dbUpon, upon)) {
-              printWarning('db_upon updated');
-              if (userConfig.triggerEventTimes.resetDb != upon['resetDb']) {
-                printWarning('Reset Database');
-                HiveBox.getDataFromServer(clean: true, cancelable: false);
-                userConfig.triggerEventTimes.resetDb = upon['resetDb'];
-                printWarning('Reset Database Done');
-              } else {
-                await HiveBox.getDataFromServer(clean: false);
-              }
-            }
-            userConfig.triggerEventTimes.dbUpon = upon;
-
-            // printWarning('${userConfig.triggerEventTimes.dbUpon} event.snapshot.value == ${event.snapshot.value}');
-            if (userConfig.isInBox) {
-              await userConfig.save();
+          if (!mapEquals(userConfig.triggerEventTimes.dbUpon, upon)) {
+            printWarning('db_upon updated');
+            if (userConfig.triggerEventTimes.resetDb != upon['resetDb']) {
+              printWarning('Reset Database');
+              HiveBox.getDataFromServer(clean: true, cancelable: false);
+              userConfig.triggerEventTimes.resetDb = upon['resetDb'];
+              printWarning('Reset Database Done');
             } else {
-              await HiveBox.userConfigBox.put(0, userConfig);
+              await HiveBox.getDataFromServer(clean: false);
             }
-          });
-          // ticketCompleteListener = FirebaseDatabase.instance.ref('db_upon').child("ticketComplete").onValue.listen((DatabaseEvent event) {
-          //   print('authStateChanges -> ticketComplete');
-          //   //
-          //   if (listeningStarted['ticketComplete'] == true) {
-          //     HiveBox.updateCompletedTickets();
-          //   }
-          //   listeningStarted['ticketComplete'] = true;
-          // });
-          // standardLibraryListener = FirebaseDatabase.instance.ref('db_upon').child("standardLibrary").onValue.listen((DatabaseEvent event) async {
-          //   print('authStateChanges -> standardLibrary');
-          //   if (listeningStarted['standardLibrary'] == true) {
-          //     await HiveBox.cleanStandardLibrary();
-          //     await HiveBox.getDataFromServer();
-          //     DB.callChangesCallBack(DataTables.standardTickets);
-          //   }
-          //   listeningStarted['standardLibrary'] = true;
-          // });
-          // resetDbListener = FirebaseDatabase.instance.ref('resetDb').onValue.listen((DatabaseEvent event) {
-          //   print('authStateChanges -> resetDb');
-          //   if (listeningStarted['resetDb'] == true) {
-          //     HiveBox.getDataFromServer(clean: true);
-          //   }
-          // });
-        }
-      });
+          }
+          userConfig.triggerEventTimes.dbUpon = upon;
+
+          // printWarning('${userConfig.triggerEventTimes.dbUpon} event.snapshot.value == ${event.snapshot.value}');
+          if (userConfig.isInBox) {
+            await userConfig.save();
+          } else {
+            await HiveBox.userConfigBox.put(0, userConfig);
+          }
+        });
+        // ticketCompleteListener = FirebaseDatabase.instance.ref('db_upon').child("ticketComplete").onValue.listen((DatabaseEvent event) {
+        //   print('authStateChanges -> ticketComplete');
+        //   //
+        //   if (listeningStarted['ticketComplete'] == true) {
+        //     HiveBox.updateCompletedTickets();
+        //   }
+        //   listeningStarted['ticketComplete'] = true;
+        // });
+        // standardLibraryListener = FirebaseDatabase.instance.ref('db_upon').child("standardLibrary").onValue.listen((DatabaseEvent event) async {
+        //   print('authStateChanges -> standardLibrary');
+        //   if (listeningStarted['standardLibrary'] == true) {
+        //     await HiveBox.cleanStandardLibrary();
+        //     await HiveBox.getDataFromServer();
+        //     DB.callChangesCallBack(DataTables.standardTickets);
+        //   }
+        //   listeningStarted['standardLibrary'] = true;
+        // });
+        // resetDbListener = FirebaseDatabase.instance.ref('resetDb').onValue.listen((DatabaseEvent event) {
+        //   print('authStateChanges -> resetDb');
+        //   if (listeningStarted['resetDb'] == true) {
+        //     HiveBox.getDataFromServer(clean: true);
+        //   }
+        // });
+      }
+    });
     // }
 
     if (isMaterialManagement) {
@@ -234,26 +234,30 @@ class HiveBox {
       print('ticketsList length == ${ticketsList.length}');
       print('standardTicketsList length == ${standardTicketsList.length}');
 
-      StatusBarProgressIndicatorController statusBarProgressIndicatorController = StatusBarProgressIndicatorController();
-      var _statusBarProgressIndicator = StatusBarProgressIndicator(trailing: const Icon(Icons.dns_rounded, color: Colors.red), controller: statusBarProgressIndicatorController);
-      StatusBar.getController().addWidget(_statusBarProgressIndicator);
-      ticketBox.putMany(ticketsList, onItemAdded: (index, object) async {
-        if (kIsWeb) double progress = statusBarProgressIndicatorController.setValue(index + 1.0, ticketsList.length);
-        // print('add $index');
-      }).then((List<HiveClass> list) async {
-        print('tickets saved');
-        int maxValue = ticketBox.values.map((e) => e.uptime).reduce(max);
-        print('$maxValue __uptimes max');
-        var upt = await getUserConfig();
-        upt.upon.tickets = maxValue;
-        await upt.save();
-        // await setUptimes({'tickets': maxValue});
+      if (ticketsList.isNotEmpty) {
+        StatusBarProgressIndicatorController statusBarProgressIndicatorController = StatusBarProgressIndicatorController();
+        var _statusBarProgressIndicator = StatusBarProgressIndicator(trailing: const Icon(Icons.dns_rounded, color: Colors.red), controller: statusBarProgressIndicatorController);
+        StatusBar.getController().addWidget(_statusBarProgressIndicator);
 
-        if (ticketsList.isNotEmpty || deletedTicketsIdsList.isNotEmpty || completedTicketsIdsList.isNotEmpty) {
-          DB.callChangesCallBack(DataTables.tickets);
-        }
-        StatusBar.getController().removeWidget(_statusBarProgressIndicator);
-      });
+        ticketBox.putMany(ticketsList, onItemAdded: (index, object) async {
+          if (kIsWeb) double progress = statusBarProgressIndicatorController.setValue(index + 1.0, ticketsList.length);
+          // print('add $index');
+        }).then((List<HiveClass> list) async {
+          print('tickets saved');
+          int maxValue = ticketBox.values.map((e) => e.uptime).reduce(max);
+          print('$maxValue __uptimes max');
+          var upt = await getUserConfig();
+          upt.upon.tickets = maxValue;
+          await upt.save();
+          // await setUptimes({'tickets': maxValue});
+
+          if (ticketsList.isNotEmpty || deletedTicketsIdsList.isNotEmpty || completedTicketsIdsList.isNotEmpty) {
+            DB.callChangesCallBack(DataTables.tickets);
+          }
+
+          StatusBar.getController().removeWidget(_statusBarProgressIndicator);
+        });
+      }
 
       await sectionsBox.putMany(factorySectionsList, afterAdd: (list) {
         if (list.isNotEmpty) DB.callChangesCallBack(DataTables.sections);

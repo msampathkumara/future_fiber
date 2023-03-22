@@ -224,7 +224,7 @@ public class Rf extends AppCompatActivity {
         } else {
         }
 
-        webView.loadUrl("http://10.200.4.31/webclient/");
+        webView.loadUrl("http://10.200.4.24/WebClient");
 
         onConfigurationChanged(getResources().getConfiguration());
     }

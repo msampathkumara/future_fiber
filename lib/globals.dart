@@ -12,11 +12,14 @@ bool isMaterialManagement = false;
 bool? _isTestServer;
 
 bool? _isLocalServer;
+bool? _isV2;
 
 Future<bool> get isTestServer async =>
-    // kIsWeb ? (_isTestServer ?? (_isTestServer = RegExp(r".\.test\.nsslsupportservices\.com").hasMatch(Uri.base.host))) : (await HiveBox.getUserConfig()).isTest;
+    kIsWeb ? (_isTestServer ?? (_isTestServer = RegExp(r".\.test\.nsslsupportservices\.com").hasMatch(Uri.base.host))) : (await HiveBox.getUserConfig()).isTest;
+
+Future<bool> get isV2 async => kIsWeb ? (_isV2 ?? (_isV2 = RegExp(r".\.v2\.smartwind\.nsslsupportservices\.com").hasMatch(Uri.base.host))) : (await HiveBox.getUserConfig()).isTest;
 // kIsWeb ? (_isTestServer ?? (_isTestServer = RegExp(r".\.test\.nsslsupportservices\.com").hasMatch(Uri.base.host))) : (true);
-    true;
+//     true;
 
 bool get isLocalServer => _isLocalServer ?? (_isLocalServer = Uri.base.host == 'localhost');
 

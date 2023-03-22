@@ -8,7 +8,7 @@ class EndPoints {
   static const _user_recoverPassword_validateOtp = "/user/recoverPassword/validateOtp";
   static const _user_recoverPassword_savePassword = "/user/recoverPassword/savePassword";
   static const _user_recoverPassword_sendOTPToAdmin = "/user/recoverPassword/sendOTPToAdmin";
-  static const _user_login = "/user/login";
+  // static const _user_login = "/user/login";
   static const _user_getUserData = "/user/getUserData";
   static const _user_setUserSection = "/user/setUserSection";
   static const admin_settings_getSettings = "admin/settings/getSettings";

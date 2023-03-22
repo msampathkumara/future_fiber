@@ -3,10 +3,10 @@ class Assets {
   Assets._();
 
   static const String androidLoginVideo = 'assets/android/loginVideo.mp4';
-  static const String assets1735U1RVRElPIEtBVCA0MTQtMzM = 'assets/1735_U1RVRElPIEtBVCA0MTQtMzM.jpg';
   static const String assetsAccountBlocked = 'assets/accountBlocked.jpg';
   static const String assetsAppainterTheme = 'assets/appainter_theme.json';
   static const String assetsFileNotFound = 'assets/fileNotFound.png';
+  static const String assetsFind = 'assets/find.jpg';
   static const String assetsJs = 'assets/js.js';
   static const String assetsJs1 = 'assets/js1.txt';
   static const String assetsNoPermissions = 'assets/noPermissions.png';
@@ -26,4 +26,10 @@ class Assets {
   static const String imagesDarkBackground = 'assets/images/dark_background.jpg';
   static const String imagesUser = 'assets/images/user.png';
   static const String imagesUserPlaceholder = 'assets/images/userPlaceholder.jpg';
+  static const String rFSMARTLogin1FilesGlobal = 'assets/rf/RF-SMARTLogin1_files/global.css';
+  static const String rFSMARTLogin1FilesJq1 = 'assets/rf/RF-SMARTLogin1_files/jq1.download';
+  static const String rFSMARTLoginFilesGlobal = 'assets/rf/RF-SMARTLogin_files/global.css';
+  static const String rFSMARTLoginFilesJq1 = 'assets/rf/RF-SMARTLogin_files/jq1.download';
+  static const String rfRFSMARTLogin = 'assets/rf/RF-SMARTLogin.html';
+  static const String rfRFSMARTLogin1 = 'assets/rf/RF-SMARTLogin1.html';
 }
