@@ -1,26 +1,28 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:smartwind/M/AppUser.dart';
 
+import '../globals.dart';
 import 'DB/hive.dart';
 
 class FCM {
   static StreamSubscription<RemoteMessage>? subscription;
 
-  static get userId => AppUser.getUser()?.id;
+  static int? get userId => AppUser.getUser()?.id;
 
   static subscribe() async {
-    FirebaseMessaging.instance.subscribeToTopic('ticketDelete');
-    FirebaseMessaging.instance.subscribeToTopic('ticketComplete');
-    FirebaseMessaging.instance.subscribeToTopic('file_update');
-    FirebaseMessaging.instance.subscribeToTopic('TicketDbReset');
-    FirebaseMessaging.instance.subscribeToTopic('userUpdates');
-    FirebaseMessaging.instance.subscribeToTopic('resetDb');
+    FirebaseMessaging.instance.subscribeToTopic('${appFlavor}_ticketDelete');
+    FirebaseMessaging.instance.subscribeToTopic('${appFlavor}_ticketComplete');
+    FirebaseMessaging.instance.subscribeToTopic('${appFlavor}_file_update');
+    FirebaseMessaging.instance.subscribeToTopic('${appFlavor}_TicketDbReset');
+    FirebaseMessaging.instance.subscribeToTopic('${appFlavor}_userUpdates');
+    FirebaseMessaging.instance.subscribeToTopic('${appFlavor}_resetDb');
 
     var userId = AppUser.getUser()?.id;
     if (AppUser.getUser() != null) {
-      FirebaseMessaging.instance.subscribeToTopic('userUpdate_$userId');
+      FirebaseMessaging.instance.subscribeToTopic('${appFlavor}_userUpdate_$userId');
     }
   }
 
@@ -35,20 +37,23 @@ class FCM {
       print("---------------- FCM ------------------");
       print(message.from);
       print(message.messageId);
-      if (message.from == "/topics/userUpdate_$userId") {
+
+      if (message.from == "/topics/${appFlavor}_userUpdate_$userId") {
         AppUser.refreshUserData();
-      } else if (message.from == "/topics/ticketComplete") {
+      } else if (message.from == "/topics/${appFlavor}_ticketComplete") {
         if (message.data["ticketId"] != null) {
           await HiveBox.deleteTicket(message.data["ticketId"]);
         }
         HiveBox.getDataFromServer();
-      } else if (message.from == "/topics/resetDb") {
+      } else if (message.from == "/topics/${appFlavor}_resetDb") {
         HiveBox.getDataFromServer(clean: true);
         print('--------------------------RESEING DATABASE-----------------');
-      } else if (message.from == "/topics/userUpdates") {
+      } else if (message.from == "/topics/${appFlavor}_userUpdates") {
         HiveBox.getDataFromServer();
         print('--------------------------UPDATING USER DATABASE-----------------');
-      } else if (message.from == "/topics/file_update") {
+      } else if (message.from == "/topics/${appFlavor}_file_update") {
+        print('file_update ====================================================================== >>> ');
+
         if (message.data["standardLibrary"] != null) {
           print('--------------------------standardLibrary-----------------');
           if (message.data["delete"] != null) {
@@ -73,14 +78,14 @@ class FCM {
   }
 
   static unsubscribe() async {
-    await FirebaseMessaging.instance.unsubscribeFromTopic('ticketDelete');
-    await FirebaseMessaging.instance.unsubscribeFromTopic('ticketComplete');
-    await FirebaseMessaging.instance.unsubscribeFromTopic('file_update');
-    await FirebaseMessaging.instance.unsubscribeFromTopic('TicketDbReset');
-    await FirebaseMessaging.instance.unsubscribeFromTopic('userUpdates');
+    await FirebaseMessaging.instance.unsubscribeFromTopic('${appFlavor}_ticketDelete');
+    await FirebaseMessaging.instance.unsubscribeFromTopic('${appFlavor}_ticketComplete');
+    await FirebaseMessaging.instance.unsubscribeFromTopic('${appFlavor}_file_update');
+    await FirebaseMessaging.instance.unsubscribeFromTopic('${appFlavor}_TicketDbReset');
+    await FirebaseMessaging.instance.unsubscribeFromTopic('${appFlavor}_userUpdates');
     var userId = AppUser.getUser()?.id;
     if (AppUser.getUser() != null) {
-      await FirebaseMessaging.instance.unsubscribeFromTopic('userUpdate_$userId');
+      await FirebaseMessaging.instance.unsubscribeFromTopic('${appFlavor}_userUpdate_$userId');
     }
   }
 }

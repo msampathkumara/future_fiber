@@ -58,23 +58,28 @@ class _WebCPRTableState extends State<WebCPRTable> {
           numeric: true,
           onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(
-          size: ColumnSize.M,
+          size: ColumnSize.S,
           label: const Text('Shortage Type', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
           onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(
-          size: ColumnSize.M,
+          size: ColumnSize.S,
           label: const Text('Date & Time', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
           onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(
-          size: ColumnSize.M,
+          size: ColumnSize.S,
           label: const Text('CPR Type', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
           onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(
-          size: ColumnSize.M,
-          label: const Text('Shipping Date', style: TextStyle(fontWeight: FontWeight.bold)),
+          size: ColumnSize.S,
+          label: const Text('Cpr Due Date', style: TextStyle(fontWeight: FontWeight.bold)),
+          numeric: true,
+          onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(
+          size: ColumnSize.S,
+          label: const Text('Material Due Date', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
           onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(
@@ -252,7 +257,7 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
     print('xxxxxxxxxxxxxxxxxxxxxxx == ${int.parse("${start / end}")}');
 
     // List returned will be empty is there're fewer items than startingAt
-    var x = _empty
+    DataResponse x = _empty
         ? await Future.delayed(const Duration(milliseconds: 2000), () => DataResponse(0, []))
         : await onRequestData(int.parse("${start / end}"), start, end, _sortColumn, _sortAscending);
     print('****************************************************************************xxxxxxxxxxxxx${x.totalRecords}');
@@ -278,7 +283,14 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                   title: TextMenu(child: Text(cpr.ticket?.mo ?? '', style: TextStyle(color: cpr.isTicketStarted ? Colors.green : null))),
                   subtitle: TextMenu(child: Text(cpr.ticket?.oe ?? '', style: const TextStyle(color: Colors.deepOrange, fontSize: 12))))),
               DataCell(Text((cpr.client) ?? "")),
-              DataCell(Text((cpr.suppliers.join(',')))),
+              DataCell(Wrap(
+                children: cpr.cprActivities
+                    .map((e) => Padding(
+                          padding: const EdgeInsets.only(right: 4.0),
+                          child: Chip(label: Text(e.supplier, style: const TextStyle(color: Colors.white)), backgroundColor: e.status.getColor()),
+                        ))
+                    .toList(),
+              )),
               DataCell(Text((cpr.shortageType) ?? "")),
               DataCell(Wrap(
                   crossAxisAlignment: WrapCrossAlignment.end,
@@ -286,6 +298,7 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                   children: [Text((cpr.date) ?? ""), Text((cpr.time) ?? "", style: const TextStyle(color: Colors.grey, fontSize: 12))])),
               DataCell(Text((cpr.cprType) ?? "")),
               DataCell(Text((cpr.shipDate))),
+              DataCell(Text((cpr.materialDueDate))),
               DataCell(Text((cpr.status), style: TextStyle(color: cpr.status.getColor()))),
               DataCell(Text((cpr.orderType ?? ''), style: TextStyle(color: (cpr.orderType ?? '').getColor()))),
               DataCell(IconButton(

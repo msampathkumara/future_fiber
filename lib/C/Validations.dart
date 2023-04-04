@@ -4,21 +4,21 @@ class Validations {
         .hasMatch(email);
   }
 
-  static epfValidation(String? epf, {String ifEmpty = "Enter NIC", String ifInvalid = "Enter valid NIC"}) {
+  static String? epfValidation(String? epf, {String ifEmpty = "Enter NIC", String ifInvalid = "Enter valid NIC"}) {
     if (epf == null || epf.isEmpty) {
       return ifEmpty;
     }
     return RegExp('[0-9]').hasMatch(epf) ? null : ifInvalid;
   }
 
-  static phoneNumberValidation(String? phoneNumber, {String ifEmpty = "Enter Phone Number", String ifInvalid = "Enter valid Phone Number", isRequired = true}) {
+  static String? phoneNumberValidation(String? phoneNumber, {String ifEmpty = "Enter Phone Number", String ifInvalid = "Enter valid Phone Number", isRequired = true}) {
     if (phoneNumber == null || phoneNumber.isEmpty) {
       return (isRequired) ? ifEmpty : null;
     }
     return RegExp(r"^(?:7|0|(?:\+94))[0-9]{9,10}$").hasMatch(phoneNumber) ? null : ifInvalid;
   }
 
-  static emailValidate(String? email, {String ifEmpty = "Enter email Number", String ifInvalid = "Enter valid email address", isRequired = true}) {
+  static String? emailValidate(String? email, {String ifEmpty = "Enter email Number", String ifInvalid = "Enter valid email address", isRequired = true}) {
     if (email == null || email.isEmpty) {
       return (isRequired) ? ifEmpty : null;
     }
@@ -34,7 +34,7 @@ class Validations {
     if (name == null || name.isEmpty) {
       return ifEmpty ?? "Enter name";
     }
-    return RegExp(r"^[\p{L} .]*$", caseSensitive: false, unicode: true, dotAll: true).hasMatch(name) ? null : (ifInvalid ?? "Enter valid name");
+    return RegExp(r"^\s*([A-Za-z]{1,}([.,] | [-']|))+[A-Za-z]+.?s*$", caseSensitive: false, unicode: true, dotAll: true).hasMatch(name) ? null : (ifInvalid ?? "Enter valid name");
   }
 
   static String? nic(String? nic, {String ifEmpty = "Enter NIC", String ifInvalid = "Enter valid NIC"}) {

@@ -1,10 +1,16 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/C/DB/hive.dart';
 
+enum AppFlavors { V2, DEBUG }
+
 final GlobalKey<ScaffoldMessengerState> snackBarKey = GlobalKey<ScaffoldMessengerState>();
 final navigatorKey = GlobalKey<NavigatorState>();
 Size screenSize = const Size(0, 0);
+var appFlavor = const String.fromEnvironment("flavor");
+
+DatabaseReference get firebaseDatabase => FirebaseDatabase.instance.ref("smartwind/$appFlavor");
 
 Color getPrimaryColor(context) => Theme.of(context).primaryColor;
 bool isMaterialManagement = false;

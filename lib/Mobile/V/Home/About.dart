@@ -21,6 +21,7 @@ class _AboutState extends State<About> {
 
   String serverUrl = "";
   String? dbName;
+  String env = "";
 
   @override
   void initState() {
@@ -39,6 +40,7 @@ class _AboutState extends State<About> {
     }).whenComplete(() {
       setState(() {});
     }).catchError((err) {});
+    env = const String.fromEnvironment("flavor");
   }
 
   @override
@@ -83,6 +85,7 @@ class _AboutState extends State<About> {
         Text("$appVersion", textScaleFactor: 1),
         ListTile(title: const Text('server url'), trailing: Text(serverUrl)),
         ListTile(title: const Text('db Name'), trailing: dbName == null ? const CircularProgressIndicator() : Text("$dbName")),
+        ListTile(title: const Text('env'), trailing: Text(env))
       ],
     )));
   }

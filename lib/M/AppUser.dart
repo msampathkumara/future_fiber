@@ -58,7 +58,7 @@ class AppUser extends NsUser {
     _userIsAdmin = null;
     return Api.get(EndPoints.user_getUserData, {}).then((value) async {
       Map res = value.data;
-      print("user data responce");
+      print("user data response");
       // print(res);
       NsUser nsUser = NsUser.fromJson(res["user"]);
       // print(nsUser.toJson());

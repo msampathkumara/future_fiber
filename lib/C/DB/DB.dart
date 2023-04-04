@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
-import 'package:sqflite/sqflite.dart';
+// import 'package:sqflite/sqflite.dart';
 
 class DB {
-  static Database? db;
+  // static Database? db;
 
   static List<DbChangeCallBack> onDBChangeCallBacks = [];
 
@@ -13,56 +13,56 @@ class DB {
     return dbChangeCallBack;
   }
 
-  static Future<void> deleteTickets(List<dynamic> deletedTickets) async {
-    Batch batch = db!.batch();
+  // static Future<void> deleteTickets(List<dynamic> deletedTickets) async {
+  //   Batch batch = db!.batch();
+  //
+  //   for (var ticket in deletedTickets) {
+  //     batch.delete('tickets', where: 'id = ?', whereArgs: [ticket["id"]]);
+  //   }
+  //
+  //   print(await batch.commit(noResult: false));
+  // }
 
-    for (var ticket in deletedTickets) {
-      batch.delete('tickets', where: 'id = ?', whereArgs: [ticket["id"]]);
-    }
+  // static Future<void> insertTicketProgressDetails(List<dynamic> deletedTickets) async {
+  //   Batch batch = db!.batch();
+  //   for (var ticket in deletedTickets) {
+  //     batch.insert('ticketProgressDetails', ticket, conflictAlgorithm: ConflictAlgorithm.replace);
+  //   }
+  //   print(await batch.commit(noResult: false));
+  // }
 
-    print(await batch.commit(noResult: false));
-  }
+  // static Future<void> insertFlags(List<dynamic> flags, Batch batch) async {
+  //   for (var ticket in flags) {
+  //     batch.insert('flags', ticket, conflictAlgorithm: ConflictAlgorithm.replace);
+  //   }
+  // }
 
-  static Future<void> insertTicketProgressDetails(List<dynamic> deletedTickets) async {
-    Batch batch = db!.batch();
-    for (var ticket in deletedTickets) {
-      batch.insert('ticketProgressDetails', ticket, conflictAlgorithm: ConflictAlgorithm.replace);
-    }
-    print(await batch.commit(noResult: false));
-  }
+  // static Future<void> insertUsers(List<dynamic> users) async {
+  //   Batch batch = db!.batch();
+  //   for (var user in users) {
+  //     insertUserSections(user["id"], user["sections"] ?? [], batch);
+  //     user.removeWidget("sections");
+  //     print(user);
+  //     batch.insert('users', user, conflictAlgorithm: ConflictAlgorithm.replace);
+  //   }
+  //   print(await batch.commit(noResult: false));
+  // }
 
-  static Future<void> insertFlags(List<dynamic> flags, Batch batch) async {
-    for (var ticket in flags) {
-      batch.insert('flags', ticket, conflictAlgorithm: ConflictAlgorithm.replace);
-    }
-  }
+  // static Future<void> insertFactorySections(List<dynamic> factorySections) async {
+  //   Batch batch = db!.batch();
+  //   for (var factorySection in factorySections) {
+  //     batch.insert('factorySections', factorySection, conflictAlgorithm: ConflictAlgorithm.replace);
+  //   }
+  //   print(await batch.commit(noResult: false));
+  // }
 
-  static Future<void> insertUsers(List<dynamic> users) async {
-    Batch batch = db!.batch();
-    for (var user in users) {
-      insertUserSections(user["id"], user["sections"] ?? [], batch);
-      user.removeWidget("sections");
-      print(user);
-      batch.insert('users', user, conflictAlgorithm: ConflictAlgorithm.replace);
-    }
-    print(await batch.commit(noResult: false));
-  }
-
-  static Future<void> insertFactorySections(List<dynamic> factorySections) async {
-    Batch batch = db!.batch();
-    for (var factorySection in factorySections) {
-      batch.insert('factorySections', factorySection, conflictAlgorithm: ConflictAlgorithm.replace);
-    }
-    print(await batch.commit(noResult: false));
-  }
-
-  static Future<void> insertUserSections(userId, List<dynamic> userSections, Batch? batch) async {
-    batch = batch ?? db!.batch();
-    for (var userSection in userSections) {
-      batch.insert('userSections', {"userId": userId, "sectionId": userSection["id"]}, conflictAlgorithm: ConflictAlgorithm.replace);
-    }
-    print(await batch.commit(noResult: false));
-  }
+  // static Future<void> insertUserSections(userId, List<dynamic> userSections, Batch? batch) async {
+  //   batch = batch ?? db!.batch();
+  //   for (var userSection in userSections) {
+  //     batch.insert('userSections', {"userId": userId, "sectionId": userSection["id"]}, conflictAlgorithm: ConflictAlgorithm.replace);
+  //   }
+  //   print(await batch.commit(noResult: false));
+  // }
 
   static callChangesCallBacks(Map<dynamic, dynamic> res) {
     List keys = res.keys.toList();

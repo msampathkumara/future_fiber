@@ -224,6 +224,7 @@ class _CountCardsState extends State<CountCards> {
                                         children: [
                                       const Text("Section"),
                                       const Text("Volume (Output)"),
+                                      const Text("Started Ticket Count"),
                                       const Text("employee Count"),
                                       const Text("Production Capacity"),
                                       const Text("Takt Time"),
@@ -239,6 +240,7 @@ class _CountCardsState extends State<CountCards> {
                                                 children: [
                                               Container(alignment: Alignment.centerLeft, child: Text("${e.sectionTitle}")),
                                               Container(alignment: Alignment.centerRight, child: Text("${e.volume ?? 0}")),
+                                              Container(alignment: Alignment.centerRight, child: Text("${e.startedTicketCount ?? 0}")),
                                               Container(alignment: Alignment.centerRight, child: Text("${e.employeeCount ?? 0}")),
                                               Container(alignment: Alignment.centerRight, child: Text((e.capacity ?? 0).toStringAsFixed(1))),
                                               Container(alignment: Alignment.centerRight, child: Text(ProgressSummery.durationToString(((e.taktTime ?? 0) * 60).round()))),
@@ -279,6 +281,9 @@ class _CountCardsState extends State<CountCards> {
                                     ListTile(
                                         title: Text("Volume", style: nameSt, textScaleFactor: 0.8),
                                         subtitle: Text("${shiftFactorySummery.volume ?? 0}", style: valSt, textScaleFactor: 1.2)),
+                                    ListTile(
+                                        title: Text("Start Count", style: nameSt, textScaleFactor: 0.8),
+                                        subtitle: Text("${shiftFactorySummery.startedTicketCount ?? 0}", style: valSt, textScaleFactor: 1.2)),
                                     ListTile(
                                         title: Text("Employees", style: nameSt, textScaleFactor: 0.8),
                                         subtitle: Text("${shiftFactorySummery.employeeCount ?? 0}", style: valSt, textScaleFactor: 1.2)),
@@ -422,6 +427,9 @@ class _CountCardsState extends State<CountCards> {
                 ListTile(
                     title: Text("Employees", style: nameSt1, textScaleFactor: 0.8, textAlign: TextAlign.center),
                     subtitle: Text("${allShiftSummery.employeeCount ?? 0}", style: valSt1, textScaleFactor: 1.3, textAlign: TextAlign.center)),
+                ListTile(
+                    title: Text("Started Count", style: nameSt1, textScaleFactor: 0.8, textAlign: TextAlign.center),
+                    subtitle: Text("${allShiftSummery.startedTicketCount ?? 0}", style: valSt1, textScaleFactor: 1.3, textAlign: TextAlign.center)),
                 ListTile(
                     title: Text("Production Capacity", style: nameSt1, textScaleFactor: 0.8, textAlign: TextAlign.center),
                     subtitle: Text((allShiftSummery.capacity ?? 0).toStringAsFixed(2), style: valSt1, textScaleFactor: 1.3, textAlign: TextAlign.center)),

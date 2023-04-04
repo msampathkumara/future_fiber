@@ -208,7 +208,7 @@ class NsUser extends HiveClass {
   }
 
   static getDefaultImage() {
-    return const AssetImage(Res.user);
+    return const AssetImage(Res.user64);
   }
 
   getUserImage() async {

@@ -488,9 +488,9 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
   CancelToken cancelToken = CancelToken();
 
   Future _loadData(int page) {
-    if (!cancelToken.isCancelled) {
+    try {
       cancelToken.cancel();
-    }
+    } catch (e) {}
     cancelToken = CancelToken();
     requested = true;
 

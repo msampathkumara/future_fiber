@@ -68,7 +68,9 @@ class _SelectSectionBottomSheetState extends State<SelectSectionBottomSheet> {
 
   @override
   dispose() {
-    cancelToken.cancel();
+    try {
+      cancelToken.cancel();
+    } catch (e) {}
     super.dispose();
   }
 

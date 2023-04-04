@@ -25,7 +25,8 @@ KIT _$KITFromJson(Map<String, dynamic> json) => KIT()
   ..sentOn = json['sentOn'] as String?
   ..addedUserId = json['addedUserId'] as int? ?? 0
   ..addedOn = json['addedOn'] as String? ?? ''
-  ..isExpanded = json['isExpanded'] as bool? ?? false;
+  ..isExpanded = json['isExpanded'] as bool? ?? false
+  ..isSelected = json['isSelected'] as bool;
 
 Map<String, dynamic> _$KITToJson(KIT instance) => <String, dynamic>{
       'ticket': instance.ticket?.toJson(),
@@ -47,4 +48,5 @@ Map<String, dynamic> _$KITToJson(KIT instance) => <String, dynamic>{
       'addedUserId': instance.addedUserId,
       'addedOn': instance.addedOn,
       'isExpanded': instance.isExpanded,
+      'isSelected': instance.isSelected,
     };

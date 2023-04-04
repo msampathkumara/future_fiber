@@ -90,7 +90,7 @@ class HiveBox {
 
         // Map<String, bool> listeningStarted = {};
 
-        dbUponListener = FirebaseDatabase.instance.ref('db_upon').onValue.listen((DatabaseEvent event) async {
+        dbUponListener = firebaseDatabase.child('db_upon').onValue.listen((DatabaseEvent event) async {
           print('authStateChanges -> db_upon');
           UserConfig userConfig = await getUserConfig();
 
@@ -148,13 +148,13 @@ class HiveBox {
     if (isMaterialManagement) {
       FirebaseAuth.instance.authStateChanges().listen((User? user) async {
         if (user != null) {
-          FirebaseDatabase.instance.ref('cprUpdate').onValue.listen((DatabaseEvent event) {
+          firebaseDatabase.child('cprUpdate').onValue.listen((DatabaseEvent event) {
             DB.callChangesCallBack(DataTables.cpr);
           });
-          FirebaseDatabase.instance.ref('kitUpdate').onValue.listen((DatabaseEvent event) {
+          firebaseDatabase.child('kitUpdate').onValue.listen((DatabaseEvent event) {
             DB.callChangesCallBack(DataTables.kit);
           });
-          FirebaseDatabase.instance.ref('resetDb').onValue.listen((DatabaseEvent event) {
+          firebaseDatabase.child('resetDb').onValue.listen((DatabaseEvent event) {
             HiveBox.getDataFromServer(clean: true);
           });
         }
@@ -166,7 +166,8 @@ class HiveBox {
   static bool pendingNextGetDataFromServer = false;
   static CancelToken cancelToken = CancelToken();
 
-  static Future getDataFromServer({clean = false, afterLoad, cleanUsers = false, cancelable = true}) async {
+  static Future getDataFromServer(
+      {clean = false, afterLoad, cleanUsers = false, cancelable = true, StatusBarProgressIndicatorController? statusBarProgressIndicatorController}) async {
     print('__________________________________________________________________________________________________________getDataFromServer');
 
     if (clean) {
@@ -191,10 +192,12 @@ class HiveBox {
       print('user not logged in not calling to server ');
       return null;
     }
-    // if (cancelable) {
-    cancelToken.cancel();
-    cancelToken = CancelToken();
-    // }
+    if (cancelable) {
+      try {
+        cancelToken.cancel();
+      } catch (e) {}
+      cancelToken = CancelToken();
+    }
     return Api.get((EndPoints.data_getData), d, cancelToken: cancelable ? cancelToken : null).then((Response response) async {
       print('__________________________________________________________________________________________________________Api ->> getDataFromServer');
       await getUserConfig();
@@ -235,12 +238,13 @@ class HiveBox {
       print('standardTicketsList length == ${standardTicketsList.length}');
 
       if (ticketsList.isNotEmpty) {
-        StatusBarProgressIndicatorController statusBarProgressIndicatorController = StatusBarProgressIndicatorController();
+        statusBarProgressIndicatorController ??= StatusBarProgressIndicatorController();
+
         var _statusBarProgressIndicator = StatusBarProgressIndicator(trailing: const Icon(Icons.dns_rounded, color: Colors.red), controller: statusBarProgressIndicatorController);
         StatusBar.getController().addWidget(_statusBarProgressIndicator);
 
         ticketBox.putMany(ticketsList, onItemAdded: (index, object) async {
-          if (kIsWeb) double progress = statusBarProgressIndicatorController.setValue(index + 1.0, ticketsList.length);
+          if (kIsWeb) double? progress = statusBarProgressIndicatorController?.setValue(index + 1.0, ticketsList.length);
           // print('add $index');
         }).then((List<HiveClass> list) async {
           print('tickets saved');

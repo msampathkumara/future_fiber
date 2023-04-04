@@ -47,7 +47,9 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
   @override
   void dispose() {
     if (!cancelToken.isCancelled) {
-      cancelToken.cancel();
+      try {
+        cancelToken.cancel();
+      } catch (e) {}
     }
     super.dispose();
   }
@@ -210,7 +212,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
                 : Padding(
                     padding: const EdgeInsets.only(top: 16),
                     child: ListView.separated(
-                padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(8),
                       itemCount: _ticketList.length < dataCount ? _ticketList.length + 1 : _ticketList.length,
                       itemBuilder: (BuildContext context, int index) {
                         if (_ticketList.length == index) {
@@ -264,19 +266,19 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
                             },
                             onDoubleTap: () async {
                               Ticket.open(context, ticket);
+                            },
+                            child: Ink(
+                                decoration: BoxDecoration(
+                                    color: ticket.isHold == 1 ? Colors.black12 : Colors.white,
+                                    border: Border.all(color: Colors.white),
+                                    borderRadius: const BorderRadius.all(Radius.circular(20))),
+                                child: ListTile(
+                                    leading: Text("${index + 1}"),
+                                    title: Text((ticket.oe ?? ""), style: const TextStyle(fontWeight: FontWeight.bold)),
+                                    subtitle: Text(ticket.getUpdateDateTime()),
+                                    trailing: Text("${ticket.usedCount}"))));
                       },
-                      child: Ink(
-                          decoration: BoxDecoration(
-                              color: ticket.isHold == 1 ? Colors.black12 : Colors.white,
-                              border: Border.all(color: Colors.white),
-                              borderRadius: const BorderRadius.all(Radius.circular(20))),
-                          child: ListTile(
-                              leading: Text("${index + 1}"),
-                              title: Text((ticket.oe ?? ""), style: const TextStyle(fontWeight: FontWeight.bold)),
-                              subtitle: Text(ticket.getUpdateDateTime()),
-                              trailing: Text("${ticket.usedCount}"))));
-                },
-                separatorBuilder: (BuildContext context, int index) {
+                      separatorBuilder: (BuildContext context, int index) {
                         return const Divider(height: 1, endIndent: 0.5, color: Colors.black12);
                       },
                     ),
@@ -295,7 +297,9 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
 
   Future _loadData(int page) {
     if (!cancelToken.isCancelled) {
-      cancelToken.cancel();
+      try {
+        cancelToken.cancel();
+      } catch (e) {}
     }
     cancelToken = CancelToken();
     requested = true;
@@ -408,51 +412,51 @@ Future<void> showStandardTicketOptions(StandardTicket ticket, BuildContext conte
             Expanded(
                 child: SingleChildScrollView(
                     child: Column(children: [
-                      if (AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_CHANGE_FACTORY))
-                        ListTile(
-                            title: const Text("Change Factory"),
-                            leading: const Icon(Icons.send_outlined, color: Colors.lightBlue),
-                            onTap: () async {
-                              Navigator.of(context).pop();
-                              showFactories(ticket, context1);
-                              // await Navigator.push(context1, MaterialPageRoute(builder: (context) => changeFactory(ticket)));
-                              // Navigator.of(context).pop();
-                            }),
-                      if (AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_DELETE_STANDARD_FILES))
-                        ListTile(
-                            title: const Text("Delete"),
-                            leading: const Icon(Icons.delete_forever, color: Colors.red),
-                            onTap: () async {
-                              snackBarKey.currentState?.showSnackBar(SnackBar(
-                                  behavior: SnackBarBehavior.floating,
-                                  width: 500,
-                                  backgroundColor: Colors.red,
-                                  content: Row(
-                                    children: [
-                                      const Text("Do You really want to delete this standard ticket ?"),
-                                      const Spacer(),
-                                      TextButton(
-                                          onPressed: () {
-                                            snackBarKey.currentState?.showSnackBar(const SnackBar(behavior: SnackBarBehavior.floating, width: 200, content: Text('Deleting')));
-                                            Api.post(EndPoints.tickets_standard_delete, {'id': ticket.id.toString()}).then((response) async {
-                                              print(response.data);
-                                              snackBarKey.currentState?.showSnackBar(
-                                                  const SnackBar(behavior: SnackBarBehavior.floating, width: 200, backgroundColor: Colors.green, content: Text('Delete Successfully')));
-                                            });
-                                          },
-                                          child: const Text("Yes"))
-                                    ],
-                                  ),
-                                  action: SnackBarAction(
-                                      label: 'No',
-                                      textColor: Colors.white,
-                                      onPressed: () {
-                                        snackBarKey.currentState?.removeCurrentSnackBar();
-                                      })));
+              if (AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_CHANGE_FACTORY))
+                ListTile(
+                    title: const Text("Change Factory"),
+                    leading: const Icon(Icons.send_outlined, color: Colors.lightBlue),
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                      showFactories(ticket, context1);
+                      // await Navigator.push(context1, MaterialPageRoute(builder: (context) => changeFactory(ticket)));
+                      // Navigator.of(context).pop();
+                    }),
+              if (AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_DELETE_STANDARD_FILES))
+                ListTile(
+                    title: const Text("Delete"),
+                    leading: const Icon(Icons.delete_forever, color: Colors.red),
+                    onTap: () async {
+                      snackBarKey.currentState?.showSnackBar(SnackBar(
+                          behavior: SnackBarBehavior.floating,
+                          width: 500,
+                          backgroundColor: Colors.red,
+                          content: Row(
+                            children: [
+                              const Text("Do You really want to delete this standard ticket ?"),
+                              const Spacer(),
+                              TextButton(
+                                  onPressed: () {
+                                    snackBarKey.currentState?.showSnackBar(const SnackBar(behavior: SnackBarBehavior.floating, width: 200, content: Text('Deleting')));
+                                    Api.post(EndPoints.tickets_standard_delete, {'id': ticket.id.toString()}).then((response) async {
+                                      print(response.data);
+                                      snackBarKey.currentState?.showSnackBar(
+                                          const SnackBar(behavior: SnackBarBehavior.floating, width: 200, backgroundColor: Colors.green, content: Text('Delete Successfully')));
+                                    });
+                                  },
+                                  child: const Text("Yes"))
+                            ],
+                          ),
+                          action: SnackBarAction(
+                              label: 'No',
+                              textColor: Colors.white,
+                              onPressed: () {
+                                snackBarKey.currentState?.removeCurrentSnackBar();
+                              })));
 
-                              Navigator.of(context).pop();
-                            }),
-                    ])))
+                      Navigator.of(context).pop();
+                    }),
+            ])))
           ],
         ),
       );

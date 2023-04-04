@@ -7,8 +7,6 @@ class Assets {
   static const String assetsAppainterTheme = 'assets/appainter_theme.json';
   static const String assetsFileNotFound = 'assets/fileNotFound.png';
   static const String assetsFind = 'assets/find.jpg';
-  static const String assetsJs = 'assets/js.js';
-  static const String assetsJs1 = 'assets/js1.txt';
   static const String assetsNoPermissions = 'assets/noPermissions.png';
   static const String assetsNoResult = 'assets/noResult.png';
   static const String assetsNoResult111 = 'assets/noResult111.jpg';
@@ -20,16 +18,13 @@ class Assets {
   static const String assetsSplash = 'assets/splash.png';
   static const String assetsSplash1 = 'assets/splash1.png';
   static const String assetsUc = 'assets/uc.png';
-  static const String assetsUc1 = 'assets/uc1.png';
   static const String fontsNsIcons = 'assets/fonts/NsIcons.ttf';
   static const String imagesBackground = 'assets/images/background.jpg';
   static const String imagesDarkBackground = 'assets/images/dark_background.jpg';
-  static const String imagesUser = 'assets/images/user.png';
-  static const String imagesUserPlaceholder = 'assets/images/userPlaceholder.jpg';
-  static const String rFSMARTLogin1FilesGlobal = 'assets/rf/RF-SMARTLogin1_files/global.css';
-  static const String rFSMARTLogin1FilesJq1 = 'assets/rf/RF-SMARTLogin1_files/jq1.download';
-  static const String rFSMARTLoginFilesGlobal = 'assets/rf/RF-SMARTLogin_files/global.css';
-  static const String rFSMARTLoginFilesJq1 = 'assets/rf/RF-SMARTLogin_files/jq1.download';
-  static const String rfRFSMARTLogin = 'assets/rf/RF-SMARTLogin.html';
-  static const String rfRFSMARTLogin1 = 'assets/rf/RF-SMARTLogin1.html';
+  static const String imagesUser128 = 'assets/images/user128.png';
+  static const String imagesUser164 = 'assets/images/user164.png';
+  static const String imagesUser256 = 'assets/images/user256.png';
+  static const String imagesUser512 = 'assets/images/user512.png';
+  static const String imagesUser64 = 'assets/images/user64.png';
+  static const String rfRf = 'assets/rf/rf.js';
 }

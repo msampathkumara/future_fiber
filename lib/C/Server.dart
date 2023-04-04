@@ -12,7 +12,7 @@ class Server {
     local = false;
 
     // if (await isV2) {
-    return "https://v2.smartwind.nsslsupportservices.com";
+    // return "https://v2.smartwind.nsslsupportservices.com";
     // }
 
     if (kDebugMode && local && (!onlineServer)) {
@@ -20,23 +20,28 @@ class Server {
       return "http://$devServerIp:3000";
     }
 
-    if (isLocalServer) {
-      if (local) {
-        return "http://$devServerIp:3000";
-      }
-      return "https://smartwind.test.nsslsupportservices.com";
+    if (appFlavor == 'v2') {
+      return "https://v2.smartwind.nsslsupportservices.com";
     }
 
-    if (await isTestServer) {
-      return "https://smartwind.test.nsslsupportservices.com";
-    } else if (await isV2) {
-      return "https://v2.smartwind.nsslsupportservices.com";
-    } else {
-      if (kIsWeb && (!isLocalServer)) {
-        return "";
-      }
-      return "https://smartwind.nsslsupportservices.com_";
-    }
+    //
+    // if (isLocalServer) {
+    //   if (local) {
+    //     return "http://$devServerIp:3000";
+    //   }
+    //   return "https://smartwind.test.nsslsupportservices.com";
+    // }
+
+    // if (await isTestServer) {
+    return "https://smartwind.test.nsslsupportservices.com";
+    // } else if (await isV2) {
+    //   return "https://v2.smartwind.nsslsupportservices.com";
+    // } else {
+    //   if (kIsWeb && (!isLocalServer)) {
+    //     return "";
+    //   }
+    //   return "https://smartwind.nsslsupportservices.com_";
+    // }
   }
 
   static Future<String> getServerPath(String path, {onlineServer = false}) async {

@@ -19,8 +19,10 @@ import '../../../Widgets/myDropDown.dart';
 import '../../ProductionPool/copy.dart';
 import '../orderOprions.dart';
 import 'KitView.dart';
+import '../../../../M/Extensions.dart';
 
 part 'webKit.options.dart';
+
 part 'webKit.table.dart';
 
 class WebKit extends StatefulWidget {
@@ -72,126 +74,124 @@ class _WebKitState extends State<WebKit> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      appBar: AppBar(
-          title: Row(
-            children: [
-              Text("KIT", style: mainWidgetsTitleTextStyle),
-              const Spacer(),
-              IconButton(
-                icon: CircleAvatar(backgroundColor: Colors.white, radius: 16, child: Icon(Icons.play_arrow, color: filterByStartTicket ? Colors.red : Colors.black, size: 20)),
-                tooltip: 'Filter by start ticket',
-                onPressed: () async {
-                  filterByStartTicket = !filterByStartTicket;
-                  loadData();
-                },
-              ),
-              const SizedBox(width: 50),
-              SizedBox(
-                  height: 36,
-                  child: ElevatedButton.icon(
-                      onPressed: () {
-                        DateTime now = DateTime.now();
-                        String lastMonth = DateFormat('yyyy-MM-dd').format(DateTime(now.year, now.month - 1, now.day));
-                        String nextMonth = DateFormat('yyyy-MM-dd').format(DateTime(now.year, now.month + 1, now.day));
-                        Api.downloadFile(EndPoints.materialManagement_kit_getExcel, {}, "$lastMonth - $nextMonth.xlsx");
-                      },
-                      label: const Text("Download Exel"),
-                      icon: const Icon(Icons.download))),
-              const SizedBox(width: 50),
-              Wrap(children: [
-                MyDropDown<Production>(
-                    items: Production.values,
-                    elevation: 4,
-                    lable: 'Production',
-                    value: Production.None,
-                    selectedText: (selectedItem) {
-                      return (selectedItem).getValue();
-                    },
-                    onSelect: (x) {
-                      selectedProduction = x;
-                      setState(() {});
-                      loadData();
-                      return selectedProduction.getValue();
-                    },
-                    onChildBuild: (Production item) {
-                      return Text(item.getValue());
-                    }),
-                const SizedBox(width: 24),
-                MyDropDown<String>(
-                    items: _status,
-                    elevation: 4,
-                    lable: 'Status',
-                    value: selectedStatus,
-                    selectedText: (selectedItem) {
-                      return (selectedItem);
-                    },
-                    onSelect: (x) {
-                      selectedStatus = x;
-                      setState(() {});
-                      loadData();
-                      return selectedStatus;
-                    },
-                    onChildBuild: (item) {
-                      return Text(item);
-                    }),
-
-                //-------------------------------------------------------------------------------------------------
-
-                const SizedBox(width: 24),
-                if (AppUser.havePermissionFor(NsPermissions.KIT_SCAN_READY_KITS))
-                  ElevatedButton.icon(
-                      onPressed: () async {
-                        await const ScanReadyKits().show(context);
-                        loadData();
-                      },
-                      label: const Padding(
-                        padding: EdgeInsets.all(12.0),
-                        child: Text("Scan Ready Kits"),
-                      ),
-                      icon: const Icon(Icons.settings_overscan)),
-                if (AppUser.havePermissionFor(NsPermissions.KIT_SEND_KITS))
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+            title: Row(
+              children: [
+                Text("KIT", style: mainWidgetsTitleTextStyle),
+                const Spacer(),
+                IconButton(
+                  icon: CircleAvatar(backgroundColor: Colors.white, radius: 16, child: Icon(Icons.play_arrow, color: filterByStartTicket ? Colors.red : Colors.black, size: 20)),
+                  tooltip: 'Filter by start ticket',
+                  onPressed: () async {
+                    filterByStartTicket = !filterByStartTicket;
+                    loadData();
+                  },
+                ),
+                const SizedBox(width: 50),
+                SizedBox(
+                    height: 36,
                     child: ElevatedButton.icon(
+                        onPressed: () {
+                          DateTime now = DateTime.now();
+                          String lastMonth = DateFormat('yyyy-MM-dd').format(DateTime(now.year, now.month - 1, now.day));
+                          String nextMonth = DateFormat('yyyy-MM-dd').format(DateTime(now.year, now.month + 1, now.day));
+                          Api.downloadFile(EndPoints.materialManagement_kit_getExcel, {}, "$lastMonth - $nextMonth.xlsx");
+                        },
+                        label: const Text("Download Exel"),
+                        icon: const Icon(Icons.download))),
+                const SizedBox(width: 50),
+                Wrap(children: [
+                  MyDropDown<Production>(
+                      items: Production.values,
+                      elevation: 4,
+                      lable: 'Production',
+                      value: Production.None,
+                      selectedText: (selectedItem) {
+                        return (selectedItem).getValue();
+                      },
+                      onSelect: (x) {
+                        selectedProduction = x;
+                        setState(() {});
+                        loadData();
+                        return selectedProduction.getValue();
+                      },
+                      onChildBuild: (Production item) {
+                        return Text(item.getValue());
+                      }),
+                  const SizedBox(width: 24),
+                  MyDropDown<String>(
+                      items: _status,
+                      elevation: 4,
+                      lable: 'Status',
+                      value: selectedStatus,
+                      selectedText: (selectedItem) {
+                        return (selectedItem);
+                      },
+                      onSelect: (x) {
+                        selectedStatus = x;
+                        setState(() {});
+                        loadData();
+                        return selectedStatus;
+                      },
+                      onChildBuild: (item) {
+                        return Text(item);
+                      }),
+
+                  //-------------------------------------------------------------------------------------------------
+
+                  const SizedBox(width: 24),
+                  if (AppUser.havePermissionFor(NsPermissions.KIT_SCAN_READY_KITS))
+                    ElevatedButton.icon(
                         onPressed: () async {
-                          await const SendKits().show(context);
+                          await const ScanReadyKits().show(context);
                           loadData();
                         },
                         label: const Padding(
                           padding: EdgeInsets.all(12.0),
-                          child: Text("Send"),
+                          child: Text("Scan Ready Kits"),
                         ),
-                        icon: const Icon(Icons.send)),
-                  ),
-                const SizedBox(width: 20),
-                Material(
-                    elevation: 4,
-                    borderRadius: BorderRadius.circular(8),
-                    child: SizedBox(height: 40, width: 250, child: SearchBar(searchController: _controller, onSearchTextChanged: (text) => {searchText = text, loadData()}))),
-              ])
-            ],
-          ),
-          backgroundColor: Colors.transparent,
-          elevation: 0),
-      body: Padding(
-        padding: const EdgeInsets.only(bottom: 16.0, right: 16),
-        child: Material(
-            elevation: 4,
-            borderRadius: BorderRadius.circular(8),
-            child: WebKITTable(onInit: (DessertDataSourceAsync dataSource) {
-              _dataSource = dataSource;
-            }, onRequestData: (int page, int startingAt, int count, String sortedBy, bool sortedAsc) {
-              return getData(page, startingAt, count, sortedBy, sortedAsc);
-            })),
-      ),
-    );
+                        icon: const Icon(Icons.settings_overscan)),
+                  if (AppUser.havePermissionFor(NsPermissions.KIT_SEND_KITS))
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: ElevatedButton.icon(
+                          onPressed: () async {
+                            await const SendKits().show(context);
+                            loadData();
+                          },
+                          label: const Padding(
+                            padding: EdgeInsets.all(12.0),
+                            child: Text("Send"),
+                          ),
+                          icon: const Icon(Icons.send)),
+                    ),
+                  const SizedBox(width: 20),
+                  Material(
+                      elevation: 4,
+                      borderRadius: BorderRadius.circular(8),
+                      child: SizedBox(height: 40, width: 250, child: SearchBar(searchController: _controller, onSearchTextChanged: (text) => {searchText = text, loadData()}))),
+                ])
+              ],
+            ),
+            backgroundColor: Colors.transparent,
+            elevation: 0),
+        body: Padding(
+            padding: const EdgeInsets.only(bottom: 16.0, right: 16),
+            child: Material(
+                elevation: 4,
+                borderRadius: BorderRadius.circular(8),
+                child: WebKITTable(onInit: (DessertDataSourceAsync dataSource) {
+                  _dataSource = dataSource;
+                }, onRequestData: (int page, int startingAt, int count, String sortedBy, bool sortedAsc) {
+                  return getData(page, startingAt, count, sortedBy, sortedAsc);
+                }))));
   }
 
   Filters dataFilter = Filters.none;
 
   void loadData() {
-    _dataSource.refreshDatasource();
+    _dataSource.refreshData();
   }
 
   Future<DataResponse> getData(page, startingAt, count, sortedBy, sortedAsc) {

@@ -32,18 +32,7 @@ class _WebKITTableState extends State<WebKITTable> {
 
   void sort(int columnIndex, bool ascending) {
     var columnName = ['mo', 'client', 'shortageType', 'addedOn', 'shipDate', 'shipDate', 'status'][columnIndex];
-    // var columnName = "oe";
-    // switch (columnIndex) {
-    //   case 1:
-    //     columnName = "production";
-    //     break;
-    //   case 2:
-    //     columnName = "usedCount";
-    //     break;
-    //   case 3:
-    //     columnName = "uptime";
-    //     break;
-    // }
+
     _dessertsDataSource!.sort(columnName, ascending);
     setState(() {
       _sortColumnIndex = columnIndex;
@@ -59,6 +48,7 @@ class _WebKITTableState extends State<WebKITTable> {
 
   List<DataColumn> get _columns {
     return [
+      const DataColumn2(size: ColumnSize.S, label: Text('#', style: TextStyle(fontWeight: FontWeight.bold))),
       DataColumn2(size: ColumnSize.M, label: const Text('Ticket', style: TextStyle(fontWeight: FontWeight.bold)), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(size: ColumnSize.M, label: const Text('Client', style: TextStyle(fontWeight: FontWeight.bold)), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(
@@ -103,10 +93,14 @@ class _WebKITTableState extends State<WebKITTable> {
 
     return Stack(alignment: Alignment.bottomCenter, children: [
       AsyncPaginatedDataTable2(
+          // onSelectAll: (x) {
+          //   print('xxxxxxxxxxxxxxxxxxxxxxxxcccccccccccccc');
+          // },
+          // showCheckboxColumn: true,
           scrollController: _scrollController,
           showFirstLastButtons: true,
-          smRatio: 0.5,
-          lmRatio: 2.5,
+          smRatio: 0.2,
+          lmRatio: 2,
           horizontalMargin: 20,
           checkboxHorizontalMargin: 12,
           columnSpacing: 16,
@@ -130,11 +124,13 @@ class _WebKITTableState extends State<WebKITTable> {
             //setState(() {
             print('Row per page changed to $value');
             _rowsPerPage = value!;
+            _dessertsDataSource?.refreshData();
             //});
           },
           initialFirstRowIndex: _initialRow,
           onPageChanged: (rowIndex) {
             print("$rowIndex${_rowsPerPage}xxxxxxxx =${rowIndex / _rowsPerPage}");
+            _dessertsDataSource?.refreshData();
           },
           sortColumnIndex: _sortColumnIndex,
           sortAscending: _sortAscending,
@@ -143,7 +139,7 @@ class _WebKITTableState extends State<WebKITTable> {
           columns: _columns,
           empty: Center(child: Container(padding: const EdgeInsets.all(20), child: const NoResultFoundMsg())),
           loading: _Loading(),
-          errorBuilder: (e) => _ErrorAndRetry(e.toString(), () => _dessertsDataSource!.refreshDatasource()),
+          errorBuilder: (e) => _ErrorAndRetry(e.toString(), () => _dessertsDataSource!.refreshData()),
           source: _dessertsDataSource!),
     ]);
   }
@@ -188,13 +184,13 @@ class __LoadingState extends State<_Loading> {
                   ? const SizedBox()
                   : Center(
                       child: Container(
-                      color: Colors.yellow,
-                      padding: const EdgeInsets.all(7),
-                      width: 150,
-                      height: 50,
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround, children: const [CircularProgressIndicator(strokeWidth: 2, color: Colors.black), Text('Loading..')]),
-                    ));
+                          color: Colors.yellow,
+                          padding: const EdgeInsets.all(7),
+                          width: 150,
+                          height: 50,
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: const [CircularProgressIndicator(strokeWidth: 2, color: Colors.black), Text('Loading..')])));
             }));
   }
 }
@@ -207,7 +203,9 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
   }
 
   final BuildContext context;
-  final bool _empty = false;
+
+  DataResponse? _dataResponse;
+
   int? _errorCounter;
 
   RangeValues? _caloriesFilter;
@@ -216,7 +214,7 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
 
   set caloriesFilter(RangeValues? calories) {
     _caloriesFilter = calories;
-    refreshDatasource();
+    refreshData();
   }
 
   // final DesertsFakeWebService _repo = DesertsFakeWebService();
@@ -227,7 +225,7 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
   void sort(String columnName, bool ascending) {
     _sortColumn = columnName;
     _sortAscending = ascending;
-    refreshDatasource();
+    refreshData();
   }
 
   @override
@@ -248,73 +246,57 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
 
     print('xxxxxxxxxxxxxxxxxxxxxxx == ${int.parse("${start / end}")}');
 
+    // _dataResponse = null;
+
     // List returned will be empty is there're fewer items than startingAt
-    var x = _empty
-        ? await Future.delayed(const Duration(milliseconds: 2000), () => DataResponse(0, []))
-        : await onRequestData(int.parse("${start / end}"), start, end, _sortColumn, _sortAscending);
+    var x = _dataResponse ?? (_dataResponse = await onRequestData(int.parse("${start / end}"), start, end, _sortColumn, _sortAscending));
     print('****************************************************************************xxxxxxxxxxxxx${x.totalRecords}');
     var r = AsyncRowsResponse(
         x.totalRecords,
-        x.data.map((kit) {
+        x.data.mapIndexed((kit, index) {
+          print('${kit.isSelected}');
           return DataRow2(
-            specificRowHeight: 55,
-            selected: false,
-            onTap: () async {
-              bool c = false;
-              await KitView(kit, (p0) {
-                c = true;
-                print('7777777777');
-              }).show(context);
-              if (c == true) {
-                refreshDatasource();
-              }
-            },
-            onSecondaryTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(duration: const Duration(seconds: 1), backgroundColor: Theme.of(context).colorScheme.error, content: Text('Right clicked on ${kit.ticket?.oe}'))),
-            cells: [
-              DataCell(ListTile(
-                  visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-                  title: TextMenu(child: Text(kit.ticket?.mo ?? kit.ticket?.oe ?? '', style: TextStyle(color: kit.isTicketStarted ? Colors.green : null))),
-                  subtitle: TextMenu(child: Text(kit.ticket?.oe ?? '', style: const TextStyle(color: Colors.deepOrange, fontSize: 12))))),
-              DataCell(Text((kit.client) ?? "")),
-              DataCell(Text((kit.shortageType) ?? "")),
-              DataCell(Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.end,
-                  direction: Axis.vertical,
-                  children: [Text((kit.date) ?? ""), Text((kit.time) ?? "", style: const TextStyle(color: Colors.grey, fontSize: 12))])),
-              DataCell(Text((kit.shipDate))),
-              DataCell(Text((kit.status), style: TextStyle(color: kit.status.getColor()))),
-              DataCell(Text((kit.orderType ?? ''), style: TextStyle(color: (kit.orderType ?? '').getColor()))),
-              // DataCell(Wrap(
-              //   children: [
-              //     if (kit.status.equalIgnoreCase('ready'))
-              //       Padding(
-              //           padding: const EdgeInsets.all(8.0),
-              //           child: TextButton(
-              //               onPressed: () {
-              //                 order(kit);
-              //               },
-              //               child: const Text("Order"))),
-              //     // IconButton(
-              //     //   icon: const Icon(Icons.more_vert_rounded),
-              //     //   onPressed: () {
-              //     //     // showKitOptions(kit, context, context);
-              //     //   },
-              //     // ),
-              //   ],
-              // ))
-
-              DataCell(IconButton(
-                icon: const Icon(Icons.more_vert_rounded),
-                onPressed: () {
-                  showCprOptions(kit, context, context, () {
-                    print('------------------------------------------------refreshDatasource');
-                    refreshDatasource();
-                  });
-                },
-              ))
-            ],
-          );
+              // onSelectChanged: (selected) {
+              //   kit.isSelected = selected ?? false;
+              //   refreshDatasource();
+              // },
+              specificRowHeight: 55,
+              selected: kit.isSelected,
+              onTap: () async {
+                bool c = false;
+                await KitView(kit, (p0) {
+                  c = true;
+                }).show(context);
+                if (c == true) {
+                  refreshData();
+                }
+              },
+              // onSecondaryTap: () => ScaffoldMessenger.of(context).showSnackBar(
+              //     SnackBar(duration: const Duration(seconds: 1), backgroundColor: Theme.of(context).colorScheme.error, content: Text('Right clicked on ${kit.ticket?.oe}'))),
+              cells: [
+                DataCell(GestureDetector(onTap: () {}, child: Text("${index + 1}"))),
+                DataCell(ListTile(
+                    visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+                    title: TextMenu(child: Text(kit.ticket?.mo ?? kit.ticket?.oe ?? '', style: TextStyle(color: kit.isTicketStarted ? Colors.green : null, fontSize: 15))),
+                    subtitle: TextMenu(child: Text(kit.ticket?.oe ?? '', style: const TextStyle(color: Colors.deepOrange, fontSize: 12))))),
+                DataCell(Text(((kit.client) ?? ""))),
+                DataCell(Text((kit.shortageType) ?? "")),
+                DataCell(Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.end,
+                    direction: Axis.vertical,
+                    children: [Text((kit.date) ?? ""), Text((kit.time) ?? "", style: const TextStyle(color: Colors.grey, fontSize: 12))])),
+                DataCell(Text((kit.shipDate))),
+                DataCell(Text((kit.status), style: TextStyle(color: kit.status.getColor()))),
+                DataCell(Text((kit.orderType ?? ''), style: TextStyle(color: (kit.orderType ?? '').getColor()))),
+                DataCell(IconButton(
+                    icon: const Icon(Icons.more_vert_rounded),
+                    onPressed: () => {
+                          showCprOptions(kit, context, context, () {
+                            print('------------------------------------------------refreshData');
+                            refreshData();
+                          })
+                        }))
+              ]);
         }).toList());
 
     return r;
@@ -323,12 +305,17 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
   void order(KIT kit) {
     Api.post(EndPoints.materialManagement_kit_order, {'kitId': kit.id})
         .then((res) {
-          refreshDatasource();
+          refreshData();
         })
         .whenComplete(() {})
         .catchError((err) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.toString())));
         });
+  }
+
+  void refreshData() {
+    _dataResponse = null;
+    refreshDatasource();
   }
 }
 

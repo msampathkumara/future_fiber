@@ -12,6 +12,7 @@ import 'package:smartwind/Web/V/MaterialManagement/CPR/AddCpr.dart';
 import 'package:smartwind/Web/V/MaterialManagement/CPR/TicketSelector.dart';
 import 'package:smartwind/Web/V/MaterialManagement/CPR/webCprView.dart';
 import 'package:smartwind/Web/Widgets/myDropDown.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../../M/AppUser.dart';
 import '../../../../M/PermissionsEnum.dart';
@@ -20,6 +21,7 @@ import '../../ProductionPool/copy.dart';
 import '../orderOprions.dart';
 
 part 'webCpr.options.dart';
+
 part 'webCpr.table.dart';
 
 class WebCpr extends StatefulWidget {
@@ -51,12 +53,27 @@ class _WebCprState extends State<WebCpr> {
 
   String selectedOrderType = 'All';
 
+  String selectedSupplierStatus = 'None';
+
+  DateTime rangeStartDate = DateTime.now();
+
+  DateTime? rangeEndDate = DateTime.now();
+
+  DateTime? selectedDate = DateTime.now();
+
+  bool singleDate = false;
+
+  String? _title;
+
+  bool filterByDate = false;
+
   @override
   void initState() {
     super.initState();
   }
 
   bool filterByStartTicket = false;
+  List<String> supplierStatusList = List.from(["None", "Cutting Pending", "Cutting Sent", "SA Pending", "SA Sent", "Printing Pending", "Printing Sent"]);
 
   @override
   Widget build(BuildContext context) {
@@ -86,25 +103,110 @@ class _WebCprState extends State<WebCpr> {
               children: [
                 Text("CPR", style: mainWidgetsTitleTextStyle),
                 const Spacer(),
+                SizedBox(height: 36, child: ElevatedButton.icon(onPressed: () => {downloadExcel()}, label: const Text("Download Exel"), icon: const Icon(Icons.download))),
+                const SizedBox(width: 16),
                 IconButton(
-                  icon: CircleAvatar(backgroundColor: Colors.white, radius: 16, child: Icon(Icons.play_arrow, color: filterByStartTicket ? Colors.red : Colors.black, size: 20)),
-                  tooltip: 'Filter by start ticket',
-                  onPressed: () async {
-                    filterByStartTicket = !filterByStartTicket;
+                    icon: CircleAvatar(backgroundColor: Colors.white, radius: 16, child: Icon(Icons.play_arrow, color: filterByStartTicket ? Colors.red : Colors.black, size: 20)),
+                    tooltip: 'Filter by start ticket',
+                    onPressed: () async {
+                      filterByStartTicket = !filterByStartTicket;
+                      loadData();
+                    }),
+                const SizedBox(width: 16),
+                Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: PopupMenuButton<int>(
+                        tooltip: "Select Date or Date range to filer by CPR Due Date",
+                        offset: const Offset(0, 30),
+                        padding: const EdgeInsets.all(16.0),
+                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                        child: Chip(
+                            deleteIcon: const Icon(Icons.close, color: Colors.red),
+                            onDeleted: filterByDate ? () => {filterByDate = false, _title = null, loadData()} : null,
+                            // backgroundColor: _selectedFilter == e ? Colors.red : null,
+                            avatar: const Icon(Icons.date_range, color: Colors.black),
+                            label: Text(_title ?? "Select Due Date", style: const TextStyle(color: Colors.black))),
+                        onSelected: (result) {},
+                        itemBuilder: (BuildContext context) {
+                          return [
+                            PopupMenuItem(
+                                value: 0,
+                                enabled: false,
+                                child: SizedBox(
+                                    width: 500,
+                                    height: 300,
+                                    child: SfDateRangePicker(
+                                        initialSelectedRange: PickerDateRange(rangeStartDate, rangeEndDate),
+                                        maxDate: DateTime.now(),
+                                        onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
+                                          print(args.value);
 
-                    loadData();
-                  },
-                ),
-                const SizedBox(width: 50),
-                SizedBox(
-                    height: 36,
-                    child: ElevatedButton.icon(
-                        onPressed: () {
-                          downloadExcel();
-                        },
-                        label: const Text("Download Exel"),
-                        icon: const Icon(Icons.download))),
-                const SizedBox(width: 50),
+                                          rangeEndDate = null;
+                                          selectedDate = null;
+                                          if (args.value is PickerDateRange) {
+                                            rangeStartDate = args.value.startDate;
+                                            rangeEndDate = args.value.endDate;
+                                            if (rangeStartDate == rangeEndDate) {
+                                              rangeEndDate = null;
+                                            }
+                                          } else if (args.value is DateTime) {
+                                            selectedDate = args.value;
+                                          } else if (args.value is List<DateTime>) {
+                                          } else {}
+                                          rangeEndDate = rangeEndDate == rangeStartDate ? null : rangeEndDate;
+                                          if (rangeEndDate == null || rangeStartDate.isSameDate(rangeEndDate!)) {
+                                            singleDate = true;
+                                          } else {
+                                            singleDate = false;
+                                          }
+                                        },
+                                        selectionMode: DateRangePickerSelectionMode.range))),
+                            PopupMenuItem(
+                              value: 1,
+                              enabled: false,
+                              child: Row(
+                                children: [
+                                  ElevatedButton(
+                                      onPressed: () => {
+                                            _title = singleDate
+                                                ? DateFormat("yyyy MMMM dd").format(rangeStartDate)
+                                                : "${DateFormat("yyyy/MM/dd").format(rangeStartDate)} to ${DateFormat("yyyy/MM/dd").format(rangeEndDate!)}",
+                                            filterByDate = true,
+                                            Navigator.of(context).pop(),
+                                            loadData()
+                                          },
+                                      child: const Text('Done')),
+                                  const Spacer(),
+                                  TextButton(onPressed: () => {filterByDate = false, _title = null, Navigator.of(context).pop(), loadData()}, child: const Text('Cancel')),
+                                ],
+                              ),
+                            )
+                          ];
+                        })),
+                const SizedBox(width: 16),
+                Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: PopupMenuButton<String>(
+                        offset: const Offset(0, 30),
+                        padding: const EdgeInsets.all(16.0),
+                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                        child: Chip(
+                            avatar: const Icon(Icons.factory, color: Colors.black),
+                            label: Row(children: [Text(selectedSupplierStatus), const Icon(Icons.arrow_drop_down_rounded, color: Colors.black)])),
+                        onSelected: (result) {},
+                        itemBuilder: (BuildContext context) {
+                          return supplierStatusList.map((String value) {
+                            return PopupMenuItem<String>(
+                                value: value,
+                                onTap: () {
+                                  selectedSupplierStatus = value;
+                                  setState(() {});
+                                  loadData();
+                                },
+                                child: Text(value));
+                          }).toList();
+                        })),
+                const SizedBox(width: 16),
                 Wrap(children: [
                   MyDropDown<String>(
                       items: const ['All', 'Urgent', 'Normal'],
@@ -193,6 +295,7 @@ class _WebCprState extends State<WebCpr> {
       requested = true;
     });
     return Api.get(EndPoints.materialManagement_cpr_search, {
+      "supplierStatus": selectedSupplierStatus,
       'production': selectedProduction.getValue(),
       'status': selectedStatus,
       'sortDirection': sortedAsc ? "asc" : "desc",
@@ -201,13 +304,17 @@ class _WebCprState extends State<WebCpr> {
       'pageSize': count,
       'orderType': selectedOrderType,
       'searchText': searchText,
-      'filterByStartTicket': filterByStartTicket
+      'filterByStartTicket': filterByStartTicket,
+      "startDate": selectedDate,
+      "rangeStartDate": filterByDate ? rangeStartDate : null,
+      "rangeEndDate": filterByDate ? rangeEndDate : null
     }).then((res) {
       print('--------------------------------------------------------------------------------------------------xxxxxxxx-');
-      dataCount = res.data["count"];
+      print('---------------------------------------------------------------------------------------------------_${res.data["count"]}');
+      dataCount = int.parse("${res.data["count"]}");
 
       var x = CPR.fromJsonArray(res.data["cprs"]);
-      print('---------------------------------------------------------------------------------------------------');
+      // print('---------------------------------------------------------------------------------------------------${res.data}');
       return DataResponse(dataCount, x);
     }).whenComplete(() {
       setState(() {
@@ -219,8 +326,9 @@ class _WebCprState extends State<WebCpr> {
           content: Text(err.toString()),
           action: SnackBarAction(
               label: 'Retry',
-              onPressed: () {
-                getData(page, startingAt, count, sortedBy, sortedAsc);
+              onPressed: () async {
+                // await getData(page, startingAt, count, sortedBy, sortedAsc);
+                _dataSource.refreshDatasource();
               })));
       setState(() {});
     });

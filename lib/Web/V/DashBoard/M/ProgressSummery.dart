@@ -38,6 +38,9 @@ class ProgressSummery {
   @JsonKey(defaultValue: null, includeIfNull: true, fromJson: intFromString)
   num? employeeCount;
 
+  @JsonKey(defaultValue: null, includeIfNull: true, fromJson: intFromString)
+  num? startedTicketCount;
+
   @JsonKey(defaultValue: null, includeIfNull: true, fromJson: numFromString)
   num? capacity;
 

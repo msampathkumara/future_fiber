@@ -99,7 +99,7 @@ class UpdateUserDetailsState extends State<UpdateUserDetails> {
     imageId = '';
   }
 
-  var placeholder = const AssetImage(Res.userPlaceholder);
+  var placeholder = const AssetImage(Res.user64);
 
   void setImage() {
     img = placeholder;
@@ -140,274 +140,275 @@ class UpdateUserDetailsState extends State<UpdateUserDetails> {
 
   getDialogUi() {
     return Scaffold(
-      appBar: AppBar(title: Text(isNew ? "Add User" : "Edit User")),
-      body: isSaving
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Wrap(direction: Axis.vertical, crossAxisAlignment: WrapCrossAlignment.center, children: [
-                      FutureBuilder(
-                          future: nsUser.getImage(),
-                          builder: (context, AsyncSnapshot s) {
-                            return s.hasData
-                                ? CircleAvatar(
-                                    radius: 150,
-                                    foregroundImage: img ?? (nsUser.haveImage ? NetworkImage(s.data) : (img ?? placeholder)),
-                                    backgroundImage: const AssetImage(Res.userPlaceholder))
-                                : const CircularProgressIndicator();
-                          }),
-                      Row(children: [
-                        SizedBox(width: 170, child: TextButton(onPressed: getImage, child: Text(isNew ? "Add Profile Picture" : "Change Profile Picture"))),
-                        if (_image != null) const SizedBox(height: 20, child: VerticalDivider(color: Colors.grey, thickness: 1)),
-                        if (_image != null)
-                          SizedBox(
-                              width: 170,
-                              child: TextButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _image = null;
-                                    });
-                                  },
-                                  child: const Text("Reset", textAlign: TextAlign.left)))
-                      ]),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16.0),
-                        child: Text(
-                          nsUser.name,
-                          textScaleFactor: 1.5,
+        appBar: AppBar(title: Text(isNew ? "Add User" : "Edit User")),
+        body: isSaving
+            ? const Center(child: CircularProgressIndicator())
+            : Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Wrap(direction: Axis.vertical, crossAxisAlignment: WrapCrossAlignment.center, children: [
+                        FutureBuilder(
+                            future: nsUser.getImage(),
+                            builder: (context, AsyncSnapshot s) {
+                              return s.hasData
+                                  ? CircleAvatar(
+                                      radius: 150,
+                                      foregroundImage: img ?? (nsUser.haveImage ? NetworkImage(s.data) : (img ?? placeholder)),
+                                      backgroundImage: const AssetImage(Res.user64))
+                                  : const CircularProgressIndicator();
+                            }),
+                        Row(children: [
+                          SizedBox(width: 170, child: TextButton(onPressed: getImage, child: Text(isNew ? "Add Profile Picture" : "Change Profile Picture"))),
+                          if (_image != null) const SizedBox(height: 20, child: VerticalDivider(color: Colors.grey, thickness: 1)),
+                          if (_image != null)
+                            SizedBox(
+                                width: 170,
+                                child: TextButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _image = null;
+                                      });
+                                    },
+                                    child: const Text("Reset", textAlign: TextAlign.left)))
+                        ]),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: Text(
+                            nsUser.name,
+                            textScaleFactor: 1.5,
+                          ),
                         ),
-                      ),
-                      Text('#${nsUser.uname}', style: const TextStyle(color: Colors.blue))
-                    ]),
-                  ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          children: [
-                            Card(
-                              child: Column(
-                                children: [
-                                  const ListTile(title: Text("Basic Info"), leading: Icon(Icons.account_box_outlined)),
-                                  Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Column(children: [
-                                      TextFormField(
-                                        initialValue: nsUser.name,
-                                        decoration: FormInputDecoration.getDeco(labelText: "Full Name"),
-                                        onChanged: (text) {
-                                          nsUser.name = text;
-                                        },
-                                      ),
-                                      const SizedBox(height: 16),
-                                      TextFormField(
-                                          initialValue: nsUser.uname,
-                                          decoration: FormInputDecoration.getDeco(labelText: "User Name", suffixIcon: getSusfix(_userNameCheking)),
-                                          onChanged: (text) {
-                                            nsUser.uname = text;
-                                            setState(() {});
-                                            check('uname', text);
-                                          }),
-                                      const SizedBox(height: 16),
-                                      TextFormField(
-                                          inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly, FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))],
-                                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                                          initialValue: (nsUser.nic ?? '').replaceAll('v', '').replaceAll('V', ''),
-                                          decoration: FormInputDecoration.getDeco(labelText: "NIC", suffixText: (nsUser.nic ?? '').contains("v") ? "V  " : ""),
-                                          onChanged: (text) {
-                                            nsUser.nic = text;
-                                            if (text.length < 10) {
-                                              text = "${text}v";
-                                            }
-                                            nsUser.nic = text;
-                                            setState(() {});
-                                          },
-                                          validator: (value) {
-                                            if ("$value".length < 10) {
-                                              value = "${value}v";
-                                            }
-                                            nsUser.nic = value ?? "";
-                                            return duplicateNic ? 'Duplicate NIC' : Validations.nic("$value");
-                                          })
-                                    ]),
-                                  )
-                                ],
-                              ),
-                            ),
-                            Card(
-                              child: Column(
-                                children: [
-                                  const ListTile(title: Text("Contacts Details"), leading: Icon(Icons.contact_phone_outlined)),
-                                  Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Column(children: [
-                                      Column(
-                                        children: [
-                                          TextFormField(
-                                              decoration: FormInputDecoration.getDeco(labelText: "Phone Number", hintText: "Enter phone number", icon: const Icon(Icons.phone)),
-                                              keyboardType: TextInputType.number,
-                                              inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
-                                              controller: _phoneNumberControll,
-                                              onFieldSubmitted: (t) {
-                                                nsUser.addPhone(t);
-                                                _phoneNumberControll.text = "";
-                                                setState(() {});
-                                              }),
-                                          Align(
-                                            alignment: Alignment.topLeft,
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(left: 32.0),
-                                              child: Wrap(
-                                                  alignment: WrapAlignment.start,
-                                                  children: List.generate(nsUser.getPhonesList().length, (index) {
-                                                    String number = nsUser.getPhonesList()[index];
-                                                    return Padding(
-                                                      padding: const EdgeInsets.all(8.0),
-                                                      child: GestureDetector(
-                                                          onTapDown: (TapDownDetails details) {
-                                                            _showPopupmenu(details.globalPosition, (val) {
-                                                              if (val == 1) {
-                                                                _phoneNumberControll.text = number;
-                                                                nsUser.removePhone(number);
-                                                              } else {
-                                                                nsUser.removePhone(number);
-                                                              }
-                                                              setState(() {});
-                                                            });
-                                                          },
-                                                          child: Chip(avatar: const Icon(Icons.call_outlined), label: Text(number))),
-                                                    );
-                                                  })),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      const SizedBox(height: 20),
-                                      Column(
-                                        children: [
-                                          TextFormField(
-                                              decoration:
-                                                  FormInputDecoration.getDeco(labelText: "Email Address", icon: const Icon(Icons.email_rounded), hintText: "Enter your Email"),
-                                              keyboardType: TextInputType.emailAddress,
-                                              validator: (input) => Validations.isValidEmail(input) ? null : "Check your email",
-                                              controller: _emaiAddressControll,
-                                              onFieldSubmitted: (t) {
-                                                nsUser.addEmailAddress(t);
-                                                _emaiAddressControll.text = "";
-                                                setState(() {});
-                                              }),
-                                          Align(
-                                            alignment: Alignment.topLeft,
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(left: 32.0),
-                                              child: Wrap(
-                                                  alignment: WrapAlignment.start,
-                                                  children: List.generate(nsUser.getEmailList().length, (index) {
-                                                    String number = nsUser.getEmailList()[index];
-                                                    return Padding(
-                                                      padding: const EdgeInsets.all(8.0),
-                                                      child: GestureDetector(
-                                                          onTapDown: (TapDownDetails details) {
-                                                            _showPopupmenu(details.globalPosition, (val) {
-                                                              if (val == 1) {
-                                                                _emaiAddressControll.text = number;
-                                                                nsUser.removeEmail(number);
-                                                              } else {
-                                                                nsUser.removeEmail(number);
-                                                              }
-                                                              setState(() {});
-                                                            });
-                                                          },
-                                                          child: Chip(avatar: const Icon(Icons.email_outlined), label: Text(number))),
-                                                    );
-                                                  })),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ]),
-                                  )
-                                ],
-                              ),
-                            ),
-                            Card(
-                              child: Column(
-                                children: [
-                                  const ListTile(title: Text("Job Details"), leading: Icon(Icons.work_outline_outlined)),
-                                  Padding(
+                        Text('#${nsUser.uname}', style: const TextStyle(color: Colors.blue))
+                      ]),
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            children: [
+                              Card(
+                                child: Column(
+                                  children: [
+                                    const ListTile(title: Text("Basic Info"), leading: Icon(Icons.account_box_outlined)),
+                                    Padding(
                                       padding: const EdgeInsets.all(16.0),
                                       child: Column(children: [
                                         TextFormField(
-                                            decoration: FormInputDecoration.getDeco(labelText: "EPF", icon: const Icon(Icons.numbers_rounded)),
-                                            keyboardType: TextInputType.number,
-                                            inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
-                                            onChanged: (t) {
-                                              nsUser.epf = int.parse(t);
+                                          initialValue: nsUser.name,
+                                          decoration: FormInputDecoration.getDeco(labelText: "Full Name"),
+                                          onChanged: (text) {
+                                            nsUser.name = text;
+                                          },
+                                        ),
+                                        const SizedBox(height: 16),
+                                        TextFormField(
+                                            initialValue: nsUser.uname,
+                                            decoration: FormInputDecoration.getDeco(labelText: "User Name", suffixIcon: getSusfix(_userNameCheking)),
+                                            onChanged: (text) {
+                                              nsUser.uname = text;
+                                              setState(() {});
+                                              check('uname', text);
+                                            }),
+                                        const SizedBox(height: 16),
+                                        TextFormField(
+                                            inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly, FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))],
+                                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                                            initialValue: (nsUser.nic ?? '').replaceAll('v', '').replaceAll('V', ''),
+                                            decoration: FormInputDecoration.getDeco(labelText: "NIC", suffixText: (nsUser.nic ?? '').contains("v") ? "V  " : ""),
+                                            onChanged: (text) {
+                                              nsUser.nic = text;
+                                              if (text.length < 10) {
+                                                text = "${text}v";
+                                              }
+                                              nsUser.nic = text;
+                                              setState(() {});
                                             },
-                                            controller: _epfNumberControll,
-                                            enabled: isNew),
-                                        const SizedBox(height: 20),
-                                        ListTile(
-                                            leading: const Icon(Icons.location_on_outlined),
-                                            title: const Text("Section"),
-                                            subtitle: Column(children: [
-                                              Row(children: [
-                                                ElevatedButton(
-                                                    onPressed: () async {
-                                                      SectionList(nsUser.sections, (p0) {
-                                                        nsUser.sections = p0;
-                                                        setState(() {});
-                                                      }).show(context);
-                                                    },
-                                                    child: const Text('Select Section')),
-                                                if (selectedSection!.sectionTitle.isNotEmpty && selectedSection!.factory.isNotEmpty)
-                                                  Padding(
-                                                      padding: const EdgeInsets.all(8.0),
-                                                      child: ElevatedButton(
-                                                          onPressed: () {
-                                                            nsUser.addSection(selectedSection!);
-                                                            selectedSection = Section();
-                                                            setState(() {});
-                                                          },
-                                                          child: const Text("Add")))
-                                              ]),
-                                              const SizedBox(height: 20),
-                                              Align(
-                                                  alignment: Alignment.topLeft,
-                                                  child: Wrap(
-                                                      direction: Axis.horizontal,
-                                                      crossAxisAlignment: WrapCrossAlignment.start,
-                                                      children: List.generate(nsUser.sections.length, (index) {
-                                                        Section section = nsUser.sections[index];
-                                                        return Padding(
-                                                            padding: const EdgeInsets.only(right: 8.0, bottom: 8),
-                                                            child: Chip(label: Text("${section.sectionTitle} @ ${section.factory}")));
-                                                      })))
-                                            ]))
-                                      ]))
-                                ],
+                                            validator: (value) {
+                                              if ("$value".length < 10) {
+                                                value = "${value}v";
+                                              }
+                                              nsUser.nic = value ?? "";
+                                              return duplicateNic ? 'Duplicate NIC' : Validations.nic("$value");
+                                            })
+                                      ]),
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                              Card(
+                                child: Column(
+                                  children: [
+                                    const ListTile(title: Text("Contacts Details"), leading: Icon(Icons.contact_phone_outlined)),
+                                    Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Column(children: [
+                                        Column(
+                                          children: [
+                                            TextFormField(
+                                                decoration: FormInputDecoration.getDeco(labelText: "Phone Number", hintText: "Enter phone number", icon: const Icon(Icons.phone)),
+                                                keyboardType: TextInputType.number,
+                                                inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+                                                controller: _phoneNumberControll,
+                                                onFieldSubmitted: (t) {
+                                                  nsUser.addPhone(t);
+                                                  _phoneNumberControll.text = "";
+                                                  setState(() {});
+                                                }),
+                                            Align(
+                                              alignment: Alignment.topLeft,
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(left: 32.0),
+                                                child: Wrap(
+                                                    alignment: WrapAlignment.start,
+                                                    children: List.generate(nsUser.getPhonesList().length, (index) {
+                                                      String number = nsUser.getPhonesList()[index];
+                                                      return Padding(
+                                                        padding: const EdgeInsets.all(8.0),
+                                                        child: GestureDetector(
+                                                            onTapDown: (TapDownDetails details) {
+                                                              _showPopupmenu(details.globalPosition, (val) {
+                                                                if (val == 1) {
+                                                                  _phoneNumberControll.text = number;
+                                                                  nsUser.removePhone(number);
+                                                                } else {
+                                                                  nsUser.removePhone(number);
+                                                                }
+                                                                setState(() {});
+                                                              });
+                                                            },
+                                                            child: Chip(avatar: const Icon(Icons.call_outlined), label: Text(number))),
+                                                      );
+                                                    })),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        const SizedBox(height: 20),
+                                        Column(
+                                          children: [
+                                            TextFormField(
+                                                decoration:
+                                                    FormInputDecoration.getDeco(labelText: "Email Address", icon: const Icon(Icons.email_rounded), hintText: "Enter your Email"),
+                                                keyboardType: TextInputType.emailAddress,
+                                                validator: (input) => Validations.isValidEmail(input) ? null : "Check your email",
+                                                controller: _emaiAddressControll,
+                                                onFieldSubmitted: (t) {
+                                                  nsUser.addEmailAddress(t);
+                                                  _emaiAddressControll.text = "";
+                                                  setState(() {});
+                                                }),
+                                            Align(
+                                              alignment: Alignment.topLeft,
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(left: 32.0),
+                                                child: Wrap(
+                                                    alignment: WrapAlignment.start,
+                                                    children: List.generate(nsUser.getEmailList().length, (index) {
+                                                      String number = nsUser.getEmailList()[index];
+                                                      return Padding(
+                                                        padding: const EdgeInsets.all(8.0),
+                                                        child: GestureDetector(
+                                                            onTapDown: (TapDownDetails details) {
+                                                              _showPopupmenu(details.globalPosition, (val) {
+                                                                if (val == 1) {
+                                                                  _emaiAddressControll.text = number;
+                                                                  nsUser.removeEmail(number);
+                                                                } else {
+                                                                  nsUser.removeEmail(number);
+                                                                }
+                                                                setState(() {});
+                                                              });
+                                                            },
+                                                            child: Chip(avatar: const Icon(Icons.email_outlined), label: Text(number))),
+                                                      );
+                                                    })),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ]),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Card(
+                                child: Column(
+                                  children: [
+                                    const ListTile(title: Text("Job Details"), leading: Icon(Icons.work_outline_outlined)),
+                                    Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Column(children: [
+                                          TextFormField(
+                                              decoration: FormInputDecoration.getDeco(labelText: "EPF", icon: const Icon(Icons.numbers_rounded)),
+                                              keyboardType: TextInputType.number,
+                                              inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+                                              onChanged: (t) {
+                                                nsUser.epf = int.parse(t);
+                                              },
+                                              controller: _epfNumberControll,
+                                              enabled: isNew),
+                                          const SizedBox(height: 20),
+                                          ListTile(
+                                              leading: const Icon(Icons.location_on_outlined),
+                                              title: const Text("Section"),
+                                              subtitle: Column(children: [
+                                                Row(children: [
+                                                  ElevatedButton(
+                                                      onPressed: () async {
+                                                        SectionList(nsUser.sections, (p0) {
+                                                          nsUser.sections = p0;
+                                                          setState(() {});
+                                                        }).show(context);
+                                                      },
+                                                      child: const Text('Select Section')),
+                                                  if (selectedSection!.sectionTitle.isNotEmpty && selectedSection!.factory.isNotEmpty)
+                                                    Padding(
+                                                        padding: const EdgeInsets.all(8.0),
+                                                        child: ElevatedButton(
+                                                            onPressed: () {
+                                                              nsUser.addSection(selectedSection!);
+                                                              selectedSection = Section();
+                                                              setState(() {});
+                                                            },
+                                                            child: const Text("Add")))
+                                                ]),
+                                                const SizedBox(height: 20),
+                                                Align(
+                                                    alignment: Alignment.topLeft,
+                                                    child: Wrap(
+                                                        direction: Axis.horizontal,
+                                                        crossAxisAlignment: WrapCrossAlignment.start,
+                                                        children: List.generate(nsUser.sections.length, (index) {
+                                                          Section section = nsUser.sections[index];
+                                                          return Padding(
+                                                              padding: const EdgeInsets.only(right: 8.0, bottom: 8),
+                                                              child: Chip(label: Text("${section.sectionTitle} @ ${section.factory}")));
+                                                        })))
+                                              ]))
+                                        ]))
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
-            ),
-      floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            saveUser();
-          },
-          child: const Icon(Icons.save_outlined)),
-    );
+        floatingActionButton: isSaving
+            ? null
+            : FloatingActionButton(
+                onPressed: () {
+                  saveUser();
+                },
+                child: const Icon(Icons.save_outlined)));
   }
 
   var imageId = '';

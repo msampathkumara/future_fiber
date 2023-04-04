@@ -7,6 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:smartwind/Mobile/V/MobileApp.dart';
 import 'package:smartwind/main.dart';
 
 void main() {

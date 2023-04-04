@@ -19,6 +19,7 @@ ShiftFactorySummery _$ShiftFactorySummeryFromJson(Map<String, dynamic> json) => 
   ..defects = ShiftFactorySummery.intFromString(json['defects'])
   ..wip = ShiftFactorySummery.intFromString(json['wip'])
   ..employeeCount = ShiftFactorySummery.intFromString(json['employeeCount'])
+  ..startedTicketCount = ShiftFactorySummery.intFromString(json['startedTicketCount'])
   ..capacity = ShiftFactorySummery.numFromString(json['capacity'])
   ..taktTime = ShiftFactorySummery.numFromString(json['taktTime'])
   ..cycleTime = ShiftFactorySummery.numFromString(json['cycleTime'])
@@ -40,6 +41,7 @@ Map<String, dynamic> _$ShiftFactorySummeryToJson(ShiftFactorySummery instance) =
       'defects': instance.defects,
       'wip': instance.wip,
       'employeeCount': instance.employeeCount,
+      'startedTicketCount': instance.startedTicketCount,
       'capacity': instance.capacity,
       'taktTime': instance.taktTime,
       'cycleTime': instance.cycleTime,

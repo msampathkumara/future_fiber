@@ -44,7 +44,7 @@ class _TicketKitListState extends State<TicketKitList> {
     return IfWeb(elseIf: getUi(), child: DialogView(width: 1000, child: getWebUi()));
   }
 
-  getWebUi() {
+  Scaffold getWebUi() {
     return Scaffold(
         appBar: AppBar(
             title: Column(
@@ -81,7 +81,7 @@ class _TicketKitListState extends State<TicketKitList> {
         ));
   }
 
-  getUi() {
+  Scaffold getUi() {
     return getWebUi();
   }
 

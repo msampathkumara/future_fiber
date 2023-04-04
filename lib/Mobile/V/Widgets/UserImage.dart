@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/res.dart';
@@ -24,11 +26,21 @@ class UserImage extends StatefulWidget {
 
 class _UserImageState extends State<UserImage> {
   late NsUser nsUser;
-  var placeholder = const AssetImage(Res.user);
+
+  Map iconMap = {
+    64: Res.user64,
+    128: Res.user128,
+    256: Res.user256,
+    512: Res.user512,
+  };
+  var icon;
 
   @override
   void initState() {
     super.initState();
+    var greater = [64, 128, 256, 512].where((e) => e >= (widget.radius * 2)).toList()..sort();
+    print('greatergreatergreatergreatergreater ${greater.first}');
+    icon = iconMap[greater.first ?? 512];
 
     nsUser = widget.nsUser!;
   }
@@ -49,11 +61,11 @@ class _UserImageState extends State<UserImage> {
                     builder: (context, AsyncSnapshot d) {
                       return d.hasData
                           ? ColorFiltered(
-                              colorFilter: const ColorFilter.mode(
-                                Colors.white,
-                                BlendMode.saturation,
-                              ),
-                              child: d.data)
+                          colorFilter: const ColorFilter.mode(
+                            Colors.white,
+                            BlendMode.saturation,
+                          ),
+                          child: d.data)
                           : const CircularProgressIndicator();
                     }),
               ),
@@ -87,7 +99,7 @@ class _UserImageState extends State<UserImage> {
                     height: widget.radius * 2,
                     fit: BoxFit.cover,
                     errorWidget: (context, url, error) {
-                      return Image.asset(Res.userPlaceholder, fit: BoxFit.cover, width: widget.radius * 2, height: widget.radius * 2);
+                      return Image.asset(icon, fit: BoxFit.cover, width: widget.radius * 2, height: widget.radius * 2);
                     },
                     progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress))),
             if (nsUser.isLocked) Positioned(right: 0, top: 0, child: Icon(Icons.lock, color: Colors.red, size: widget.radius * 0.6))

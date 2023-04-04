@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:smartwind/C/DB/hive.dart';
 
@@ -92,6 +93,16 @@ class CPR {
   get time => addedOn.toString().split(" ")[1];
 
   String get supplier => suppliers.first;
+
+  get materialDueDate {
+    DateTime? x;
+    try {
+      x = DateTime.parse(shipDate);
+    } catch (e) {
+      x = null;
+    }
+    return x != null ? DateFormat("yyyy-MM-dd").format(x.add(const Duration(days: 3))) : '';
+  }
 
   static List<String> arrayFromObject(object) {
     if (object == null) return [];

@@ -12,6 +12,7 @@ import 'package:smartwind/res.dart';
 
 import '../../../../../../C/ServerResponse/ServerResponceMap.dart';
 import '../../../../../../M/EndPoints.dart';
+import '../../../../../../globals.dart';
 import 'RF.dart';
 
 class FinishCheckList extends StatefulWidget {
@@ -29,7 +30,6 @@ class _FinishCheckListState extends State<FinishCheckList> {
   Map? checkListMap;
 
   late Ticket ticket;
-  final DatabaseReference db = FirebaseDatabase.instance.ref();
 
   bool erpNotWorking = false;
 
@@ -37,7 +37,7 @@ class _FinishCheckListState extends State<FinishCheckList> {
   void initState() {
     super.initState();
     ticket = widget.ticket;
-    db.child("settings").once().then((DatabaseEvent databaseEvent) {
+    firebaseDatabase.child("settings").once().then((DatabaseEvent databaseEvent) {
       DataSnapshot result = databaseEvent.snapshot;
 
       erpNotWorking = result.child("erpNotWorking").value == 0;
@@ -136,12 +136,15 @@ class _FinishCheckListState extends State<FinishCheckList> {
     var r = await Api.get(EndPoints.tickets_finish_getProgress, {'ticket': ticket.id.toString()});
     ServerResponseMap res1 = ServerResponseMap.fromJson((r.data));
 
+    print('res1 ${res1.toJson()}');
+
     if (mounted) await Ticket.getFile(ticket, context);
     if (res1.done != null) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(backgroundColor: Colors.red, content: Text('Already Completed')));
     } else if (ticket.ticketFile != null) {
       if (mounted) {
-        var x = await Navigator.push(context, MaterialPageRoute(builder: (context) => RF(ticket, res1.operationMinMax!, res1.ticketProgressDetails)));
+        var x = await RF(ticket, res1.operationMinMax!, res1.ticketProgressDetails).show(context);
+        // var x = await Navigator.push(context, MaterialPageRoute(builder: (context) => RF(ticket, res1.operationMinMax!, res1.ticketProgressDetails)));
         if (x != null || x == true) {
           await LoadingDialog(Api.post(EndPoints.tickets_qc_uploadEdits, {'quality': quality, 'ticketId': ticket.id, 'type': isQc, "sectionId": selectedSection}).then((res) {
             Map data = res.data;

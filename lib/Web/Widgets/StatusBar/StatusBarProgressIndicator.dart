@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'StatusBarItem.dart';
 
 class StatusBarProgressIndicator extends StatefulWidget with StatusBarItem {
-  final StatusBarProgressIndicatorController controller;
+  final StatusBarProgressIndicatorController? controller;
   Widget? trailing;
 
   StatusBarProgressIndicator({this.trailing, Key? key, required this.controller}) : super(key: key);
@@ -29,7 +29,7 @@ class _StatusBarProgressIndicatorState extends State<StatusBarProgressIndicator>
     //   });
     // controller.repeat(reverse: true);
 
-    controller = widget.controller;
+    controller = widget.controller!;
     controller.onProgressChange((progress) {
       // print('onProgressChange $progress');
       setState(() {});
@@ -44,25 +44,26 @@ class _StatusBarProgressIndicatorState extends State<StatusBarProgressIndicator>
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton(
-      padding: const EdgeInsets.only(bottom: 0),
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
-      offset: const Offset(0, -70),
-      itemBuilder: (BuildContext context) => [PopupMenuItem(value: 0, enabled: false, child: popupInnerWidget(controller))],
-      child: Wrap(
-        children: [
-          widget.trailing ?? Container(),
-          SizedBox(
-            width: 100,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child:
-                  LinearProgressIndicator(valueColor: const AlwaysStoppedAnimation(Colors.green), value: controller.getProgress / 100, semanticsLabel: 'Linear progress indicator'),
-            ),
-          ),
-          Padding(padding: const EdgeInsets.all(8.0), child: Text("${controller.getProgress.toStringAsFixed(1)} % ", textScaleFactor: 0.8)),
-        ],
-      ),
-    );
+        padding: const EdgeInsets.only(bottom: 0),
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+        offset: const Offset(0, -70),
+        itemBuilder: (BuildContext context) => [PopupMenuItem(value: 0, enabled: false, child: popupInnerWidget(controller))],
+        child: ClipRRect(
+            borderRadius: const BorderRadius.all(Radius.circular(4.0)),
+            child: Container(
+                color: Colors.white,
+                child: Wrap(children: [
+                  widget.trailing ?? Container(),
+                  SizedBox(
+                    width: 100,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: LinearProgressIndicator(
+                          valueColor: const AlwaysStoppedAnimation(Colors.green), value: controller.getProgress / 100, semanticsLabel: 'Linear progress indicator'),
+                    ),
+                  ),
+                  Padding(padding: const EdgeInsets.all(4.0), child: Text("${controller.getProgress.toStringAsFixed(1)} % ", textScaleFactor: 0.8)),
+                ]))));
   }
 }
 

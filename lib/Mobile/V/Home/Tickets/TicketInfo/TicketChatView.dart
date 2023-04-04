@@ -9,6 +9,7 @@ import '../../../../../C/Api.dart';
 import '../../../../../M/EndPoints.dart';
 import '../../../../../M/NsUser.dart';
 import '../../../../../M/TicketComment.dart';
+import '../../../../../globals.dart';
 import '../../../Widgets/UserImage.dart';
 import 'M/TicketChat.dart';
 
@@ -38,7 +39,7 @@ class _TicketChatViewState extends State<TicketChatView> {
   void initState() {
     ticketChat.ticket = (widget.ticket);
 
-    DatabaseReference ref = FirebaseDatabase.instance.ref("ticketComment/${ticketChat.ticket.id}");
+    DatabaseReference ref = firebaseDatabase.child("ticketComment/${ticketChat.ticket.id}");
     sub = ref.onValue.listen((event) {
       loadData(ticketChat.ticket.id);
     });

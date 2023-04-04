@@ -31,9 +31,6 @@ import '../../../C/Api.dart';
 import '../../../C/DB/hive.dart';
 import '../../../M/EndPoints.dart';
 import '../../../M/PermissionsEnum.dart';
-import '../../../globals.dart';
-import '../../../globals.dart';
-import '../RF/RF.dart';
 import '../Widgets/UserImage.dart';
 import 'About.dart';
 import 'Admin/AdminCpanel.dart';
@@ -169,8 +166,16 @@ class _MobileHomeState extends State<MobileHome> {
                               direction: Axis.horizontal,
                               crossAxisAlignment: WrapCrossAlignment.center,
                               children: [
-                                // _menuButton(() {
-                                //   RF().show(context);
+                                // _menuButton(() async {
+
+                                // OperationMinMax _operationMinMax = OperationMinMax();
+                                // _operationMinMax.max = 30;
+                                // _operationMinMax.min = 10;
+                                // List<Progress> progressList = [];
+                                // var x = await RF(Ticket.fromJson({}), _operationMinMax, progressList).show(context);
+                                // print("xxxxx -- $x");
+
+                                //
                                 // }, Icon(Icons.precision_manufacturing_outlined, size: iconSize), "RF"),
                                 if (AppUser.havePermissionFor(NsPermissions.TICKET_PRODUCTION_POOL))
                                   _OpenContainerWrapper(
@@ -247,7 +252,7 @@ class _MobileHomeState extends State<MobileHome> {
                                       closedBuilder: (BuildContext context, void Function() action) {
                                         return Chip(
                                             avatar: CircleAvatar(backgroundColor: Colors.grey.shade800, child: Image.asset(Res.north_sails_logox50, width: 50)),
-                                            label: Text('NS Smart Wind $appVersion $serverType}'));
+                                            label: Text('NS Smart Wind $appVersion $serverType} | $appFlavor'));
                                       }))))
                     ])))
             : const PermissionMessage();

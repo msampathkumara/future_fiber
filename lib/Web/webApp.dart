@@ -7,7 +7,7 @@ import '../C/App.dart';
 import '../M/AppUser.dart';
 import '../Mobile/V/Login/Login.dart';
 import '../globals.dart';
-import 'home_page.dart';
+import 'WebHomePage.dart';
 
 class WebApp extends StatelessWidget {
   const WebApp({Key? key}) : super(key: key);
@@ -46,50 +46,51 @@ class WebApp extends StatelessWidget {
       ),
       // home: MainPage(),
       navigatorObservers: const [],
-      initialRoute: "/",
+      // initialRoute: "/",
       onUnknownRoute: (RouteSettings settings) {
         return MaterialPageRoute<void>(settings: settings, builder: (BuildContext context) => const Scaffold(body: Center(child: Text('Not Found'))));
       },
       routes: <String, WidgetBuilder>{
         '/': (BuildContext context) => (isMaterialManagement ? const MaterialManagementHomePage() : const WebHomePage()),
         '/login': (BuildContext context) => const Login(),
-        '/materialManagement': (BuildContext context) => const MaterialManagementHomePage(),
+        // '/materialManagement': (BuildContext context) => const MaterialManagementHomePage(),
+        '/materialManagement': (BuildContext context) => const WebHomePage(isMaterialManagement: true),
       },
     );
   }
 }
 
-class MainPage extends StatefulWidget {
-  const MainPage({Key? key}) : super(key: key);
-
-  @override
-  State<MainPage> createState() => _MainPageState();
-}
-
-class _MainPageState extends State<MainPage> {
-  bool loading = true;
-
-  @override
-  void initState() {
-    super.initState();
-
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      loading = false;
-      if (user == null) {
-        print('User is currently signed out!__${FirebaseAuth.instance.currentUser}');
-        Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
-      } else {
-        print('User is signed in!');
-        Navigator.pushNamed(context, '/');
-      }
-    });
-    primaryColor = Theme.of(context).primaryColor;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ((FirebaseAuth.instance.currentUser != null && App.currentUser != null))
-        ? const Center(child: CircularProgressIndicator())
-        : (isMaterialManagement ? const MaterialManagementHomePage() : const WebHomePage());
-  }
-}
+// class MainPage extends StatefulWidget {
+//   const MainPage({Key? key}) : super(key: key);
+//
+//   @override
+//   State<MainPage> createState() => _MainPageState();
+// }
+//
+// class _MainPageState extends State<MainPage> {
+//   bool loading = true;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     var route = ModalRoute.of(context)?.settings.name;
+//     FirebaseAuth.instance.authStateChanges().listen((User? user) {
+//       loading = false;
+//       if (user == null) {
+//         print('User is currently signed out!__${FirebaseAuth.instance.currentUser}');
+//         Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+//       } else {
+//         print('User is signed in!');
+//         Navigator.pushNamed(context, route ?? '/');
+//       }
+//     });
+//     primaryColor = Theme.of(context).primaryColor;
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return ((FirebaseAuth.instance.currentUser != null && App.currentUser != null))
+//         ? const Center(child: CircularProgressIndicator())
+//         : (isMaterialManagement ? const MaterialManagementHomePage() : const WebHomePage());
+//   }
+// }

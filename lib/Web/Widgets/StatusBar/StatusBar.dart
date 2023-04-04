@@ -44,8 +44,8 @@ class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 20,
-      color: Colors.white,
+      height: StatusBarController.statusBarItemList.isNotEmpty ? 20 : 0,
+      color: Colors.transparent,
       child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.end, children: StatusBarController.statusBarItemList),
     );
   }

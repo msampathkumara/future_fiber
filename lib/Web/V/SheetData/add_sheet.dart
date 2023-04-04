@@ -9,6 +9,7 @@ import 'package:smartwind/Web/V/SheetData/ErrorSheetObjectList.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../C/Api.dart';
+import '../../../globals.dart';
 
 class AddSheet extends StatefulWidget {
   final bool isUpdate;
@@ -218,7 +219,7 @@ class _AddSheetState extends State<AddSheet> {
 
   Future<void> upload(ev) async {
     var id = uuid.v4();
-    DatabaseReference ref = FirebaseDatabase.instance.ref('sheetUploadProgress/$id');
+    DatabaseReference ref = firebaseDatabase.child('sheetUploadProgress/$id');
     ref.onValue.listen((DatabaseEvent event) {
       Map<dynamic, dynamic>? data = event.snapshot.value as Map?;
       setState(() {
