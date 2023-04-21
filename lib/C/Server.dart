@@ -9,7 +9,7 @@ class Server {
   static String devServerIp = '192.168.0.100';
 
   static Future<String> getServerAddress({onlineServer = false}) async {
-    local = false;
+    local = true;
 
     // if (await isV2) {
     // return "https://v2.smartwind.nsslsupportservices.com";

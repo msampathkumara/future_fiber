@@ -123,7 +123,6 @@ class _AddMaterialsState extends State<AddMaterials> {
                           suggestionState: Suggestion.expand,
                           textInputAction: TextInputAction.next,
                           hint: 'Material',
-                          hasOverlay: true,
                           searchStyle: TextStyle(fontSize: 15, color: Colors.black.withOpacity(0.8)),
                           searchInputDecoration: InputDecoration(
                               focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black.withOpacity(0.8))),

@@ -60,8 +60,7 @@ class UserConfigAdapter extends TypeAdapter<UserConfig> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-UserConfig _$UserConfigFromJson(Map<String, dynamic> json) =>
-    UserConfig()
+UserConfig _$UserConfigFromJson(Map<String, dynamic> json) => UserConfig()
   ..id = json['id'] as int
   ..uptime = json['uptime'] as int? ?? 0
   ..user = json['user'] == null ? null : NsUser.fromJson(json['user'] as Map<String, dynamic>)

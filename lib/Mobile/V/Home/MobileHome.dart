@@ -6,7 +6,6 @@ import 'package:device_information/device_information.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -35,6 +34,7 @@ import '../Widgets/UserImage.dart';
 import 'About.dart';
 import 'Admin/AdminCpanel.dart';
 import 'BlueBook/BlueBook.dart';
+import 'Tickets/FinishedGoods/AddRFCredentials.dart';
 import 'Tickets/FinishedGoods/FinishedGoods.dart';
 import 'Tickets/QC/QCList.dart';
 import 'Tickets/StandardFiles/StandardFiles.dart';
@@ -49,7 +49,7 @@ class MobileHome extends StatefulWidget {
   }
 }
 
-enum MenuItems { logout, dbReload, changeSection, cpanel, deleteDownloadedFiles }
+enum MenuItems { logout, dbReload, changeSection, cpanel, deleteDownloadedFiles, changeRfCred }
 
 class _MobileHomeState extends State<MobileHome> {
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -141,7 +141,7 @@ class _MobileHomeState extends State<MobileHome> {
                             subtitle: AppUser.getSelectedSection() != null
                                 ? Text("${AppUser.getSelectedSection()?.sectionTitle} @ ${AppUser.getSelectedSection()?.factory}")
                                 : const Text(""),
-                            trailing: _currentUserOperionMenu(),
+                            trailing: _currentUserOperationMenu(),
                             onTap: () {
                               Navigator.push(context, MaterialPageRoute(builder: (context) => CurrentUserDetails(nsUser!)));
                             }))),
@@ -286,10 +286,12 @@ class _MobileHomeState extends State<MobileHome> {
     // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Login()), (Route<dynamic> route) => false);
   }
 
-  _currentUserOperionMenu() {
+  PopupMenuButton<MenuItems> _currentUserOperationMenu() {
     return PopupMenuButton<MenuItems>(
       onSelected: (MenuItems result) async {
-        if (result == MenuItems.logout) {
+        if (result == MenuItems.changeRfCred) {
+          await const AddRFCredentials().show(context);
+        } else if (result == MenuItems.logout) {
           await _logout();
         } else if (result == MenuItems.dbReload) {
           HiveBox.getDataFromServer(clean: true);
@@ -298,7 +300,7 @@ class _MobileHomeState extends State<MobileHome> {
               context,
               MaterialPageRoute(
                   builder: (context) => UserSectionSelector(nsUser!, (Section section) {
-                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MobileHome()), (Route<dynamic> route) => false);
+                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MobileHome()), (Route<dynamic> route) => false);
                       })));
         } else if (result == MenuItems.cpanel) {
           Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminCpanel()));
@@ -321,17 +323,20 @@ class _MobileHomeState extends State<MobileHome> {
         setState(() {});
         // print(result);
       },
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<MenuItems>>[
+      itemBuilder: (BuildContext context) =>
+      <PopupMenuEntry<MenuItems>>[
         const PopupMenuItem<MenuItems>(value: MenuItems.dbReload, child: Text('Reload Database')),
         const PopupMenuItem<MenuItems>(value: MenuItems.deleteDownloadedFiles, child: Text('Delete Downloaded Files')),
         const PopupMenuItem<MenuItems>(value: MenuItems.logout, child: Text('Logout')),
         const PopupMenuItem<MenuItems>(value: MenuItems.changeSection, child: Text('Change Section')),
+        PopupMenuItem<MenuItems>(
+            value: MenuItems.changeRfCred, child: Row(children: const [Icon(Icons.admin_panel_settings_rounded), SizedBox(width: 16), Text('Change RF Credentials')])),
         if (nsUser!.utype == 'admin') const PopupMenuItem<MenuItems>(value: MenuItems.cpanel, child: Text('Cpanel'))
       ],
     );
   }
 
-  _menuButton(openContainer, Icon image, title) {
+  SizedBox _menuButton(openContainer, Icon image, title) {
     return SizedBox(
         height: 170,
         width: 170,

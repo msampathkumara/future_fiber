@@ -1,5 +1,4 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/Ticket.dart';
@@ -53,12 +52,14 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
   UserRFCredentials? userRFCredentials;
   late OperationMinMax operationMinMax;
   late List<Progress> progressList;
-  var showFinishButton = true;
+  var showFinishButton = false;
 
   // WebView? _webView;
   // WebViewController? _controller;
   bool webPageConnectionError = false;
   bool loading = true;
+
+  bool started = false;
 
   Future<String> loadAsset() async {
     return await rootBundle.loadString('assets/rf/rf.js');
@@ -66,8 +67,9 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
 
   String setupData(loadData) {
     // print(userRFCredentials.toJson());
-    loadData = loadData.toString().replaceAll("@@user", userRFCredentials?.uname ?? "MalithG");
-    loadData = loadData.toString().replaceAll("@@pass", userRFCredentials?.pword ?? "abc@123");
+    loadData = loadData.toString().replaceAll("@@started", "$started");
+    loadData = loadData.toString().replaceAll("@@user", userRFCredentials?.uname ?? "");
+    loadData = loadData.toString().replaceAll("@@pass", userRFCredentials?.pword ?? "");
     loadData = loadData.toString().replaceAll("@@mo", widget.ticket.mo ?? "");
     loadData = loadData.toString().replaceAll("@@min", operationMinMax.min.toString());
     loadData = loadData.toString().replaceAll("@@max", operationMinMax.max.toString());
@@ -80,9 +82,16 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
 
   bool loadingUserRFCredentials = true;
 
+  late final WebViewCookieManager cookieManager = WebViewCookieManager();
+
+  void clearCookies() async {
+    await cookieManager.clearCookies();
+  }
+
   @override
   initState() {
     super.initState();
+    clearCookies();
     print('RFFFFFFFFFFFFFFF==== >>>> ');
     ticket = widget.ticket;
     progressList = widget.progressList;
@@ -94,6 +103,9 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
 
       if (uc == null) {
         userRFCredentials = await const AddRFCredentials().show(context);
+        if (userRFCredentials == null) {
+          if (mounted) Navigator.of(context).pop();
+        }
       } else {
         userRFCredentials = UserRFCredentials.fromJson(uc);
       }
@@ -113,6 +125,7 @@ class _RFState extends State<RF> with SingleTickerProviderStateMixin {
         params = const PlatformWebViewControllerCreationParams();
       }
       final WebViewController controller = WebViewController.fromPlatformCreationParams(params);
+
       controller
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..setBackgroundColor(const Color(0x00000000))
@@ -176,24 +189,30 @@ Page resource error:
             );
           },
         )
-        ..addJavaScriptChannel(
-          "onError",
-          onMessageReceived: (JavaScriptMessage) async {
-            print("xxxxxxxxxxxxxxxxxxxxxx == > ${JavaScriptMessage.message}");
-            userRFCredentials = await const AddRFCredentials().show(context);
-          },
-        )
-        ..addJavaScriptChannel(
-          "onSuccess",
-          onMessageReceived: (JavaScriptMessage) {
-            print("xxxxxxxxxxxxxxxxxxxxxx == > ${JavaScriptMessage.message}");
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("finished")));
-            showFinishButton = true;
-            setState(() {});
-          },
-        )
+        ..addJavaScriptChannel("onError", onMessageReceived: (JavaScriptMessage javaScriptMessage) async {
+          print("xxxxxxxxxxxxxxxxxxxxxx == > ${javaScriptMessage.message}");
+          userRFCredentials = await const AddRFCredentials().show(context);
+          if (userRFCredentials != null) {
+            _controller.loadRequest(Uri.parse('http://10.200.4.24/WebClient/default.aspx'));
+          } else {
+            Navigator.of(context).pop();
+          }
+        })
+        ..addJavaScriptChannel("onSuccess", onMessageReceived: (JavaScriptMessage javaScriptMessage) async {
+          print("xxxxxxxxxxxxxxxxxxxxxx == > ${javaScriptMessage.message}");
+          // showFinishButton = true;
+          // setState(() {});
+
+          var v = await finish();
+          if (mounted) Navigator.pop(context, v);
+        })
+        ..addJavaScriptChannel("onStart", onMessageReceived: (JavaScriptMessage javaScriptMessage) async {
+          print("xxxxxxxxxxxxxxxxxxxxxx == > ${javaScriptMessage.message}");
+          started = true;
+        })
         // ..loadRequest(Uri.parse('https://www.facebook.com/'));
-        ..loadRequest(Uri.parse('http://10.200.4.24/WebClient/default.aspx?ReturnUrl=%2fWebClient%2fRFSMenu.aspx'));
+        // ..loadRequest(Uri.parse('http://10.200.4.24/WebClient/default.aspx'));
+        ..loadRequest(Uri.parse('http://10.200.4.24/WebClient/RFSMenu.aspx'));
       // ..loadFlutterAsset(Res.RF_SMARTLogin);
 
       // #docregion platform_features
@@ -204,8 +223,6 @@ Page resource error:
       // #enddocregion platform_features
 
       _controller = controller;
-
-      print('');
 
       setState(() {
         loadingUserRFCredentials = false;
@@ -227,6 +244,9 @@ Page resource error:
 
   @override
   void dispose() {
+    _controller.clearCache();
+    _controller.clearLocalStorage();
+    clearCookies();
     super.dispose();
   }
 
@@ -242,8 +262,7 @@ Page resource error:
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [CircularProgressIndicator(), Text("Loading RF Credentials")]),
-              )
+                    children: const [CircularProgressIndicator(), Text("Loading RF Credentials")]))
             : Column(
                 children: [
                   // Expanded(child: PDFViewWidget(ticket.ticketFile!.path)),
@@ -292,9 +311,7 @@ Page resource error:
                                                       : const Icon(Icons.pending_outlined),
                                                   title: now ? Text(progress.operation!) : Text(progress.operation!),
                                                   subtitle: const Text(""),
-                                                  trailing: Wrap(
-                                                    children: [Text(progress.operationNo.toString())],
-                                                  )));
+                                                  trailing: Wrap(children: [Text(progress.operationNo.toString())])));
                                         }))
                               ])))),
                   const Divider(),
@@ -343,16 +360,7 @@ Page resource error:
                     icon: const Icon(Icons.check_circle_outline_outlined),
                     label: const Text("Finish"),
                     onPressed: () async {
-                      var v = await LoadingDialog(Api.post(EndPoints.tickets_finish,
-                          {'erpDone': 0, 'ticket': ticket.id.toString(), 'userSectionId': AppUser.getSelectedSection()?.id, 'doAt': operationMinMax.doAt.toString()}).then((res) {
-                        Map data = res.data;
-                        print(data);
-
-                        if (data["errorResponce"] != null) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${data["errorResponce"]["message"]}"), backgroundColor: Colors.red));
-                        }
-                        return data["errorResponce"] == null;
-                      }));
+                      var v = await finish();
                       if (mounted) Navigator.pop(context, v);
                     })
                 : null);
@@ -374,5 +382,19 @@ Page resource error:
                 return const SizedBox(height: 150, width: 50, child: Center(child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator())));
               }));
         });
+  }
+
+  Future finish() async {
+    return await LoadingDialog(Api.post(
+            EndPoints.tickets_finish, {'erpDone': 0, 'ticket': ticket.id.toString(), 'userSectionId': AppUser.getSelectedSection()?.id, 'doAt': operationMinMax.doAt.toString()})
+        .then((res) {
+      Map data = res.data;
+      print(data);
+
+      if (data["errorResponce"] != null) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${data["errorResponce"]["message"]}"), backgroundColor: Colors.red));
+      }
+      return data["errorResponce"] == null;
+    }));
   }
 }

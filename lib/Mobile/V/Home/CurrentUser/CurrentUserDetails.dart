@@ -51,27 +51,26 @@ class _CurrentUserDetailsState extends State<CurrentUserDetails> {
   getUi() {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 1,
-        toolbarHeight: 350,
-        flexibleSpace: Center(
-          child: Wrap(
-            direction: Axis.vertical,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              UserImage(nsUser: nsUser, radius: 100),
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: Text(
-                  nsUser.name,
-                  textScaleFactor: 1.5,
+          backgroundColor: Colors.white,
+          elevation: 1,
+          toolbarHeight: 350,
+          flexibleSpace: Center(
+            child: Wrap(
+              direction: Axis.vertical,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                UserImage(nsUser: nsUser, radius: 100),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: Text(
+                    nsUser.name,
+                    textScaleFactor: 1.5,
+                  ),
                 ),
-              ),
-              Text('#${nsUser.uname}', style: const TextStyle(color: Colors.blue)),
-            ],
-          ),
-        ),
-      ),
+                Text('#${nsUser.uname}', style: const TextStyle(color: Colors.blue)),
+              ],
+            ),
+          )),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -143,5 +142,26 @@ class _CurrentUserDetailsState extends State<CurrentUserDetails> {
 
   getWebUi() {
     return getUi();
+  }
+
+  PopupMenuButton<int> _currentUserOperionMenu() {
+    return PopupMenuButton<int>(
+        icon: const Icon(Icons.menu, color: Colors.red),
+        onSelected: (int result) async {
+          if (result == 0) {
+          } else if (result == 1) {
+          } else if (result == 2) {
+          } else if (result == 3) {
+          } else if (result == 4) {}
+
+          setState(() {});
+          // print(result);
+        },
+        itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+              const PopupMenuItem<int>(value: 0, child: Text('Reload Database')),
+              const PopupMenuItem<int>(value: 1, child: Text('Delete Downloaded Files')),
+              const PopupMenuItem<int>(value: 2, child: Text('Logout')),
+              const PopupMenuItem<int>(value: 3, child: Text('Change Section'))
+            ]);
   }
 }

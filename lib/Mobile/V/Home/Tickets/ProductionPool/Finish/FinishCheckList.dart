@@ -1,19 +1,24 @@
 import 'dart:convert';
 
+import 'package:dart_ping/dart_ping.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:smartwind/C/Api.dart';
 import 'package:smartwind/C/Server.dart';
+import 'package:smartwind/C/ServerResponse/OperationMinMax.dart';
 import 'package:smartwind/M/AppUser.dart';
 import 'package:smartwind/M/Ticket.dart';
 import 'package:smartwind/Mobile/V/Home/Tickets/ProductionPool/Finish/SelectSectionBottomSheet.dart';
 import 'package:smartwind/res.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../../../../C/ServerResponse/ServerResponceMap.dart';
 import '../../../../../../M/EndPoints.dart';
 import '../../../../../../globals.dart';
+import 'PingFailedError.dart';
 import 'RF.dart';
+import 'package:dio/dio.dart';
 
 class FinishCheckList extends StatefulWidget {
   final Ticket ticket;
@@ -40,7 +45,7 @@ class _FinishCheckListState extends State<FinishCheckList> {
     firebaseDatabase.child("settings").once().then((DatabaseEvent databaseEvent) {
       DataSnapshot result = databaseEvent.snapshot;
 
-      erpNotWorking = result.child("erpNotWorking").value == 0;
+      erpNotWorking = result.child("erpNotWorking").value == 1;
       setState(() {});
     });
   }
@@ -142,16 +147,69 @@ class _FinishCheckListState extends State<FinishCheckList> {
     if (res1.done != null) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(backgroundColor: Colors.red, content: Text('Already Completed')));
     } else if (ticket.ticketFile != null) {
-      if (mounted) {
-        var x = await RF(ticket, res1.operationMinMax!, res1.ticketProgressDetails).show(context);
-        // var x = await Navigator.push(context, MaterialPageRoute(builder: (context) => RF(ticket, res1.operationMinMax!, res1.ticketProgressDetails)));
-        if (x != null || x == true) {
-          await LoadingDialog(Api.post(EndPoints.tickets_qc_uploadEdits, {'quality': quality, 'ticketId': ticket.id, 'type': isQc, "sectionId": selectedSection}).then((res) {
-            Map data = res.data;
-          }));
+      print('erpNotWorking $erpNotWorking');
+
+      // bool pingOk = await LoadingDialog(ping());
+      // print('pingOk $pingOk');
+
+      // return;
+
+      if (erpNotWorking) {
+        await showErpNotAvailableMsg(quality, isQc, selectedSection, res1.operationMinMax!);
+        // await LoadingDialog(Api.post(EndPoints.tickets_qc_uploadEdits, {'quality': quality, 'ticketId': ticket.id, 'type': isQc, "sectionId": selectedSection}).then((res) {
+        //   Map data = res.data;
+        // }));
+      } else if (mounted) {
+        // Begin ping process and listen for output
+        bool pingOk = await LoadingDialog(ping());
+
+        // this will run when ping failed
+        if (!pingOk) {
+          if (mounted) {
+            await showErpNotAvailableMsg(quality, isQc, selectedSection, res1.operationMinMax!);
+          }
+        } else {
+          if (mounted) {
+            var uuid = const Uuid();
+            var x = await RF(ticket, res1.operationMinMax!, res1.ticketProgressDetails, key: Key(uuid.v1())).show(context);
+            if (x != null || x == true) {
+              await LoadingDialog(Api.post(EndPoints.tickets_qc_uploadEdits, {'quality': quality, 'ticketId': ticket.id, 'type': isQc, "sectionId": selectedSection}).then((res) {
+                Map data = res.data;
+              }));
+            }
+          }
         }
       }
     }
+  }
+
+  Future<bool> ping() async {
+    // var address='https://v2.smartwind.nsslsupportservices.com';
+    var address = 'http://10.200.4.24/WebClient/default.aspx';
+
+    BaseOptions options = BaseOptions(baseUrl: address, connectTimeout: const Duration(seconds: 5), receiveTimeout: const Duration(seconds: 15));
+    Dio dio = Dio(options);
+
+    return dio.get(address).then((value) {
+      return true;
+    }).onError((error, stackTrace) {
+      return false;
+    });
+
+    // final ping = Ping('v2.smartwind.nsslsupportservices.com', count: 2);
+    final ping = Ping('10.200.4.24', count: 2);
+    await for (final event in ping.stream) {
+      print('ping event-----------------------');
+      print(event);
+
+      final summary = event.summary;
+      if (summary != null) {
+        print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx ${summary.received > 0}');
+        return summary.received > 0;
+      }
+    }
+    print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+    return false;
   }
 
   Future LoadingDialog(Future future) async {
@@ -159,7 +217,7 @@ class _FinishCheckListState extends State<FinishCheckList> {
         context: context,
         builder: (BuildContext context1) {
           future.then((value) {
-            Navigator.of(context1).pop(true);
+            Navigator.of(context1).pop(value);
           });
 
           return AlertDialog(
@@ -182,5 +240,36 @@ class _FinishCheckListState extends State<FinishCheckList> {
       },
     );
     return selectedSectionId;
+  }
+
+  Future<void> showErpNotAvailableMsg(quality, isQc, selectedSection, OperationMinMax operationMinMax) async {
+    bool? b = await const PingFailedError().show(context);
+    if (b == true) {
+      await finish_(selectedSection, operationMinMax);
+
+      await LoadingDialog(Api.post(EndPoints.tickets_qc_uploadEdits, {'quality': quality, 'ticketId': ticket.id, 'type': isQc, "sectionId": selectedSection}).then((res) {
+        Map data = res.data;
+        print(data);
+
+        snackBarKey.currentState?.showSnackBar(
+            SnackBar(content: const Text("Done"), behavior: SnackBarBehavior.floating, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)), width: 200));
+      }));
+    } else {
+      print("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn");
+    }
+  }
+
+  Future finish_(selectedSection, OperationMinMax operationMinMax) async {
+    return await LoadingDialog(Api.post(
+            EndPoints.tickets_finish, {'erpDone': 0, 'ticket': ticket.id.toString(), 'userSectionId': AppUser.getSelectedSection()?.id, 'doAt': operationMinMax.doAt.toString()})
+        .then((res) {
+      Map data = res.data;
+      print(data);
+
+      if (data["errorResponce"] != null) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${data["errorResponce"]["message"]}"), backgroundColor: Colors.red));
+      }
+      return data["errorResponce"] == null;
+    }));
   }
 }

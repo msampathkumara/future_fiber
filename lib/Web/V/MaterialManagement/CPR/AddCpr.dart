@@ -25,7 +25,7 @@ class AddCpr extends StatefulWidget {
     return _AddCprState();
   }
 
-  show(context) {
+  Future show(context) {
     return kIsWeb ? showDialog(context: context, builder: (_) => this) : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
   }
 }
@@ -74,7 +74,7 @@ class _AddCprState extends State<AddCpr> {
 
   TextEditingController myController = TextEditingController();
 
-  getWebUi() {
+  Scaffold getWebUi() {
     List<CprItem> _selectedItems = List.from(selectedItems);
     return Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -391,7 +391,7 @@ class _AddCprState extends State<AddCpr> {
                           suggestionState: Suggestion.expand,
                           textInputAction: TextInputAction.next,
                           hint: 'Material',
-                          hasOverlay: true,
+
                           searchStyle: TextStyle(fontSize: 15, color: Colors.black.withOpacity(0.8)),
                           searchInputDecoration: InputDecoration(
                               isDense: true,
@@ -522,7 +522,7 @@ class _AddCprState extends State<AddCpr> {
   String? _supplier2;
   String? _supplier3;
 
-  getSuppliers() {
+  Column getSuppliers() {
     _supplier2 = _supplier1 == _supplier2 ? null : _supplier2;
     _supplier3 = _supplier2 == _supplier3 ? null : _supplier3;
 
@@ -733,12 +733,14 @@ class _AddCprState extends State<AddCpr> {
 
   String errMsg = '';
 
-  save() {
+  void save() {
     if (cpr.client == null) {
       errMsg = 'select client ';
-    } else if (cpr.sailType == null) {
-      errMsg = 'select sail type ';
-    } else if (cpr.shortageType == null) {
+    }
+    // else if (cpr.sailType == null) {
+    //   errMsg = 'select sail type ';
+    // }
+    else if (cpr.shortageType == null) {
       errMsg = 'select shortageType   ';
     } else if (cpr.cprType == null) {
       errMsg = 'select cprType ';
@@ -778,7 +780,7 @@ class _AddCprState extends State<AddCpr> {
     setState(() {});
   }
 
-  getOptions(List _selectedItems) {
+  AbsorbPointer getOptions(List _selectedItems) {
     return AbsorbPointer(
       absorbing: _selectedItems.isEmpty,
       child: Opacity(

@@ -17,7 +17,7 @@ class AddEmployeeCounts extends StatefulWidget {
   State<AddEmployeeCounts> createState() => _AddEmployeeCountsState();
 
   Future show(context) {
-    return kIsWeb ? showDialog(context: context, builder: (_) => this) : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
+    return showDialog(context: context, builder: (_) => this);
   }
 }
 
@@ -40,6 +40,13 @@ class _AddEmployeeCountsState extends State<AddEmployeeCounts> {
   get isFactorySelected => selectedFactory != null;
 
   get isShiftSelected => selectedShift != null;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

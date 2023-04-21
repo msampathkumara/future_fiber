@@ -19,6 +19,7 @@ class _WebKITTableState extends State<WebKITTable> {
 
   final bool _dataSourceLoading = false;
   final int _initialRow = 0;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void didChangeDependencies() {
@@ -83,8 +84,6 @@ class _WebKITTableState extends State<WebKITTable> {
           onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
     ];
   }
-
-  final ScrollController _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -254,7 +253,7 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
     var r = AsyncRowsResponse(
         x.totalRecords,
         x.data.mapIndexed((kit, index) {
-          print('${kit.isSelected}');
+          print('isSelected = ${kit.isSelected}');
           return DataRow2(
               // onSelectChanged: (selected) {
               //   kit.isSelected = selected ?? false;

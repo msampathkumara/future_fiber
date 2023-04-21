@@ -51,15 +51,10 @@ class KIT {
   @JsonKey(defaultValue: false, includeIfNull: true)
   var isExpanded = false;
 
-  bool get isTicketStarted => ticket?.isStarted ?? false;
-
+  @JsonKey(defaultValue: false, includeIfNull: true)
   bool isSelected = false;
 
-  static dynamic arryFromObject(object) => (object.runtimeType == String
-      ? object.toString().split(',')
-      : object.runtimeType == List
-          ? object
-          : []);
+  bool get isTicketStarted => ticket?.isStarted ?? false;
 
   NsUser? get user {
     return HiveBox.usersBox.get(addedUserId);
@@ -73,9 +68,9 @@ class KIT {
     return HiveBox.usersBox.get(receivedUserId);
   }
 
-  get date => addedOn.toString().split(" ")[0];
+  String get date => addedOn.toString().split(" ")[0];
 
-  get time => addedOn.toString().split(" ")[1];
+  String get time => addedOn.toString().split(" ")[1];
 
   String get supplier => suppliers.first;
 
@@ -86,4 +81,10 @@ class KIT {
   }
 
   factory KIT.fromJson(Map<String, dynamic> json) => _$KITFromJson(json);
+
+  static dynamic arryFromObject(object) => (object.runtimeType == String
+      ? object.toString().split(',')
+      : object.runtimeType == List
+          ? object
+          : []);
 }

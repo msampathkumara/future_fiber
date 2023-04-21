@@ -581,7 +581,7 @@ class _CountCardsState extends State<CountCards> {
     }
   }
 
-  getSettingsMenu() {
+  List<Widget> getSettingsMenu() {
     return [
       const SizedBox(width: 24),
       Container(width: 1, color: Colors.red, height: 24),
@@ -592,19 +592,28 @@ class _CountCardsState extends State<CountCards> {
           padding: const EdgeInsets.all(16.0),
           shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
           child: const Icon(Icons.settings, color: Colors.redAccent),
-          onSelected: (result) {},
+          onSelected: (result) async {
+            print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx ${result}');
+            if (result == 0) {
+              await const AddEmployeeCounts().show(context);
+            } else if (result == 1) {
+              await const AddDefaultEmployeeCounts().show(context);
+            } else if (result == 2) {
+              await const AddDefaultShifts().show(context);
+            } else if (result == 3) {
+              await const ChangeShifts().show(context);
+            } else if (result == 4) {
+              await const AddAverageSailTimes().show(context);
+            }
+          },
           itemBuilder: (BuildContext context) {
             return <PopupMenuEntry<int>>[
-              if (AppUser.havePermissionFor(NsPermissions.DASHBOARD_ADD_EMPLOYEE_COUNT))
-                PopupMenuItem(value: 0, enabled: true, child: const Text("Add Employee Counts"), onTap: () => const AddEmployeeCounts().show(context)),
+              if (AppUser.havePermissionFor(NsPermissions.DASHBOARD_ADD_EMPLOYEE_COUNT)) const PopupMenuItem(value: 0, enabled: true, child: Text("Add Employee Counts")),
               if (AppUser.havePermissionFor(NsPermissions.DASHBOARD_SET_DEFAULT_EMPLOYEE_COUNT))
-                PopupMenuItem(value: 0, enabled: true, child: const Text("Set default Employee Counts"), onTap: () => const AddDefaultEmployeeCounts().show(context)),
-              if (AppUser.havePermissionFor(NsPermissions.DASHBOARD_SET_DEFAULT_SHIFTS))
-                PopupMenuItem(value: 0, enabled: true, child: const Text("Set Default shifts"), onTap: () => const AddDefaultShifts().show(context)),
-              if (AppUser.havePermissionFor(NsPermissions.DASHBOARD_CHANGE_SHIFT_TIME))
-                PopupMenuItem(value: 0, enabled: true, child: const Text("Change Shift Time"), onTap: () => const ChangeShifts().show(context)),
-              if (AppUser.havePermissionFor(NsPermissions.DASHBOARD_SET_AVERAGE_SAIL_TIME))
-                PopupMenuItem(value: 0, enabled: true, child: const Text("Set Average Sail Times"), onTap: () => const AddAverageSailTimes().show(context))
+                const PopupMenuItem(value: 1, enabled: true, child: Text("Set default Employee Counts")),
+              if (AppUser.havePermissionFor(NsPermissions.DASHBOARD_SET_DEFAULT_SHIFTS)) const PopupMenuItem(value: 2, enabled: true, child: Text("Set Default shifts")),
+              if (AppUser.havePermissionFor(NsPermissions.DASHBOARD_CHANGE_SHIFT_TIME)) const PopupMenuItem(value: 3, enabled: true, child: Text("Change Shift Time")),
+              if (AppUser.havePermissionFor(NsPermissions.DASHBOARD_SET_AVERAGE_SAIL_TIME)) const PopupMenuItem(value: 4, enabled: true, child: Text("Set Average Sail Times"))
             ];
           }),
       const SizedBox(width: 36)
