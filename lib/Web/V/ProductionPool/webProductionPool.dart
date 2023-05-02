@@ -36,7 +36,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
   bool filterByNoFiles = false;
   bool filterByStart = false;
 
-  get ticketCount => _dataSource == null ? 0 : _dataSource?.rowCount;
+  int? get ticketCount => _dataSource == null ? 0 : _dataSource?.rowCount;
 
   @override
   void initState() {
@@ -155,7 +155,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
 
   Filters dataFilter = Filters.none;
 
-  flagIcon(Filters filter, IconData? icon, tooltip, {String? text, Function? onPressed, bool? checked, IconData? icon2}) {
+  IconButton flagIcon(Filters filter, IconData? icon, tooltip, {String? text, Function? onPressed, bool? checked, IconData? icon2}) {
     checked = checked ?? dataFilter == filter;
 
     return IconButton(

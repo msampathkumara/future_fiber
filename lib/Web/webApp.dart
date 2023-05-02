@@ -1,9 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind/Web/V/MaterialManagement/materialManagementHomePage.dart';
-import 'package:smartwind/main.dart';
 
-import '../C/App.dart';
 import '../M/AppUser.dart';
 import '../Mobile/V/Login/Login.dart';
 import '../globals.dart';
@@ -59,38 +56,3 @@ class WebApp extends StatelessWidget {
     );
   }
 }
-
-// class MainPage extends StatefulWidget {
-//   const MainPage({Key? key}) : super(key: key);
-//
-//   @override
-//   State<MainPage> createState() => _MainPageState();
-// }
-//
-// class _MainPageState extends State<MainPage> {
-//   bool loading = true;
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     var route = ModalRoute.of(context)?.settings.name;
-//     FirebaseAuth.instance.authStateChanges().listen((User? user) {
-//       loading = false;
-//       if (user == null) {
-//         print('User is currently signed out!__${FirebaseAuth.instance.currentUser}');
-//         Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
-//       } else {
-//         print('User is signed in!');
-//         Navigator.pushNamed(context, route ?? '/');
-//       }
-//     });
-//     primaryColor = Theme.of(context).primaryColor;
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return ((FirebaseAuth.instance.currentUser != null && App.currentUser != null))
-//         ? const Center(child: CircularProgressIndicator())
-//         : (isMaterialManagement ? const MaterialManagementHomePage() : const WebHomePage());
-//   }
-// }

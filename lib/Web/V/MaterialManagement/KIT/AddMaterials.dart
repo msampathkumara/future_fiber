@@ -1,7 +1,7 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:searchfield/searchfield.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:smartwind/M/CPR/CprItem.dart';
 import 'package:smartwind/M/EndPoints.dart';
 import 'package:smartwind/Web/Widgets/DialogView.dart';
@@ -15,14 +15,18 @@ import '../DropMaterialList.dart';
 
 class AddMaterials extends StatefulWidget {
   final int kitId;
+  late BuildContext parentContext;
 
-  const AddMaterials(this.kitId, {Key? key}) : super(key: key);
+  AddMaterials(this.kitId, {Key? key}) : super(key: key);
 
   @override
   State<AddMaterials> createState() => _AddMaterialsState();
 
   Future show(context) {
-    return kIsWeb ? showDialog(context: context, builder: (_) => this) : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
+    parentContext = context;
+    return kIsWeb
+        ? showDialog(context: context, builder: (_) => MaterialApp(home: this, theme: Theme.of(context)))
+        : Navigator.push(context, MaterialPageRoute(builder: (context) => this));
   }
 }
 
@@ -31,6 +35,9 @@ class _AddMaterialsState extends State<AddMaterials> {
   KitItem currentMaterial = KitItem();
   late List<String> _matList = [];
   final _qtyController = TextEditingController();
+
+  FocusNode currentMaterialFocusNode = FocusNode();
+  FocusNode qtyFocusNode = FocusNode();
 
   List<KitItem> get selectedItems => kit.items.where((element) => element.selected).toList();
 
@@ -63,18 +70,16 @@ class _AddMaterialsState extends State<AddMaterials> {
 
   @override
   Widget build(BuildContext context) {
-    return IfWeb(elseIf: getUi(), child: DialogView(width: 500, child: getWebUi()));
+    return IfWeb(elseIf: getUi(), child: DialogView(width: 600, child: getWebUi()));
   }
 
-  getWebUi() {
+  Scaffold getWebUi() {
     List<KitItem> _selectedItems = List.from(selectedItems);
     return Scaffold(
-        floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              save();
-            },
-            child: const Icon(Icons.save_rounded)),
-        appBar: AppBar(title: const Text('Add Materials')),
+        floatingActionButton: FloatingActionButton(onPressed: () => {save()}, child: const Icon(Icons.save_rounded)),
+        appBar: AppBar(title: const Text('Add Materials'), actions: [
+          IconButton(onPressed: () => {Navigator.pop(widget.parentContext, false)}, icon: const Icon(Icons.close))
+        ]),
         body: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -113,51 +118,88 @@ class _AddMaterialsState extends State<AddMaterials> {
                 padding: const EdgeInsets.all(8.0),
                 child: Row(children: [
                   Flexible(
-                      child: SearchField(
-                          controller: textEditingController,
-                          onSubmit: (v) {
-                            currentMaterial.item = v;
-                            setState(() {});
+                      child: Autocomplete<String>(
+                          fieldViewBuilder: (BuildContext context, TextEditingController textEditingController_, FocusNode focusNode, VoidCallback onFieldSubmitted) {
+                            textEditingController = textEditingController_;
+                            currentMaterialFocusNode = focusNode;
+                            return TextFormField(
+                                controller: textEditingController,
+                                focusNode: focusNode,
+                                onFieldSubmitted: (String value) {
+                                  onFieldSubmitted();
+                                  print('You just typed a new entry  $value');
+                                },
+                                decoration: getTextFieldDecoration(hint: "Material"));
                           },
-                          suggestions: _matList.map((e) => SearchFieldListItem(e)).toList(),
-                          suggestionState: Suggestion.expand,
-                          textInputAction: TextInputAction.next,
-                          hint: 'Material',
-                          searchStyle: TextStyle(fontSize: 15, color: Colors.black.withOpacity(0.8)),
-                          searchInputDecoration: InputDecoration(
-                              focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black.withOpacity(0.8))),
-                              border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.red))),
-                          maxSuggestionsInViewPort: 6,
-                          itemHeight: 36,
-                          onSuggestionTap: (v) {
-                            currentMaterial.item = v.searchKey;
-                            setState(() {});
-                          })),
+                          displayStringForOption: (s) => s,
+                          optionsBuilder: (TextEditingValue textEditingValue) {
+                            if (textEditingValue.text == '') {
+                              // return const Iterable<String>.empty();
+                              return _matList;
+                            }
+                            return [textEditingValue.text, ..._matList].where((option) {
+                              return option.toLowerCase().contains(textEditingValue.text.toLowerCase());
+                            });
+                          },
+                          onSelected: (selection) {
+                            debugPrint('You just selected $selection');
+                            currentMaterial.item = selection;
+                            FocusScope.of(context).requestFocus(qtyFocusNode);
+                          },
+                          optionsViewBuilder: (context, onSelected, options) => Align(
+                                alignment: Alignment.topLeft,
+                                child: Material(
+                                  elevation: 4.0,
+                                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(4.0))),
+                                  child: SizedBox(
+                                    height: 52.0 * options.length,
+                                    width: 350, // <-- Right here !
+                                    child: ListView.builder(
+                                      padding: EdgeInsets.zero,
+                                      itemCount: options.length,
+                                      shrinkWrap: false,
+                                      itemBuilder: (BuildContext context, int index) {
+                                        final option = options.elementAt(index);
+                                        return InkWell(
+                                          onTap: () => {onSelected(option)},
+                                          child: Builder(builder: (BuildContext context) {
+                                            final bool highlight = AutocompleteHighlightedOption.of(context) == index;
+                                            if (highlight) {
+                                              SchedulerBinding.instance.addPostFrameCallback((Duration timeStamp) => {Scrollable.ensureVisible(context, alignment: 0.5)});
+                                            }
+                                            return Container(color: highlight ? Theme.of(context).focusColor : null, padding: const EdgeInsets.all(16.0), child: Text((option)));
+                                          }),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          optionsMaxHeight: 200)),
                   const SizedBox(width: 8),
                   SizedBox(
                       width: 100,
                       child: TextField(
+                          decoration: getTextFieldDecoration(hint: "QTY"),
+                          focusNode: qtyFocusNode,
                           controller: _qtyController,
-                          decoration: const InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.teal)), labelText: 'QTY'),
+                          // decoration: const InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.teal)), labelText: 'QTY'),
                           onChanged: (text) {
                             currentMaterial.qty = (text);
+
                             setState(() {});
-                          })),
-                  const SizedBox(width: 8),
-                  Card(
-                      child: IconButton(
-                          color: Colors.blue,
-                          onPressed: (textEditingController.text.isEmpty || _qtyController.text.isEmpty)
-                              ? null
-                              : () {
-                                  currentMaterial.item = textEditingController.text;
-                                  _addMaterialToList(currentMaterial);
-                                  currentMaterial = KitItem();
-                                  _qtyController.clear();
-                                  textEditingController.clear();
-                                  setState(() {});
-                                },
-                          icon: const Icon(Icons.add_rounded)))
+                          },
+                          onSubmitted: (q) => {saveMaterial(context)})),
+                  const SizedBox(width: 8)
+                  // Card(
+                  //     child: IconButton(
+                  //         color: Colors.blue,
+                  //         onPressed: (textEditingController.text.isEmpty || _qtyController.text.isEmpty)
+                  //             ? null
+                  //             : () {
+                  //                 saveMaterial();
+                  //               },
+                  //         icon: const Icon(Icons.add_rounded)))
                 ]),
               )),
               getOptions(_selectedItems),
@@ -200,7 +242,7 @@ class _AddMaterialsState extends State<AddMaterials> {
     kit.items.insert(x == -1 ? 0 : x, KitItem.fromJson(currentMaterial.toJson()));
   }
 
-  getOptions(List _selectedItems) {
+  AbsorbPointer getOptions(List _selectedItems) {
     return AbsorbPointer(
       absorbing: _selectedItems.isEmpty,
       child: Opacity(
@@ -263,17 +305,11 @@ class _AddMaterialsState extends State<AddMaterials> {
     //   err_msg = 'items';
     // } else {
     Api.post(EndPoints.materialManagement_kit_saveKitMaterials, {'kit': kit}).then((res) {
-      Navigator.pop(context, true);
+      Navigator.pop(widget.parentContext, true);
     }).whenComplete(() {
       setState(() {});
     }).catchError((err) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(err.toString()),
-          action: SnackBarAction(
-              label: 'Retry',
-              onPressed: () {
-                getAllMaterials();
-              })));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.toString()), action: SnackBarAction(label: 'Retry', onPressed: () => {getAllMaterials()})));
       setState(() {
         // _dataLoadingError = true;
       });
@@ -281,4 +317,53 @@ class _AddMaterialsState extends State<AddMaterials> {
     // }
     print(errMsg);
   }
+
+  void saveMaterial(context) {
+    if (textEditingController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(backgroundColor: Colors.red, content: Text("Enter Material", style: TextStyle(color: Colors.white))));
+      return;
+    }
+    if (_qtyController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(backgroundColor: Colors.red, content: Text("Enter Qty", style: TextStyle(color: Colors.white))));
+      return;
+    }
+
+    KitItem item = KitItem.fromJson(currentMaterial.toJson());
+
+    // Api.post(EndPoints.materialManagement_kit_saveKitMaterials, {'kit': kit}).then((res) {
+    //   item.saved = true;
+    //   setState(() {});
+    // }).whenComplete(() {
+    //   setState(() {});
+    // }).catchError((err) {
+    //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.toString()), action: SnackBarAction(label: 'Retry', onPressed: () => {getAllMaterials()})));
+    //   setState(() {
+    //     // _dataLoadingError = true;
+    //   });
+    // });
+
+    _addMaterialToList(item);
+    currentMaterial = KitItem();
+    _qtyController.clear();
+    textEditingController.clear();
+    setState(() {});
+  }
+}
+
+InputDecoration getTextFieldDecoration({hint = ''}) {
+  return InputDecoration(
+    border: InputBorder.none,
+    hintText: hint,
+    filled: true,
+    // fillColor: Colors.grey.shade300,
+    contentPadding: const EdgeInsets.only(left: 14.0, bottom: 6.0, top: 8.0),
+    focusedBorder: OutlineInputBorder(
+      borderSide: const BorderSide(color: Colors.red),
+      borderRadius: BorderRadius.circular(4.0),
+    ),
+    enabledBorder: UnderlineInputBorder(
+      borderSide: const BorderSide(color: Colors.grey),
+      borderRadius: BorderRadius.circular(4.0),
+    ),
+  );
 }

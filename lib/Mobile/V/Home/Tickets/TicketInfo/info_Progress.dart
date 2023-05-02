@@ -74,7 +74,9 @@ class _info_ProgressState extends State<info_Progress> {
                           Container(
                               decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.white),
                               padding: const EdgeInsets.all(2.0),
-                              child: Text("${progress.section!.sectionTitle} @ ${progress.section!.factory}", style: const TextStyle(color: Colors.redAccent)))
+                              child: progress.section == null
+                                  ? const Text("section not found", style: TextStyle(color: Colors.red))
+                                  : Text("${progress.section!.sectionTitle} @ ${progress.section!.factory}", style: const TextStyle(color: Colors.redAccent)))
                         ])),
                     Expanded(
                         flex: 4,

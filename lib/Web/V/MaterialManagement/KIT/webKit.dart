@@ -20,6 +20,7 @@ import '../../ProductionPool/copy.dart';
 import '../orderOprions.dart';
 import 'KitView.dart';
 import '../../../../M/Extensions.dart';
+import 'ReceiveKits.dart';
 
 part 'webKit.options.dart';
 
@@ -142,36 +143,38 @@ class _WebKitState extends State<WebKit> {
 
                   const SizedBox(width: 24),
                   if (AppUser.havePermissionFor(NsPermissions.KIT_SCAN_READY_KITS))
-                    ElevatedButton.icon(
-                        onPressed: () async {
-                          await const ScanReadyKits().show(context);
-                          loadData();
-                        },
-                        label: const Padding(
-                          padding: EdgeInsets.all(12.0),
-                          child: Text("Scan Ready Kits"),
-                        ),
-                        icon: const Icon(Icons.settings_overscan)),
+                    SizedBox(
+                        height: 36,
+                        child: ElevatedButton.icon(
+                            onPressed: () async {
+                              await const ScanReadyKits().show(context);
+                              loadData();
+                            },
+                            label: const Text("Scan Ready Kits"),
+                            icon: const Icon(Icons.settings_overscan))),
                   if (AppUser.havePermissionFor(NsPermissions.KIT_SEND_KITS))
                     Padding(
                         padding: const EdgeInsets.only(left: 8.0),
-                        child: ElevatedButton.icon(
-                            onPressed: () async {
-                              await const SendKits().show(context);
-                              loadData();
-                            },
-                            label: const Padding(padding: EdgeInsets.all(12.0), child: Text("Send")),
-                            icon: const Icon(Icons.send))),
+                        child: SizedBox(
+                          height: 36,
+                          child: ElevatedButton.icon(
+                              onPressed: () async {
+                                await const SendKits().show(context);
+                                loadData();
+                              },
+                              label: const Text("Send"),
+                              icon: const Icon(Icons.send)),
+                        )),
                   if (AppUser.havePermissionFor(NsPermissions.KIT_RECEIVE_KITS))
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0),
-                      child: ElevatedButton.icon(
-                          onPressed: () async {
-                            await const SendKits().show(context);
-                            loadData();
-                          },
-                          label: const Padding(padding: EdgeInsets.all(12.0), child: Text("Receive")),
-                          icon: const Icon(Icons.call_received_rounded)),
+                      child: SizedBox(
+                        height: 36,
+                        child: ElevatedButton.icon(
+                            onPressed: () async => {await const ReceiveKits().show(context), loadData()},
+                            label: const Text("Receive"),
+                            icon: const Icon(Icons.call_received_rounded)),
+                      ),
                     ),
                   const SizedBox(width: 20),
                   Material(

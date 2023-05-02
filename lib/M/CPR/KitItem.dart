@@ -7,6 +7,9 @@ part 'KitItem.g.dart';
 class KitItem extends CprItem {
   KitItem();
 
+  @JsonKey(defaultValue: false, includeIfNull: true)
+  bool saved = false;
+
   static List<KitItem> fromJsonArray(kits) {
     return List<KitItem>.from(kits.map((model) => KitItem.fromJson(model)));
   }

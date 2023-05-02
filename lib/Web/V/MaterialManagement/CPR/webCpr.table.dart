@@ -287,7 +287,10 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                 children: cpr.cprActivities
                     .map((e) => Padding(
                           padding: const EdgeInsets.only(right: 4.0),
-                          child: Chip(label: Text(e.supplier, style: const TextStyle(color: Colors.white)), backgroundColor: e.status.getColor()),
+                          child: Chip(
+                              padding: const EdgeInsets.all(2.0),
+                              label: Text(e.supplier, style: const TextStyle(color: Colors.white, fontSize: 12)),
+                              backgroundColor: e.status.getColor()),
                         ))
                     .toList(),
               )),

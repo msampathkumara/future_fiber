@@ -67,10 +67,7 @@ class _GeneratePasswordState extends State<GeneratePassword> {
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             backgroundColor: Colors.red,
-                            content: const Text(
-                              "generate new password and save",
-                              style: TextStyle(color: Colors.white),
-                            ),
+                            content: const Text("generate new password and save", style: TextStyle(color: Colors.white)),
                             action: SnackBarAction(
                                 textColor: Colors.white,
                                 label: 'continue',
