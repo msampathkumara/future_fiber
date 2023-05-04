@@ -1,5 +1,5 @@
-name: smartwind
-description: NorthSails Smart Wind
+name: smartwind_future_fibers
+description: NorthSails Smart Wind project for Future Fibers
 
 
 publish_to: 'none'
@@ -134,35 +134,4 @@ flutter:
         - asset: assets/fonts/NsIcons.ttf
 
 
-
-
-
-
-
-
-splash_screen_view:
-
-  color: "#ffffff"
-  #background_image: "assets/splashscreen_image.png"
-
-  # Optional parameters are listed below.
-  image: assets/splash.png
-
-  #color_dark: "#042a49"
-  background_image_dark: "assets/images/dark_background.png"
-  #image_dark: assets/splash-invert.png
-
-  #android: false
-  #ios: false
-  #web: false
-
-  android_gravity: center
-  #ios_content_mode: center
-  web_image_mode: center
-
-  fullscreen: true
-
-  #info_plist_files:
-  #  - 'ios/Runner/Info-Debug.plist'
-  #  - 'ios/Runner/Info-Release.plist'
 
