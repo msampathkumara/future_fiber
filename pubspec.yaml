@@ -4,7 +4,7 @@ description: NorthSails Smart Wind
 
 publish_to: 'none'
 
-version: 1.3.7+247
+version: 1.4.0+250
 
 environment:
   sdk: ">=2.17.0 <3.0.0"
