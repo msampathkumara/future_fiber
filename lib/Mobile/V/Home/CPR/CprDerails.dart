@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:smartwind/M/CPR/CPR.dart';
-import 'package:smartwind/M/CPR/CprItem.dart';
-import 'package:smartwind/M/EndPoints.dart';
-import 'package:smartwind/M/NsUser.dart';
+import 'package:smartwind_future_fibers/M/CPR/CPR.dart';
+import 'package:smartwind_future_fibers/M/CPR/CprItem.dart';
+import 'package:smartwind_future_fibers/M/EndPoints.dart';
+import 'package:smartwind_future_fibers/M/NsUser.dart';
 
 import '../../../../C/Api.dart';
 import '../../Widgets/ErrorMessageView.dart';

@@ -2,9 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:smartwind/M/EndPoints.dart';
-import 'package:smartwind/M/NsUser.dart';
-import 'package:smartwind/C/DB/hive.dart';
+import 'package:smartwind_future_fibers/M/EndPoints.dart';
+import 'package:smartwind_future_fibers/M/NsUser.dart';
+import 'package:smartwind_future_fibers/C/DB/hive.dart';
 
 import '../C/Server.dart';
 import '../Mobile/V/Widgets/ErrorMessageView.dart';

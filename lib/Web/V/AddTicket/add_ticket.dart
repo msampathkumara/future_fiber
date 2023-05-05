@@ -2,9 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
-import 'package:smartwind/C/Api.dart';
-import 'package:smartwind/M/EndPoints.dart';
-import 'package:smartwind/M/Enums.dart';
+import 'package:smartwind_future_fibers/C/Api.dart';
+import 'package:smartwind_future_fibers/M/EndPoints.dart';
+import 'package:smartwind_future_fibers/M/Enums.dart';
 
 class AddTickets extends StatefulWidget {
   final bool standard;

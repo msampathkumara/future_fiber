@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/res.dart';
+import 'package:smartwind_future_fibers/res.dart';
 
 import '../../../M/AppUser.dart';
 import '../../../M/NsUser.dart';

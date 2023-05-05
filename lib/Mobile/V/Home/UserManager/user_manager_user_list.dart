@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:nfc_manager/nfc_manager.dart';
-import 'package:smartwind/C/DB/DB.dart';
-import 'package:smartwind/M/Enums.dart';
-import 'package:smartwind/M/NsUser.dart';
-import 'package:smartwind/Mobile/V/Widgets/SearchBar.dart';
-import 'package:smartwind/Web/V/UserManager/UpdateUserDetails.dart';
-import 'package:smartwind/Web/Widgets/ShowMessage.dart';
+import 'package:smartwind_future_fibers/C/DB/DB.dart';
+import 'package:smartwind_future_fibers/M/Enums.dart';
+import 'package:smartwind_future_fibers/M/NsUser.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Widgets/SearchBar.dart';
+import 'package:smartwind_future_fibers/Web/V/UserManager/UpdateUserDetails.dart';
+import 'package:smartwind_future_fibers/Web/Widgets/ShowMessage.dart';
 
 import '../../../../C/Api.dart';
 import '../../../../C/DB/hive.dart';

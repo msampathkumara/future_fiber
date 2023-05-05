@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:smartwind/Mobile/V/Home/MaterialManagement/BattrenList.dart';
-import 'package:smartwind/Mobile/V/Home/MaterialManagement/CprList.dart';
-import 'package:smartwind/Mobile/V/Home/MaterialManagement/KitList.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Home/MaterialManagement/BattrenList.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Home/MaterialManagement/CprList.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Home/MaterialManagement/KitList.dart';
 
 class MaterialManagement extends StatefulWidget {
   const MaterialManagement({Key? key}) : super(key: key);

@@ -9,13 +9,13 @@ import 'package:hex/hex.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:nfc_manager/platform_tags.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:smartwind/C/Server.dart';
-import 'package:smartwind/C/form_input_decoration.dart';
-import 'package:smartwind/M/AppUser.dart';
-import 'package:smartwind/M/EndPoints.dart';
-import 'package:smartwind/M/NsUser.dart';
-import 'package:smartwind/Mobile/V/Widgets/ErrorMessageView.dart';
-import 'package:smartwind/res.dart';
+import 'package:smartwind_future_fibers/C/Server.dart';
+import 'package:smartwind_future_fibers/C/form_input_decoration.dart';
+import 'package:smartwind_future_fibers/M/AppUser.dart';
+import 'package:smartwind_future_fibers/M/EndPoints.dart';
+import 'package:smartwind_future_fibers/M/NsUser.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Widgets/ErrorMessageView.dart';
+import 'package:smartwind_future_fibers/res.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../C/DB/hive.dart';
@@ -122,7 +122,7 @@ class _LoginState extends State<Login> {
                 : getMobileUi());
   }
 
-  _login() async {
+  Future<void> _login() async {
     errorMessage = "";
     if (nfcCode.isEmpty && (_user.uname.isEmpty || _user.pword.isEmpty)) {
       errorMessage = "Enter username and password";
@@ -221,7 +221,7 @@ class _LoginState extends State<Login> {
     });
   }
 
-  getWebUi() {
+  Stack getWebUi() {
     return Stack(children: [
       if (kIsWeb)
         SizedBox.expand(
@@ -245,7 +245,7 @@ class _LoginState extends State<Login> {
 
   final _formKey = GlobalKey<FormState>();
 
-  _body() {
+  Column _body() {
     // Build a Form widget using the _formKey created above.
     return Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
       Container(
@@ -262,7 +262,7 @@ class _LoginState extends State<Login> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    SizedBox(width: 128, height: 128, child: Image.asset(Res.north_sails_logo)),
+                    SizedBox(width: 128, height: 128, child: CircleAvatar(child: Image.asset(Res.smartwindlogo))),
                     Padding(
                       padding: const EdgeInsets.all(10),
                       child: TextFormField(
@@ -384,7 +384,7 @@ class _LoginState extends State<Login> {
     ]);
   }
 
-  getMobileUi() {
+  Stack getMobileUi() {
     return Stack(
       children: [
         if (kIsWeb)
@@ -401,87 +401,115 @@ class _LoginState extends State<Login> {
                   fit: BoxFit.fill,
                   child: SizedBox(width: _videoPlayerController.value.size.width, height: _videoPlayerController.value.size.height, child: VideoPlayer(_videoPlayerController)))),
         Center(
-            child: Container(
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(15)),
-                  color: Colors.white70,
+            child: SizedBox(
+          height: 600,
+          width: 400,
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.center,
+            children: [
+              Positioned(
+                top: 150,
+                child: Container(
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                      color: Colors.white70,
+                    ),
+                    child: Padding(
+                        padding: const EdgeInsets.all(32.0),
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 64.0),
+                          child: SizedBox(
+                              width: 300,
+                              child: Wrap(direction: Axis.horizontal, children: [
+                                const SizedBox(height: 62),
+                                TextFormField(
+                                    autofocus: false,
+                                    onFieldSubmitted: (d) {
+                                      _passwordFocusNode.requestFocus();
+                                    },
+                                    style: const TextStyle(fontSize: 20, color: Colors.blue),
+                                    cursorColor: Colors.blue,
+                                    initialValue: _user.uname,
+                                    decoration: InputDecoration(
+                                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0), borderSide: const BorderSide(color: Colors.black)),
+                                        prefixIcon: const Padding(padding: EdgeInsets.only(left: 8.0), child: Icon(Icons.account_circle_outlined, color: Colors.blue)),
+                                        hintText: 'User Name',
+                                        hintStyle: TextStyle(color: Colors.blue.shade200),
+                                        fillColor: Colors.white,
+                                        filled: true,
+                                        contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0)),
+                                    onChanged: (uname) {
+                                      _user.uname = uname;
+                                    }),
+                                const SizedBox(height: 84),
+                                TextFormField(
+                                    focusNode: _passwordFocusNode,
+                                    cursorColor: Colors.blue,
+                                    onFieldSubmitted: (f) {
+                                      _login();
+                                    },
+                                    style: const TextStyle(fontSize: 20, color: Colors.blue),
+                                    initialValue: _user.pword,
+                                    obscureText: hidePassword,
+                                    autofocus: false,
+                                    decoration: InputDecoration(
+                                        suffixIcon: IconButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                hidePassword = !hidePassword;
+                                              });
+                                            },
+                                            icon: Icon((!hidePassword) ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: Colors.blue)),
+                                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0), borderSide: const BorderSide(color: Colors.black)),
+                                        prefixIcon: const Padding(padding: EdgeInsets.only(left: 8.0), child: Icon(Icons.lock_outlined, color: Colors.blue)),
+                                        hintText: 'Password',
+                                        hintStyle: TextStyle(color: Colors.blue.shade200),
+                                        fillColor: Colors.white,
+                                        filled: true,
+                                        contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                                        focusedBorder:
+                                            OutlineInputBorder(borderSide: const BorderSide(color: Colors.blueAccent, width: 1.0), borderRadius: BorderRadius.circular(5.0)),
+                                        enabledBorder:
+                                            OutlineInputBorder(borderRadius: BorderRadius.circular(5.0), borderSide: BorderSide(color: Colors.blueGrey.shade50, width: 1.0))),
+                                    onChanged: (pword) {
+                                      _user.pword = pword;
+                                    }),
+                                const SizedBox(height: 64),
+                                Text(errorMessage, style: const TextStyle(color: Colors.red, fontSize: 20)),
+                                SizedBox(
+                                    width: double.infinity,
+                                    height: 50,
+                                    child: ElevatedButton(
+                                        onPressed: _login,
+                                        style: FormInputDecoration.buttonStyle(),
+                                        child: const Text("Login", style: TextStyle(color: Colors.white, fontSize: 20)))),
+                                SizedBox(
+                                    width: double.infinity,
+                                    child: TextButton(
+                                        onPressed: () async {
+                                          await const PasswordRecovery().show(context);
+                                        },
+                                        child: const Text('forgot my password'))),
+                                if (nfcIsAvailable) const SizedBox(height: 84),
+                                if (nfcIsAvailable) const Center(child: Text("  Or ", style: TextStyle(color: Colors.grey, fontSize: 20), textAlign: TextAlign.center)),
+                                if (nfcIsAvailable) const SizedBox(height: 32),
+                                if (nfcIsAvailable) const Center(child: Text("Use NFC card to login ", style: TextStyle(color: Colors.black, fontSize: 25)))
+                              ])),
+                        ))),
+              ),
+              Positioned(
+                top: -50,
+                child: SizedBox(
+                  height: 300,
+                  width: 300,
+                  child: Padding(
+                      padding: const EdgeInsets.all(24.0), child: Center(child: ClipRRect(borderRadius: BorderRadius.circular(360), child: Image.asset(Res.smartwindlogo)))),
                 ),
-                child: Padding(
-                    padding: const EdgeInsets.all(32.0),
-                    child: SizedBox(
-                        width: 300,
-                        child: Wrap(direction: Axis.horizontal, children: [
-                          Padding(padding: const EdgeInsets.all(24.0), child: Center(child: CircleAvatar(radius: 100, child: Image.asset(Res.north_sails_logo)))),
-                          const SizedBox(height: 62),
-                          TextFormField(
-                              autofocus: false,
-                              onFieldSubmitted: (d) {
-                                _passwordFocusNode.requestFocus();
-                              },
-                              style: const TextStyle(fontSize: 20, color: Colors.blue),
-                              cursorColor: Colors.blue,
-                              initialValue: _user.uname,
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0), borderSide: const BorderSide(color: Colors.black)),
-                                  prefixIcon: const Padding(padding: EdgeInsets.only(left: 8.0), child: Icon(Icons.account_circle_outlined, color: Colors.blue)),
-                                  hintText: 'Enter User Name',
-                                  hintStyle: TextStyle(color: Colors.blue.shade200),
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0)),
-                              onChanged: (uname) {
-                                _user.uname = uname;
-                              }),
-                          const SizedBox(height: 84),
-                          TextFormField(
-                              focusNode: _passwordFocusNode,
-                              cursorColor: Colors.blue,
-                              onFieldSubmitted: (f) {
-                                _login();
-                              },
-                              style: const TextStyle(fontSize: 20, color: Colors.blue),
-                              initialValue: _user.pword,
-                              obscureText: hidePassword,
-                              autofocus: false,
-                              decoration: InputDecoration(
-                                  suffixIcon: IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          hidePassword = !hidePassword;
-                                        });
-                                      },
-                                      icon: Icon((!hidePassword) ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: Colors.blue)),
-                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0), borderSide: const BorderSide(color: Colors.black)),
-                                  prefixIcon: const Padding(padding: EdgeInsets.only(left: 8.0), child: Icon(Icons.lock_outlined, color: Colors.blue)),
-                                  hintText: 'Enter Password',
-                                  hintStyle: TextStyle(color: Colors.blue.shade200),
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                                  focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.blueAccent, width: 1.0), borderRadius: BorderRadius.circular(5.0)),
-                                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0), borderSide: BorderSide(color: Colors.blueGrey.shade50, width: 1.0))),
-                              onChanged: (pword) {
-                                _user.pword = pword;
-                              }),
-                          const SizedBox(height: 64),
-                          Text(errorMessage, style: const TextStyle(color: Colors.red, fontSize: 20)),
-                          SizedBox(
-                              width: double.infinity,
-                              height: 50,
-                              child: ElevatedButton(
-                                  onPressed: _login, style: FormInputDecoration.buttonStyle(), child: const Text("Login", style: TextStyle(color: Colors.white, fontSize: 20)))),
-                          SizedBox(
-                              width: double.infinity,
-                              child: TextButton(
-                                  onPressed: () async {
-                                    await const PasswordRecovery().show(context);
-                                  },
-                                  child: const Text('forgot my password'))),
-                          if (nfcIsAvailable) const SizedBox(height: 84),
-                          if (nfcIsAvailable) const Center(child: Text("  Or ", style: TextStyle(color: Colors.grey, fontSize: 20), textAlign: TextAlign.center)),
-                          if (nfcIsAvailable) const SizedBox(height: 32),
-                          if (nfcIsAvailable) const Center(child: Text("Use NFC card to login ", style: TextStyle(color: Colors.black, fontSize: 25)))
-                        ])))))
+              ),
+            ],
+          ),
+        ))
       ],
     );
   }

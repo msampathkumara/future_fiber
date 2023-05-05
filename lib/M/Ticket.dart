@@ -14,14 +14,14 @@ import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:smartwind/C/Server.dart';
-import 'package:smartwind/M/StandardTicket.dart';
-import 'package:smartwind/M/TicketFlag.dart';
+import 'package:smartwind_future_fibers/C/Server.dart';
+import 'package:smartwind_future_fibers/M/StandardTicket.dart';
+import 'package:smartwind_future_fibers/M/TicketFlag.dart';
 
-import 'package:smartwind/Mobile/V/Home/Tickets/CS/CS.dart';
-import 'package:smartwind/Mobile/V/Home/Tickets/ShippingSystem/ShippingSystem.dart';
-import 'package:smartwind/Mobile/V/Widgets/ErrorMessageView.dart';
-import 'package:smartwind/Mobile/V/Widgets/Loading.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Home/Tickets/CS/CS.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Home/Tickets/ShippingSystem/ShippingSystem.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Widgets/ErrorMessageView.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Widgets/Loading.dart';
 import 'package:universal_html/html.dart' as html;
 
 import '../C/Api.dart';

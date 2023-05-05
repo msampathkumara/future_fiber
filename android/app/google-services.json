@@ -30,6 +30,13 @@
             {
               "client_id": "27155477934-c363brl12co3ci8qfd09658lssojbefl.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "27155477934-1et4ro5i0s696jpelkjsrsqb54de7t8t.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.smartwind"
+              }
             }
           ]
         }
@@ -59,6 +66,13 @@
             {
               "client_id": "27155477934-c363brl12co3ci8qfd09658lssojbefl.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "27155477934-1et4ro5i0s696jpelkjsrsqb54de7t8t.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.smartwind"
+              }
             }
           ]
         }
@@ -104,6 +118,85 @@
             {
               "client_id": "27155477934-c363brl12co3ci8qfd09658lssojbefl.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "27155477934-1et4ro5i0s696jpelkjsrsqb54de7t8t.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.smartwind"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:27155477934:android:b2692e21961b4a9e30043f",
+        "android_client_info": {
+          "package_name": "com.sampathkumara.northsails.smartwind.ff"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "27155477934-tq4lg8gml4vam2vm3pmgv44mbsju7qsg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBggKndNStZQHrA00JqSbtlkUs6Cz9s3OI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "27155477934-c363brl12co3ci8qfd09658lssojbefl.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "27155477934-1et4ro5i0s696jpelkjsrsqb54de7t8t.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.smartwind"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:27155477934:android:88f2dde2bb24449930043f",
+        "android_client_info": {
+          "package_name": "com.sampathkumara.northsails.smartwind.ff.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "27155477934-tq4lg8gml4vam2vm3pmgv44mbsju7qsg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBggKndNStZQHrA00JqSbtlkUs6Cz9s3OI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "27155477934-c363brl12co3ci8qfd09658lssojbefl.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "27155477934-1et4ro5i0s696jpelkjsrsqb54de7t8t.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.smartwind"
+              }
             }
           ]
         }
@@ -133,6 +226,13 @@
             {
               "client_id": "27155477934-c363brl12co3ci8qfd09658lssojbefl.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "27155477934-1et4ro5i0s696jpelkjsrsqb54de7t8t.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.smartwind"
+              }
             }
           ]
         }
@@ -162,6 +262,13 @@
             {
               "client_id": "27155477934-c363brl12co3ci8qfd09658lssojbefl.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "27155477934-1et4ro5i0s696jpelkjsrsqb54de7t8t.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.smartwind"
+              }
             }
           ]
         }

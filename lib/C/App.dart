@@ -1,8 +1,8 @@
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:restart_app/restart_app.dart';
-import 'package:smartwind/C/DB/hive.dart';
-import 'package:smartwind/M/AppUser.dart';
-import 'package:smartwind/M/NsUser.dart';
+import 'package:smartwind_future_fibers/C/DB/hive.dart';
+import 'package:smartwind_future_fibers/M/AppUser.dart';
+import 'package:smartwind_future_fibers/M/NsUser.dart';
 
 class App {
   App();

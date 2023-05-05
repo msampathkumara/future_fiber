@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:smartwind/M/NsUser.dart';
-import 'package:smartwind/Mobile/V/Home/UserManager/UserDetails.dart';
+import 'package:smartwind_future_fibers/M/NsUser.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Home/UserManager/UserDetails.dart';
 
 import 'UserImage.dart';
 

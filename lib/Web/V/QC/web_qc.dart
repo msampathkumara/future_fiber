@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/M/EndPoints.dart';
-import 'package:smartwind/M/QC.dart';
-import 'package:smartwind/M/Section.dart';
-import 'package:smartwind/Mobile/V/Widgets/SearchBar.dart';
-import 'package:smartwind/Web/V/QC/webQView.dart';
+import 'package:smartwind_future_fibers/M/EndPoints.dart';
+import 'package:smartwind_future_fibers/M/QC.dart';
+import 'package:smartwind_future_fibers/M/Section.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Widgets/SearchBar.dart';
+import 'package:smartwind_future_fibers/Web/V/QC/webQView.dart';
 
 import '../../../C/Api.dart';
 import '../../../M/Enums.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:smartwind/M/AppUser.dart';
-import 'package:smartwind/V/PermissionMessage.dart';
-import 'package:smartwind/Web/V/MaterialManagement/CPR/webCpr.dart';
-import 'package:smartwind/Web/V/MaterialManagement/KIT/webKit.dart';
+import 'package:smartwind_future_fibers/M/AppUser.dart';
+import 'package:smartwind_future_fibers/V/PermissionMessage.dart';
+import 'package:smartwind_future_fibers/Web/V/MaterialManagement/CPR/webCpr.dart';
+import 'package:smartwind_future_fibers/Web/V/MaterialManagement/KIT/webKit.dart';
 
 import '../../../M/PermissionsEnum.dart';
 import '../../../Mobile/V/Widgets/UserImage.dart';

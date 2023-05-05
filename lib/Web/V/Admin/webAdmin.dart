@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:smartwind/M/Admin/Settings.dart';
-import 'package:smartwind/M/EndPoints.dart';
+import 'package:smartwind_future_fibers/M/Admin/Settings.dart';
+import 'package:smartwind_future_fibers/M/EndPoints.dart';
 
 import '../../../C/Api.dart';
 import '../../../C/Validations.dart';

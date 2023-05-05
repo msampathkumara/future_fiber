@@ -1,12 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:smartwind/C/Api.dart';
-import 'package:smartwind/M/Enums.dart';
-import 'package:smartwind/M/Ticket.dart';
-import 'package:smartwind/Mobile/V/Home/Tickets/TicketInfo/TicketInfo.dart';
-import 'package:smartwind/Mobile/V/Widgets/SearchBar.dart';
-import 'package:smartwind/ns_icons_icons.dart';
+import 'package:smartwind_future_fibers/C/Api.dart';
+import 'package:smartwind_future_fibers/M/Enums.dart';
+import 'package:smartwind_future_fibers/M/Ticket.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Home/Tickets/TicketInfo/TicketInfo.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Widgets/SearchBar.dart';
+import 'package:smartwind_future_fibers/ns_icons_icons.dart';
 
 import '../../../../../M/EndPoints.dart';
 import '../../../../../Web/V/QC/webTicketQView.dart';

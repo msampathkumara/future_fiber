@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:smartwind/M/Ticket.dart';
+import 'package:smartwind_future_fibers/M/Ticket.dart';
 
 import 'Ticket/CprReport.dart';
 

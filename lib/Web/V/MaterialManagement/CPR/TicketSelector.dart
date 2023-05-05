@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/M/Enums.dart';
-import 'package:smartwind/Mobile/V/Widgets/SearchBar.dart';
-import 'package:smartwind/Web/V/MaterialManagement/CPR/AddTicket.dart';
-import 'package:smartwind/Web/Widgets/DialogView.dart';
-import 'package:smartwind/Web/Widgets/IfWeb.dart';
+import 'package:smartwind_future_fibers/M/Enums.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Widgets/SearchBar.dart';
+import 'package:smartwind_future_fibers/Web/V/MaterialManagement/CPR/AddTicket.dart';
+import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
+import 'package:smartwind_future_fibers/Web/Widgets/IfWeb.dart';
 
 import '../../../../C/DB/hive.dart';
 import '../../../../M/Ticket.dart';

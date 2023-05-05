@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:smartwind/M/Ticket.dart';
-import 'package:smartwind/Mobile/V/Widgets/UserButton.dart';
+import 'package:smartwind_future_fibers/M/Ticket.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Widgets/UserButton.dart';
 
 import '../../../../../C/ServerResponse/Progress.dart';
 import '../../../../../Web/V/QC/webTicketQView.dart';

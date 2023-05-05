@@ -6,7 +6,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:smartwind/C/Server.dart';
+import 'package:smartwind_future_fibers/C/Server.dart';
 
 import '../C/App.dart';
 import '../C/DB/hive.dart';

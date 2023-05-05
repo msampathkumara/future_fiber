@@ -1,7 +1,7 @@
 import 'package:custom_webview/webview_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:pdfx/pdfx.dart';
-import 'package:smartwind/M/Ticket.dart';
+import 'package:smartwind_future_fibers/M/Ticket.dart';
 
 import 'SelectPdfPage.dart';
 

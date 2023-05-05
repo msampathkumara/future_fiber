@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:smartwind/M/Enums.dart';
-import 'package:smartwind/M/NsUser.dart';
-import 'package:smartwind/M/Ticket.dart';
-import 'package:smartwind/Mobile/V/Widgets/SearchBar.dart';
-import 'package:smartwind/ns_icons_icons.dart';
+import 'package:smartwind_future_fibers/M/Enums.dart';
+import 'package:smartwind_future_fibers/M/NsUser.dart';
+import 'package:smartwind_future_fibers/M/Ticket.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Widgets/SearchBar.dart';
+import 'package:smartwind_future_fibers/ns_icons_icons.dart';
 
 import '../../../../../C/DB/DB.dart';
 import '../../../../../C/DB/hive.dart';

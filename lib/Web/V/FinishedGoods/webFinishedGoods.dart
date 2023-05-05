@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:smartwind/C/Api.dart';
-import 'package:smartwind/M/EndPoints.dart';
-import 'package:smartwind/Web/V/FinishedGoods/webFinishedGoods.table.dart';
+import 'package:smartwind_future_fibers/C/Api.dart';
+import 'package:smartwind_future_fibers/M/EndPoints.dart';
+import 'package:smartwind_future_fibers/Web/V/FinishedGoods/webFinishedGoods.table.dart';
 
 import '../../../M/Enums.dart';
 import '../../../M/Ticket.dart';

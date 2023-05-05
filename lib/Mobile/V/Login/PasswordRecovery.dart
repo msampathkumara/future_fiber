@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:smartwind/C/Server.dart';
-import 'package:smartwind/C/Validations.dart';
-import 'package:smartwind/C/form_input_decoration.dart';
-import 'package:smartwind/M/EndPoints.dart';
-import 'package:smartwind/M/NsUser.dart';
+import 'package:smartwind_future_fibers/C/Server.dart';
+import 'package:smartwind_future_fibers/C/Validations.dart';
+import 'package:smartwind_future_fibers/C/form_input_decoration.dart';
+import 'package:smartwind_future_fibers/M/EndPoints.dart';
+import 'package:smartwind_future_fibers/M/NsUser.dart';
 
 import '../../../M/User/Email.dart';
 import '../../../Web/Widgets/DialogView.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:smartwind/M/Ticket.dart';
-import 'package:smartwind/Mobile/V/Home/Tickets/ProductionPool/Finish/PDFViewWidget.dart';
+import 'package:smartwind_future_fibers/M/Ticket.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Home/Tickets/ProductionPool/Finish/PDFViewWidget.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class ShippingSystem extends StatefulWidget {

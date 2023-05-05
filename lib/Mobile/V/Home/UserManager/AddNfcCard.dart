@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:hex/hex.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:nfc_manager/platform_tags.dart';
-import 'package:smartwind/M/NsUser.dart';
-import 'package:smartwind/Mobile/V/Widgets/ErrorMessageView.dart';
+import 'package:smartwind_future_fibers/M/NsUser.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Widgets/ErrorMessageView.dart';
 
 import '../../../../C/Api.dart';
 import '../../../../M/EndPoints.dart';

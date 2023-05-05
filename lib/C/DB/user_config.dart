@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:smartwind/C/DB/up_on.dart';
+import 'package:smartwind_future_fibers/C/DB/up_on.dart';
 
 import 'TriggerEventTimes.dart';
 import 'HiveClass.dart';

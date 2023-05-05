@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pdf_render/pdf_render_widgets.dart';
-import 'package:smartwind/M/EndPoints.dart';
-import 'package:smartwind/M/QC.dart';
-import 'package:smartwind/M/Ticket.dart';
-import 'package:smartwind/Web/V/QC/QFileView.dart';
-import 'package:smartwind/res.dart';
+import 'package:smartwind_future_fibers/M/EndPoints.dart';
+import 'package:smartwind_future_fibers/M/QC.dart';
+import 'package:smartwind_future_fibers/M/Ticket.dart';
+import 'package:smartwind_future_fibers/Web/V/QC/QFileView.dart';
+import 'package:smartwind_future_fibers/res.dart';
 import 'package:universal_html/html.dart' as html;
 
 import '../../../C/Api.dart';

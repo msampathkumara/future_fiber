@@ -23,7 +23,7 @@
             body {
                 margin: 0;
                 height: 100%;
-                background: #ffffff url("splash/img/dark-background.webp");
+                background: #ffffff url("./splash/imgx/dark-background.webp");
                 background-size: 100% 100%;
             }
         }
@@ -194,13 +194,14 @@
 </html>
 
 <picture id="splash">
-    <source srcset="splash/img/light-1x.png 1x, splash/img/light-2x.png 2x, splash/img/light-3x.png 3x"
+    <source srcset="./splash/imgx/light-1x.png 1x, ./splash/imgx/light-2x.png 2x, ./splash/imgx/light-3x.png 3x"
             media="(prefers-color-scheme: light) or (prefers-color-scheme: no-preference)">
-    <source srcset="splash/img/dark-1x.png 1x, splash/img/dark-2x.png 2x, splash/img/dark-3x.png 3x" media="(prefers-color-scheme: dark)">
+    <source srcset="./splash/imgx/dark-1x.png 1x, ./splash/imgx/dark-2x.png 2x,./splash/imgx/dark-3x.png 3x" media="(prefers-color-scheme: dark)">
 
     <div class="center"
          style="width: 300px; height: 300px;background-color: rgba(255, 255, 255, .15); backdrop-filter: blur(5px); border-radius: 24px">
-        <img class="center" width="170" height="170" style=" " src="splash/img/light-1x.png" alt=""/>
+        <img class="center" width="170" height="170" style=" border-radius: 100%;  background-color: white;" src="./splash/imgx/smartwindlogo.jpg" alt=""></img>
+
         <div style="padding-top: 220px;font-family: Arial,sans-serif;  color: black;" class="center" id="loading"></div>
 
     </div>

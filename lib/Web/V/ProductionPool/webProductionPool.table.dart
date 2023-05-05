@@ -1,7 +1,7 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:just_the_tooltip/just_the_tooltip.dart';
-import 'package:smartwind/M/Ticket.dart';
+import 'package:smartwind_future_fibers/M/Ticket.dart';
 
 import '../../../C/DB/hive.dart';
 import '../../../M/Enums.dart';

@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:smartwind/Web/Widgets/StatusBar/StatusBarProgressIndicator.dart';
+import 'package:smartwind_future_fibers/Web/Widgets/StatusBar/StatusBarProgressIndicator.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import 'StatusBarItem.dart';

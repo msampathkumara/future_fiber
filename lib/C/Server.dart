@@ -9,7 +9,7 @@ class Server {
   static String devServerIp = '192.168.0.100';
 
   static Future<String> getServerAddress({onlineServer = false}) async {
-    local = true;
+    local = false;
 
     // if (await isV2) {
     // return "https://v2.smartwind.nsslsupportservices.com";
@@ -20,28 +20,7 @@ class Server {
       return "http://$devServerIp:3000";
     }
 
-    if (appFlavor == 'v2') {
-      return "https://v2.smartwind.nsslsupportservices.com";
-    }
-
-    //
-    // if (isLocalServer) {
-    //   if (local) {
-    //     return "http://$devServerIp:3000";
-    //   }
-    //   return "https://smartwind.test.nsslsupportservices.com";
-    // }
-
-    // if (await isTestServer) {
-    return "https://smartwind.test.nsslsupportservices.com";
-    // } else if (await isV2) {
-    //   return "https://v2.smartwind.nsslsupportservices.com";
-    // } else {
-    //   if (kIsWeb && (!isLocalServer)) {
-    //     return "";
-    //   }
-    //   return "https://smartwind.nsslsupportservices.com_";
-    // }
+    return "https://futurefibers.smartwind.nsslsupportservices.com";
   }
 
   static Future<String> getServerPath(String path, {onlineServer = false}) async {

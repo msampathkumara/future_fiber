@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:smartwind/M/EndPoints.dart';
-import 'package:smartwind/M/Enums.dart';
-import 'package:smartwind/Web/Widgets/DialogView.dart';
-import 'package:smartwind/Web/Widgets/IfWeb.dart';
-import 'package:smartwind/globals.dart';
+import 'package:smartwind_future_fibers/M/EndPoints.dart';
+import 'package:smartwind_future_fibers/M/Enums.dart';
+import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
+import 'package:smartwind_future_fibers/Web/Widgets/IfWeb.dart';
+import 'package:smartwind_future_fibers/globals.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../../C/Api.dart';

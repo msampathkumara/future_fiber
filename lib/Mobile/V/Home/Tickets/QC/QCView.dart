@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/C/Server.dart';
-import 'package:smartwind/M/QC.dart';
+import 'package:smartwind_future_fibers/C/Server.dart';
+import 'package:smartwind_future_fibers/M/QC.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../../../M/EndPoints.dart';

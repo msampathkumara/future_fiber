@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:smartwind/M/AppUser.dart';
-import 'package:smartwind/Mobile/V/Home/UserManager/UserDetails.dart';
-import 'package:smartwind/V/PermissionMessage.dart';
+import 'package:smartwind_future_fibers/M/AppUser.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Home/UserManager/UserDetails.dart';
+import 'package:smartwind_future_fibers/V/PermissionMessage.dart';
 
 import '../C/DB/hive.dart';
 import '../M/PermissionsEnum.dart';

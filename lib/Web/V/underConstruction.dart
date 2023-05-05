@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smartwind/res.dart';
+import 'package:smartwind_future_fibers/res.dart';
 
 class UnderConstructions extends StatelessWidget {
   final String title;

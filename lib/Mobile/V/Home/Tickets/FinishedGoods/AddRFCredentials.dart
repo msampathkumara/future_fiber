@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:smartwind/M/EndPoints.dart';
-import 'package:smartwind/Web/Widgets/DialogView.dart';
+import 'package:smartwind_future_fibers/M/EndPoints.dart';
+import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
 
 import '../../../../../C/Api.dart';
 import '../../../../../C/form_input_decoration.dart';

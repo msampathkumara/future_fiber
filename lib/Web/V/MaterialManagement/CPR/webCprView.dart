@@ -1,15 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/C/Api.dart';
-import 'package:smartwind/M/AppUser.dart';
-import 'package:smartwind/M/CPR/CPR.dart';
-import 'package:smartwind/M/CPR/CprItem.dart';
-import 'package:smartwind/M/Chat/message.dart';
-import 'package:smartwind/M/EndPoints.dart';
-import 'package:smartwind/M/Enums.dart';
-import 'package:smartwind/Web/V/MaterialManagement/CPR/LinkViewer.dart';
-import 'package:smartwind/Web/Widgets/DialogView.dart';
-import 'package:smartwind/Web/Widgets/chatBubble.dart';
+import 'package:smartwind_future_fibers/C/Api.dart';
+import 'package:smartwind_future_fibers/M/AppUser.dart';
+import 'package:smartwind_future_fibers/M/CPR/CPR.dart';
+import 'package:smartwind_future_fibers/M/CPR/CprItem.dart';
+import 'package:smartwind_future_fibers/M/Chat/message.dart';
+import 'package:smartwind_future_fibers/M/EndPoints.dart';
+import 'package:smartwind_future_fibers/M/Enums.dart';
+import 'package:smartwind_future_fibers/Web/V/MaterialManagement/CPR/LinkViewer.dart';
+import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
+import 'package:smartwind_future_fibers/Web/Widgets/chatBubble.dart';
 import 'package:universal_html/html.dart' as html;
 
 import '../../../../M/CPR/cprActivity.dart';

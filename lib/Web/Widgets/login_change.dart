@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/C/DB/hive.dart';
-import 'package:smartwind/M/AppUser.dart';
+import 'package:smartwind_future_fibers/C/DB/hive.dart';
+import 'package:smartwind_future_fibers/M/AppUser.dart';
 
 import '../../C/App.dart';
 import '../../C/DB/user_config.dart';

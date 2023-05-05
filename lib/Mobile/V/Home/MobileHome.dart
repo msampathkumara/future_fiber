@@ -11,20 +11,20 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:smartwind/C/FCM.dart';
-import 'package:smartwind/C/Server.dart';
-import 'package:smartwind/M/AppUser.dart';
-import 'package:smartwind/M/NsUser.dart';
-import 'package:smartwind/M/Section.dart';
-import 'package:smartwind/Mobile/V/Home/CurrentUser/CurrentUserDetails.dart';
-import 'package:smartwind/Mobile/V/Home/HR/HRSystem.dart';
-import 'package:smartwind/Mobile/V/Home/MaterialManagement/MaterialManagement.dart';
-import 'package:smartwind/Mobile/V/Home/Tickets/ProductionPool/ProductionPool.dart';
-import 'package:smartwind/Mobile/V/Login/SectionSelector.dart';
-import 'package:smartwind/Mobile/V/Widgets/ErrorMessageView.dart';
-import 'package:smartwind/V/PermissionMessage.dart';
-import 'package:smartwind/globals.dart';
-import 'package:smartwind/res.dart';
+import 'package:smartwind_future_fibers/C/FCM.dart';
+import 'package:smartwind_future_fibers/C/Server.dart';
+import 'package:smartwind_future_fibers/M/AppUser.dart';
+import 'package:smartwind_future_fibers/M/NsUser.dart';
+import 'package:smartwind_future_fibers/M/Section.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Home/CurrentUser/CurrentUserDetails.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Home/HR/HRSystem.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Home/MaterialManagement/MaterialManagement.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Home/Tickets/ProductionPool/ProductionPool.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Login/SectionSelector.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Widgets/ErrorMessageView.dart';
+import 'package:smartwind_future_fibers/V/PermissionMessage.dart';
+import 'package:smartwind_future_fibers/globals.dart';
+import 'package:smartwind_future_fibers/res.dart';
 
 import '../../../C/Api.dart';
 import '../../../C/DB/hive.dart';
@@ -154,7 +154,7 @@ class _MobileHomeState extends State<MobileHome> {
                         right: 0,
                         child: ColorFiltered(
                           colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.1), BlendMode.dstATop),
-                          child: Image.asset(Res.north_sails_logo, width: 350),
+                          child: Image.asset(Res.smartwindlogo, width: 350),
                         ),
                       ),
                       SingleChildScrollView(
@@ -241,19 +241,22 @@ class _MobileHomeState extends State<MobileHome> {
                           right: 0,
                           child: Align(
                               alignment: FractionalOffset.bottomCenter,
-                              child: Center(
-                                  child: OpenContainer(
-                                      closedElevation: 0,
-                                      closedColor: Colors.transparent,
-                                      transitionDuration: const Duration(milliseconds: 500),
-                                      openBuilder: (BuildContext context, void Function({Object? returnValue}) action) {
-                                        return const About();
-                                      },
-                                      closedBuilder: (BuildContext context, void Function() action) {
-                                        return Chip(
-                                            avatar: CircleAvatar(backgroundColor: Colors.grey.shade800, child: Image.asset(Res.north_sails_logox50, width: 50)),
-                                            label: Text('NS Smart Wind $appVersion $serverType} | $appFlavor'));
-                                      }))))
+                              child: OpenContainer(
+                                  closedElevation: 0,
+                                  closedColor: Colors.transparent,
+                                  transitionDuration: const Duration(milliseconds: 500),
+                                  openBuilder: (BuildContext context, void Function({Object? returnValue}) action) {
+                                    return const About();
+                                  },
+                                  closedBuilder: (BuildContext context, void Function() action) {
+                                    return Chip(
+                                        avatar: CircleAvatar(
+                                            radius: 360,
+                                            backgroundColor: Colors.grey.shade800,
+                                            child: ClipRRect(
+                                                clipBehavior: Clip.antiAlias, borderRadius: BorderRadius.circular(360), child: Image.asset(Res.smartwindlogo, width: 50))),
+                                        label: Text('SmartWind for Future Fibers $appVersion $serverType | $appFlavor'));
+                                  })))
                     ])))
             : const PermissionMessage();
   }
@@ -323,8 +326,7 @@ class _MobileHomeState extends State<MobileHome> {
         setState(() {});
         // print(result);
       },
-      itemBuilder: (BuildContext context) =>
-      <PopupMenuEntry<MenuItems>>[
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<MenuItems>>[
         const PopupMenuItem<MenuItems>(value: MenuItems.dbReload, child: Text('Reload Database')),
         const PopupMenuItem<MenuItems>(value: MenuItems.deleteDownloadedFiles, child: Text('Delete Downloaded Files')),
         const PopupMenuItem<MenuItems>(value: MenuItems.logout, child: Text('Logout')),

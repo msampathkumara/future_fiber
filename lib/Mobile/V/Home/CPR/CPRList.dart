@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:measured_size/measured_size.dart';
-import 'package:smartwind/M/CPR/CPR.dart';
-import 'package:smartwind/M/EndPoints.dart';
-import 'package:smartwind/Mobile/V/Widgets/SearchBar.dart';
+import 'package:smartwind_future_fibers/M/CPR/CPR.dart';
+import 'package:smartwind_future_fibers/M/EndPoints.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Widgets/SearchBar.dart';
 
 import '../../../../C/Api.dart';
 import '../../../../M/Enums.dart';

@@ -1,7 +1,7 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/M/DeviceLog.dart';
+import 'package:smartwind_future_fibers/M/DeviceLog.dart';
 
 import '../../../../C/Api.dart';
 import '../../../../M/Device.dart';

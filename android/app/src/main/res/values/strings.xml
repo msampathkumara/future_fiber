@@ -27,9 +27,10 @@
     <string name="error">Error</string>
     <string name="please_wait">Please Wait</string>
     <string name="cancel">Cancel</string>
-    <string name="worng_username_or_password_enterd">Worng username or password enterd..</string>
+    <string name="worng_username_or_password_enterd">Wrong username or password entered..</string>
     <string name="highlighter">Highlighter</string>
     <string name="add">Add</string>
     <string name="undo">undo</string>
     <string name="app_name">SmartWind</string>
+    <string name="app_name_debug">SmartWind (Debug)</string>
 </resources>

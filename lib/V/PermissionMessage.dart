@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:smartwind_future_fibers/res.dart';
 
 import '../M/AppUser.dart';
-import '../generated/assets.dart';
 
 class PermissionMessage extends StatefulWidget {
   const PermissionMessage({Key? key}) : super(key: key);
@@ -19,7 +19,7 @@ class _PermissionMessageState extends State<PermissionMessage> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(width: 256, child: Image.asset(Assets.assetsNoPermissions)),
+          SizedBox(width: 256, child: Image.asset(Res.noPermissions)),
           const Text('You don\'t have permissions ', textScaleFactor: 1.2, style: TextStyle(color: Colors.red)),
           const SizedBox(height: 36),
           ElevatedButton(onPressed: () => {AppUser.logout(context)}, child: const Text("Logout"))

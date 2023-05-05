@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:smartwind/M/Chat/message.dart';
-import 'package:smartwind/M/NsUser.dart';
+import 'package:smartwind_future_fibers/M/Chat/message.dart';
+import 'package:smartwind_future_fibers/M/NsUser.dart';
 
 import '../../Mobile/V/Widgets/UserImage.dart';
 import '../V/ProductionPool/copy.dart';

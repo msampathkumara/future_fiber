@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/M/EndPoints.dart';
-import 'package:smartwind/M/StandardTicket.dart';
+import 'package:smartwind_future_fibers/M/EndPoints.dart';
+import 'package:smartwind_future_fibers/M/StandardTicket.dart';
 
 import '../../../C/Api.dart';
 import '../../../C/DB/DB.dart';

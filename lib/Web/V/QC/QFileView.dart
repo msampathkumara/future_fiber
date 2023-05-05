@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pdf_render/pdf_render_widgets.dart';
-import 'package:smartwind/M/QC.dart';
-import 'package:smartwind/Web/Widgets/DialogView.dart';
-import 'package:smartwind/Web/Widgets/IfWeb.dart';
+import 'package:smartwind_future_fibers/M/QC.dart';
+import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
+import 'package:smartwind_future_fibers/Web/Widgets/IfWeb.dart';
 
 class QFileView extends StatefulWidget {
   final QC qc;

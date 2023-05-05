@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:smartwind/M/NsUser.dart';
+import 'package:smartwind_future_fibers/M/NsUser.dart';
 
 part 'message.g.dart';
 

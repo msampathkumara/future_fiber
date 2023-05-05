@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'package:smartwind/Web/Widgets/DialogView.dart';
+import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
 
 class Loading extends StatefulWidget {
   final String loadingText;

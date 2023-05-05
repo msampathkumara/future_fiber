@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:smartwind/res.dart';
+import 'package:smartwind_future_fibers/res.dart';
 
 import '../../../C/Api.dart';
 import '../../../C/App.dart';
@@ -78,7 +78,7 @@ class _AboutState extends State<About> {
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: CircleAvatar(radius: 100, child: Image.asset(Res.north_sails_logo)),
+            child: CircleAvatar(radius: 100, child: Image.asset(Res.smartwindlogo)),
           ),
         ),
         const Text("NS Smart Wind", textScaleFactor: 1.5),

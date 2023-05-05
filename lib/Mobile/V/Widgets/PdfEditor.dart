@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
-import 'package:smartwind/M/Ticket.dart';
+import 'package:smartwind_future_fibers/M/Ticket.dart';
 
 class PdfEditor extends StatefulWidget {
   final Ticket ticket;

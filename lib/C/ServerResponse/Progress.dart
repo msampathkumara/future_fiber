@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:smartwind/M/NsUser.dart';
-import 'package:smartwind/M/Section.dart';
+import 'package:smartwind_future_fibers/M/NsUser.dart';
+import 'package:smartwind_future_fibers/M/Section.dart';
 
 part 'Progress.g.dart';
 

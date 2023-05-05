@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:smartwind/M/AppUser.dart';
+import 'package:smartwind_future_fibers/M/AppUser.dart';
 
 import '../globals.dart';
 import 'DB/hive.dart';

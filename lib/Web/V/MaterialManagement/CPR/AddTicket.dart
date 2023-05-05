@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:smartwind/M/EndPoints.dart';
-import 'package:smartwind/Web/Widgets/DialogView.dart';
-import 'package:smartwind/Web/Widgets/IfWeb.dart';
+import 'package:smartwind_future_fibers/M/EndPoints.dart';
+import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
+import 'package:smartwind_future_fibers/Web/Widgets/IfWeb.dart';
 
 import '../../../../C/Api.dart';
 import '../../../../M/Ticket.dart';

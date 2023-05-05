@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smartwind/M/NsUser.dart';
+import 'package:smartwind_future_fibers/M/NsUser.dart';
 
 class NfcScan extends StatefulWidget {
   final NsUser nsUser;

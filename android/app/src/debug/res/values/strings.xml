@@ -1,4 +1,5 @@
 <resources>
 
     <string name="app_name">SmartWind (Debug)</string>
+    <string name="app_name_debug">SmartWind (Debug)</string>
 </resources>

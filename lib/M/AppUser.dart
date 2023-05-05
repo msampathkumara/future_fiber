@@ -1,12 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:restart_app/restart_app.dart';
-import 'package:smartwind/C/Api.dart';
-import 'package:smartwind/C/App.dart';
-import 'package:smartwind/M/EndPoints.dart';
-import 'package:smartwind/M/Enums.dart';
-import 'package:smartwind/M/NsUser.dart';
-import 'package:smartwind/M/PermissionsEnum.dart';
-import 'package:smartwind/C/DB/user_config.dart';
+import 'package:smartwind_future_fibers/C/Api.dart';
+import 'package:smartwind_future_fibers/C/App.dart';
+import 'package:smartwind_future_fibers/M/EndPoints.dart';
+import 'package:smartwind_future_fibers/M/Enums.dart';
+import 'package:smartwind_future_fibers/M/NsUser.dart';
+import 'package:smartwind_future_fibers/M/PermissionsEnum.dart';
+import 'package:smartwind_future_fibers/C/DB/user_config.dart';
 
 import '../C/DB/DB.dart';
 import 'Section.dart';

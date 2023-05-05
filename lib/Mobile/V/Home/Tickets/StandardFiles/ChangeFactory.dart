@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:smartwind/M/Section.dart';
-import 'package:smartwind/M/StandardTicket.dart';
+import 'package:smartwind_future_fibers/M/Section.dart';
+import 'package:smartwind_future_fibers/M/StandardTicket.dart';
 
 import '../../../../../C/Api.dart';
 

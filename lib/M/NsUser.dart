@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:smartwind/C/Server.dart';
-import 'package:smartwind/C/DB/hive.dart';
-import 'package:smartwind/res.dart';
+import 'package:smartwind_future_fibers/C/Server.dart';
+import 'package:smartwind_future_fibers/C/DB/hive.dart';
+import 'package:smartwind_future_fibers/res.dart';
 
 import '../C/Api.dart';
 import '../Mobile/V/Widgets/UserImage.dart';

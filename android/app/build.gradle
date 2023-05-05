@@ -66,9 +66,16 @@ android {
     }
     buildTypes {
         debug {
+
+//            manifestPlaceholders = [appLabel: "@string/app_name_debug" ,appIcon: "@mipmap/ic_launcher_debug"]
             applicationIdSuffix ".debug"
+//            manifestPlaceholders = [appIcon: "@mipmap/ic_launcher_debug"]
         }
         release {
+
+//            manifestPlaceholders = [appLabel: "@string/app_name",appIcon: "@mipmap/ic_launcher"]
+//            manifestPlaceholders = [appIcon: "@mipmap/ic_launcher"]
+
 //            debuggable true
             // Signing with the debug keys for now, so `flutter run --release` works.
 //            signingConfig signingConfigs.debug
@@ -99,6 +106,11 @@ android {
 //            ]
         }
         prod {
+        }
+        ff {
+//            dimension 'default'
+            applicationIdSuffix '.ff'
+//            versionNameSuffix 'future fibres'
         }
     }
 

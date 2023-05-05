@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:smartwind/M/PermissionsEnum.dart';
-import 'package:smartwind/Mobile/V/Home/Tickets/ProductionPool/TicketStartDialog.dart';
-import 'package:smartwind/Web/V/MaterialManagement/CPR/TicketCprList.dart';
-import 'package:smartwind/Web/V/ProductionPool/TicketPageSelector.dart';
+import 'package:smartwind_future_fibers/M/PermissionsEnum.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Home/Tickets/ProductionPool/TicketStartDialog.dart';
+import 'package:smartwind_future_fibers/Web/V/MaterialManagement/CPR/TicketCprList.dart';
+import 'package:smartwind_future_fibers/Web/V/ProductionPool/TicketPageSelector.dart';
 
 import '../../../../../C/Api.dart';
 import '../../../../../M/AppUser.dart';

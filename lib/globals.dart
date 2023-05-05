@@ -1,7 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind/C/DB/hive.dart';
+import 'package:smartwind_future_fibers/C/DB/hive.dart';
 
 enum AppFlavors { V2, DEBUG }
 

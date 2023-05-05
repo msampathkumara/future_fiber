@@ -5,9 +5,9 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
-import 'package:smartwind/M/CPR/CprItem.dart';
-import 'package:smartwind/Web/Widgets/DialogView.dart';
-import 'package:smartwind/Web/Widgets/IfWeb.dart';
+import 'package:smartwind_future_fibers/M/CPR/CprItem.dart';
+import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
+import 'package:smartwind_future_fibers/Web/Widgets/IfWeb.dart';
 
 class DropMaterialList extends StatefulWidget {
   const DropMaterialList({Key? key}) : super(key: key);

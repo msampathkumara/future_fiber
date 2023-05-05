@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:smartwind/M/Ticket.dart';
+import 'package:smartwind_future_fibers/M/Ticket.dart';
 
 part 'TicketProgressDetails.g.dart';
 

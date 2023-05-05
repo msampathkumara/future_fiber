@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:smartwind/C/Server.dart';
-import 'package:smartwind/res.dart';
+import 'package:smartwind_future_fibers/C/Server.dart';
+import 'package:smartwind_future_fibers/res.dart';
 
 import '../../../C/Api.dart';
 import '../../../M/EndPoints.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:smartwind/C/DB/hive.dart';
-import 'package:smartwind/Web/Widgets/DialogView.dart';
+import 'package:smartwind_future_fibers/C/DB/hive.dart';
+import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
 
 import '../../../../../M/Ticket.dart';
 
