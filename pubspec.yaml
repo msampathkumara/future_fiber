@@ -17,8 +17,8 @@ dependencies:
 
   custom_webview:
     path: ./Pugins/custom_webview
-#  smartwind_login:
-#    path: ../../smartwind_flutter_packages/smartwind_login
+  #  smartwind_login:
+  #    path: ../../smartwind_flutter_packages/smartwind_login
 
 
   #  firebase------------------------------------------
@@ -153,6 +153,7 @@ flutter:
     - assets/smartwindlogo.jpg
     - assets/smartwindLogo.png
     - assets/smartwindlogo100.jpg
+    - assets/smartwindlogo150.jpg
     - assets/splash.png
     - assets/splash1.png
     - assets/uc.png

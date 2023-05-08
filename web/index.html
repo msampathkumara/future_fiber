@@ -5,7 +5,7 @@
         body, html {
             margin: 0;
             height: 100%;
-            background: #ffffff url("splash/imgx/light-background.jpg");
+            background-image: url("splash/imgx/background.jpg");
             background-size: 100% 100%;
         }
 
@@ -23,11 +23,10 @@
             body {
                 margin: 0;
                 height: 100%;
-                background: #ffffff url("./splash/imgx/dark-background.jpg");
+                background: #ffffff url("splash/imgx/dark_background.jpg");
                 background-size: 100% 100%;
             }
         }
-
 
 
     </style>
@@ -43,7 +42,6 @@
         };
         // To work around the recent breaking change on Flutter Web, you can set workaround_for_flutter_93615 to true:
         window.workaround_for_flutter_93615 = true;
-
 
 
     </script>
@@ -150,7 +148,6 @@
     }
 
 
-
 </script>
 <script>
 
@@ -176,7 +173,6 @@
     });
 
 
-
 </script>
 <script>
     async function download() {
@@ -187,7 +183,6 @@
         link.type = 'application/pdf';
         link.click();
     }
-
 
 
 </script>
@@ -205,9 +200,10 @@
 
     <div class="center"
          style="width: 300px; height: 300px;background-color: rgba(255, 255, 255, .15); backdrop-filter: blur(5px); border-radius: 24px">
-        <img class="center" width="170" height="170" style=" border-radius: 100%;  background-color: white;" src="./splash/imgx/smartwindlogo.jpg" alt=""></img>
+        <img class="center" width="170" height="170" style=" border-radius: 100%;  background-color: white;" src="./splash/imgx/smartwindlogo.jpg"
+             alt=""></img>
 
-        <div style="padding-top: 220px;font-family: Arial,sans-serif;  color: black;" class="center" id="loading"></div>
+        <div style="padding-top: 220px;font-family: Arial,sans-serif;  color: white;" class="center" id="loading"></div>
 
     </div>
 

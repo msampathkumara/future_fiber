@@ -300,6 +300,6 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
         padding: const EdgeInsets.all(0),
         icon: Tooltip(message: s, child: Icon(icon)),
         selectedIcon: Tooltip(message: s, child: Icon(selectedIcon)),
-        label: Text('Dash Board', style: TextStyle(fontSize: fontSize)));
+        label: Text(s, style: TextStyle(fontSize: fontSize)));
   }
 }

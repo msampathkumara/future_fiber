@@ -380,7 +380,7 @@ class _LoginState extends State<Login> {
                   ),
                   width: 128,
                   height: 128,
-                  child: CircleAvatar(radius: 360, child: ClipRRect(borderRadius: const BorderRadius.all(Radius.circular(360)), child: Image.asset(Res.smartwindlogo100)))))
+                  child: CircleAvatar(radius: 360, child: ClipRRect(borderRadius: const BorderRadius.all(Radius.circular(360)), child: Image.asset(Res.smartwindlogo150)))))
         ],
       )
     ]);

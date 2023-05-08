@@ -16,7 +16,7 @@ class ChangeFactory extends StatefulWidget {
 class _ChangeFactoryState extends State<ChangeFactory> {
   Section selectedSection = Section();
 
-  List<String> factoryList = ['Upwind', 'OD', 'Nylon Standard', 'OEM'];
+  List<String> factoryList = ["EC-SIX", "AERO-SIX", "FIBRE LIGHT", "Machine Shop", "PULTRUSION", "TACO"];
 
   @override
   void initState() {

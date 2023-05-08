@@ -181,20 +181,12 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
   // var subscription;
   List<Map> currentFileList = [];
 
-  final tabs = ["All", "Upwind", "OD", 'Nylon Standard', 'Nylon Custom', "OEM", "No Pool"];
+  final tabs = ["All", "EC-SIX", "AERO-SIX", "FIBRE LIGHT", "Machine Shop", "PULTRUSION", "TACO", "No Pool"];
   TabController? _tabBarController;
 
   getBody() {
     return _tabBarController == null ? Container() : Scaffold(backgroundColor: Colors.white, body: getTicketListByCategory(filteredAllUsersList, context));
   }
-
-  final int CAT_ALL = 0;
-  final int CAT_UPWIND = 1;
-  final int CAT_OD = 2;
-  final int CAT_NYLON = 3;
-  final int CAT_OEM = 4;
-
-  // var indicator = new GlobalKey<RefreshIndicatorState>();
 
   getTicketListByCategory(List<NsUser> filesList, _context) {
     return Column(

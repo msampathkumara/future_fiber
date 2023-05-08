@@ -53,7 +53,6 @@ class _BlueBookState extends State<BlueBook> {
 
     wv = InAppWebView(
         initialUrlRequest: URLRequest(url: Uri.parse("http://bluebook.northsails.com:8088/nsbb/app/blueBook.html")),
-        // initialUrlRequest: URLRequest(url: Uri.parse("https://smartupwind.nsslsupportservices.com/FileBrowser/Files/ppp/upwind/upwind")),
         initialOptions: InAppWebViewGroupOptions(crossPlatform: InAppWebViewOptions(useOnDownloadStart: true), android: AndroidInAppWebViewOptions(useHybridComposition: true)),
         onReceivedHttpAuthRequest: (InAppWebViewController controller, URLAuthenticationChallenge challenge) async {
           print('onReceivedHttpAuthRequest');

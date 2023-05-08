@@ -90,7 +90,7 @@ class _WebStandardLibraryState extends State<WebStandardLibrary> {
                       child: DropdownButton<Production>(
                         value: selectedProduction,
                         selectedItemBuilder: (_) {
-                          return [Production.All, Production.Upwind, Production.Nylon_Standard, Production.OEM, Production.OD].map<Widget>((Production item) {
+                          return [...Production.values].map<Widget>((Production item) {
                             return Center(
                                 child: Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -98,7 +98,7 @@ class _WebStandardLibraryState extends State<WebStandardLibrary> {
                             ));
                           }).toList();
                         },
-                        items: [Production.All, Production.Upwind, Production.Nylon_Standard, Production.OEM, Production.OD].map((Production value) {
+                        items: [...Production.values].map((Production value) {
                           return DropdownMenuItem<Production>(
                             value: value,
                             child: Text(value.getValue()),
@@ -262,7 +262,7 @@ class _WebStandardLibraryState extends State<WebStandardLibrary> {
                     child: Padding(
                         padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
                         child: ListView(
-                            children: [Production.Upwind, Production.Nylon_Standard, Production.OEM, Production.OD]
+                            children: Production.values
                                 .map((e) => ListTile(
                                     title: Text(e.getValue()),
                                     selectedTileColor: Colors.black12,

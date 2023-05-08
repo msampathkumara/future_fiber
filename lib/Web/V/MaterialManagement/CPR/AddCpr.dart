@@ -39,7 +39,7 @@ class _AddCprState extends State<AddCpr> {
   final _shortageTypes = ["Short", "Damage", "Unreceived"];
   final _cprTypes = ["Pocket", "Rope Luff", "Purchase Cover", "Overhead Tape", "Tape Cover", "Take Down", "Soft Hanks", "Windows", "Stow pouch", "VPC**", "Other"];
   final _suppliers = ["Cutting", "SA", "Printing", 'None'];
-  final _clients = ['Upwind', 'OD', 'Nylon Standard', 'Nylon Custom', 'OEM', '38 Upwind', '38 OD', '38 Nylon Standard', '38 Nylon Custom', '38 OEM'];
+  final _clients = ["EC-SIX", "AERO-SIX", "FIBRE LIGHT", "Machine Shop", "PULTRUSION", "TACO"];
   var textEditingController = TextEditingController();
 
   bool saving = false;
@@ -293,28 +293,6 @@ class _AddCprState extends State<AddCpr> {
                                           }).toList();
                                         })),
                               ),
-                              // if (cpr.ticket!.production == null)
-                              //   ListTile(
-                              //     title: Text("Client", style: titleTheme),
-                              //     subtitle: SizedBox(
-                              //       width: 200,
-                              //       child: Padding(
-                              //           padding: const EdgeInsets.all(16.0),
-                              //           child: DropdownSearch<String>(
-                              //               selectedItem: cpr.client,
-                              //               // mode: Mode.BOTTOM_SHEET,
-                              //               // showSelectedItem: true,
-                              //               items: const ["Upwind", "OD", "Nylon", "OEM"],
-                              //               dropdownDecoratorProps: const DropDownDecoratorProps(dropdownSearchDecoration: InputDecoration(hintText: "Select Client")),
-                              //               onChanged: (c) {
-                              //                 cpr.client = c;
-                              //               })),
-                              //     ),
-                              //   ),
-                              // Padding(
-                              //   padding: const EdgeInsets.only(left: 12.0),
-                              //   child: Text("Suppliers", style: titleTheme),
-                              // ),
                               ListTile(dense: false, title: Text("Suppliers", style: titleTheme), subtitle: getSuppliers()),
                               ListTile(
                                   title: Text("Comment", style: titleTheme),

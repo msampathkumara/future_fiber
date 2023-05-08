@@ -43,7 +43,7 @@ class CountCards extends StatefulWidget {
 }
 
 class _CountCardsState extends State<CountCards> {
-  var selectedProduction = Production.Upwind;
+  var selectedProduction = Production.EC__SIX;
   var now = DateTime.now();
   DateTime rangeStartDate = DateTime.now();
 
