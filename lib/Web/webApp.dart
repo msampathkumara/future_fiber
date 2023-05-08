@@ -18,10 +18,13 @@ class WebApp extends StatelessWidget {
       title: 'Smart Wind',
       scaffoldMessengerKey: snackBarKey,
       navigatorKey: navigatorKey,
+
       theme: ThemeData(
         iconTheme: const IconThemeData(size: 16.0),
         primarySwatch: Colors.green,
         primaryColorDark: Colors.green,
+        accentIconTheme: IconThemeData(color: Colors.yellow[700], size: 32),
+        primaryIconTheme: IconThemeData(color: Colors.yellow[700], size: 24),
         bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.black.withOpacity(0)),
         inputDecorationTheme: InputDecorationTheme(
             border: const OutlineInputBorder(),
@@ -36,10 +39,10 @@ class WebApp extends StatelessWidget {
               borderRadius: BorderRadius.circular(4.0),
             )),
         scrollbarTheme: const ScrollbarThemeData().copyWith(
-            thumbColor: MaterialStateProperty.all(Colors.lightGreen),
+            thumbColor: MaterialStateProperty.all(Colors.grey),
             thumbVisibility: MaterialStateProperty.all(true),
-            trackBorderColor: MaterialStateProperty.all(Colors.lightGreen),
-            trackColor: MaterialStateProperty.all(Colors.lightGreen)),
+            trackBorderColor: MaterialStateProperty.all(Colors.grey),
+            trackColor: MaterialStateProperty.all(Colors.grey)),
       ),
       // home: MainPage(),
       navigatorObservers: const [],

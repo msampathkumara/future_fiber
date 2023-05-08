@@ -184,10 +184,10 @@ class _LoginState extends State<Login> {
 
           if (kIsWeb) {
             // await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => WebHomePage()), (Route<dynamic> route) => false);
-            Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+            if (mounted) Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
           } else {
             FCM.subscribe();
-            await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => CheckTabStatus(nsUser)), (Route<dynamic> route) => false);
+            if (mounted) await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => CheckTabStatus(nsUser)), (Route<dynamic> route) => false);
           }
           setLoading(false);
         });
@@ -224,12 +224,7 @@ class _LoginState extends State<Login> {
 
   Stack getWebUi() {
     return Stack(children: [
-      if (kIsWeb)
-        SizedBox.expand(
-            child: FittedBox(
-          fit: BoxFit.cover,
-          child: Image.asset(Res.background),
-        )),
+      if (kIsWeb) SizedBox.expand(child: FittedBox(fit: BoxFit.cover, child: Image.asset(Res.background))),
       if (!loading) Center(child: _body()),
       if (loading) ConstrainedBox(constraints: const BoxConstraints.expand(), child: Container(color: Colors.black54, child: const Center(child: CircularProgressIndicator()))),
       Align(
@@ -239,7 +234,7 @@ class _LoginState extends State<Login> {
               child: Chip(
                   backgroundColor: Colors.black.withOpacity(0.5),
                   padding: const EdgeInsets.all(8.0),
-                  label: Text("NS Smart Wind $appVersion v",
+                  label: Text("SmartWind for Future Fibers $appVersion v",
                       style: const TextStyle(color: Colors.white, shadows: <Shadow>[Shadow(offset: Offset(0.0, 0.0), blurRadius: 10.0, color: Colors.black)])))))
     ]);
   }
@@ -249,139 +244,145 @@ class _LoginState extends State<Login> {
   Column _body() {
     // Build a Form widget using the _formKey created above.
     return Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-      Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.white.withAlpha(220),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SizedBox(
-              width: 300,
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(width: 128, height: 128, child: CircleAvatar(child: Image.asset(Res.smartwindlogo))),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: TextFormField(
-                          initialValue: _user.uname,
-                          onChanged: (text) {
-                            _user.uname = text;
-                          },
-                          autofocus: false,
-                          style: const TextStyle(fontSize: 15.0, color: Colors.black),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: 'Username',
-                            filled: true,
-                            fillColor: Colors.grey[150],
-                            contentPadding: const EdgeInsets.only(left: 14.0, bottom: 6.0, top: 8.0),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(color: Colors.red),
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: const BorderSide(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(10.0),
+      Stack(
+        alignment: Alignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 64.0),
+            child: Container(
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.white.withAlpha(230)),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 76, bottom: 16.0, left: 16, right: 16),
+                  child: SizedBox(
+                    width: 300,
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: TextFormField(
+                                initialValue: _user.uname,
+                                onChanged: (text) {
+                                  _user.uname = text;
+                                },
+                                autofocus: false,
+                                style: const TextStyle(fontSize: 15.0, color: Colors.black),
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'Username',
+                                  filled: true,
+                                  fillColor: Colors.grey.shade300,
+                                  contentPadding: const EdgeInsets.only(left: 14.0, bottom: 6.0, top: 8.0),
+                                  focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.red), borderRadius: BorderRadius.circular(10.0)),
+                                  enabledBorder: UnderlineInputBorder(borderSide: const BorderSide(color: Colors.grey), borderRadius: BorderRadius.circular(10.0)),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter user name';
+                                  }
+                                  return null;
+                                }),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Stack(
+                              alignment: const Alignment(0, 0),
+                              children: <Widget>[
+                                TextFormField(
+                                    initialValue: _user.password,
+                                    onChanged: (text) {
+                                      _user.pword = text;
+                                    },
+                                    onFieldSubmitted: (text) {
+                                      _user.pword = text;
+                                      if (_formKey.currentState!.validate()) {
+                                        _login();
+                                      }
+                                    },
+                                    obscureText: !visiblePassword,
+                                    autofocus: false,
+                                    style: const TextStyle(fontSize: 15.0, color: Colors.black),
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: 'password',
+                                      filled: true,
+                                      fillColor: Colors.grey.shade300,
+                                      contentPadding: const EdgeInsets.only(left: 14.0, bottom: 6.0, top: 8.0),
+                                      focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.red), borderRadius: BorderRadius.circular(10.0)),
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide: const BorderSide(color: Colors.grey),
+                                        borderRadius: BorderRadius.circular(10.0),
+                                      ),
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter password';
+                                      }
+                                      return null;
+                                    }),
+                                Positioned(
+                                    right: 15,
+                                    child: SizedBox(
+                                        child: IconButton(
+                                            onPressed: () {
+                                              visiblePassword = !visiblePassword;
+                                              setState(() {});
+                                            },
+                                            icon: Icon(visiblePassword ? Icons.visibility_rounded : Icons.visibility_off_rounded))))
+                              ],
                             ),
                           ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter user name';
-                            }
-                            return null;
-                          }),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Stack(
-                        alignment: const Alignment(0, 0),
-                        children: <Widget>[
-                          TextFormField(
-                              initialValue: _user.password,
-                              onChanged: (text) {
-                                _user.pword = text;
-                              },
-                              onFieldSubmitted: (text) {
-                                _user.pword = text;
-                                if (_formKey.currentState!.validate()) {
-                                  _login();
-                                }
-                              },
-                              obscureText: !visiblePassword,
-                              autofocus: false,
-                              style: const TextStyle(fontSize: 15.0, color: Colors.black),
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: 'password',
-                                filled: true,
-                                fillColor: Colors.grey[150],
-                                contentPadding: const EdgeInsets.only(left: 14.0, bottom: 6.0, top: 8.0),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(color: Colors.red),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: const BorderSide(color: Colors.grey),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter password';
-                                }
-                                return null;
-                              }),
-                          Positioned(
-                              right: 15,
+                          Padding(
+                              padding: const EdgeInsets.all(10),
                               child: SizedBox(
-                                  child: IconButton(
-                                      onPressed: () {
-                                        visiblePassword = !visiblePassword;
-                                        setState(() {});
-                                      },
-                                      icon: Icon(visiblePassword ? Icons.visibility_rounded : Icons.visibility_off_rounded))))
+                                  height: 50,
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    style: FormInputDecoration.buttonStyle(),
+
+                                    onPressed: () {
+                                      if (_formKey.currentState!.validate()) {
+                                        _login();
+                                      }
+                                    },
+                                    child: const Text(
+                                      'Login',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0), side: const BorderSide(color: Colors.orange)),
+                                  ))),
+                          SizedBox(
+                              width: double.infinity,
+                              child: TextButton(
+                                onPressed: () async {
+                                  print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+                                  // await Navigator.push(context, MaterialPageRoute(builder: (context) => const PasswordRecovery()));
+                                  await const PasswordRecovery().show(context);
+                                },
+                                child: const Text('forgot my password'),
+                                // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0), side: const BorderSide(color: Colors.orange)),
+                              ))
                         ],
                       ),
                     ),
-                    Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: SizedBox(
-                            height: 50,
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              style: FormInputDecoration.buttonStyle(),
-
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  _login();
-                                }
-                              },
-                              child: const Text(
-                                'Login',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0), side: const BorderSide(color: Colors.orange)),
-                            ))),
-                    SizedBox(
-                        width: double.infinity,
-                        child: TextButton(
-                          onPressed: () async {
-                            print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-                            // await Navigator.push(context, MaterialPageRoute(builder: (context) => const PasswordRecovery()));
-                            await const PasswordRecovery().show(context);
-                          },
-                          child: const Text('forgot my password'),
-                          // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0), side: const BorderSide(color: Colors.orange)),
-                        ))
-                  ],
-                ),
-              ),
-            ),
-          ))
+                  ),
+                )),
+          ),
+          Positioned(
+              top: 0,
+              child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [BoxShadow(blurRadius: 10, color: Colors.black, spreadRadius: 1)],
+                  ),
+                  width: 128,
+                  height: 128,
+                  child: CircleAvatar(radius: 360, child: ClipRRect(borderRadius: const BorderRadius.all(Radius.circular(360)), child: Image.asset(Res.smartwindlogo100)))))
+        ],
+      )
     ]);
   }
 

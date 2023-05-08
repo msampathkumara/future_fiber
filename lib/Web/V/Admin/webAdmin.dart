@@ -329,6 +329,7 @@ class _WebAdminState extends State<WebAdmin> {
       setState(() {});
     }).catchError((err) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          behavior: SnackBarBehavior.floating,
           content: Text(err.toString()),
           action: SnackBarAction(
               label: 'Retry',

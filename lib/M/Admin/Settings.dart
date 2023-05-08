@@ -4,7 +4,7 @@ part 'Settings.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class Settings {
-  @JsonKey(defaultValue: null, includeIfNull: true)
+  @JsonKey(defaultValue: 0, includeIfNull: true)
   int erpNotWorking = 1;
 
   @JsonKey(defaultValue: [], includeIfNull: true)

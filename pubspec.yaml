@@ -4,7 +4,7 @@ description: NorthSails Smart Wind project for Future Fibers
 
 publish_to: 'none'
 
-version: 1.4.1+251
+version: 1.4.2+252
 
 environment:
   sdk: ">=2.17.0 <3.0.0"
@@ -14,6 +14,12 @@ dependencies:
     sdk: flutter
   flutter_web_plugins:
     sdk: flutter
+
+  custom_webview:
+    path: ./Pugins/custom_webview
+#  smartwind_login:
+#    path: ../../smartwind_flutter_packages/smartwind_login
+
 
   #  firebase------------------------------------------
   firebase_core: ^2.9.0
@@ -54,8 +60,7 @@ dependencies:
   data_table_2: ^2.4.2
 
 
-  custom_webview:
-    path: ./Pugins/custom_webview
+
   json_annotation: ^4.8.0
 
 
@@ -130,7 +135,9 @@ flutter:
     - assets/fonts/NsIcons.ttf
     - assets/ic_launcher-playstore.png
     - assets/images/background.jpg
+    - assets/images/background1.jpg
     - assets/images/dark_background.jpg
+    - assets/images/dark_background1.jpg
     - assets/images/user128.png
     - assets/images/user164.png
     - assets/images/user256.png
@@ -145,6 +152,7 @@ flutter:
     - assets/sample.pdf
     - assets/smartwindlogo.jpg
     - assets/smartwindLogo.png
+    - assets/smartwindlogo100.jpg
     - assets/splash.png
     - assets/splash1.png
     - assets/uc.png

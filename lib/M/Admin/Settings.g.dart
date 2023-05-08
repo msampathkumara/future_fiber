@@ -7,7 +7,7 @@ part of 'Settings.dart';
 // **************************************************************************
 
 Settings _$SettingsFromJson(Map<String, dynamic> json) => Settings()
-  ..erpNotWorking = json['erpNotWorking'] as int
+  ..erpNotWorking = json['erpNotWorking'] as int? ?? 0
   ..otpAdminEmails = (json['otpAdminEmails'] as List<dynamic>?)?.map((e) => e as String).toList() ?? [];
 
 Map<String, dynamic> _$SettingsToJson(Settings instance) => <String, dynamic>{

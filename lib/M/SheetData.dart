@@ -1,7 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-@JsonSerializable(explicitToJson: true)
 @HiveType(typeId: 16)
 part 'SheetData.g.dart';
 

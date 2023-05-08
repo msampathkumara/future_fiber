@@ -62,7 +62,7 @@ class _AppInfoState extends State<AppInfo> {
           padding: const EdgeInsets.all(32.0),
           child: Card(
             child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center, children: [
-              SizedBox(width: 150, child: Image.asset(Res.splash)),
+              SizedBox(width: 150, child: Image.asset(Res.smartwindlogo100, height: 100, width: 100, cacheWidth: 100)),
               ListTile(title: const Text('App Name'), trailing: Text('$appName')),
               ListTile(title: const Text('App Version'), trailing: Text('$appVersion')),
               ListTile(title: const Text('App Build Number'), trailing: Text('$buildNumber')),

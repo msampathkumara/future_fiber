@@ -86,8 +86,7 @@ class _MainAppState extends State<MainApp> {
                             width: double.infinity,
                             child: Center(
                                 child: Wrap(
-                              children: [Text((_isTestServer.data ?? false) ? 'Test server' : 'Local Server', style: const TextStyle(color: Colors.white, fontSize: 15))],
-                            ))),
+                                    children: [Text((_isTestServer.data ?? false) ? 'Test server' : 'Local Server', style: const TextStyle(color: Colors.white, fontSize: 15))]))),
                       Expanded(
                           child: loading
                               ? const Center(child: SizedBox(width: 200, height: 200, child: CircularProgressIndicator(color: Colors.red)))

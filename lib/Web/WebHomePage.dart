@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:smartwind_future_fibers/M/AppUser.dart';
@@ -146,7 +145,7 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                               Padding(
                                 padding: const EdgeInsets.only(left: 8, top: 8, bottom: 12, right: 8),
                                 child: Material(
-                                  color: Colors.blue,
+                                  color: Theme.of(context).primaryColor,
                                   elevation: 8,
                                   clipBehavior: Clip.antiAlias,
                                   borderRadius: BorderRadius.circular(8),
@@ -186,18 +185,10 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                                                                     selectedIndex: _selectedIndex,
                                                                     onDestinationSelected: (int index) async {
                                                                       if (index == materialManagementRouteWidgets.indexOf(null) && _isMaterialManagement) {
-                                                                        // _isMaterialManagement = false;
-                                                                        // setState(() => {_selectedIndex = 0});
                                                                         Navigator.popAndPushNamed(context, "/");
                                                                         return;
                                                                       } else if (index == routeWidgets.indexOf(null)) {
-                                                                        // _isMaterialManagement = true;
-                                                                        // setState(() => {_selectedIndex = 1});
-                                                                        // if (isLocalServer || await isTestServer) {
                                                                         Navigator.popAndPushNamed(context, "/materialManagement");
-                                                                        // } else {
-                                                                        //   html.window.open("https://mm.smartwind.nsslsupportservices.com", 'new tab');
-                                                                        // }
                                                                         return;
                                                                       }
 
@@ -209,59 +200,30 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                                                                         ? getMaterialManagementRouteButtons(size)
                                                                         : [
                                                                             if (AppUser.havePermissionFor(NsPermissions.DASHBOARD_DASHBOARD))
-                                                                              NavigationRailDestination(
-                                                                                  padding: const EdgeInsets.all(0),
-                                                                                  icon: const Icon(Icons.favorite_border),
-                                                                                  selectedIcon: const Icon(Icons.favorite),
-                                                                                  label: Text('Dash Board', style: TextStyle(fontSize: size))),
+                                                                              getNavigationRailDestination('Dash Board', Icons.favorite_border, Icons.favorite, size),
                                                                             if (AppUser.havePermissionFor(NsPermissions.TICKET_PRODUCTION_POOL))
-                                                                              NavigationRailDestination(
-                                                                                  padding: const EdgeInsets.all(0),
-                                                                                  icon: const Icon(Icons.precision_manufacturing_outlined),
-                                                                                  selectedIcon: const Icon(Icons.precision_manufacturing_rounded),
-                                                                                  label: Text('Production Pool', style: TextStyle(fontSize: size))),
-                                                                            NavigationRailDestination(
-                                                                                icon: const Icon(Icons.inventory_2_outlined),
-                                                                                selectedIcon: const Icon(Icons.inventory_2_rounded),
-                                                                                label: Text('Finished Goods', style: TextStyle(fontSize: size))),
+                                                                              getNavigationRailDestination('Production Pool', Icons.precision_manufacturing_outlined,
+                                                                                  Icons.precision_manufacturing_rounded, size),
+                                                                            getNavigationRailDestination(
+                                                                                'Finished Goods', Icons.inventory_2_outlined, Icons.inventory_2_rounded, size),
                                                                             if (AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_STANDARD_FILES))
-                                                                              NavigationRailDestination(
-                                                                                  icon: const Icon(Icons.collections_bookmark_outlined),
-                                                                                  selectedIcon: const Icon(Icons.collections_bookmark_rounded),
-                                                                                  label: Text('Standard Library', style: TextStyle(fontSize: size))),
+                                                                              getNavigationRailDestination('Standard Library', Icons.collections_bookmark_outlined,
+                                                                                  Icons.collections_bookmark_rounded, size),
                                                                             if (AppUser.havePermissionFor(NsPermissions.USERS_USER_MANAGER))
-                                                                              NavigationRailDestination(
-                                                                                  icon: const Icon(Icons.people_outline_outlined),
-                                                                                  selectedIcon: const Icon(Icons.people_outline_rounded),
-                                                                                  label: Text('User Manager', style: TextStyle(fontSize: size))),
-                                                                            NavigationRailDestination(
-                                                                                icon: const Icon(Icons.verified_outlined),
-                                                                                selectedIcon: const Icon(Icons.verified_rounded),
-                                                                                label: Text('QA & QC', style: TextStyle(fontSize: size))),
+                                                                              getNavigationRailDestination(
+                                                                                  'User Manager', Icons.people_outline_outlined, Icons.people_outline_rounded, size),
+                                                                            getNavigationRailDestination('QA & QC', Icons.verified_outlined, Icons.verified_rounded, size),
                                                                             if (AppUser.havePermissionFor(NsPermissions.MATERIAL_MANAGEMENT_MATERIAL_MANAGEMENT))
-                                                                              NavigationRailDestination(
-                                                                                  icon: const Icon(Icons.widgets_outlined),
-                                                                                  selectedIcon: const Icon(Icons.widgets_rounded),
-                                                                                  label: Text('Material Management', style: TextStyle(fontSize: size))),
+                                                                              getNavigationRailDestination(
+                                                                                  'Material Management', Icons.widgets_outlined, Icons.widgets_rounded, size),
                                                                             if (AppUser.havePermissionFor(NsPermissions.SHEET_ADD_DATA_SHEET))
-                                                                              NavigationRailDestination(
-                                                                                  icon: const Icon(Icons.list_alt_outlined),
-                                                                                  selectedIcon: const Icon(Icons.list_alt_rounded),
-                                                                                  label: Text('Sheet Data', style: TextStyle(fontSize: size))),
+                                                                              getNavigationRailDestination('Sheet Data', Icons.list_alt_outlined, Icons.list_alt_rounded, size),
                                                                             if (AppUser.havePermissionFor(NsPermissions.DEVICE_MANAGER_DEVICE_MANAGER))
-                                                                              NavigationRailDestination(
-                                                                                  icon: const Icon(Icons.phone_iphone_outlined),
-                                                                                  selectedIcon: const Icon(Icons.phone_iphone_rounded),
-                                                                                  label: Text('Tabs', style: TextStyle(fontSize: size))),
+                                                                              getNavigationRailDestination('Tabs', Icons.phone_iphone_outlined, Icons.phone_iphone_rounded, size),
                                                                             if (AppUser.havePermissionFor(NsPermissions.ADMIN_ADMIN))
-                                                                              NavigationRailDestination(
-                                                                                  icon: const Icon(Icons.admin_panel_settings_outlined),
-                                                                                  selectedIcon: const Icon(Icons.admin_panel_settings_rounded),
-                                                                                  label: Text('Admin', style: TextStyle(fontSize: size))),
-                                                                            NavigationRailDestination(
-                                                                                icon: const Icon(Icons.info_outline),
-                                                                                selectedIcon: const Icon(Icons.info),
-                                                                                label: Text('Info', style: TextStyle(fontSize: size))),
+                                                                              getNavigationRailDestination(
+                                                                                  'Admin', Icons.admin_panel_settings_outlined, Icons.admin_panel_settings_outlined, size),
+                                                                            getNavigationRailDestination('Info', Icons.info_outline, Icons.info_rounded, size),
                                                                           ])))));
                                               })),
                                       Padding(
@@ -314,11 +276,11 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                                   ),
                                 ),
                               ),
-                    Expanded(child: Center(child: (_isMaterialManagement ? materialManagementRouteWidgets : routeWidgets).elementAt(_selectedIndex)))
+                              Expanded(child: Center(child: (_isMaterialManagement ? materialManagementRouteWidgets : routeWidgets).elementAt(_selectedIndex)))
                             ],
                           ),
                         ),
-              const SizedBox(width: double.infinity, child: StatusBar())
+                        const SizedBox(width: double.infinity, child: StatusBar())
                       ],
                     )
                   : const PermissionMessage(),
@@ -331,5 +293,13 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
       print('Writing another word $i');
       statusBarProgressIndicatorController.setValue(i as double, 500);
     }
+  }
+
+  NavigationRailDestination getNavigationRailDestination(String s, IconData icon, IconData selectedIcon, double fontSize) {
+    return NavigationRailDestination(
+        padding: const EdgeInsets.all(0),
+        icon: Tooltip(message: s, child: Icon(icon)),
+        selectedIcon: Tooltip(message: s, child: Icon(selectedIcon)),
+        label: Text('Dash Board', style: TextStyle(fontSize: fontSize)));
   }
 }

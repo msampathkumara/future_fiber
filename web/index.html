@@ -5,7 +5,7 @@
         body, html {
             margin: 0;
             height: 100%;
-            background: #ffffff url("splash/img/light-background.webp");
+            background: #ffffff url("splash/imgx/light-background.jpg");
             background-size: 100% 100%;
         }
 
@@ -23,10 +23,11 @@
             body {
                 margin: 0;
                 height: 100%;
-                background: #ffffff url("./splash/imgx/dark-background.webp");
+                background: #ffffff url("./splash/imgx/dark-background.jpg");
                 background-size: 100% 100%;
             }
         }
+
 
 
     </style>
@@ -42,6 +43,7 @@
         };
         // To work around the recent breaking change on Flutter Web, you can set workaround_for_flutter_93615 to true:
         window.workaround_for_flutter_93615 = true;
+
 
 
     </script>
@@ -148,6 +150,7 @@
     }
 
 
+
 </script>
 <script>
 
@@ -173,6 +176,7 @@
     });
 
 
+
 </script>
 <script>
     async function download() {
@@ -185,6 +189,7 @@
     }
 
 
+
 </script>
 
 <a style="position:absolute;right: 50px; bottom: 50px;z-index: 0; color: white;" href="./reload"
@@ -193,7 +198,7 @@
 </body>
 </html>
 
-<picture id="splash">
+<picture id="splash" style="background-color:red">
     <source srcset="./splash/imgx/light-1x.png 1x, ./splash/imgx/light-2x.png 2x, ./splash/imgx/light-3x.png 3x"
             media="(prefers-color-scheme: light) or (prefers-color-scheme: no-preference)">
     <source srcset="./splash/imgx/dark-1x.png 1x, ./splash/imgx/dark-2x.png 2x,./splash/imgx/dark-3x.png 3x" media="(prefers-color-scheme: dark)">
