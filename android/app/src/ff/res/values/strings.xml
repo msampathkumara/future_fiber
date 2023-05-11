@@ -1,0 +1,5 @@
+<resources>
+
+    <string name="app_name">SmartWind (future fibres)</string>
+    <string name="app_name_debug">SmartWind (future fibres) (Debug)</string>
+</resources>
