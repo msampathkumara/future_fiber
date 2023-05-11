@@ -292,9 +292,11 @@ class _MobileHomeState extends State<MobileHome> {
   PopupMenuButton<MenuItems> _currentUserOperationMenu() {
     return PopupMenuButton<MenuItems>(
       onSelected: (MenuItems result) async {
-        if (result == MenuItems.changeRfCred) {
-          await const AddRFCredentials().show(context);
-        } else if (result == MenuItems.logout) {
+        // if (result == MenuItems.changeRfCred) {
+        //   await const AddRFCredentials().show(context);
+        // } else
+
+        if (result == MenuItems.logout) {
           await _logout();
         } else if (result == MenuItems.dbReload) {
           HiveBox.getDataFromServer(clean: true);

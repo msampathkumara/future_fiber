@@ -17,7 +17,8 @@ import '../../../../../../C/ServerResponse/ServerResponceMap.dart';
 import '../../../../../../M/EndPoints.dart';
 import '../../../../../../globals.dart';
 import 'PingFailedError.dart';
-import 'RF.dart';
+
+// import 'RF.dart';
 import 'package:dio/dio.dart';
 
 class FinishCheckList extends StatefulWidget {
@@ -170,13 +171,13 @@ class _FinishCheckListState extends State<FinishCheckList> {
           }
         } else {
           if (mounted) {
-            var uuid = const Uuid();
-            var x = await RF(ticket, res1.operationMinMax!, res1.ticketProgressDetails, key: Key(uuid.v1())).show(context);
-            if (x != null || x == true) {
-              await LoadingDialog(Api.post(EndPoints.tickets_qc_uploadEdits, {'quality': quality, 'ticketId': ticket.id, 'type': isQc, "sectionId": selectedSection}).then((res) {
-                Map data = res.data;
-              }));
-            }
+            // var uuid = const Uuid();
+            // var x = await RF(ticket, res1.operationMinMax!, res1.ticketProgressDetails, key: Key(uuid.v1())).show(context);
+            // if (x != null || x == true) {
+            await LoadingDialog(Api.post(EndPoints.tickets_qc_uploadEdits, {'quality': quality, 'ticketId': ticket.id, 'type': isQc, "sectionId": selectedSection}).then((res) {
+              Map data = res.data;
+            }));
+            // }
           }
         }
       }

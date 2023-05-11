@@ -501,29 +501,29 @@ class _LoginState extends State<Login> {
                         ))),
               ),
               Positioned(
-                top: -50,
+                top: 0,
                 child: SizedBox(
-                  height: 300,
-                  width: 300,
+                  height: 250,
+                  width: 250,
                   child: Padding(
                       padding: const EdgeInsets.all(24.0), child: Center(child: ClipRRect(borderRadius: BorderRadius.circular(360), child: Image.asset(Res.smartwindlogo)))),
                 ),
-              ),
-              Positioned(
-                  bottom: 10,
-                  left: 0,
-                  right: 0,
-                  child: Align(
-                      alignment: FractionalOffset.bottomCenter,
-                      child: Chip(
-                          avatar: CircleAvatar(
-                              radius: 360,
-                              backgroundColor: Colors.grey.shade800,
-                              child: ClipRRect(clipBehavior: Clip.antiAlias, borderRadius: BorderRadius.circular(360), child: Image.asset(Res.smartwindlogo, width: 50))),
-                          label: Text('SmartWind for Future Fibers $appVersion | $appFlavor'))))
+              )
             ],
           ),
-        ))
+        )),
+        Positioned(
+            bottom: 10,
+            left: 0,
+            right: 0,
+            child: Align(
+                alignment: FractionalOffset.bottomCenter,
+                child: Chip(
+                    avatar: CircleAvatar(
+                        radius: 360,
+                        backgroundColor: Colors.grey.shade800,
+                        child: ClipRRect(clipBehavior: Clip.antiAlias, borderRadius: BorderRadius.circular(360), child: Image.asset(Res.smartwindlogo50, width: 50))),
+                    label: Text('SmartWind for Future Fibers $appVersion | $appFlavor'))))
       ],
     );
   }

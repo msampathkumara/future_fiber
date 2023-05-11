@@ -263,6 +263,7 @@ class _WebStandardLibraryState extends State<WebStandardLibrary> {
                         padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
                         child: ListView(
                             children: Production.values
+                                .without([Production.All, Production.None])
                                 .map((e) => ListTile(
                                     title: Text(e.getValue()),
                                     selectedTileColor: Colors.black12,

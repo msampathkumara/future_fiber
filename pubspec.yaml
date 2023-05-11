@@ -4,7 +4,7 @@ description: NorthSails Smart Wind project for Future Fibers
 
 publish_to: 'none'
 
-version: 1.4.2+252
+version: 1.4.4+254
 
 environment:
   sdk: ">=2.17.0 <3.0.0"
@@ -150,12 +150,11 @@ flutter:
     - assets/QACheckList.json
     - assets/rf/rf.js
     - assets/sample.pdf
-    - assets/smartwindlogo.jpg
-    - assets/smartwindLogo.png
-    - assets/smartwindlogo100.jpg
-    - assets/smartwindlogo150.jpg
-    - assets/splash.png
-    - assets/splash1.png
+    - assets/smartwindlogo.png
+    - assets/smartwindlogo100.png
+    - assets/smartwindlogo150.png
+    - assets/smartwindlogo50.png
+    - assets/smartwindlogos.zip
     - assets/uc.png
   uses-material-design: true
   fonts:

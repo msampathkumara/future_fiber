@@ -18,12 +18,11 @@ class Res {
   static const String QACheckList = "assets/QACheckList.json";
   static const String rf = "assets/rf/rf.js";
   static const String sample = "assets/sample.pdf";
-  static const String smartwindlogo = "assets/smartwindlogo.jpg";
-  static const String smartwindLogo = "assets/smartwindLogo.png";
-  static const String smartwindlogo100 = "assets/smartwindlogo100.jpg";
-  static const String smartwindlogo150 = "assets/smartwindlogo150.jpg";
-  static const String splash = "assets/splash.png";
-  static const String splash1 = "assets/splash1.png";
+  static const String smartwindlogo = "assets/smartwindlogo.png";
+  static const String smartwindlogo100 = "assets/smartwindlogo100.png";
+  static const String smartwindlogo150 = "assets/smartwindlogo150.png";
+  static const String smartwindlogo50 = "assets/smartwindlogo50.png";
+  static const String smartwindlogos = "assets/smartwindlogos.zip";
   static const String uc = "assets/uc.png";
   static const String user128 = "assets/images/user128.png";
   static const String user164 = "assets/images/user164.png";

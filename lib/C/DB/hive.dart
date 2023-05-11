@@ -50,13 +50,15 @@ class HiveBox {
 
   /// Create an instance of HiveBox to use throughout the app.
   static Future create() async {
+    String flavor = const String.fromEnvironment("flavor");
+
     var packageInfo = await PackageInfo.fromPlatform();
     if (kIsWeb) {
-      Hive.init('smartwind_${packageInfo.buildNumber}');
+      Hive.init('smartwind_${flavor}_${packageInfo.buildNumber}');
     } else {
       var directory = await getApplicationDocumentsDirectory();
 
-      Hive.init('${directory.path}/smartwind_${packageInfo.buildNumber}');
+      Hive.init('${directory.path}/smartwind_${flavor}_${packageInfo.buildNumber}');
     }
 
     Hive.registerAdapter(NsUserAdapter());
