@@ -45,7 +45,7 @@ class _TicketSelectorState extends State<TicketSelector> {
           children: [
             SizedBox(
                 width: double.infinity,
-                child: SearchBar(
+                child: S_SearchBar(
                     delay: 300,
                     onSearchTextChanged: (text) {
                       searchText = text;

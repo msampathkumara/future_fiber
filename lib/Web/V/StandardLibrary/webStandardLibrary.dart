@@ -120,7 +120,7 @@ class _WebStandardLibraryState extends State<WebStandardLibrary> {
                   child: SizedBox(
                     height: 40,
                     width: 200,
-                    child: SearchBar(
+                    child: S_SearchBar(
                         onSearchTextChanged: (String text) {
                           searchText = text;
                           loadData();

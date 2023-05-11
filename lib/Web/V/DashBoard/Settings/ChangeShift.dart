@@ -37,9 +37,9 @@ class _ChangeShiftsState extends State<ChangeShifts> {
 
   late DateTime maxEndTime;
 
-  get isFactorySelected => selectedFactory != null;
+  bool get isFactorySelected => selectedFactory != null;
 
-  get timeValidateOk {
+  bool get timeValidateOk {
     List<Map<String, DateTime>> times = [];
 
     times.add({'start': minStartTime.subtract(const Duration(hours: 1)), 'end': minStartTime});
@@ -90,10 +90,10 @@ class _ChangeShiftsState extends State<ChangeShifts> {
 
   @override
   Widget build(BuildContext context) {
-    return IfWeb(elseIf: getUi(), child: DialogView(child: getWebUi(), width: 500, height: 500));
+    return IfWeb(elseIf: getWebUi(), child: DialogView(width: 500, height: 500, child: getWebUi()));
   }
 
-  getWebUi() {
+  Scaffold getWebUi() {
     return Scaffold(
         appBar: AppBar(title: const Text("Change Shifts Time")),
         body: loading
@@ -145,9 +145,7 @@ class _ChangeShiftsState extends State<ChangeShifts> {
     return (min > 0 ? min : (24 * 60) - min.abs()) / 60;
   }
 
-  getUi() {}
-
-  getTimeSelector(TimeOfDay time, f) {
+  MediaQuery getTimeSelector(TimeOfDay time, f) {
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
       child: ActionChip(

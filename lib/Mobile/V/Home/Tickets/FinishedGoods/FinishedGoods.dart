@@ -73,7 +73,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
             onPressed: () => Navigator.pop(context),
           ),
           title: const Text("Finished Goods", textScaleFactor: 1.2),
-          bottom: SearchBar(
+          bottom: S_SearchBar(
               delay: 300,
               searchController: searchController,
               onSearchTextChanged: (text) {

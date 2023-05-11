@@ -67,7 +67,7 @@ class _CPRListState extends State<CPRList> {
             onPressed: () => Navigator.pop(context),
           ),
           title: const Text("CPR", textScaleFactor: 1.2),
-          bottom: SearchBar(
+          bottom: S_SearchBar(
               delay: 500,
               searchController: searchController,
               child: IconButton(

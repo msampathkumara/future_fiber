@@ -41,7 +41,7 @@ class _AddDefaultEmployeeCountsState extends State<AddDefaultEmployeeCounts> {
     );
   }
 
-  final List<String> _sections = ['3D Drawing', 'Hand Work', 'layout', 'Qc', 'Sewing', 'Stickup'];
+  List<String> _sections = [];
 
   getWebUi() {
     return Scaffold(
@@ -146,6 +146,9 @@ class _AddDefaultEmployeeCountsState extends State<AddDefaultEmployeeCounts> {
 
       List sectionDefaults = data["sectionDefaults"];
       sectionDefaultsMap = {for (var e in sectionDefaults) e["sectionTitle"]: e};
+
+      // _sections = sectionDefaults.map((e) => e.sectionTitle).toList() as List<String>;
+      _sections = sectionDefaultsMap.keys.map((e) => e as String).toList();
 
       print(sectionDefaultsMap);
     }).whenComplete(() {

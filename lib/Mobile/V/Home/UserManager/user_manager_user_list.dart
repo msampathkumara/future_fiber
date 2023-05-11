@@ -117,7 +117,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
             if (_showDeactivatedUsers) const Text("(Deactivated Users)", textScaleFactor: 0.7),
           ],
         ),
-        bottom: SearchBar(
+        bottom: S_SearchBar(
           searchController: searchController,
           onSearchTextChanged: (text) {
             searchText = text;

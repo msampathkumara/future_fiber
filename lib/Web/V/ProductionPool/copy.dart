@@ -50,7 +50,7 @@ class TextMenu extends StatelessWidget {
                 leading: const Icon(Icons.copy),
                 title: Wrap(children: [const Text('Copy '), Text('  ${child.data}', style: const TextStyle(color: Colors.redAccent))]),
                 onTap: () {
-                  Clipboard.setData(ClipboardData(text: child.data));
+                  Clipboard.setData(ClipboardData(text: child.data ?? ''));
                   Navigator.of(context).pop();
                   snackBarKey.currentState?.showSnackBar(const SnackBar(behavior: SnackBarBehavior.floating, width: 200, content: Text('Copied')));
                 },

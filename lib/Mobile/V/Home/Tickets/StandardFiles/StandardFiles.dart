@@ -84,7 +84,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
               onPressed: () => Navigator.pop(context),
             ),
             title: const Text("Standard Library", textScaleFactor: 1.2),
-            bottom: SearchBar(
+            bottom: S_SearchBar(
                 delay: 300,
                 searchController: searchController,
                 onSearchTextChanged: (text) {

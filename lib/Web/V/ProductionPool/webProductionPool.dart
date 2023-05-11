@@ -127,7 +127,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                       child: SizedBox(
                           height: 40,
                           width: 250,
-                          child: SearchBar(onSearchTextChanged: (String text) => {searchText = text, loadData()}, delay: 300, searchController: _controller))),
+                          child: S_SearchBar(onSearchTextChanged: (String text) => {searchText = text, loadData()}, delay: 300, searchController: _controller))),
                 ])
               ],
             ),

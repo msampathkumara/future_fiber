@@ -68,7 +68,7 @@ class _UserPermissionsState extends State<UserPermissions> {
                         },
                         child: const Text("Choose Profile", style: TextStyle(color: Colors.white)))
                 ],
-                bottom: SearchBar(
+                bottom: S_SearchBar(
                     delay: 300,
                     onSearchTextChanged: (t) {
                       _userPermissions = userPermissions.where((e) => t.containsInArrayIgnoreCase([e.name, e.category, e.description])).toList();

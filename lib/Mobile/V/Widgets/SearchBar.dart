@@ -6,7 +6,7 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 // ignore: must_be_immutable
-class SearchBar extends StatefulWidget implements PreferredSizeWidget {
+class S_SearchBar extends StatefulWidget implements PreferredSizeWidget {
   TextEditingController searchController;
 
   Function(String text) onSearchTextChanged;
@@ -17,20 +17,20 @@ class SearchBar extends StatefulWidget implements PreferredSizeWidget {
 
   int delay = 0;
 
-  SearchBar({super.key, required this.onSearchTextChanged, this.onSubmitted, this.onBarCode, this.child, this.delay = 300, required this.searchController}) {
+  S_SearchBar({super.key, required this.onSearchTextChanged, this.onSubmitted, this.onBarCode, this.child, this.delay = 300, required this.searchController}) {
     print("_______________________________________");
   }
 
   @override
-  _SearchBarState createState() {
-    return _SearchBarState();
+  _S_SearchBarState createState() {
+    return _S_SearchBarState();
   }
 
   @override
   Size get preferredSize => const Size.fromHeight(50);
 }
 
-class _SearchBarState extends State<SearchBar> {
+class _S_SearchBarState extends State<S_SearchBar> {
   StreamSubscription? subscription;
 
   @override

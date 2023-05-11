@@ -39,7 +39,7 @@ class _KitListState extends State<KitList> {
           automaticallyImplyLeading: false,
           actions: const <Widget>[],
           elevation: 0.0,
-          bottom: SearchBar(
+          bottom: S_SearchBar(
               delay: 300,
               searchController: searchController,
               onSearchTextChanged: (text) {

@@ -265,7 +265,7 @@ class _WebCprState extends State<WebCpr> {
                   Material(
                       elevation: 4,
                       borderRadius: BorderRadius.circular(8),
-                      child: SizedBox(height: 40, width: 300, child: SearchBar(searchController: _controller, onSearchTextChanged: (text) => {searchText = text, loadData()})))
+                      child: SizedBox(height: 40, width: 300, child: S_SearchBar(searchController: _controller, onSearchTextChanged: (text) => {searchText = text, loadData()})))
                 ])
               ],
             ),

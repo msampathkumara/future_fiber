@@ -94,7 +94,7 @@ class _GeneratePasswordState extends State<GeneratePassword> {
                     width: 200,
                     child: ElevatedButton.icon(
                         onPressed: () {
-                          Clipboard.setData(ClipboardData(text: _newPassword)).then((_) {
+                          Clipboard.setData(ClipboardData(text: _newPassword ?? "")).then((_) {
                             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("password copied to clipboard")));
                           });
                         },

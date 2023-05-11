@@ -102,7 +102,7 @@ class _WebFinishedGoodsState extends State<WebFinishedGoods> {
                     child: SizedBox(
                       height: 40,
                       width: 200,
-                      child: SearchBar(
+                      child: S_SearchBar(
                           onSearchTextChanged: (String text) {
                             searchText = text;
                             loadData();

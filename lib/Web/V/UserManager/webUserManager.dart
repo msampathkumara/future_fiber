@@ -76,7 +76,7 @@ class _WebUserManagerState extends State<WebUserManager> {
                 Wrap(children: [
                   SizedBox(
                       width: 400,
-                      child: SearchBar(
+                      child: S_SearchBar(
                           onSearchTextChanged: (text) {
                             searchText = text;
                             loadData();

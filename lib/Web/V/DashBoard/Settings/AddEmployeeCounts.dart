@@ -50,11 +50,7 @@ class _AddEmployeeCountsState extends State<AddEmployeeCounts> {
 
   @override
   Widget build(BuildContext context) {
-    return DialogView(
-      child: getWebUi(),
-      width: 500,
-      height: 600,
-    );
+    return DialogView(child: getWebUi(), width: 500, height: 600);
   }
 
   final List<String> _sections = ['3D Drawing', 'Hand Work', 'layout', 'Qc', 'Sewing', 'Stickup'];

@@ -57,7 +57,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
             onPressed: () => Navigator.pop(context),
           ),
           title: const Text("QA & QC", textScaleFactor: 1.2),
-          bottom: SearchBar(
+          bottom: S_SearchBar(
               searchController: searchController,
               delay: 300,
               onSearchTextChanged: (text) {

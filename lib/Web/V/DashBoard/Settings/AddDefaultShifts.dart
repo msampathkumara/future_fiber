@@ -44,7 +44,7 @@ class _AddDefaultShiftsState extends State<AddDefaultShifts> {
 
   @override
   Widget build(BuildContext context) {
-    return IfWeb(elseIf: getUi(), child: DialogView(child: getWebUi(), width: 500, height: 500));
+    return IfWeb(elseIf: getWebUi(), child: DialogView(child: getWebUi(), width: 500, height: 500));
   }
 
   getWebUi() {
@@ -134,8 +134,6 @@ class _AddDefaultShiftsState extends State<AddDefaultShifts> {
     int min = ((t2.hour * 60 + t2.minute)) - ((t1.hour * 60 + t1.minute));
     return (min > 0 ? min : (24 * 60) - min.abs()) / 60;
   }
-
-  getUi() {}
 
   getTimeSelector(TimeOfDay time, f) {
     return ActionChip(

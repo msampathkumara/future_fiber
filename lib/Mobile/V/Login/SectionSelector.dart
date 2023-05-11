@@ -60,7 +60,7 @@ class _UserSectionSelectorState extends State<UserSectionSelector> {
               preferredSize: const Size.fromHeight(100),
               child: Column(
                 children: [
-                  SearchBar(
+                  S_SearchBar(
                       onSearchTextChanged: (String text) {
                         searchText = text.toLowerCase();
                         loadData();

@@ -139,7 +139,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                   if ((!_showAllTickets) && nsUser != null && nsUser!.section != null)
                     InkWell(onTap: () => {}, child: Text(_showAllMyProduction ? nsUser!.section!.factory : "${nsUser!.section!.sectionTitle} @ ${nsUser!.section!.factory}"))
                 ])),
-            bottom: SearchBar(
+            bottom: S_SearchBar(
                 searchController: searchController,
                 delay: 500,
                 onSearchTextChanged: (text) {

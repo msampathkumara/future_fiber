@@ -79,7 +79,7 @@ class _GenerateOTPState extends State<GenerateOTP> {
                     width: 200,
                     child: ElevatedButton.icon(
                         onPressed: () {
-                          Clipboard.setData(ClipboardData(text: _otp)).then((_) {
+                          Clipboard.setData(ClipboardData(text: _otp ?? '')).then((_) {
                             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("OTP copied to clipboard")));
                           });
                         },
