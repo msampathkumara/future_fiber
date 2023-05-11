@@ -33,9 +33,9 @@ class _ChangeShiftsState extends State<ChangeShifts> {
 
   String? selectedFactory;
 
-  late DateTime minStartTime;
+  late DateTime minStartTime = DateTime.now();
 
-  late DateTime maxEndTime;
+  DateTime? maxEndTime;
 
   bool get isFactorySelected => selectedFactory != null;
 
@@ -43,7 +43,9 @@ class _ChangeShiftsState extends State<ChangeShifts> {
     List<Map<String, DateTime>> times = [];
 
     times.add({'start': minStartTime.subtract(const Duration(hours: 1)), 'end': minStartTime});
-    times.add({'start': maxEndTime, 'end': maxEndTime.add(const Duration(hours: 1))});
+    if (maxEndTime != null) {
+      times.add({'start': maxEndTime!, 'end': maxEndTime!.add(const Duration(hours: 1))});
+    }
 
     for (var e in _shiftsList) {
       DateTime? d = e.startAt;
@@ -125,7 +127,7 @@ class _ChangeShiftsState extends State<ChangeShifts> {
                         ),
                       ),
                       const Spacer(),
-                      Text("Maximum end time :${DateFormat('yyyy-MM-dd HH:mm').format(maxEndTime)}", style: const TextStyle(color: Colors.red)),
+                      if (maxEndTime != null) Text("Maximum end time :${DateFormat('yyyy-MM-dd HH:mm').format(maxEndTime!)}", style: const TextStyle(color: Colors.red)),
                       Text("Minimum start time :${DateFormat('yyyy-MM-dd HH:mm').format(minStartTime)}", style: const TextStyle(color: Colors.red))
                     ],
                   ),
@@ -248,8 +250,8 @@ class _ChangeShiftsState extends State<ChangeShifts> {
       Map data = res.data;
 
       _shiftsList = Shift.fromJsonArray(data["shifts"]);
-      minStartTime = Shift.stringToDateTime(data["minStartTime"]);
-      maxEndTime = Shift.stringToDateTime(data["maxEndTime"]);
+      minStartTime = data["minStartTime"] == null ? DateTime.now() : Shift.stringToDateTime(data["minStartTime"]);
+      maxEndTime = data["maxEndTime"] == null ? null : Shift.stringToDateTime(data["maxEndTime"]);
 
       shiftsMap = {for (var e in _shiftsList) e.shiftName ?? '': e};
     }).whenComplete(() {

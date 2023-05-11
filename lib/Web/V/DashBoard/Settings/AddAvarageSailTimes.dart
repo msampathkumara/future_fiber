@@ -24,16 +24,16 @@ class AddAverageSailTimes extends StatefulWidget {
 class _AddAverageSailTimesState extends State<AddAverageSailTimes> {
   String? selectedFactory;
 
-  final List<String> _sections = ['3D Drawing', 'Hand Work', 'layout', 'Qc', 'Sewing', 'Stickup'];
+  List<String> _sections = [];
 
   bool get isFactorySelected => selectedFactory != null;
 
   @override
   Widget build(BuildContext context) {
-    return IfWeb(elseIf: getUi(), child: DialogView(child: getWebUi(), width: 400, height: 600));
+    return IfWeb(elseIf: getWebUi(), child: DialogView(width: 400, height: 600, child: getWebUi()));
   }
 
-  getWebUi() {
+  Scaffold getWebUi() {
     return Scaffold(
         appBar: AppBar(title: const Text('Average Sail Times')),
         body: error
@@ -163,6 +163,7 @@ class _AddAverageSailTimesState extends State<AddAverageSailTimes> {
       factoryAverages = data["factoryAverages"];
       sectionAverages = data["sectionAverages"];
       sectionAveragesMap = {for (var e in sectionAverages) e["sectionTitle"]: e};
+      _sections = sectionAveragesMap.keys.map((e) => e as String).toList();
 
       // print(sectionAveragesMap);
     }).whenComplete(() {

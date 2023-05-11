@@ -37,9 +37,9 @@ class _AddEmployeeCountsState extends State<AddEmployeeCounts> {
 
   List _selectedFactoryShiftsList = [];
 
-  get isFactorySelected => selectedFactory != null;
+  bool get isFactorySelected => selectedFactory != null;
 
-  get isShiftSelected => selectedShift != null;
+  bool get isShiftSelected => selectedShift != null;
 
   @override
   void initState() {
@@ -50,12 +50,12 @@ class _AddEmployeeCountsState extends State<AddEmployeeCounts> {
 
   @override
   Widget build(BuildContext context) {
-    return DialogView(child: getWebUi(), width: 500, height: 600);
+    return DialogView(width: 500, height: 600, child: getWebUi());
   }
 
-  final List<String> _sections = ['3D Drawing', 'Hand Work', 'layout', 'Qc', 'Sewing', 'Stickup'];
+  List<String> _sections = [];
 
-  getWebUi() {
+  Scaffold getWebUi() {
     return Scaffold(
         appBar: AppBar(title: const Text("Add Employee Count")),
         body: !isShiftSelected
@@ -241,6 +241,7 @@ class _AddEmployeeCountsState extends State<AddEmployeeCounts> {
 
       sectionEmployeeCounts = data["sectionEmployeeCounts"];
       sectionEmployeeCountsMap = {for (var e in sectionEmployeeCounts) e["sectionTitle"]: e};
+      _sections = sectionEmployeeCountsMap.keys.map((e) => e as String).toList();
     }).whenComplete(() {
       setState(() {
         loading = false;

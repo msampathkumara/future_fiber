@@ -38,11 +38,11 @@ class Shift {
 
   TimeOfDay get endAtTime => TimeOfDay(hour: endAt?.hour ?? 0, minute: endAt?.minute ?? 0);
 
-  get isActive => deleted == 0;
+  bool get isActive => deleted == 0;
 
-  static stringToDateTime(d) => DateFormat('yyyy-MM-dd HH:mm').parse(d);
+  static DateTime stringToDateTime(d) => DateFormat('yyyy-MM-dd HH:mm').parse(d);
 
-  static dateTimeToString(date) => DateFormat("yyyy-MM-dd  HH:mm").format(date);
+  static String dateTimeToString(date) => DateFormat("yyyy-MM-dd  HH:mm").format(date);
 
   Map<String, dynamic> toJson() => _$ShiftToJson(this);
 
