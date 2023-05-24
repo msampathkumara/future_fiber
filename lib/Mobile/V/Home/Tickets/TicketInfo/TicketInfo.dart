@@ -14,6 +14,7 @@ import 'package:smartwind_future_fibers/Mobile/V/Home/Tickets/TicketInfo/info_sh
 import 'package:smartwind_future_fibers/Mobile/V/Widgets/ErrorMessageView.dart';
 import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
 import 'package:smartwind_future_fibers/ns_icons_icons.dart';
+import 'package:deebugee_plugin/DialogView.dart';
 
 import '../../../../../C/Api.dart';
 import '../../../../../C/DB/DB.dart';

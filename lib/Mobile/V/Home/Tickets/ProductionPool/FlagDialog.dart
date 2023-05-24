@@ -1,5 +1,7 @@
+import 'package:deebugee_plugin/DialogView.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind_future_fibers/M/Enums.dart';
+import 'package:deebugee_plugin/DialogView.dart';
 import 'package:smartwind_future_fibers/M/Ticket.dart';
 import 'package:smartwind_future_fibers/M/TicketFlag.dart';
 import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
@@ -60,129 +62,129 @@ class _FlagDialogNewState extends State<FlagDialogNew> {
     return Theme(
         data: Theme.of(context).copyWith(
             scrollbarTheme:
-                const ScrollbarThemeData().copyWith(thumbColor: MaterialStateProperty.all(Theme.of(context).primaryColor), thumbVisibility: MaterialStateProperty.all(true))),
+            const ScrollbarThemeData().copyWith(thumbColor: MaterialStateProperty.all(Theme.of(context).primaryColor), thumbVisibility: MaterialStateProperty.all(true))),
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           body: commentList == null
               ? const Center(child: CircularProgressIndicator())
               : Stack(
-                  children: [
-                    Scaffold(
-                      backgroundColor: Colors.transparent,
-                      appBar: AppBar(
-                          toolbarHeight: 100,
-                          title: ListTile(
-                              leading: CircleAvatar(backgroundColor: Colors.white, child: icon),
-                              title: Text(widget.editable ? (isFlaged ? removeTitle : addTitle) : addTitle.replaceAll("Set", ""),
-                                  textScaleFactor: 1, style: const TextStyle(color: Colors.white)))
-                          // actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.info))]
-                          ),
-                      body: ListView.separated(
-                        controller: _scrollController,
-                        padding: EdgeInsets.only(bottom: isFlaged ? 50 : 162.0),
-                        reverse: true,
-                        itemBuilder: (BuildContext context, int index) {
-                          return const Divider(height: 0, color: Colors.transparent);
-                        },
-                        itemCount: (commentList?.length ?? 0) + 1,
-                        separatorBuilder: (BuildContext context, int index) {
-                          print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz $index');
-                          return getChatElement(commentList![index]);
-                        },
-                      ),
-                    ),
-                    if (widget.editable)
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: BottomAppBar(
-                          elevation: 0,
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 8.0, top: 8, bottom: 8, right: 8),
-                            child: Container(
-                                constraints: const BoxConstraints(minWidth: 100, maxWidth: 500),
-                                child: Column(
-                                  children: [
-                                    if (!isFlaged)
-                                      Padding(
-                                        padding: const EdgeInsets.only(bottom: 8.0),
-                                        child: SizedBox(
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(left: 0.0),
-                                            child: TextFormField(
-                                              keyboardType: TextInputType.multiline,
-                                              maxLines: null,
-                                              minLines: 4,
-                                              controller: _commentController,
-                                              onChanged: (c) {
-                                                setState(() {});
-                                              },
-                                              onFieldSubmitted: (x) {
-                                                if (x.isNotEmpty) {
-                                                  saveComment(_commentController.value.text);
-                                                  _commentController.clear();
-                                                }
-                                              },
-                                              decoration: InputDecoration(
-                                                  focusedBorder: OutlineInputBorder(
-                                                    borderSide: const BorderSide(color: Colors.grey),
-                                                    borderRadius: BorderRadius.circular(16),
-                                                  ),
-                                                  enabledBorder: UnderlineInputBorder(
-                                                    borderSide: const BorderSide(color: Colors.white),
-                                                    borderRadius: BorderRadius.circular(16),
-                                                  ),
-                                                  filled: true,
-                                                  fillColor: Colors.grey.shade100,
-                                                  focusColor: Colors.grey.shade100,
-                                                  border: InputBorder.none,
-                                                  // focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16.0), gapPadding: 0),
-                                                  // enabledBorder: InputBorder.none,
-                                                  hintText: 'Enter your Comment',
-                                                  hintStyle: const TextStyle(color: Colors.grey)
-                                                  // prefixIcon: Icon(Icons.search, color: Colors.white)
-                                                  ),
+            children: [
+              Scaffold(
+                backgroundColor: Colors.transparent,
+                appBar: AppBar(
+                    toolbarHeight: 100,
+                    title: ListTile(
+                        leading: CircleAvatar(backgroundColor: Colors.white, child: icon),
+                        title: Text(widget.editable ? (isFlaged ? removeTitle : addTitle) : addTitle.replaceAll("Set", ""),
+                            textScaleFactor: 1, style: const TextStyle(color: Colors.white)))
+                  // actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.info))]
+                ),
+                body: ListView.separated(
+                  controller: _scrollController,
+                  padding: EdgeInsets.only(bottom: isFlaged ? 50 : 162.0),
+                  reverse: true,
+                  itemBuilder: (BuildContext context, int index) {
+                    return const Divider(height: 0, color: Colors.transparent);
+                  },
+                  itemCount: (commentList?.length ?? 0) + 1,
+                  separatorBuilder: (BuildContext context, int index) {
+                    print('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz $index');
+                    return getChatElement(commentList![index]);
+                  },
+                ),
+              ),
+              if (widget.editable)
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: BottomAppBar(
+                    elevation: 0,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0, top: 8, bottom: 8, right: 8),
+                      child: Container(
+                          constraints: const BoxConstraints(minWidth: 100, maxWidth: 500),
+                          child: Column(
+                            children: [
+                              if (!isFlaged)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 8.0),
+                                  child: SizedBox(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 0.0),
+                                      child: TextFormField(
+                                        keyboardType: TextInputType.multiline,
+                                        maxLines: null,
+                                        minLines: 4,
+                                        controller: _commentController,
+                                        onChanged: (c) {
+                                          setState(() {});
+                                        },
+                                        onFieldSubmitted: (x) {
+                                          if (x.isNotEmpty) {
+                                            saveComment(_commentController.value.text);
+                                            _commentController.clear();
+                                          }
+                                        },
+                                        decoration: InputDecoration(
+                                            focusedBorder: OutlineInputBorder(
+                                              borderSide: const BorderSide(color: Colors.grey),
+                                              borderRadius: BorderRadius.circular(16),
                                             ),
-                                          ),
+                                            enabledBorder: UnderlineInputBorder(
+                                              borderSide: const BorderSide(color: Colors.white),
+                                              borderRadius: BorderRadius.circular(16),
+                                            ),
+                                            filled: true,
+                                            fillColor: Colors.grey.shade100,
+                                            focusColor: Colors.grey.shade100,
+                                            border: InputBorder.none,
+                                            // focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16.0), gapPadding: 0),
+                                            // enabledBorder: InputBorder.none,
+                                            hintText: 'Enter your Comment',
+                                            hintStyle: const TextStyle(color: Colors.grey)
+                                          // prefixIcon: Icon(Icons.search, color: Colors.white)
                                         ),
                                       ),
-                                    (!isFlaged)
-                                        ? SizedBox(
-                                            width: double.infinity,
-                                            height: 36,
-                                            child: ElevatedButton(
-                                                child: const Text('Add Flag'),
-                                                onPressed: () {
-                                                  showLoadingDialog(context, "Updating Data");
-                                                  setFlag(flagType.getValue(), _commentController.value.text, ticket).then((value) {
-                                                    print(value);
-                                                    Navigator.of(context).pop(true);
-                                                    Navigator.of(context).pop(true);
-                                                  });
-                                                }),
-                                          )
-                                        : SizedBox(
-                                            width: double.infinity,
-                                            height: 36,
-                                            child: ElevatedButton(
-                                                child: const Text('Remove Flag'),
-                                                onPressed: () {
-                                                  showLoadingDialog(context, "Updating Data");
-                                                  removeFlag(flagType.getValue(), ticket).then((value) {
-                                                    print(value);
-                                                    Navigator.of(context).pop(false);
-                                                    Navigator.of(context).pop(false);
-                                                  });
-                                                }),
-                                          )
-                                  ],
-                                )),
-                          ),
-                        ),
-                      )
-                  ],
-                ),
+                                    ),
+                                  ),
+                                ),
+                              (!isFlaged)
+                                  ? SizedBox(
+                                width: double.infinity,
+                                height: 36,
+                                child: ElevatedButton(
+                                    child: const Text('Add Flag'),
+                                    onPressed: () {
+                                      showLoadingDialog(context, "Updating Data");
+                                      setFlag(flagType.getValue(), _commentController.value.text, ticket).then((value) {
+                                        print(value);
+                                        Navigator.of(context).pop(true);
+                                        Navigator.of(context).pop(true);
+                                      });
+                                    }),
+                              )
+                                  : SizedBox(
+                                width: double.infinity,
+                                height: 36,
+                                child: ElevatedButton(
+                                    child: const Text('Remove Flag'),
+                                    onPressed: () {
+                                      showLoadingDialog(context, "Updating Data");
+                                      removeFlag(flagType.getValue(), ticket).then((value) {
+                                        print(value);
+                                        Navigator.of(context).pop(false);
+                                        Navigator.of(context).pop(false);
+                                      });
+                                    }),
+                              )
+                            ],
+                          )),
+                    ),
+                  ),
+                )
+            ],
+          ),
         ));
   }
 
@@ -296,7 +298,7 @@ class _FlagDialogNewState extends State<FlagDialogNew> {
         icon = const Icon(NsIcons.rush, color: Colors.orange);
         break;
       case TicketFlagTypes.SK:
-        // TODO: Handle this case.
+      // TODO: Handle this case.
         break;
       case TicketFlagTypes.HOLD:
         flagType = TicketFlagTypes.HOLD;
@@ -305,7 +307,7 @@ class _FlagDialogNewState extends State<FlagDialogNew> {
         icon = const Icon(Icons.pan_tool_rounded, color: Colors.red);
         break;
       case TicketFlagTypes.CROSS:
-        // TODO: Handle this case.
+      // TODO: Handle this case.
         break;
     }
   }

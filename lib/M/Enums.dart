@@ -6,9 +6,9 @@ import '../ns_icons_icons.dart';
 import '../C/DB/HiveClass.dart';
 import 'PermissionsEnum.dart';
 
-enum Production { All, EC__SIX, AERO__SIX, FIBRE_LIGHT, Machine_Shop, PULTRUSION, TACO, None }
+enum Production { All, EC__SIX, AERO__SIX, FIBRE_LITE, Machine_Shop, PULTRUSION, TACO, None }
 
-enum StandardProductions { All, EC__SIX, AERO__SIX, FIBRE_LIGHT, Machine_Shop, PULTRUSION, TACO }
+enum StandardProductions { All, EC__SIX, AERO__SIX, FIBRE_LITE, Machine_Shop, PULTRUSION, TACO }
 
 enum SortByItem { id, mo, oe, finished, dir, uptime, file, sheet, production, isRed, isRush, inPrint, isError, isGr, isSk, isHold, delete, reNamed, progress, fileVersion }
 

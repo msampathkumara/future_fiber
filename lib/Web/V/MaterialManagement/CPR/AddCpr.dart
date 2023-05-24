@@ -10,6 +10,7 @@ import 'package:smartwind_future_fibers/Web/V/MaterialManagement/CPR/PastMateria
 import 'package:smartwind_future_fibers/Web/V/MaterialManagement/DropMaterialList.dart';
 import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
 import 'package:smartwind_future_fibers/Web/Widgets/IfWeb.dart';
+import 'package:deebugee_plugin/DialogView.dart';
 
 import '../../../../C/Api.dart';
 import '../../../../C/DB/hive.dart';
@@ -39,7 +40,7 @@ class _AddCprState extends State<AddCpr> {
   final _shortageTypes = ["Short", "Damage", "Unreceived"];
   final _cprTypes = ["Pocket", "Rope Luff", "Purchase Cover", "Overhead Tape", "Tape Cover", "Take Down", "Soft Hanks", "Windows", "Stow pouch", "VPC**", "Other"];
   final _suppliers = ["Cutting", "SA", "Printing", 'None'];
-  final _clients = ["EC-SIX", "AERO-SIX", "FIBRE LIGHT", "Machine Shop", "PULTRUSION", "TACO"];
+  final _clients = ["EC-SIX", "AERO-SIX", "FIBRE LITE", "Machine Shop", "PULTRUSION", "TACO"];
   var textEditingController = TextEditingController();
 
   bool saving = false;

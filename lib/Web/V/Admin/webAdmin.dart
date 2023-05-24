@@ -44,7 +44,7 @@ class _WebAdminState extends State<WebAdmin> {
                     width: 700,
                     child: Column(
                       children: [
-                        // Padding(padding: const EdgeInsets.all(8.0), child: SizedBox(width: 500, child:S_SearchBar(onSearchTextChanged: (t) {}, searchController: searchController))),
+                        // Padding(padding: const EdgeInsets.all(8.0), child: SizedBox(width: 500, child:DeeBugeeSearchBar(onSearchTextChanged: (t) {}, searchController: searchController))),
                         Expanded(
                           child: ListView(
                             children: [

@@ -1,11 +1,12 @@
 import 'dart:async';
 
+import 'package:deebugee_plugin/DeeBugeeSearchBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:measured_size/measured_size.dart';
 import 'package:smartwind_future_fibers/M/CPR/CPR.dart';
 import 'package:smartwind_future_fibers/M/EndPoints.dart';
-import 'package:smartwind_future_fibers/Mobile/V/Widgets/SearchBar.dart';
+import 'package:deebugee_plugin/DeeBugeeSearchBar.dart';
 
 import '../../../../C/Api.dart';
 import '../../../../M/Enums.dart';
@@ -67,7 +68,7 @@ class _CPRListState extends State<CPRList> {
             onPressed: () => Navigator.pop(context),
           ),
           title: const Text("CPR", textScaleFactor: 1.2),
-          bottom: S_SearchBar(
+          bottom: DeeBugeeSearchBar(
               delay: 500,
               searchController: searchController,
               child: IconButton(

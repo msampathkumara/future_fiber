@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind_future_fibers/M/Device.dart';
 import 'package:smartwind_future_fibers/M/EndPoints.dart';
+import 'package:deebugee_plugin/DialogView.dart';
 import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
 
 import '../../../C/Api.dart';

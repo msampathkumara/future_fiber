@@ -16,8 +16,7 @@ KitItem _$KitItemFromJson(Map<String, dynamic> json) => KitItem()
   ..selected = json['selected'] as bool? ?? false
   ..saved = json['saved'] as bool? ?? false;
 
-Map<String, dynamic> _$KitItemToJson(KitItem instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$KitItemToJson(KitItem instance) => <String, dynamic>{
       'item': instance.item,
       'qty': instance.qty,
       'checked': instance.checked,

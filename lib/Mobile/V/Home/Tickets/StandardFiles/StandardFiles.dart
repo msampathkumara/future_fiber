@@ -6,7 +6,7 @@ import 'package:smartwind_future_fibers/C/Api.dart';
 import 'package:smartwind_future_fibers/M/Enums.dart';
 import 'package:smartwind_future_fibers/M/Ticket.dart';
 import 'package:smartwind_future_fibers/Mobile/V/Home/Tickets/TicketInfo/TicketInfo.dart';
-import 'package:smartwind_future_fibers/Mobile/V/Widgets/SearchBar.dart';
+import 'package:deebugee_plugin/DeeBugeeSearchBar.dart';
 
 import '../../../../../M/AppUser.dart';
 import '../../../../../M/EndPoints.dart';
@@ -84,7 +84,7 @@ class _StandardFilesState extends State<StandardFiles> with TickerProviderStateM
               onPressed: () => Navigator.pop(context),
             ),
             title: const Text("Standard Library", textScaleFactor: 1.2),
-            bottom: S_SearchBar(
+            bottom: DeeBugeeSearchBar(
                 delay: 300,
                 searchController: searchController,
                 onSearchTextChanged: (text) {

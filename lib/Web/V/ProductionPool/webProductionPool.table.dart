@@ -80,6 +80,10 @@ class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
           label: const Text('Production', style: TextStyle(fontWeight: FontWeight.bold)),
           onSort: (columnIndex, ascending) => sort<String>((d) => d.production ?? "", columnIndex, ascending)),
       DataColumn2(
+          size: ColumnSize.M,
+          label: const Text('Job ID', style: TextStyle(fontWeight: FontWeight.bold)),
+          onSort: (columnIndex, ascending) => sort<String>((d) => d.jobId ?? "", columnIndex, ascending)),
+      DataColumn2(
           size: ColumnSize.S,
           label: const Text('Progress', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
@@ -102,7 +106,7 @@ class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
     return Stack(key: menuKey, alignment: Alignment.bottomCenter, children: [
       PaginatedDataTable2(
           scrollController: _scrollController,
-          smRatio: 0.8,
+          smRatio: 0.5,
           lmRatio: 3,
           horizontalMargin: 20,
           checkboxHorizontalMargin: 12,
@@ -209,6 +213,7 @@ class DessertDataSource extends DataTableSource {
         DataCell(Wrap(
             direction: Axis.vertical,
             children: [Text(ticket.production ?? '-'), if (ticket.atSection != null) Text(ticket.atSection ?? '', style: const TextStyle(color: Colors.red, fontSize: 12))])),
+        DataCell(Text("${ticket.jobId}")),
         DataCell(Text("${ticket.progress}%")),
         DataCell(Wrap(
           direction: Axis.vertical,
@@ -329,7 +334,7 @@ class DessertDataSource extends DataTableSource {
     print("DATA SETED");
   }
 
-  getColor(int i) {
+  MaterialColor getColor(int i) {
     return [Colors.grey, Colors.green, Colors.red][i];
   }
 }

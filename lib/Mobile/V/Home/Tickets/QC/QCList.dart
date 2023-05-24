@@ -6,7 +6,7 @@ import 'package:smartwind_future_fibers/M/QC.dart';
 import 'package:smartwind_future_fibers/M/Section.dart';
 import 'package:smartwind_future_fibers/M/Ticket.dart';
 import 'package:smartwind_future_fibers/Mobile/V/Home/Tickets/QC/QCView.dart';
-import 'package:smartwind_future_fibers/Mobile/V/Widgets/SearchBar.dart';
+import 'package:deebugee_plugin/DeeBugeeSearchBar.dart';
 import 'package:smartwind_future_fibers/Web/V/QC/webTicketQView.dart';
 
 import '../../../../../C/Api.dart';
@@ -57,7 +57,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
             onPressed: () => Navigator.pop(context),
           ),
           title: const Text("QA & QC", textScaleFactor: 1.2),
-          bottom: S_SearchBar(
+          bottom: DeeBugeeSearchBar(
               searchController: searchController,
               delay: 300,
               onSearchTextChanged: (text) {

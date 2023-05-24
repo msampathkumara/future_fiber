@@ -7,6 +7,7 @@ import '../../../../C/Api.dart';
 import '../../../../M/Device.dart';
 import '../../../../M/EndPoints.dart';
 import '../../../../M/NsUser.dart';
+import 'package:deebugee_plugin/DialogView.dart';
 import '../../../../Mobile/V/Widgets/UserImage.dart';
 import '../../../Widgets/DialogView.dart';
 

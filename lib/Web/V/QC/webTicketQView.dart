@@ -12,6 +12,7 @@ import 'package:universal_html/html.dart' as html;
 
 import '../../../C/Api.dart';
 import '../../../Mobile/V/Widgets/UserImage.dart';
+import 'package:deebugee_plugin/DialogView.dart';
 import '../../Widgets/DialogView.dart';
 
 class WebTicketQView extends StatefulWidget {

@@ -11,6 +11,7 @@ import 'package:smartwind_future_fibers/Mobile/V/Home/Tickets/StandardFiles/fact
 import 'package:smartwind_future_fibers/Mobile/V/Widgets/UserImage.dart';
 import 'package:smartwind_future_fibers/Web/V/MaterialManagement/KIT/AddMaterials.dart';
 import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
+import 'package:deebugee_plugin/DialogView.dart';
 import 'package:smartwind_future_fibers/Web/Widgets/IfWeb.dart';
 import 'package:smartwind_future_fibers/Web/Widgets/chatBubble.dart';
 

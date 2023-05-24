@@ -7,8 +7,9 @@ import 'package:smartwind_future_fibers/M/EndPoints.dart';
 import 'package:smartwind_future_fibers/M/Enums.dart';
 import 'package:smartwind_future_fibers/M/NsUser.dart';
 import 'package:smartwind_future_fibers/M/user_permission.dart';
-import 'package:smartwind_future_fibers/Mobile/V/Widgets/SearchBar.dart';
+import 'package:deebugee_plugin/DeeBugeeSearchBar.dart';
 import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
+import 'package:deebugee_plugin/DialogView.dart';
 
 import '../../../../C/Api.dart';
 import '../../../../Web/V/UserManager/Permissions/PermissionsProfiles.dart';
@@ -68,7 +69,7 @@ class _UserPermissionsState extends State<UserPermissions> {
                         },
                         child: const Text("Choose Profile", style: TextStyle(color: Colors.white)))
                 ],
-                bottom: S_SearchBar(
+                bottom: DeeBugeeSearchBar(
                     delay: 300,
                     onSearchTextChanged: (t) {
                       _userPermissions = userPermissions.where((e) => t.containsInArrayIgnoreCase([e.name, e.category, e.description])).toList();

@@ -1,3 +1,4 @@
+import 'package:deebugee_plugin/DialogView.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,7 +7,7 @@ import 'package:smartwind_future_fibers/C/Validations.dart';
 import 'package:smartwind_future_fibers/C/form_input_decoration.dart';
 import 'package:smartwind_future_fibers/M/EndPoints.dart';
 import 'package:smartwind_future_fibers/M/NsUser.dart';
-
+import 'package:deebugee_plugin/DialogView.dart';
 import '../../../M/User/Email.dart';
 import '../../../Web/Widgets/DialogView.dart';
 import '../../../Web/Widgets/IfWeb.dart';
@@ -142,8 +143,7 @@ class _PasswordRecoveryState extends State<PasswordRecovery> {
 
       print(value.data);
 
-      if (map["user"] == null) {
-      } else {
+      if (map["user"] == null) {} else {
         user = NsUser.fromJson(map["user"]);
         print(user?.emails.first.toJson());
       }
@@ -235,94 +235,94 @@ class _PasswordRecoveryState extends State<PasswordRecovery> {
           child: Card(
             child: Center(
                 child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: SizedBox(width: 160, height: 160, child: UserImage(nsUser: user, radius: 160)),
-                ),
-                const Text("HI", textScaleFactor: 1.5),
-                Text(user!.name, textScaleFactor: 1.5),
-                const Divider(),
-                if (verifiedEmails.isEmpty) const Text('You don\'t have any verified email addresses'),
-                const SizedBox(height: 16),
-                if (verifiedEmails.isNotEmpty && verifiedEmails.length == 1)
-                  Builder(
-                    builder: (BuildContext context) {
-                      selectedEmail = verifiedEmails[0];
-                      return Wrap(direction: Axis.vertical, alignment: WrapAlignment.center, crossAxisAlignment: WrapCrossAlignment.center, children: [
-                        Padding(padding: const EdgeInsets.all(8.0), child: FilterChip(label: Text('${selectedEmail?.email}'), onSelected: (v) {}, selected: true)),
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: SizedBox(width: 160, height: 160, child: UserImage(nsUser: user, radius: 160)),
+                    ),
+                    const Text("HI", textScaleFactor: 1.5),
+                    Text(user!.name, textScaleFactor: 1.5),
+                    const Divider(),
+                    if (verifiedEmails.isEmpty) const Text('You don\'t have any verified email addresses'),
+                    const SizedBox(height: 16),
+                    if (verifiedEmails.isNotEmpty && verifiedEmails.length == 1)
+                      Builder(
+                        builder: (BuildContext context) {
+                          selectedEmail = verifiedEmails[0];
+                          return Wrap(direction: Axis.vertical, alignment: WrapAlignment.center, crossAxisAlignment: WrapCrossAlignment.center, children: [
+                            Padding(padding: const EdgeInsets.all(8.0), child: FilterChip(label: Text('${selectedEmail?.email}'), onSelected: (v) {}, selected: true)),
+                            const SizedBox(height: 16),
+                            SizedBox(
+                                width: 200,
+                                child: ElevatedButton(
+                                    onPressed: selectedEmail == null
+                                        ? null
+                                        : () {
+                                      sendOtp();
+                                    },
+                                    child: const Text('Send OTP')))
+                          ]);
+                        },
+                      ),
+                    if (verifiedEmails.isNotEmpty && verifiedEmails.length > 1)
+                      Wrap(direction: Axis.vertical, alignment: WrapAlignment.center, crossAxisAlignment: WrapCrossAlignment.center, children: [
+                        const Text('Select email address to send otp', style: TextStyle(fontSize: 16)),
+                        const SizedBox(height: 16),
+                        ...verifiedEmails
+                            .map((e) => Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: FilterChip(
+                              label: Text('${e.email}'),
+                              onSelected: (v) {
+                                setState(() {
+                                  selectedEmail = v ? e : null;
+                                });
+                              },
+                              selected: selectedEmail == e),
+                        ))
+                            .toList(),
                         const SizedBox(height: 16),
                         SizedBox(
-                            width: 200,
-                            child: ElevatedButton(
-                                onPressed: selectedEmail == null
-                                    ? null
-                                    : () {
-                                        sendOtp();
-                                      },
-                                child: const Text('Send OTP')))
-                      ]);
-                    },
-                  ),
-                if (verifiedEmails.isNotEmpty && verifiedEmails.length > 1)
-                  Wrap(direction: Axis.vertical, alignment: WrapAlignment.center, crossAxisAlignment: WrapCrossAlignment.center, children: [
-                    const Text('Select email address to send otp', style: TextStyle(fontSize: 16)),
-                    const SizedBox(height: 16),
-                    ...verifiedEmails
-                        .map((e) => Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: FilterChip(
-                                  label: Text('${e.email}'),
-                                  onSelected: (v) {
-                                    setState(() {
-                                      selectedEmail = v ? e : null;
-                                    });
-                                  },
-                                  selected: selectedEmail == e),
-                            ))
-                        .toList(),
-                    const SizedBox(height: 16),
-                    SizedBox(
-                      width: 200,
-                      child: ElevatedButton(
-                          onPressed: selectedEmail == null
-                              ? null
-                              : () {
-                                  sendOtp();
+                          width: 200,
+                          child: ElevatedButton(
+                              onPressed: selectedEmail == null
+                                  ? null
+                                  : () {
+                                sendOtp();
+                              },
+                              child: const Text('Send OTP')),
+                        )
+                      ]),
+                    const SizedBox(height: 8),
+                    const Divider(),
+                    Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: SizedBox(
+                            width: 250,
+                            child: TextButton(
+                                style: FormInputDecoration.buttonStyle(),
+                                onPressed: () {
+                                  requestOTP();
                                 },
-                          child: const Text('Send OTP')),
-                    )
-                  ]),
-                const SizedBox(height: 8),
-                const Divider(),
-                Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: SizedBox(
-                        width: 250,
-                        child: TextButton(
+                                child: const Text("Send OTP Request to System Admin")))),
+                    const Divider(),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: SizedBox(
+                        width: 200,
+                        child: ElevatedButton(
                             style: FormInputDecoration.buttonStyle(),
                             onPressed: () {
-                              requestOTP();
+                              _enterOTP = true;
+                              setLoading(false);
                             },
-                            child: const Text("Send OTP Request to System Admin")))),
-                const Divider(),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: SizedBox(
-                    width: 200,
-                    child: ElevatedButton(
-                        style: FormInputDecoration.buttonStyle(),
-                        onPressed: () {
-                          _enterOTP = true;
-                          setLoading(false);
-                        },
-                        child: const Text("Enter OTP")),
-                  ),
-                ),
-              ],
-            )),
+                            child: const Text("Enter OTP")),
+                      ),
+                    ),
+                  ],
+                )),
           ),
         ),
       ),

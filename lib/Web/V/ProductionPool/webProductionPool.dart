@@ -1,12 +1,12 @@
+import 'package:deebugee_plugin/deebugeeFloatingActionButtonMenu.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind_future_fibers/C/DB/DB.dart';
 import 'package:smartwind_future_fibers/M/Ticket.dart';
-import 'package:smartwind_future_fibers/Mobile/V/Widgets/SearchBar.dart';
+import 'package:deebugee_plugin/DeeBugeeSearchBar.dart';
 import 'package:smartwind_future_fibers/Web/V/AddTicket/add_ticket.dart';
 import 'package:smartwind_future_fibers/Web/V/ProductionPool/webProductionPool.table.dart';
 import 'package:smartwind_future_fibers/Web/V/SheetData/add_sheet.dart';
-
 import '../../../C/DB/hive.dart';
 import '../../../M/AppUser.dart';
 import '../../../M/Enums.dart';
@@ -127,7 +127,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                       child: SizedBox(
                           height: 40,
                           width: 250,
-                          child: S_SearchBar(onSearchTextChanged: (String text) => {searchText = text, loadData()}, delay: 300, searchController: _controller))),
+                          child: DeeBugeeSearchBar(onSearchTextChanged: (String text) => {searchText = text, loadData()}, delay: 300, searchController: _controller))),
                 ])
               ],
             ),
@@ -144,12 +144,22 @@ class _WebProductionPoolState extends State<WebProductionPool> {
         floatingActionButtonLocation: FloatingActionButtonLocation.miniStartFloat,
         floatingActionButton: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: FloatingActionButton.small(
-              onPressed: () async {
-                addItemsBottomSheetMenu(context);
-              },
-              // backgroundColor: Colors.green,
-              child: const Icon(Icons.add)),
+          child: DeebugeeFloatingActionButtonMenu(
+              (context) => [
+                    if (AppUser.havePermissionFor(NsPermissions.TICKET_UPLOAD_TICKET))
+                      PopupMenuItemChoice(title: 'Add Tickets', icon: Icons.picture_as_pdf, iconColor: Colors.red, onTap: () => const AddTickets().show(context)),
+                    if (AppUser.havePermissionFor(NsPermissions.SHEET_ADD_DATA_SHEET))
+                      PopupMenuItemChoice(title: 'Add Data Sheet', icon: Icons.list_alt_rounded, onTap: () => {const AddSheet().show(context)}),
+                    if (AppUser.havePermissionFor(NsPermissions.SHEET_ADD_UPDATED_DATA_SHEET))
+                      PopupMenuItemChoice(title: 'Add Updated Data Sheet', icon: Icons.list_alt_rounded, onTap: () => {const AddSheet(isUpdate: true).show(context)}),
+                  ],
+              icon: const Icon(Icons.add)),
+          // child: FloatingActionButton.small(
+          //     onPressed: () async {
+          //       addItemsBottomSheetMenu(context);
+          //     },
+          //     // backgroundColor: Colors.green,
+          //     child: const Icon(Icons.add)),
         ));
   }
 
@@ -165,11 +175,11 @@ class _WebProductionPoolState extends State<WebProductionPool> {
           child: (text != null)
               ? Text(text, style: TextStyle(color: checked ? Colors.red : Colors.black, fontWeight: FontWeight.bold))
               : Stack(
-                  children: [
-                    Icon(icon, color: checked ? Colors.red : Colors.black, size: 20),
-                    Icon(icon2, color: checked ? Colors.red : Colors.black, size: 20),
-                  ],
-                )),
+            children: [
+              Icon(icon, color: checked ? Colors.red : Colors.black, size: 20),
+              Icon(icon2, color: checked ? Colors.red : Colors.black, size: 20),
+            ],
+          )),
       tooltip: tooltip,
       onPressed: () async {
         if (onPressed != null) {

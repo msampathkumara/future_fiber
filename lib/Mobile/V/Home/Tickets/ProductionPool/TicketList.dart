@@ -6,7 +6,7 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:smartwind_future_fibers/M/Enums.dart';
 import 'package:smartwind_future_fibers/M/NsUser.dart';
 import 'package:smartwind_future_fibers/M/Ticket.dart';
-import 'package:smartwind_future_fibers/Mobile/V/Widgets/SearchBar.dart';
+import 'package:deebugee_plugin/DeeBugeeSearchBar.dart';
 import 'package:smartwind_future_fibers/ns_icons_icons.dart';
 
 import '../../../../../C/DB/DB.dart';
@@ -139,7 +139,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                   if ((!_showAllTickets) && nsUser != null && nsUser!.section != null)
                     InkWell(onTap: () => {}, child: Text(_showAllMyProduction ? nsUser!.section!.factory : "${nsUser!.section!.sectionTitle} @ ${nsUser!.section!.factory}"))
                 ])),
-            bottom: S_SearchBar(
+            bottom: DeeBugeeSearchBar(
                 searchController: searchController,
                 delay: 500,
                 onSearchTextChanged: (text) {

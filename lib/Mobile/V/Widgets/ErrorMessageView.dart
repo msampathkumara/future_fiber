@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../Web/Widgets/DialogView.dart';
+import 'package:deebugee_plugin/DialogView.dart';
 
 class ErrorMessageView extends StatefulWidget {
   final String errorMessage;

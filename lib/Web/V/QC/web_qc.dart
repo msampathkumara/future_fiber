@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:smartwind_future_fibers/M/EndPoints.dart';
 import 'package:smartwind_future_fibers/M/QC.dart';
 import 'package:smartwind_future_fibers/M/Section.dart';
-import 'package:smartwind_future_fibers/Mobile/V/Widgets/SearchBar.dart';
+import 'package:deebugee_plugin/DeeBugeeSearchBar.dart';
 import 'package:smartwind_future_fibers/Web/V/QC/webQView.dart';
 
 import '../../../C/Api.dart';
@@ -88,7 +88,6 @@ class _WebQcState extends State<WebQc> {
                                 child: Text(value.getValue()));
                           }).toList();
                         })),
-
                 Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: PopupMenuButton<String>(
@@ -112,33 +111,7 @@ class _WebQcState extends State<WebQc> {
                           }).toList();
                         })),
                 const SizedBox(width: 16),
-                // Material(
-                //   elevation: 4,
-                //   borderRadius: BorderRadius.circular(8),
-                //   child: SizedBox(
-                //     height: 40,
-                //     child: DropdownButtonHideUnderline(
-                //       child: DropdownButton<Production>(
-                //         value: selectedProduction,
-                //         selectedItemBuilder: (_) {
-                //           return Production.values.where((element) => element.getValue().toLowerCase() != 'none').map<Widget>((Production item) {
-                //             return Center(child: Padding(padding: const EdgeInsets.all(8.0), child: Text(item.getValue())));
-                //           }).toList();
-                //         },
-                //         items: Production.values.where((element) => element.getValue().toLowerCase() != 'none').map((Production value) {
-                //           return DropdownMenuItem<Production>(value: value, child: Text(value.getValue()));
-                //         }).toList(),
-                //         onChanged: (_) {
-                //           selectedProduction = _ ?? Production.All;
-                //           setState(() {});
-                //           loadData();
-                //         },
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                const SizedBox(width: 16),
-                S_SearchBar(
+                DeeBugeeSearchBar(
                     onSearchTextChanged: (text) {
                       searchText = text;
                       loadData();
@@ -160,39 +133,6 @@ class _WebQcState extends State<WebQc> {
               return getData(page, startingAt, count, sortedBy, sortedAsc);
             })),
       ),
-      // bottomNavigationBar: BottomAppBar(
-      //     shape: const CircularNotchedRectangle(),
-      //     color: Colors.green,
-      //     child: IconTheme(
-      //       data: const IconThemeData(color: Colors.white),
-      //       child: Row(
-      //         children: [
-      //           InkWell(
-      //             onTap: () {},
-      //             splashColor: Colors.red,
-      //             child: Ink(
-      //               child: IconButton(
-      //                 icon: const Icon(Icons.refresh),
-      //                 onPressed: () {
-      //                   _dataSource.refreshDatasource();
-      //                 },
-      //               ),
-      //             ),
-      //           ),
-      //           const Spacer(),
-      //           const Padding(
-      //             padding: EdgeInsets.all(8.0),
-      //             child: Text(
-      //               "${0}",
-      //               textScaleFactor: 1.1,
-      //               style: TextStyle(color: Colors.white),
-      //             ),
-      //           ),
-      //           const Spacer(),
-      //           const SizedBox(width: 36)
-      //         ],
-      //       ),
-      //     ))
     );
   }
 

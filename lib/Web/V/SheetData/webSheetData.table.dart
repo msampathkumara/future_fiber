@@ -80,6 +80,7 @@ class _WebPrintTableState extends State<WebSheetDataTable> {
       const DataColumn2(size: ColumnSize.S, label: Text('#', style: TextStyle(fontWeight: FontWeight.bold))),
       DataColumn2(size: ColumnSize.L, label: const Text('MO', style: TextStyle(fontWeight: FontWeight.bold)), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(size: ColumnSize.L, label: const Text('OE', style: TextStyle(fontWeight: FontWeight.bold)), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(size: ColumnSize.L, label: const Text('Job ID', style: TextStyle(fontWeight: FontWeight.bold)), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(
           size: ColumnSize.M,
           label: const Tooltip(message: "Operation NO", child: Text('Operation NO', overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.bold))),
@@ -184,13 +185,7 @@ class _ErrorAndRetry extends StatelessWidget {
               Text('Oops! $errorMessage', style: const TextStyle(color: Colors.white)),
               TextButton(
                   onPressed: retry,
-                  child: Row(mainAxisSize: MainAxisSize.min, children: const [
-                    Icon(
-                      Icons.refresh,
-                      color: Colors.white,
-                    ),
-                    Text('Retry', style: TextStyle(color: Colors.white))
-                  ]))
+                  child: const Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.refresh, color: Colors.white), Text('Retry', style: TextStyle(color: Colors.white))]))
             ])),
       );
 }
@@ -213,17 +208,12 @@ class __LoadingState extends State<_Loading> {
                   ? const SizedBox()
                   : Center(
                       child: Container(
-                      color: Colors.yellow,
+                        color: Colors.yellow,
                       padding: const EdgeInsets.all(7),
                       width: 150,
                       height: 50,
-                      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: const [
-                        CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.black,
-                        ),
-                        Text('Loading..')
-                      ]),
+                      child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround, children: [CircularProgressIndicator(strokeWidth: 2, color: Colors.black), Text('Loading..')]),
                     ));
             }));
   }
@@ -303,12 +293,13 @@ class SheetDataSourceAsync extends AsyncDataTableSource {
                 DataCell(Text("$_i")),
                 DataCell(Text((sheetData.mo) ?? "")),
                 DataCell(Text((sheetData.oe) ?? "")),
+                DataCell(Text((sheetData.jobId) ?? "")),
                 DataCell(Text(("${sheetData.operationNo ?? ""}"))),
                 DataCell(Text(("${sheetData.next}"))),
                 DataCell(Text((sheetData.operation ?? ""))),
                 DataCell(Text((sheetData.pool ?? ""))),
                 DataCell(Text((sheetData.deliveryDate ?? ""))),
-                DataCell(Text((sheetData.shipDate ?? ""))),
+                DataCell(Text((sheetData.shipDate ?? "")))
               ]);
         }).toList());
 

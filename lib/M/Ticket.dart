@@ -194,6 +194,16 @@ class Ticket extends DataObject {
   @JsonKey(defaultValue: null, includeIfNull: true)
   int? custom;
 
+  @HiveField(41, defaultValue: null)
+  @JsonKey(defaultValue: null, includeIfNull: true, fromJson: intToString)
+  String? jobId;
+
+  @HiveField(42, defaultValue: null)
+  @JsonKey(defaultValue: null, includeIfNull: true, fromJson: intToString)
+  String? config;
+
+  static String intToString(string) => '${string ?? ''}';
+
   bool get isCustom => custom == 1;
 
   bool get isStandard => custom == 0;

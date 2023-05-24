@@ -5,7 +5,7 @@ import 'package:smartwind_future_fibers/C/Api.dart';
 import 'package:smartwind_future_fibers/M/Enums.dart';
 import 'package:smartwind_future_fibers/M/Ticket.dart';
 import 'package:smartwind_future_fibers/Mobile/V/Home/Tickets/TicketInfo/TicketInfo.dart';
-import 'package:smartwind_future_fibers/Mobile/V/Widgets/SearchBar.dart';
+import 'package:deebugee_plugin/DeeBugeeSearchBar.dart';
 import 'package:smartwind_future_fibers/ns_icons_icons.dart';
 
 import '../../../../../M/EndPoints.dart';
@@ -73,7 +73,7 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
             onPressed: () => Navigator.pop(context),
           ),
           title: const Text("Finished Goods", textScaleFactor: 1.2),
-          bottom: S_SearchBar(
+          bottom: DeeBugeeSearchBar(
               delay: 300,
               searchController: searchController,
               onSearchTextChanged: (text) {

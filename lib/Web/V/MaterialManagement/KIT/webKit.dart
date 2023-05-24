@@ -1,4 +1,5 @@
 import 'package:data_table_2/data_table_2.dart';
+import 'package:deebugee_plugin/DeeBugeeSearchBar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -180,7 +181,8 @@ class _WebKitState extends State<WebKit> {
                   Material(
                       elevation: 4,
                       borderRadius: BorderRadius.circular(8),
-                      child: SizedBox(height: 40, width: 250, child: S_SearchBar(searchController: _controller, onSearchTextChanged: (text) => {searchText = text, loadData()}))),
+                      child: SizedBox(
+                          height: 40, width: 250, child: DeeBugeeSearchBar(searchController: _controller, onSearchTextChanged: (text) => {searchText = text, loadData()}))),
                 ])
               ],
             ),

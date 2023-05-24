@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:smartwind_future_fibers/C/DB/DB.dart';
 import 'package:smartwind_future_fibers/M/NsUser.dart';
 import 'package:smartwind_future_fibers/Mobile/V/Home/UserManager/user_manager_user_list.dart';
-import 'package:smartwind_future_fibers/Mobile/V/Widgets/SearchBar.dart';
+import 'package:deebugee_plugin/DeeBugeeSearchBar.dart';
 
 import '../../../C/DB/hive.dart';
 import '../../../M/Enums.dart';
@@ -76,7 +76,7 @@ class _WebUserManagerState extends State<WebUserManager> {
                 Wrap(children: [
                   SizedBox(
                       width: 400,
-                      child: S_SearchBar(
+                      child: DeeBugeeSearchBar(
                           onSearchTextChanged: (text) {
                             searchText = text;
                             loadData();

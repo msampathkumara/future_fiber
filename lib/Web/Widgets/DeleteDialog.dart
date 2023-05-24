@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
 import 'package:smartwind_future_fibers/Web/Widgets/IfWeb.dart';
+import 'package:deebugee_plugin/DialogView.dart';
 
 class DeleteDialog extends StatefulWidget {
   const DeleteDialog({Key? key}) : super(key: key);

@@ -1,5 +1,7 @@
+import 'package:deebugee_plugin/DialogView.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind_future_fibers/C/DB/hive.dart';
+import 'package:deebugee_plugin/DialogView.dart';
 import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
 
 import '../../../../../M/Ticket.dart';
@@ -40,38 +42,38 @@ class _TicketStartDialogState extends State<TicketStartDialog> {
         body: loading
             ? const Center(child: CircularProgressIndicator())
             : Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [const Text("Do you really want to start production ?", textScaleFactor: 1.5), Text("  ${ticket.mo}"), Text("  ${ticket.oe}")],
-                ),
-              ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [const Text("Do you really want to start production ?", textScaleFactor: 1.5), Text("  ${ticket.mo}"), Text("  ${ticket.oe}")],
+          ),
+        ),
         bottomNavigationBar: loading
             ? null
             : BottomAppBar(
-                child: Row(crossAxisAlignment: CrossAxisAlignment.end, mainAxisAlignment: MainAxisAlignment.end, children: [
-                Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text("Cancel"))),
-                Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                        onPressed: () async {
-                          setState(() {
-                            loading = true;
-                          });
-                          await Ticket.start(ticket, context).then((value) {
-                            var t = HiveBox.ticketBox.get(ticket.id);
-                            t?.isStarted = true;
-                            t?.save();
-                            Navigator.of(context).pop(t);
-                          });
-                        },
-                        child: const Text("Start")))
-              ])));
+            child: Row(crossAxisAlignment: CrossAxisAlignment.end, mainAxisAlignment: MainAxisAlignment.end, children: [
+              Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text("Cancel"))),
+              Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                      onPressed: () async {
+                        setState(() {
+                          loading = true;
+                        });
+                        await Ticket.start(ticket, context).then((value) {
+                          var t = HiveBox.ticketBox.get(ticket.id);
+                          t?.isStarted = true;
+                          t?.save();
+                          Navigator.of(context).pop(t);
+                        });
+                      },
+                      child: const Text("Start")))
+            ])));
   }
 }

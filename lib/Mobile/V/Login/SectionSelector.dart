@@ -1,3 +1,4 @@
+import 'package:deebugee_plugin/DeeBugeeSearchBar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind_future_fibers/M/AppUser.dart';
@@ -60,7 +61,7 @@ class _UserSectionSelectorState extends State<UserSectionSelector> {
               preferredSize: const Size.fromHeight(100),
               child: Column(
                 children: [
-                  S_SearchBar(
+                  DeeBugeeSearchBar(
                       onSearchTextChanged: (String text) {
                         searchText = text.toLowerCase();
                         loadData();
@@ -73,9 +74,9 @@ class _UserSectionSelectorState extends State<UserSectionSelector> {
                       children: [
                         ChoiceChip(label: const Text("All"), selected: selectedFactory == null, onSelected: (v) => {selectedFactory = null, loadData()}),
                         ...factories.map((e) => Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: ChoiceChip(label: Text(e), selected: selectedFactory == e, onSelected: (v) => {selectedFactory = e, loadData()}),
-                            ))
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: ChoiceChip(label: Text(e), selected: selectedFactory == e, onSelected: (v) => {selectedFactory = e, loadData()}),
+                        ))
                       ],
                     ),
                   )

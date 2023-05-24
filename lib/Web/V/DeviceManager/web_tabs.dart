@@ -1,4 +1,5 @@
 import 'package:data_table_2/data_table_2.dart';
+import 'package:deebugee_plugin/DeeBugeeSearchBar.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind_future_fibers/M/EndPoints.dart';
 import 'package:smartwind_future_fibers/M/NsUser.dart';
@@ -53,7 +54,7 @@ class _WebTabsState extends State<WebTabs> {
               const Spacer(),
               Wrap(children: [
                 const SizedBox(width: 20),
-                S_SearchBar(
+                DeeBugeeSearchBar(
                     delay: 300,
                     onSearchTextChanged: (text) {
                       searchText = text;

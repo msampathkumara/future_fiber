@@ -6,7 +6,7 @@ import 'package:smartwind_future_fibers/C/Api.dart';
 import 'package:smartwind_future_fibers/M/CPR/CPR.dart';
 import 'package:smartwind_future_fibers/M/EndPoints.dart';
 import 'package:smartwind_future_fibers/M/Enums.dart';
-import 'package:smartwind_future_fibers/Mobile/V/Widgets/SearchBar.dart';
+import 'package:deebugee_plugin/DeeBugeeSearchBar.dart';
 import 'package:smartwind_future_fibers/Web/Styles/styles.dart';
 import 'package:smartwind_future_fibers/Web/V/MaterialManagement/CPR/AddCpr.dart';
 import 'package:smartwind_future_fibers/Web/V/MaterialManagement/CPR/TicketSelector.dart';
@@ -265,7 +265,8 @@ class _WebCprState extends State<WebCpr> {
                   Material(
                       elevation: 4,
                       borderRadius: BorderRadius.circular(8),
-                      child: SizedBox(height: 40, width: 300, child: S_SearchBar(searchController: _controller, onSearchTextChanged: (text) => {searchText = text, loadData()})))
+                      child:
+                          SizedBox(height: 40, width: 300, child: DeeBugeeSearchBar(searchController: _controller, onSearchTextChanged: (text) => {searchText = text, loadData()})))
                 ])
               ],
             ),

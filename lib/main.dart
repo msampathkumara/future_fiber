@@ -16,6 +16,15 @@ import 'globals.dart';
 
 void runLoggedApp() async {
   runZoned(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+    if (kDebugMode) {
+      isMaterialManagement = false;
+    } else {
+      isMaterialManagement = Uri.base.host.contains('mm.');
+    }
+
     await HiveBox.create();
     runApp((!kIsWeb && await isTestServer)
         ? Scaffold(
@@ -36,14 +45,7 @@ main() async {
   var env = const String.fromEnvironment("flavor");
   print('var env = String.fromEnvironment("flavor") =========== >>>$env');
 
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  if (kDebugMode) {
-    isMaterialManagement = false;
-  } else {
-    isMaterialManagement = Uri.base.host.contains('mm.');
-  }
   runLoggedApp();
 }
 

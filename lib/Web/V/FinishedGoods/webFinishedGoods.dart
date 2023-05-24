@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:deebugee_plugin/DeeBugeeSearchBar.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind_future_fibers/C/Api.dart';
 import 'package:smartwind_future_fibers/M/EndPoints.dart';
@@ -102,7 +103,7 @@ class _WebFinishedGoodsState extends State<WebFinishedGoods> {
                     child: SizedBox(
                       height: 40,
                       width: 200,
-                      child: S_SearchBar(
+                      child: DeeBugeeSearchBar(
                           onSearchTextChanged: (String text) {
                             searchText = text;
                             loadData();

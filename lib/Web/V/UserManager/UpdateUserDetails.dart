@@ -13,6 +13,7 @@ import 'package:smartwind_future_fibers/M/NsUser.dart';
 import 'package:smartwind_future_fibers/M/Section.dart';
 import 'package:smartwind_future_fibers/Mobile/V/Home/UserManager/section_list.dart';
 import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
+import 'package:deebugee_plugin/DialogView.dart';
 import 'package:smartwind_future_fibers/res.dart';
 
 import '../../../M/EndPoints.dart';

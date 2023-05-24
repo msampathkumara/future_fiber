@@ -1,4 +1,5 @@
 import 'package:data_table_2/data_table_2.dart';
+import 'package:deebugee_plugin/DeeBugeeSearchBar.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind_future_fibers/M/EndPoints.dart';
 
@@ -47,7 +48,7 @@ class _WebSheetDataState extends State<WebSheetData> {
               const Spacer(),
               Wrap(children: [
                 const SizedBox(width: 20),
-                S_SearchBar(
+                DeeBugeeSearchBar(
                     delay: 300,
                     onSearchTextChanged: (text) {
                       searchText = text;

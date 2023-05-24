@@ -4,7 +4,7 @@ import 'package:nfc_manager/nfc_manager.dart';
 import 'package:smartwind_future_fibers/C/DB/DB.dart';
 import 'package:smartwind_future_fibers/M/Enums.dart';
 import 'package:smartwind_future_fibers/M/NsUser.dart';
-import 'package:smartwind_future_fibers/Mobile/V/Widgets/SearchBar.dart';
+import 'package:deebugee_plugin/DeeBugeeSearchBar.dart';
 import 'package:smartwind_future_fibers/Web/V/UserManager/UpdateUserDetails.dart';
 import 'package:smartwind_future_fibers/Web/Widgets/ShowMessage.dart';
 
@@ -117,7 +117,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
             if (_showDeactivatedUsers) const Text("(Deactivated Users)", textScaleFactor: 0.7),
           ],
         ),
-        bottom: S_SearchBar(
+        bottom: DeeBugeeSearchBar(
           searchController: searchController,
           onSearchTextChanged: (text) {
             searchText = text;
@@ -181,7 +181,7 @@ class _UserManagerUserListState extends State<UserManagerUserList> with TickerPr
   // var subscription;
   List<Map> currentFileList = [];
 
-  final tabs = ["All", "EC-SIX", "AERO-SIX", "FIBRE LIGHT", "Machine Shop", "PULTRUSION", "TACO", "No Pool"];
+  final tabs = ["All", "EC-SIX", "AERO-SIX", "FIBRE LITE", "Machine Shop", "PULTRUSION", "TACO", "No Pool"];
   TabController? _tabBarController;
 
   getBody() {

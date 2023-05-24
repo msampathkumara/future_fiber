@@ -2,7 +2,7 @@
 // import 'package:smartwind_future_fibers/M/Enums.dart';
 // import 'package:smartwind_future_fibers/M/Ticket.dart';
 // import 'package:smartwind_future_fibers/M/TicketPrint.dart';
-// import 'package:smartwind_future_fibers/Mobile/V/Widgets/SearchBar.dart';
+// import 'package:deebugee_plugin/DeeBugeeSearchBar.dart';
 //
 // import '../../../../../C/Api.dart';
 // import '../../../../../M/EndPoints.dart';
@@ -50,7 +50,7 @@
 //             onPressed: () => Navigator.pop(context),
 //           ),
 //           title: const Text("Print", textScaleFactor: 1.2),
-//           bottom:S_SearchBar(
+//           bottom:DeeBugeeSearchBar(
 //               searchController: searchController,
 //               delay: 300,
 //               onSearchTextChanged: (text) {

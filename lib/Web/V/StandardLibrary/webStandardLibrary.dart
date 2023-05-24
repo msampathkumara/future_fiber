@@ -1,3 +1,4 @@
+import 'package:deebugee_plugin/DeeBugeeSearchBar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind_future_fibers/M/EndPoints.dart';
@@ -9,7 +10,6 @@ import '../../../M/AppUser.dart';
 import '../../../M/Enums.dart';
 import '../../../M/PermissionsEnum.dart';
 import '../../../M/Ticket.dart';
-import '../../../Mobile/V/Widgets/SearchBar.dart';
 import '../../Styles/styles.dart';
 import '../AddTicket/add_ticket.dart';
 import 'webStandardLibrary.table.dart';
@@ -65,14 +65,14 @@ class _WebStandardLibraryState extends State<WebStandardLibrary> {
       floatingActionButtonLocation: FloatingActionButtonLocation.miniStartFloat,
       floatingActionButton: (AppUser.havePermissionFor(NsPermissions.STANDARD_FILES_UPLOAD_STANDARD_FILES))
           ? Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: FloatingActionButton.small(
-                  onPressed: () async {
-                    addItemsBottomSheetMenu(context);
-                  },
-                  // backgroundColor: Colors.green,
-                  child: const Icon(Icons.add)),
-            )
+        padding: const EdgeInsets.all(8.0),
+        child: FloatingActionButton.small(
+            onPressed: () async {
+              addItemsBottomSheetMenu(context);
+            },
+            // backgroundColor: Colors.green,
+            child: const Icon(Icons.add)),
+      )
           : null,
       backgroundColor: Colors.transparent,
       appBar: AppBar(
@@ -93,9 +93,9 @@ class _WebStandardLibraryState extends State<WebStandardLibrary> {
                           return [...Production.values].map<Widget>((Production item) {
                             return Center(
                                 child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(item.getValue()),
-                            ));
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(item.getValue()),
+                                ));
                           }).toList();
                         },
                         items: [...Production.values].map((Production value) {
@@ -120,7 +120,7 @@ class _WebStandardLibraryState extends State<WebStandardLibrary> {
                   child: SizedBox(
                     height: 40,
                     width: 200,
-                    child: S_SearchBar(
+                    child: DeeBugeeSearchBar(
                         onSearchTextChanged: (String text) {
                           searchText = text;
                           loadData();
@@ -265,13 +265,13 @@ class _WebStandardLibraryState extends State<WebStandardLibrary> {
                             children: Production.values
                                 .without([Production.All, Production.None])
                                 .map((e) => ListTile(
-                                    title: Text(e.getValue()),
-                                    selectedTileColor: Colors.black12,
-                                    leading: const Icon(Icons.picture_as_pdf),
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                      AddTickets(standard: true, production: e).show(context);
-                                    }))
+                                title: Text(e.getValue()),
+                                selectedTileColor: Colors.black12,
+                                leading: const Icon(Icons.picture_as_pdf),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  AddTickets(standard: true, production: e).show(context);
+                                }))
                                 .toList())))
               ]));
         });

@@ -10,6 +10,7 @@ import 'package:timeline_tile/timeline_tile.dart';
 
 import '../../../../../C/Api.dart';
 import '../../../../../C/DB/hive.dart';
+import 'package:deebugee_plugin/DialogView.dart';
 import '../../../../../M/NsUser.dart';
 import '../../../../../Web/Widgets/DialogView.dart';
 import '../../../../../Web/Widgets/IfWeb.dart';

@@ -1,10 +1,13 @@
+import 'package:deebugee_plugin/DialogView.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind_future_fibers/M/NsUser.dart';
-
+import 'package:deebugee_plugin/DialogView.dart';
+import 'package:deebugee_plugin/DialogView.dart';
 import '../../../../M/AppUser.dart';
 import '../../../../Web/Widgets/DialogView.dart';
+import 'package:deebugee_plugin/DialogView.dart';
 import '../../../../Web/Widgets/IfWeb.dart';
 import '../../Widgets/UserImage.dart';
 
@@ -78,41 +81,41 @@ class _CurrentUserDetailsState extends State<CurrentUserDetails> {
             children: [
               Card(
                   child: Column(children: [
-                const ListTile(title: Text("Contact Details"), leading: Icon(Icons.contact_phone_outlined)),
-                Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(children: [
-                      ListTile(
-                          leading: const Icon(Icons.phone_android_outlined),
-                          title: const Text("Phone"),
-                          subtitle: Wrap(children: nsUser.phoneList.map((e) => Padding(padding: const EdgeInsets.only(right: 4.0), child: Chip(label: Text(e)))).toList())),
-                      ListTile(
-                        leading: const Icon(Icons.alternate_email_outlined),
-                        title: const Text("Email"),
-                        subtitle: Wrap(
-                            // direction: Axis.vertical,
-                            children: nsUser.emails
-                                .map((e) => Padding(
+                    const ListTile(title: Text("Contact Details"), leading: Icon(Icons.contact_phone_outlined)),
+                    Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(children: [
+                          ListTile(
+                              leading: const Icon(Icons.phone_android_outlined),
+                              title: const Text("Phone"),
+                              subtitle: Wrap(children: nsUser.phoneList.map((e) => Padding(padding: const EdgeInsets.only(right: 4.0), child: Chip(label: Text(e)))).toList())),
+                          ListTile(
+                            leading: const Icon(Icons.alternate_email_outlined),
+                            title: const Text("Email"),
+                            subtitle: Wrap(
+                              // direction: Axis.vertical,
+                                children: nsUser.emails
+                                    .map((e) => Padding(
                                     padding: const EdgeInsets.only(right: 4.0),
                                     child: Chip(
-                                        // avatar: e.isNotVerified ? null : const Icon(Icons.done, color: Colors.green),
+                                      // avatar: e.isNotVerified ? null : const Icon(Icons.done, color: Colors.green),
                                         label: Text("${e.email}"),
                                         onDeleted: e.isNotVerified
                                             ? null
                                             : () {
-                                                // VerifyEmail(e).show(context);
-                                              },
+                                          // VerifyEmail(e).show(context);
+                                        },
                                         deleteIcon: e.isNotVerified ? null : const Icon(Icons.error, color: Colors.red))))
-                                .toList()),
-                        // trailing: IconButton(
-                        //     onPressed: () {
-                        //       AddUserEmail(() {}).show(context);
-                        //     },
-                        //     icon: const Icon(Icons.add))
-                      ),
-                      ListTile(leading: const Icon(Icons.location_on_outlined), title: const Text("Address"), subtitle: Text(nsUser.address.split(",").join("\n"), style: stStyle))
-                    ]))
-              ])),
+                                    .toList()),
+                            // trailing: IconButton(
+                            //     onPressed: () {
+                            //       AddUserEmail(() {}).show(context);
+                            //     },
+                            //     icon: const Icon(Icons.add))
+                          ),
+                          ListTile(leading: const Icon(Icons.location_on_outlined), title: const Text("Address"), subtitle: Text(nsUser.address.split(",").join("\n"), style: stStyle))
+                        ]))
+                  ])),
               Card(
                 child: Column(
                   children: [
@@ -148,20 +151,16 @@ class _CurrentUserDetailsState extends State<CurrentUserDetails> {
     return PopupMenuButton<int>(
         icon: const Icon(Icons.menu, color: Colors.red),
         onSelected: (int result) async {
-          if (result == 0) {
-          } else if (result == 1) {
-          } else if (result == 2) {
-          } else if (result == 3) {
-          } else if (result == 4) {}
+          if (result == 0) {} else if (result == 1) {} else if (result == 2) {} else if (result == 3) {} else if (result == 4) {}
 
           setState(() {});
           // print(result);
         },
         itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-              const PopupMenuItem<int>(value: 0, child: Text('Reload Database')),
-              const PopupMenuItem<int>(value: 1, child: Text('Delete Downloaded Files')),
-              const PopupMenuItem<int>(value: 2, child: Text('Logout')),
-              const PopupMenuItem<int>(value: 3, child: Text('Change Section'))
-            ]);
+          const PopupMenuItem<int>(value: 0, child: Text('Reload Database')),
+          const PopupMenuItem<int>(value: 1, child: Text('Delete Downloaded Files')),
+          const PopupMenuItem<int>(value: 2, child: Text('Logout')),
+          const PopupMenuItem<int>(value: 3, child: Text('Change Section'))
+        ]);
   }
 }

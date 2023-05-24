@@ -1,10 +1,10 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-@HiveType(typeId: 16)
 part 'SheetData.g.dart';
 
 @JsonSerializable(explicitToJson: true)
+@HiveType(typeId: 16)
 class SheetData {
   @HiveField(1, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)
@@ -53,6 +53,16 @@ class SheetData {
   @HiveField(12, defaultValue: null)
   @JsonKey(defaultValue: null, includeIfNull: true)
   String? shipDate;
+
+  @HiveField(13, defaultValue: null)
+  @JsonKey(defaultValue: null, includeIfNull: true, fromJson: intToString)
+  String? jobId;
+
+  @HiveField(14, defaultValue: null)
+  @JsonKey(defaultValue: null, includeIfNull: true, fromJson: intToString)
+  String? config;
+
+  static String intToString(string) => '$string';
 
   SheetData();
 

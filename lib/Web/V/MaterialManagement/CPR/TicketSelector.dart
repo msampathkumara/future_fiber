@@ -1,9 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind_future_fibers/M/Enums.dart';
-import 'package:smartwind_future_fibers/Mobile/V/Widgets/SearchBar.dart';
+import 'package:deebugee_plugin/DeeBugeeSearchBar.dart';
 import 'package:smartwind_future_fibers/Web/V/MaterialManagement/CPR/AddTicket.dart';
 import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
+import 'package:deebugee_plugin/DialogView.dart';
 import 'package:smartwind_future_fibers/Web/Widgets/IfWeb.dart';
 
 import '../../../../C/DB/hive.dart';
@@ -45,7 +46,7 @@ class _TicketSelectorState extends State<TicketSelector> {
           children: [
             SizedBox(
                 width: double.infinity,
-                child: S_SearchBar(
+                child: DeeBugeeSearchBar(
                     delay: 300,
                     onSearchTextChanged: (text) {
                       searchText = text;
