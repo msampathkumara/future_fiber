@@ -83,25 +83,16 @@ class _TicketInfoState extends State<TicketInfo> {
   }
 
   var bottomNavigationBarItems = <BottomNavigationBarItem>[
-    const BottomNavigationBarItem(
-      icon: Icon(Icons.data_usage),
-      label: "Progress",
-    ),
-    const BottomNavigationBarItem(
-      icon: Icon(Icons.flag),
-      label: "Flags",
-    ),
-    const BottomNavigationBarItem(
-      icon: Icon(Icons.history),
-      label: "History",
-    ),
+    const BottomNavigationBarItem(icon: Icon(Icons.data_usage), label: "Progress"),
+    const BottomNavigationBarItem(icon: Icon(Icons.flag), label: "Flags"),
+    const BottomNavigationBarItem(icon: Icon(Icons.history), label: "History"),
   ];
   int bottomNavigationBarSelectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return kIsWeb
-        ? DialogView(child: getWebUi(), width: 1000)
+        ? DialogView(width: 1000, child: getWebUi())
         : Scaffold(
             body: _loading ? const Center(child: CircularProgressIndicator()) : _body(bottomNavigationBarSelectedIndex),
             appBar: _appBar(),
@@ -126,11 +117,12 @@ class _TicketInfoState extends State<TicketInfo> {
             floatingActionButton: getViewFileButton());
   }
 
+  var tsx = const TextStyle(color: Colors.green, fontSize: 24);
   var ts = const TextStyle(color: Colors.white, fontSize: 24);
   var smallText = const TextStyle(fontSize: 16);
   var xSmallText = const TextStyle(fontSize: 12);
 
-  _appBar() {
+  AppBar _appBar() {
     return AppBar(
       // backgroundColor: Theme.of(context).primaryColor,
 
@@ -168,10 +160,10 @@ class _TicketInfoState extends State<TicketInfo> {
                             //       icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)), onPressed: () {}),
                             if (_ticket.isHold == 1)
                               IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.pan_tool_rounded, color: Colors.black)), onPressed: () {}),
-                            if (_ticket.isGr == 1)
-                              IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)), onPressed: () {}),
-                            if (_ticket.isSk == 1)
-                              IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)), onPressed: () {}),
+                            // if (_ticket.isGr == 1)
+                            //   IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)), onPressed: () {}),
+                            // if (_ticket.isSk == 1)
+                            //   IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)), onPressed: () {}),
                             if (_ticket.isError == 1)
                               IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.report_problem_rounded, color: Colors.red)), onPressed: () {}),
                             if (_ticket.isSort == 1)
@@ -216,7 +208,7 @@ class _TicketInfoState extends State<TicketInfo> {
     );
   }
 
-  _body(int index) {
+  StatefulWidget? _body(int index) {
     switch (index) {
       case 0:
         return info_Flags(flags, ticketComments);
@@ -235,7 +227,7 @@ class _TicketInfoState extends State<TicketInfo> {
   List<TicketComment> ticketComments = [];
   List<CPR> cprs = [];
 
-  _getBottomNavigationBarItem(IconData icon, String text, int i) {
+  InkResponse _getBottomNavigationBarItem(IconData icon, String text, int i) {
     return InkResponse(
         splashColor: Colors.white,
         radius: 110,
@@ -255,7 +247,7 @@ class _TicketInfoState extends State<TicketInfo> {
 
   var visualDensity = const VisualDensity(horizontal: 0, vertical: -4);
 
-  getWebUi() {
+  Scaffold getWebUi() {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Row(children: [
@@ -279,6 +271,7 @@ class _TicketInfoState extends State<TicketInfo> {
                             visualDensity: visualDensity,
                             title: Text(_ticket.production ?? "_", style: ts.merge(smallText)),
                             subtitle: Text(_ticket.atSection ?? '', style: ts.merge(smallText))),
+                        if (AppUser.getUser()?.id == 1) Padding(padding: const EdgeInsets.all(8.0), child: TextMenu(child: Text("${_ticket.id}", style: ts))),
                         ListTile(visualDensity: visualDensity, title: Text("Pool : ", style: ts.merge(xSmallText)), subtitle: Text(_ticket.pool ?? '', style: ts.merge(smallText))),
                         ListTile(
                             visualDensity: visualDensity,
@@ -300,10 +293,10 @@ class _TicketInfoState extends State<TicketInfo> {
                             //       icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)), onPressed: () {}),
                             if (_ticket.isHold == 1)
                               IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.pan_tool_rounded, color: Colors.black)), onPressed: () {}),
-                            if (_ticket.isGr == 1)
-                              IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)), onPressed: () {}),
-                            if (_ticket.isSk == 1)
-                              IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)), onPressed: () {}),
+                            // if (_ticket.isGr == 1)
+                            //   IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)), onPressed: () {}),
+                            // if (_ticket.isSk == 1)
+                            //   IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)), onPressed: () {}),
                             if (_ticket.isError == 1)
                               IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.report_problem_rounded, color: Colors.red)), onPressed: () {}),
                             if (_ticket.isSort == 1)
@@ -346,6 +339,119 @@ class _TicketInfoState extends State<TicketInfo> {
                           icon: const Icon(Icons.close, color: Colors.black))
                     ]),
                     backgroundColor: Colors.white),
+                body: _loading ? const Center(child: CircularProgressIndicator()) : _body(bottomNavigationBarSelectedIndex),
+                backgroundColor: Colors.white,
+                bottomNavigationBar: BottomAppBar(
+                    elevation: 16,
+                    // color: Colors.orange,
+                    color: Theme.of(context).primaryColor,
+                    shape: const CircularNotchedRectangle(),
+                    notchMargin: 4.0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          _getBottomNavigationBarItem(Icons.tour_rounded, ("Flags"), 0),
+                          _getBottomNavigationBarItem(Icons.data_usage_rounded, ("Progress"), 1),
+                          _getBottomNavigationBarItem(Icons.category_outlined, ("Short Items"), 2),
+                          _getBottomNavigationBarItem(Icons.history_rounded, ("History"), 3)
+                        ],
+                      ),
+                    )),
+                floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+                floatingActionButton: getViewFileButton()))
+      ]),
+    );
+  }
+
+  Scaffold getWebUi1() {
+    return Scaffold(
+      appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: Row(children: [
+            SizedBox(
+                width: 500,
+                child: ListTile(
+                    visualDensity: visualDensity, title: TextMenu(child: Text(_ticket.mo ?? "_", style: tsx)), subtitle: TextMenu(child: Text(_ticket.oe ?? "_", style: tsx)))),
+            const Spacer(),
+            IconButton(onPressed: () => {Navigator.pop(context)}, icon: const Icon(Icons.close, color: Colors.black))
+          ]),
+          backgroundColor: Colors.white),
+      body: Row(children: [
+        SizedBox(
+            width: 300,
+            child: Container(
+              color: Theme.of(context).primaryColor,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        ListTile(
+                            visualDensity: visualDensity,
+                            title: Text(_ticket.production ?? "_", style: ts.merge(smallText)),
+                            subtitle: Text(_ticket.atSection ?? '', style: ts.merge(smallText))),
+                        ListTile(visualDensity: visualDensity, title: Text("Pool : ", style: ts.merge(xSmallText)), subtitle: Text(_ticket.pool ?? '', style: ts.merge(smallText))),
+                        ListTile(
+                            visualDensity: visualDensity,
+                            title: Text("Update on : ", style: ts.merge(xSmallText)),
+                            subtitle: Text(_ticket.getUpdateDateTime(), style: ts.merge(smallText))),
+                        if (_ticket.shipDate.isNotEmpty)
+                          ListTile(
+                              visualDensity: visualDensity, title: Text("Ship Date : ", style: ts.merge(xSmallText)), subtitle: Text(_ticket.shipDate, style: ts.merge(smallText))),
+                        if (_ticket.deliveryDate.isNotEmpty)
+                          ListTile(
+                              visualDensity: visualDensity,
+                              title: Text("Delivery Date : ", style: ts.merge(xSmallText)),
+                              subtitle: Text(_ticket.deliveryDate, style: ts.merge(smallText))),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Wrap(children: [
+                            // if (_ticket.inPrint == 1)
+                            //   IconButton(
+                            //       icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.print_rounded, color: Colors.deepOrangeAccent)), onPressed: () {}),
+                            if (_ticket.isHold == 1)
+                              IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.pan_tool_rounded, color: Colors.black)), onPressed: () {}),
+                            // if (_ticket.isGr == 1)
+                            //   IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)), onPressed: () {}),
+                            // if (_ticket.isSk == 1)
+                            //   IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)), onPressed: () {}),
+                            if (_ticket.isError == 1)
+                              IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.report_problem_rounded, color: Colors.red)), onPressed: () {}),
+                            if (_ticket.isSort == 1)
+                              IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.local_mall_rounded, color: Colors.green)), onPressed: () {}),
+                            if (_ticket.isRush == 1)
+                              IconButton(
+                                  icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent)), onPressed: () {}),
+                            if (_ticket.isRed == 1)
+                              IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)), onPressed: () {}),
+                          ]),
+                        )
+                      ],
+                    ),
+                  ),
+                  if (_ticket.isStarted)
+                    Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: CircularPercentIndicator(
+                            radius: 50.0,
+                            lineWidth: 4.0,
+                            percent: (_progress / 100).toDouble(),
+                            center: Text("${_ticket.progress}%", style: ts),
+                            progressColor: Colors.blue,
+                            animateFromLastPercent: true,
+                            animation: true,
+                            animationDuration: 500))
+                ],
+              ),
+            )),
+        Expanded(
+            child: Scaffold(
                 body: _loading ? const Center(child: CircularProgressIndicator()) : _body(bottomNavigationBarSelectedIndex),
                 backgroundColor: Colors.white,
                 bottomNavigationBar: BottomAppBar(

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -12,6 +13,7 @@ import 'package:smartwind_future_fibers/ns_icons_icons.dart';
 import '../../../../../C/DB/DB.dart';
 import '../../../../../C/DB/hive.dart';
 import '../../../../../M/AppUser.dart';
+import '../../../../../M/Ticket/CprReport.dart';
 import '../../../../../Web/V/QC/webTicketQView.dart';
 import '../../../../../globals.dart';
 import '../../../Widgets/NoResultFoundMsg.dart';
@@ -166,7 +168,8 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                 flagIcon(Filters.isError, Icons.warning_rounded),
                 // flagIcon(Filters.inPrint, Icons.print_rounded),
                 flagIcon(Filters.isRush, Icons.offline_bolt_rounded),
-                flagIcon(Filters.isRed, Icons.flag_rounded),
+                flagIcon(Filters.isRed, TicketFlagTypes.RED.getIcon()),
+                flagIcon(Filters.isYellow, TicketFlagTypes.YELLOW.getIcon()),
                 flagIcon(Filters.isHold, NsIcons.stop),
                 flagIcon(Filters.isSk, NsIcons.sk),
                 flagIcon(Filters.isGr, NsIcons.gr),
@@ -217,7 +220,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
   TabController? _tabBarController;
   var themeColor = Colors.green;
 
-  getBody() {
+  Widget getBody() {
     var l = tabs.length;
     print('tab length = $l');
     return _tabBarController == null
@@ -247,7 +250,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
             : Scaffold(appBar: AppBar(toolbarHeight: 10, automaticallyImplyLeading: false), body: getTicketListByCategory(listsMap[Production.All]));
   }
 
-  getTicketListByCategory(List<Ticket> filesList) {
+  Column getTicketListByCategory(List<Ticket> filesList) {
     GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
     return Column(children: [
       Expanded(
@@ -262,16 +265,16 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
                   padding: const EdgeInsets.only(top: 16),
                   child: filesList.isNotEmpty
                       ? ListView.separated(
-                    padding: const EdgeInsets.all(8),
-                    itemCount: filesList.length,
-                    itemBuilder: (BuildContext context1, int index) {
-                      // print(FilesList[index]);
-                      Ticket ticket = (filesList[index]);
-                      // print(ticket.toJson());
-                      return TicketTile(index, ticket, onLongPress: () async {
-                        print('Long pres');
-                        await showTicketOptions(ticket, context1, context, loadData: () {
-                          _refreshIndicatorKey.currentState?.show();
+                          padding: const EdgeInsets.all(8),
+                          itemCount: filesList.length,
+                          itemBuilder: (BuildContext context1, int index) {
+                            // print(FilesList[index]);
+                            Ticket ticket = (filesList[index]);
+                            // print(ticket.toJson());
+                            return TicketTile(index, ticket, onLongPress: () async {
+                              print('Long pres');
+                              await showTicketOptions(ticket, context1, context, loadData: () {
+                                _refreshIndicatorKey.currentState?.show();
                               });
 
                               setState(() {});
@@ -380,7 +383,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
 
   Filters dataFilter = Filters.none;
 
-  flagIcon(Filters filter, IconData icon, {String? text}) {
+  IconButton flagIcon(Filters filter, IconData icon, {String? text}) {
     return IconButton(
       icon: CircleAvatar(
           backgroundColor: Colors.white,
@@ -428,7 +431,7 @@ class _TicketListState extends State<TicketList> with TickerProviderStateMixin {
     return (!t.openSections.contains(section.toString()));
   }
 
-  searchByProduction(Ticket t, Production selectedProduction) {
+  bool searchByProduction(Ticket t, Production selectedProduction) {
     if (selectedProduction == Production.All) {
       return true;
     }
@@ -449,6 +452,8 @@ class TicketTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    CprReport? kitReport = ticket.getKitReport();
+
     return GestureDetector(
         behavior: HitTestBehavior.opaque,
         onLongPress: () async {
@@ -482,9 +487,9 @@ class TicketTile extends StatelessWidget {
                 if ((ticket.mo ?? "").trim().isNotEmpty) Text((ticket.oe ?? "")),
                 const SizedBox(height: 4),
                 Wrap(children: [
-                  if (ticket.shipDate.isNotEmpty) const Padding(padding: EdgeInsets.only(right: 4), child: Icon(Icons.directions_boat_outlined, size: 12, color: Colors.grey)),
-                  if (ticket.shipDate.isNotEmpty) Text(ticket.shipDate),
-                  if (ticket.shipDate.isNotEmpty) const SizedBox(width: 16),
+                  // if (ticket.shipDate.isNotEmpty) const Padding(padding: EdgeInsets.only(right: 4), child: Icon(Icons.directions_boat_outlined, size: 12, color: Colors.grey)),
+                  // if (ticket.shipDate.isNotEmpty) Text(ticket.shipDate),
+                  // if (ticket.shipDate.isNotEmpty) const SizedBox(width: 16),
                   if (ticket.deliveryDate.isNotEmpty) const Padding(padding: EdgeInsets.only(right: 4), child: Icon(Icons.local_shipping_rounded, size: 12, color: Colors.grey)),
                   if (ticket.deliveryDate.isNotEmpty) Text(ticket.deliveryDate)
                 ])
@@ -494,18 +499,18 @@ class TicketTile extends StatelessWidget {
                 children: [
                   //********************************************************************************************************************************************
 
-                  ticket.haveKit == 1
+                  ticket.haveKit == 1 && kitReport != null
                       ? IconButton(
-                          icon: const Icon(Icons.view_in_ar_rounded, color: Colors.red),
+                          icon: Icon(kitReport!.itemCount > 0 ? Icons.inventory : Icons.view_in_ar_rounded, color: kitReport.status!.getColor()),
                           onPressed: () {
                             snackBarKey.currentState?.hideCurrentSnackBar();
                             snackBarKey.currentState?.showSnackBar(SnackBar(
-                                content: Wrap(children: ticket.getKitReport().map((e) => Row(children: [Text("${e.status}"), const Spacer(), Text("${e.count}")])).toList()),
+                                content: Row(children: [Text("${kitReport.status}"), const Spacer(), Text("${kitReport.count}")]),
                                 behavior: SnackBarBehavior.floating,
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
                                 width: 200));
                           })
-                      : const IconButton(icon: Icon(Icons.view_in_ar_rounded, color: Colors.grey), onPressed: null),
+                      : IconButton(icon: Icon(kitReport!.itemCount > 0 ? Icons.inventory : Icons.view_in_ar_rounded, color: Colors.grey), onPressed: null),
                   if (ticket.haveCpr == 1)
                     IconButton(
                         icon: const Icon(Icons.local_mall_rounded, color: Colors.red),
@@ -528,19 +533,19 @@ class TicketTile extends StatelessWidget {
                         FlagDialogNew(ticket, TicketFlagTypes.HOLD, editable: false).show(context);
                       },
                     ),
-                  if (ticket.isGr == 1)
-                    IconButton(
-                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)),
-                      onPressed: () {
-                        // FlagDialog().showFlagView(context, ticket, TicketFlagTypes.GR);
-                        FlagDialogNew(ticket, TicketFlagTypes.GR, editable: false).show(context);
-                      },
-                    ),
-                  if (ticket.isSk == 1)
-                    IconButton(
-                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)),
-                      onPressed: () {},
-                    ),
+                  // if (ticket.isGr == 1)
+                  //   IconButton(
+                  //     icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)),
+                  //     onPressed: () {
+                  //       // FlagDialog().showFlagView(context, ticket, TicketFlagTypes.GR);
+                  //       FlagDialogNew(ticket, TicketFlagTypes.GR, editable: false).show(context);
+                  //     },
+                  //   ),
+                  // if (ticket.isSk == 1)
+                  //   IconButton(
+                  //     icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)),
+                  //     onPressed: () {},
+                  //   ),
                   if (ticket.isError == 1)
                     IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.report_problem_rounded, color: Colors.red)), onPressed: () {}),
                   // if (ticket.isSort == 1)
@@ -554,12 +559,16 @@ class TicketTile extends StatelessWidget {
                         }),
                   if (ticket.isRed == 1)
                     IconButton(
-                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)),
+                      icon: CircleAvatar(backgroundColor: Colors.white, child: Icon(TicketFlagTypes.RED.getIcon(), color: Colors.red)),
                       onPressed: () {
                         // FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RED);
                         FlagDialogNew(ticket, TicketFlagTypes.RED, editable: false).show(context);
                       },
                     ),
+                  if (ticket.isYellow == 1)
+                    IconButton(
+                        icon: CircleAvatar(backgroundColor: Colors.white, child: Icon(TicketFlagTypes.YELLOW.getIcon(), color: Colors.orangeAccent)),
+                        onPressed: () => {FlagDialogNew(ticket, TicketFlagTypes.YELLOW, editable: false).show(context)}),
                   if (ticket.isQa == 1)
                     IconButton(
                         icon: const CircleAvatar(backgroundColor: Colors.deepOrangeAccent, child: Text('QA', style: TextStyle(color: Colors.white))),

@@ -20,7 +20,7 @@ class PastMaterialRow extends StatefulWidget {
 class _PastMaterialRowState extends State<PastMaterialRow> {
   @override
   Widget build(BuildContext context) {
-    return IfWeb(elseIf: getUi(), child: DialogView(child: getWebUi()));
+    return DialogView(child: getWebUi());
   }
 
   List<CprItem> items = [];
@@ -60,6 +60,4 @@ class _PastMaterialRowState extends State<PastMaterialRow> {
       ),
     );
   }
-
-  getUi() {}
 }

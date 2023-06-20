@@ -52,7 +52,9 @@ class _BlueBookState extends State<BlueBook> {
     path = ticket == null ? "" : widget.ticket!.ticketFile!.path;
 
     wv = InAppWebView(
-        initialUrlRequest: URLRequest(url: Uri.parse("http://bluebook.northsails.com:8088/nsbb/app/blueBook.html")),
+        initialUrlRequest: URLRequest(
+            url: Uri.parse(
+                "https://login.microsoftonline.com/5b5a8c35-0130-488b-875f-e4deb88b2904/oauth2/authorize?client%5Fid=00000003%2D0000%2D0ff1%2Dce00%2D000000000000&response%5Fmode=form%5Fpost&response%5Ftype=code%20id%5Ftoken&resource=00000003%2D0000%2D0ff1%2Dce00%2D000000000000&scope=openid&nonce=037B0F7697D629D661FF8AACAEBF6D065074AB129FB876BF%2D88A29908F71D6A8685FF8016CF8FFE9A8CB6FE9CBA360E10853D61706054EBE9&redirect%5Furi=https%3A%2F%2Fntgmast%2Esharepoint%2Ecom%2F%5Fforms%2Fdefault%2Easpx&state=OD0w&claims=%7B%22id%5Ftoken%22%3A%7B%22xms%5Fcc%22%3A%7B%22values%22%3A%5B%22CP1%22%5D%7D%7D%7D&wsucxt=1&cobrandid=11bd8083%2D87e0%2D41b5%2Dbb78%2D0bc43c8a8e8a&client%2Drequest%2Did=2f9db6a0%2Df0d1%2D3000%2D9a46%2Ddb2eba0f402f")),
         initialOptions: InAppWebViewGroupOptions(crossPlatform: InAppWebViewOptions(useOnDownloadStart: true), android: AndroidInAppWebViewOptions(useHybridComposition: true)),
         onReceivedHttpAuthRequest: (InAppWebViewController controller, URLAuthenticationChallenge challenge) async {
           print('onReceivedHttpAuthRequest');
@@ -66,7 +68,7 @@ class _BlueBookState extends State<BlueBook> {
             if (blueBookCredentials != null) {
               return HttpAuthResponse(username: blueBookCredentials.userName, password: blueBookCredentials.password, action: HttpAuthResponseAction.PROCEED);
             } else {
-              Navigator.pop(context);
+              if (mounted) Navigator.pop(context);
             }
           } else {
             var blueBookCredentials = await BlurBookLogin.getBlueBookCredentials();

@@ -33,7 +33,7 @@ class _TicketSelectorState extends State<TicketSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return IfWeb(elseIf: getUi(), child: DialogView(width: 500, child: getWebUi()));
+    return DialogView(width: 500, child: getWebUi());
   }
 
   List<Ticket> ticketList = [];
@@ -97,8 +97,6 @@ class _TicketSelectorState extends State<TicketSelector> {
           ],
         ));
   }
-
-  getUi() {}
 
   void load() {
     setState(() {

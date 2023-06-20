@@ -300,9 +300,9 @@ class FlagDialog1 {
         // titleIcon = CircleAvatar(backgroundColor: Colors.pink, child: Center(child: Text("SK", style: TextStyle(color: Colors.white))));
         titleIcon = const Icon(NsIcons.sk);
         break;
-      case TicketFlagTypes.CROSS:
-        titleIcon = const Icon(NsIcons.sk);
-        titleText = "SK";
+      case TicketFlagTypes.YELLOW:
+        titleIcon = const Icon(Icons.tour_rounded, color: Colors.yellow);
+        titleText = "Yellow";
         break;
     }
 

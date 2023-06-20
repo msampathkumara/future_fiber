@@ -155,7 +155,7 @@ class _ErrorAndRetry extends StatelessWidget {
               Text('Oops! $errorMessage', style: const TextStyle(color: Colors.white)),
               TextButton(
                   onPressed: retry,
-                  child: Row(mainAxisSize: MainAxisSize.min, children: const [Icon(Icons.refresh, color: Colors.white), Text('Retry', style: TextStyle(color: Colors.white))]))
+                  child: const Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.refresh, color: Colors.white), Text('Retry', style: TextStyle(color: Colors.white))]))
             ])),
       );
 }
@@ -178,17 +178,12 @@ class __LoadingState extends State<_Loading> {
                   ? const SizedBox()
                   : Center(
                       child: Container(
-                      color: Colors.yellow,
+                        color: Colors.yellow,
                       padding: const EdgeInsets.all(7),
                       width: 150,
                       height: 50,
-                      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: const [
-                        CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.black,
-                        ),
-                        Text('Loading..')
-                      ]),
+                      child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround, children: [CircularProgressIndicator(strokeWidth: 2, color: Colors.black), Text('Loading..')]),
                     ));
             }));
   }
@@ -276,10 +271,7 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
               )),
               DataCell(Wrap(
                 direction: Axis.vertical,
-                children: [
-                  Text(ticket.production ?? '-'),
-                  if (ticket.atSection != null) Text(ticket.atSection ?? '', style: const TextStyle(color: Colors.red, fontSize: 12)),
-                ],
+                children: [Text(ticket.production ?? '-'), if (ticket.atSection != null) Text(ticket.atSection ?? '', style: const TextStyle(color: Colors.red, fontSize: 12))],
               )),
               DataCell(Text("${ticket.progress}%")),
               DataCell(Text(ticket.shipDate.toString())),
@@ -287,9 +279,7 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                 children: [
                   IconButton(
                       icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.chat, color: Colors.blue)),
-                      onPressed: () {
-                        TicketChatView(ticket).show(context);
-                      }),
+                      onPressed: () => {TicketChatView(ticket).show(context)}),
                   if (ticket.isQa == 1)
                     IconButton(
                         icon: const CircleAvatar(backgroundColor: Colors.deepOrangeAccent, radius: 8, child: Text('QA', style: TextStyle(fontSize: 8, color: Colors.white))),
@@ -301,25 +291,21 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                   const Spacer(),
                   if (ticket.isHold == 1)
                     IconButton(
-                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.stop, color: Colors.black)),
-                      onPressed: () {
-                        // FlagDialog().showFlagView(context, ticket, TicketFlagTypes.HOLD);
-                        FlagDialogNew(ticket, TicketFlagTypes.HOLD, editable: false).show(context);
-                      },
-                    ),
-                  if (ticket.isGr == 1)
-                    IconButton(
-                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)),
-                      onPressed: () {
-                        // FlagDialog().showFlagView(context, ticket, TicketFlagTypes.GR);
-                        FlagDialogNew(ticket, TicketFlagTypes.GR, editable: false).show(context);
-                      },
-                    ),
-                  if (ticket.isSk == 1)
-                    IconButton(
-                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)),
-                      onPressed: () {},
-                    ),
+                        icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.stop, color: Colors.black)),
+                        onPressed: () => {FlagDialogNew(ticket, TicketFlagTypes.HOLD, editable: false).show(context)}),
+                  // if (ticket.isGr == 1)
+                  //   IconButton(
+                  //     icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)),
+                  //     onPressed: () {
+                  //       // FlagDialog().showFlagView(context, ticket, TicketFlagTypes.GR);
+                  //       FlagDialogNew(ticket, TicketFlagTypes.GR, editable: false).show(context);
+                  //     },
+                  //   ),
+                  // if (ticket.isSk == 1)
+                  //   IconButton(
+                  //     icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)),
+                  //     onPressed: () {},
+                  //   ),
                   if (ticket.isError == 1)
                     IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.report_problem_rounded, color: Colors.red)), onPressed: () {}),
                   if (ticket.haveCpr == 1)
@@ -327,18 +313,15 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                   if (ticket.isRush == 1)
                     IconButton(
                         icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent)),
-                        onPressed: () {
-                          // FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RUSH);
-                          FlagDialogNew(ticket, TicketFlagTypes.RUSH, editable: false).show(context);
-                        }),
+                        onPressed: () => {FlagDialogNew(ticket, TicketFlagTypes.RUSH, editable: false).show(context)}),
                   if (ticket.isRed == 1)
                     IconButton(
-                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)),
-                      onPressed: () {
-                        // FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RED);
-                        FlagDialogNew(ticket, TicketFlagTypes.RED, editable: false).show(context);
-                      },
-                    )
+                        icon: CircleAvatar(backgroundColor: Colors.white, child: Icon(TicketFlagTypes.RED.getIcon(), color: TicketFlagTypes.RED.getColor())),
+                        onPressed: () => {FlagDialogNew(ticket, TicketFlagTypes.RED, editable: false).show(context)}),
+                  if (ticket.isYellow == 1)
+                    IconButton(
+                        icon: CircleAvatar(backgroundColor: Colors.white, child: Icon(TicketFlagTypes.YELLOW.getIcon(), color: TicketFlagTypes.YELLOW.getColor())),
+                        onPressed: () => {FlagDialogNew(ticket, TicketFlagTypes.YELLOW, editable: false).show(context)})
                 ],
               )),
               DataCell(Text(ticket.completedOn ?? '-'))

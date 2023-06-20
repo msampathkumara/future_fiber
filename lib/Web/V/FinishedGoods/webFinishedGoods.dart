@@ -8,7 +8,6 @@ import 'package:smartwind_future_fibers/Web/V/FinishedGoods/webFinishedGoods.tab
 
 import '../../../M/Enums.dart';
 import '../../../M/Ticket.dart';
-import '../../../Mobile/V/Widgets/SearchBar.dart';
 import '../../../ns_icons_icons.dart';
 import '../../Styles/styles.dart';
 
@@ -56,10 +55,11 @@ class _WebFinishedGoodsState extends State<WebFinishedGoods> {
                   flagIcon(Filters.isError, Icons.warning_rounded, "Filter by Error Route"),
                   // flagIcon(Filters.inPrint, Icons.print_rounded, "Filter by in print"),
                   flagIcon(Filters.isRush, Icons.offline_bolt_rounded, "Filter by rush"),
-                  flagIcon(Filters.isRed, Icons.flag_rounded, "Filter by red flag"),
+                  flagIcon(Filters.isRed, TicketFlagTypes.RED.getIcon(), "Filter by red flag"),
+                  flagIcon(Filters.isYellow, TicketFlagTypes.YELLOW.getIcon(), "Filter by yellow flag"),
                   flagIcon(Filters.isHold, NsIcons.stop, "Filter by stop"),
-                  flagIcon(Filters.isSk, NsIcons.sk, "Filter by SK"),
-                  flagIcon(Filters.isGr, NsIcons.gr, "Filter by GR"),
+                  // flagIcon(Filters.isSk, NsIcons.sk, "Filter by SK"),
+                  // flagIcon(Filters.isGr, NsIcons.gr, "Filter by GR"),
                   flagIcon(Filters.haveCpr, NsIcons.short, "Filter by CPR"),
                   flagIcon(Filters.isQc, NsIcons.short, "Filter by QC", text: "QC"),
                   flagIcon(Filters.isQa, NsIcons.short, "Filter by QA", text: "QA"),
@@ -150,7 +150,7 @@ class _WebFinishedGoodsState extends State<WebFinishedGoods> {
 
   Filters dataFilter = Filters.none;
 
-  flagIcon(Filters filter, IconData icon, tooltip, {String? text}) {
+  IconButton flagIcon(Filters filter, IconData? icon, tooltip, {String? text}) {
     return IconButton(
       icon: CircleAvatar(
           backgroundColor: Colors.white,

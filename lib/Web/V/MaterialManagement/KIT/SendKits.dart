@@ -29,7 +29,7 @@ class _SendKitsState extends State<SendKits> {
 
   @override
   Widget build(BuildContext context) {
-    return IfWeb(elseIf: getUi(), child: DialogView(width: 500, child: getWebUi()));
+    return DialogView(width: 500, child: getWebUi());
   }
 
   List<String> ticketList = [];
@@ -99,8 +99,6 @@ class _SendKitsState extends State<SendKits> {
             ),
     );
   }
-
-  getUi() {}
 
   // void send(Ticket t) {
   //   Api.post(EndPoints.materialManagement_kit_sendKit, {'mo': t.mo}).then((res) {

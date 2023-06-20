@@ -71,7 +71,7 @@ class _AddMaterialsState extends State<AddMaterials> {
 
   @override
   Widget build(BuildContext context) {
-    return IfWeb(elseIf: getUi(), child: DialogView(width: 600, child: getWebUi()));
+    return DialogView(width: 600, child: getWebUi());
   }
 
   Scaffold getWebUi() {
@@ -234,7 +234,6 @@ class _AddMaterialsState extends State<AddMaterials> {
             ])));
   }
 
-  getUi() {}
   KIT kit = KIT();
 
   void _addMaterialToList(KitItem currentMaterial) {

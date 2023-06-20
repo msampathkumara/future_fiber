@@ -85,13 +85,14 @@ class _WebProductionPoolState extends State<WebProductionPool> {
                     setState(() {});
                   }),
                   Padding(padding: const EdgeInsets.all(8.0), child: Container(width: 1, color: Colors.red, height: 24)),
-                  flagIcon(Filters.isError, Icons.warning_rounded, "Filter by Error Route"),
+                  flagIcon(Filters.isError, Icons.warning_rounded, "Filter by Error Route", color: Colors.red),
                   // flagIcon(Filters.inPrint, Icons.print_rounded, "Filter by in print"),
                   flagIcon(Filters.isRush, Icons.offline_bolt_rounded, "Filter by rush"),
-                  flagIcon(Filters.isRed, Icons.flag_rounded, "Filter by red flag"),
+                  flagIcon(Filters.isRed, TicketFlagTypes.RED.getIcon(), "Filter by red flag"),
+                  flagIcon(Filters.isYellow, TicketFlagTypes.YELLOW.getIcon(), "Filter by yellow flag"),
                   flagIcon(Filters.isHold, NsIcons.stop, "Filter by stop"),
-                  flagIcon(Filters.isSk, NsIcons.sk, "Filter by SK"),
-                  flagIcon(Filters.isGr, NsIcons.gr, "Filter by GR"),
+                  // flagIcon(Filters.isSk, NsIcons.sk, "Filter by SK"),
+                  // flagIcon(Filters.isGr, NsIcons.gr, "Filter by GR"),
                   flagIcon(Filters.haveKit, Icons.view_in_ar_rounded, "Filter by Kit"),
                   flagIcon(Filters.haveCpr, NsIcons.short, "Filter by CPR"),
                   flagIcon(Filters.isQc, NsIcons.short, "Filter by QC", text: "QC"),
@@ -165,7 +166,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
 
   Filters dataFilter = Filters.none;
 
-  IconButton flagIcon(Filters filter, IconData? icon, tooltip, {String? text, Function? onPressed, bool? checked, IconData? icon2}) {
+  IconButton flagIcon(Filters filter, IconData? icon, tooltip, {String? text, Function? onPressed, bool? checked, IconData? icon2, MaterialColor? color}) {
     checked = checked ?? dataFilter == filter;
 
     return IconButton(
@@ -174,12 +175,7 @@ class _WebProductionPoolState extends State<WebProductionPool> {
           radius: 16,
           child: (text != null)
               ? Text(text, style: TextStyle(color: checked ? Colors.red : Colors.black, fontWeight: FontWeight.bold))
-              : Stack(
-            children: [
-              Icon(icon, color: checked ? Colors.red : Colors.black, size: 20),
-              Icon(icon2, color: checked ? Colors.red : Colors.black, size: 20),
-            ],
-          )),
+              : Stack(children: [Icon(icon, color: checked ? Colors.red : Colors.black, size: 20), Icon(icon2, color: checked ? Colors.red : Colors.black, size: 20)])),
       tooltip: tooltip,
       onPressed: () async {
         if (onPressed != null) {
@@ -200,63 +196,63 @@ class _WebProductionPoolState extends State<WebProductionPool> {
       return (filterByStart ? ticket.isStarted : true) &&
           (filterByFiles ? ticket.hasFile : true) &&
           (filterByNoFiles ? ticket.hasNoFile : true) &&
-          searchText.containsInArrayIgnoreCase([ticket.mo, ticket.oe]) &&
+          searchText.containsInArrayIgnoreCase([ticket.mo, ticket.oe, ticket.jobId]) &&
           searchByFilters(ticket, dataFilter) &&
           searchByProduction(ticket, selectedProduction);
     }).toList();
     _dataSource?.setData(tickets);
   }
 
-  addItemsBottomSheetMenu(context) {
-    showModalBottomSheet(
-        constraints: kIsWeb ? const BoxConstraints(maxWidth: 600) : null,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        backgroundColor: Colors.white,
-        context: context,
-        builder: (builder) {
-          return Container(
-              color: Colors.transparent,
-              child: Column(children: [
-                const Padding(padding: EdgeInsets.all(16.0), child: Text("Add", textScaleFactor: 1.2)),
-                Expanded(
-                    child: Padding(
-                        padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
-                        child: ListView(children: [
-                          if (AppUser.havePermissionFor(NsPermissions.TICKET_UPLOAD_TICKET))
-                            ListTile(
-                              title: const Text("Add Tickets"),
-                              selectedTileColor: Colors.black12,
-                              leading: const Icon(Icons.picture_as_pdf),
-                              onTap: () {
-                                Navigator.pop(context);
-                                const AddTickets().show(context);
-                              },
-                            ),
-                          if (AppUser.havePermissionFor(NsPermissions.SHEET_ADD_DATA_SHEET))
-                            ListTile(
-                              title: const Text("Add Data Sheet"),
-                              selectedTileColor: Colors.black12,
-                              leading: const Icon(Icons.list_alt_rounded),
-                              onTap: () {
-                                Navigator.pop(context);
-                                const AddSheet().show(context);
-                              },
-                            ),
-                          if (AppUser.havePermissionFor(NsPermissions.SHEET_ADD_UPDATED_DATA_SHEET))
-                            ListTile(
-                                title: const Text("Add Updated Data Sheet", style: TextStyle(color: Colors.red)),
-                                selectedTileColor: Colors.black12,
-                                leading: const Icon(Icons.list_alt_rounded),
-                                onTap: () {
-                                  Navigator.pop(context);
-                                  const AddSheet(isUpdate: true).show(context);
-                                })
-                        ])))
-              ]));
-        });
-  }
+  // addItemsBottomSheetMenu(context) {
+  //   showModalBottomSheet(
+  //       constraints: kIsWeb ? const BoxConstraints(maxWidth: 600) : null,
+  //       shape: RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.circular(10.0),
+  //       ),
+  //       backgroundColor: Colors.white,
+  //       context: context,
+  //       builder: (builder) {
+  //         return Container(
+  //             color: Colors.transparent,
+  //             child: Column(children: [
+  //               const Padding(padding: EdgeInsets.all(16.0), child: Text("Add", textScaleFactor: 1.2)),
+  //               Expanded(
+  //                   child: Padding(
+  //                       padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
+  //                       child: ListView(children: [
+  //                         if (AppUser.havePermissionFor(NsPermissions.TICKET_UPLOAD_TICKET))
+  //                           ListTile(
+  //                             title: const Text("Add Tickets"),
+  //                             selectedTileColor: Colors.black12,
+  //                             leading: const Icon(Icons.picture_as_pdf),
+  //                             onTap: () {
+  //                               Navigator.pop(context);
+  //                               const AddTickets().show(context);
+  //                             },
+  //                           ),
+  //                         if (AppUser.havePermissionFor(NsPermissions.SHEET_ADD_DATA_SHEET))
+  //                           ListTile(
+  //                             title: const Text("Add Data Sheet"),
+  //                             selectedTileColor: Colors.black12,
+  //                             leading: const Icon(Icons.list_alt_rounded),
+  //                             onTap: () {
+  //                               Navigator.pop(context);
+  //                               const AddSheet().show(context);
+  //                             },
+  //                           ),
+  //                         if (AppUser.havePermissionFor(NsPermissions.SHEET_ADD_UPDATED_DATA_SHEET))
+  //                           ListTile(
+  //                               title: const Text("Add Updated Data Sheet", style: TextStyle(color: Colors.red)),
+  //                               selectedTileColor: Colors.black12,
+  //                               leading: const Icon(Icons.list_alt_rounded),
+  //                               onTap: () {
+  //                                 Navigator.pop(context);
+  //                                 const AddSheet(isUpdate: true).show(context);
+  //                               })
+  //                       ])))
+  //             ]));
+  //       });
+  // }
 
   bool searchByProduction(Ticket ticket, Production selectedProduction) {
     if (selectedProduction == Production.None && (ticket.production == null || ticket.production == '')) {

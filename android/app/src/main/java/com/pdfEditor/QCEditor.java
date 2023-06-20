@@ -43,6 +43,7 @@ public class QCEditor extends AppCompatActivity {
     private String serverUrl;
     private String sectionId;
     private String userCurrentSection;
+    private String uniqueKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +74,7 @@ public class QCEditor extends AppCompatActivity {
             serverUrl = (getIntent().getExtras().getString("serverUrl"));
             sectionId = (getIntent().getExtras().getString("sectionId"));
             userCurrentSection = (getIntent().getExtras().getString("userCurrentSection"));
+            uniqueKey = (getIntent().getExtras().getString("uniqueKey"));
             System.out.println("---------------------------------------------------------");
             System.out.println(SELECTED_FILE.id);
         } else {
@@ -265,6 +267,7 @@ public class QCEditor extends AppCompatActivity {
                 vals.put("svgs", value.toString());
                 vals.put("type", isQc ? "qc" : "qa");
                 vals.put("userCurrentSection", userCurrentSection);
+                vals.put("uniqueKey", uniqueKey);
 
                 System.out.println(vals);
 

@@ -55,7 +55,7 @@ class _KitListState extends State<KitList> {
 
   final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
-  getBody() {
+  Column getBody() {
     return Column(
       children: [
         Expanded(
@@ -66,7 +66,7 @@ class _KitListState extends State<KitList> {
             },
             child: (_kitList.isEmpty && (!requested))
                 ? Center(
-                child: Wrap(
+                    child: Wrap(
                   crossAxisAlignment: WrapCrossAlignment.center,
                   direction: Axis.vertical,
                   children: [

@@ -338,16 +338,16 @@ class _FinishedGoodsState extends State<FinishedGoods> with TickerProviderStateM
                                       icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.pan_tool_rounded, color: Colors.black)),
                                       onPressed: () {},
                                     ),
-                                  if (ticket.isGr == 1)
-                                    IconButton(
-                                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)),
-                                      onPressed: () {},
-                                    ),
-                                  if (ticket.isSk == 1)
-                                    IconButton(
-                                      icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)),
-                                      onPressed: () {},
-                                    ),
+                                  // if (ticket.isGr == 1)
+                                  //   IconButton(
+                                  //     icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)),
+                                  //     onPressed: () {},
+                                  //   ),
+                                  // if (ticket.isSk == 1)
+                                  //   IconButton(
+                                  //     icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)),
+                                  //     onPressed: () {},
+                                  //   ),
                                   if (ticket.isError == 1)
                                     IconButton(
                                       icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.report_problem_rounded, color: Colors.red)),

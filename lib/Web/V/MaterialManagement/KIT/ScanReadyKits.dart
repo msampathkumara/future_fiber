@@ -27,7 +27,7 @@ class _ScanReadyKitsState extends State<ScanReadyKits> {
 
   @override
   Widget build(BuildContext context) {
-    return IfWeb(elseIf: getUi(), child: DialogView(width: 300, height: 500, child: getWebUi()));
+    return DialogView(width: 300, height: 500, child: getWebUi());
   }
 
   List<Ticket> ticketList = [];
@@ -78,8 +78,6 @@ class _ScanReadyKitsState extends State<ScanReadyKits> {
       ),
     );
   }
-
-  getUi() {}
 
   void send(Ticket t) {
     Api.post(EndPoints.materialManagement_kit_readyKit, {'mo': t.mo}).then((res) {

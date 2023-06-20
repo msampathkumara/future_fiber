@@ -26,9 +26,7 @@ class TicketAdapter extends TypeAdapter<Ticket> {
       ..id = fields[7] == null ? 0 : fields[7] as int
       ..isRed = fields[8] == null ? 0 : fields[8] as int
       ..isRush = fields[9] == null ? 0 : fields[9] as int
-      ..isSk = fields[10] == null ? 0 : fields[10] as int
       ..inPrint = fields[11] == null ? 0 : fields[11] as int
-      ..isGr = fields[12] == null ? 0 : fields[12] as int
       ..isError = fields[13] == null ? 0 : fields[13] as int
       ..canOpen = fields[14] == null ? 0 : fields[14] as int
       ..isSort = fields[15] == null ? 0 : fields[15] as int
@@ -55,13 +53,14 @@ class TicketAdapter extends TypeAdapter<Ticket> {
       ..pool = fields[39] as String?
       ..custom = fields[40] as int?
       ..jobId = fields[41] as String?
-      ..config = fields[42] as String?;
+      ..config = fields[42] as String?
+      ..isYellow = fields[43] == null ? 0 : fields[43] as int;
   }
 
   @override
   void write(BinaryWriter writer, Ticket obj) {
     writer
-      ..writeByte(39)
+      ..writeByte(38)
       ..writeByte(0)
       ..write(obj.mo)
       ..writeByte(1)
@@ -80,12 +79,8 @@ class TicketAdapter extends TypeAdapter<Ticket> {
       ..write(obj.isRed)
       ..writeByte(9)
       ..write(obj.isRush)
-      ..writeByte(10)
-      ..write(obj.isSk)
       ..writeByte(11)
       ..write(obj.inPrint)
-      ..writeByte(12)
-      ..write(obj.isGr)
       ..writeByte(13)
       ..write(obj.isError)
       ..writeByte(14)
@@ -139,7 +134,9 @@ class TicketAdapter extends TypeAdapter<Ticket> {
       ..writeByte(41)
       ..write(obj.jobId)
       ..writeByte(42)
-      ..write(obj.config);
+      ..write(obj.config)
+      ..writeByte(43)
+      ..write(obj.isYellow);
   }
 
   @override
@@ -167,9 +164,7 @@ Ticket _$TicketFromJson(Map<String, dynamic> json) => Ticket()
   ..id = json['id'] as int? ?? 0
   ..isRed = json['isRed'] as int? ?? 0
   ..isRush = json['isRush'] as int? ?? 0
-  ..isSk = json['isSk'] as int? ?? 0
   ..inPrint = json['inPrint'] as int? ?? 0
-  ..isGr = json['isGr'] as int? ?? 0
   ..isError = json['isError'] as int? ?? 0
   ..canOpen = json['canOpen'] as int? ?? 0
   ..isSort = json['isSort'] as int? ?? 0
@@ -197,6 +192,7 @@ Ticket _$TicketFromJson(Map<String, dynamic> json) => Ticket()
   ..custom = json['custom'] as int?
   ..jobId = Ticket.intToString(json['jobId'])
   ..config = Ticket.intToString(json['config'])
+  ..isYellow = json['isYellow'] as int? ?? 0
   ..loading = json['loading'] as bool? ?? false;
 
 Map<String, dynamic> _$TicketToJson(Ticket instance) => <String, dynamic>{
@@ -209,9 +205,7 @@ Map<String, dynamic> _$TicketToJson(Ticket instance) => <String, dynamic>{
       'id': instance.id,
       'isRed': instance.isRed,
       'isRush': instance.isRush,
-      'isSk': instance.isSk,
       'inPrint': instance.inPrint,
-      'isGr': instance.isGr,
       'isError': instance.isError,
       'canOpen': instance.canOpen,
       'isSort': instance.isSort,
@@ -239,5 +233,6 @@ Map<String, dynamic> _$TicketToJson(Ticket instance) => <String, dynamic>{
       'custom': instance.custom,
       'jobId': instance.jobId,
       'config': instance.config,
+      'isYellow': instance.isYellow,
       'loading': instance.loading,
     };

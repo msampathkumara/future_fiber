@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'StatusBarItem.dart';
 
-class StatusBarProgressIndicator extends StatefulWidget with StatusBarItem {
+class StatusBarProgressIndicator extends StatefulWidget implements StatusBarItem {
   final StatusBarProgressIndicatorController? controller;
   Widget? trailing;
 
@@ -72,7 +72,7 @@ class StatusBarProgressIndicatorController {
 
   final List<Function?> _onProgressChange = [];
 
-  get getProgress => _progress;
+  double get getProgress => _progress;
 
   double setValue(double i, totalCount) {
     _progress = normalize(i, 0, totalCount) * 100;

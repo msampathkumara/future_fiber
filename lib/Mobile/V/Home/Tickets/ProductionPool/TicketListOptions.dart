@@ -14,6 +14,7 @@ import '../../../../../M/Ticket.dart';
 import '../../../../../Web/V/MaterialManagement/orderOprions.dart';
 import '../../../../../ns_icons_icons.dart';
 import '../../BlueBook/BlueBook.dart';
+import 'Finish/AddTimeSheet.dart';
 import 'Finish/FinishCheckList.dart';
 import 'FlagDialog.dart';
 
@@ -78,6 +79,15 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                   ),
                 if (AppUser.havePermissionFor(NsPermissions.TICKET_ALERT_MANAGER))
                   ListTile(
+                    title: Text(ticket.isYellow == 1 ? "Remove Yellow Flag" : "Set Yellow Flag"),
+                    leading: const Icon(Icons.flag, color: Colors.orange),
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                      FlagDialogNew(ticket, TicketFlagTypes.YELLOW).show(context);
+                    },
+                  ),
+                if (AppUser.havePermissionFor(NsPermissions.TICKET_ALERT_MANAGER))
+                  ListTile(
                     title: Text(ticket.isHold == 1 ? "Restart Production" : "Stop Production"),
                     leading: const Icon(Icons.pan_tool_rounded, color: Colors.red),
                     onTap: () async {
@@ -89,18 +99,18 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                       }
                     },
                   ),
-                if (AppUser.havePermissionFor(NsPermissions.TICKET_ALERT_MANAGER))
-                  ListTile(
-                    onTap: () async {
-                      Navigator.of(context).pop();
-                      // await FlagDialog1.showGRDialog(context1, ticket);
-                      FlagDialogNew(ticket, TicketFlagTypes.GR).show(context);
-                    },
-                    title: Text(ticket.isGr == 1 ? "Remove GR" : "Set GR"),
-                    // leading: SizedBox(
-                    //     width: 24, height: 24, child: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))))
-                    leading: const Icon(NsIcons.gr, color: Colors.blue),
-                  ),
+                // if (AppUser.havePermissionFor(NsPermissions.TICKET_ALERT_MANAGER))
+                //   ListTile(
+                //     onTap: () async {
+                //       Navigator.of(context).pop();
+                //       // await FlagDialog1.showGRDialog(context1, ticket);
+                //       FlagDialogNew(ticket, TicketFlagTypes.GR).show(context);
+                //     },
+                //     title: Text(ticket.isGr == 1 ? "Remove GR" : "Set GR"),
+                //     // leading: SizedBox(
+                //     //     width: 24, height: 24, child: CircleAvatar(backgroundColor: Colors.blue, child: Center(child: Text("GR", style: TextStyle(color: Colors.white)))))
+                //     leading: const Icon(NsIcons.gr, color: Colors.blue),
+                //   ),
                 if (AppUser.havePermissionFor(NsPermissions.TICKET_ALERT_MANAGER))
                   ListTile(
                       title: Text(ticket.isRush == 1 ? "Remove Rush" : "Set Rush"),
@@ -183,6 +193,8 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
                       title: const Text("Download CS Page"),
                       leading: const Icon(Icons.request_page_rounded),
                       onTap: () async {
+                        // AddTimeSheet(19).show(context);
+
                         TicketPageSelector(ticket).show(context).then((value) => Navigator.of(context).pop());
                       }),
                 if (ticket.hasFile && AppUser.havePermissionFor(NsPermissions.TICKET_DELETE_TICKET))
@@ -233,12 +245,12 @@ Future<void> showTicketOptions(Ticket ticket, BuildContext context1, BuildContex
 //   }
 // }
 
-String listSortBy = "shipDate";
+String listSortBy = "deliveryDate";
 bool listSortDirectionIsDESC = false;
 String sortedBy = "Date";
 
 sortByBottomSheetMenu(context, loadData) {
-  getListItem(String title, icon, key) {
+  ListTile getListItem(String title, icon, key) {
     return ListTile(
       trailing: (listSortBy == key ? (listSortDirectionIsDESC ? const Icon(Icons.arrow_upward_rounded) : const Icon(Icons.arrow_downward_rounded)) : null),
       title: Text(title),
@@ -276,7 +288,7 @@ sortByBottomSheetMenu(context, loadData) {
                     padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
                     child: ListView(
                       children: [
-                        getListItem("Shipping Date", Icons.date_range_rounded, "shipDate"),
+                        // getListItem("Shipping Date", Icons.date_range_rounded, "shipDate"),
                         getListItem("Modification Date", Icons.date_range_rounded, "uptime"),
                         getListItem("Delivery Date", Icons.date_range_rounded, "deliveryDate"),
                         getListItem("Name", Icons.sort_by_alpha_rounded, "mo")

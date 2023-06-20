@@ -90,9 +90,9 @@ class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
           onSort: (columnIndex, ascending) => sort<num>((d) => d.progress, columnIndex, ascending)),
       DataColumn2(
           size: ColumnSize.M,
-          label: const Text('Shipping Date', style: TextStyle(fontWeight: FontWeight.bold)),
+          label: const Text('Delivery Date', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
-          onSort: (columnIndex, ascending) => sort<String>((d) => d.shipDate, columnIndex, ascending)),
+          onSort: (columnIndex, ascending) => sort<String>((d) => d.deliveryDate, columnIndex, ascending)),
       const DataColumn2(size: ColumnSize.S, label: Text('Kit/CPR', style: TextStyle(fontWeight: FontWeight.bold)), numeric: true),
       const DataColumn2(size: ColumnSize.L, label: Text('Product Notifications', style: TextStyle(fontWeight: FontWeight.bold)), numeric: true),
       const DataColumn2(numeric: true, size: ColumnSize.S, tooltip: "Options", label: Text('Options', style: TextStyle(fontWeight: FontWeight.bold)))
@@ -106,8 +106,8 @@ class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
     return Stack(key: menuKey, alignment: Alignment.bottomCenter, children: [
       PaginatedDataTable2(
           scrollController: _scrollController,
-          smRatio: 0.5,
-          lmRatio: 3,
+          smRatio: 0.7,
+          lmRatio: 2.4,
           horizontalMargin: 20,
           checkboxHorizontalMargin: 12,
           columnSpacing: 16,
@@ -115,7 +115,7 @@ class _PaginatedDataTable2DemoState extends State<PaginatedDataTable2Demo> {
           showFirstLastButtons: true,
           rowsPerPage: _rowsPerPage,
           autoRowsToHeight: false,
-          minWidth: 800,
+          minWidth: 1220,
           fit: FlexFit.tight,
           showCheckboxColumn: false,
           border: TableBorder(
@@ -156,7 +156,7 @@ class DessertDataSource extends DataTableSource {
 
   DessertDataSource(this.context, this.filter) {
     tickets = _tickets;
-    sort((d) => d.shipDate, true);
+    sort((d) => d.deliveryDate, true);
   }
 
   final BuildContext context;
@@ -164,7 +164,7 @@ class DessertDataSource extends DataTableSource {
   late bool hasRowTaps = true;
   late bool hasRowHeightOverrides;
 
-  Comparable Function(Ticket d) sortField = ((d) => (d.shipDate));
+  Comparable Function(Ticket d) sortField = ((d) => (d.deliveryDate));
   var _ascending = false;
 
   void sort<T>(Comparable<T> Function(Ticket d) getField, bool ascending) {
@@ -185,13 +185,11 @@ class DessertDataSource extends DataTableSource {
     assert(index >= 0);
     if (index >= tickets.length) throw 'index > _tickets.length';
     final ticket = tickets[index];
+    var e = ticket.getKitReport();
     return DataRow2.byIndex(
       index: index,
       selected: false,
-      onTap: () {
-        var ticketInfo = TicketInfo(ticket);
-        ticketInfo.show(context);
-      },
+      onTap: () => {TicketInfo(ticket).show(context)},
       onDoubleTap: hasRowTaps
           ? () {
               if (ticket.hasFile) {
@@ -215,37 +213,49 @@ class DessertDataSource extends DataTableSource {
             children: [Text(ticket.production ?? '-'), if (ticket.atSection != null) Text(ticket.atSection ?? '', style: const TextStyle(color: Colors.red, fontSize: 12))])),
         DataCell(Text("${ticket.jobId}")),
         DataCell(Text("${ticket.progress}%")),
-        DataCell(Wrap(
-          direction: Axis.vertical,
-          children: [
-            if (ticket.deliveryDate.toString().isNotEmpty)
-              Wrap(children: [const Icon(Icons.local_shipping_rounded, size: 12, color: Colors.grey), const SizedBox(width: 16), Text(ticket.deliveryDate.toString())]),
-            if (ticket.shipDate.toString().isNotEmpty)
-              Wrap(children: [const Icon(Icons.directions_boat_rounded, size: 12, color: Colors.grey), const SizedBox(width: 16), Text(ticket.shipDate.toString(), style: sts)]),
-          ],
-        )),
+        DataCell(Text(ticket.deliveryDate.toString())),
         DataCell(Wrap(
           children: [
-            ticket.haveKit == 1
+            ticket.haveKit == 1 && e != null
                 ? JustTheTooltip(
                     content: SizedBox(
-                      width: 150,
-                      child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Wrap(children: ticket.getKitReport().map((e) => Row(children: [Text("${e.status}"), const Spacer(), Text("${e.count}")])).toList())),
-                    ),
-                    child: IconButton(icon: const Icon(Icons.view_in_ar_rounded, color: Colors.red), onPressed: () {}))
-                : const IconButton(icon: Icon(Icons.view_in_ar_rounded, color: Colors.grey), onPressed: null),
+                        width: 150,
+                        child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(children: [
+                              Icon(Icons.circle, color: e.status?.getColor(), size: 8),
+                              const SizedBox(width: 4),
+                              Text("${e.status}"),
+                              const Spacer(),
+                              Text("${e.count}"),
+                              const Spacer(),
+                              Text("${e.itemCount}")
+                            ]))),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(e.itemCount > 0 ? Icons.inventory : Icons.view_in_ar_rounded, color: e.status?.getColor() ?? Colors.grey),
+                    ))
+                : const Padding(padding: EdgeInsets.all(8.0), child: Icon(Icons.view_in_ar_outlined, color: Colors.grey)),
             ticket.haveCpr == 1
                 ? JustTheTooltip(
                     content: SizedBox(
                       width: 150,
                       child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Wrap(children: ticket.getCprReport().map((e) => Row(children: [Text("${e.status}"), const Spacer(), Text("${e.count}")])).toList())),
+                          child: Wrap(
+                              children: ticket
+                                  .getCprReport()
+                                  .map((e) => Row(children: [
+                                        Icon(Icons.circle, color: e.status?.getColor(), size: 8),
+                                        const SizedBox(width: 4),
+                                        Text("${e.status}"),
+                                        const Spacer(),
+                                        Text("${e.count}")
+                                      ]))
+                                  .toList())),
                     ),
-                    child: IconButton(icon: const Icon(Icons.local_mall_rounded, color: Colors.red), onPressed: () {}))
-                : const IconButton(icon: Icon(Icons.local_mall_rounded, color: Colors.grey), onPressed: null),
+                    child: const Padding(padding: EdgeInsets.all(8.0), child: Icon(Icons.local_mall_rounded, color: Colors.red)))
+                : const Padding(padding: EdgeInsets.all(8.0), child: Icon(Icons.local_mall_outlined, color: Colors.grey)),
           ],
         )),
         DataCell(Row(
@@ -270,46 +280,40 @@ class DessertDataSource extends DataTableSource {
                 icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.stop, color: Colors.black)),
                 onPressed: () => {FlagDialogNew(ticket, TicketFlagTypes.HOLD, editable: false).show(context)},
               ),
-            if (ticket.isGr == 1)
-              IconButton(
-                icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)),
-                onPressed: () {
-                  // FlagDialog().showFlagView(context, ticket, TicketFlagTypes.GR);
-                  FlagDialogNew(ticket, TicketFlagTypes.GR, editable: false).show(context);
-                },
-              ),
-            if (ticket.isSk == 1)
-              IconButton(
-                icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)),
-                onPressed: () {},
-              ),
+            // if (ticket.isGr == 1)
+            //   IconButton(
+            //     icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.blue)),
+            //     onPressed: () {
+            //       // FlagDialog().showFlagView(context, ticket, TicketFlagTypes.GR);
+            //       FlagDialogNew(ticket, TicketFlagTypes.GR, editable: false).show(context);
+            //     },
+            //   ),
+            // if (ticket.isSk == 1)
+            //   IconButton(
+            //     icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.sk, color: Colors.pink)),
+            //     onPressed: () {},
+            //   ),
             if (ticket.isError == 1)
               IconButton(icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.report_problem_rounded, color: Colors.red)), onPressed: () {}),
             if (ticket.isRush == 1)
               IconButton(
                   icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent)),
-                  onPressed: () {
-                    // FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RUSH);
-                    FlagDialogNew(ticket, TicketFlagTypes.RUSH, editable: false).show(context);
-                  }),
+                  onPressed: () => {FlagDialogNew(ticket, TicketFlagTypes.RUSH, editable: false).show(context)}),
             if (ticket.isRed == 1)
               IconButton(
-                  icon: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)),
-                  onPressed: () {
-                    // FlagDialog().showFlagView(context, ticket, TicketFlagTypes.RED);
-
-                    FlagDialogNew(ticket, TicketFlagTypes.RED, editable: false).show(context);
-                  })
+                  icon: CircleAvatar(backgroundColor: Colors.white, child: Icon(TicketFlagTypes.RED.getIcon(), color: TicketFlagTypes.RED.getColor())),
+                  onPressed: () => {FlagDialogNew(ticket, TicketFlagTypes.RED, editable: false).show(context)}),
+            if (ticket.isYellow == 1)
+              IconButton(
+                  icon: CircleAvatar(backgroundColor: Colors.white, child: Icon(TicketFlagTypes.YELLOW.getIcon(), color: TicketFlagTypes.YELLOW.getColor())),
+                  onPressed: () => {FlagDialogNew(ticket, TicketFlagTypes.YELLOW, editable: false).show(context)})
           ],
         )),
         DataCell(IconButton(
-          icon: const Icon(Icons.more_vert_rounded),
-          onPressed: () {
-            showTicketOptions(ticket, context, context, loadData: () {
-              notifyListeners();
-            });
-          },
-        ))
+            icon: const Icon(Icons.more_vert_rounded),
+            onPressed: () => {
+                  showTicketOptions(ticket, context, context, loadData: () => {notifyListeners()})
+                }))
       ],
     );
   }

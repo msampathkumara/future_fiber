@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smartwind_future_fibers/M/Enums.dart';
 import 'package:smartwind_future_fibers/M/TicketComment.dart';
 import 'package:smartwind_future_fibers/M/TicketFlag.dart';
 import 'package:smartwind_future_fibers/Mobile/V/Widgets/UserButton.dart';
@@ -23,6 +24,11 @@ class _info_FlagsState extends State<info_Flags> {
 
   Map<String, dynamic> titles = {
     "red": {"title": "Red Flag", "icon": const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: Colors.red)), "expanded": false},
+    "yellow": {
+      "title": "Yellow Flag",
+      "icon": CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.tour_rounded, color: TicketFlagTypes.YELLOW.getColor())),
+      "expanded": false
+    },
     "rush": {"title": "Rush", "icon": const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.flash_on_rounded, color: Colors.orangeAccent)), "expanded": false},
     "hold": {"title": "Stop Production", "icon": const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.pan_tool_rounded, color: Colors.black)), "expanded": false},
     "gr": {"title": "Graphics", "icon": const CircleAvatar(backgroundColor: Colors.white, child: Icon(NsIcons.gr, color: Colors.red)), "expanded": false},

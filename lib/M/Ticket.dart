@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -33,6 +32,7 @@ import 'LocalFileVersion.dart';
 import 'PermissionsEnum.dart';
 import 'Ticket/CprReport.dart';
 import '../C/DB/hive.dart';
+import 'package:collection/collection.dart';
 
 part 'Ticket.g.dart';
 
@@ -79,17 +79,17 @@ class Ticket extends DataObject {
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int isRush = 0;
 
-  @HiveField(10, defaultValue: 0)
-  @JsonKey(defaultValue: 0, includeIfNull: true)
-  int isSk = 0;
+  // @HiveField(10, defaultValue: 0)
+  // @JsonKey(defaultValue: 0, includeIfNull: true)
+  // int isSk = 0;
 
   @HiveField(11, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
   int inPrint = 0;
 
-  @HiveField(12, defaultValue: 0)
-  @JsonKey(defaultValue: 0, includeIfNull: true)
-  int isGr = 0;
+  // @HiveField(12, defaultValue: 0)
+  // @JsonKey(defaultValue: 0, includeIfNull: true)
+  // int isGr = 0;
 
   @HiveField(13, defaultValue: 0)
   @JsonKey(defaultValue: 0, includeIfNull: true)
@@ -202,6 +202,10 @@ class Ticket extends DataObject {
   @JsonKey(defaultValue: null, includeIfNull: true, fromJson: intToString)
   String? config;
 
+  @HiveField(43, defaultValue: 0)
+  @JsonKey(defaultValue: 0, includeIfNull: true)
+  int isYellow = 0;
+
   static String intToString(string) => '${string ?? ''}';
 
   bool get isCustom => custom == 1;
@@ -229,11 +233,14 @@ class Ticket extends DataObject {
 
   bool get error => isError == 1;
 
-  get isNotHold => isHold == 0;
+  bool get isNotHold => isHold == 0;
 
-  static stringToList(string) => (string == null || string.toString().isEmpty) ? [] : json.decode(string);
+  static List stringToList(string) => (string == null || string.toString().isEmpty) ? [] : json.decode(string);
 
-  static List<CprReport> stringToCprReportList(string) => (string == null || string.toString().isEmpty) ? [] : CprReport.fromJsonArray(json.decode(string));
+  static List<CprReport> stringToCprReportList(string) {
+    List<CprReport> r = (string == null || string.toString().isEmpty) ? [] : CprReport.fromJsonArray(json.decode(string));
+    return r;
+  }
 
   String getUpdateDateTime() {
     var date = DateTime.fromMicrosecondsSinceEpoch(uptime * 1000);
@@ -386,7 +393,7 @@ class Ticket extends DataObject {
 
   static const platform = MethodChannel('editPdf');
 
-  static isFileNew(Ticket ticket) async {
+  static Future<bool> isFileNew(Ticket ticket) async {
     // var ticket1 = ticket.isStandardFile ? HiveBox.standardTicketsBox.get(ticket.id) : HiveBox.ticketBox.get(ticket.id);
     print('Ticket id == ${ticket.id}');
     var ticket1 = HiveBox.ticketBox.get(ticket.id);
@@ -487,7 +494,7 @@ class Ticket extends DataObject {
     });
   }
 
-  getName() {
+  String? getName() {
     return mo ?? oe;
   }
 
@@ -495,7 +502,7 @@ class Ticket extends DataObject {
     return List<Ticket>.from(tickets.map((model) => Ticket.fromJson(model)));
   }
 
-  get isStandardFile => this is StandardTicket;
+  bool get isStandardFile => this is StandardTicket;
 
   TicketTypes getTicketType() {
     return isStandardFile ? TicketTypes.Standard : TicketTypes.Ticket;
@@ -573,16 +580,16 @@ class Ticket extends DataObject {
     return await ticketPdfViwer.show(context);
   }
 
-  List<CprReport>? _kitReport;
+  CprReport? _kitReport;
   List<CprReport>? _cprReport;
 
-  List<CprReport> getKitReport() {
-    print(_kitReport == null);
-    return _kitReport = _kitReport ?? cprReport.where((element) => element.type == 'kit').toList();
+  CprReport? getKitReport() {
+    _kitReport = _kitReport ?? cprReport.firstWhereOrNull((element) => element.type == 'kit');
+
+    return _kitReport;
   }
 
   List<CprReport> getCprReport() {
-    print(_cprReport == null);
     return _cprReport = _cprReport ?? cprReport.where((element) => element.type == 'cpr').toList();
   }
 }

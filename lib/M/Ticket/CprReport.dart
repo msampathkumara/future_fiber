@@ -22,6 +22,10 @@ class CprReport {
   @JsonKey(defaultValue: 0, includeIfNull: true, fromJson: intFromString)
   int count = 0;
 
+  @HiveField(3, defaultValue: 0)
+  @JsonKey(defaultValue: 0, includeIfNull: true, fromJson: intFromString)
+  int itemCount = 0;
+
   CprReport();
 
   static int intFromString(String c) => int.parse(c);

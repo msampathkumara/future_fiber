@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pdf_render/pdf_render_widgets.dart';
 import 'package:deebugee_plugin/DialogView.dart';
+import 'package:smartwind_future_fibers/Mobile/V/Home/Tickets/QC/TimeCardView.dart';
 import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
 import 'package:smartwind_future_fibers/Web/Widgets/IfWeb.dart';
 
@@ -49,7 +50,7 @@ class _MobileQViewState extends State<MobileQView> {
     return IfWeb(elseIf: getUi(), child: DialogView(child: getWebUi()));
   }
 
-  getWebUi() {
+  Scaffold getWebUi() {
     return Scaffold(
       appBar: AppBar(
           toolbarHeight: 100,
@@ -71,10 +72,15 @@ class _MobileQViewState extends State<MobileQView> {
             ])
           ])),
       body: _pdfLoading ? const Center(child: CircularProgressIndicator()) : PdfViewer.openData(_data, params: const PdfViewerParams()),
+      floatingActionButton: FloatingActionButton.small(
+          onPressed: () {
+            TimeCardView(widget.qc.id).show(context);
+          },
+          child: const Icon(Icons.av_timer_rounded)),
     );
   }
 
-  getUi() {
+  Scaffold getUi() {
     return getWebUi();
   }
 }

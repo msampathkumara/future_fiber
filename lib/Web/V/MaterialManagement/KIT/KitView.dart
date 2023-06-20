@@ -125,7 +125,7 @@ class _KitViewState extends State<KitView> {
                                       TextButton(
                                           onPressed: () async {
                                             await AddMaterials(_kit.id).show(context);
-                                            setState(() => {_loading = true});
+                                            setState(() => _loading = true);
                                             apiGetData();
                                           },
                                           child: const Text("Add Materials"))

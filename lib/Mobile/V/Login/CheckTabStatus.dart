@@ -1,4 +1,4 @@
-import 'package:device_info/device_info.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:device_information/device_information.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -147,7 +147,7 @@ class _CheckTabStatusState extends State<CheckTabStatus> {
       'tags': build.tags,
       'type': build.type,
       'isPhysicalDevice': build.isPhysicalDevice,
-      'androidId': build.androidId,
+      // 'androidId': build.androidId,
       'systemFeatures': build.systemFeatures,
       'deviceName': await DeviceInformation.deviceName,
       'productName': await DeviceInformation.productName,
@@ -178,7 +178,7 @@ class _CheckTabStatusState extends State<CheckTabStatus> {
                         })),
                 (Route<dynamic> route) => false);
           }
-          await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MobileHome()), (Route<dynamic> route) => false);
+          if (mounted) await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MobileHome()), (Route<dynamic> route) => false);
         });
       } else {
         ErrorMessageView(errorMessage: response.data).show(context);

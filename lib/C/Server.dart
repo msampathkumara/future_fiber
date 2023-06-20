@@ -6,18 +6,14 @@ import '../globals.dart';
 
 class Server {
   static bool local = true;
-  static String devServerIp = '192.168.0.100';
+  static String devServerIp = ' ';
 
   static Future<String> getServerAddress({onlineServer = false}) async {
     local = true;
 
-    // if (await isV2) {
-    // return "https://v2.smartwind.nsslsupportservices.com";
-    // }
-
     if (kDebugMode && local && (!onlineServer)) {
       print(devServerIp);
-      return "http://$devServerIp:3000";
+      return "http://$devServerIp:3001";
     }
 
     return "https://futurefibers.smartwind.nsslsupportservices.com";

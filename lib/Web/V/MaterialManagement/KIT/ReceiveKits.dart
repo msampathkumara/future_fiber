@@ -27,7 +27,7 @@ class _ReceiveKitsState extends State<ReceiveKits> {
 
   @override
   Widget build(BuildContext context) {
-    return IfWeb(elseIf: getUi(), child: DialogView(width: 500, child: getWebUi()));
+    return DialogView(width: 500, child: getWebUi());
   }
 
   List<String> ticketList = [];
@@ -93,8 +93,6 @@ class _ReceiveKitsState extends State<ReceiveKits> {
       ),
     );
   }
-
-  getUi() {}
 
   void receiveKits() {
     Api.post(EndPoints.materialManagement_kit_receiveKits, {'mos': ticketList, "comment": comment}).then((res) {

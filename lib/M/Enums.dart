@@ -16,9 +16,9 @@ enum Status { All, Sent, Cancel, Done }
 
 enum Type { All, QA, QC }
 
-enum TicketFlagTypes { RED, GR, RUSH, SK, HOLD, CROSS }
+enum TicketFlagTypes { RED, GR, RUSH, SK, HOLD, YELLOW }
 
-enum Filters { isRed, isRush, inPrint, isError, isGr, isSk, isHold, none, isQc, isQa, haveCpr, haveKit }
+enum Filters { isRed, isRush, inPrint, isError, isGr, isSk, isHold, none, isQc, isQa, haveCpr, haveKit, isYellow }
 
 enum Collection { User, Ticket, Any }
 
@@ -73,14 +73,37 @@ extension TicketFlagTypesToString on TicketFlagTypes {
     return (this).toString().split('.').last.toLowerCase();
   }
 
-  getIcon() {
+  IconData getIcon() {
     return {
-      TicketFlagTypes.RED: Icons.tour_rounded,
-      TicketFlagTypes.GR: NsIcons.gr,
-      TicketFlagTypes.RUSH: Icons.flash_on_rounded,
-      TicketFlagTypes.SK: NsIcons.sk,
-      TicketFlagTypes.HOLD: NsIcons.stop
-    }[this];
+          TicketFlagTypes.RED: Icons.tour_rounded,
+          TicketFlagTypes.YELLOW: Icons.flag,
+          TicketFlagTypes.GR: NsIcons.gr,
+          TicketFlagTypes.RUSH: Icons.flash_on_rounded,
+          TicketFlagTypes.SK: NsIcons.sk,
+          TicketFlagTypes.HOLD: NsIcons.stop
+        }[this] ??
+        Icons.error;
+  }
+
+  MaterialColor getColor() {
+    switch (this) {
+      case TicketFlagTypes.RED:
+        return Colors.red;
+      case TicketFlagTypes.YELLOW:
+        return Colors.amber;
+      case TicketFlagTypes.GR:
+        return Colors.blue;
+
+      case TicketFlagTypes.SK:
+        return Colors.pink;
+      case TicketFlagTypes.RUSH:
+        return Colors.amber;
+
+      case TicketFlagTypes.HOLD:
+        return Colors.grey;
+    }
+
+    return Colors.red;
   }
 }
 

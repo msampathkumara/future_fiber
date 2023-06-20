@@ -24,7 +24,7 @@ class DropMaterialList extends StatefulWidget {
 class _DropMaterialListState extends State<DropMaterialList> {
   @override
   Widget build(BuildContext context) {
-    return IfWeb(elseIf: getUi(), child: DialogView(child: getWebUi()));
+    return DialogView(child: getWebUi());
   }
 
   late DropzoneViewController controller1;
@@ -38,7 +38,7 @@ class _DropMaterialListState extends State<DropMaterialList> {
   bool sheetUploadingError = false;
   String errorMessage = "";
 
-  getWebUi() {
+  Scaffold getWebUi() {
     return Scaffold(
       appBar: AppBar(actions: [
         IconButton(
@@ -116,8 +116,6 @@ class _DropMaterialListState extends State<DropMaterialList> {
           },
         ),
       );
-
-  getUi() {}
 
   upload(ev) async {
     List<CprItem> cprItems = [];

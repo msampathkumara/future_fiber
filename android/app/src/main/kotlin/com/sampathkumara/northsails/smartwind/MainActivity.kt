@@ -88,12 +88,14 @@ class MainActivity : FlutterActivity() {
                     val serverUrl = call.argument<String>("serverUrl")
                     val sectionId = call.argument<String>("sectionId")
                     val userCurrentSection = call.argument<String>("userCurrentSection")
+                    val uniqueKey = call.argument<String>("uniqueKey")
 
                     println(" $qc---------------------------------- _$ticket")
                     println("----sectionId------------------------------ _$sectionId")
 
 
                     val i = Intent(this, QCEditor::class.java)
+                    i.putExtra("uniqueKey", uniqueKey)
                     i.putExtra("ticket", ticket)
                     i.putExtra("qc", qc)
                     i.putExtra("serverUrl", serverUrl)

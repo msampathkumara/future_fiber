@@ -104,7 +104,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
   List<Map> currentFileList = [];
 
   void _sortByBottomSheetMenu() {
-    getListItem(String title, icon, key) {
+    ListTile getListItem(String title, icon, key) {
       return ListTile(
         title: Text(title),
         selectedTileColor: Colors.black12,
@@ -152,7 +152,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
         });
   }
 
-  getBody() {
+  Scaffold getBody() {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -197,7 +197,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
 
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
-  _getTicketsList() {
+  Stack _getTicketsList() {
     return Stack(
       children: [
         if (requestFinished && _ticketQcList.isEmpty) const Center(child: NoResultFoundMsg()),
@@ -278,7 +278,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
                         child: ListTile(
                             leading: Container(width: 50, alignment: Alignment.center, height: double.infinity, child: Text("${index + 1}", textAlign: TextAlign.center)),
                             title: Row(children: [
-                              Text(_ticketQc.ticket!.getName(), style: TextStyle(fontWeight: FontWeight.bold, color: tc)),
+                              Text(_ticketQc.ticket!.getName() ?? '', style: TextStyle(fontWeight: FontWeight.bold, color: tc)),
                               const Spacer(),
                               Text(_ticketQc.quality ?? '', style: TextStyle(color: (_ticketQc.quality ?? '').getColor())),
                               const SizedBox(width: 50)
@@ -402,7 +402,7 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
 
   Type _selectedType = Type.All;
 
-  _typeChip(Type p) {
+  FilterChip _typeChip(Type p) {
     return FilterChip(
         selectedColor: Colors.white,
         checkmarkColor: themeColor,

@@ -61,7 +61,7 @@ class _AddCprState extends State<AddCpr> {
 
   @override
   Widget build(BuildContext context) {
-    return IfWeb(elseIf: getUi(), child: DialogView(child: getWebUi()));
+    return DialogView(child: getWebUi());
   }
 
   var titleTheme = const TextStyle(fontSize: 12, color: Colors.grey);
@@ -494,8 +494,6 @@ class _AddCprState extends State<AddCpr> {
     //   x[0].qty = "${(double.parse("${x[0].qty.split(' ')[0]}") + double.parse(currentMaterial.qty.split(' ')[0]))} ${x[0].qty.split(' ')[1]}";
     // }
   }
-
-  getUi() {}
 
   String? _supplier1;
   String? _supplier2;

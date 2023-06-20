@@ -42,7 +42,6 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
   bool loading = true;
 
   StatusBarProgressIndicatorController statusBarProgressIndicatorController = StatusBarProgressIndicatorController();
-  late StatusBarProgressIndicator _statusBarProgressIndicator;
 
   bool _isMaterialManagement = false;
 
@@ -79,7 +78,6 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
   @override
   initState() {
     _isMaterialManagement = widget.isMaterialManagement;
-    _statusBarProgressIndicator = StatusBarProgressIndicator(controller: statusBarProgressIndicatorController);
 
     print('HOME PAGE INIT');
     HiveBox.getUserConfig();
@@ -103,21 +101,9 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
       });
     });
 
-    // StatusBar.getController().addWidget(_statusBarProgressIndicator);
-    // runIndicator().then((value) {
-    //   // StatusBar.getController().removeWidget(_statusBarProgressIndicator);
-    // });
-
-    // StatusBar.getController().addWidget(_statusBarProgressIndicator);
-
     super.initState();
 
     _selectedIndex = _isMaterialManagement ? 1 : 0;
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   int _selectedIndex = 0;
@@ -130,12 +116,9 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
         child: Scaffold(
           backgroundColor: Colors.grey.shade200,
           body: loading
-              ? Center(
-                  child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: const [CircularProgressIndicator(color: Colors.red)],
-                ))
+              ? const Center(
+                  child:
+                      Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [CircularProgressIndicator(color: Colors.red)]))
               : (AppUser.havePermissionFor(NsPermissions.MAIN_WEB))
                   ? Column(
                       children: [
@@ -192,7 +175,7 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                                                                         return;
                                                                       }
 
-                                                                      setState(() => {_selectedIndex = index});
+                                                                      setState(() => _selectedIndex = index);
                                                                       return;
                                                                     },
                                                                     labelType: NavigationRailLabelType.all,
@@ -256,22 +239,18 @@ class _WebHomePageState extends State<WebHomePage> with SingleTickerProviderStat
                                                         Text("${AppUser.getUser()?.name}"),
                                                         Text("#${AppUser.getUser()?.uname}", style: TextStyle(color: Theme.of(context).primaryColor)),
                                                         Column(children: [
-                                                          TextButton(
-                                                              onPressed: () {
-                                                                UserDetails(AppUser.getUser()!).show(context);
-                                                              },
-                                                              child: const Text("Details")),
+                                                          TextButton(onPressed: () => {UserDetails(AppUser.getUser()!).show(context)}, child: const Text("Details"))
                                                         ])
                                                       ]),
                                                     ))),
-                                            PopupMenuItem(value: 1, child: Row(children: const [Icon(Icons.logout_rounded), SizedBox(width: 36), Text('Logout')])),
+                                            const PopupMenuItem(value: 1, child: Row(children: [Icon(Icons.logout_rounded), SizedBox(width: 36), Text('Logout')])),
                                             // PopupMenuItem(value: 2, child: Row(children: const [Icon(Icons.logout_rounded), SizedBox(width: 36), Text('RF')])),
                                             // if (AppUser.getUser()?.id == 1)
                                             //   CheckedPopupMenuItem(value: 2, checked: isMaterialManagement, padding: const EdgeInsets.all(0.0), child: const Text("Material Management")),
                                           ],
                                         ),
                                       ),
-                                      Text('${appVersion}v', style: TextStyle(fontSize: 8, color: Theme.of(context).primaryColor))
+                                      Text('${appVersion}v', style: const TextStyle(fontSize: 8, color: Colors.white))
                                     ],
                                   ),
                                 ),

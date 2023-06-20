@@ -16,6 +16,8 @@ import '../../../../../../globals.dart';
 
 import 'package:dio/dio.dart';
 
+import 'AddTimeSheet.dart';
+
 class FinishCheckList extends StatefulWidget {
   final Ticket ticket;
 
@@ -80,10 +82,10 @@ class _FinishCheckListState extends State<FinishCheckList> {
 
   static const platform = MethodChannel('editPdf');
 
-  Future<void> finish(String quality) async {
+  Future<void> finish(String quality, uniqueKey) async {
     var isQc = false;
     int? selectedSection = AppUser.getSelectedSection()?.id;
-    if (AppUser.getSelectedSection()?.sectionTitle.toLowerCase() == "qc") {
+    if (AppUser.getSelectedSection()?.sectionTitle.toLowerCase() == "finishing") {
       isQc = true;
     }
 
@@ -123,7 +125,9 @@ class _FinishCheckListState extends State<FinishCheckList> {
         // var x = await RF(ticket, res1.operationMinMax!, res1.ticketProgressDetails, key: Key(uuid.v1())).show(context);
         // if (x != null || x == true) {
         await finish__(res1.operationMinMax!);
-        await loadingDialog(Api.post(EndPoints.tickets_qc_uploadEdits, {'quality': quality, 'ticketId': ticket.id, 'type': isQc, "sectionId": selectedSection}).then((res) {}));
+        await loadingDialog(
+            Api.post(EndPoints.tickets_qc_uploadEdits, {'uniqueKey': uniqueKey, 'quality': quality, 'ticketId': ticket.id, 'type': isQc, "sectionId": selectedSection})
+                .then((res) {}));
         // }
       }
       // }
@@ -220,16 +224,20 @@ class _FinishCheckListState extends State<FinishCheckList> {
     }));
   }
 
-  getButton(String qulaity, MaterialColor color, bool showCommentEditor) {
+  SizedBox getButton(String qulaity, MaterialColor color, bool showCommentEditor) {
     return SizedBox(
       width: double.infinity,
       child: OutlinedButton(
           style: ElevatedButton.styleFrom(textStyle: const TextStyle(fontWeight: FontWeight.bold)),
           onPressed: () async {
+            var selectedSectionId = AppUser.getSelectedSection()?.id;
+            var uniqueKey = UniqueKey().hashCode.toString();
+            print(uniqueKey);
+
             if (showCommentEditor) {
               var isQc = false;
               var selectedSection = AppUser.getSelectedSection()?.id;
-              if (AppUser.getSelectedSection()?.sectionTitle.toLowerCase() == "qc") {
+              if (AppUser.getSelectedSection()?.sectionTitle.toLowerCase() == "finishing") {
                 isQc = true;
                 selectedSection = await selectSection();
                 if (selectedSection == null) return;
@@ -237,6 +245,7 @@ class _FinishCheckListState extends State<FinishCheckList> {
               var userCurrentSection = AppUser.getSelectedSection()?.id ?? 0;
 
               await platform.invokeMethod('qcEdit', {
+                'uniqueKey': uniqueKey,
                 'userCurrentSection': userCurrentSection.toString(),
                 "qc": isQc,
                 "sectionId": "$selectedSection",
@@ -244,10 +253,14 @@ class _FinishCheckListState extends State<FinishCheckList> {
                 'ticket': {'id': ticket.id, "qc": isQc}.toString()
               });
               if (mounted) {
-                Navigator.pop(context, true);
+                // Navigator.pop(context, true);
               }
             } else {
-              await finish(qulaity).then((value) => {Navigator.of(context).pop(true)});
+              await finish(qulaity, uniqueKey).then((value) => {});
+            }
+            if (mounted) {
+              await AddTimeSheet(selectedSectionId!, uniqueKey).show(context);
+              Navigator.of(context).pop(true);
             }
           },
           child: Text(qulaity)),

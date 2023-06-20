@@ -83,7 +83,7 @@ class _SelectSectionBottomSheetState extends State<SelectSectionBottomSheet> {
 
       final ids = (pendingList ?? []).map((e) => e.section?.id).toSet();
       (pendingList ?? []).retainWhere((x) => ids.remove(x.section?.id));
-      (pendingList ?? []).removeWhere((x) => x.section?.sectionTitle.toLowerCase() == 'qc');
+      (pendingList ?? []).removeWhere((x) => x.section?.sectionTitle.toLowerCase() == 'finishing');
       loading = false;
       setState(() {});
       print('llll $loading');

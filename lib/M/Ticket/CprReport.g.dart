@@ -19,19 +19,22 @@ class CprReportAdapter extends TypeAdapter<CprReport> {
     return CprReport()
       ..status = fields[0] as String?
       ..type = fields[1] as String?
-      ..count = fields[2] == null ? 0 : fields[2] as int;
+      ..count = fields[2] == null ? 0 : fields[2] as int
+      ..itemCount = fields[3] == null ? 0 : fields[3] as int;
   }
 
   @override
   void write(BinaryWriter writer, CprReport obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.status)
       ..writeByte(1)
       ..write(obj.type)
       ..writeByte(2)
-      ..write(obj.count);
+      ..write(obj.count)
+      ..writeByte(3)
+      ..write(obj.itemCount);
   }
 
   @override
@@ -48,10 +51,13 @@ class CprReportAdapter extends TypeAdapter<CprReport> {
 CprReport _$CprReportFromJson(Map<String, dynamic> json) => CprReport()
   ..status = json['status'] as String?
   ..type = json['type'] as String?
-  ..count = json['count'] == null ? 0 : CprReport.intFromString(json['count'] as String);
+  ..count = json['count'] == null ? 0 : CprReport.intFromString(json['count'] as String)
+  ..itemCount = json['itemCount'] == null ? 0 : CprReport.intFromString(json['itemCount'] as String);
 
-Map<String, dynamic> _$CprReportToJson(CprReport instance) => <String, dynamic>{
+Map<String, dynamic> _$CprReportToJson(CprReport instance) =>
+    <String, dynamic>{
       'status': instance.status,
       'type': instance.type,
       'count': instance.count,
+      'itemCount': instance.itemCount,
     };
