@@ -1,9 +1,9 @@
+import 'package:deebugee_plugin/IfWeb.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
 import 'package:deebugee_plugin/DialogView.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/IfWeb.dart';
 import 'package:pdfx/pdfx.dart';
 
 import '../../../M/Ticket.dart';
@@ -54,7 +54,7 @@ class _TicketPageSelectorState extends State<TicketPageSelector> {
     return IfWeb(elseIf: getUi(), child: DialogView(child: getWebUi()));
   }
 
-  getWebUi() {
+  Scaffold getWebUi() {
     return Scaffold(
         appBar: AppBar(title: ListTile(title: Text("${ticket.mo}"), subtitle: Wrap(children: [Text("${ticket.oe}")]), textColor: Colors.white), actions: [
           if (!_pdfLoading)
@@ -70,35 +70,35 @@ class _TicketPageSelectorState extends State<TicketPageSelector> {
         backgroundColor: Colors.white,
         body: _pdfLoading
             ? const Center(child: CircularProgressIndicator())
-            // : PdfViewer.openData(
-            //     _data,
-            //     params: const PdfViewerParams(),
-            //   )
+        // : PdfViewer.openData(
+        //     _data,
+        //     params: const PdfViewerParams(),
+        //   )
             : Column(
-                children: [
-                  Expanded(
-                    child: PdfView(
-                        renderer: (PdfPage page) => page.render(
-                              width: page.width * 1,
-                              height: page.height * 1,
-                              format: PdfPageImageFormat.jpeg,
-                              backgroundColor: '#FFFFFF',
-                            ),
-                        pageSnapping: false,
-                        scrollDirection: Axis.vertical,
-                        controller: pdfController,
-                        onPageChanged: (p) {
-                          print('xxxxxxxxxxxxxxxxxxxxxxx ${p}');
-                          page = p;
-                          setState(() {});
-                        },
-                        onDocumentLoaded: (document) {
-                          print('xxxxxxxxxxxxxxxxxxxxxxx ${document.pagesCount}');
-                          setState(() {});
-                        }),
-                  )
-                ],
-              ),
+          children: [
+            Expanded(
+              child: PdfView(
+                  renderer: (PdfPage page) => page.render(
+                    width: page.width * 1,
+                    height: page.height * 1,
+                    format: PdfPageImageFormat.jpeg,
+                    backgroundColor: '#FFFFFF',
+                  ),
+                  pageSnapping: false,
+                  scrollDirection: Axis.vertical,
+                  controller: pdfController,
+                  onPageChanged: (p) {
+                    print('xxxxxxxxxxxxxxxxxxxxxxx ${p}');
+                    page = p;
+                    setState(() {});
+                  },
+                  onDocumentLoaded: (document) {
+                    print('xxxxxxxxxxxxxxxxxxxxxxx ${document.pagesCount}');
+                    setState(() {});
+                  }),
+            )
+          ],
+        ),
         bottomNavigationBar: BottomAppBar(
             elevation: 2,
             child: Row(
@@ -132,7 +132,7 @@ class _TicketPageSelectorState extends State<TicketPageSelector> {
             label: Text("Select Page $page")));
   }
 
-  getUi() {
+  dynamic getUi() {
     return getWebUi();
   }
 

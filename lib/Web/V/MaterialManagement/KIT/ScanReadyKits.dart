@@ -1,12 +1,10 @@
+import 'package:deebugee_plugin/DialogView.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind_future_fibers/M/EndPoints.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
-import 'package:deebugee_plugin/DialogView.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/IfWeb.dart';
 
 import '../../../../C/Api.dart';
 import '../../../../C/form_input_decoration.dart';
+import '../../../../M/EndPoints.dart';
 import '../../../../M/Ticket.dart';
 
 class ScanReadyKits extends StatefulWidget {
@@ -27,12 +25,12 @@ class _ScanReadyKitsState extends State<ScanReadyKits> {
 
   @override
   Widget build(BuildContext context) {
-    return DialogView(width: 300, height: 500, child: getWebUi());
+    return DialogView(width: 400, height: 550, child: getWebUi());
   }
 
   List<Ticket> ticketList = [];
 
-  getWebUi() {
+  Scaffold getWebUi() {
     return Scaffold(
       appBar: AppBar(title: const Text('Scan Ready Kits')),
       body: Padding(
@@ -62,9 +60,16 @@ class _ScanReadyKitsState extends State<ScanReadyKits> {
                 Ticket t = ticketList[index];
                 return ListTile(
                     title: Text("${t.mo}"),
+                    subtitle: alreadyDoneList.contains(t) ? const Text("Already Done ", style: TextStyle(color: Colors.red, fontSize: 12)) : null,
                     trailing: t.loading
                         ? const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 1))
-                        : const Icon(Icons.done, color: Colors.green, size: 16));
+                        : errorList.contains(t)
+                            ? InkWell(
+                                onTap: () {
+                                  send(t);
+                                },
+                                child: const Tooltip(message: 'something went wrong. Tap to retry', child: Icon(Icons.error, color: Colors.red, size: 16)))
+                            : const Icon(Icons.done, color: Colors.green, size: 16));
               },
               itemCount: ticketList.length,
               separatorBuilder: (BuildContext context, int index) {
@@ -79,16 +84,28 @@ class _ScanReadyKitsState extends State<ScanReadyKits> {
     );
   }
 
+  List<Ticket> alreadyDoneList = [];
+  List<Ticket> errorList = [];
+
   void send(Ticket t) {
+    setState(() => t.loading = true);
     Api.post(EndPoints.materialManagement_kit_readyKit, {'mo': t.mo}).then((res) {
       Map data = res.data;
+      if (data["alreadyDone"] != null) {
+        alreadyDoneList.add(t);
+      }
+      errorList.remove(t);
       setState(() {
         t.loading = false;
         print('xxxxxxxxx');
       });
     }).whenComplete(() {
+      t.loading = false;
       setState(() {});
     }).catchError((err) {
+      errorList.remove(t);
+      errorList.add(t);
+      print(err.toString());
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.toString())));
       setState(() {
         // _dataLoadingError = true;

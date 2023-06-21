@@ -1,4 +1,5 @@
 import 'package:deebugee_plugin/DialogView.dart';
+import 'package:deebugee_plugin/IfWeb.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,10 +8,7 @@ import 'package:smartwind_future_fibers/C/Validations.dart';
 import 'package:smartwind_future_fibers/C/form_input_decoration.dart';
 import 'package:smartwind_future_fibers/M/EndPoints.dart';
 import 'package:smartwind_future_fibers/M/NsUser.dart';
-import 'package:deebugee_plugin/DialogView.dart';
 import '../../../M/User/Email.dart';
-import '../../../Web/Widgets/DialogView.dart';
-import '../../../Web/Widgets/IfWeb.dart';
 import '../Widgets/UserImage.dart';
 import '../Widgets/message_box.dart';
 import 'Login.dart';

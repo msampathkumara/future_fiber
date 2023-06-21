@@ -1,20 +1,17 @@
 import 'package:data_table_2/data_table_2.dart';
+import 'package:deebugee_plugin/DialogView.dart';
+import 'package:deebugee_plugin/IfWeb.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
 import 'package:searchfield/searchfield.dart';
-import 'package:smartwind_future_fibers/M/CPR/CPR.dart';
-import 'package:smartwind_future_fibers/M/EndPoints.dart';
-import 'package:smartwind_future_fibers/M/Ticket.dart';
-import 'package:smartwind_future_fibers/Web/V/MaterialManagement/CPR/PastMaterialRow.dart';
-import 'package:smartwind_future_fibers/Web/V/MaterialManagement/DropMaterialList.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/IfWeb.dart';
-import 'package:deebugee_plugin/DialogView.dart';
-
 import '../../../../C/Api.dart';
-import '../../../../C/DB/hive.dart';
+import '../../../../M/CPR/CPR.dart';
 import '../../../../M/CPR/CprItem.dart';
+import '../../../../M/EndPoints.dart';
+import '../../../../M/Ticket.dart';
+import '../DropMaterialList.dart';
+import 'PastMaterialRow.dart';
 
 class AddCpr extends StatefulWidget {
   final Ticket ticket;
@@ -40,7 +37,7 @@ class _AddCprState extends State<AddCpr> {
   final _shortageTypes = ["Short", "Damage", "Unreceived"];
   final _cprTypes = ["Pocket", "Rope Luff", "Purchase Cover", "Overhead Tape", "Tape Cover", "Take Down", "Soft Hanks", "Windows", "Stow pouch", "VPC**", "Other"];
   final _suppliers = ["Cutting", "SA", "Printing", 'None'];
-  final _clients = ["EC-SIX", "AERO-SIX", "FIBRE LITE", "Machine Shop", "PULTRUSION", "TACO"];
+  final _clients = ['Upwind', 'OD', 'Nylon Standard', 'Nylon Custom', 'OEM', '38 Upwind', '38 OD', '38 Nylon Standard', '38 Nylon Custom', '38 OEM'];
   var textEditingController = TextEditingController();
 
   bool saving = false;
@@ -61,7 +58,7 @@ class _AddCprState extends State<AddCpr> {
 
   @override
   Widget build(BuildContext context) {
-    return DialogView(child: getWebUi());
+    return IfWeb(elseIf: getUi(), child: DialogView(child: getWebUi()));
   }
 
   var titleTheme = const TextStyle(fontSize: 12, color: Colors.grey);
@@ -294,6 +291,28 @@ class _AddCprState extends State<AddCpr> {
                                           }).toList();
                                         })),
                               ),
+                              // if (cpr.ticket!.production == null)
+                              //   ListTile(
+                              //     title: Text("Client", style: titleTheme),
+                              //     subtitle: SizedBox(
+                              //       width: 200,
+                              //       child: Padding(
+                              //           padding: const EdgeInsets.all(16.0),
+                              //           child: DropdownSearch<String>(
+                              //               selectedItem: cpr.client,
+                              //               // mode: Mode.BOTTOM_SHEET,
+                              //               // showSelectedItem: true,
+                              //               items: const ["Upwind", "OD", "Nylon", "OEM"],
+                              //               dropdownDecoratorProps: const DropDownDecoratorProps(dropdownSearchDecoration: InputDecoration(hintText: "Select Client")),
+                              //               onChanged: (c) {
+                              //                 cpr.client = c;
+                              //               })),
+                              //     ),
+                              //   ),
+                              // Padding(
+                              //   padding: const EdgeInsets.only(left: 12.0),
+                              //   child: Text("Suppliers", style: titleTheme),
+                              // ),
                               ListTile(dense: false, title: Text("Suppliers", style: titleTheme), subtitle: getSuppliers()),
                               ListTile(
                                   title: Text("Comment", style: titleTheme),
@@ -494,6 +513,8 @@ class _AddCprState extends State<AddCpr> {
     //   x[0].qty = "${(double.parse("${x[0].qty.split(' ')[0]}") + double.parse(currentMaterial.qty.split(' ')[0]))} ${x[0].qty.split(' ')[1]}";
     // }
   }
+
+  getUi() {}
 
   String? _supplier1;
   String? _supplier2;

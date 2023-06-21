@@ -1,9 +1,8 @@
+import 'package:deebugee_plugin/IfWeb.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind_future_fibers/M/Ticket.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/IfWeb.dart';
 import 'package:deebugee_plugin/DialogView.dart';
 import '../../../../../C/Api.dart';
 import '../../../../../M/EndPoints.dart';
@@ -64,116 +63,116 @@ class _TicketChatViewState extends State<TicketChatView> {
     return Theme(
       data: Theme.of(context).copyWith(
           scrollbarTheme:
-              const ScrollbarThemeData().copyWith(thumbColor: MaterialStateProperty.all(Theme.of(context).primaryColor), thumbVisibility: MaterialStateProperty.all(true))),
+          const ScrollbarThemeData().copyWith(thumbColor: MaterialStateProperty.all(Theme.of(context).primaryColor), thumbVisibility: MaterialStateProperty.all(true))),
       child: Scaffold(
           body: Stack(
-        children: [
-          Scaffold(
-              appBar: AppBar(
-                toolbarHeight: 100,
-                title: Row(
-                  children: [
-                    Wrap(
-                      direction: Axis.vertical,
+            children: [
+              Scaffold(
+                  appBar: AppBar(
+                    toolbarHeight: 100,
+                    title: Row(
                       children: [
-                        Text(ticketChat.ticket.mo ?? ticketChat.ticket.oe ?? '', textScaleFactor: 1),
-                        Text("${ticketChat.ticket.oe}", style: const TextStyle(), textScaleFactor: 0.8)
+                        Wrap(
+                          direction: Axis.vertical,
+                          children: [
+                            Text(ticketChat.ticket.mo ?? ticketChat.ticket.oe ?? '', textScaleFactor: 1),
+                            Text("${ticketChat.ticket.oe}", style: const TextStyle(), textScaleFactor: 0.8)
+                          ],
+                        ),
+                        const Spacer(),
+                        // Stack(
+                        //   children: [
+                        //     Padding(padding: const EdgeInsets.only(left: 0.0), child: SizedBox(height: 36, width: 36, child: UserImage(nsUser: NsUser.fromId(1), radius: 16))),
+                        //     Padding(padding: const EdgeInsets.only(left: 30.0), child: SizedBox(height: 36, width: 36, child: UserImage(nsUser: NsUser.fromId(1), radius: 16))),
+                        //     Padding(padding: const EdgeInsets.only(left: 60.0), child: SizedBox(height: 36, width: 36, child: UserImage(nsUser: NsUser.fromId(1), radius: 16))),
+                        //     Padding(padding: const EdgeInsets.only(left: 90.0), child: SizedBox(height: 36, width: 36, child: UserImage(nsUser: NsUser.fromId(1), radius: 16)))
+                        //   ],
+                        // )
                       ],
                     ),
-                    const Spacer(),
-                    // Stack(
-                    //   children: [
-                    //     Padding(padding: const EdgeInsets.only(left: 0.0), child: SizedBox(height: 36, width: 36, child: UserImage(nsUser: NsUser.fromId(1), radius: 16))),
-                    //     Padding(padding: const EdgeInsets.only(left: 30.0), child: SizedBox(height: 36, width: 36, child: UserImage(nsUser: NsUser.fromId(1), radius: 16))),
-                    //     Padding(padding: const EdgeInsets.only(left: 60.0), child: SizedBox(height: 36, width: 36, child: UserImage(nsUser: NsUser.fromId(1), radius: 16))),
-                    //     Padding(padding: const EdgeInsets.only(left: 90.0), child: SizedBox(height: 36, width: 36, child: UserImage(nsUser: NsUser.fromId(1), radius: 16)))
-                    //   ],
-                    // )
-                  ],
-                ),
-                // actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.info))]
-              ),
-              body: ListView.separated(
-                controller: _scrollController,
-                padding: const EdgeInsets.only(bottom: 154.0),
-                reverse: true,
-                separatorBuilder: (BuildContext context, int index) {
-                  return const Divider(height: 0, color: Colors.transparent);
-                },
-                itemCount: (ticketChat.commentList?.length ?? 0),
-                itemBuilder: (BuildContext context, int index) {
-                  return getChatElement(ticketChat.commentList![index]);
-                },
-              )),
-          if (ticketChat.commentList == null) const Align(alignment: Alignment.center, child: CircularProgressIndicator()),
-          Positioned(
-              bottom: 0.0,
-              left: 0.0,
-              right: 0.0,
-              child: BottomAppBar(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 8.0, top: 8, bottom: 8, right: 8),
-                  child: Container(
-                      constraints: const BoxConstraints(minWidth: 100, maxWidth: 500),
-                      child: Row(
-                        children: [
-                          // if (_chatBoxController.value.text.isEmpty) IconButton(onPressed: () {}, icon: const Icon(Icons.image)),
-                          Expanded(
-                            child: SizedBox(
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 0.0),
-                                child: TextFormField(
-                                  keyboardType: TextInputType.multiline,
-                                  maxLines: null,
-                                  minLines: 5,
-                                  controller: _chatBoxController,
-                                  onChanged: (c) {
-                                    setState(() {});
-                                  },
-                                  onFieldSubmitted: (x) {
-                                    if (x.isNotEmpty) {
-                                      saveComment(_chatBoxController.value.text);
-                                      _chatBoxController.clear();
-                                    }
-                                  },
-                                  decoration: InputDecoration(
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: const BorderSide(color: Colors.grey),
-                                        borderRadius: BorderRadius.circular(16),
+                    // actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.info))]
+                  ),
+                  body: ListView.separated(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.only(bottom: 154.0),
+                    reverse: true,
+                    separatorBuilder: (BuildContext context, int index) {
+                      return const Divider(height: 0, color: Colors.transparent);
+                    },
+                    itemCount: (ticketChat.commentList?.length ?? 0),
+                    itemBuilder: (BuildContext context, int index) {
+                      return getChatElement(ticketChat.commentList![index]);
+                    },
+                  )),
+              if (ticketChat.commentList == null) const Align(alignment: Alignment.center, child: CircularProgressIndicator()),
+              Positioned(
+                  bottom: 0.0,
+                  left: 0.0,
+                  right: 0.0,
+                  child: BottomAppBar(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0, top: 8, bottom: 8, right: 8),
+                      child: Container(
+                          constraints: const BoxConstraints(minWidth: 100, maxWidth: 500),
+                          child: Row(
+                            children: [
+                              // if (_chatBoxController.value.text.isEmpty) IconButton(onPressed: () {}, icon: const Icon(Icons.image)),
+                              Expanded(
+                                child: SizedBox(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 0.0),
+                                    child: TextFormField(
+                                      keyboardType: TextInputType.multiline,
+                                      maxLines: null,
+                                      minLines: 5,
+                                      controller: _chatBoxController,
+                                      onChanged: (c) {
+                                        setState(() {});
+                                      },
+                                      onFieldSubmitted: (x) {
+                                        if (x.isNotEmpty) {
+                                          saveComment(_chatBoxController.value.text);
+                                          _chatBoxController.clear();
+                                        }
+                                      },
+                                      decoration: InputDecoration(
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: const BorderSide(color: Colors.grey),
+                                            borderRadius: BorderRadius.circular(16),
+                                          ),
+                                          enabledBorder: UnderlineInputBorder(
+                                            borderSide: const BorderSide(color: Colors.white),
+                                            borderRadius: BorderRadius.circular(16),
+                                          ),
+                                          filled: true,
+                                          fillColor: Colors.grey.shade100,
+                                          focusColor: Colors.grey.shade100,
+                                          border: InputBorder.none,
+                                          // focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16.0), gapPadding: 0),
+                                          // enabledBorder: InputBorder.none,
+                                          hintText: 'Enter your Comment',
+                                          hintStyle: const TextStyle(color: Colors.grey)
+                                        // prefixIcon: Icon(Icons.search, color: Colors.white)
                                       ),
-                                      enabledBorder: UnderlineInputBorder(
-                                        borderSide: const BorderSide(color: Colors.white),
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                      filled: true,
-                                      fillColor: Colors.grey.shade100,
-                                      focusColor: Colors.grey.shade100,
-                                      border: InputBorder.none,
-                                      // focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16.0), gapPadding: 0),
-                                      // enabledBorder: InputBorder.none,
-                                      hintText: 'Enter your Comment',
-                                      hintStyle: const TextStyle(color: Colors.grey)
-                                      // prefixIcon: Icon(Icons.search, color: Colors.white)
-                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                          IconButton(
-                              onPressed: _chatBoxController.value.text.isNotEmpty
-                                  ? () {
-                                      saveComment(_chatBoxController.value.text);
-                                      _chatBoxController.clear();
-                                    }
-                                  : null,
-                              icon: const Icon(Icons.send),
-                              color: Theme.of(context).primaryColor)
-                        ],
-                      )),
-                ),
-              ))
-        ],
-      )),
+                              IconButton(
+                                  onPressed: _chatBoxController.value.text.isNotEmpty
+                                      ? () {
+                                    saveComment(_chatBoxController.value.text);
+                                    _chatBoxController.clear();
+                                  }
+                                      : null,
+                                  icon: const Icon(Icons.send),
+                                  color: Theme.of(context).primaryColor)
+                            ],
+                          )),
+                    ),
+                  ))
+            ],
+          )),
     );
   }
 
@@ -220,25 +219,25 @@ class _TicketChatViewState extends State<TicketChatView> {
   void loadData(int id) {
     Api.get(EndPoints.tickets_comments_list, {'ticketId': id})
         .then((res) {
-          Map data = res.data;
+      Map data = res.data;
 
-          ticketChat.commentList = TicketComment.fromJsonArray(data['comments']).reversed.toList();
-          setState(() {});
-        })
+      ticketChat.commentList = TicketComment.fromJsonArray(data['comments']).reversed.toList();
+      setState(() {});
+    })
         .whenComplete(() {})
         .catchError((err) {
-          print(err);
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(err.toString()),
-              action: SnackBarAction(
-                  label: 'Retry',
-                  onPressed: () {
-                    loadData(id);
-                  })));
-          setState(() {
-            // _dataLoadingError = true;
-          });
-        });
+      print(err);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(err.toString()),
+          action: SnackBarAction(
+              label: 'Retry',
+              onPressed: () {
+                loadData(id);
+              })));
+      setState(() {
+        // _dataLoadingError = true;
+      });
+    });
   }
 
   void saveComment(String newComment) {

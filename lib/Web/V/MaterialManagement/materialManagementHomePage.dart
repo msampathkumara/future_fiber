@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:smartwind_future_fibers/M/AppUser.dart';
-import 'package:smartwind_future_fibers/V/PermissionMessage.dart';
-import 'package:smartwind_future_fibers/Web/V/MaterialManagement/CPR/webCpr.dart';
-import 'package:smartwind_future_fibers/Web/V/MaterialManagement/KIT/webKit.dart';
 
+import '../../../M/AppUser.dart';
 import '../../../M/PermissionsEnum.dart';
 import '../../../Mobile/V/Widgets/UserImage.dart';
+import '../../../V/PermissionMessage.dart';
 import '../../../globals.dart';
 import '../../Widgets/login_change.dart';
+import 'CPR/webCpr.dart';
+import 'KIT/webKit.dart';
 
 class MaterialManagementHomePage extends StatefulWidget {
   const MaterialManagementHomePage({Key? key}) : super(key: key);

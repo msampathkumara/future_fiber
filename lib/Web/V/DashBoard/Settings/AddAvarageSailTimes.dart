@@ -1,10 +1,9 @@
+import 'package:deebugee_plugin/IfWeb.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:smartwind_future_fibers/M/EndPoints.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
 import 'package:deebugee_plugin/DialogView.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/IfWeb.dart';
 import 'package:smartwind_future_fibers/globals.dart';
 
 import '../../../../C/Api.dart';
@@ -39,79 +38,79 @@ class _AddAverageSailTimesState extends State<AddAverageSailTimes> {
         appBar: AppBar(title: const Text('Average Sail Times')),
         body: error
             ? Center(
-                child: Wrap(crossAxisAlignment: WrapCrossAlignment.center, direction: Axis.vertical, children: [
-                  const Text("Something went wrong"),
-                  TextButton(
-                      onPressed: () {
-                        getData(selectedFactory);
-                      },
-                      child: const Text("Retry", style: TextStyle(color: Colors.red)))
-                ]),
-              )
+          child: Wrap(crossAxisAlignment: WrapCrossAlignment.center, direction: Axis.vertical, children: [
+            const Text("Something went wrong"),
+            TextButton(
+                onPressed: () {
+                  getData(selectedFactory);
+                },
+                child: const Text("Retry", style: TextStyle(color: Colors.red)))
+          ]),
+        )
             : loading
-                ? const Center(child: CircularProgressIndicator())
-                : isFactorySelected
-                    ? Column(
-                        children: [
-                          ListTile(
-                              title: Row(
-                                children: [getFactorySector(), const Spacer()],
-                              ),
-                              trailing: SizedBox(
-                                  width: 100,
-                                  height: 36,
-                                  child: TextFormField(
-                                    initialValue: "${factoryAverages["hours"] ?? ''}",
-                                    onChanged: (text) {
-                                      factoryAverages["hours"] = text;
-                                    },
-                                    decoration: FormInputDecoration.getDeco(),
-                                    keyboardType: TextInputType.number,
-                                    inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.allow(RegExp(r'[0-9]')), FilteringTextInputFormatter.digitsOnly],
-                                  ))),
-                          const Padding(
-                              padding: EdgeInsets.only(left: 8.0, right: 8),
-                              child: Divider(
-                                color: Colors.red,
-                              )),
-                          Expanded(
-                            child: ListView.separated(
-                              itemBuilder: (BuildContext context, int index) {
-                                var section = _sections[index];
-                                Map? sectionAv = sectionAveragesMap[section];
+            ? const Center(child: CircularProgressIndicator())
+            : isFactorySelected
+            ? Column(
+          children: [
+            ListTile(
+                title: Row(
+                  children: [getFactorySector(), const Spacer()],
+                ),
+                trailing: SizedBox(
+                    width: 100,
+                    height: 36,
+                    child: TextFormField(
+                      initialValue: "${factoryAverages["hours"] ?? ''}",
+                      onChanged: (text) {
+                        factoryAverages["hours"] = text;
+                      },
+                      decoration: FormInputDecoration.getDeco(),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.allow(RegExp(r'[0-9]')), FilteringTextInputFormatter.digitsOnly],
+                    ))),
+            const Padding(
+                padding: EdgeInsets.only(left: 8.0, right: 8),
+                child: Divider(
+                  color: Colors.red,
+                )),
+            Expanded(
+              child: ListView.separated(
+                itemBuilder: (BuildContext context, int index) {
+                  var section = _sections[index];
+                  Map? sectionAv = sectionAveragesMap[section];
 
-                                return ListTile(
-                                  title: Text(section),
-                                  trailing: SizedBox(
-                                      width: 100,
-                                      height: 36,
-                                      child: TextFormField(
-                                        initialValue: "${sectionAv?['hours'] ?? 0}",
-                                        onChanged: (text) {
-                                          sectionAveragesMap[section]['hours'] = text;
-                                        },
-                                        decoration: FormInputDecoration.getDeco(),
-                                        keyboardType: TextInputType.number,
-                                        inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.allow(RegExp(r'[0-9]')), FilteringTextInputFormatter.digitsOnly],
-                                      )),
-                                );
-                              },
-                              separatorBuilder: (BuildContext context, int index) {
-                                return Divider(color: Colors.grey.shade200);
-                              },
-                              itemCount: _sections.length,
-                            ),
-                          ),
-                        ],
-                      )
-                    : Center(child: getFactorySector()),
+                  return ListTile(
+                    title: Text(section),
+                    trailing: SizedBox(
+                        width: 100,
+                        height: 36,
+                        child: TextFormField(
+                          initialValue: "${sectionAv?['hours'] ?? 0}",
+                          onChanged: (text) {
+                            sectionAveragesMap[section]['hours'] = text;
+                          },
+                          decoration: FormInputDecoration.getDeco(),
+                          keyboardType: TextInputType.number,
+                          inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.allow(RegExp(r'[0-9]')), FilteringTextInputFormatter.digitsOnly],
+                        )),
+                  );
+                },
+                separatorBuilder: (BuildContext context, int index) {
+                  return Divider(color: Colors.grey.shade200);
+                },
+                itemCount: _sections.length,
+              ),
+            ),
+          ],
+        )
+            : Center(child: getFactorySector()),
         bottomNavigationBar: (isFactorySelected && !loading && !error)
             ? BottomAppBar(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(onPressed: save, child: const Text('Save')),
-                ),
-              )
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(onPressed: save, child: const Text('Save')),
+          ),
+        )
             : null);
   }
 
@@ -134,13 +133,13 @@ class _AddAverageSailTimesState extends State<AddAverageSailTimes> {
             return Production.values
                 .without([Production.None, Production.All])
                 .map((e) => PopupMenuItem(
-                    onTap: () {
-                      selectedFactory = e.getValue();
-                      getData(selectedFactory);
-                    },
-                    value: 0,
-                    enabled: true,
-                    child: Text(e.getValue())))
+                onTap: () {
+                  selectedFactory = e.getValue();
+                  getData(selectedFactory);
+                },
+                value: 0,
+                enabled: true,
+                child: Text(e.getValue())))
                 .toList();
           }),
     );

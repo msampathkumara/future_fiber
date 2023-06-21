@@ -1,16 +1,14 @@
 import 'package:data_table_2/data_table_2.dart';
+import 'package:deebugee_plugin/DialogView.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:smartwind_future_fibers/M/CPR/CprItem.dart';
-import 'package:smartwind_future_fibers/M/EndPoints.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
-import 'package:deebugee_plugin/DialogView.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/IfWeb.dart';
 
 import '../../../../C/Api.dart';
+import '../../../../M/CPR/CprItem.dart';
 import '../../../../M/CPR/KIT.dart';
 import '../../../../M/CPR/KitItem.dart';
+import '../../../../M/EndPoints.dart';
 import '../CPR/PastMaterialRow.dart';
 import '../DropMaterialList.dart';
 

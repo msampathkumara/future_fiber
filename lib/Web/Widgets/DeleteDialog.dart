@@ -1,7 +1,6 @@
+import 'package:deebugee_plugin/IfWeb.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/IfWeb.dart';
 import 'package:deebugee_plugin/DialogView.dart';
 
 class DeleteDialog extends StatefulWidget {
@@ -21,7 +20,7 @@ class _DeleteDialogState extends State<DeleteDialog> {
     return IfWeb(elseIf: getUi(), child: DialogView(height: 350, width: 400, child: getWebUi()));
   }
 
-  getWebUi() {
+  Scaffold getWebUi() {
     return Scaffold(
       body: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center, children: [
         const Padding(

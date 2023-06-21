@@ -1,9 +1,8 @@
+import 'package:deebugee_plugin/IfWeb.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind_future_fibers/M/EndPoints.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
 import 'package:deebugee_plugin/DialogView.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/IfWeb.dart';
 
 import '../../../../C/Api.dart';
 import '../../../../M/User/PermissionProfile.dart';
@@ -45,30 +44,30 @@ class _PermissionsProfilesState extends State<PermissionsProfiles> {
     return isLoading
         ? const Scaffold(body: Center(child: CircularProgressIndicator()))
         : Scaffold(
-            appBar: AppBar(title: Text("${permissionProfileList.length}")),
-            body: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ListView.separated(
-                itemCount: (permissionProfileList.length + 1),
-                separatorBuilder: (BuildContext context, int index) {
-                  return const Divider();
-                },
-                itemBuilder: (BuildContext context, int index) {
-                  print('index == $index');
+        appBar: AppBar(title: Text("${permissionProfileList.length}")),
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListView.separated(
+            itemCount: (permissionProfileList.length + 1),
+            separatorBuilder: (BuildContext context, int index) {
+              return const Divider();
+            },
+            itemBuilder: (BuildContext context, int index) {
+              print('index == $index');
 
-                  if (permissionProfileList.length == index) {
-                    return const Text("ddddddddd", style: TextStyle(color: Colors.red));
-                  }
-                  var permissionProfile = permissionProfileList.elementAt(index);
+              if (permissionProfileList.length == index) {
+                return const Text("ddddddddd", style: TextStyle(color: Colors.red));
+              }
+              var permissionProfile = permissionProfileList.elementAt(index);
 
-                  return ListTile(
-                      title: Text(permissionProfile.name),
-                      onTap: () {
-                        widget.onSelect(permissionProfile.permissions);
-                      });
-                },
-              ),
-            ));
+              return ListTile(
+                  title: Text(permissionProfile.name),
+                  onTap: () {
+                    widget.onSelect(permissionProfile.permissions);
+                  });
+            },
+          ),
+        ));
   }
 
   getUi() {}

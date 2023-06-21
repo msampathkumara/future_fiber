@@ -13,8 +13,7 @@ KitItem _$KitItemFromJson(Map<String, dynamic> json) => KitItem()
   ..dnt = json['dnt'] as String? ?? ''
   ..userId = json['userId'] as int? ?? -1
   ..id = json['id'] as int? ?? 0
-  ..selected = json['selected'] as bool? ?? false
-  ..saved = json['saved'] as bool? ?? false;
+  ..selected = json['selected'] as bool? ?? false;
 
 Map<String, dynamic> _$KitItemToJson(KitItem instance) => <String, dynamic>{
       'item': instance.item,
@@ -24,5 +23,4 @@ Map<String, dynamic> _$KitItemToJson(KitItem instance) => <String, dynamic>{
       'userId': instance.userId,
       'id': instance.id,
       'selected': instance.selected,
-      'saved': instance.saved,
     };

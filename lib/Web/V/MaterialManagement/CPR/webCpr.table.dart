@@ -174,7 +174,7 @@ class _ErrorAndRetry extends StatelessWidget {
               Text('Oops! $errorMessage', style: const TextStyle(color: Colors.white)),
               TextButton(
                   onPressed: retry,
-                  child: Row(mainAxisSize: MainAxisSize.min, children: const [Icon(Icons.refresh, color: Colors.white), Text('Retry', style: TextStyle(color: Colors.white))]))
+                  child: const Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.refresh, color: Colors.white), Text('Retry', style: TextStyle(color: Colors.white))]))
             ])),
       );
 }
@@ -197,12 +197,12 @@ class __LoadingState extends State<_Loading> {
                   ? const SizedBox()
                   : Center(
                       child: Container(
-                      color: Colors.yellow,
+                        color: Colors.yellow,
                       padding: const EdgeInsets.all(7),
                       width: 150,
                       height: 50,
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround, children: const [CircularProgressIndicator(strokeWidth: 2, color: Colors.black), Text('Loading..')]),
+                      child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround, children: [CircularProgressIndicator(strokeWidth: 2, color: Colors.black), Text('Loading..')]),
                     ));
             }));
   }
@@ -300,9 +300,9 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                   direction: Axis.vertical,
                   children: [Text((cpr.date) ?? ""), Text((cpr.time) ?? "", style: const TextStyle(color: Colors.grey, fontSize: 12))])),
               DataCell(Text((cpr.cprType) ?? "")),
-              DataCell(Text((cpr.shipDate))),
+              DataCell(Text((cpr.CPRDueDate))),
               DataCell(Text((cpr.materialDueDate))),
-              DataCell(Text((cpr.status), style: TextStyle(color: cpr.status.getColor()))),
+              DataCell(Text((cpr.status.capitalize()), style: TextStyle(color: cpr.status.getColor()))),
               DataCell(Text((cpr.orderType ?? ''), style: TextStyle(color: (cpr.orderType ?? '').getColor()))),
               DataCell(IconButton(
                 icon: const Icon(Icons.more_vert_rounded),

@@ -63,7 +63,7 @@ showDeleteDialog(BuildContext context, CPR cpr, reload) async {
           TextButton(
             child: const Text("Continue"),
             onPressed: () async {
-                delete(cpr, context, reload);
+              delete(cpr, context, reload);
               Navigator.of(context).pop();
             },
           )

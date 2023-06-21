@@ -1,14 +1,13 @@
 import 'package:data_table_2/data_table_2.dart';
+import 'package:deebugee_plugin/DialogView.dart';
+import 'package:deebugee_plugin/IfWeb.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind_future_fibers/M/EndPoints.dart';
-import 'package:smartwind_future_fibers/M/Ticket.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
-import 'package:deebugee_plugin/DialogView.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/IfWeb.dart';
 
 import '../../../../C/Api.dart';
 import '../../../../M/CPR/CPR.dart';
+import '../../../../M/EndPoints.dart';
+import '../../../../M/Ticket.dart';
 import '../orderOprions.dart';
 
 class TicketKitList extends StatefulWidget {

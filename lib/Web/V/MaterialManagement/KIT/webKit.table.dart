@@ -3,8 +3,9 @@ part of 'webKit.dart';
 class WebKITTable extends StatefulWidget {
   final Null Function(DessertDataSourceAsync dataSource) onInit;
   final Future<DataResponse> Function(int page, int startingAt, int count, String sortedBy, bool sortedAsc) onRequestData;
+  final Function(Map<int, KIT> selectedList) onSelectChange;
 
-  const WebKITTable({super.key, required this.onInit, required this.onRequestData});
+  const WebKITTable({super.key, required this.onInit, required this.onRequestData, required this.onSelectChange});
 
   @override
   _WebKITTableState createState() => _WebKITTableState();
@@ -24,7 +25,7 @@ class _WebKITTableState extends State<WebKITTable> {
   @override
   void didChangeDependencies() {
     // initState is to early to access route options, context is invalid at that stage
-    _dessertsDataSource ??= DessertDataSourceAsync(context, onRequestData: widget.onRequestData);
+    _dessertsDataSource ??= DessertDataSourceAsync(context, onRequestData: widget.onRequestData, onSelectChange: widget.onSelectChange);
 
     widget.onInit(_dessertsDataSource!);
 
@@ -126,6 +127,7 @@ class _WebKITTableState extends State<WebKITTable> {
             _dessertsDataSource?.refreshData();
             //});
           },
+          showCheckboxColumn: true,
           initialFirstRowIndex: _initialRow,
           onPageChanged: (rowIndex) {
             print("$rowIndex${_rowsPerPage}xxxxxxxx =${rowIndex / _rowsPerPage}");
@@ -140,6 +142,22 @@ class _WebKITTableState extends State<WebKITTable> {
           loading: _Loading(),
           errorBuilder: (e) => _ErrorAndRetry(e.toString(), () => _dessertsDataSource!.refreshData()),
           source: _dessertsDataSource!),
+      if (DessertDataSourceAsync.selectedList.isNotEmpty)
+        Positioned(
+            left: 16,
+            bottom: 16,
+            child: Row(
+              children: [
+                Text("${DessertDataSourceAsync.selectedList.length} KITs Selected "),
+                TextButton(
+                    onPressed: () {
+                      DessertDataSourceAsync.selectedList.clear();
+                      _dessertsDataSource?.refreshDatasource();
+                      setState(() {});
+                    },
+                    child: const Text("Clear Selection", style: TextStyle(color: Colors.red)))
+              ],
+            )),
     ]);
   }
 }
@@ -160,7 +178,7 @@ class _ErrorAndRetry extends StatelessWidget {
               Text('Oops! $errorMessage', style: const TextStyle(color: Colors.white)),
               TextButton(
                   onPressed: retry,
-                  child: Row(mainAxisSize: MainAxisSize.min, children: const [Icon(Icons.refresh, color: Colors.white), Text('Retry', style: TextStyle(color: Colors.white))]))
+                  child: const Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.refresh, color: Colors.white), Text('Retry', style: TextStyle(color: Colors.white))]))
             ])),
       );
 }
@@ -187,17 +205,18 @@ class __LoadingState extends State<_Loading> {
                           padding: const EdgeInsets.all(7),
                           width: 150,
                           height: 50,
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: const [CircularProgressIndicator(strokeWidth: 2, color: Colors.black), Text('Loading..')])));
+                          child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround, children: [CircularProgressIndicator(strokeWidth: 2, color: Colors.black), Text('Loading..')])));
             }));
   }
 }
 
 class DessertDataSourceAsync extends AsyncDataTableSource {
+  static Map<int, KIT> selectedList = {};
   Future<DataResponse> Function(int page, int startingAt, int count, String sortedBy, bool sortedAsc) onRequestData;
+  Function(Map<int, KIT> selectedList) onSelectChange;
 
-  DessertDataSourceAsync(this.context, {required this.onRequestData}) {
+  DessertDataSourceAsync(this.context, {required this.onRequestData, required this.onSelectChange}) {
     print('DessertDataSourceAsync created');
   }
 
@@ -253,15 +272,10 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
     var r = AsyncRowsResponse(
         x.totalRecords,
         x.data.mapIndexed((kit, index) {
-          print('isSelected = ${kit.isSelected}');
           return DataRow2(
-              // onSelectChanged: (selected) {
-              //   kit.isSelected = selected ?? false;
-              //   refreshDatasource();
-              // },
+              color: (selectedList.containsKey(kit.id) ? MaterialStateProperty.all(Colors.grey.shade300) : MaterialStateProperty.all(Colors.white)),
               specificRowHeight: 55,
-              selected: kit.isSelected,
-              onTap: () async {
+              onDoubleTap: () async {
                 bool c = false;
                 await KitView(kit, (p0) {
                   c = true;
@@ -270,10 +284,16 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                   refreshData();
                 }
               },
-              // onSecondaryTap: () => ScaffoldMessenger.of(context).showSnackBar(
-              //     SnackBar(duration: const Duration(seconds: 1), backgroundColor: Theme.of(context).colorScheme.error, content: Text('Right clicked on ${kit.ticket?.oe}'))),
               cells: [
-                DataCell(GestureDetector(onTap: () {}, child: Text("${index + 1}"))),
+                DataCell(onTap: () {
+                  if (!selectedList.containsKey(kit.id)) {
+                    selectedList[kit.id] = kit;
+                  } else {
+                    selectedList.remove(kit.id);
+                  }
+                  onSelectChange(selectedList);
+                  refreshDatasource();
+                }, Center(child: Text("${index + 1}"))),
                 DataCell(ListTile(
                     visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
                     title: TextMenu(child: Text(kit.ticket?.mo ?? kit.ticket?.oe ?? '', style: TextStyle(color: kit.isTicketStarted ? Colors.green : null, fontSize: 15))),
@@ -283,9 +303,9 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                 DataCell(Wrap(
                     crossAxisAlignment: WrapCrossAlignment.end,
                     direction: Axis.vertical,
-                    children: [Text((kit.date) ?? ""), Text((kit.time) ?? "", style: const TextStyle(color: Colors.grey, fontSize: 12))])),
+                    children: [Text((kit.date)), Text((kit.time), style: const TextStyle(color: Colors.grey, fontSize: 12))])),
                 DataCell(Text((kit.shipDate))),
-                DataCell(Text((kit.status), style: TextStyle(color: kit.status.getColor()))),
+                DataCell(Text((kit.status.capitalize()), style: TextStyle(color: kit.status.getColor()))),
                 DataCell(Text((kit.orderType ?? ''), style: TextStyle(color: (kit.orderType ?? '').getColor()))),
                 DataCell(IconButton(
                     icon: const Icon(Icons.more_vert_rounded),
@@ -304,12 +324,12 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
   void order(KIT kit) {
     Api.post(EndPoints.materialManagement_kit_order, {'kitId': kit.id})
         .then((res) {
-          refreshData();
-        })
+      refreshData();
+    })
         .whenComplete(() {})
         .catchError((err) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.toString())));
-        });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.toString())));
+    });
   }
 
   void refreshData() {

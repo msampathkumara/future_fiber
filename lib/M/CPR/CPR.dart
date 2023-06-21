@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:smartwind_future_fibers/C/DB/hive.dart';
 
+import '../../C/DB/hive.dart';
 import '../NsUser.dart';
 import '../Ticket.dart';
 import 'CprItem.dart';
@@ -88,20 +88,30 @@ class CPR {
 
   factory CPR.fromJson(Map<String, dynamic> json) => _$CPRFromJson(json);
 
-  get date => addedOn.toString().split(" ")[0];
+  String get date => addedOn.toString().split(" ")[0];
 
-  get time => addedOn.toString().split(" ")[1];
+  String get time => addedOn.toString().split(" ")[1];
 
   String get supplier => suppliers.first;
 
-  get materialDueDate {
+  String get CPRDueDate {
     DateTime? x;
     try {
-      x = DateTime.parse(shipDate);
+      x = DateTime.parse(ticket!.deliveryDate ?? '');
     } catch (e) {
       x = null;
     }
-    return x != null ? DateFormat("yyyy-MM-dd").format(x.add(const Duration(days: 3))) : '';
+    return x != null ? DateFormat("yyyy-MM-dd").format(x.subtract(const Duration(days: 7))) : '';
+  }
+
+  String get materialDueDate {
+    DateTime? x;
+    try {
+      x = DateTime.parse(ticket!.deliveryDate ?? '');
+    } catch (e) {
+      x = null;
+    }
+    return x != null ? DateFormat("yyyy-MM-dd").format(x.subtract(const Duration(days: 10))) : '';
   }
 
   static List<String> arrayFromObject(object) {

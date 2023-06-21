@@ -1,16 +1,18 @@
+import 'package:deebugee_plugin/DialogView.dart';
+import 'package:deebugee_plugin/IfWeb.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind_future_fibers/M/EndPoints.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
-import 'package:deebugee_plugin/DialogView.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/IfWeb.dart';
 
 import '../../../../C/Api.dart';
 import '../../../../C/form_input_decoration.dart';
+import '../../../../M/CPR/KIT.dart';
+import '../../../../M/EndPoints.dart';
 import '../../../../M/Ticket.dart';
 
 class SendKits extends StatefulWidget {
-  const SendKits({Key? key}) : super(key: key);
+  final Map<int, KIT> selectedList;
+
+  const SendKits(this.selectedList, {Key? key}) : super(key: key);
 
   @override
   State<SendKits> createState() => _SendKitsState();
@@ -26,16 +28,26 @@ class _SendKitsState extends State<SendKits> {
   var moNode = FocusNode();
 
   bool loading = false;
+  List<String> ticketList = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    widget.selectedList.forEach((key, value) {
+      ticketList.add(value.ticket!.mo ?? value.ticket!.oe!);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return DialogView(width: 500, child: getWebUi());
+    return IfWeb(elseIf: getUi(), child: DialogView(width: 500, child: getWebUi()));
   }
 
-  List<String> ticketList = [];
   final TextEditingController _controller = TextEditingController();
 
-  getWebUi() {
+  Scaffold getWebUi() {
     return Scaffold(
       appBar: AppBar(title: const Text('Send Kits')),
       body: loading
@@ -47,49 +59,49 @@ class _SendKitsState extends State<SendKits> {
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
                       autofocus: true,
-                      focusNode: moNode,
-                      onChanged: (a) {
-                        setState(() {});
-                      },
-                      controller: _controller,
-                      decoration: FormInputDecoration.getDeco(hintText: "MO"),
-                      onFieldSubmitted: (mo) {
-                        _controller.clear();
-                        FocusScope.of(context).requestFocus(moNode);
-                        setState(() {
-                          ticketList.add(mo);
-                        });
-                      }),
-                ),
-                Expanded(
-                  child: ListView.separated(
-                    itemBuilder: (BuildContext context, int index) {
-                      String t = ticketList[index];
-                      return ListTile(title: Text(t));
-                    },
-                    itemCount: ticketList.length,
-                    separatorBuilder: (BuildContext context, int index) {
-                      return const Divider(
-                        height: 0,
-                      );
-                    },
-                  ),
-                ),
-                TextFormField(
-                  decoration: FormInputDecoration.getDeco(hintText: "Comment"),
-                  keyboardType: TextInputType.multiline,
-                  maxLines: 8,
-                  onChanged: (c) {
-                    comment = c;
-                  },
-                ),
-                if (ticketList.isNotEmpty || _controller.text.isNotEmpty)
-                  Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton.icon(
-                          onPressed: () {
-                            if (_controller.text.isNotEmpty) {
-                              ticketList.add(_controller.text);
+                focusNode: moNode,
+                onChanged: (a) {
+                  setState(() {});
+                },
+                controller: _controller,
+                decoration: FormInputDecoration.getDeco(hintText: "MO"),
+                onFieldSubmitted: (mo) {
+                  _controller.clear();
+                  FocusScope.of(context).requestFocus(moNode);
+                  setState(() {
+                    ticketList.add(mo);
+                  });
+                }),
+          ),
+          Expanded(
+            child: ListView.separated(
+              itemBuilder: (BuildContext context, int index) {
+                String t = ticketList[index];
+                return ListTile(title: Text(t));
+              },
+              itemCount: ticketList.length,
+              separatorBuilder: (BuildContext context, int index) {
+                return const Divider(
+                  height: 0,
+                );
+              },
+            ),
+          ),
+          TextFormField(
+            decoration: FormInputDecoration.getDeco(hintText: "Comment"),
+            keyboardType: TextInputType.multiline,
+            maxLines: 8,
+            onChanged: (c) {
+              comment = c;
+            },
+          ),
+          if (ticketList.isNotEmpty || _controller.text.isNotEmpty)
+            Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ElevatedButton.icon(
+                    onPressed: () {
+                      if (_controller.text.isNotEmpty) {
+                        ticketList.add(_controller.text);
                             }
                             sendKits();
                           },
@@ -98,6 +110,10 @@ class _SendKitsState extends State<SendKits> {
               ]),
             ),
     );
+  }
+
+  getUi() {
+    return Text("NOT WEB");
   }
 
   // void send(Ticket t) {

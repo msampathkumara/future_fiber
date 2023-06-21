@@ -1,24 +1,23 @@
 import 'package:data_table_2/data_table_2.dart';
+import 'package:deebugee_plugin/DialogView.dart';
+import 'package:deebugee_plugin/IfWeb.dart';
+import 'package:deebugee_plugin/extensions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind_future_fibers/C/Api.dart';
-import 'package:smartwind_future_fibers/M/CPR/KIT.dart';
-import 'package:smartwind_future_fibers/M/CPR/KitItem.dart';
-import 'package:smartwind_future_fibers/M/Chat/message.dart';
-import 'package:smartwind_future_fibers/M/EndPoints.dart';
-import 'package:smartwind_future_fibers/M/Enums.dart';
-import 'package:smartwind_future_fibers/Mobile/V/Home/Tickets/StandardFiles/factory_selector.dart';
-import 'package:smartwind_future_fibers/Mobile/V/Widgets/UserImage.dart';
-import 'package:smartwind_future_fibers/Web/V/MaterialManagement/KIT/AddMaterials.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
-import 'package:deebugee_plugin/DialogView.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/IfWeb.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/chatBubble.dart';
 
+import '../../../../C/Api.dart';
 import '../../../../M/AppUser.dart';
 import '../../../../M/CPR/CprItem.dart';
+import '../../../../M/CPR/KIT.dart';
+import '../../../../M/CPR/KitItem.dart';
+import '../../../../M/Chat/message.dart';
+import '../../../../M/EndPoints.dart';
 import '../../../../M/NsUser.dart';
 import '../../../../M/PermissionsEnum.dart';
+import '../../../../Mobile/V/Home/Tickets/StandardFiles/factory_selector.dart';
+import '../../../../Mobile/V/Widgets/UserImage.dart';
+import '../../../Widgets/chatBubble.dart';
+import 'AddMaterials.dart';
 
 class KitView extends StatefulWidget {
   final KIT kit;
@@ -135,7 +134,7 @@ class _KitViewState extends State<KitView> {
                                 Expanded(
                                     child: SizedBox(
                                         width: double.infinity,
-                                        child: DataTable(columns: [
+                                        child: DataTable2(columns: [
                                           const DataColumn(label: Text('')),
                                           const DataColumn(label: Text('Item')),
                                           const DataColumn(label: Text('Qty')),
@@ -144,19 +143,6 @@ class _KitViewState extends State<KitView> {
                                           if (_canDeleted) const DataColumn(label: Text(''))
                                         ], rows: [
                                           for (var material in _kit.items) getMatRow(material),
-                                          // if (kIsWeb)
-                                          //   DataRow2(cells: [
-                                          //     DataCell.empty,
-                                          //     DataCell.empty,
-                                          //     DataCell.empty,
-                                          //     DataCell.empty,
-                                          //     if (_canDeleted) DataCell.empty,
-                                          //     DataCell(TextButton(
-                                          //         onPressed: () async {
-                                          //           await AddMaterials(_kit.id).show(context) == true ? apiGetData() : null;
-                                          //         },
-                                          //         child: const Text("Add Materials"))),
-                                          //   ])
                                         ]))),
                               if (_kit.items.isNotEmpty)
                                 TextButton(

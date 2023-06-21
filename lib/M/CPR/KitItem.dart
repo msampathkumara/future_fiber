@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:smartwind_future_fibers/M/CPR/CprItem.dart';
+
+import 'CprItem.dart';
 
 part 'KitItem.g.dart';
 

@@ -1,3 +1,4 @@
+import 'package:deebugee_plugin/IfWeb.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,8 +7,6 @@ import 'package:random_password_generator/random_password_generator.dart';
 import 'package:smartwind_future_fibers/M/EndPoints.dart';
 import 'package:deebugee_plugin/DialogView.dart';
 import 'package:smartwind_future_fibers/M/NsUser.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/IfWeb.dart';
 
 import '../../../C/Api.dart';
 
@@ -43,7 +42,7 @@ class _GeneratePasswordState extends State<GeneratePassword> {
     return IfWeb(elseIf: getUi(), child: DialogView(width: 500, height: 500, child: getUi()));
   }
 
-  getUi() {
+  Scaffold getUi() {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Reset Password"),

@@ -1,14 +1,10 @@
 import 'package:deebugee_plugin/DialogView.dart';
+import 'package:deebugee_plugin/IfWeb.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:smartwind_future_fibers/M/NsUser.dart';
-import 'package:deebugee_plugin/DialogView.dart';
-import 'package:deebugee_plugin/DialogView.dart';
 import '../../../../M/AppUser.dart';
-import '../../../../Web/Widgets/DialogView.dart';
-import 'package:deebugee_plugin/DialogView.dart';
-import '../../../../Web/Widgets/IfWeb.dart';
 import '../../Widgets/UserImage.dart';
 
 class CurrentUserDetails extends StatefulWidget {

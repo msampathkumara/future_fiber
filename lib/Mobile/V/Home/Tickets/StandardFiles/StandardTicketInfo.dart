@@ -1,3 +1,4 @@
+import 'package:deebugee_plugin/IfWeb.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -13,7 +14,6 @@ import '../../../../../C/DB/hive.dart';
 import 'package:deebugee_plugin/DialogView.dart';
 import '../../../../../M/NsUser.dart';
 import '../../../../../Web/Widgets/DialogView.dart';
-import '../../../../../Web/Widgets/IfWeb.dart';
 import '../../../Widgets/UserImage.dart';
 
 class StandardTicketInfo extends StatefulWidget {
@@ -109,16 +109,16 @@ class _StandardTicketInfoState extends State<StandardTicketInfo> {
                             // const Text("1 MIN AGO", textAlign: TextAlign.start, style: TextStyle(color: Colors.grey)),
                             RichText(
                                 text: TextSpan(style: defaultStyle, children: [
-                              TextSpan(text: user?.name ?? "", style: linkStyle),
-                              TextSpan(text: " ${(ticketHistory.action ?? "").toLowerCase().replaceUnderscore.capitalizeFirstofEach}")
-                            ])),
+                                  TextSpan(text: user?.name ?? "", style: linkStyle),
+                                  TextSpan(text: " ${(ticketHistory.action ?? "").toLowerCase().replaceUnderscore.capitalizeFirstofEach}")
+                                ])),
                             Align(alignment: Alignment.bottomRight, child: Text("${ticketHistory.uptime}", textAlign: TextAlign.end, style: timeStyle)),
                             const Divider(thickness: 1.5)
                           ],
                         ),
                       ),
                       indicatorStyle:
-                          IndicatorStyle(indicatorXY: 0.1, width: 40, height: 40, drawGap: true, padding: const EdgeInsets.all(8), indicator: UserImage(nsUser: user, radius: 24))),
+                      IndicatorStyle(indicatorXY: 0.1, width: 40, height: 40, drawGap: true, padding: const EdgeInsets.all(8), indicator: UserImage(nsUser: user, radius: 24))),
                 );
               }),
         ),

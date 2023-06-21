@@ -1,14 +1,13 @@
 import 'dart:convert';
 
 import 'package:csv/csv.dart';
+import 'package:deebugee_plugin/DialogView.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
-import 'package:smartwind_future_fibers/M/CPR/CprItem.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
-import 'package:deebugee_plugin/DialogView.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/IfWeb.dart';
+
+import '../../../M/CPR/CprItem.dart';
 
 class DropMaterialList extends StatefulWidget {
   const DropMaterialList({Key? key}) : super(key: key);
@@ -38,7 +37,7 @@ class _DropMaterialListState extends State<DropMaterialList> {
   bool sheetUploadingError = false;
   String errorMessage = "";
 
-  Scaffold getWebUi() {
+  getWebUi() {
     return Scaffold(
       appBar: AppBar(actions: [
         IconButton(
@@ -124,11 +123,11 @@ class _DropMaterialListState extends State<DropMaterialList> {
       List<List<dynamic>> rowsAsListOfValues = const CsvToListConverter().convert(bar);
 
       for (var element in rowsAsListOfValues) {
-        print("${element[1]}---${element[2]} ${element[3]}");
+        print("${element[0]}---${element[1]} ${element[2]}");
 
         CprItem item = CprItem();
-        item.item = element[1];
-        item.qty = "${element[2]} ${element[3]}";
+        item.item = "${element[0]}";
+        item.qty = "${element[1]} ${element[2]}";
         cprItems.add(item);
       }
 

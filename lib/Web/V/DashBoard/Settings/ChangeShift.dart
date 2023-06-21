@@ -1,11 +1,10 @@
+import 'package:deebugee_plugin/IfWeb.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:smartwind_future_fibers/M/EndPoints.dart';
 import 'package:deebugee_plugin/DialogView.dart';
 import 'package:smartwind_future_fibers/M/Enums.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/IfWeb.dart';
 import 'package:smartwind_future_fibers/globals.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
@@ -71,8 +70,7 @@ class _ChangeShiftsState extends State<ChangeShifts> {
       if (a['start'].isNotBetween(b['start']!, b['end']!)! &&
           b['start'].isNotBetween(a['start']!, a['end']!)! &&
           a['end'].isNotBetween(b['start']!, a['end']!)! &&
-          b['end'].isNotBetween(a['start']!, a['end']!)!) {
-      } else {
+          b['end'].isNotBetween(a['start']!, a['end']!)!) {} else {
         x = false;
       }
 
@@ -102,36 +100,36 @@ class _ChangeShiftsState extends State<ChangeShifts> {
         body: loading
             ? const Center(child: CircularProgressIndicator())
             : !isFactorySelected
-                ? getDateSector()
-                : Column(
-                    children: [
-                      getDateSector(),
-                      const Divider(),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Table(
-                          children: [
-                            TableRow(
-                                children: [const Text("Shift Name"), const Text("Start Time"), const Text("End Time"), const Text("Duration")]
-                                    .map((e) => Padding(padding: const EdgeInsets.all(8.0), child: e))
-                                    .toList()),
-                            ...shiftsMap.values
-                                .map((e) => TableRow(children: [
-                                      // Switch(value: e.isActive, onChanged: (bool v) => setState(() => e.deleted = v ? 0 : 1)),
-                                      Padding(padding: const EdgeInsets.all(8.0), child: Text((e.shiftName ?? '').capitalize())),
-                                      getTimeSelector(e.startAtTime, (TimeOfDay t) => e.setStartTime(t)),
-                                      getTimeSelector(e.endAtTime, (t) => e.setEndTime(t)),
-                                      Padding(padding: const EdgeInsets.all(8.0), child: Text(dif(e.startAtTime, e.endAtTime)))
-                                    ]))
-                                .toList()
-                          ],
-                        ),
-                      ),
-                      const Spacer(),
-                      if (maxEndTime != null) Text("Maximum end time :${DateFormat('yyyy-MM-dd HH:mm').format(maxEndTime!)}", style: const TextStyle(color: Colors.red)),
-                      Text("Minimum start time :${DateFormat('yyyy-MM-dd HH:mm').format(minStartTime)}", style: const TextStyle(color: Colors.red))
-                    ],
-                  ),
+            ? getDateSector()
+            : Column(
+          children: [
+            getDateSector(),
+            const Divider(),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Table(
+                children: [
+                  TableRow(
+                      children: [const Text("Shift Name"), const Text("Start Time"), const Text("End Time"), const Text("Duration")]
+                          .map((e) => Padding(padding: const EdgeInsets.all(8.0), child: e))
+                          .toList()),
+                  ...shiftsMap.values
+                      .map((e) => TableRow(children: [
+                    // Switch(value: e.isActive, onChanged: (bool v) => setState(() => e.deleted = v ? 0 : 1)),
+                    Padding(padding: const EdgeInsets.all(8.0), child: Text((e.shiftName ?? '').capitalize())),
+                    getTimeSelector(e.startAtTime, (TimeOfDay t) => e.setStartTime(t)),
+                    getTimeSelector(e.endAtTime, (t) => e.setEndTime(t)),
+                    Padding(padding: const EdgeInsets.all(8.0), child: Text(dif(e.startAtTime, e.endAtTime)))
+                  ]))
+                      .toList()
+                ],
+              ),
+            ),
+            const Spacer(),
+            if (maxEndTime != null) Text("Maximum end time :${DateFormat('yyyy-MM-dd HH:mm').format(maxEndTime!)}", style: const TextStyle(color: Colors.red)),
+            Text("Minimum start time :${DateFormat('yyyy-MM-dd HH:mm').format(minStartTime)}", style: const TextStyle(color: Colors.red))
+          ],
+        ),
         bottomNavigationBar: (loading || !isFactorySelected)
             ? null
             : BottomAppBar(child: Padding(padding: const EdgeInsets.all(8.0), child: ElevatedButton(onPressed: (timeValidateOk) ? save : null, child: const Text("Save")))));
@@ -222,14 +220,14 @@ class _ChangeShiftsState extends State<ChangeShifts> {
               return Production.values
                   .without([Production.None, Production.All])
                   .map((e) => PopupMenuItem(
-                      onTap: () {
-                        selectedFactory = e.getValue();
-                        // loadData();
-                        getShiftsByDate();
-                      },
-                      value: 0,
-                      enabled: true,
-                      child: Text(e.getValue())))
+                  onTap: () {
+                    selectedFactory = e.getValue();
+                    // loadData();
+                    getShiftsByDate();
+                  },
+                  value: 0,
+                  enabled: true,
+                  child: Text(e.getValue())))
                   .toList();
             }),
       )
@@ -238,8 +236,8 @@ class _ChangeShiftsState extends State<ChangeShifts> {
     return loading
         ? const Center(child: CircularProgressIndicator())
         : isFactorySelected
-            ? Row(children: x)
-            : Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: x));
+        ? Row(children: x)
+        : Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: x));
   }
 
   getShiftsByDate() {

@@ -1,24 +1,24 @@
 import 'package:data_table_2/data_table_2.dart';
+import 'package:deebugee_plugin/DeeBugeeSearchBar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:smartwind_future_fibers/C/Api.dart';
-import 'package:smartwind_future_fibers/M/CPR/CPR.dart';
-import 'package:smartwind_future_fibers/M/EndPoints.dart';
-import 'package:smartwind_future_fibers/M/Enums.dart';
-import 'package:deebugee_plugin/DeeBugeeSearchBar.dart';
-import 'package:smartwind_future_fibers/Web/Styles/styles.dart';
-import 'package:smartwind_future_fibers/Web/V/MaterialManagement/CPR/AddCpr.dart';
-import 'package:smartwind_future_fibers/Web/V/MaterialManagement/CPR/TicketSelector.dart';
 import 'package:smartwind_future_fibers/Web/V/MaterialManagement/CPR/webCprView.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/myDropDown.dart';
+
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
+import '../../../../C/Api.dart';
 import '../../../../M/AppUser.dart';
+import '../../../../M/CPR/CPR.dart';
+import '../../../../M/EndPoints.dart';
+import '../../../../M/Enums.dart';
 import '../../../../M/PermissionsEnum.dart';
 import '../../../../Mobile/V/Widgets/NoResultFoundMsg.dart';
+import '../../../Styles/styles.dart';
 import '../../ProductionPool/copy.dart';
 import '../orderOprions.dart';
+import 'AddCpr.dart';
+import 'TicketSelector.dart';
 
 part 'webCpr.options.dart';
 
@@ -46,7 +46,7 @@ class _WebCprState extends State<WebCpr> {
 
   late DessertDataSourceAsync _dataSource;
 
-  final _status = ['All', 'Sent', 'Ready', 'Pending', 'Order'];
+  final _status = ['All', 'Sent', 'Ready', 'Pending', 'Order', 'Received'];
   String selectedStatus = 'All';
 
   bool e = false;
@@ -100,6 +100,8 @@ class _WebCprState extends State<WebCpr> {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
             title: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text("CPR", style: mainWidgetsTitleTextStyle),
                 const Spacer(),
@@ -113,161 +115,174 @@ class _WebCprState extends State<WebCpr> {
                       loadData();
                     }),
                 const SizedBox(width: 16),
-                Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: PopupMenuButton<int>(
-                        tooltip: "Select Date or Date range to filer by CPR Due Date",
-                        offset: const Offset(0, 30),
-                        padding: const EdgeInsets.all(16.0),
-                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                        child: Chip(
-                            deleteIcon: const Icon(Icons.close, color: Colors.red),
-                            onDeleted: filterByDate ? () => {filterByDate = false, _title = null, loadData()} : null,
-                            // backgroundColor: _selectedFilter == e ? Colors.red : null,
-                            avatar: const Icon(Icons.date_range, color: Colors.black),
-                            label: Text(_title ?? "Select Due Date", style: const TextStyle(color: Colors.black))),
-                        onSelected: (result) {},
-                        itemBuilder: (BuildContext context) {
-                          return [
-                            PopupMenuItem(
-                                value: 0,
-                                enabled: false,
-                                child: SizedBox(
-                                    width: 500,
-                                    height: 300,
-                                    child: SfDateRangePicker(
-                                        initialSelectedRange: PickerDateRange(rangeStartDate, rangeEndDate),
-                                        maxDate: DateTime.now(),
-                                        onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
-                                          print(args.value);
+                Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: PopupMenuButton<int>(
+                              tooltip: "Select Date or Date range to filer by CPR Due Date",
+                              offset: const Offset(0, 30),
+                              padding: const EdgeInsets.all(16.0),
+                              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                              child: Chip(
+                                  deleteIcon: const Icon(Icons.close, color: Colors.red),
+                                  onDeleted: filterByDate ? () => {filterByDate = false, _title = null, loadData()} : null,
+                                  // backgroundColor: _selectedFilter == e ? Colors.red : null,
+                                  avatar: const Icon(Icons.date_range, color: Colors.black),
+                                  label: Text(_title ?? "Select Due Date", style: const TextStyle(color: Colors.black))),
+                              onSelected: (result) {},
+                              itemBuilder: (BuildContext context) {
+                                return [
+                                  PopupMenuItem(
+                                      value: 0,
+                                      enabled: false,
+                                      child: SizedBox(
+                                          width: 500,
+                                          height: 300,
+                                          child: SfDateRangePicker(
+                                              initialSelectedRange: PickerDateRange(rangeStartDate, rangeEndDate),
+                                              maxDate: DateTime.now(),
+                                              onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
+                                                print(args.value);
 
-                                          rangeEndDate = null;
-                                          selectedDate = null;
-                                          if (args.value is PickerDateRange) {
-                                            rangeStartDate = args.value.startDate;
-                                            rangeEndDate = args.value.endDate;
-                                            if (rangeStartDate == rangeEndDate) {
-                                              rangeEndDate = null;
-                                            }
-                                          } else if (args.value is DateTime) {
-                                            selectedDate = args.value;
-                                          } else if (args.value is List<DateTime>) {
-                                          } else {}
-                                          rangeEndDate = rangeEndDate == rangeStartDate ? null : rangeEndDate;
-                                          if (rangeEndDate == null || rangeStartDate.isSameDate(rangeEndDate!)) {
-                                            singleDate = true;
-                                          } else {
-                                            singleDate = false;
-                                          }
-                                        },
-                                        selectionMode: DateRangePickerSelectionMode.range))),
-                            PopupMenuItem(
-                              value: 1,
-                              enabled: false,
-                              child: Row(
-                                children: [
-                                  ElevatedButton(
-                                      onPressed: () => {
-                                            _title = singleDate
-                                                ? DateFormat("yyyy MMMM dd").format(rangeStartDate)
-                                                : "${DateFormat("yyyy/MM/dd").format(rangeStartDate)} to ${DateFormat("yyyy/MM/dd").format(rangeEndDate!)}",
-                                            filterByDate = true,
-                                            Navigator.of(context).pop(),
-                                            loadData()
-                                          },
-                                      child: const Text('Done')),
-                                  const Spacer(),
-                                  TextButton(onPressed: () => {filterByDate = false, _title = null, Navigator.of(context).pop(), loadData()}, child: const Text('Cancel')),
-                                ],
-                              ),
-                            )
-                          ];
-                        })),
-                const SizedBox(width: 16),
-                Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: PopupMenuButton<String>(
-                        offset: const Offset(0, 30),
-                        padding: const EdgeInsets.all(16.0),
-                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                        child: Chip(
-                            avatar: const Icon(Icons.factory, color: Colors.black),
-                            label: Row(children: [Text(selectedSupplierStatus), const Icon(Icons.arrow_drop_down_rounded, color: Colors.black)])),
-                        onSelected: (result) {},
-                        itemBuilder: (BuildContext context) {
-                          return supplierStatusList.map((String value) {
-                            return PopupMenuItem<String>(
-                                value: value,
-                                onTap: () {
-                                  selectedSupplierStatus = value;
-                                  setState(() {});
-                                  loadData();
-                                },
-                                child: Text(value));
-                          }).toList();
-                        })),
-                const SizedBox(width: 16),
-                Wrap(children: [
-                  MyDropDown<String>(
-                      items: const ['All', 'Urgent', 'Normal'],
-                      elevation: 4,
-                      lable: 'OrderType',
-                      value: 'All',
-                      selectedText: (selectedItem) {
-                        return (selectedItem);
-                      },
-                      onSelect: (x) {
-                        selectedOrderType = x;
-                        setState(() {});
-                        loadData();
-                        return selectedOrderType;
-                      },
-                      onChildBuild: (item) {
-                        return Text(item);
-                      }),
-                  const SizedBox(width: 20),
-                  MyDropDown<Production>(
-                      items: Production.values,
-                      elevation: 4,
-                      lable: 'Production',
-                      value: Production.None,
-                      selectedText: (selectedItem) {
-                        return (selectedItem).getValue();
-                      },
-                      onSelect: (x) {
-                        selectedProduction = x;
-                        setState(() {});
-                        loadData();
-                        return selectedProduction.getValue();
-                      },
-                      onChildBuild: (Production item) {
-                        return Text(item.getValue());
-                      }),
-                  const SizedBox(width: 20),
-                  MyDropDown<String>(
-                      items: _status,
-                      elevation: 4,
-                      lable: 'Status',
-                      value: selectedStatus,
-                      selectedText: (selectedItem) {
-                        return (selectedItem);
-                      },
-                      onSelect: (x) {
-                        selectedStatus = x;
-                        setState(() {});
-                        loadData();
-                        return selectedStatus;
-                      },
-                      onChildBuild: (item) {
-                        return Text(item);
-                      }),
-                  const SizedBox(width: 20),
-                  Material(
-                      elevation: 4,
-                      borderRadius: BorderRadius.circular(8),
-                      child:
-                          SizedBox(height: 40, width: 300, child: DeeBugeeSearchBar(searchController: _controller, onSearchTextChanged: (text) => {searchText = text, loadData()})))
-                ])
+                                                rangeEndDate = null;
+                                                selectedDate = null;
+                                                if (args.value is PickerDateRange) {
+                                                  rangeStartDate = args.value.startDate;
+                                                  rangeEndDate = args.value.endDate;
+                                                  if (rangeStartDate == rangeEndDate) {
+                                                    rangeEndDate = null;
+                                                  }
+                                                } else if (args.value is DateTime) {
+                                                  selectedDate = args.value;
+                                                } else if (args.value is List<DateTime>) {
+                                                } else {}
+                                                rangeEndDate = rangeEndDate == rangeStartDate ? null : rangeEndDate;
+                                                if (rangeEndDate == null || rangeStartDate.isSameDate(rangeEndDate!)) {
+                                                  singleDate = true;
+                                                } else {
+                                                  singleDate = false;
+                                                }
+                                              },
+                                              selectionMode: DateRangePickerSelectionMode.range))),
+                                  PopupMenuItem(
+                                    value: 1,
+                                    enabled: false,
+                                    child: Row(
+                                      children: [
+                                        ElevatedButton(
+                                            onPressed: () => {
+                                                  _title = singleDate
+                                                      ? DateFormat("yyyy MMMM dd").format(rangeStartDate)
+                                                      : "${DateFormat("yyyy/MM/dd").format(rangeStartDate)} to ${DateFormat("yyyy/MM/dd").format(rangeEndDate!)}",
+                                                  filterByDate = true,
+                                                  Navigator.of(context).pop(),
+                                                  loadData()
+                                                },
+                                            child: const Text('Done')),
+                                        const Spacer(),
+                                        TextButton(onPressed: () => {filterByDate = false, _title = null, Navigator.of(context).pop(), loadData()}, child: const Text('Cancel')),
+                                      ],
+                                    ),
+                                  )
+                                ];
+                              })),
+                      PopupMenuButton<String>(
+                          tooltip: "Filter By Supplier Status",
+                          offset: const Offset(0, 30),
+                          padding: const EdgeInsets.all(16.0),
+                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                          child: Chip(
+                              avatar: const Icon(Icons.factory, color: Colors.black),
+                              label: Row(children: [Text(selectedSupplierStatus), const Icon(Icons.arrow_drop_down_rounded, color: Colors.black)])),
+                          onSelected: (result) {},
+                          itemBuilder: (BuildContext context) {
+                            return supplierStatusList.map((String value) {
+                              return PopupMenuItem<String>(
+                                  value: value,
+                                  onTap: () {
+                                    selectedSupplierStatus = value;
+                                    setState(() {});
+                                    loadData();
+                                  },
+                                  child: Text(value));
+                            }).toList();
+                          }),
+                      PopupMenuButton<String>(
+                          tooltip: "Filter By Order Type",
+                          offset: const Offset(0, 30),
+                          padding: const EdgeInsets.all(16.0),
+                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                          child: Chip(
+                              avatar: const Icon(Icons.star_rounded, color: Colors.black),
+                              label: Row(children: [Text(selectedOrderType), const Icon(Icons.arrow_drop_down_rounded, color: Colors.black)])),
+                          onSelected: (result) {},
+                          itemBuilder: (BuildContext context) {
+                            return ['All', 'Urgent', 'Normal'].map((String value) {
+                              return PopupMenuItem<String>(
+                                  value: value,
+                                  onTap: () {
+                                    selectedOrderType = value;
+                                    setState(() {});
+                                    loadData();
+                                  },
+                                  child: Text(value));
+                            }).toList();
+                          }),
+                      PopupMenuButton<Production>(
+                          tooltip: "Filter By Production",
+                          offset: const Offset(0, 30),
+                          padding: const EdgeInsets.all(16.0),
+                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                          child: Chip(
+                              avatar: const Icon(Icons.factory_rounded, color: Colors.black),
+                              label: Row(children: [Text(selectedProduction.getValue()), const Icon(Icons.arrow_drop_down_rounded, color: Colors.black)])),
+                          onSelected: (result) {},
+                          itemBuilder: (BuildContext context) {
+                            return Production.values.map((Production value) {
+                              return PopupMenuItem<Production>(
+                                  value: value,
+                                  onTap: () {
+                                    selectedProduction = value;
+                                    setState(() {});
+                                    loadData();
+                                  },
+                                  child: Text(value.getValue()));
+                            }).toList();
+                          }),
+                      PopupMenuButton<String>(
+                          tooltip: "Filter By Status",
+                          offset: const Offset(0, 30),
+                          padding: const EdgeInsets.all(16.0),
+                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                          child: Chip(
+                              avatar: const Icon(Icons.more, color: Colors.black),
+                              label: Row(children: [Text(selectedStatus), const Icon(Icons.arrow_drop_down_rounded, color: Colors.black)])),
+                          onSelected: (result) {},
+                          itemBuilder: (BuildContext context) {
+                            return _status.map((String value) {
+                              return PopupMenuItem<String>(
+                                  value: value,
+                                  onTap: () {
+                                    selectedStatus = value;
+                                    setState(() {});
+                                    loadData();
+                                  },
+                                  child: Text(value));
+                            }).toList();
+                          }),
+                      Material(
+                          elevation: 4,
+                          borderRadius: BorderRadius.circular(8),
+                          child: SizedBox(
+                              height: 40, width: 300, child: DeeBugeeSearchBar(searchController: _controller, onSearchTextChanged: (text) => {searchText = text, loadData()})))
+                    ]
+                        .map((Widget e) => Padding(
+                              padding: const EdgeInsets.only(left: 16),
+                              child: e,
+                            ))
+                        .toList())
               ],
             ),
             backgroundColor: Colors.transparent,

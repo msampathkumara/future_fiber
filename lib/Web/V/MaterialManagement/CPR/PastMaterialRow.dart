@@ -1,10 +1,11 @@
+import 'dart:convert';
+
 import 'package:data_table_2/data_table_2.dart';
+import 'package:deebugee_plugin/DialogView.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:smartwind_future_fibers/M/CPR/CprItem.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
-import 'package:deebugee_plugin/DialogView.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/IfWeb.dart';
+
+import '../../../../M/CPR/CprItem.dart';
 
 class PastMaterialRow extends StatefulWidget {
   const PastMaterialRow({Key? key}) : super(key: key);
@@ -36,18 +37,34 @@ class _PastMaterialRowState extends State<PastMaterialRow> {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(children: [
-          TextFormField(onChanged: (t) {
-            items = [];
-            List<String> c = t.split("	 ");
+          TextFormField(
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.grey.shade200,
+                hintText: 'Excel Rows',
+                contentPadding: const EdgeInsets.only(left: 16.0, bottom: 16.0, top: 16.0),
+                border: OutlineInputBorder(borderSide: const BorderSide(color: Colors.orange), borderRadius: BorderRadius.circular(4)),
+                focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.orange), borderRadius: BorderRadius.circular(4)),
+                enabledBorder: UnderlineInputBorder(borderSide: const BorderSide(color: Colors.orange), borderRadius: BorderRadius.circular(4)),
+              ),
+              keyboardType: TextInputType.multiline,
+              maxLines: 10,
+              onChanged: (t) {
+                items = [];
+                // List<String> c = t.split("	 ");
+                // List<String> c = t.split("\n");
 
-            for (var element in c) {
-              CprItem ci = CprItem();
-              ci.item = element.split("	")[1];
-              ci.qty = "${element.split("	")[2]} ${element.split("	")[3]}";
-              items.add(ci);
-            }
-            setState(() {});
-          }),
+                LineSplitter ls = const LineSplitter();
+                List<String> c = ls.convert(t);
+
+                for (var element in c) {
+                  CprItem ci = CprItem();
+                  ci.item = element.split("	")[0];
+                  ci.qty = "${element.split("	")[1]} ${element.split("	")[2]}";
+                  items.add(ci);
+                }
+                setState(() {});
+              }),
           Expanded(
               child: DataTable2(
             columns: const [
@@ -60,4 +77,6 @@ class _PastMaterialRowState extends State<PastMaterialRow> {
       ),
     );
   }
+
+  getUi() {}
 }
