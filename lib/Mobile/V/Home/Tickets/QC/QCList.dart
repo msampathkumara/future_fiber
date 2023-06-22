@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:pdf_render/pdf_render_widgets.dart';
 import 'package:smartwind_future_fibers/M/EndPoints.dart';
 import 'package:smartwind_future_fibers/M/Enums.dart';
 import 'package:smartwind_future_fibers/M/QC.dart';
 import 'package:smartwind_future_fibers/M/Section.dart';
 import 'package:smartwind_future_fibers/M/Ticket.dart';
-import 'package:smartwind_future_fibers/Mobile/V/Home/Tickets/QC/QCView.dart';
 import 'package:deebugee_plugin/DeeBugeeSearchBar.dart';
-import 'package:smartwind_future_fibers/Web/V/QC/webTicketQView.dart';
 
 import '../../../../../C/Api.dart';
 import '../../../Widgets/NoResultFoundMsg.dart';
@@ -261,14 +258,12 @@ class _QCListState extends State<QCList> with TickerProviderStateMixin {
                       // await showTicketOptions(ticketPrint, context);
                       // setState(() {});
                     },
-                    onTap: (_ticketQc.quality ?? '').toLowerCase() != 'reject'
-                        ? null
-                        : () async {
-                            // await Navigator.push(context, MaterialPageRoute(builder: (context) => QCView(_ticketQc)));
-                            // WebTicketQView(_ticketQc.ticket ?? Ticket(), true).show(context);
+                    onTap: () async {
+                      // await Navigator.push(context, MaterialPageRoute(builder: (context) => QCView(_ticketQc)));
+                      // WebTicketQView(_ticketQc.ticket ?? Ticket(), true).show(context);
 
-                            MobileQView(_ticketQc).show(context);
-                          },
+                      MobileQView(_ticketQc).show(context);
+                    },
                     onDoubleTap: () async {
                       // print(await ticket.getLocalFileVersion());
                       // ticket.open(context);

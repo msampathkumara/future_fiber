@@ -82,7 +82,7 @@ class _FinishCheckListState extends State<FinishCheckList> {
 
   static const platform = MethodChannel('editPdf');
 
-  Future<void> finish(String quality, uniqueKey) async {
+  Future<void> finishQcPass(String quality, uniqueKey) async {
     var isQc = false;
     int? selectedSection = AppUser.getSelectedSection()?.id;
     if (AppUser.getSelectedSection()?.sectionTitle.toLowerCase() == "finishing") {
@@ -94,44 +94,17 @@ class _FinishCheckListState extends State<FinishCheckList> {
 
     print('res1 ${res1.toJson()}');
 
-    if (mounted) await Ticket.getFile(ticket, context);
+    // if (mounted) await Ticket.getFile(ticket, context);
     if (res1.done != null) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(backgroundColor: Colors.red, content: Text('Already Completed')));
-    } else if (ticket.ticketFile != null) {
-      // print('erpNotWorking $erpNotWorking');
-
-      // bool pingOk = await LoadingDialog(ping());
-      // print('pingOk $pingOk');
-
-      // return;
-
-      // if (erpNotWorking) {
-      //   await showErpNotAvailableMsg(quality, isQc, selectedSection, res1.operationMinMax!);
-      //   await loadingDialog(Api.post(EndPoints.tickets_qc_uploadEdits, {'quality': quality, 'ticketId': ticket.id, 'type': isQc, "sectionId": selectedSection}).then((res) {
-      //     Map data = res.data;
-      //   }));
-      // } else if (mounted) {
-      // Begin ping process and listen for output
-      // bool pingOk = await loadingDialog(ping());
-
-      // this will run when ping failed
-      // if (!pingOk) {
-      //   if (mounted) {
-      //     await showErpNotAvailableMsg(quality, isQc, selectedSection, res1.operationMinMax!);
-      //   }
-      // } else {
+    } else {
       if (mounted) {
-        // var uuid = const Uuid();
-        // var x = await RF(ticket, res1.operationMinMax!, res1.ticketProgressDetails, key: Key(uuid.v1())).show(context);
-        // if (x != null || x == true) {
         await finish__(res1.operationMinMax!);
+        print('finish__');
         await loadingDialog(
             Api.post(EndPoints.tickets_qc_uploadEdits, {'uniqueKey': uniqueKey, 'quality': quality, 'ticketId': ticket.id, 'type': isQc, "sectionId": selectedSection})
                 .then((res) {}));
-        // }
       }
-      // }
-      // }
     }
   }
 
@@ -149,19 +122,19 @@ class _FinishCheckListState extends State<FinishCheckList> {
     }));
   }
 
-  Future<bool> ping() async {
-    // var address='https://v2.smartwind.nsslsupportservices.com';
-    var address = 'http://10.200.4.24/WebClient/default.aspx';
-
-    BaseOptions options = BaseOptions(baseUrl: address, connectTimeout: const Duration(seconds: 5), receiveTimeout: const Duration(seconds: 15));
-    Dio dio = Dio(options);
-
-    return dio.get(address).then((value) {
-      return true;
-    }).onError((error, stackTrace) {
-      return false;
-    });
-  }
+  // Future<bool> ping() async {
+  //   // var address='https://v2.smartwind.nsslsupportservices.com';
+  //   var address = 'http://10.200.4.24/WebClient/default.aspx';
+  //
+  //   BaseOptions options = BaseOptions(baseUrl: address, connectTimeout: const Duration(seconds: 5), receiveTimeout: const Duration(seconds: 15));
+  //   Dio dio = Dio(options);
+  //
+  //   return dio.get(address).then((value) {
+  //     return true;
+  //   }).onError((error, stackTrace) {
+  //     return false;
+  //   });
+  // }
 
   Future loadingDialog(Future future) async {
     return await showDialog(
@@ -224,7 +197,7 @@ class _FinishCheckListState extends State<FinishCheckList> {
     }));
   }
 
-  SizedBox getButton(String qulaity, MaterialColor color, bool showCommentEditor) {
+  SizedBox getButton(String quality, MaterialColor color, bool showCommentEditor) {
     return SizedBox(
       width: double.infinity,
       child: OutlinedButton(
@@ -245,6 +218,7 @@ class _FinishCheckListState extends State<FinishCheckList> {
               var userCurrentSection = AppUser.getSelectedSection()?.id ?? 0;
 
               await platform.invokeMethod('qcEdit', {
+                'quality': quality,
                 'uniqueKey': uniqueKey,
                 'userCurrentSection': userCurrentSection.toString(),
                 "qc": isQc,
@@ -256,14 +230,14 @@ class _FinishCheckListState extends State<FinishCheckList> {
                 // Navigator.pop(context, true);
               }
             } else {
-              await finish(qulaity, uniqueKey).then((value) => {});
+              await finishQcPass(quality, uniqueKey).then((value) => {});
             }
             if (mounted) {
               await AddTimeSheet(selectedSectionId!, uniqueKey).show(context);
               Navigator.of(context).pop(true);
             }
           },
-          child: Text(qulaity)),
+          child: Text(quality)),
     );
   }
 }

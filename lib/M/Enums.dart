@@ -297,6 +297,10 @@ extension StringContainsInArrayExtension on String {
 
       case 'reject':
         return Colors.red;
+      case 'qc pass':
+        return Colors.green;
+      case 'under concision':
+        return Colors.orange;
     }
 
     return Colors.red;

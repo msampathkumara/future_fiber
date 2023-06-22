@@ -41,6 +41,7 @@ public class QCEditor extends AppCompatActivity {
     int RequestedOrientation;
     boolean isQc = false;
     private String serverUrl;
+    private String quality;
     private String sectionId;
     private String userCurrentSection;
     private String uniqueKey;
@@ -72,6 +73,7 @@ public class QCEditor extends AppCompatActivity {
             SELECTED_FILE = Ticket.formJsonString(getIntent().getExtras().getString("ticket"));
             isQc = (getIntent().getExtras().getBoolean("qc"));
             serverUrl = (getIntent().getExtras().getString("serverUrl"));
+            quality = (getIntent().getExtras().getString("quality"));
             sectionId = (getIntent().getExtras().getString("sectionId"));
             userCurrentSection = (getIntent().getExtras().getString("userCurrentSection"));
             uniqueKey = (getIntent().getExtras().getString("uniqueKey"));
@@ -266,6 +268,7 @@ public class QCEditor extends AppCompatActivity {
                 vals.put("ticketId", SELECTED_FILE.id + "");
                 vals.put("svgs", value.toString());
                 vals.put("type", isQc ? "qc" : "qa");
+                vals.put("quality", quality);
                 vals.put("userCurrentSection", userCurrentSection);
                 vals.put("uniqueKey", uniqueKey);
 

@@ -65,7 +65,7 @@ class _KitViewState extends State<KitView> {
 
   bool _loading = true;
 
-  getWebUi() {
+  Scaffold getWebUi() {
     return Scaffold(
       appBar: AppBar(title: const Text("View KIT")),
       body: _loading
@@ -134,13 +134,13 @@ class _KitViewState extends State<KitView> {
                                 Expanded(
                                     child: SizedBox(
                                         width: double.infinity,
-                                        child: DataTable2(columns: [
-                                          const DataColumn(label: Text('')),
-                                          const DataColumn(label: Text('Item')),
-                                          const DataColumn(label: Text('Qty')),
-                                          const DataColumn(label: Text('Date')),
-                                          const DataColumn(label: Text('User')),
-                                          if (_canDeleted) const DataColumn(label: Text(''))
+                                        child: DataTable2(smRatio: 0.4, lmRatio: 2, columns: [
+                                          const DataColumn2(size: ColumnSize.S, label: Text('')),
+                                          const DataColumn2(size: ColumnSize.L, label: Text('Item')),
+                                          const DataColumn2(size: ColumnSize.M, label: Text('Qty')),
+                                          const DataColumn2(size: ColumnSize.M, label: Text('Date')),
+                                          const DataColumn2(size: ColumnSize.L, label: Text('User')),
+                                          if (_canDeleted) const DataColumn2(size: ColumnSize.S, label: Text(''))
                                         ], rows: [
                                           for (var material in _kit.items) getMatRow(material),
                                         ]))),
@@ -205,7 +205,7 @@ class _KitViewState extends State<KitView> {
               ),
               if (kIsWeb)
                 SizedBox(
-                    width: 395,
+                    width: 300,
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Card(
@@ -304,7 +304,7 @@ class _KitViewState extends State<KitView> {
     });
   }
 
-  getButton() {
+  FloatingActionButton? getButton() {
     if (_loading) {
       return null;
     }
@@ -347,7 +347,7 @@ class _KitViewState extends State<KitView> {
     });
   }
 
-  getMatRow(KitItem material) {
+  DataRow getMatRow(KitItem material) {
     NsUser? user = (material.user);
     print('AppUser.havePermissionFor(NsPermissions.KIT_CHECK_MATERIALS) ${AppUser.havePermissionFor(NsPermissions.KIT_CHECK_MATERIALS)}');
     return DataRow(cells: [
@@ -364,13 +364,11 @@ class _KitViewState extends State<KitView> {
                   : null)),
       DataCell(Text(material.item)),
       DataCell(Text(material.qty)),
-      DataCell(Text(material.dnt.replaceAll(" ", "\n"))),
-      DataCell(user != null
-          ? ListTile(
-              leading: UserImage(nsUser: user, radius: 12),
-              title: Text(user.uname, style: const TextStyle(fontSize: 12)),
-            )
-          : const Text('-')),
+      DataCell(Text(
+        material.dnt.replaceAll(" ", "\n"),
+        style: const TextStyle(fontSize: 12),
+      )),
+      DataCell(user != null ? ListTile(dense: true, leading: UserImage(nsUser: user, radius: 12), title: Text(user.uname, style: const TextStyle(fontSize: 10))) : const Text('-')),
       if (_canDeleted)
         DataCell(IconButton(
             onPressed: () {
@@ -383,7 +381,7 @@ class _KitViewState extends State<KitView> {
     ]);
   }
 
-  deleteMaterial(CprItem material) {
+  Future deleteMaterial(CprItem material) {
     setState(() {
       _loading = true;
     });
@@ -421,7 +419,7 @@ class _KitViewState extends State<KitView> {
 
   TextEditingController commentController = TextEditingController();
 
-  saveComment() {
+  Future saveComment() {
     String text = commentController.text;
     commentController.clear();
     return Api.post(EndPoints.materialManagement_saveCprComment, {'text': text, 'cprId': _kit.id}).then((res) {

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pdf_render/pdf_render_widgets.dart';
 import 'package:smartwind_future_fibers/M/EndPoints.dart';
+import 'package:smartwind_future_fibers/M/Enums.dart';
 import 'package:smartwind_future_fibers/M/QC.dart';
 import 'package:smartwind_future_fibers/M/Ticket.dart';
 import 'package:smartwind_future_fibers/Web/V/QC/QFileView.dart';
@@ -61,7 +62,7 @@ class _WebTicketQViewState extends State<WebTicketQView> {
 
   // final Completer<WebViewController> _controller = Completer<WebViewController>();
 
-  editUserUi() {
+  Scaffold editUserUi() {
     return Scaffold(
         appBar: AppBar(title: Text(ticket.mo ?? ticket.oe ?? ''), actions: [
           if (!_pdfLoading && selectedQc != null)
@@ -108,9 +109,14 @@ class _WebTicketQViewState extends State<WebTicketQView> {
                                   Wrap(direction: Axis.vertical, children: [
                                     Text("${qc.user?.name}"),
                                     Text("${qc.user?.uname}", style: const TextStyle(color: Colors.blue, fontSize: 12)),
-                                    Text(
-                                      "${qc.getSection()?.sectionTitle}@${qc.getSection()?.factory}",
-                                      style: const TextStyle(fontSize: 12, color: Colors.redAccent),
+                                    Column(
+                                      children: [
+                                        Text(qc.quality ?? ''),
+                                        Text(
+                                          "${qc.getSection()?.sectionTitle}@${qc.getSection()?.factory}",
+                                          style: const TextStyle(fontSize: 12, color: Colors.redAccent),
+                                        ),
+                                      ],
                                     )
                                   ])
                                 ]),
@@ -154,7 +160,14 @@ class _WebTicketQViewState extends State<WebTicketQView> {
                                 _data = value;
                               });
                             },
-                            trailing: Text("${qc.getSection()?.sectionTitle} @ ${qc.getSection()?.factory}", style: const TextStyle(color: Colors.redAccent)),
+                            trailing: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(qc.quality ?? '', style: TextStyle(color: (qc.quality ?? '').getColor())),
+                                Text("${qc.getSection()?.sectionTitle} @ ${qc.getSection()?.factory}", style: const TextStyle(color: Colors.redAccent)),
+                              ],
+                            ),
                             leading: UserImage(nsUser: qc.user, radius: 16, padding: 2),
                             title: Row(children: [
                               const SizedBox(width: 4),
@@ -210,7 +223,7 @@ class _WebTicketQViewState extends State<WebTicketQView> {
     });
   }
 
-  getView() {
+  Widget getView() {
     return _pdfLoading
         ? const Center(child: CircularProgressIndicator())
         : _data == null

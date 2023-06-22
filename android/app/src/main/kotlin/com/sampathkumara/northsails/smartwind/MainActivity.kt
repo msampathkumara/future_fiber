@@ -84,6 +84,7 @@ class MainActivity : FlutterActivity() {
 
                     editPdfResult = result
                     val ticket = call.argument<String>("ticket")
+                    val quality = call.argument<String>("quality")
                     val qc = call.argument<Boolean>("qc")
                     val serverUrl = call.argument<String>("serverUrl")
                     val sectionId = call.argument<String>("sectionId")
@@ -97,6 +98,7 @@ class MainActivity : FlutterActivity() {
                     val i = Intent(this, QCEditor::class.java)
                     i.putExtra("uniqueKey", uniqueKey)
                     i.putExtra("ticket", ticket)
+                    i.putExtra("quality", quality)
                     i.putExtra("qc", qc)
                     i.putExtra("serverUrl", serverUrl)
                     i.putExtra("sectionId", sectionId)

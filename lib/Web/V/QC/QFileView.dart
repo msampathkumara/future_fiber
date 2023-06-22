@@ -5,6 +5,8 @@ import 'package:pdf_render/pdf_render_widgets.dart';
 import 'package:smartwind_future_fibers/M/QC.dart';
 import 'package:deebugee_plugin/DialogView.dart';
 
+import '../../../res.dart';
+
 class QFileView extends StatefulWidget {
   final QC qc;
 
@@ -25,15 +27,20 @@ class _QFileViewState extends State<QFileView> {
 
   Uint8List? _data;
 
+  bool isPass = false;
+
   @override
   void initState() {
     selectedQc = widget.qc;
+    isPass = selectedQc.quality?.toLowerCase() == 'qc pass';
 
-    selectedQc.getFile(context).then((value) async {
-      _pdfLoading = false;
-      _data = value;
-      setState(() {});
-    });
+    if (selectedQc.quality?.toLowerCase() != 'qc pass') {
+      selectedQc.getFile(context).then((value) async {
+        _pdfLoading = false;
+        _data = value;
+        setState(() {});
+      });
+    }
     super.initState();
   }
 
@@ -42,17 +49,19 @@ class _QFileViewState extends State<QFileView> {
     return IfWeb(elseIf: getUi(), child: DialogView(child: getWebUi()));
   }
 
-  getWebUi() {
+  dynamic getWebUi() {
     return getUi();
   }
 
-  getUi() {
+  Scaffold getUi() {
     return Scaffold(
         appBar: AppBar(title: Text("${selectedQc.ticket?.mo}")),
-        body: _pdfLoading
-            ? const Center(child: CircularProgressIndicator())
-            : _data == null
-            ? const Text("No Data")
-            : PdfViewer.openData(_data!, params: const PdfViewerParams()));
+        body: isPass
+            ? Center(child: Image.asset(Res.qc_passed_sticket))
+            : _pdfLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _data == null
+                    ? const Text("No Data")
+                    : PdfViewer.openData(_data!, params: const PdfViewerParams()));
   }
 }

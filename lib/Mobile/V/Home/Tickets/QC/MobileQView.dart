@@ -6,6 +6,7 @@ import 'package:deebugee_plugin/DialogView.dart';
 import 'package:smartwind_future_fibers/Mobile/V/Home/Tickets/QC/TimeCardView.dart';
 
 import '../../../../../M/QC.dart';
+import '../../../../../res.dart';
 import '../../../Widgets/UserImage.dart';
 
 class MobileQView extends StatefulWidget {
@@ -28,6 +29,8 @@ class _MobileQViewState extends State<MobileQView> {
 
   late QC qc;
 
+  bool isPass = false;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -35,13 +38,16 @@ class _MobileQViewState extends State<MobileQView> {
 
     _pdfLoading = true;
     qc = widget.qc;
+    isPass = qc.quality?.toLowerCase() == 'qc pass';
 
     setState(() {});
-    widget.qc.getFile(context).then((value) async {
-      _pdfLoading = false;
-      setState(() {});
-      _data = value;
-    });
+    if (qc.quality?.toLowerCase() != 'qc pass') {
+      widget.qc.getFile(context).then((value) async {
+        _pdfLoading = false;
+        setState(() {});
+        _data = value;
+      });
+    }
   }
 
   @override
@@ -70,7 +76,11 @@ class _MobileQViewState extends State<MobileQView> {
               Text(qc.getDateTime(), style: const TextStyle(fontSize: 12))
             ])
           ])),
-      body: _pdfLoading ? const Center(child: CircularProgressIndicator()) : PdfViewer.openData(_data, params: const PdfViewerParams()),
+      body: isPass
+          ? Center(child: Image.asset(Res.qc_passed_sticket))
+          : _pdfLoading
+              ? const Center(child: CircularProgressIndicator())
+              : PdfViewer.openData(_data, params: const PdfViewerParams()),
       floatingActionButton: FloatingActionButton.small(
           onPressed: () {
             TimeCardView(widget.qc.id).show(context);
