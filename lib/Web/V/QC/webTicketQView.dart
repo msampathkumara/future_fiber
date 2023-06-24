@@ -39,6 +39,8 @@ class _WebTicketQViewState extends State<WebTicketQView> {
 
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
+  bool isPass = false;
+
   @override
   void initState() {
     ticket = widget.ticket;
@@ -94,9 +96,15 @@ class _WebTicketQViewState extends State<WebTicketQView> {
                                     QFileView(qc).show(context);
                                     return;
                                   }
+
                                   _pdfLoading = true;
                                   selectedQc = qc;
+                                  isPass = selectedQc?.quality?.toLowerCase() == 'qc pass';
                                   setState(() {});
+                                  if (isPass) {
+                                    return;
+                                  }
+
                                   qc.getFile(context).then((value) async {
                                     _pdfLoading = false;
                                     setState(() {});
@@ -133,9 +141,11 @@ class _WebTicketQViewState extends State<WebTicketQView> {
                     Expanded(
                         child: selectedQc == null
                             ? Center(child: Text(widget.isQc ? 'Select QC' : 'Select QA'))
-                            : _pdfLoading
-                                ? const Center(child: CircularProgressIndicator())
-                                : getView())
+                            : isPass
+                                ? Center(child: Image.asset(Res.qc_passed_sticket))
+                                : _pdfLoading
+                                    ? const Center(child: CircularProgressIndicator())
+                                    : getView())
                   ])
                 : RefreshIndicator(
                     key: _refreshIndicatorKey,

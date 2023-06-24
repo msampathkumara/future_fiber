@@ -40,7 +40,6 @@ class _MobileQViewState extends State<MobileQView> {
     qc = widget.qc;
     isPass = qc.quality?.toLowerCase() == 'qc pass';
 
-    setState(() {});
     if (qc.quality?.toLowerCase() != 'qc pass') {
       widget.qc.getFile(context).then((value) async {
         _pdfLoading = false;

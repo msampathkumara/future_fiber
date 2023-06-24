@@ -12,8 +12,6 @@ import 'package:smartwind_future_fibers/M/TicketFlag.dart';
 import 'package:smartwind_future_fibers/M/TicketHistory.dart';
 import 'package:smartwind_future_fibers/Mobile/V/Home/Tickets/TicketInfo/info_short_items.dart';
 import 'package:smartwind_future_fibers/Mobile/V/Widgets/ErrorMessageView.dart';
-import 'package:smartwind_future_fibers/Web/Widgets/DialogView.dart';
-import 'package:smartwind_future_fibers/ns_icons_icons.dart';
 import 'package:deebugee_plugin/DialogView.dart';
 
 import '../../../../../C/Api.dart';
@@ -267,11 +265,15 @@ class _TicketInfoState extends State<TicketInfo> {
                             visualDensity: visualDensity,
                             title: TextMenu(child: Text(_ticket.mo ?? "_", style: ts)),
                             subtitle: TextMenu(child: Text(_ticket.oe ?? "_", style: ts))),
+                        ListTile(visualDensity: visualDensity, title: Text("Job : ", style: ts.merge(xSmallText)), subtitle: Text(_ticket.jobId ?? '_', style: ts.merge(
+                            smallText))),
                         ListTile(
                             visualDensity: visualDensity,
                             title: Text(_ticket.production ?? "_", style: ts.merge(smallText)),
                             subtitle: Text(_ticket.atSection ?? '', style: ts.merge(smallText))),
-                        if (AppUser.getUser()?.id == 1) Padding(padding: const EdgeInsets.all(8.0), child: TextMenu(child: Text("${_ticket.id}", style: ts))),
+                        if (AppUser
+                            .getUser()
+                            ?.id == 1) Padding(padding: const EdgeInsets.all(8.0), child: TextMenu(child: Text("${_ticket.id}", style: ts))),
                         ListTile(visualDensity: visualDensity, title: Text("Pool : ", style: ts.merge(xSmallText)), subtitle: Text(_ticket.pool ?? '', style: ts.merge(smallText))),
                         ListTile(
                             visualDensity: visualDensity,

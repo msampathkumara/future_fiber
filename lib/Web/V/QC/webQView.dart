@@ -7,6 +7,8 @@ import 'package:deebugee_plugin/DialogView.dart';
 import 'package:universal_html/html.dart' as html;
 
 import '../../../M/QC.dart';
+import '../../../Mobile/V/Home/Tickets/QC/TimeCardView.dart';
+import '../../../res.dart';
 
 class webQView extends StatefulWidget {
   final QC qc;
@@ -27,15 +29,19 @@ class _webQViewState extends State<webQView> {
   // PdfControllerPinch pdfPinchController = PdfControllerPinch(document: PdfDocument.openAsset('x.pdf'));
   var _data;
 
+  var isPass;
+
   @override
   void initState() {
-    widget.qc.getFile(context).then((value) async {
-      _data = value;
-      _pdfLoading = false;
-      setState(() {});
-      // final document = PdfDocument.openData(value);
-      // pdfPinchController.loadDocument(document);
-    });
+    isPass = widget.qc.quality?.toLowerCase() == 'qc pass';
+
+    if (widget.qc.quality?.toLowerCase() != 'qc pass') {
+      widget.qc.getFile(context).then((value) async {
+        _data = value;
+        _pdfLoading = false;
+        setState(() {});
+      });
+    }
 
     super.initState();
   }
@@ -45,29 +51,13 @@ class _webQViewState extends State<webQView> {
     return IfWeb(elseIf: getUi(), child: DialogView(child: getUi()));
   }
 
-  // getWebUi() {
-  //   return Scaffold(
-  //       appBar: AppBar(),
-  //       body: PdfViewPinch(
-  //         controller: pdfPinchController,
-  //         onDocumentError: (err) {
-  //           print(err);
-  //         },
-  //         onDocumentLoaded: (document) {
-  //           setState(() {
-  //             // _allPagesCount = document.pagesCount;
-  //           });
-  //         },
-  //         onPageChanged: (page) {
-  //           setState(() {
-  //             // _actualPageNumber = page;
-  //           });
-  //         },
-  //       ));
-  // }
-
-  getUi() {
+  Scaffold getUi() {
     return Scaffold(
+        floatingActionButton: FloatingActionButton.small(
+            onPressed: () {
+              TimeCardView(widget.qc.id).show(context);
+            },
+            child: const Icon(Icons.av_timer_rounded)),
         appBar: AppBar(title: ListTile(title: Text("${widget.qc.ticket?.mo}"), subtitle: Wrap(children: [Text("${widget.qc.ticket?.oe}")]), textColor: Colors.white), actions: [
           if (!_pdfLoading)
             IconButton(
@@ -79,11 +69,13 @@ class _webQViewState extends State<webQView> {
                 icon: const Icon(Icons.open_in_new))
         ]),
         backgroundColor: Colors.white,
-        body: _pdfLoading
-            ? const Center(child: CircularProgressIndicator())
-            : PdfViewer.openData(
-          _data,
-          params: const PdfViewerParams(),
-        ));
+        body: isPass
+            ? Center(child: Image.asset(Res.qc_passed_sticket))
+            : _pdfLoading
+                ? const Center(child: CircularProgressIndicator())
+                : PdfViewer.openData(
+                    _data,
+                    params: const PdfViewerParams(),
+                  ));
   }
 }

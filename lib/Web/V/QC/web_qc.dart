@@ -99,7 +99,7 @@ class _WebQcState extends State<WebQc> {
                             label: Row(children: [Text(selectedQuality), const Icon(Icons.arrow_drop_down_rounded, color: Colors.black)])),
                         onSelected: (result) {},
                         itemBuilder: (BuildContext context) {
-                          return ["All", "Excellent", "Good", "Reject"].map((String value) {
+                          return ["All", "QC Pass", "Under Concision", "Rework", "Reject"].map((String value) {
                             return PopupMenuItem<String>(
                                 value: value,
                                 onTap: () {

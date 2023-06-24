@@ -31,24 +31,8 @@ class _WebQcTableState extends State<WebQcTable> {
   }
 
   void sort(int columnIndex, bool ascending) {
-    var columnName = "dnt";
-    switch (columnIndex) {
-      case 0:
-        columnName = "ticket.mo";
-        break;
-      case 1:
-        columnName = "quality";
-        break;
-      case 2:
-        columnName = "dnt";
-        break;
-      case 3:
-        columnName = "qc.qc";
-        break;
-      case 4:
-        columnName = "qc.sectionId";
-        break;
-    }
+    var columnName = ["ticket.mo", "ticket.jobId", "quality", "dnt", "qc.qc", "qc.sectionId"].elementAtOrNull(columnIndex) ?? "dnt";
+
     _dessertsDataSource!.sort(columnName, ascending);
     setState(() {
       _sortColumnIndex = columnIndex;
@@ -67,6 +51,11 @@ class _WebQcTableState extends State<WebQcTable> {
       DataColumn2(
         size: ColumnSize.L,
         label: const Text('Ticket', style: TextStyle(fontWeight: FontWeight.bold)),
+        onSort: (columnIndex, ascending) => sort(columnIndex, ascending),
+      ),
+      DataColumn2(
+        size: ColumnSize.M,
+        label: const Text('Job ID', style: TextStyle(fontWeight: FontWeight.bold)),
         onSort: (columnIndex, ascending) => sort(columnIndex, ascending),
       ),
       DataColumn2(
@@ -169,7 +158,7 @@ class _ErrorAndRetry extends StatelessWidget {
               Text('Oops! $errorMessage', style: const TextStyle(color: Colors.white)),
               TextButton(
                   onPressed: retry,
-                  child: Row(mainAxisSize: MainAxisSize.min, children: const [Icon(Icons.refresh, color: Colors.white), Text('Retry', style: TextStyle(color: Colors.white))]))
+                  child: const Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.refresh, color: Colors.white), Text('Retry', style: TextStyle(color: Colors.white))]))
             ])),
       );
 }
@@ -192,12 +181,12 @@ class __LoadingState extends State<_Loading> {
                   ? const SizedBox()
                   : Center(
                       child: Container(
-                      color: Colors.yellow,
+                        color: Colors.yellow,
                       padding: const EdgeInsets.all(7),
                       width: 150,
                       height: 50,
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround, children: const [CircularProgressIndicator(strokeWidth: 2, color: Colors.black), Text('Loading..')]),
+                      child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround, children: [CircularProgressIndicator(strokeWidth: 2, color: Colors.black), Text('Loading..')]),
                     ));
             }));
   }
@@ -286,6 +275,7 @@ class QcDataSourceAsync extends AsyncDataTableSource {
                   },
                   child: Wrap(
                       direction: Axis.vertical, children: [Text((qc.ticket?.mo) ?? ""), Text((qc.ticket?.oe) ?? "", style: const TextStyle(color: Colors.red, fontSize: 12))]))),
+              DataCell(Text(qc.ticket?.jobId ?? '_')),
               DataCell(Text(qc.quality ?? '')),
               DataCell(Text('${qc.getDateTime()}')),
               DataCell(Text(qc.qc == 1 ? 'QC' : 'QA')),

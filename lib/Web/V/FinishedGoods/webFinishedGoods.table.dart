@@ -44,7 +44,7 @@ class _AsyncPaginatedDataTable2DemoState extends State<AsyncPaginatedDataTable2D
   }
 
   void sort(int columnIndex, bool ascending) {
-    String columnName = ["mo", "production", "progress", "shipDate", '', 'completedOn'].elementAt(columnIndex);
+    String columnName = ["mo", "jobId", "production", "progress", "shipDate", '', 'completedOn'].elementAt(columnIndex);
 
     _dessertsDataSource!.sort(columnName, ascending);
     setState(() {
@@ -62,6 +62,11 @@ class _AsyncPaginatedDataTable2DemoState extends State<AsyncPaginatedDataTable2D
   List<DataColumn> get _columns {
     return [
       DataColumn2(size: ColumnSize.M, label: const Text('Ticket', style: TextStyle(fontWeight: FontWeight.bold)), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
+      DataColumn2(
+          size: ColumnSize.M,
+          label: const Text('Job ID', style: TextStyle(fontWeight: FontWeight.bold)),
+          numeric: true,
+          onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(
           size: ColumnSize.M, label: const Text('Production', style: TextStyle(fontWeight: FontWeight.bold)), onSort: (columnIndex, ascending) => sort(columnIndex, ascending)),
       DataColumn2(
@@ -269,6 +274,7 @@ class DessertDataSourceAsync extends AsyncDataTableSource {
                   TextMenu(child: Text((ticket.oe) ?? "", style: const TextStyle(color: Colors.red, fontSize: 12))),
                 ],
               )),
+              DataCell(Text("${ticket.jobId}")),
               DataCell(Wrap(
                 direction: Axis.vertical,
                 children: [Text(ticket.production ?? '-'), if (ticket.atSection != null) Text(ticket.atSection ?? '', style: const TextStyle(color: Colors.red, fontSize: 12))],
